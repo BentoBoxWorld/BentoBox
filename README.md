@@ -2,13 +2,13 @@ BSkyBlock
 ==========
 [![Build Status](https://travis-ci.org/tastybento/bskyblock.svg?branch=master)](https://travis-ci.org/tastybento/bskyblock)
 
-A Skyblock Bukkit plugin for Minecraft derived from ASkyBlock!
+A Skyblock Bukkit plugin for Minecraft derived from BSkyBlock!
 
 This is a survival game where the player starts with an island in the sky.
 
 Bugs and Feature requests
 =========================
-File bug and feature requests here: https://github.com/tastybento/ASkyBlock-Bugs-N-Features/issues
+File bug and feature requests here: https://github.com/tastybento/BSkyBlock-Bugs-N-Features/issues
 
 
 Note for developers

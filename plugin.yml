@@ -1,5 +1,5 @@
-name: ASkyBlock
-main: us.tastybento.askyblock.ASkyBlock
+name: BSkyBlock
+main: us.tastybento.askyblock.BSkyBlock
 version: ${version}
 
 authors: [Tastybento, Poslovitch]
