@@ -1,5 +1,6 @@
 BSkyBlock
 ==========
+[![Build Status](https://travis-ci.org/tastybento/bskyblock.svg?branch=master)](https://travis-ci.org/tastybento/bskyblock)
 
 A Skyblock Bukkit plugin for Minecraft derived from ASkyBlock!
 
