@@ -13,7 +13,7 @@ import us.tastybento.bskyblock.config.Settings;
  * @author Tastybento
  * @author Poslovitch
  */
-public class Player {
+public class APlayer {
     private UUID uuid;
     
     private String locale;
@@ -27,7 +27,7 @@ public class Player {
      * Constructor - initializes the variables
      * @param uuid - UUID of the player
      */
-    public Player(UUID uuid){
+    public APlayer(UUID uuid){
         this.uuid = uuid;
         
         this.locale = "";

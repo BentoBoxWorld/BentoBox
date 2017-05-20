@@ -5,19 +5,19 @@ import java.util.Map.Entry;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.database.objects.Player;
+import us.tastybento.bskyblock.database.objects.APlayer;
 
 public class PlayersManager{
     
     private BSkyBlock plugin;
     private ASBDatabase database;
     
-    private HashMap<UUID, Player> players;
+    private HashMap<UUID, APlayer> players;
     
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
         database = ASBDatabase.getDatabase();
-        players = new HashMap<UUID, Player>();
+        players = new HashMap<UUID, APlayer>();
     }
     
     public void load(){
@@ -30,13 +30,13 @@ public class PlayersManager{
                 
                 @Override
                 public void run() {
-                    for(Entry<UUID, Player> entry : players.entrySet()){
+                    for(Entry<UUID, APlayer> entry : players.entrySet()){
                         database.savePlayerData(entry.getValue());
                     }
                 }
             });
         } else {
-            for(Entry<UUID, Player> entry : players.entrySet()){
+            for(Entry<UUID, APlayer> entry : players.entrySet()){
                 database.savePlayerData(entry.getValue());
             }
         }
@@ -47,7 +47,7 @@ public class PlayersManager{
         players.clear();
     }
     
-    public Player getPlayer(UUID uuid){
+    public APlayer getPlayer(UUID uuid){
         return players.get(uuid);
     }
 }

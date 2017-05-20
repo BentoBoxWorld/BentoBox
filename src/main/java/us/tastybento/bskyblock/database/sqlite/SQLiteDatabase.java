@@ -6,18 +6,18 @@ import java.util.UUID;
 
 import us.tastybento.bskyblock.database.ASBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.database.objects.Player;
+import us.tastybento.bskyblock.database.objects.APlayer;
 
 public class SQLiteDatabase extends ASBDatabase{
 
     @Override
-    public Player loadPlayerData(UUID uuid) {
+    public APlayer loadPlayerData(UUID uuid) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void savePlayerData(Player player) {
+    public void savePlayerData(APlayer player) {
         // TODO Auto-generated method stub
         
     }

@@ -8,7 +8,7 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.mysql.MySQLDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.database.objects.Player;
+import us.tastybento.bskyblock.database.objects.APlayer;
 import us.tastybento.bskyblock.database.sqlite.SQLiteDatabase;
 
 public abstract class ASBDatabase {
@@ -20,8 +20,8 @@ public abstract class ASBDatabase {
         return DatabaseType.FLATFILE.database;
     }
     
-    public abstract Player loadPlayerData(UUID uuid);
-    public abstract void savePlayerData(Player player);
+    public abstract APlayer loadPlayerData(UUID uuid);
+    public abstract void savePlayerData(APlayer player);
     
     public abstract Island loadIslandData(String location);
     public abstract void saveIslandData(Island island);
