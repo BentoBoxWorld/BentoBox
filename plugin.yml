@@ -1,0 +1,11 @@
+name: ASkyBlock
+main: us.tastybento.askyblock.ASkyBlock
+version: ${version}
+
+authors: [Tastybento, Poslovitch]
+
+depend: [Vault]
+softdepend: [Herochat, DeluxeChat, PlaceholderAPI, MVdWPlaceholderAPI]
+
+load: startup
+loadbefore: [Multiverse-Core]

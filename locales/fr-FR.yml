@@ -1,0 +1,39 @@
+###########################################################################################
+# Ceci est fichier YAML. Soyez prudents lorsque vous l'éditez et vérifiez la syntaxe en   #
+# utilisant un parser YAML, tel que http://yaml-online-parser.appspot.com                 #
+###########################################################################################
+
+### Credits ###
+# MrSheepSheep: traduction originale
+# Poslovitch: maintien en 4.0
+#
+# Cette traduction est adaptée pour la version : [4.0]
+
+not-setup:
+  header: |-
+      Configuration nécessaire avant de pouvoir utiliser le plugin...
+      Editez le fichier config.yml puis redémarrez le serveur.
+  distance: "Assurez vous d'avoir défini la distance entre les îles. Si vous avez mis à jour le plugin, conservez la même distance."
+  generator: |-
+      Le générateur n'est pas défini pour le monde des îles.
+      Les raisons potentielles sont:
+        1. Si vous configurez le monde des îles comme le seul monde du serveur,
+           assurez-vous d'avoir ajouté le nom du monde dans le fichier bukkit.yml.
+        2. Vous avez reload le serveur au lieu de le redémarrer.
+  generator-multiverse: "  3. Le plugin Multiverse n'est pas à jour. Installez la version la plus récente."
+  world-name: |-
+      Le nom du monde dans le fichier config.yml diffère de celui spécifié dans le fichier islands.yml.
+      Si ceci est intentionnel, nous en déduisons que vous réinitialisez votre serveur.
+      Dans ce cas, supprimez le fichier islands.yml et l'ancien monde.
+      Si ce n'est pas le cas, corrigez le nom du monde dans le fichier config.yml et redémarrez votre serveur. Ceci peut se produire lorsque vous mettez à jour le plugin.
+  config-outdated: |-
+      Le fichier config.yml semble être obsolète.
+      Assurez-vous d'avoir actualisé votre configuration après avoir mis à jour le plugin.
+      Si cette erreur persiste, vous avez probablement édité l'ancien config.yml plutôt que le nouveau.
+      Si c'est le cas, supprimez le fichier config.yml, travaillez sur le fichier config.new.yml puis renommez-le en config.yml.
+
+
+general:
+  success: "Succès!"
+  errors:
+    no-permission: "Vous n'avez pas la permission d'exécuter cette commande."
