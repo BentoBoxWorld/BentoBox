@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
 public class PlayersManager{
     
     private BSkyBlock plugin;
-    private ASBDatabase database;
+    private BSBDatabase database;
     
     private HashMap<UUID, Players> playerCache;
     
@@ -31,7 +31,7 @@ public class PlayersManager{
      */
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = ASBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase();
         playerCache = new HashMap<UUID, Players>();
     }
     

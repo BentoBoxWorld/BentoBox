@@ -7,9 +7,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.tastybento.bskyblock.config.ASBLocale;
+import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.database.ASBDatabase;
+import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.IslandsManager;
 import us.tastybento.bskyblock.database.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.PlayersManager;
@@ -23,7 +23,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
 public class BSkyBlock extends JavaPlugin{
     private static BSkyBlock plugin;
     
-    private HashMap<String, ASBLocale> locales = new HashMap<String, ASBLocale>();
+    private HashMap<String, BSBLocale> locales = new HashMap<String, BSBLocale>();
     
     // Databases
     private PlayersManager playersManager;
@@ -116,7 +116,7 @@ public class BSkyBlock extends JavaPlugin{
             
             @Override
             public String getValue() {
-                return ASBDatabase.getDatabase().toString();
+                return BSBDatabase.getDatabase().toString();
             }
         });
     }
@@ -133,7 +133,7 @@ public class BSkyBlock extends JavaPlugin{
      * Returns an HashMap of locale identifier and the related object
      * @return the locales
      */
-    public HashMap<String, ASBLocale> getLocales(){
+    public HashMap<String, BSBLocale> getLocales(){
         return locales;
     }
     
@@ -141,7 +141,7 @@ public class BSkyBlock extends JavaPlugin{
      * Returns the default locale
      * @return the default locale
      */
-    public ASBLocale getLocale(){
+    public BSBLocale getLocale(){
         return locales.get(Settings.defaultLanguage);
     }
     
@@ -150,7 +150,7 @@ public class BSkyBlock extends JavaPlugin{
      * @param sender - CommandSender to get the locale
      * @return if sender is a player, the player's locale, otherwise the default locale
      */
-    public ASBLocale getLocale(CommandSender sender){
+    public BSBLocale getLocale(CommandSender sender){
         if(sender instanceof Player) return getLocale(((Player) sender).getUniqueId());
         else return getLocale();
     }
@@ -160,7 +160,7 @@ public class BSkyBlock extends JavaPlugin{
      * @param player - Player to get the locale
      * @return the locale for this player
      */
-    public ASBLocale getLocale(UUID player){
+    public BSBLocale getLocale(UUID player){
         String locale = getPlayers().getPlayer(player).getLocale();
         if(locale.isEmpty() || !locales.containsKey(locale)) return locales.get(Settings.defaultLanguage);
         

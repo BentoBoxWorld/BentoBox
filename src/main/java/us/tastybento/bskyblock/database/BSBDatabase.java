@@ -11,9 +11,9 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 import us.tastybento.bskyblock.database.sqlite.SQLiteDatabase;
 
-public abstract class ASBDatabase {
+public abstract class BSBDatabase {
     
-    public static ASBDatabase getDatabase(){
+    public static BSBDatabase getDatabase(){
         for(DatabaseType type : DatabaseType.values()){
             if(type == Settings.databaseType) return type.database;
         }
@@ -34,9 +34,9 @@ public abstract class ASBDatabase {
         MYSQL(new MySQLDatabase()),
         SQLITE(new SQLiteDatabase());
         
-        ASBDatabase database;
+        BSBDatabase database;
         
-        DatabaseType(ASBDatabase database){
+        DatabaseType(BSBDatabase database){
             this.database = database;
         }
     }

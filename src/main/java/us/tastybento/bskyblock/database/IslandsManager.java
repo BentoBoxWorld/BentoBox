@@ -16,8 +16,8 @@ import us.tastybento.bskyblock.database.objects.Island;
 public class IslandsManager {
 
     private BSkyBlock plugin;
-    private ASBDatabase database;
-
+    private BSBDatabase database;
+    
     private HashMap<Location, Island> islands;
     private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
@@ -30,7 +30,7 @@ public class IslandsManager {
 
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = ASBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase();
         islands = new HashMap<Location, Island>();
         islandsByUUID = new HashMap<UUID, Island>();
         spawn = null;

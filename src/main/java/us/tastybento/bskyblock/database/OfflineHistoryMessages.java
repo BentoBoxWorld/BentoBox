@@ -18,14 +18,14 @@ import us.tastybento.bskyblock.config.Settings;
  */
 public class OfflineHistoryMessages {
     private BSkyBlock plugin;
-    private ASBDatabase database;
+    private BSBDatabase database;
 
     // Offline Messages
     private HashMap<UUID, List<String>> messages;
 
     public OfflineHistoryMessages(BSkyBlock plugin){
         this.plugin = plugin;
-        database = ASBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase();
         messages = new HashMap<UUID, List<String>>();
     }
 

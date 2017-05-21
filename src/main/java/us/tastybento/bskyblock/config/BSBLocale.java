@@ -15,7 +15,7 @@ import us.tastybento.bskyblock.BSkyBlock;
  * @author Tastybento
  * @author Poslovitch
  */
-public class ASBLocale {
+public class BSBLocale {
     
     private BSkyBlock plugin;
     
@@ -29,7 +29,7 @@ public class ASBLocale {
      * @param plugin
      * @param localeName - name of the yaml file that will be used
      */
-    public ASBLocale(BSkyBlock plugin, String localeID){
+    public BSBLocale(BSkyBlock plugin, String localeID){
         this.plugin = plugin;
         this.localeID = localeID;
         getLocale(localeID);

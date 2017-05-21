@@ -4,7 +4,7 @@ import org.bukkit.command.CommandSender;
 
 import us.tastybento.bskyblock.BSkyBlock;
 
-public class AdminCommand extends ASBCommand{
+public class AdminCommand extends BSBCommand{
 
     public AdminCommand(BSkyBlock plugin) {
         super(plugin);

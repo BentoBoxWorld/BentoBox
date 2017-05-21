@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
  * @author Tastybento
  * @author Poslovitch
  */
-public class IslandCommand extends ASBCommand{
+public class IslandCommand extends BSBCommand{
     private BSkyBlock plugin;
     
     public IslandCommand(BSkyBlock plugin) {

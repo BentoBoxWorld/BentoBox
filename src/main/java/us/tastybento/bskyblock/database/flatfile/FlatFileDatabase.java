@@ -6,11 +6,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
-import us.tastybento.bskyblock.database.ASBDatabase;
+import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 
-public class FlatFileDatabase extends ASBDatabase{
+public class FlatFileDatabase extends BSBDatabase{
 
     @Override
     public UUID getUUID(String name, boolean adminCheck) {
