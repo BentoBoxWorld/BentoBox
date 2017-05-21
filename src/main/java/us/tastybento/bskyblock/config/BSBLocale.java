@@ -136,12 +136,8 @@ public class BSBLocale {
     public String islandHelpControlPanel;
     public String islandHelpReset;
     public String islandHelpSetHome;
-    public String islandHelpLevel;
-    public String islandHelpLevelOther;
     public String islandHelpName;
     public String islandHelpResetName;
-    public String islandHelpTopTen;
-    public String islandHelpValue;
     public String islandHelpLimits;
     public String islandHelpTeam;
     public String islandHelpInvite;

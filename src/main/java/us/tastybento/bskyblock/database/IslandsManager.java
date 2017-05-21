@@ -140,33 +140,6 @@ public class IslandsManager {
     }
 
     /**
-     * Get the island level
-     * @param playerUUID
-     * @return Level of island, or null if unknown
-     */
-    public Integer getIslandLevel(UUID playerUUID) {
-        if (islandsByUUID.containsKey(playerUUID))
-            return islandsByUUID.get(playerUUID).getLevel();
-        return null;
-    }
-
-    /**
-     * Set the island level for this player
-     * @param playerUUID
-     * @param islandLevel
-     * @return true if successful, false if not
-     */
-    public boolean setIslandLevel(UUID playerUUID, int islandLevel) {
-        if (islandsByUUID.containsKey(playerUUID)) {
-            islandsByUUID.get(playerUUID).setLevel(islandLevel);
-            // TODO
-            //plugin.getChatListener().setPlayerLevel(playerUUID, islandLevel);
-            return true;
-        }
-        return false;
-    }
-
-    /**
      * Puts a player in a team. Removes them from their old island if required.
      * @param playerUUID
      * @param teamLeader

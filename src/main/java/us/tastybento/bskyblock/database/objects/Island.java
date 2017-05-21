@@ -38,8 +38,6 @@ public class Island {
     private int minProtectedZ;
     // Protection size
     private int protectionRange;
-    // Height of island
-    private int y;
     // World the island is in
     private World world;
 
@@ -66,10 +64,6 @@ public class Island {
     private boolean locked = false;
     private boolean isSpawn = false;
     private boolean purgeProtected = false;
-
-    //// Rating ////
-    private int level;
-    private int levelHandicap;
 
     //// Protection ////
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
@@ -294,34 +288,6 @@ public class Island {
      */
     public void setPurgeProtected(boolean purgeProtected){
         this.purgeProtected = purgeProtected;
-    }
-
-    /**
-     * @return the island level
-     */
-    public int getLevel(){
-        return level;
-    }
-
-    /**
-     * @param level - the island level to set
-     */
-    public void setLevel(int level){
-        this.level = level;
-    }
-
-    /**
-     * @return the island level handicap
-     */
-    public int getLevelHandicap(){
-        return levelHandicap;
-    }
-
-    /**
-     * @param levelHandicap - the island level handicap to set
-     */
-    public void setLevelHandicap(int levelHandicap){
-        this.levelHandicap = levelHandicap;
     }
 
     /**
@@ -582,18 +548,18 @@ public class Island {
      * Resets the flags to their default as set in config.yml for this island
      */
     public void setFlagsDefaults(){
-        for(SettingsFlag flag : SettingsFlag.values()){
+        /*for(SettingsFlag flag : SettingsFlag.values()){
             this.flags.put(flag, Settings.defaultIslandSettings.get(flag));
-        }
+        }*/ //TODO default flags
     }
 
     /**
      * Resets the flags to their default as set in config.yml for the spawn
      */
     public void setSpawnFlagsDefaults(){
-        for(SettingsFlag flag : SettingsFlag.values()){
+        /*for(SettingsFlag flag : SettingsFlag.values()){
             this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
-        }
+        }*/ //TODO default flags
     }
 
     /**
