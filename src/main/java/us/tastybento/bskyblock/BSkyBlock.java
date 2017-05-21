@@ -45,11 +45,11 @@ public class BSkyBlock extends JavaPlugin{
         offlineHistoryMessages = new OfflineHistoryMessages(this);
         offlineHistoryMessages.load();
         
-        if (Settings.useEconomy && !VaultHelper.setupEconomy(this)) {
+        if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
             getLogger().warning("Could not set up economy! - Running without an economy.");
             Settings.useEconomy = false;
         }
-        if (!VaultHelper.setupPermissions(this)) {
+        if (!VaultHelper.setupPermissions()) {
             getLogger().severe("Cannot link with Vault for permissions! Disabling plugin!");
             getServer().getPluginManager().disablePlugin(this);
             return;

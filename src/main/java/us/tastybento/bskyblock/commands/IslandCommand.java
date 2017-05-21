@@ -35,7 +35,7 @@ public class IslandCommand extends ASBCommand{
         
         Player player = (Player) sender;
         // Basic permission check to even use /island
-        if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")){
+        if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.create")){
             Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
             return false;
         }
@@ -113,7 +113,7 @@ public class IslandCommand extends ASBCommand{
             @Override
             public String[] getHelp(CommandSender sender, String label){
                 // TODO check if multiple homes
-                if(VaultHelper.hasPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).islandHelpGoHomes};
+                if(VaultHelper.checkPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).islandHelpGoHomes};
                 return new String[] {null, plugin.getLocale(sender).islandHelpGo};
             }
         });
@@ -314,17 +314,17 @@ public class IslandCommand extends ASBCommand{
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
                 
-                if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
+                if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
                     return false;
                 }
                 
-                if(!plugin.getPlayers().getPlayer(player.getUniqueId()).hasIsland()){
+                if(!plugin.getIslands().hasIsland(player.getUniqueId())){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoIsland);
                     return false;
                 }
                 
-                if(!plugin.getPlayers().getPlayer(player.getUniqueId()).isOwner()){
+                if(!plugin.getIslands().isOwner(player.getUniqueId())){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNotLeader);
                     return false;
                 }
@@ -359,8 +359,8 @@ public class IslandCommand extends ASBCommand{
                 }
                 
                 // Set the name
-                if(VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name.format")) plugin.getPlayers().getPlayer(player.getUniqueId()).getIsland().setName(ChatColor.translateAlternateColorCodes('&', name));
-                else plugin.getPlayers().getPlayer(player.getUniqueId()).getIsland().setName(name);
+                if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name.format")) plugin.getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
+                else plugin.getIslands().getIsland(player.getUniqueId()).setName(name);
                 
                 Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).generalSuccess);
             }
@@ -383,17 +383,17 @@ public class IslandCommand extends ASBCommand{
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
                 
-                if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
+                if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
                     return false;
                 }
                 
-                if(!plugin.getPlayers().getPlayer(player.getUniqueId()).hasIsland()){
+                if(!plugin.getIslands().hasIsland(player.getUniqueId())){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoIsland);
                     return false;
                 }
                 
-                if(!plugin.getPlayers().getPlayer(player.getUniqueId()).isOwner()){
+                if(!plugin.getIslands().isOwner(player.getUniqueId())){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNotLeader);
                     return false;
                 }
@@ -406,7 +406,7 @@ public class IslandCommand extends ASBCommand{
                 Player player = (Player) sender;
                 
                 // Resets the island name
-                plugin.getPlayers().getPlayer(player.getUniqueId()).getIsland().setName(null);
+                plugin.getIslands().getIsland(player.getUniqueId()).setName(null);
                 Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).generalSuccess);
             }
 
@@ -1076,12 +1076,12 @@ public class IslandCommand extends ASBCommand{
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
                 
-                if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.lock")){
+                if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
                     return false;
                 }
                 
-                if(!plugin.getPlayers().getPlayer(player.getUniqueId()).hasIsland()){
+                if(!plugin.getIslands().hasIsland(player.getUniqueId())){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoIsland);
                     return false;
                 }
@@ -1092,7 +1092,7 @@ public class IslandCommand extends ASBCommand{
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
-                Island island = plugin.getPlayers().getPlayer(player.getUniqueId()).getIsland();
+                Island island = plugin.getIslands().getIsland(player.getUniqueId());
                 
                 if(!island.isLocked()){
                     // TODO: Expel all visitors

@@ -1,31 +1,28 @@
 package us.tastybento.bskyblock.util;
 
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
-import net.milkbowl.vault.economy.Economy;
-import net.milkbowl.vault.permission.Permission;
-import us.tastybento.bskyblock.BSkyBlock;
-
 /**
  * Helper class for Vault Economy and Permissions
- * 
- * @author Tastybento
- * @author Poslovitch
  */
 public class VaultHelper {
     public static Economy econ = null;
     public static Permission permission = null;
-    
+
     /**
      * Sets up the economy instance
      * 
      * @return true if successful
      */
-    public static boolean setupEconomy(BSkyBlock plugin) {
-        RegisteredServiceProvider<Economy> economyProvider = plugin.getServer().getServicesManager()
-                .getRegistration(Economy.class);
+    public static boolean setupEconomy() {
+        RegisteredServiceProvider<Economy> economyProvider = Bukkit.getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.economy.Economy.class);
         if (economyProvider != null) {
             econ = economyProvider.getProvider();
         }
@@ -37,9 +34,9 @@ public class VaultHelper {
      * 
      * @return true if successful
      */
-    public static boolean setupPermissions(BSkyBlock plugin) {
-        RegisteredServiceProvider<Permission> permissionProvider = plugin.getServer().getServicesManager()
-                .getRegistration(Permission.class);
+    public static boolean setupPermissions() {
+        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager()
+                .getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
@@ -53,7 +50,7 @@ public class VaultHelper {
      * @param perm
      * @return true if the player has the perm
      */
-    public static boolean hasPerm(final Player player, final String perm) {
+    public static boolean checkPerm(final Player player, final String perm) {
         return permission.has(player, perm);
     }
 

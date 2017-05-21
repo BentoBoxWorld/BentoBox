@@ -38,4 +38,12 @@ public class Settings {
     public static HashMap<SettingsFlag, Boolean> defaultSpawnSettings = new HashMap<SettingsFlag, Boolean>();
     
     public static List<HistoryMessageType> historyMessagesTypes;
+
+    public static int inviteWait;
+
+    public static int maxDeaths;
+
+    public static int islandDistance;
+    
+    public static int protectionRange;
 }

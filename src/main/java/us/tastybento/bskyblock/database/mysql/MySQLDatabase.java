@@ -6,18 +6,18 @@ import java.util.UUID;
 
 import us.tastybento.bskyblock.database.ASBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.database.objects.APlayer;
+import us.tastybento.bskyblock.database.objects.Players;
 
 public class MySQLDatabase extends ASBDatabase{
 
     @Override
-    public APlayer loadPlayerData(UUID uuid) {
+    public Players loadPlayerData(UUID uuid) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void savePlayerData(APlayer player) {
+    public void savePlayerData(Players player) {
         // TODO Auto-generated method stub
         
     }
@@ -42,6 +42,24 @@ public class MySQLDatabase extends ASBDatabase{
 
     @Override
     public void saveOfflineHistoryMessages(HashMap<UUID, List<String>> messages) {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public boolean isPlayerKnown(UUID uniqueID) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public UUID getUUID(String name, boolean adminCheck) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void savePlayerName(String name, UUID uuid) {
         // TODO Auto-generated method stub
         
     }

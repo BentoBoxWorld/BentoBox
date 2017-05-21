@@ -8,7 +8,7 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.mysql.MySQLDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.database.objects.APlayer;
+import us.tastybento.bskyblock.database.objects.Players;
 import us.tastybento.bskyblock.database.sqlite.SQLiteDatabase;
 
 public abstract class ASBDatabase {
@@ -20,8 +20,8 @@ public abstract class ASBDatabase {
         return DatabaseType.FLATFILE.database;
     }
     
-    public abstract APlayer loadPlayerData(UUID uuid);
-    public abstract void savePlayerData(APlayer player);
+    public abstract Players loadPlayerData(UUID uuid);
+    public abstract void savePlayerData(Players player);
     
     public abstract Island loadIslandData(String location);
     public abstract void saveIslandData(Island island);
@@ -40,4 +40,27 @@ public abstract class ASBDatabase {
             this.database = database;
         }
     }
+
+    /**
+     * Checks in database whether the player is known by the plugin or not
+     * @param uniqueID
+     * @return true or false
+     */
+    public abstract boolean isPlayerKnown(UUID uniqueID);
+
+    /**
+     * Gets the UUID for player with name. If adminCheck is true, the search will be more extensive
+     * @param name
+     * @param adminCheck
+     * @return UUID of player with name, or null if it cannot be found
+     */
+    public abstract UUID getUUID(String name, boolean adminCheck);
+
+    /**
+     * Associates this name with the UUID
+     * @param name
+     * @param uuid
+     */
+    public abstract void savePlayerName(String name, UUID uuid);
+    
 }
