@@ -1,8 +1,6 @@
 package us.tastybento.bskyblock.database;
 
-import java.io.File;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map.Entry;
 import java.util.UUID;
 
@@ -430,7 +428,7 @@ public class PlayersManager{
         addPlayer(targetUUID);
         // Check if the target player has a permission bypass (admin.noban)
         Player target = plugin.getServer().getPlayer(targetUUID);
-        if (target != null && VaultHelper.checkPerm(target, Settings.PERMPREFIX + "admin.noban")) {
+        if (target != null && VaultHelper.hasPerm(target, Settings.PERMPREFIX + "admin.noban")) {
             return false;
         }
         Island island = plugin.getIslands().getIsland(playerUUID);

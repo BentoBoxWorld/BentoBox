@@ -35,7 +35,7 @@ public class IslandCommand extends BSBCommand{
         
         Player player = (Player) sender;
         // Basic permission check to even use /island
-        if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.create")){
+        if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")){
             Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
             return false;
         }
@@ -113,7 +113,7 @@ public class IslandCommand extends BSBCommand{
             @Override
             public String[] getHelp(CommandSender sender, String label){
                 // TODO check if multiple homes
-                if(VaultHelper.checkPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).islandHelpGoHomes};
+                if(VaultHelper.hasPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).islandHelpGoHomes};
                 return new String[] {null, plugin.getLocale(sender).islandHelpGo};
             }
         });
@@ -314,7 +314,7 @@ public class IslandCommand extends BSBCommand{
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
                 
-                if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")){
+                if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
                     return false;
                 }
@@ -359,7 +359,7 @@ public class IslandCommand extends BSBCommand{
                 }
                 
                 // Set the name
-                if(VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name.format")) plugin.getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
+                if(VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name.format")) plugin.getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
                 else plugin.getIslands().getIsland(player.getUniqueId()).setName(name);
                 
                 Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).generalSuccess);
@@ -383,7 +383,7 @@ public class IslandCommand extends BSBCommand{
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
                 
-                if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.name")){
+                if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
                     return false;
                 }
@@ -1076,7 +1076,7 @@ public class IslandCommand extends BSBCommand{
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 Player player = (Player) sender;
                 
-                if(!VaultHelper.checkPerm(player, Settings.PERMPREFIX + "island.lock")){
+                if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.lock")){
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
                     return false;
                 }

@@ -50,7 +50,7 @@ public class VaultHelper {
      * @param perm
      * @return true if the player has the perm
      */
-    public static boolean checkPerm(final Player player, final String perm) {
+    public static boolean hasPerm(final Player player, final String perm) {
         return permission.has(player, perm);
     }
 
