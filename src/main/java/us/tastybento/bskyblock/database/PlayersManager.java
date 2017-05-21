@@ -10,13 +10,13 @@ import us.tastybento.bskyblock.database.objects.APlayer;
 public class PlayersManager{
     
     private BSkyBlock plugin;
-    private ASBDatabase database;
+    private BSBDatabase database;
     
     private HashMap<UUID, APlayer> players;
     
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = ASBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase();
         players = new HashMap<UUID, APlayer>();
     }
     

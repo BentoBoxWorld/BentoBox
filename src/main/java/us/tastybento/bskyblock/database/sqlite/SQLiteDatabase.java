@@ -4,11 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.database.ASBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.APlayer;
 
-public class SQLiteDatabase extends ASBDatabase{
+public class SQLiteDatabase extends BSBDatabase{
 
     @Override
     public APlayer loadPlayerData(UUID uuid) {

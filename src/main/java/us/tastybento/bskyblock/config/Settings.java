@@ -3,7 +3,7 @@ package us.tastybento.bskyblock.config;
 import java.util.HashMap;
 import java.util.List;
 
-import us.tastybento.bskyblock.database.ASBDatabase.DatabaseType;
+import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.OfflineHistoryMessages.HistoryMessageType;
 import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 

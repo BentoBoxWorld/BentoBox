@@ -12,7 +12,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 public class IslandsManager {
 
     private BSkyBlock plugin;
-    private ASBDatabase database;
+    private BSBDatabase database;
     
     private HashMap<Location, Island> islands;
     private Island spawn;
@@ -22,7 +22,7 @@ public class IslandsManager {
     
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = ASBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase();
         islands = new HashMap<Location, Island>();
         spawn = null;
     }
