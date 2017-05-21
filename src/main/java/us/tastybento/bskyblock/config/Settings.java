@@ -49,7 +49,7 @@ public class Settings {
     
     /*      WORLD       */
     public static String worldName;
-    public static int distance;
+    public static int islandDistance;
     public static int protectionRange;
     public static int startX;
     public static int startZ;
@@ -116,6 +116,10 @@ public class Settings {
     public static int confirmLeaveWait;
     public static boolean confirmReset;
     public static int confirmResetWait;
+    
+    // Deaths
+    public static int deathsMax;
+    public static boolean deathsSumTeam;
     
     /*      PROTECTION      */
     public static boolean allowPistonPush;

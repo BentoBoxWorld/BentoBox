@@ -36,7 +36,7 @@ public class Players {
         this.uuid = uuid;
         this.homeLocations = new HashMap<Integer,Location>();
         this.playerName = "";
-        this.resetsLeft = Settings.defaultResetLimit;
+        this.resetsLeft = Settings.resetLimit;
         this.locale = "";
         this.useControlPanel = Settings.useControlPanel;
         this.kickedList = new HashMap<Location, Date>();
@@ -186,8 +186,8 @@ public class Players {
      */
     public void setDeaths(int deaths) {
         this.deaths = deaths;
-        if (this.deaths > Settings.maxDeaths) {
-            this.deaths = Settings.maxDeaths;
+        if (this.deaths > Settings.deathsMax) {
+            this.deaths = Settings.deathsMax;
         }
     }
 
@@ -196,8 +196,8 @@ public class Players {
      */
     public void addDeath() {
         this.deaths++;
-        if (this.deaths > Settings.maxDeaths) {
-            this.deaths = Settings.maxDeaths;
+        if (this.deaths > Settings.deathsMax) {
+            this.deaths = Settings.deathsMax;
         }
     }
 

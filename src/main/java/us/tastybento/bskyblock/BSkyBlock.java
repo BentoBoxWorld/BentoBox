@@ -72,7 +72,7 @@ public class BSkyBlock extends JavaPlugin{
                 islandsManager.save(true);
                 offlineHistoryMessages.save(true);
             }
-        }, Settings.backupPeriod, Settings.backupPeriod);
+        }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
     }
     
     @Override

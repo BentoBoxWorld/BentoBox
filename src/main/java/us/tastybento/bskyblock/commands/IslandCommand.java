@@ -349,12 +349,12 @@ public class IslandCommand extends BSBCommand{
                 }
                 
                 // Check if the name isn't too short or too long
-                if(name.length() < Settings.minIslandNameLength){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorTooShort.replace("[length]", String.valueOf(Settings.minIslandNameLength)));
+                if(name.length() < Settings.nameMinLength){
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorTooShort.replace("[length]", String.valueOf(Settings.nameMinLength)));
                     return;
                 }
-                if(name.length() > Settings.maxIslandNameLength){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorTooLong.replace("[length]", String.valueOf(Settings.maxIslandNameLength)));
+                if(name.length() > Settings.nameMaxLength){
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorTooLong.replace("[length]", String.valueOf(Settings.nameMaxLength)));
                     return;
                 }
                 

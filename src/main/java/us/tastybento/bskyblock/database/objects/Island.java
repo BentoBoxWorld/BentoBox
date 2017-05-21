@@ -38,8 +38,6 @@ public class Island {
     private int minProtectedZ;
     // Protection size
     private int protectionRange;
-    // Height of island
-    private int y;
     // World the island is in
     private World world;
 
@@ -582,18 +580,18 @@ public class Island {
      * Resets the flags to their default as set in config.yml for this island
      */
     public void setFlagsDefaults(){
-        for(SettingsFlag flag : SettingsFlag.values()){
+        /*for(SettingsFlag flag : SettingsFlag.values()){
             this.flags.put(flag, Settings.defaultIslandSettings.get(flag));
-        }
+        }*/ //TODO default flags
     }
 
     /**
      * Resets the flags to their default as set in config.yml for the spawn
      */
     public void setSpawnFlagsDefaults(){
-        for(SettingsFlag flag : SettingsFlag.values()){
+        /*for(SettingsFlag flag : SettingsFlag.values()){
             this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
-        }
+        }*/ //TODO default flags
     }
 
     /**

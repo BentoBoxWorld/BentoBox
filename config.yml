@@ -268,7 +268,7 @@ island:
   # Accessed via sethome <number> or go <number>
   # Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>  
   max-homes: 1
-  
+
   # Island naming
   # Only players with the TODO can name their island
   # It is displayed in the top ten and enter and exit announcements
@@ -399,6 +399,16 @@ island:
 
     reset: true
     reset-wait: 10
+  
+  # Deaths count
+  deaths:
+    # Max deaths
+    # If player dies more than this, it doesn't count anymore
+    max: 10
+    
+    # Sum team deaths - if true, all the teams deaths are summed
+    # If false, only the leader's deaths counts
+    sum-team: false
 
 ### Protection Settings ###
 protection:
