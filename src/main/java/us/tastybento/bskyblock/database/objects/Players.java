@@ -26,7 +26,6 @@ public class Players {
     private int deaths;
     private HashMap<Location, Date> kickedList;
 
-
     /**
      * @param uuid
      *            Constructor - initializes the state variables

@@ -279,34 +279,6 @@ public class IslandCommand extends BSBCommand{
             }
         });
         
-        /* /is level [player] - Calculate and display island level */
-        registerArgument(new String[] {"level"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpLevel,
-                        "[player]", plugin.getLocale(sender).islandHelpLevelOther};
-            }
-        });
-        
         /* /is name <name> - Set island display name */
         registerArgument(new String[] {"name"}, new CommandArgumentHandler() {
             
@@ -418,60 +390,6 @@ public class IslandCommand extends BSBCommand{
             @Override
             public String[] getHelp(CommandSender sender, String label){
                 return new String[] {null, plugin.getLocale(sender).islandHelpResetName};
-            }
-        });
-        
-        /* /is topten - Display top ten */
-        registerArgument(new String[] {"topten", "top"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpTopTen};
-            }
-        });
-        
-        /* /is value - Show the value of the block in hand */
-        registerArgument(new String[] {"value"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpValue};
             }
         });
         

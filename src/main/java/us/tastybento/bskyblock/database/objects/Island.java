@@ -65,10 +65,6 @@ public class Island {
     private boolean isSpawn = false;
     private boolean purgeProtected = false;
 
-    //// Rating ////
-    private int level;
-    private int levelHandicap;
-
     //// Protection ////
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
 
@@ -292,34 +288,6 @@ public class Island {
      */
     public void setPurgeProtected(boolean purgeProtected){
         this.purgeProtected = purgeProtected;
-    }
-
-    /**
-     * @return the island level
-     */
-    public int getLevel(){
-        return level;
-    }
-
-    /**
-     * @param level - the island level to set
-     */
-    public void setLevel(int level){
-        this.level = level;
-    }
-
-    /**
-     * @return the island level handicap
-     */
-    public int getLevelHandicap(){
-        return levelHandicap;
-    }
-
-    /**
-     * @param levelHandicap - the island level handicap to set
-     */
-    public void setLevelHandicap(int levelHandicap){
-        this.levelHandicap = levelHandicap;
     }
 
     /**
