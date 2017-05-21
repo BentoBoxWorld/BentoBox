@@ -11,7 +11,7 @@ BSkyBlock (Better SkyBlock) represents a turning point on ASkyBlock's history : 
 
 Bugs and Feature requests
 =========================
-File bug and feature requests here: https://github.com/tastybento/BSkyBlock-Bugs-N-Features/issues
+File bug and feature requests here: https://github.com/tastybento/bskyblock/issues
 
 Note for developers
 ===================
