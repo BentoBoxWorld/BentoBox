@@ -13,6 +13,7 @@ import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.IslandsManager;
 import us.tastybento.bskyblock.database.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.PlayersManager;
+import us.tastybento.bskyblock.database.RunTest;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -36,6 +37,7 @@ public class BSkyBlock extends JavaPlugin{
     @Override
     public void onEnable(){
         plugin = this;
+        new RunTest(this);
         playersManager = new PlayersManager(this);
         islandsManager = new IslandsManager(this);
         
