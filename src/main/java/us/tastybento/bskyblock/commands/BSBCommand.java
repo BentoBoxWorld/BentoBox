@@ -21,10 +21,10 @@ import us.tastybento.bskyblock.util.Util;
  * 
  * @author Poslovitch
  */
-public abstract class ASBCommand implements CommandExecutor, TabCompleter{    
+public abstract class BSBCommand implements CommandExecutor, TabCompleter{    
     private Map<String, CommandArgumentHandler> arguments;
         
-    protected ASBCommand(BSkyBlock plugin){
+    protected BSBCommand(BSkyBlock plugin){
         arguments = new HashMap<String, CommandArgumentHandler>();
         
         // Automatically register the help argument
