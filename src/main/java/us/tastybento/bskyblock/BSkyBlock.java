@@ -82,7 +82,7 @@ public class BSkyBlock extends JavaPlugin{
         // Save data
         playersManager.shutdown();
         islandsManager.shutdown();
-        offlineHistoryMessages.shutdown();
+        //offlineHistoryMessages.shutdown();
         
         plugin = null;
     }

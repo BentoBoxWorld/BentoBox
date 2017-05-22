@@ -21,12 +21,11 @@ public class OfflineHistoryMessages {
     private BSBDatabase database;
 
     // Offline Messages
-    private HashMap<UUID, List<String>> messages;
+    private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
 
     public OfflineHistoryMessages(BSkyBlock plugin){
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
-        messages = new HashMap<UUID, List<String>>();
     }
 
     public void load(){

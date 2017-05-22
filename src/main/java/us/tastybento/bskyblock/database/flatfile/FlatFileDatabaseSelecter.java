@@ -6,6 +6,10 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -81,15 +85,31 @@ public class FlatFileDatabaseSelecter<T> extends AbstractDatabaseHandler<T> {
                         field.getName(), type);
 
                 Method method = propertyDescriptor.getWriteMethod();
-                plugin.getLogger().info("DEBUG: " + propertyDescriptor.getPropertyType().getTypeName());
+                plugin.getLogger().info("DEBUG: " + field.getName() + ": " + propertyDescriptor.getPropertyType().getTypeName());
                 if (propertyDescriptor.getPropertyType().equals(HashMap.class)) {
                     plugin.getLogger().info("DEBUG: is HashMap");
-                 // TODO: this may not work with all keys. Further serialization may be required.
+                    // TODO: this may not work with all keys. Further serialization may be required.
                     HashMap<Object,Object> value = new HashMap<Object, Object>();
                     for (String key : config.getConfigurationSection(field.getName()).getKeys(false)) {
                         value.put(key, config.get(field.getName() + "." + key));
                     }
                     method.invoke(instance, value);
+                } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
+                    plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
+
+                    // TODO: this may not work with all keys. Further serialization may be required.
+                    Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));
+                    
+                    method.invoke(instance, value);
+                } else if (propertyDescriptor.getPropertyType().equals(UUID.class)) {
+                    plugin.getLogger().info("DEBUG: is UUID");
+                    String uuid = (String)config.get(field.getName());
+                    if (uuid.equals("null")) {
+                        method.invoke(instance, (Object)null); 
+                    } else {
+                        Object value = UUID.fromString(uuid);
+                        method.invoke(instance, value);
+                    }
                 } else {
                     Object value = config.get(field.getName());
                     method.invoke(instance, value);

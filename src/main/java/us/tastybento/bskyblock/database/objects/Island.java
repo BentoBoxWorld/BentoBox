@@ -5,10 +5,10 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
 import us.tastybento.bskyblock.config.Settings;
@@ -22,273 +22,6 @@ import us.tastybento.bskyblock.config.Settings;
  * @author Poslovitch
  */
 public class Island {
-    private BSkyBlock plugin;
-
-    //// Island ////
-    // The center of the island itself
-    private Location center;
-    // Island range
-    private int range;
-
-    // Coordinates of the island area
-    private int minX;
-    private int minZ;
-    // Coordinates of minimum protected area
-    private int minProtectedX;
-    private int minProtectedZ;
-    // Protection size
-    private int protectionRange;
-    // World the island is in
-    private World world;
-
-    // Display name
-    private String name;
-
-    // Time parameters
-    private long createdDate;
-    private long updatedDate;
-
-    //// Team ////
-    // Owner (Team Leader)
-    private UUID owner;
-    // Members (use set because each value must be unique)
-    private Set<UUID> members;
-    // Trustees
-    private Set<UUID> trustees;
-    // Coops
-    private Set<UUID> coops;
-    // Banned players
-    private Set<UUID> banned;
-
-    //// State ////
-    private boolean locked = false;
-    private boolean isSpawn = false;
-    private boolean purgeProtected = false;
-
-    //// Protection ////
-    private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
-
-    public Island(Location location, UUID owner, int protectionRange) {
-        this.members = new HashSet<UUID>();
-        this.members.add(owner);
-        this.owner = owner;
-        this.coops = new HashSet<UUID>();
-        this.trustees = new HashSet<UUID>();
-        this.banned = new HashSet<UUID>();
-        this.createdDate = System.currentTimeMillis();
-        this.updatedDate = System.currentTimeMillis();
-        this.name = "";
-        this.world = location.getWorld();
-        this.center = location;
-        this.minX = center.getBlockX() - Settings.islandDistance;
-        this.minZ = center.getBlockZ() - Settings.islandDistance;
-        this.protectionRange = protectionRange;
-        this.minProtectedX = center.getBlockX() - protectionRange;
-        this.minProtectedZ = center.getBlockZ() - protectionRange;
-    }
-
-    /**
-     * @return the center Location
-     */
-    public Location getCenter(){
-        return center;
-    }
-
-    /**
-     * @return the x coordinate of the island center
-     */
-    public int getX(){
-        return center.getBlockX();
-    }
-
-    /**
-     * @return the y coordinate of the island center
-     */
-    public int getY(){
-        return center.getBlockY();
-    }
-
-    /**
-     * @return the z coordinate of the island center
-     */
-    public int getZ(){
-        return center.getBlockZ();
-    }
-
-    /**
-     * @return the island range
-     */
-    public int getRange(){
-        return range;
-    }
-
-    /**
-     * @param range - the range to set
-     */
-    public void setRange(int range){
-        this.range = range;
-    }
-
-    /**
-     * @return the island display name or the owner's name if none is set
-     */
-    public String getName(){
-        return (name != null) ? name : plugin.getServer().getOfflinePlayer(owner).getName();
-    }
-
-    /**
-     * @param name - the display name to set
-     *               Set to null to remove the display name
-     */
-    public void setName(String name){
-        this.name = name;
-    }
-
-    /**
-     * @return the date when the island was created
-     */
-    public long getCreatedDate(){
-        return createdDate;
-    }
-
-    /**
-     * @param createdDate - the createdDate to sets
-     */
-    public void setCreatedDate(long createdDate){
-        this.createdDate = createdDate;
-    }
-
-    /**
-     * @return the date when the island was updated (team member connection, etc...)
-     */
-    public long getUpdatedDate(){
-        return updatedDate;
-    }
-
-    /**
-     * @param updatedDate - the updatedDate to sets
-     */
-    public void setUpdatedDate(long updatedDate){
-        this.updatedDate = updatedDate;
-    }
-
-    /**
-     * @return the owner (team leader)
-     */
-    public UUID getOwner(){
-        return owner;
-    }
-
-    /**
-     * Sets the owner of the island. If the owner was previous banned, they are unbanned
-     * @param owner - the owner/team leader to set
-     */
-    public void setOwner(UUID owner){
-        this.owner = owner;
-        this.banned.remove(owner);
-    }
-
-    /**
-     * @return the members of the island (owner included)
-     */
-    public Set<UUID> getMembers(){
-        return members;
-    }
-
-    /**
-     * @param members - the members to set
-     */
-    public void setMembers(Set<UUID> members){
-        this.members = members;
-    }
-
-    /**
-     * @return the trustees players of the island
-     */
-    public Set<UUID> getTrustees(){
-        return trustees;
-    }
-
-    /**
-     * @param trustees - the trustees to set
-     */
-    public void setTrustees(Set<UUID> trustees){
-        this.trustees = trustees;
-    }
-
-    /**
-     * @return the coop players of the island
-     */
-    public Set<UUID> getCoops(){
-        return coops;
-    }
-
-    /**
-     * @param coops - the coops to set
-     */
-    public void setCoops(Set<UUID> coops){
-        this.coops = coops;
-    }
-
-    /**
-     * @return true if the island is locked, otherwise false
-     */
-    public boolean isLocked(){
-        return locked;
-    }
-
-    /**
-     * Locks/Unlocks the island. May be cancelled by
-     * {@link IslandLockEvent} or {@link IslandUnlockEvent}.
-     * @param locked - the lock state to set
-     */
-    public void setLocked(boolean locked){
-        if(locked){
-            // Lock the island
-            IslandLockEvent event = new IslandLockEvent(this);
-            plugin.getServer().getPluginManager().callEvent(event);
-
-            if(!event.isCancelled()){
-                this.locked = locked;
-            }
-        } else {
-            // Unlock the island
-            IslandUnlockEvent event = new IslandUnlockEvent(this);
-            plugin.getServer().getPluginManager().callEvent(event);
-
-            if(!event.isCancelled()){
-                this.locked = locked;
-            }
-        }
-    }
-
-    /**
-     * @return true if the island is the spawn otherwise false
-     */
-    public boolean isSpawn(){
-        return isSpawn;
-    }
-
-    /**
-     * @param isSpawn - if the island is the spawn
-     */
-    public void setSpawn(boolean isSpawn){
-        this.isSpawn = isSpawn;
-    }
-
-    /**
-     * @return true if the island is protected from the Purge, otherwise false
-     */
-    public boolean isPurgeProtected(){
-        return purgeProtected;
-    }
-
-    /**
-     * @param purgeProtected - if the island is protected from the Purge
-     */
-    public void setPurgeProtected(boolean purgeProtected){
-        this.purgeProtected = purgeProtected;
-    }
 
     /**
      * Island Guard Settings flags
@@ -544,49 +277,72 @@ public class Island {
         WITHER_BLOW_UP_SHULKER_BOX
     }
 
-    /**
-     * Resets the flags to their default as set in config.yml for this island
-     */
-    public void setFlagsDefaults(){
-        /*for(SettingsFlag flag : SettingsFlag.values()){
-            this.flags.put(flag, Settings.defaultIslandSettings.get(flag));
-        }*/ //TODO default flags
-    }
+    //// Island ////
+    // The center of the island itself
+    private Location center;
 
-    /**
-     * Resets the flags to their default as set in config.yml for the spawn
-     */
-    public void setSpawnFlagsDefaults(){
-        /*for(SettingsFlag flag : SettingsFlag.values()){
-            this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
-        }*/ //TODO default flags
-    }
+    // Island range
+    private int range;
 
-    /**
-     * Get the Island Guard flag status
-     * @param flag
-     * @return true or false, or false if flag is not in the list
-     */
-    public boolean getFlag(SettingsFlag flag){
-        if(flags.containsKey(flag)) return flags.get(flag);
-        else return false;
-    }
+    // Coordinates of the island area
+    private int minX;
 
-    /**
-     * Set the Island Guard flag status
-     * @param flag
-     * @param value
-     */
-    public void setFlag(SettingsFlag flag, boolean value){
-        flags.put(flag, value);
-    }
+    private int minZ;
 
-    /**
-     * Toggles the Island Guard flag status if it is in the list
-     * @param flag
-     */
-    public void toggleFlag(SettingsFlag flag){
-        if(flags.containsKey(flag)) flags.put(flag, (flags.get(flag)) ? false : true);
+    // Coordinates of minimum protected area
+    private int minProtectedX;
+
+    private int minProtectedZ;
+
+    // Protection size
+    private int protectionRange;
+
+    // World the island is in
+    private World world;
+
+    // Display name
+    private String name;
+
+    // Time parameters
+    private long createdDate;
+
+    private long updatedDate;
+
+    //// Team ////
+    // Owner (Team Leader)
+    private UUID owner;
+
+    // Members (use set because each value must be unique)
+    private Set<UUID> members = new HashSet<UUID>();
+
+    // Trustees
+    private Set<UUID> trustees = new HashSet<UUID>();
+    // Coops
+    private Set<UUID> coops = new HashSet<UUID>();
+
+    // Banned players
+    private Set<UUID> banned = new HashSet<UUID>();
+    //// State ////
+    private boolean locked = false;
+    private boolean spawn = false;
+    private boolean purgeProtected = false;
+    //// Protection ////
+    private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
+
+    public Island() {};
+    
+    public Island(Location location, UUID owner, int protectionRange) {
+        this.members.add(owner);
+        this.owner = owner;
+        this.createdDate = System.currentTimeMillis();
+        this.updatedDate = System.currentTimeMillis();
+        this.world = location.getWorld();
+        this.center = location;
+        this.minX = center.getBlockX() - Settings.islandDistance;
+        this.minZ = center.getBlockZ() - Settings.islandDistance;
+        this.protectionRange = protectionRange;
+        this.minProtectedX = center.getBlockX() - protectionRange;
+        this.minProtectedZ = center.getBlockZ() - protectionRange;
     }
 
     /**
@@ -598,32 +354,6 @@ public class Island {
         banned.remove(playerUUID);
 
     }
-
-    /**
-     * Checks if a location is within this island's protected area
-     * 
-     * @param target
-     * @return true if it is, false if not
-     */
-    public boolean onIsland(Location target) {
-        if (center.getWorld() != null) {
-            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-    
-    public boolean inIslandSpace(int x, int z) {
-        if (x >= center.getBlockX() - Settings.islandDistance / 2 && x < center.getBlockX() + Settings.islandDistance / 2 && z >= center.getBlockZ() - Settings.islandDistance / 2
-                && z < center.getBlockZ() + Settings.islandDistance / 2) {
-            return true;
-        }
-        return false;
-    }
-
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
@@ -646,14 +376,158 @@ public class Island {
     }
 
     /**
-     * Removes target from the banned list. May be cancelled by unban event.
-     * @param targetUUID
-     * @return true if successful, otherwise false.
+     * @return the banned
      */
-    public boolean removeFromBanList(UUID targetUUID) {
-        // TODO fire unban event
-        banned.remove(targetUUID);
-        return true;
+    public Set<UUID> getBanned() {
+        return banned;
+    }
+    /**
+     * @return the center Location
+     */
+    public Location getCenter(){
+        return center;
+    }
+    /**
+     * @return the coop players of the island
+     */
+    public Set<UUID> getCoops(){
+        return coops;
+    }
+    /**
+     * @return the date when the island was created
+     */
+    public long getCreatedDate(){
+        return createdDate;
+    }
+    /**
+     * Get the Island Guard flag status
+     * @param flag
+     * @return true or false, or false if flag is not in the list
+     */
+    public boolean getFlag(SettingsFlag flag){
+        if(flags.containsKey(flag)) {
+            return flags.get(flag);
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * @return the flags
+     */
+    public HashMap<SettingsFlag, Boolean> getFlags() {
+        return flags;
+    }
+    /**
+     * @return the members of the island (owner included)
+     */
+    public Set<UUID> getMembers(){
+        return members;
+    }
+    /**
+     * @return the minProtectedX
+     */
+    public int getMinProtectedX() {
+        return minProtectedX;
+    }
+
+    /**
+     * @return the minProtectedZ
+     */
+    public int getMinProtectedZ() {
+        return minProtectedZ;
+    }
+
+    /**
+     * @return the minX
+     */
+    public int getMinX() {
+        return minX;
+    }
+
+    /**
+     * @return the minZ
+     */
+    public int getMinZ() {
+        return minZ;
+    }
+
+    /**
+     * @return the island display name or the owner's name if none is set
+     */
+    public String getName(){
+        return (name != null) ? name : Bukkit.getServer().getOfflinePlayer(owner).getName();
+    }
+
+    /**
+     * @return the owner (team leader)
+     */
+    public UUID getOwner(){
+        return owner;
+    }
+
+    /**
+     * @return the protectionRange
+     */
+    public int getProtectionRange() {
+        return protectionRange;
+    }
+
+    /**
+     * @return the island range
+     */
+    public int getRange(){
+        return range;
+    }
+
+    /**
+     * @return the trustees players of the island
+     */
+    public Set<UUID> getTrustees(){
+        return trustees;
+    }
+
+    /**
+     * @return the date when the island was updated (team member connection, etc...)
+     */
+    public long getUpdatedDate(){
+        return updatedDate;
+    }
+
+    /**
+     * @return the world
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    /**
+     * @return the x coordinate of the island center
+     */
+    public int getX(){
+        return center.getBlockX();
+    }
+
+    /**
+     * @return the y coordinate of the island center
+     */
+    public int getY(){
+        return center.getBlockY();
+    }
+
+    /**
+     * @return the z coordinate of the island center
+     */
+    public int getZ(){
+        return center.getBlockZ();
+    }
+
+    public boolean inIslandSpace(int x, int z) {
+        if (x >= center.getBlockX() - Settings.islandDistance / 2 && x < center.getBlockX() + Settings.islandDistance / 2 && z >= center.getBlockZ() - Settings.islandDistance / 2
+                && z < center.getBlockZ() + Settings.islandDistance / 2) {
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -666,10 +540,182 @@ public class Island {
     }
 
     /**
-     * @return the protectionRange
+     * @return true if the island is locked, otherwise false
      */
-    public int getProtectionRange() {
-        return protectionRange;
+    public boolean getLocked(){
+        return locked;
+    }
+
+    /**
+     * @return true if the island is protected from the Purge, otherwise false
+     */
+    public boolean getPurgeProtected(){
+        return purgeProtected;
+    }
+
+    /**
+     * @return true if the island is the spawn otherwise false
+     */
+    public boolean getSpawn(){
+        return spawn;
+    }
+
+    /**
+     * Checks if a location is within this island's protected area
+     * 
+     * @param target
+     * @return true if it is, false if not
+     */
+    public boolean onIsland(Location target) {
+        if (center.getWorld() != null) {
+            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
+                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Removes target from the banned list. May be cancelled by unban event.
+     * @param targetUUID
+     * @return true if successful, otherwise false.
+     */
+    public boolean removeFromBanList(UUID targetUUID) {
+        // TODO fire unban event
+        banned.remove(targetUUID);
+        return true;
+    }
+
+    /**
+     * @param banned the banned to set
+     */
+    public void setBanned(Set<UUID> banned) {
+        this.banned = banned;
+    }
+
+    /**
+     * @param center the center to set
+     */
+    public void setCenter(Location center) {
+        this.center = center;
+    }
+
+    /**
+     * @param coops - the coops to set
+     */
+    public void setCoops(Set<UUID> coops){
+        this.coops = coops;
+    }
+
+    /**
+     * @param createdDate - the createdDate to sets
+     */
+    public void setCreatedDate(long createdDate){
+        this.createdDate = createdDate;
+    }
+
+    /**
+     * Set the Island Guard flag status
+     * @param flag
+     * @param value
+     */
+    public void setFlag(SettingsFlag flag, boolean value){
+        flags.put(flag, value);
+    }
+
+    /**
+     * @param flags the flags to set
+     */
+    public void setFlags(HashMap<SettingsFlag, Boolean> flags) {
+        this.flags = flags;
+    }
+
+    /**
+     * Resets the flags to their default as set in config.yml for this island
+     */
+    public void setFlagsDefaults(){
+        /*for(SettingsFlag flag : SettingsFlag.values()){
+            this.flags.put(flag, Settings.defaultIslandSettings.get(flag));
+        }*/ //TODO default flags
+    }
+
+    /**
+     * Locks/Unlocks the island. May be cancelled by
+     * {@link IslandLockEvent} or {@link IslandUnlockEvent}.
+     * @param locked - the lock state to set
+     */
+    public void setLocked(boolean locked){
+        if(locked){
+            // Lock the island
+            IslandLockEvent event = new IslandLockEvent(this);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if(!event.isCancelled()){
+                this.locked = locked;
+            }
+        } else {
+            // Unlock the island
+            IslandUnlockEvent event = new IslandUnlockEvent(this);
+            Bukkit.getServer().getPluginManager().callEvent(event);
+
+            if(!event.isCancelled()){
+                this.locked = locked;
+            }
+        }
+    }
+
+    /**
+     * @param members - the members to set
+     */
+    public void setMembers(Set<UUID> members){
+        this.members = members;
+    }
+
+    /**
+     * @param minProtectedX the minProtectedX to set
+     */
+    public void setMinProtectedX(int minProtectedX) {
+        this.minProtectedX = minProtectedX;
+    }
+
+    /**
+     * @param minProtectedZ the minProtectedZ to set
+     */
+    public void setMinProtectedZ(int minProtectedZ) {
+        this.minProtectedZ = minProtectedZ;
+    }
+
+    /**
+     * @param minX the minX to set
+     */
+    public void setMinX(int minX) {
+        this.minX = minX;
+    }
+
+    /**
+     * @param minZ the minZ to set
+     */
+    public void setMinZ(int minZ) {
+        this.minZ = minZ;
+    }
+
+    /**
+     * @param name - the display name to set
+     *               Set to null to remove the display name
+     */
+    public void setName(String name){
+        this.name = name;
+    }
+
+    /**
+     * Sets the owner of the island. If the owner was previous banned, they are unbanned
+     * @param owner - the owner/team leader to set
+     */
+    public void setOwner(UUID owner){
+        this.owner = owner;
+        this.banned.remove(owner);
     }
 
     /**
@@ -680,9 +726,63 @@ public class Island {
     }
 
     /**
-     * @return the banned
+     * @param purgeProtected - if the island is protected from the Purge
      */
-    public Set<UUID> getBanned() {
-        return banned;
+    public void setPurgeProtected(boolean purgeProtected){
+        this.purgeProtected = purgeProtected;
+    }
+
+    /**
+     * @param range - the range to set
+     */
+    public void setRange(int range){
+        this.range = range;
+    }
+
+    /**
+     * @param isSpawn - if the island is the spawn
+     */
+    public void setSpawn(boolean isSpawn){
+        this.spawn = isSpawn;
+    }
+
+    /**
+     * Resets the flags to their default as set in config.yml for the spawn
+     */
+    public void setSpawnFlagsDefaults(){
+        /*for(SettingsFlag flag : SettingsFlag.values()){
+            this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
+        }*/ //TODO default flags
+    }
+
+    /**
+     * @param trustees - the trustees to set
+     */
+    public void setTrustees(Set<UUID> trustees){
+        this.trustees = trustees;
+    }
+
+    /**
+     * @param updatedDate - the updatedDate to sets
+     */
+    public void setUpdatedDate(long updatedDate){
+        this.updatedDate = updatedDate;
+    }
+
+    /**
+     * @param world the world to set
+     */
+    public void setWorld(World world) {
+        this.world = world;
+    }
+
+    /**
+     * Toggles the Island Guard flag status if it is in the list
+     * @param flag
+     */
+    public void toggleFlag(SettingsFlag flag){
+        if(flags.containsKey(flag)) {
+            flags.put(flag, (flags.get(flag)) ? false : true);
+        }
     }
 }

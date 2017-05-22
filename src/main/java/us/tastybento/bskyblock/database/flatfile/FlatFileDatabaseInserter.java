@@ -5,11 +5,15 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -56,9 +60,29 @@ public class FlatFileDatabaseInserter<T> extends AbstractDatabaseHandler<T> {
             Method method = propertyDescriptor.getReadMethod();
 
             Object value = method.invoke(instance);
-
+            plugin.getLogger().info("DEBUG: writing " + field.getName());
+            plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
             // TODO: depending on the type, it'll need serializing
-            config.set(field.getName(), value);
+            if (propertyDescriptor.getPropertyType().equals(UUID.class)) {
+                plugin.getLogger().info("DEBUG: writing UUID for " + field.getName());
+                if (value != null) {
+                    config.set(field.getName(), ((UUID)value).toString());
+                } else {
+                    config.set(field.getName(), "null");
+                }
+            } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
+                plugin.getLogger().info("DEBUG: Hashset for " + field.getName());
+                
+                List<Object> list = new ArrayList<Object>();
+                for (Object object : (Set<Object>)value) {
+                    if (object instanceof UUID) {
+                        list.add(((UUID)object).toString());
+                    }
+                }
+                config.set(field.getName(), list);
+            } else {
+                config.set(field.getName(), value);
+            }
 
 
         }
