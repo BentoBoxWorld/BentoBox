@@ -5,6 +5,7 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -66,7 +67,7 @@ public class FlatFileDatabaseSelecter<T> extends AbstractDatabaseHandler<T> {
      */
     private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException,
     IntrospectionException, IllegalArgumentException, InvocationTargetException
-             {
+    {
 
         T instance = type.newInstance();
 
@@ -74,14 +75,29 @@ public class FlatFileDatabaseSelecter<T> extends AbstractDatabaseHandler<T> {
 
             /* We assume the table-column-names exactly match the variable-names of T */
             // TODO: depending on the data type, it'll need deserializing
-            Object value = config.get(field.getName());
+            try {
 
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
-                    field.getName(), type);
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(
+                        field.getName(), type);
 
-            Method method = propertyDescriptor.getWriteMethod();
+                Method method = propertyDescriptor.getWriteMethod();
+                plugin.getLogger().info("DEBUG: " + propertyDescriptor.getPropertyType().getTypeName());
+                if (propertyDescriptor.getPropertyType().equals(HashMap.class)) {
+                    plugin.getLogger().info("DEBUG: is HashMap");
+                 // TODO: this may not work with all keys. Further serialization may be required.
+                    HashMap<Object,Object> value = new HashMap<Object, Object>();
+                    for (String key : config.getConfigurationSection(field.getName()).getKeys(false)) {
+                        value.put(key, config.get(field.getName() + "." + key));
+                    }
+                    method.invoke(instance, value);
+                } else {
+                    Object value = config.get(field.getName());
+                    method.invoke(instance, value);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
 
-            method.invoke(instance, value);
         }
 
         return instance;

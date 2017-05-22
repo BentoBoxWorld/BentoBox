@@ -1,8 +1,16 @@
 package us.tastybento.bskyblock.database;
 
+import java.util.HashMap;
+import java.util.List;
+
+import org.bukkit.Location;
+import org.bukkit.inventory.ItemStack;
+
 public class Test {
     private int      id;
     private String     name;
+    private HashMap<Integer, Location> homeLocations;
+    private List<ItemStack>    inventory;
 
     public Test() {}
 
@@ -26,6 +34,34 @@ public class Test {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    /**
+     * @return the homeLocations
+     */
+    public HashMap<Integer, Location> getHomeLocations() {
+        return homeLocations;
+    }
+
+    /**
+     * @param homeLocations the homeLocations to set
+     */
+    public void setHomeLocations(HashMap<Integer, Location> homeLocations) {
+        this.homeLocations = homeLocations;
+    }
+
+    /**
+     * @return the inventory
+     */
+    public List<ItemStack> getInventory() {
+        return inventory;
+    }
+
+    /**
+     * @param inventory the inventory to set
+     */
+    public void setInventory(List<ItemStack> inventory) {
+        this.inventory = inventory;
     }
 
     public String toString() {
