@@ -177,14 +177,6 @@ world:
       # Limits water animals (Squid) spawn
       water-animals: 15
 
-    # Animal breeding limits - if this is set to more than 0, then players will not be able
-    # to breed more animals than that number on their island. A value of zero means no
-    # limit. Note that animals will not be killed or reduced to this limit.
-    # This WILL affect mob-spawner blocks AND spawn egg use. Note that hearts will
-    # still appear, but breeding will not happen.
-    # Limit includes nether island if nether islands are active.
-    animal-breeding-limit: 0
-
     # General entity limiting
     # Use this section to limit how many entities can be added to an island.
     # 0 means the item will be blocked from placement completely.
@@ -498,7 +490,7 @@ acid:
       # Items fizz when they are destroyed.
       item: 0
 
-	# Damage that rain does.
+    # Damage that rain does.
     rain: 0
 
     # Damage type to apply in addition to acid damage
