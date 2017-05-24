@@ -44,7 +44,7 @@ public class BSkyBlock extends JavaPlugin{
             return;
         }
         
-        // Load configuration and locales if the config don't have errors.
+        // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
