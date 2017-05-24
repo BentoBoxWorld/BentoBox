@@ -98,7 +98,7 @@ public class IslandsManager {
      * @param owner UUID
      */
     public Island createIsland(Location location, UUID owner){
-        Island island = new Island(location, owner, Settings.protectionRange);
+        Island island = new Island(location, owner, Settings.islandProtectionRange);
         islands.put(location, island);
         if (owner != null)
             islandsByUUID.put(owner, island);

@@ -69,7 +69,7 @@ general:
   mute-death-messages: false
 
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
-  ftb-auto-activator: false
+  FTB-auto-activator: false
   
   # Allow obsidian to be scooped up with an empty bucket back into lava
   # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
@@ -123,15 +123,15 @@ world:
   start-x: 0
   start-z: 0
 
+  # Island height - Lowest is 5.
+  # It is the y coordinate of the bedrock block in the schematic
+  island-height: 120
+
   # Sea height (don't changes this mid-game unless you delete the world)
   # Minimum is 0, which means you are playing Skyblock!
   # If sea height is less than about 10, then players will drop right through it
   # if it exists. Makes for an interesting variation on skyblock.
   sea-height: 0
-
-  # Island height - Lowest is 5.
-  # It is the y coordinate of the bedrock block in the schematic
-  island-height: 120
 
   # Maximum number of islands in the world. Set to 0 for unlimited. 
   # If the number of islands is greater than this number, no new island will be created.

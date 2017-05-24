@@ -50,7 +50,7 @@ public class Settings {
     /*      WORLD       */
     public static String worldName;
     public static int islandDistance;
-    public static int protectionRange;
+    public static int islandProtectionRange;
     public static int startX;
     public static int startZ;
     public static int seaHeight;
