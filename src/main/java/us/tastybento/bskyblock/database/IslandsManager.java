@@ -31,6 +31,7 @@ public class IslandsManager {
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
+        database.connect(plugin);
         islands = new HashMap<Location, Island>();
         islandsByUUID = new HashMap<UUID, Island>();
         spawn = null;

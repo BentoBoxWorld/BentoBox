@@ -278,6 +278,11 @@ public class Island {
     }
 
     //// Island ////
+    /**
+     * The unique ID for this island
+     */
+    private UUID uuid;
+    
     // The center of the island itself
     private Location center;
 
@@ -784,5 +789,19 @@ public class Island {
         if(flags.containsKey(flag)) {
             flags.put(flag, (flags.get(flag)) ? false : true);
         }
+    }
+
+    /**
+     * @return the uuid
+     */
+    public UUID getUuid() {
+        return uuid;
+    }
+
+    /**
+     * @param uuid the uuid to set
+     */
+    public void setUuid(UUID uuid) {
+        this.uuid = uuid;
     }
 }

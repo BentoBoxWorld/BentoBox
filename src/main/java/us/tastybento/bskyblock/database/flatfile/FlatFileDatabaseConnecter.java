@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.database.flatfile;
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -12,10 +13,14 @@ import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
 public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
+    private static final int MAX_LOOPS = 100;
     private BSkyBlock plugin;
+    private File dataFolder;
+
 
     public FlatFileDatabaseConnecter(BSkyBlock plugin, DatabaseConnectionSettingsImpl databaseConnectionSettingsImpl) {
         this.plugin = plugin;
+        dataFolder = new File(plugin.getDataFolder(), "database");
     }
 
     @Override
@@ -38,7 +43,6 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
      */
     @Override
     public YamlConfiguration loadYamlFile(String fileName) {
-        File dataFolder = new File(plugin.getDataFolder(), "database");
         File yamlFile = new File(dataFolder, fileName + ".yml");
 
         YamlConfiguration config = null;
@@ -77,7 +81,6 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
      */
     @Override
     public void saveYamlFile(YamlConfiguration yamlFile, String fileName) {
-        File dataFolder = new File(plugin.getDataFolder(), "database");
         File file = new File(dataFolder, fileName + ".yml");
 
         try {
@@ -85,6 +88,18 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public UUID getUniqueId() {
+        UUID uuid = UUID.randomUUID();
+        File file = new File(dataFolder, uuid.toString() + ".yml");
+        int limit = 0;
+        while (file.exists() && limit++ < MAX_LOOPS) {
+            uuid = UUID.randomUUID();
+            file = new File(dataFolder, uuid.toString() + ".yml");
+        }
+        return uuid;
     }
 
 }

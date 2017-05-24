@@ -6,11 +6,16 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 
 public class FlatFileDatabase extends BSBDatabase{
+    
+    private BSkyBlock plugin;
+    DatabaseConnecter connecter;
 
     @Override
     public UUID getUUID(String name, boolean adminCheck) {
@@ -60,9 +65,14 @@ public class FlatFileDatabase extends BSBDatabase{
     }
 
     @Override
-    public void saveIslandData(Island island) {
-        // TODO Auto-generated method stub
-        
+    public boolean saveIslandData(Island island) {
+        FlatFileDatabaseInserter<Island> inserter = new FlatFileDatabaseInserter<Island>(plugin, Island.class, connecter);
+        try {
+            inserter.insertObject(island);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     @Override
@@ -87,5 +97,12 @@ public class FlatFileDatabase extends BSBDatabase{
     public void savePlayerName(String name, UUID uuid) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public boolean connect(BSkyBlock plugin) {
+        this.plugin = plugin;
+        this.connecter = new FlatFileDatabaseConnecter(plugin, null);
+        return false;
     }
 }

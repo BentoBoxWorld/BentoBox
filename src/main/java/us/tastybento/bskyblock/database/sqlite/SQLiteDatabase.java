@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
@@ -29,9 +30,9 @@ public class SQLiteDatabase extends BSBDatabase{
     }
 
     @Override
-    public void saveIslandData(Island island) {
+    public boolean saveIslandData(Island island) {
         // TODO Auto-generated method stub
-        
+        return false;
     }
 
     @Override
@@ -62,6 +63,12 @@ public class SQLiteDatabase extends BSBDatabase{
     public void savePlayerName(String name, UUID uuid) {
         // TODO Auto-generated method stub
         
+    }
+
+    @Override
+    public boolean connect(BSkyBlock plugin) {
+        // TODO Auto-generated method stub
+        return false;
     }
 
 }

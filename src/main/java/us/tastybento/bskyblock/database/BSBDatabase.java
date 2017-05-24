@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.mysql.MySQLDatabase;
@@ -20,11 +21,22 @@ public abstract class BSBDatabase {
         return DatabaseType.FLATFILE.database;
     }
     
+    public abstract boolean connect(BSkyBlock plugin);
     public abstract Players loadPlayerData(UUID uuid);
     public abstract void savePlayerData(Players player);
     
+    /**
+     * Loads an island
+     * @param location
+     * @return
+     */
     public abstract Island loadIslandData(String location);
-    public abstract void saveIslandData(Island island);
+    /**
+     * Saves an island to the database
+     * @param island
+     * @return
+     */
+    public abstract boolean saveIslandData(Island island);
     
     public abstract HashMap<UUID, List<String>> loadOfflineHistoryMessages();
     public abstract void saveOfflineHistoryMessages(HashMap<UUID, List<String>> messages);

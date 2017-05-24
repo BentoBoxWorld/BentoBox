@@ -50,8 +50,8 @@ public class FlatFileDatabaseSelecter<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      */
-    public T selectObject() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException  {
-        YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName());
+    public T selectObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException  {
+        YamlConfiguration config = databaseConnecter.loadYamlFile(key);
         return createObject(config);
     }
 
@@ -104,7 +104,7 @@ public class FlatFileDatabaseSelecter<T> extends AbstractDatabaseHandler<T> {
                 } else if (propertyDescriptor.getPropertyType().equals(UUID.class)) {
                     plugin.getLogger().info("DEBUG: is UUID");
                     String uuid = (String)config.get(field.getName());
-                    if (uuid.equals("null")) {
+                    if (uuid == null || uuid.equals("null")) {
                         method.invoke(instance, (Object)null); 
                     } else {
                         Object value = UUID.fromString(uuid);

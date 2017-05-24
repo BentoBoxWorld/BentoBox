@@ -7,8 +7,6 @@ import us.tastybento.bskyblock.BSkyBlock;
 /**
  * An abstract class that handles insert/select-operations into/from a database
  * 
- * @author Tino for http://www.java-blog.com
- * 
  * @param <T>
  */
 public abstract class AbstractDatabaseHandler<T> {

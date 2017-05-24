@@ -7,7 +7,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -53,7 +52,8 @@ public class FlatFileDatabaseInserter<T> extends AbstractDatabaseHandler<T> {
      * @throws IntrospectionException
      */
     public void insertObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-        YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName());
+        YamlConfiguration config = new YamlConfiguration();
+        String filename = "";
         for (Field field : type.getDeclaredFields()) {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
 
@@ -65,6 +65,15 @@ public class FlatFileDatabaseInserter<T> extends AbstractDatabaseHandler<T> {
             // TODO: depending on the type, it'll need serializing
             if (propertyDescriptor.getPropertyType().equals(UUID.class)) {
                 plugin.getLogger().info("DEBUG: writing UUID for " + field.getName());
+                // Check if this is the UUID
+                if (method.getName().equals("getUuid")) {
+                    if (value == null) {
+                        value = databaseConnecter.getUniqueId();
+                        // Set it in the class
+                        propertyDescriptor.getWriteMethod().invoke(instance, value);
+                    }
+                    filename = value.toString();
+                }
                 if (value != null) {
                     config.set(field.getName(), ((UUID)value).toString());
                 } else {
@@ -72,7 +81,7 @@ public class FlatFileDatabaseInserter<T> extends AbstractDatabaseHandler<T> {
                 }
             } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
                 plugin.getLogger().info("DEBUG: Hashset for " + field.getName());
-                
+
                 List<Object> list = new ArrayList<Object>();
                 for (Object object : (Set<Object>)value) {
                     if (object instanceof UUID) {
@@ -83,10 +92,11 @@ public class FlatFileDatabaseInserter<T> extends AbstractDatabaseHandler<T> {
             } else {
                 config.set(field.getName(), value);
             }
-
-
         }
-        databaseConnecter.saveYamlFile(config, type.getSimpleName());
+        if (filename.isEmpty()) {
+            throw new IllegalArgumentException("No UUID in class");
+        }
+        databaseConnecter.saveYamlFile(config, filename);
 
     }
     /**

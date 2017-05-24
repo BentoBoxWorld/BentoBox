@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.database;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -38,5 +39,11 @@ public interface DatabaseConnecter {
      * @param simpleName
      */
     public void saveYamlFile(YamlConfiguration config, String simpleName);
+
+    /**
+     * Looks through the database (or files) and returns a known unique key
+     * @return a unique key for this record
+     */
+    public UUID getUniqueId();
 }
 

@@ -1,13 +1,8 @@
 package us.tastybento.bskyblock.database;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabaseConnecter;
@@ -42,7 +37,7 @@ public class RunTest {
             items.add(new ItemStack(Material.ACTIVATOR_RAIL, 2));
             items.add(new ItemStack(Material.FEATHER,5));
             test.setInventory(items);
-    */
+            */
             FlatFileDatabaseInserter<Island> inserter = new FlatFileDatabaseInserter<Island>(plugin, Island.class, connecter);
 
             inserter.insertObject(test);
@@ -51,7 +46,7 @@ public class RunTest {
 
             FlatFileDatabaseSelecter<Island> selecter = new FlatFileDatabaseSelecter<Island>(plugin, Island.class, connecter);
 
-            test = selecter.selectObject();
+            test = selecter.selectObject(test.getUuid().toString());
 
             plugin.getLogger().info("DEBUG: name = " + test.getName());
             plugin.getLogger().info("DEBUG: owner = " + test.getOwner());
@@ -60,7 +55,7 @@ public class RunTest {
             plugin.getLogger().info("DEBUG: homes = " + homes);
             items = test.getInventory();
             plugin.getLogger().info("DEBUG: items = " + items);
-*/
+             */
         } catch (Exception e) {
             e.printStackTrace();
         }
