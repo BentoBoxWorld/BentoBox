@@ -95,6 +95,9 @@ public class Island {
 
         // Can open doors or trapdoors
         DOOR,
+        
+        // Can dye sheeps
+        DYEING,
 
         // Can use Elytras
         ELYTRA,
