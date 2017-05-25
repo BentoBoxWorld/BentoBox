@@ -1,16 +1,17 @@
 package us.tastybento.bskyblock.config;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.Locale;
 
-import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import us.tastybento.bskyblock.BSkyBlock;
 
 /**
- * Contains all the texts sent to players
+ * Contains all the texts sent to players.
+ * The locale object is instantiated at server launch, but the texts are only loaded when needed.
  * 
  * @author Tastybento
  * @author Poslovitch
@@ -33,7 +34,6 @@ public class BSBLocale {
         this.plugin = plugin;
         this.localeID = localeID;
         getLocale(localeID);
-        loadLocale();
         
         localeObject = new Locale(localeID.substring(0, 2), localeID.substring(3, 5));
     }
@@ -104,99 +104,15 @@ public class BSBLocale {
     }
     
     /*      Localization        */
+    private HashMap<String, String> localization = new HashMap<String, String>();
     
-    // Not Setup
-    public String notSetupHeader;
-    public String notSetupDistance;
-    public String notSetupGenerator;
-    public String notSetupGeneratorMultiverse;
-    public String notSetupWorldname;
-    public String notSetupOutdated;
-    
-    // General
-    public String generalSuccess;
-    
-    // Errors
-    public String errorNoPermission;
-    public String errorUseInGame;
-    public String errorNoIsland;
-    public String errorNotLeader;
-    public String errorTooShort;
-    public String errorTooLong;
-    
-    // Help
-    public String helpSyntaxColor;
-    public String helpCommentColor;
-    public String helpHeader;
-    public String islandHelpGo;
-    public String islandHelpGoHomes;
-    public String islandHelpSpawn;
-    public String islandHelpCreate;
-    public String islandHelpInfo;
-    public String islandHelpControlPanel;
-    public String islandHelpReset;
-    public String islandHelpSetHome;
-    public String islandHelpLevel;
-    public String islandHelpLevelOther;
-    public String islandHelpName;
-    public String islandHelpResetName;
-    public String islandHelpTopTen;
-    public String islandHelpValue;
-    public String islandHelpLimits;
-    public String islandHelpTeam;
-    public String islandHelpInvite;
-    public String islandHelpUninvite;
-    public String islandHelpLeave;
-    public String islandHelpKick;
-    public String islandHelpAccept;
-    public String islandHelpReject;
-    public String islandHelpMakeleader;
-    public String islandHelpTeamchat;
-    public String islandHelpBiomes;
-    public String islandHelpExpel;
-    public String islandHelpExpelall;
-    public String islandHelpBan;
-    public String islandHelpUnban;
-    public String islandHelpBanlist;
-    public String islandHelpTrust;
-    public String islandHelpUntrust;
-    public String islandHelpTrustlist;
-    public String islandHelpCoop;
-    public String islandHelpUncoop;
-    public String islandHelpCooplist;
-    public String islandHelpLock;
-    public String islandHelpSettings;
-    public String islandHelpLanguage;
-    
-    // Lock
-    public String lockLocking;
-    public String lockUnlocking;
-    
-    private void loadLocale(){
-        // Not Setup
-        notSetupHeader = ChatColor.translateAlternateColorCodes('&', locale.getString("not-setup.header", "More set up is required before the plugin can start...\nEdit config.yml. Then restart server."));
-        notSetupDistance = ChatColor.translateAlternateColorCodes('&', locale.getString("not-setup.distance", "Make sure you set island distance. If upgrading, set it to what it was before."));
-        notSetupGenerator = ChatColor.translateAlternateColorCodes('&', 
-                locale.getString("not-setup.generator", "The world generator for the island world is not registered."
-                        + "\nPotential reasons are:"
-                        + "\n  1. If you are configuring the island world as the only server world\n     Make sure you have added the world to bukkit.yml"
-                        + "\n  2. You reloaded instead of restarting the server. Reboot and try again."));
-        notSetupGeneratorMultiverse = ChatColor.translateAlternateColorCodes('&', locale.getString("not-setup.generator-multiverse", "  3. Your Multiverse plugin is out of date. Upgrade to the latest version."));
-        notSetupWorldname = ChatColor.translateAlternateColorCodes('&', 
-                locale.getString("not-setup.world-name", "The world name in config.yml is different to the world name in islands.yml." 
-                        + "\nIf this is intentional, we assume you are doing a full reset."
-                        + "\nIf so, delete islands.yml and the previous world."
-                        + "\nIf not, correct the world name in config.yml and restart. This is probably the case if you are upgrading."));
-        notSetupOutdated = ChatColor.translateAlternateColorCodes('&', 
-                locale.getString("not-setup.config-outdated", "The config.yml file looks outdated."
-                        + "\nMake sure you updated your configuration after upgrading."
-                        + "\nIf this error is still happening, you probably edited the old config rather than editing the new one."
-                        + "\nIf so, please remove the current config.yml, work on config.new.yml and rename it to config.yml."));
-        
-        // General
-        generalSuccess = ChatColor.translateAlternateColorCodes('&', locale.getString("general.success", "Success!"));
-        
-        // Errors
-        errorNoPermission = ChatColor.translateAlternateColorCodes('&', locale.getString("general.errors.no-permission", "You don't have permission to execute this command."));
+    public String get(String id){
+        // If the text isn't loaded, load it.
+        if(!localization.containsKey(id)){
+            // Save the text to the HashMap.
+            // If the text doesn't exist in the locale file, save it as its id, to help debug.
+            localization.put(id, locale.getString(id, id));
+        }
+        return localization.get(id);
     }
 }

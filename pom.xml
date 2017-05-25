@@ -6,7 +6,7 @@
 	<packaging>jar</packaging>
 	<version>0.0.1</version>
 	<name>BSkyBlock</name>
-	<description>The next generation of BSkyBlock</description>
+	<description>The next generation of ASkyBlock</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -31,9 +31,9 @@
 				</includes>
 			</resource>
 			<resource>
-				<targetPath>locale</targetPath>
+				<targetPath>locales</targetPath>
 				<filtering>false</filtering>
-				<directory>${basedir}/locale</directory>
+				<directory>${basedir}/locales</directory>
 				<includes>
 					<include>*.yml</include>
 				</includes>

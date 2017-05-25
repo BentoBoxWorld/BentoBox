@@ -29,14 +29,14 @@ public class IslandCommand extends BSBCommand{
     @Override
     public boolean canExecute(CommandSender sender, String label) {
         if(!(sender instanceof Player)){
-            Util.sendMessage(sender, plugin.getLocale(sender).errorUseInGame);
+            Util.sendMessage(sender, plugin.getLocale(sender).get("general.errors.use-in-game"));
             return false;
         }
         
         Player player = (Player) sender;
         // Basic permission check to even use /island
         if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")){
-            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
+            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
             return false;
         }
         
@@ -113,8 +113,8 @@ public class IslandCommand extends BSBCommand{
             @Override
             public String[] getHelp(CommandSender sender, String label){
                 // TODO check if multiple homes
-                if(VaultHelper.hasPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).islandHelpGoHomes};
-                return new String[] {null, plugin.getLocale(sender).islandHelpGo};
+                if(VaultHelper.hasPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).get("help.island.go-homes")};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.go")};
             }
         });
         
@@ -140,7 +140,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpSpawn};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.spawn")};
             }
         });
         
@@ -167,7 +167,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"[schematic]", plugin.getLocale(sender).islandHelpCreate};
+                return new String[] {"[schematic]", plugin.getLocale(sender).get("help.island.create")};
             }
         });
         
@@ -194,7 +194,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"[player]", plugin.getLocale(sender).islandHelpInfo};
+                return new String[] {"[player]", plugin.getLocale(sender).get("help.island.info")};
             }
         });
         
@@ -221,7 +221,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"[on/off]", plugin.getLocale(sender).islandHelpControlPanel};
+                return new String[] {"[on/off]", plugin.getLocale(sender).get("help.island.control-panel")};
             }
         });
         
@@ -248,7 +248,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpReset};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.reset")};
             }
         });
         
@@ -275,35 +275,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpSetHome};
-            }
-        });
-        
-        /* /is level [player] - Calculate and display island level */
-        registerArgument(new String[] {"level"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpLevel,
-                        "[player]", plugin.getLocale(sender).islandHelpLevelOther};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.sethome")};
             }
         });
         
@@ -315,17 +287,17 @@ public class IslandCommand extends BSBCommand{
                 Player player = (Player) sender;
                 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                     return false;
                 }
                 
                 if(!plugin.getIslands().hasIsland(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoIsland);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
                     return false;
                 }
                 
                 if(!plugin.getIslands().isOwner(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNotLeader);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.not-leader"));
                     return false;
                 }
                 
@@ -349,12 +321,12 @@ public class IslandCommand extends BSBCommand{
                 }
                 
                 // Check if the name isn't too short or too long
-                if(name.length() < Settings.minIslandNameLength){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorTooShort.replace("[length]", String.valueOf(Settings.minIslandNameLength)));
+                if(name.length() < Settings.nameMinLength){
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.too-short").replace("[length]", String.valueOf(Settings.nameMinLength)));
                     return;
                 }
-                if(name.length() > Settings.maxIslandNameLength){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorTooLong.replace("[length]", String.valueOf(Settings.maxIslandNameLength)));
+                if(name.length() > Settings.nameMaxLength){
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.too-long").replace("[length]", String.valueOf(Settings.nameMaxLength)));
                     return;
                 }
                 
@@ -362,7 +334,7 @@ public class IslandCommand extends BSBCommand{
                 if(VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name.format")) plugin.getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
                 else plugin.getIslands().getIsland(player.getUniqueId()).setName(name);
                 
-                Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).generalSuccess);
+                Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).get("general.success"));
             }
 
             @Override
@@ -372,7 +344,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<name>", plugin.getLocale(sender).islandHelpName};
+                return new String[] {"<name>", plugin.getLocale(sender).get("help.island.name")};
             }
         });
         
@@ -384,17 +356,17 @@ public class IslandCommand extends BSBCommand{
                 Player player = (Player) sender;
                 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                     return false;
                 }
                 
                 if(!plugin.getIslands().hasIsland(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoIsland);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
                     return false;
                 }
                 
                 if(!plugin.getIslands().isOwner(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNotLeader);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.not-leader"));
                     return false;
                 }
                 
@@ -407,7 +379,7 @@ public class IslandCommand extends BSBCommand{
                 
                 // Resets the island name
                 plugin.getIslands().getIsland(player.getUniqueId()).setName(null);
-                Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).generalSuccess);
+                Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).get("general.success"));
             }
 
             @Override
@@ -417,61 +389,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpResetName};
-            }
-        });
-        
-        /* /is topten - Display top ten */
-        registerArgument(new String[] {"topten", "top"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpTopTen};
-            }
-        });
-        
-        /* /is value - Show the value of the block in hand */
-        registerArgument(new String[] {"value"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return false;
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                
-            }
-
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-                return null;
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpValue};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.resetname")};
             }
         });
         
@@ -498,7 +416,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpLimits};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.limits")};
             }
         });
         
@@ -525,7 +443,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpTeam};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.team")};
             }
         });
         
@@ -552,7 +470,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpInvite};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.invite")};
             }
         });
         
@@ -579,7 +497,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpUninvite};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.uninvite")};
             }
         });
         
@@ -606,7 +524,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpLeave};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.leave")};
             }
         });
         
@@ -633,7 +551,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpKick};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.kick")};
             }
         });
         
@@ -660,7 +578,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"[player]", plugin.getLocale(sender).islandHelpAccept};
+                return new String[] {"[player]", plugin.getLocale(sender).get("help.island.accept")};
             }
         });
         
@@ -687,7 +605,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"[player]", plugin.getLocale(sender).islandHelpReject};
+                return new String[] {"[player]", plugin.getLocale(sender).get("help.island.reject")};
             }
         });
         
@@ -714,7 +632,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpMakeleader};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.makeleader")};
             }
         });
         
@@ -741,7 +659,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpTeamchat};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.teamchat")};
             }
         });
         
@@ -768,7 +686,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpBiomes};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.biomes")};
             }
         });
         
@@ -795,7 +713,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpExpel};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.expel")};
             }
         });
         
@@ -822,7 +740,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpExpelall};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.expelall")};
             }
         });
         
@@ -849,7 +767,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpBan};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.ban")};
             }
         });
         
@@ -876,7 +794,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpUnban};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.unban")};
             }
         });
         
@@ -903,7 +821,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpBanlist};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.banlist")};
             }
         });
         
@@ -930,7 +848,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpTrust};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.trust")};
             }
         });
         
@@ -957,7 +875,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpUntrust};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.untrust")};
             }
         });
         
@@ -984,7 +902,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpTrustlist};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.trustlist")};
             }
         });
         
@@ -1011,7 +929,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpCoop};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.coop")};
             }
         });
         
@@ -1038,7 +956,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<player>", plugin.getLocale(sender).islandHelpUncoop};
+                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.uncoop")};
             }
         });
         
@@ -1065,7 +983,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpCooplist};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.cooplist")};
             }
         });
         
@@ -1077,12 +995,12 @@ public class IslandCommand extends BSBCommand{
                 Player player = (Player) sender;
                 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.lock")){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoPermission);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                     return false;
                 }
                 
                 if(!plugin.getIslands().hasIsland(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).errorNoIsland);
+                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
                     return false;
                 }
                 
@@ -1097,9 +1015,9 @@ public class IslandCommand extends BSBCommand{
                 if(!island.isLocked()){
                     // TODO: Expel all visitors
                     // TODO: send offline messages
-                    island.setLocked(false);
+                    island.setLocked(true);
                 } else {
-                    Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).lockUnlocking);
+                    Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player).get("island.lock.unlocking"));
                     // TODO: send offline messages
                     island.setLocked(false);
                 }
@@ -1112,7 +1030,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpLock};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.lock")};
             }
         });
         
@@ -1139,7 +1057,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {null, plugin.getLocale(sender).islandHelpSettings};
+                return new String[] {null, plugin.getLocale(sender).get("help.island.settings")};
             }
         });
         
@@ -1166,7 +1084,7 @@ public class IslandCommand extends BSBCommand{
             
             @Override
             public String[] getHelp(CommandSender sender, String label){
-                return new String[] {"<id>", plugin.getLocale(sender).islandHelpLanguage};
+                return new String[] {"<id>", plugin.getLocale(sender).get("help.island.language")};
             }
         });
     }

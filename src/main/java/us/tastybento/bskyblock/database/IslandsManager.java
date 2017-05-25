@@ -98,7 +98,7 @@ public class IslandsManager {
      * @param owner UUID
      */
     public Island createIsland(Location location, UUID owner){
-        Island island = new Island(location, owner, Settings.protectionRange);
+        Island island = new Island(location, owner, Settings.islandProtectionRange);
         islands.put(location, island);
         if (owner != null)
             islandsByUUID.put(owner, island);
@@ -137,33 +137,6 @@ public class IslandsManager {
             }
             island.getMembers().remove(playerUUID);
         }
-    }
-
-    /**
-     * Get the island level
-     * @param playerUUID
-     * @return Level of island, or null if unknown
-     */
-    public Integer getIslandLevel(UUID playerUUID) {
-        if (islandsByUUID.containsKey(playerUUID))
-            return islandsByUUID.get(playerUUID).getLevel();
-        return null;
-    }
-
-    /**
-     * Set the island level for this player
-     * @param playerUUID
-     * @param islandLevel
-     * @return true if successful, false if not
-     */
-    public boolean setIslandLevel(UUID playerUUID, int islandLevel) {
-        if (islandsByUUID.containsKey(playerUUID)) {
-            islandsByUUID.get(playerUUID).setLevel(islandLevel);
-            // TODO
-            //plugin.getChatListener().setPlayerLevel(playerUUID, islandLevel);
-            return true;
-        }
-        return false;
     }
 
     /**

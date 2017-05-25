@@ -38,7 +38,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
                 // Generate help
-                String help = plugin.getLocale(sender).helpHeader + "\n";
+                String help = plugin.getLocale(sender).get("help.header") + "\n";
                 
                 for(String argument : arguments.keySet()){
                     CommandArgumentHandler cah = getArgumentHandler(argument);

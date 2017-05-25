@@ -36,7 +36,7 @@ public class Util {
      * @throws InvocationTargetException
      * @throws NoSuchMethodException
      */
-    public static NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
+    public static NMSAbstraction getNMSHandler() throws ClassNotFoundException, IllegalArgumentException,
     SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
     NoSuchMethodException {
         String serverPackageName = plugin.getServer().getClass().getPackage().getName();
@@ -44,10 +44,10 @@ public class Util {
         String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
         Class<?> clazz;
         try {
-            clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
+            clazz = Class.forName(pluginPackageName + ".util.nms." + version + ".NMSHandler");
         } catch (Exception e) {
             plugin.getLogger().info("No NMS Handler found for " + version + ", falling back to Bukkit API.");
-            clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
+            clazz = Class.forName(pluginPackageName + ".util.nms.fallback.NMSHandler");
         }
         // Check if we have a NMSAbstraction implementing class at that location.
         if (NMSAbstraction.class.isAssignableFrom(clazz)) {
