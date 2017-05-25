@@ -37,12 +37,6 @@ public class BSkyBlock extends JavaPlugin{
     @Override
     public void onEnable(){
         plugin = this;
-
-        if (!VaultHelper.setupPermissions()) {
-            getLogger().severe("Cannot link with Vault for permissions! Disabling plugin!");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
         
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
@@ -86,8 +80,7 @@ public class BSkyBlock extends JavaPlugin{
         // Save data
         playersManager.shutdown();
         islandsManager.shutdown();
-        offlineHistoryMessages.shutdown();
-
+        //offlineHistoryMessages.shutdown();
         plugin = null;
     }
 

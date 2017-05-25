@@ -1012,7 +1012,7 @@ public class IslandCommand extends BSBCommand{
                 Player player = (Player) sender;
                 Island island = plugin.getIslands().getIsland(player.getUniqueId());
                 
-                if(!island.isLocked()){
+                if(!island.getLocked()){
                     // TODO: Expel all visitors
                     // TODO: send offline messages
                     island.setLocked(true);

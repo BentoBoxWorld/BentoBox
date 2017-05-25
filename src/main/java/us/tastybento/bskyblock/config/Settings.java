@@ -68,7 +68,6 @@ public class Settings {
     public static int spawnLimitMonsters;
     public static int spawnLimitAnimals;
     public static int spawnLimitWaterAnimals;
-    public static int breedingLimit;
     public static HashMap<EntityType, Integer> entityLimits;
     public static HashMap<String, Integer> tileEntityLimits;
     
