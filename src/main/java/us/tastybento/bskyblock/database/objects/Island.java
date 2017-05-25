@@ -95,6 +95,9 @@ public class Island extends DataObject {
 
         // Can open doors or trapdoors
         DOOR,
+        
+        // Can dye sheeps
+        DYEING,
 
         // Can use Elytras
         ELYTRA,
@@ -798,5 +801,4 @@ public class Island extends DataObject {
         this.uniqueId = uniqueId;
         
     }
-
 }
