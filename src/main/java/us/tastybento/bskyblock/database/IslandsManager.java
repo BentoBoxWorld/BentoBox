@@ -27,18 +27,30 @@ public class IslandsManager {
 
     // Metrics data
     private int metrics_createdcount = 0;
+    private AbstractDatabaseHandler<Island> handler;
 
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
-        database.connect(plugin);
+        handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
         islands = new HashMap<Location, Island>();
         islandsByUUID = new HashMap<UUID, Island>();
         spawn = null;
+        //load();
     }
 
     public void load(){
-        //TODO
+            try {
+                for (Object island : handler.selectObjects()) {
+                    if (island instanceof Island) {
+                        islands.put(((Island)island).getCenter(), (Island)island);
+                        islandsByUUID.put(((Island)island).getOwner(), (Island)island);
+                    }
+                }
+            } catch (Exception e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
     }
 
     public void save(boolean async){
@@ -47,14 +59,24 @@ public class IslandsManager {
 
                 @Override
                 public void run() {
-                    for(Entry<Location, Island> entry : islands.entrySet()){
-                        database.saveIslandData(entry.getValue());
+                    for(Island island : islands.values()){
+                        try {
+                            handler.insertObject(island);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } 
                     }
                 }
             });
         } else {
-            for(Entry<Location, Island> entry : islands.entrySet()){
-                database.saveIslandData(entry.getValue());
+            for(Island island : islands.values()){
+                try {
+                    handler.insertObject(island);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } 
             }
         }
     }

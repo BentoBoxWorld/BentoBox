@@ -21,7 +21,7 @@ import us.tastybento.bskyblock.config.Settings;
  * @author Tastybento
  * @author Poslovitch
  */
-public class Island {
+public class Island extends DataObject {
 
     /**
      * Island Guard Settings flags
@@ -277,12 +277,7 @@ public class Island {
         WITHER_BLOW_UP_SHULKER_BOX
     }
 
-    //// Island ////
-    /**
-     * The unique ID for this island
-     */
-    private UUID uuid;
-    
+    //// Island ////    
     // The center of the island itself
     private Location center;
 
@@ -333,6 +328,8 @@ public class Island {
     private boolean purgeProtected = false;
     //// Protection ////
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
+
+    private String uniqueId = "";
 
     public Island() {};
     
@@ -791,17 +788,15 @@ public class Island {
         }
     }
 
-    /**
-     * @return the uuid
-     */
-    public UUID getUuid() {
-        return uuid;
+    @Override
+    public String getUniqueId() {
+        return uniqueId;
     }
 
-    /**
-     * @param uuid the uuid to set
-     */
-    public void setUuid(UUID uuid) {
-        this.uuid = uuid;
+    @Override
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+        
     }
+
 }

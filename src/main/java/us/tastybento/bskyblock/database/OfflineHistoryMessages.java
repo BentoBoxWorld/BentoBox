@@ -29,7 +29,7 @@ public class OfflineHistoryMessages {
     }
 
     public void load(){
-        messages = database.loadOfflineHistoryMessages();
+        //messages = database.loadOfflineHistoryMessages();
     }
 
     public void save(boolean async){
@@ -38,11 +38,11 @@ public class OfflineHistoryMessages {
 
                 @Override
                 public void run() {
-                    database.saveOfflineHistoryMessages(messages);
+                    //database.saveOfflineHistoryMessages(messages);
                 }
             });
         } else {
-            database.saveOfflineHistoryMessages(messages);
+            //database.saveOfflineHistoryMessages(messages);
         }
     }
 

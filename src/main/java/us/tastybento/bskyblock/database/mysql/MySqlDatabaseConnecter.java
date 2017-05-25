@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.database.mysql;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -29,21 +28,22 @@ public class MySqlDatabaseConnecter implements DatabaseConnecter {
     }
 
     @Override
-    public YamlConfiguration loadYamlFile(String simpleName) {
+    public String getUniqueId(String tableName) {
         // TODO Auto-generated method stub
         return null;
     }
 
     @Override
-    public void saveYamlFile(YamlConfiguration config, String simpleName) {
+    public YamlConfiguration loadYamlFile(String string, String key) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void saveYamlFile(YamlConfiguration yamlFile, String tableName,
+            String fileName) {
         // TODO Auto-generated method stub
         
-    }
-
-    @Override
-    public UUID getUniqueId() {
-        // TODO Auto-generated method stub
-        return null;
     }
 
 }

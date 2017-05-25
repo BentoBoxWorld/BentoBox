@@ -16,7 +16,7 @@ import us.tastybento.bskyblock.config.Settings;
  * 
  * @author tastybento
  */
-public class Players {
+public class Players extends DataObject {
     private HashMap<Integer, Location> homeLocations;
     private UUID uuid;
     private String playerName;
@@ -246,6 +246,18 @@ public class Players {
         if (location != null) {
             kickedList.put(location, new Date());
         }
+    }
+
+    @Override
+    public String getUniqueId() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void setUniqueId(String uniqueId) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

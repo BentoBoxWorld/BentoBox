@@ -38,21 +38,7 @@ public class PlayersManager{
     }
     
     public void save(boolean async){
-        if(async){
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-                
-                @Override
-                public void run() {
-                    for(Entry<UUID, Players> entry : playerCache.entrySet()){
-                        database.savePlayerData(entry.getValue());
-                    }
-                }
-            });
-        } else {
-            for(Entry<UUID, Players> entry : playerCache.entrySet()){
-                database.savePlayerData(entry.getValue());
-            }
-        }
+        // TODO
     }
     
     public void shutdown(){
@@ -89,7 +75,7 @@ public class PlayersManager{
      */
     public void removeOnlinePlayer(final UUID player) {
         if (playerCache.containsKey(player)) {
-            database.savePlayerData(playerCache.get(player));
+            //database.savePlayerData(playerCache.get(player));
             playerCache.remove(player);
             // plugin.getLogger().info("Removing player from cache: " + player);
         }
@@ -100,7 +86,7 @@ public class PlayersManager{
      */
     public void removeAllPlayers() {
         for (UUID pl : playerCache.keySet()) {
-            database.savePlayerData(playerCache.get(pl));
+            //database.savePlayerData(playerCache.get(pl));
         }
         playerCache.clear();
     }
@@ -124,7 +110,9 @@ public class PlayersManager{
             return true;
         } else {
             // Get from the database - do not add to cache yet
-            return database.isPlayerKnown(uniqueID) ? true: false;
+            //return database.isPlayerKnown(uniqueID) ? true: false;
+            // TODO
+            return false;
         }
     }
 
@@ -263,7 +251,8 @@ public class PlayersManager{
     @SuppressWarnings("deprecation")
     public UUID getUUID(String string, boolean adminCheck) {
         // Look in the database if it ready
-        return database.getUUID(string, adminCheck);
+        //return database.getUUID(string, adminCheck);
+        return null;
     }
 
     /**
@@ -274,7 +263,7 @@ public class PlayersManager{
     public void setPlayerName(UUID uniqueId, String name) {
         addPlayer(uniqueId);
         playerCache.get(uniqueId).setPlayerN(name);
-        database.savePlayerName(name, uniqueId);
+        //database.savePlayerName(name, uniqueId);
     }
 
     /**

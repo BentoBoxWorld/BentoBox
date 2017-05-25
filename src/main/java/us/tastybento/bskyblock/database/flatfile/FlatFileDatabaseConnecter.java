@@ -14,13 +14,14 @@ import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     private static final int MAX_LOOPS = 100;
+    private static final String DATABASE_FOLDER_NAME = "database";
     private BSkyBlock plugin;
     private File dataFolder;
 
 
     public FlatFileDatabaseConnecter(BSkyBlock plugin, DatabaseConnectionSettingsImpl databaseConnectionSettingsImpl) {
         this.plugin = plugin;
-        dataFolder = new File(plugin.getDataFolder(), "database");
+        dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }
 
     @Override
@@ -41,9 +42,11 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
      * @param fileName
      * @return
      */
-    @Override
-    public YamlConfiguration loadYamlFile(String fileName) {
-        File yamlFile = new File(dataFolder, fileName + ".yml");
+    public YamlConfiguration loadYamlFile(String tableName, String fileName) {
+        if (!fileName.endsWith(".yml")) {
+            fileName = fileName + ".yml";
+        }
+        File yamlFile = new File(dataFolder, tableName + File.separator + fileName);
 
         YamlConfiguration config = null;
         if (yamlFile.exists()) {
@@ -80,9 +83,15 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
      * @param fileName
      */
     @Override
-    public void saveYamlFile(YamlConfiguration yamlFile, String fileName) {
-        File file = new File(dataFolder, fileName + ".yml");
-
+    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName) {
+        if (!fileName.endsWith(".yml")) {
+            fileName = fileName + ".yml";
+        }
+        File tableFolder = new File(dataFolder, tableName);
+        File file = new File(tableFolder, fileName);
+        if (!tableFolder.exists()) {
+            tableFolder.mkdirs();
+        }
         try {
             yamlFile.save(file);
         } catch (Exception e) {
@@ -91,15 +100,15 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
     }
 
     @Override
-    public UUID getUniqueId() {
+    public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
-        File file = new File(dataFolder, uuid.toString() + ".yml");
+        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".yml");
         int limit = 0;
         while (file.exists() && limit++ < MAX_LOOPS) {
             uuid = UUID.randomUUID();
-            file = new File(dataFolder, uuid.toString() + ".yml");
+            file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".yml");
         }
-        return uuid;
+        return uuid.toString();
     }
 
 }

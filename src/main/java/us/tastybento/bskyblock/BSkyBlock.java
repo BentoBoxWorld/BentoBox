@@ -37,13 +37,13 @@ public class BSkyBlock extends JavaPlugin{
     @Override
     public void onEnable(){
         plugin = this;
-        new RunTest(this);
+        //new RunTest(this);
         playersManager = new PlayersManager(this);
         islandsManager = new IslandsManager(this);
         
         playersManager.load();
         islandsManager.load();
-        
+                
         offlineHistoryMessages = new OfflineHistoryMessages(this);
         offlineHistoryMessages.load();
         
@@ -66,7 +66,7 @@ public class BSkyBlock extends JavaPlugin{
         }
         
         // Save islands & players data asynchronously every X minutes
-        plugin.getServer().getScheduler().runTaskTimer(this, new Runnable() {
+        getServer().getScheduler().runTaskTimer(this, new Runnable() {
             
             @Override
             public void run() {
