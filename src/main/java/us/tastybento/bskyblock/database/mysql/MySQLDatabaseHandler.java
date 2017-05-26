@@ -17,6 +17,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,13 +65,22 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         mySQLmapping.put(Location.class.getTypeName(), "VARCHAR(254)");
         mySQLmapping.put(World.class.getTypeName(), "VARCHAR(254)");
         
-        // Sets - this stores just the name of the set which is another table
+        // TODO: Collections - these need to create another table and link to it
         mySQLmapping.put(Set.class.getTypeName(), "VARCHAR(254)");
+        mySQLmapping.put(Map.class.getTypeName(), "VARCHAR(254)");
+        mySQLmapping.put(HashMap.class.getTypeName(), "VARCHAR(254)");
+        mySQLmapping.put(ArrayList.class.getTypeName(), "VARCHAR(254)");
           
      }
 
     public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
+        try {
+            connection = databaseConnecter.createConnection();
+        } catch (SQLException e1) {
+            plugin.getLogger().severe(e1.getMessage());
+            return;
+        }
         // Check if the table exists in the database and if not, create it
         try {
             createSchema();
@@ -90,22 +100,23 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     private void createSchema() throws IntrospectionException, SQLException {
         PreparedStatement pstmt = null;
-        connection = databaseConnecter.createConnection();
         try {
             String sql = "CREATE TABLE IF NOT EXISTS " + type.getSimpleName() + "(";
             for (Field field : type.getDeclaredFields()) {
                 PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
-                plugin.getLogger().info("DEBUG: Field = " + field.getName());
+                plugin.getLogger().info("DEBUG: Field = " + field.getName() + "(" + propertyDescriptor.getPropertyType().getTypeName() + ")");
                 String mapping = mySQLmapping.get(propertyDescriptor.getPropertyType().getTypeName());
                 if (mapping != null) {
-                    sql += field.getName() + " " + mapping + ",";
+                    sql += "`" + field.getName() + "` " + mapping + ",";
+                    // TODO: Create set and map tables.  
                 } else {
                     sql += field.getName() + " VARCHAR(254),";
                     plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
                 }
             }
-            sql = sql.substring((sql.length()-1), sql.length()) + ")";
-            plugin.getLogger().info("DEBUG: SQL string = " + sql);
+            //plugin.getLogger().info("DEBUG: SQL before trim string = " + sql);
+            sql = sql.substring(0,(sql.length()-1)) + ")";
+            //plugin.getLogger().info("DEBUG: SQL string = " + sql);
             pstmt = connection.prepareStatement(sql.toString());
             pstmt.executeUpdate();
         } catch (Exception e) {

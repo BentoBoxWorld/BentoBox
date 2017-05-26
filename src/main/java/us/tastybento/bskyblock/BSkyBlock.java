@@ -46,7 +46,7 @@ public class BSkyBlock extends JavaPlugin{
             Settings.dbHost = "localhost";
             Settings.dbPort = 3306;
             Settings.dbName = "ASkyBlock";
-            Settings.dbUsername = "user";
+            Settings.dbUsername = "username";
             Settings.dbPassword = "password";
             
             playersManager = new PlayersManager(this);

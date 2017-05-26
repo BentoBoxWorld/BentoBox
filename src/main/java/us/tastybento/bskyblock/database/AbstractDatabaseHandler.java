@@ -91,7 +91,7 @@ public abstract class AbstractDatabaseHandler<T> {
             if (usePlaceHolders)
                 sb.append("?");
             else
-                sb.append(f.getName());
+                sb.append("`" + f.getName() + "`");
         }
 
         return sb.toString();
