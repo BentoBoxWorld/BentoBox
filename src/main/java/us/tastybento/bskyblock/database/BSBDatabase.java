@@ -8,6 +8,11 @@ import us.tastybento.bskyblock.database.sqlite.SQLiteDatabase;
 
 public abstract class BSBDatabase {
     
+    /**
+     * Gets the type of database being used. Currently supported options are
+     * FLATFILE, MYSQL and SQLITE. Default is FLATFILE
+     * @return Database type
+     */
     public static BSBDatabase getDatabase(){
         for(DatabaseType type : DatabaseType.values()){
             if(type == Settings.databaseType) return type.database;
@@ -31,7 +36,6 @@ public abstract class BSBDatabase {
      * Gets a handler for this class type with this database connection
      * @param plugin
      * @param type
-     * @param databaseConnecter
      * @return selector object
      */
     public abstract AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> type);

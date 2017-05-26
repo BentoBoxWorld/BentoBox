@@ -1,10 +1,96 @@
 package us.tastybento.bskyblock.database;
 
+import us.tastybento.bskyblock.config.Settings;
+
 public class DatabaseConnectionSettingsImpl {
 
-    public DatabaseConnectionSettingsImpl(String string, int i, String string2,
-            String string3, String string4) {
-        // TODO Auto-generated constructor stub
+    private String host;
+    private int port;
+    private String databaseName;
+    private String username;
+    private String password;
+    /**
+     * Hosts database settings
+     * @param host
+     * @param port
+     * @param databaseName
+     * @param username
+     * @param password
+     */
+    public DatabaseConnectionSettingsImpl(String host, int port,
+            String databaseName, String username, String password) {
+        this.host = host;
+        this.port = port;
+        this.databaseName = databaseName;
+        this.username = username;
+        this.password = password;
+    }
+    public DatabaseConnectionSettingsImpl() {
+        this.host = Settings.dbHost;
+        this.port = Settings.dbPort;
+        this.databaseName = Settings.dbName;
+        this.username = Settings.dbUsername;
+        this.password = Settings.dbPassword;
+    }
+    /**
+     * @return the host
+     */
+    public String getHost() {
+        return host;
+    }
+    /**
+     * @param host the host to set
+     */
+    public void setHost(String host) {
+        this.host = host;
+    }
+    /**
+     * @return the port
+     */
+    public int getPort() {
+        return port;
+    }
+    /**
+     * @param port the port to set
+     */
+    public void setPort(int port) {
+        this.port = port;
+    }
+    /**
+     * @return the databaseName
+     */
+    public String getDatabaseName() {
+        return databaseName;
+    }
+    /**
+     * @param databaseName the databaseName to set
+     */
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+    /**
+     * @return the username
+     */
+    public String getUsername() {
+        return username;
+    }
+    /**
+     * @param username the username to set
+     */
+    public void setUsername(String username) {
+        this.username = username;
+    }
+    /**
+     * @return the password
+     */
+    public String getPassword() {
+        return password;
+    }
+    /**
+     * @param password the password to set
+     */
+    public void setPassword(String password) {
+        this.password = password;
     }
 
 }

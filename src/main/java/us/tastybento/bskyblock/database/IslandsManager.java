@@ -13,6 +13,11 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
+/**
+ * The job of this class is manage all island related data.
+ * @author tastybento
+ *
+ */
 public class IslandsManager {
 
     private BSkyBlock plugin;
@@ -23,12 +28,16 @@ public class IslandsManager {
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
     
+    /**
+     * One island can be spawn, this is the one - otherwise, this value is null
+     */
     private Island spawn;
 
     // Metrics data
     private int metrics_createdcount = 0;
     private AbstractDatabaseHandler<Island> handler;
-
+    
+    @SuppressWarnings("unchecked")
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
@@ -36,7 +45,6 @@ public class IslandsManager {
         islands = new HashMap<Location, Island>();
         islandsByUUID = new HashMap<UUID, Island>();
         spawn = null;
-        //load();
     }
 
     public void load(){

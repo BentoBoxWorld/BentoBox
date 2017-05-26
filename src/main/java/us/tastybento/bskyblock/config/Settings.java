@@ -33,7 +33,6 @@ public class Settings {
     public static boolean purgeRemoveUserData;
     
     // TODO Database 
-    public static DatabaseType databaseType;
     public static int databaseBackupPeriod;
     
     public static boolean recoverSuperFlat;
@@ -156,4 +155,12 @@ public class Settings {
     
     // TODO added this just to avoid compilation errors, but will be changed in the future
     public static List<HistoryMessageType> historyMessagesTypes;
+
+    // Database settings
+    public static DatabaseType databaseType;
+    public static String dbHost;
+    public static int dbPort;
+    public static String dbName;
+    public static String dbUsername;
+    public static String dbPassword;
 }

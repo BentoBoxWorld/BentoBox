@@ -7,16 +7,10 @@ import java.sql.SQLException;
 import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
  * 
- * @param <T>
- */
-/**
- * @author tastybento
- *
  * @param <T>
  */
 /**
@@ -45,7 +39,7 @@ public abstract class AbstractDatabaseHandler<T> {
 
     protected BSkyBlock plugin;
 
-    
+
     /**
      * Constructor
      * 
@@ -56,8 +50,7 @@ public abstract class AbstractDatabaseHandler<T> {
      *            Contains the settings to create a connection to the database
      *            like host/port/database/user/password
      */
-    protected AbstractDatabaseHandler(BSkyBlock plugin, Class<T> type,
-            DatabaseConnecter databaseConnecter) {
+    protected AbstractDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
 
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
@@ -103,7 +96,7 @@ public abstract class AbstractDatabaseHandler<T> {
 
         return sb.toString();
     }
-    
+
     /**
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
@@ -129,7 +122,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws InstantiationException 
      */
     protected abstract T selectObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
-    
+
     /**
      * Inserts T into the corresponding database-table
      * 

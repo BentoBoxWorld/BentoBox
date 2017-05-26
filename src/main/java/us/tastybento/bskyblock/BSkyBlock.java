@@ -11,6 +11,7 @@ import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.IslandsManager;
 import us.tastybento.bskyblock.database.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.PlayersManager;
@@ -40,6 +41,14 @@ public class BSkyBlock extends JavaPlugin{
         
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
+            // TEMP DEBUG DATABASE
+            Settings.databaseType = DatabaseType.MYSQL;
+            Settings.dbHost = "localhost";
+            Settings.dbPort = 3306;
+            Settings.dbName = "ASkyBlock";
+            Settings.dbUsername = "user";
+            Settings.dbPassword = "password";
+            
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
 

@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.database.mysql;
 
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -10,39 +11,52 @@ import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
 public class MySqlDatabaseConnecter implements DatabaseConnecter {
 
+    private String connectionUrl;
+    private DatabaseConnectionSettingsImpl dbSettings;
+    private Connection connection = null;
+    /**
+     * Class for MySQL database connections using the settings provided
+     * @param dbSettings
+     */
     public MySqlDatabaseConnecter(
-            DatabaseConnectionSettingsImpl databaseConnectionSettingsImpl) {
-        // TODO Auto-generated constructor stub
+            DatabaseConnectionSettingsImpl dbSettings) {
+        this.dbSettings = dbSettings;
+        try {
+            Class.forName("com.mysql.jdbc.Driver").newInstance();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + "/" + dbSettings.getDatabaseName();
     }
 
     @Override
     public Connection createConnection() throws SQLException {
-        // TODO Auto-generated method stub
-        return null;
+        connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
+        return connection;
     }
 
     @Override
     public String getConnectionUrl() {
-        // TODO Auto-generated method stub
-        return null;
+        return connectionUrl;
     }
 
     @Override
     public String getUniqueId(String tableName) {
-        // TODO Auto-generated method stub
-        return null;
+        // Not used
+        return "";
     }
 
     @Override
     public YamlConfiguration loadYamlFile(String string, String key) {
-        // TODO Auto-generated method stub
+        // Not used
         return null;
     }
 
     @Override
     public void saveYamlFile(YamlConfiguration yamlFile, String tableName,
             String fileName) {
-        // TODO Auto-generated method stub
+        // Not used
         
     }
 
