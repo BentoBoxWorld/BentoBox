@@ -5,6 +5,9 @@ import java.beans.PropertyDescriptor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.lang.reflect.TypeVariable;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -64,14 +67,16 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Bukkit Mappings
         mySQLmapping.put(Location.class.getTypeName(), "VARCHAR(254)");
         mySQLmapping.put(World.class.getTypeName(), "VARCHAR(254)");
-        
+
         // TODO: Collections - these need to create another table and link to it
-        mySQLmapping.put(Set.class.getTypeName(), "VARCHAR(254)");
-        mySQLmapping.put(Map.class.getTypeName(), "VARCHAR(254)");
-        mySQLmapping.put(HashMap.class.getTypeName(), "VARCHAR(254)");
-        mySQLmapping.put(ArrayList.class.getTypeName(), "VARCHAR(254)");
-          
-     }
+        // Collections are stored as additional tables. The boolean indicates whether there 
+        // is any data in it or not (maybe)
+        mySQLmapping.put(Set.class.getTypeName(), "BOOL");
+        mySQLmapping.put(Map.class.getTypeName(), "BOOL");
+        mySQLmapping.put(HashMap.class.getTypeName(), "BOOL");
+        mySQLmapping.put(ArrayList.class.getTypeName(), "BOOL");
+
+    }
 
     public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
@@ -108,7 +113,18 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 String mapping = mySQLmapping.get(propertyDescriptor.getPropertyType().getTypeName());
                 if (mapping != null) {
                     sql += "`" + field.getName() + "` " + mapping + ",";
-                    // TODO: Create set and map tables.  
+                    // Create set and map tables. 
+                    if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                            propertyDescriptor.getPropertyType().equals(Map.class) ||
+                            propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                            propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                        String setSql = "CREATE TABLE IF NOT EXISTS " + type.getSimpleName() + "_" + field.getName() + " (";
+                        // Get the type
+                        setSql += getMethodParameterTypes(propertyDescriptor.getWriteMethod());
+                        plugin.getLogger().info(setSql);
+                        PreparedStatement collections = connection.prepareStatement(setSql);
+                        collections.executeUpdate();
+                    }
                 } else {
                     sql += field.getName() + " VARCHAR(254),";
                     plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
@@ -116,7 +132,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
             //plugin.getLogger().info("DEBUG: SQL before trim string = " + sql);
             sql = sql.substring(0,(sql.length()-1)) + ")";
-            //plugin.getLogger().info("DEBUG: SQL string = " + sql);
+            plugin.getLogger().info("DEBUG: SQL string = " + sql);
             pstmt = connection.prepareStatement(sql.toString());
             pstmt.executeUpdate();
         } catch (Exception e) {
@@ -125,6 +141,44 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             MySQLDatabaseResourceCloser.close(pstmt);
             MySQLDatabaseResourceCloser.close(pstmt);
         }
+    }
+
+    /**
+     * Gets the types for parameters in a method
+     * @param writeMethod
+     * @return List of strings with the SQL for parameter and type set
+     */
+    private String getMethodParameterTypes(Method method) {
+        String result = "";
+        // Get the return type
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            if( genericParameterTypes[i] instanceof ParameterizedType ) {
+                Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
+                //parameters[0] contains java.lang.String for method like "method(List<String> value)"
+                int index = 0;
+                String firstColumn = "";
+                for (Type type : parameters) {
+                    plugin.getLogger().info("DEBUG: set type = " + type.getTypeName());
+                    String setMapping = mySQLmapping.get(type.getTypeName());
+                    String notNull = "";
+                    if (index == 0) {
+                        firstColumn = "`" + type.getTypeName() + "_" + index + "`";
+                        notNull = " NOT NULL";
+                    }
+                    if (setMapping != null) {
+                        result += "`" + type.getTypeName() + "_" + index + "` " + setMapping + notNull + ",";
+                    } else {
+                        result += "`" + type.getTypeName() + "_" + index + "` VARCHAR(254)" + notNull + ",";
+                        plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
+                    }
+                    index++;
+                }
+                // Add primary key
+                result += " PRIMARY KEY (" + firstColumn + "))";
+            }
+        }
+        return result;
     }
 
     @Override
