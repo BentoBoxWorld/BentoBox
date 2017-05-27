@@ -30,6 +30,7 @@ import org.bukkit.World;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * 
@@ -246,8 +247,34 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
                 Method method = propertyDescriptor
                         .getReadMethod();
-
+                plugin.getLogger().info("DEBUG: Field = " + field.getName() + "(" + propertyDescriptor.getPropertyType().getTypeName() + ")");
+                //sql += "`" + field.getName() + "` " + mapping + ",";
+                
                 Object value = method.invoke(instance);
+                
+                // Create set and map tables. 
+                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                        propertyDescriptor.getPropertyType().equals(Map.class) ||
+                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    // Collection
+                    // TODO Set the values in the subsidiary tables.
+                    value = true;
+                }
+                // Types that need to be serialized
+                if (propertyDescriptor.getPropertyType().equals(UUID.class)) {
+                    value = ((UUID)value).toString();
+                }
+                // Bukkit Types
+                if (propertyDescriptor.getPropertyType().equals(Location.class)) {
+                    // Serialize
+                    value = Util.getStringLocation(((Location)value));
+                }
+                if (propertyDescriptor.getPropertyType().equals(World.class)) {
+                    // Serialize - get the name
+                    value = ((World)value).getName();
+                }
+                
 
                 preparedStatement.setObject(++i, value);
             }
@@ -349,7 +376,29 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         field.getName(), type);
 
                 Method method = propertyDescriptor.getWriteMethod();
-
+                
+                // Create set and map tables. 
+                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                        propertyDescriptor.getPropertyType().equals(Map.class) ||
+                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    // Collection
+                    // TODO Set the values in the subsidiary tables.
+                    value = null;
+                }
+                // Types that need to be serialized
+                if (propertyDescriptor.getPropertyType().equals(UUID.class)) {
+                    value = UUID.fromString((String)value);
+                }
+                // Bukkit Types
+                if (propertyDescriptor.getPropertyType().equals(Location.class)) {
+                    // Serialize
+                    value = Util.getLocationString(((String)value));
+                }
+                if (propertyDescriptor.getPropertyType().equals(World.class)) {
+                    // Serialize - get the name
+                    value = plugin.getServer().getWorld((String)value);
+                }
                 method.invoke(instance, value);
             }
 
