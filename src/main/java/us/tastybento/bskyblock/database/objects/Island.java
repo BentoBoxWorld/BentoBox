@@ -22,7 +22,24 @@ import us.tastybento.bskyblock.config.Settings;
  * @author Poslovitch
  */
 public class Island extends DataObject {
+    
+    private String uniqueId = "";
+    
+    @Override
+    public String getUniqueId() {
+        // Island's have UUID's that are randomly assigned if they do not exist
+        if (uniqueId.isEmpty()) {
+            uniqueId = UUID.randomUUID().toString();
+        }
+        return uniqueId;
+    }
 
+    @Override
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
+        
+    }
+    
     /**
      * Island Guard Settings flags
      * Covers island, spawn and system settings
@@ -332,8 +349,6 @@ public class Island extends DataObject {
     //// Protection ////
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
 
-    private String uniqueId = "";
-
     public Island() {};
     
     public Island(Location location, UUID owner, int protectionRange) {
@@ -427,6 +442,10 @@ public class Island extends DataObject {
      * @return the members of the island (owner included)
      */
     public Set<UUID> getMembers(){
+        if (members == null) {
+            Bukkit.getLogger().info("DEBUG: members = null");
+            members = new HashSet<UUID>();
+        }
         return members;
     }
     /**
@@ -675,6 +694,7 @@ public class Island extends DataObject {
      * @param members - the members to set
      */
     public void setMembers(Set<UUID> members){
+        Bukkit.getLogger().info("DEBUG: setting members = " + members);
         this.members = members;
     }
 
@@ -789,17 +809,6 @@ public class Island extends DataObject {
         if(flags.containsKey(flag)) {
             flags.put(flag, (flags.get(flag)) ? false : true);
         }
-    }
-
-    @Override
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    @Override
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-        
     }
 
 }

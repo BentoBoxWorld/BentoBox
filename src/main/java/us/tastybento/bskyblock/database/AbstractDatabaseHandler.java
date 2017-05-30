@@ -134,7 +134,8 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws InstantiationException 
      * @throws SecurityException 
      * @throws SQLException 
+     * @throws NoSuchMethodException 
      */
-    protected abstract void insertObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException;
+    protected abstract void insertObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
 
 }

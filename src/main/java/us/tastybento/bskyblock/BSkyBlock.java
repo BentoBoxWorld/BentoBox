@@ -1,8 +1,11 @@
 package us.tastybento.bskyblock;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +18,8 @@ import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.IslandsManager;
 import us.tastybento.bskyblock.database.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.PlayersManager;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -38,7 +43,7 @@ public class BSkyBlock extends JavaPlugin{
     @Override
     public void onEnable(){
         plugin = this;
-        
+
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
             // TEMP DEBUG DATABASE
@@ -48,12 +53,16 @@ public class BSkyBlock extends JavaPlugin{
             Settings.dbName = "ASkyBlock";
             Settings.dbUsername = "username";
             Settings.dbPassword = "password";
-            
+
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
+            // Only load metrics if set to true in config
+            if(Settings.metrics) metrics = new Metrics(plugin);
 
-            playersManager.load();
-            islandsManager.load();
+            // If metrics are loaded, register the custom data charts
+            if(metrics != null){
+                registerCustomCharts();
+            }
 
             offlineHistoryMessages = new OfflineHistoryMessages(this);
             offlineHistoryMessages.load();
@@ -63,24 +72,57 @@ public class BSkyBlock extends JavaPlugin{
                 Settings.useEconomy = false;
             }
 
-            // Only load metrics if set to true in config
-            if(Settings.metrics) metrics = new Metrics(this);
-
-            // If metrics are loaded, register the custom data charts
-            if(metrics != null){
-                registerCustomCharts();
-            }
-
-            // Save islands & players data asynchronously every X minutes
-            plugin.getServer().getScheduler().runTaskTimer(this, new Runnable() {
+            // These items have to be loaded when the server has done 1 tick.
+            // Note Worlds are not loaded this early, so any Locations or World reference will be null
+            // at this point. Therefore, the 1 tick scheduler is required.
+            getServer().getScheduler().runTask(this, new Runnable() {
 
                 @Override
                 public void run() {
-                    playersManager.save(true);
-                    islandsManager.save(true);
-                    offlineHistoryMessages.save(true);
+
+                    // Test: Create a random island and save it
+                    // TODO: ideally this should be in a test class!
+                    /*
+                    Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), UUID.randomUUID());
+                    // Add members
+                    Set<UUID> randomSet = new HashSet<UUID>();
+                    for (int i = 0; i < 10; i++) {
+                        randomSet.add(UUID.randomUUID());
+                        island.addMember(UUID.randomUUID());
+                        island.addToBanList(UUID.randomUUID());
+                    }
+                    island.setBanned(randomSet);
+                    island.setCoops(randomSet);
+                    island.setTrustees(randomSet);
+                    island.setMembers(randomSet);
+                    for (SettingsFlag flag: SettingsFlag.values()) {
+                        island.setFlag(flag, true);
+                    }
+                    island.setLocked(true);
+                    island.setName("new name");
+                    island.setPurgeProtected(true);
+                    islandsManager.save(false);
+    */
+                    // TODO: Write loading code for MySQL
+                    playersManager.load();
+                    islandsManager.load();
+
+
+                    // Save islands & players data asynchronously every X minutes
+                    Settings.databaseBackupPeriod = 10 * 60 * 20;
+                    plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+
+                        @Override
+                        public void run() {
+                            playersManager.save(true);
+                            islandsManager.save(true);
+                            offlineHistoryMessages.save(true);
+                        }
+                    }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
                 }
-            }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
+                // TODO Auto-generated method stub
+
+            });
         }
     }
 
