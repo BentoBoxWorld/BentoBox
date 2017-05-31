@@ -22,9 +22,9 @@ import us.tastybento.bskyblock.config.Settings;
  * @author Poslovitch
  */
 public class Island extends DataObject {
-    
+
     private String uniqueId = "";
-    
+
     @Override
     public String getUniqueId() {
         // Island's have UUID's that are randomly assigned if they do not exist
@@ -37,9 +37,9 @@ public class Island extends DataObject {
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
-        
+
     }
-    
+
     /**
      * Island Guard Settings flags
      * Covers island, spawn and system settings
@@ -112,7 +112,7 @@ public class Island extends DataObject {
 
         // Can open doors or trapdoors
         DOOR,
-        
+
         // Can dye sheeps
         DYEING,
 
@@ -350,7 +350,7 @@ public class Island extends DataObject {
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
 
     public Island() {};
-    
+
     public Island(Location location, UUID owner, int protectionRange) {
         this.members.add(owner);
         this.owner = owner;

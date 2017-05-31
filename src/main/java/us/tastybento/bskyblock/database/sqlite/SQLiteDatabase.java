@@ -1,8 +1,8 @@
 package us.tastybento.bskyblock.database.sqlite;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 
 public class SQLiteDatabase extends BSBDatabase{
 

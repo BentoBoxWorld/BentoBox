@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database;
+package us.tastybento.bskyblock.database.managers;
 
 import java.util.HashMap;
 import java.util.List;

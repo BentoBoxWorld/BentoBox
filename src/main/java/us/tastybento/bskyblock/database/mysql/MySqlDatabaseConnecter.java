@@ -9,17 +9,17 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
-public class MySqlDatabaseConnecter implements DatabaseConnecter {
-
+public class MySQLDatabaseConnecter implements DatabaseConnecter {
+    
     private String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
     private Connection connection = null;
+    
     /**
      * Class for MySQL database connections using the settings provided
      * @param dbSettings
      */
-    public MySqlDatabaseConnecter(
-            DatabaseConnectionSettingsImpl dbSettings) {
+    public MySQLDatabaseConnecter(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
@@ -55,8 +55,7 @@ public class MySqlDatabaseConnecter implements DatabaseConnecter {
     }
 
     @Override
-    public void saveYamlFile(YamlConfiguration yamlFile, String tableName,
-            String fileName) {
+    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName) {
         // Not used
         
     }

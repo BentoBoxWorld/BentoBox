@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database;
+package us.tastybento.bskyblock.database.managers;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.Field;
@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database

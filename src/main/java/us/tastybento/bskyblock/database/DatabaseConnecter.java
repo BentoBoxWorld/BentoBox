@@ -48,7 +48,6 @@ public interface DatabaseConnecter {
      * @param tableName - analogous to a table in a database
      * @param fileName - the name of the record. Must be unique.
      */
-    public void saveYamlFile(YamlConfiguration yamlFile, String tableName,
-            String fileName);
+    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName);
 }
 

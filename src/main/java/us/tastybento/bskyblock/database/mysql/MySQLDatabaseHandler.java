@@ -30,8 +30,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
+import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
 
 /**

@@ -9,7 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
-import us.tastybento.bskyblock.database.OfflineHistoryMessages.HistoryMessageType;
+import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages.HistoryMessageType;
 
 /**
  * All the plugin settings are here

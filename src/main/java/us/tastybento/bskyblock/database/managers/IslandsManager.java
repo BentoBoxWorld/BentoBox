@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database;
+package us.tastybento.bskyblock.database.managers;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import org.bukkit.Location;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
@@ -22,12 +23,12 @@ public class IslandsManager {
 
     private BSkyBlock plugin;
     private BSBDatabase database;
-    
+
     private HashMap<Location, Island> islands;
     private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
-    
+
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
      */
@@ -36,7 +37,7 @@ public class IslandsManager {
     // Metrics data
     private int metrics_createdcount = 0;
     private AbstractDatabaseHandler<Island> handler;
-    
+
     @SuppressWarnings("unchecked")
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
@@ -48,17 +49,17 @@ public class IslandsManager {
     }
 
     public void load(){
-            try {
-                for (Object island : handler.selectObjects()) {
-                    if (island instanceof Island) {
-                        islands.put(((Island)island).getCenter(), (Island)island);
-                        islandsByUUID.put(((Island)island).getOwner(), (Island)island);
-                    }
+        try {
+            for (Object island : handler.selectObjects()) {
+                if (island instanceof Island) {
+                    islands.put(((Island)island).getCenter(), (Island)island);
+                    islandsByUUID.put(((Island)island).getOwner(), (Island)island);
                 }
-            } catch (Exception e) {
-                // TODO Auto-generated catch block
-                e.printStackTrace();
             }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
     public void save(boolean async){
@@ -135,7 +136,7 @@ public class IslandsManager {
             islandsByUUID.put(owner, island);
         return island;
     }
-    
+
     public void deleteIsland(Location location){
         //TODO
     }
@@ -188,9 +189,9 @@ public class IslandsManager {
             // Player already on island
             return true;
         }
-        
+
         // TODO: Fire a join team event. If canceled, return false
-        
+
         if (!setLeaveTeam(playerUUID)) {
             // Player not allowed to leave team
             return false;
@@ -202,7 +203,7 @@ public class IslandsManager {
 
     /**
      * Called when a player leaves a team
-    * @param playerUUID
+     * @param playerUUID
      * @return true if successful, false if not
      */
     public boolean setLeaveTeam(UUID playerUUID) {
@@ -283,7 +284,7 @@ public class IslandsManager {
         return null;
     }
 
-    
+
     /**
      * Determines if a location is in the island world or not or
      * in the new nether if it is activated
@@ -315,7 +316,7 @@ public class IslandsManager {
             return getIsland(playerUUID).getCenter();
         return null;
     }
-    
+
     /**
      * @param playerUUID
      * @return ban list for player

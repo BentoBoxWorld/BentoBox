@@ -1,10 +1,12 @@
-package us.tastybento.bskyblock.database;
+package us.tastybento.bskyblock.database.managers;
 
 import java.util.UUID;
 
 import org.bukkit.Location;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabaseConnecter;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -14,7 +16,7 @@ public class RunTest {
         try {
 
             DatabaseConnecter connecter = new FlatFileDatabaseConnecter(plugin, null);
-            
+
             /*
                     new DatabaseConnectionSettingsImpl(
                             "127.0.0.1", 3306, "exampleDatabase","user", "pass"));
@@ -35,12 +37,12 @@ public class RunTest {
             items.add(new ItemStack(Material.ACTIVATOR_RAIL, 2));
             items.add(new ItemStack(Material.FEATHER,5));
             test.setInventory(items);
-            */
+             */
             BSBDatabase database = BSBDatabase.getDatabase();
             AbstractDatabaseHandler<Island> handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
 
             handler.insertObject(test);
-            
+
             plugin.getLogger().info("DEBUG: ALL WRITTEN! Now reading...");
 
             test = handler.selectObject(test.getUniqueId());

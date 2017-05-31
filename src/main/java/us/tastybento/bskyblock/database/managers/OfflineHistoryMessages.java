@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database;
+package us.tastybento.bskyblock.database.managers;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.database.BSBDatabase;
 
 /**
  * Handles offline messaging to players and teams

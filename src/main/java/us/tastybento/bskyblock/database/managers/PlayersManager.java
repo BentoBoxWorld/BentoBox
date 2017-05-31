@@ -1,7 +1,6 @@
-package us.tastybento.bskyblock.database;
+package us.tastybento.bskyblock.database.managers;
 
 import java.util.HashMap;
-import java.util.Map.Entry;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -9,17 +8,18 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 public class PlayersManager{
-    
+
     private BSkyBlock plugin;
     private BSBDatabase database;
-    
+
     private HashMap<UUID, Players> playerCache;
-    
+
     /**
      * Provides a memory cache of online player information
      * This is the one-stop-shop of player info
@@ -32,24 +32,24 @@ public class PlayersManager{
         database = BSBDatabase.getDatabase();
         playerCache = new HashMap<UUID, Players>();
     }
-    
+
     public void load(){
         //TODO
     }
-    
+
     public void save(boolean async){
         // TODO
     }
-    
+
     public void shutdown(){
         save(false);
         playerCache.clear();
     }
-    
+
     public Players getPlayer(UUID uuid){
         return playerCache.get(uuid);
     }
-    
+
     /*
      * Cache control methods
      */
@@ -59,14 +59,14 @@ public class PlayersManager{
             return null;
         //plugin.getLogger().info("DEBUG: added player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
-                final Players player = new Players(playerUUID);
-                playerCache.put(playerUUID, player);
-                return player;
+            final Players player = new Players(playerUUID);
+            playerCache.put(playerUUID, player);
+            return player;
         } else {
             return playerCache.get(playerUUID);
         }
     }
-    
+
     /**
      * Stores the player's info and removes the player from the cache
      * 

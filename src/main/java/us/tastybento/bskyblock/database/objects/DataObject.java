@@ -1,8 +1,4 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.database.objects;
-
 
 /**
  * Contains fields that must be in any data object
@@ -14,12 +10,12 @@ public abstract class DataObject {
     /**
      * @return the uniqueId
      */
-    abstract public String getUniqueId();
+    public abstract String getUniqueId();
 
     /**
      * @param uniqueId the uniqueId to set
      */
-    abstract public void setUniqueId(String uniqueId);
+    public abstract void setUniqueId(String uniqueId);
     
 
 }
