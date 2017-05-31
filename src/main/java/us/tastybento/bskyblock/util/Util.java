@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
+import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 
 /**
  * A set of utility methods
@@ -20,10 +21,12 @@ import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 public class Util {
     private static BSkyBlock plugin = BSkyBlock.getInstance();
 
-    public static void sendMessage(CommandSender sender, String message){
+    public static void sendMessage(CommandSender receiver, String message){
+        message = PlaceholderHandler.replacePlaceholders(receiver, message);
+        
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             for(String part : message.split("\n")){
-                sender.sendMessage(part);
+                receiver.sendMessage(part);
             }
         }
     }

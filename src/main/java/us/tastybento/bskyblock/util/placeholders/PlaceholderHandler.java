@@ -94,7 +94,7 @@ public class PlaceholderHandler {
     }
 
     /**
-     * @return tre if APIs are registered (including Internal), otherwise false
+     * @return true if APIs are registered (including Internal), otherwise false
      */
     public static boolean hasHooks(){
         return apis != null ? true : false;
