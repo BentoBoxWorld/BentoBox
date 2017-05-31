@@ -22,7 +22,7 @@ public class IslandCommand extends BSBCommand{
     private BSkyBlock plugin;
     
     public IslandCommand(BSkyBlock plugin) {
-        super(plugin);
+        super(plugin, true);
         this.plugin = plugin;
     }
 
@@ -310,7 +310,7 @@ public class IslandCommand extends BSBCommand{
                 
                 // Explain command
                 if(args.length == 1){
-                    Util.sendMessage(player, getHelpMessage(player, label, args[0], getHelp(sender, label)));
+                    //TODO Util.sendMessage(player, getHelpMessage(player, label, args[0], getHelp(sender, label)));
                     return;
                 }
                 

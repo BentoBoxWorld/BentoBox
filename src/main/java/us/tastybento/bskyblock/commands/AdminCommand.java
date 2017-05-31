@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 public class AdminCommand extends BSBCommand{
 
     public AdminCommand(BSkyBlock plugin) {
-        super(plugin);
+        super(plugin, true);
         // TODO Auto-generated constructor stub
     }
 

@@ -13,7 +13,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.util.Util;
 
 /**
  * Abstract class that handles commands and tabs. It makes the commands code modular
@@ -23,56 +22,48 @@ import us.tastybento.bskyblock.util.Util;
  */
 public abstract class BSBCommand implements CommandExecutor, TabCompleter{    
     private Map<String, CommandArgumentHandler> arguments;
-        
-    protected BSBCommand(BSkyBlock plugin){
+    private boolean help;
+
+    protected BSBCommand(BSkyBlock plugin, boolean help){
         arguments = new HashMap<String, CommandArgumentHandler>();
-        
-        // Automatically register the help argument
-        registerArgument(new String[] {"help", "?"}, new CommandArgumentHandler() {
-            
-            @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
-                return true; // If the player can execute the command, he can receive help
-            }
-            
-            @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
-                // Generate help
-                String help = plugin.getLocale(sender).get("help.header") + "\n";
-                
-                for(String argument : arguments.keySet()){
-                    CommandArgumentHandler cah = getArgumentHandler(argument);
-                    if(cah.canExecute(sender, label, args) && cah.getHelp(sender, label) != null) {
-                        help += getHelpMessage(sender, label, argument, cah.getHelp(sender, label)) + "\n";
-                    }
+        this.help = help;
+
+        // Register a help argument if needed
+        if(help){
+            registerArgument(new String[] {"help", "?"}, new CommandArgumentHandler() {
+
+                @Override
+                public boolean canExecute(CommandSender sender, String label, String[] args) {
+                    return true; // If the player can execute the command, he can receive help
                 }
-                
-                //TODO: multiple pages
-                
-                Util.sendMessage(sender, help);
-            }
-            
-            @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                return null; // Doesn't have options for tab-completion
-            }
-            
-            @Override
-            public String[] getHelp(CommandSender sender, String label) {
-                return null; // Obviously, don't send any help message.
-            }
-            
-        });
-        
+
+                @Override
+                public void onExecute(CommandSender sender, String label, String[] args) {
+                    // TODO send help
+                }
+
+                @Override
+                public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
+                    return null; // Doesn't have options for tab-completion
+                }
+
+                @Override
+                public String[] getHelp(CommandSender sender, String label) {
+                    return null; // Obviously, don't send any help message.
+                }
+
+            });
+        }
+
         // Register other arguments
         setup();
     }
-    
+
     /**
      * Setup the command arguments
      */
     public abstract void setup();
-    
+
     /**
      * Check if the sender can use the command
      * @param sender
@@ -80,7 +71,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
      * @return if the sender can use the command
      */
     public abstract boolean canExecute(CommandSender sender, String label);
-    
+
     /**
      * This code is executed when no arguments is specified for the command
      * @param sender
@@ -88,17 +79,17 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
      * @param args
      */
     public abstract void onExecuteDefault(CommandSender sender, String label, String[] args);
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args){
         if(this.canExecute(sender, label)){
             if(args.length >= 1){
-                if(arguments.get(args[0]) != null){
-                    if(arguments.get(args[0]).canExecute(sender, label, args)){
-                        arguments.get(args[0]).onExecute(sender, label, args);
-                    }
+                if(arguments.containsKey(args[0]) && arguments.get(args[0]).canExecute(sender, label, args)){
+                    arguments.get(args[0]).onExecute(sender, label, args);
+                } else if(help) {
+                    arguments.get("?").onExecute(sender, label, args);
                 } else {
-                    arguments.get("help").onExecute(sender, label, args);
+                    this.onExecuteDefault(sender, label, args);
                 }
             } else {
                 this.onExecuteDefault(sender, label, args);
@@ -106,7 +97,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
         }
         return true;
     }
-    
+
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args){
         List<String> options = new ArrayList<String>();
@@ -128,7 +119,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
         }
         return options;
     }
-    
+
     public abstract class CommandArgumentHandler{
         /**
          * Check if the sender can use the argument
@@ -138,7 +129,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
          * @return if the sender can use the argument
          */
         public abstract boolean canExecute(CommandSender sender, String label, String[] args);
-        
+
         /**
          * Code to execute for this argument
          * @param sender
@@ -146,7 +137,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
          * @param args
          */
         public abstract void onExecute(CommandSender sender, String label, String[] args);
-        
+
         /**
          * Request a list of tab-completion options with the argument
          * @param sender
@@ -155,7 +146,7 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
          * @return the list of options
          */
         public abstract List<String> onTabComplete(CommandSender sender, String label, String[] args);
-        
+
         /**
          * Get help information
          * <code>new String[] {arguments, description};</code>
@@ -165,20 +156,16 @@ public abstract class BSBCommand implements CommandExecutor, TabCompleter{
          */
         public abstract String[] getHelp(CommandSender sender, String label);
     }
-    
+
     public void registerArgument(String[] args, CommandArgumentHandler handler){
         Arrays.asList(args).forEach(arg -> arguments.put(arg, handler));
     }
-    
+
     public Map<String, CommandArgumentHandler> getArguments(){
         return arguments;
     }
-    
+
     public CommandArgumentHandler getArgumentHandler(String argument){
         return arguments.get(argument);
-    }
-    
-    public String getHelpMessage(CommandSender sender, String label, String argument, String[] helpData){
-        return ""; //TODO help
     }
 }
