@@ -20,9 +20,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 
-
 /**
- * 
  * Class that creates a list of <T>s filled with values from the corresponding
  * database-table.
  * 
@@ -33,20 +31,17 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
-    public FlatFileDatabaseHandler(BSkyBlock plugin, Class<T> type,
-            DatabaseConnecter databaseConnecter) {
+    public FlatFileDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
     }
 
     @Override
     protected String createSelectQuery() {
-        // not used
-        return "";
+        return ""; // not used
     }
     @Override
     protected String createInsertQuery() {
-        // not used
-        return "";
+        return ""; // not used
     }
     /**
      * Creates a <T> filled with values from the corresponding
@@ -114,10 +109,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      */
-    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException,
-    IntrospectionException, IllegalArgumentException, InvocationTargetException
-    {
-
+    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, IllegalArgumentException, InvocationTargetException {
         T instance = type.newInstance();
 
         for (Field field : type.getDeclaredFields()) {
@@ -239,5 +231,4 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         databaseConnecter.saveYamlFile(config, type.getSimpleName(), filename);
 
     }
-
 }
