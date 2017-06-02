@@ -52,7 +52,6 @@ public abstract class AbstractDatabaseHandler<T> {
      *            like host/port/database/user/password
      */
     protected AbstractDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
-
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
         this.type = type;
