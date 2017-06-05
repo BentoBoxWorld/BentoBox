@@ -1,8 +1,11 @@
 package us.tastybento.bskyblock;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -15,6 +18,8 @@ import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -97,8 +102,12 @@ public class BSkyBlock extends JavaPlugin{
                     island.setName("new name");
                     island.setPurgeProtected(true);
                     islandsManager.save(false);
-    */
+    
+                    
+                    getLogger().info("DEBUG: ************ Finished saving, now loading *************");
                     // TODO: Write loading code for MySQL
+                     * 
+                     */
                     playersManager.load();
                     islandsManager.load();
 

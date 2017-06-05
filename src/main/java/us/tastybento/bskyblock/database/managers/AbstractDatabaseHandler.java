@@ -8,6 +8,7 @@ import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
+import us.tastybento.bskyblock.database.objects.DataObject;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -120,8 +121,9 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws IllegalArgumentException 
      * @throws IllegalAccessException 
      * @throws InstantiationException 
+     * @throws SQLException 
      */
-    protected abstract T selectObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
+    protected abstract T selectObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException;
 
     /**
      * Inserts T into the corresponding database-table

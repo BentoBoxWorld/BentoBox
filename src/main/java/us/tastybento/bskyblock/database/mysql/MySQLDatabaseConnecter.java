@@ -28,7 +28,7 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
             e.printStackTrace();
         }
         // jdbc:mysql://localhost:3306/Peoples?autoReconnect=true&useSSL=false
-        connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + "/" + dbSettings.getDatabaseName() + "?autoReconnect=true&useSSL=false";
+        connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + "/" + dbSettings.getDatabaseName() + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";
     }
 
     @Override
