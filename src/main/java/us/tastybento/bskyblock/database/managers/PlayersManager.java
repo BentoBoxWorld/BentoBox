@@ -1,6 +1,8 @@
 package us.tastybento.bskyblock.database.managers;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -19,6 +21,7 @@ public class PlayersManager{
     private BSBDatabase database;
 
     private HashMap<UUID, Players> playerCache;
+    private Set<UUID> inTeleport;
 
     /**
      * Provides a memory cache of online player information
@@ -31,6 +34,7 @@ public class PlayersManager{
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
         playerCache = new HashMap<UUID, Players>();
+        inTeleport = new HashSet<UUID>();
     }
 
     public void load(){
@@ -487,5 +491,39 @@ public class PlayersManager{
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getDeaths();
     }
+
+    /**
+     * Sets if a player is mid-teleport or not
+     * @param uniqueId
+     */
+    public void setInTeleport(UUID uniqueId) {
+        inTeleport.add(uniqueId); 
+    }
+
+    /**
+     * Removes player from in-teleport
+     * @param uniqueId
+     */
+    public void removeInTeleport(UUID uniqueId) {
+        inTeleport.remove(uniqueId);    
+    }
+    
+    /**
+     * @param uniqueId
+     * @return true if a player is mid-teleport
+     */
+    public boolean isInTeleport(UUID uniqueId) {
+        return inTeleport.contains(uniqueId);        
+    }
+
+    /**
+     * Resets everything to do with a player that needs to be reset
+     * @param player
+     */
+    public void resetPlayer(Player player) {
+        // TODO Auto-generated method stub
+        
+    }
+    
 
 }

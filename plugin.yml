@@ -9,3 +9,19 @@ softdepend: [Herochat, DeluxeChat, PlaceholderAPI, MVdWPlaceholderAPI]
 
 load: startup
 loadbefore: [Multiverse-Core]
+
+commands:
+    island:
+        description: Main player command
+        aliases: [is, island]
+        usage:  |
+             /island help
+    asadmin:
+        description: Admin commands
+        usage:  |
+            /asadmin
+    asc:
+        description: Game challenges
+        aliases: [c, challenge, aschallenge, challenges]
+        usage:  |  
+            /challenge

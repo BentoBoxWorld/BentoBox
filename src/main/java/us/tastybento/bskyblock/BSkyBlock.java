@@ -3,10 +3,13 @@ package us.tastybento.bskyblock;
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
@@ -15,6 +18,7 @@ import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -31,6 +35,9 @@ public class BSkyBlock extends JavaPlugin{
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
     private OfflineHistoryMessages offlineHistoryMessages;
+    
+    // Schematics
+    private SchematicsMgr schematicsManager;
 
     // Metrics
     private Metrics metrics;
@@ -67,6 +74,8 @@ public class BSkyBlock extends JavaPlugin{
                 getLogger().warning("Could not set up economy! - Running without an economy.");
                 Settings.useEconomy = false;
             }
+            
+            VaultHelper.setupPermissions();
 
             // These items have to be loaded when the server has done 1 tick.
             // Note Worlds are not loaded this early, so any Locations or World reference will be null
@@ -117,6 +126,12 @@ public class BSkyBlock extends JavaPlugin{
                     
                     playersManager.load();
                     islandsManager.load();
+                    
+                    // Load schematics
+                    Settings.chestItems = new ItemStack[] {new ItemStack(Material.LAVA_BUCKET,1)};
+                    schematicsManager = new SchematicsMgr(plugin);
+                    
+                    getCommand("island").setExecutor(new IslandCommand(plugin));
                     /*
                      *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
@@ -260,4 +275,16 @@ public class BSkyBlock extends JavaPlugin{
     public IslandsManager getIslands(){
         return islandsManager;
     }
+
+    public static BSkyBlock getPlugin() {
+        return plugin;
+    }
+
+    /**
+     * @return the schematics
+     */
+    public SchematicsMgr getSchematics() {
+        return schematicsManager;
+    }
+
 }

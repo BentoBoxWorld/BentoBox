@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.config;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.block.Biome;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,36 @@ import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages.HistoryM
 public class Settings {
     /* The settings variables should follow the config order */
     
-    public static final String PERMPREFIX = "bskyblock.";
+
+    // Constants
+    // Game Type BSKYBLOCK or ACIDISLAND
+    public enum GameType {
+        BSKYBLOCK, ACIDISLAND
+    }
+    /*
+    public final static GameType GAMETYPE = GameType.ACIDISLAND;
+    // The spawn command (Essentials spawn for example)
+    public final static String SPAWNCOMMAND = "spawn";
+    // Permission prefix
+    public final static String PERMPREFIX = "acidisland.";
+    // The island command
+    public final static String ISLANDCOMMAND = "ai";
+    // The challenge command
+    public static final String CHALLENGECOMMAND = "aic";
+    // Admin command
+    public static final String ADMINCOMMAND = "acid";
+    */
+    public final static GameType GAMETYPE = GameType.BSKYBLOCK;
+    // Permission prefix
+    public final static String PERMPREFIX = "bskyblock.";
+    // The island command
+    public final static String ISLANDCOMMAND = "island";
+    // The challenge command
+    public static final String CHALLENGECOMMAND = "asc";
+    // The spawn command (Essentials spawn for example)
+    public final static String SPAWNCOMMAND = "spawn";
+    // Admin command
+    public static final String ADMINCOMMAND = "asadmin";
     
     /*      GENERAL     */
     public static boolean metrics;
@@ -149,9 +179,13 @@ public class Settings {
     public static boolean acidFullArmorProtection;
     
     /*      SCHEMATICS      */
-    public static EntityType companionType;
     public static List<String> companionNames;
-    public static List<ItemStack> chestItems;
+    public static ItemStack[] chestItems;
+    public static Biome defaultBiome;
+    public static boolean usePhysics;
+    public static EntityType companionType;
+    public static boolean useSchematicPanel;
+    public static boolean chooseIslandRandomly;
     
     // TODO added this just to avoid compilation errors, but will be changed in the future
     public static List<HistoryMessageType> historyMessagesTypes;
@@ -173,4 +207,11 @@ public class Settings {
     public static boolean createEnd;
 
     public static boolean islandEnd;
+    public static boolean resetMoney;
+    public static double acidDamage;
+    public static int islandXOffset;
+    public static int islandStartX;
+    public static int islandZOffset;
+    public static int islandStartZ;
+
 }

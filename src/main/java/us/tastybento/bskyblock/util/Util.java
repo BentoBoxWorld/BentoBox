@@ -142,4 +142,9 @@ public class Util {
         }
         return result;
     }
+
+    public static boolean isOnePointEight() {
+        // TODO Auto-generated method stub
+        return false;
+    }
 }

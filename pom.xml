@@ -9,6 +9,7 @@
 	<description>The next generation of ASkyBlock</description>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<server.jars>${project.basedir}/lib</server.jars>
 	</properties>
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
@@ -71,6 +72,13 @@
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>VaultAPI</artifactId>
 			<version>LATEST</version>
+		</dependency>
+		<dependency>
+			<groupId>spigotmc.org</groupId>
+			<artifactId>spigot-1.12</artifactId>
+			<scope>system</scope>
+			<systemPath>${server.jars}/spigot-1.12.jar</systemPath>
+			<version>1.12</version>
 		</dependency>
 	</dependencies>
 	<repositories>

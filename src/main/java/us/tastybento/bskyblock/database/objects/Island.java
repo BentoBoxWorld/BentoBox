@@ -349,6 +349,8 @@ public class Island extends DataObject {
     //// Protection ////
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
 
+    private int levelHandicap;
+
     public Island() {};
 
     public Island(Location location, UUID owner, int protectionRange) {
@@ -815,6 +817,20 @@ public class Island extends DataObject {
         if(flags.containsKey(flag)) {
             flags.put(flag, (flags.get(flag)) ? false : true);
         }
+    }
+
+    /**
+     * @return the levelHandicap
+     */
+    public int getLevelHandicap() {
+        return levelHandicap;
+    }
+
+    /**
+     * @param levelHandicap the levelHandicap to set
+     */
+    public void setLevelHandicap(int levelHandicap) {
+        this.levelHandicap = levelHandicap;
     }
 
 }
