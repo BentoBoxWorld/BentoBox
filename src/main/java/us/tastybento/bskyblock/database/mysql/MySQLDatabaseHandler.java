@@ -310,7 +310,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#insertObject(java.lang.Object)
      */
     @Override
-    public void insertObject(T instance) throws SQLException,
+    public void saveObject(T instance) throws SQLException,
     SecurityException, IllegalArgumentException,
     InstantiationException, IllegalAccessException,
     IntrospectionException, InvocationTargetException, NoSuchMethodException {
@@ -484,7 +484,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws ClassNotFoundException 
      */
     @Override
-    public List<T> selectObjects() throws SQLException,
+    public List<T> loadObjects() throws SQLException,
     SecurityException, IllegalArgumentException,
     InstantiationException, IllegalAccessException,
     IntrospectionException, InvocationTargetException, ClassNotFoundException {
@@ -511,7 +511,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#selectObject(java.lang.String)
      */
     @Override
-    protected T selectObject(String uniqueId) throws InstantiationException,
+    protected T loadObject(String uniqueId) throws InstantiationException,
     IllegalAccessException, IllegalArgumentException,
     InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
         Connection connection = null;

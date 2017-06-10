@@ -41,11 +41,11 @@ public class RunTest {
             BSBDatabase database = BSBDatabase.getDatabase();
             AbstractDatabaseHandler<Island> handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
 
-            handler.insertObject(test);
+            handler.saveObject(test);
 
             plugin.getLogger().info("DEBUG: ALL WRITTEN! Now reading...");
 
-            test = handler.selectObject(test.getUniqueId());
+            test = handler.loadObject(test.getUniqueId());
 
             plugin.getLogger().info("DEBUG: name = " + test.getName());
             plugin.getLogger().info("DEBUG: owner = " + test.getOwner());

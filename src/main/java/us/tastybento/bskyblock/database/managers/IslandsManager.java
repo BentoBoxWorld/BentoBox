@@ -56,7 +56,7 @@ public class IslandsManager {
         islandsByUUID.clear();
         spawn = null;
         try {
-            for (Object island : handler.selectObjects()) {
+            for (Object island : handler.loadObjects()) {
                 if (island instanceof Island) {
                     islands.put(((Island)island).getCenter(), (Island)island);
                     islandsByUUID.put(((Island)island).getOwner(), (Island)island);
@@ -76,7 +76,7 @@ public class IslandsManager {
                 public void run() {
                     for(Island island : islands.values()){
                         try {
-                            handler.insertObject(island);
+                            handler.saveObject(island);
                         } catch (Exception e) {
                             // TODO Auto-generated catch block
                             e.printStackTrace();
@@ -87,7 +87,7 @@ public class IslandsManager {
         } else {
             for(Island island : islands.values()){
                 try {
-                    handler.insertObject(island);
+                    handler.saveObject(island);
                 } catch (Exception e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();

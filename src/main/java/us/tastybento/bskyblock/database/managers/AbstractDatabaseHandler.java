@@ -110,7 +110,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws SQLException 
      * @throws ClassNotFoundException 
      */
-    protected abstract List<T> selectObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
+    protected abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Creates a <T> filled with values from the corresponding
@@ -126,10 +126,10 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws ClassNotFoundException 
      * @throws SecurityException 
      */
-    protected abstract T selectObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
+    protected abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
-     * Inserts T into the corresponding database-table
+     * Save T into the corresponding database
      * 
      * @param instance that should be inserted into the database
      * @throws IllegalAccessException
@@ -141,6 +141,6 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws SQLException 
      * @throws NoSuchMethodException 
      */
-    protected abstract void insertObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
+    protected abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
 
 }

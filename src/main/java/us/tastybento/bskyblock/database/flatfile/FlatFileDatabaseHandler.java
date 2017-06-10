@@ -62,7 +62,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws ClassNotFoundException 
      */
     @Override
-    public T selectObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException  {
+    public T loadObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException  {
         YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName(), key);
         return createObject(config);
     }
@@ -78,7 +78,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws ClassNotFoundException 
      */
     @Override
-    public List<T> selectObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException {
+    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException {
         List<T> list = new ArrayList<T>();
         FilenameFilter ymlFilter = new FilenameFilter() {
             @Override
@@ -201,7 +201,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void insertObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
         // The file name of the Yaml file.
