@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages.HistoryM
 public class Settings {
     /* The settings variables should follow the config order */
     
-    public static final String PERMPREFIX = "askyblock.";
+    public static final String PERMPREFIX = "bskyblock.";
     
     /*      GENERAL     */
     public static boolean metrics;
@@ -163,4 +163,14 @@ public class Settings {
     public static String dbName;
     public static String dbUsername;
     public static String dbPassword;
+
+    public static boolean createNether;
+
+    public static boolean useOwnGenerator;
+
+    public static boolean islandNether;
+
+    public static boolean createEnd;
+
+    public static boolean islandEnd;
 }

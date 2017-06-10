@@ -1,12 +1,8 @@
 package us.tastybento.bskyblock;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,8 +14,7 @@ import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
-import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
+import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -80,6 +75,14 @@ public class BSkyBlock extends JavaPlugin{
 
                 @Override
                 public void run() {
+                    // Create the world if it does not exist
+                    // TODO: get world name from config.yml
+                    Settings.worldName = "BSkyBlock_world";
+                    Settings.createNether = true;
+                    Settings.createEnd = true;
+                    Settings.islandNether = false;
+                    Settings.islandEnd = false;
+                    new IslandWorld(plugin);
 
                     // Test: Create a random island and save it
                     // TODO: ideally this should be in a test class!
