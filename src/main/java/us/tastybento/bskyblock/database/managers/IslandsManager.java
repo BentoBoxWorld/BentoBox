@@ -48,7 +48,13 @@ public class IslandsManager {
         spawn = null;
     }
 
+    /**
+     * Clear and reload all islands from database
+     */
     public void load(){
+        islands.clear();
+        islandsByUUID.clear();
+        spawn = null;
         try {
             for (Object island : handler.selectObjects()) {
                 if (island instanceof Island) {

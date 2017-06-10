@@ -47,13 +47,14 @@ public class BSkyBlock extends JavaPlugin{
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
             // TEMP DEBUG DATABASE
+            /*
             Settings.databaseType = DatabaseType.MYSQL;
             Settings.dbHost = "localhost";
             Settings.dbPort = 3306;
             Settings.dbName = "ASkyBlock";
             Settings.dbUsername = "username";
             Settings.dbPassword = "password";
-
+*/
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
@@ -82,10 +83,12 @@ public class BSkyBlock extends JavaPlugin{
 
                     // Test: Create a random island and save it
                     // TODO: ideally this should be in a test class!
-                    /*
-                    Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), UUID.randomUUID());
+                    UUID owner = UUID.fromString("ddf561c5-72b6-4ec6-a7ea-8b50a893beb2");
+                    
+                    Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), owner);
                     // Add members
                     Set<UUID> randomSet = new HashSet<UUID>();
+                    island.addMember(owner);
                     for (int i = 0; i < 10; i++) {
                         randomSet.add(UUID.randomUUID());
                         island.addMember(UUID.randomUUID());
@@ -105,12 +108,17 @@ public class BSkyBlock extends JavaPlugin{
     
                     
                     getLogger().info("DEBUG: ************ Finished saving, now loading *************");
-                    // TODO: Write loading code for MySQL
-                     * 
-                     */
+                    
+                     
+                    
                     playersManager.load();
                     islandsManager.load();
 
+                    Island loadedIsland = islandsManager.getIsland(owner);
+                    getLogger().info("Island name = " + loadedIsland.getName());
+                    getLogger().info("Island locked = " + loadedIsland.getLocked());
+                    //getLogger().info("Random set = " + randomSet);
+                    getLogger().info("Island coops = " + loadedIsland.getCoops());
 
                     // Save islands & players data asynchronously every X minutes
                     Settings.databaseBackupPeriod = 10 * 60 * 20;

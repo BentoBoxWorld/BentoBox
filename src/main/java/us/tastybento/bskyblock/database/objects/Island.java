@@ -694,7 +694,7 @@ public class Island extends DataObject {
      * @param members - the members to set
      */
     public void setMembers(Set<UUID> members){
-        Bukkit.getLogger().info("DEBUG: setting members = " + members);
+        //Bukkit.getLogger().info("DEBUG: setting members = " + members);
         this.members = members;
     }
 
