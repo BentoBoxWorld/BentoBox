@@ -249,29 +249,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return columns;
     }
 
-    /**
-     * Get a list of parameter types for the collection argument in this method
-     * @param writeMethod
-     * @return
-     */
-    private List<Type> getCollectionParameterTypes(Method writeMethod) {
-        List<Type> result = new ArrayList<Type>();
-        // Get the return type
-        // This uses a trick to extract what the arguments are of the writeMethod of the field.
-        // In this way, we can deduce what type needs to be written at runtime.
-        Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
-        // There could be more than one argument, so step through them
-        for (int i = 0; i < genericParameterTypes.length; i++) {
-            // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if( genericParameterTypes[i] instanceof ParameterizedType ) {
-                // Get the actual type arguments of the parameter 
-                Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
-                result.addAll(Arrays.asList(parameters));
-            }
-        }
-        return result;
-    }
-
 
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#createSelectQuery()
@@ -504,12 +481,13 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws InvocationTargetException
+     * @throws ClassNotFoundException 
      */
     @Override
     public List<T> selectObjects() throws SQLException,
     SecurityException, IllegalArgumentException,
     InstantiationException, IllegalAccessException,
-    IntrospectionException, InvocationTargetException {
+    IntrospectionException, InvocationTargetException, ClassNotFoundException {
 
         Connection connection = null;
         Statement statement = null;
@@ -535,7 +513,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     protected T selectObject(String uniqueId) throws InstantiationException,
     IllegalAccessException, IllegalArgumentException,
-    InvocationTargetException, IntrospectionException, SQLException {
+    InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -578,13 +556,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws InvocationTargetException
+     * @throws ClassNotFoundException 
      */
     @SuppressWarnings("unchecked")
     private List<T> createObjects(ResultSet resultSet)
             throws SecurityException, IllegalArgumentException,
             SQLException, InstantiationException,
             IllegalAccessException, IntrospectionException,
-            InvocationTargetException {
+            InvocationTargetException, ClassNotFoundException {
 
         List<T> list = new ArrayList<T>();
         // The database can return multiple results in one go, e.g., all the islands in the database
@@ -633,7 +612,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         //plugin.getLogger().info("DEBUG: adding a set");
                         // Loop through the collection resultset 
                         // Note that we have no idea what type this is
-                        List<Type> collectionTypes = getCollectionParameterTypes(method);
+                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
                         // collectionTypes should be only 1 long
                         Type setType = collectionTypes.get(0);
                         value = new HashSet<Object>();
@@ -641,13 +620,13 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         //plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
                         while (collectionResultSet.next()) {
                             //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                            ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),setType.getClass()));
+                            ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
                         }
                     } else if (propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                         //plugin.getLogger().info("DEBUG: Adding a list ");
                         // Loop through the collection resultset 
                         // Note that we have no idea what type this is
-                        List<Type> collectionTypes = getCollectionParameterTypes(method);
+                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
                         // collectionTypes should be only 1 long
                         Type setType = collectionTypes.get(0);
                         value = new ArrayList<Object>();
@@ -655,14 +634,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         while (collectionResultSet.next()) {
                             //plugin.getLogger().info("DEBUG: adding to the list");
                             //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                            ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),setType.getClass()));
+                            ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
                         }
                     } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
                             propertyDescriptor.getPropertyType().equals(HashMap.class)) {
                         //plugin.getLogger().info("DEBUG: Adding a map ");
                         // Loop through the collection resultset 
                         // Note that we have no idea what type this is
-                        List<Type> collectionTypes = getCollectionParameterTypes(method);
+                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
                         // collectionTypes should be 2 long
                         Type keyType = collectionTypes.get(0);
                         Type valueType = collectionTypes.get(1);
@@ -673,9 +652,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
                             // Work through the columns
                             // Key
-                            Object key = (deserialize(collectionResultSet.getObject(1),keyType.getClass()));
+                            Object key = deserialize(collectionResultSet.getObject(1),Class.forName(keyType.getTypeName()));
                             //plugin.getLogger().info("DEBUG: key = " + key);
-                            Object mapValue = (deserialize(collectionResultSet.getObject(2),valueType.getClass()));
+                            Object mapValue = deserialize(collectionResultSet.getObject(2),Class.forName(valueType.getTypeName()));
                             //plugin.getLogger().info("DEBUG: value = " + mapValue);
                             ((Map<Object,Object>) value).put(key,mapValue);
                         }

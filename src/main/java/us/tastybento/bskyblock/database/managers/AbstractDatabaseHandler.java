@@ -108,8 +108,9 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws IntrospectionException
      * @throws SecurityException 
      * @throws SQLException 
+     * @throws ClassNotFoundException 
      */
-    protected abstract List<T> selectObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException;
+    protected abstract List<T> selectObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Creates a <T> filled with values from the corresponding
@@ -122,8 +123,10 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException 
      * @throws InstantiationException 
      * @throws SQLException 
+     * @throws ClassNotFoundException 
+     * @throws SecurityException 
      */
-    protected abstract T selectObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException;
+    protected abstract T selectObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Inserts T into the corresponding database-table

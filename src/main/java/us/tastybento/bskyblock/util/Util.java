@@ -1,6 +1,12 @@
 package us.tastybento.bskyblock.util;
 
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -112,5 +118,28 @@ public class Util {
             return "";
         }
         return location.getWorld().getName() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ() + ":" + Float.floatToIntBits(location.getYaw()) + ":" + Float.floatToIntBits(location.getPitch());
+    }
+    
+    /**
+     * Get a list of parameter types for the collection argument in this method
+     * @param writeMethod
+     * @return
+     */
+    public static List<Type> getCollectionParameterTypes(Method writeMethod) {
+        List<Type> result = new ArrayList<Type>();
+        // Get the return type
+        // This uses a trick to extract what the arguments are of the writeMethod of the field.
+        // In this way, we can deduce what type needs to be written at runtime.
+        Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
+        // There could be more than one argument, so step through them
+        for (int i = 0; i < genericParameterTypes.length; i++) {
+            // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
+            if( genericParameterTypes[i] instanceof ParameterizedType ) {
+                // Get the actual type arguments of the parameter 
+                Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
+                result.addAll(Arrays.asList(parameters));
+            }
+        }
+        return result;
     }
 }

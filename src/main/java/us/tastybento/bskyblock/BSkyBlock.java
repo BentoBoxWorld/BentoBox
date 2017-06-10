@@ -2,6 +2,7 @@ package us.tastybento.bskyblock;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,7 +15,6 @@ import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
@@ -83,6 +83,7 @@ public class BSkyBlock extends JavaPlugin{
 
                     // Test: Create a random island and save it
                     // TODO: ideally this should be in a test class!
+                    /*
                     UUID owner = UUID.fromString("ddf561c5-72b6-4ec6-a7ea-8b50a893beb2");
                     
                     Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), owner);
@@ -109,17 +110,21 @@ public class BSkyBlock extends JavaPlugin{
                     
                     getLogger().info("DEBUG: ************ Finished saving, now loading *************");
                     
-                     
+                     */
                     
                     playersManager.load();
                     islandsManager.load();
-
+                    /*
+                     *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
                     getLogger().info("Island name = " + loadedIsland.getName());
                     getLogger().info("Island locked = " + loadedIsland.getLocked());
                     //getLogger().info("Random set = " + randomSet);
                     getLogger().info("Island coops = " + loadedIsland.getCoops());
-
+                    for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
+                        getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
+                    }
+                    */
                     // Save islands & players data asynchronously every X minutes
                     Settings.databaseBackupPeriod = 10 * 60 * 20;
                     plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
