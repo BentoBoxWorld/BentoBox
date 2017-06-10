@@ -96,13 +96,17 @@ public class IslandCommand extends BSBCommand{
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 // TODO Auto-generated method stub
-                return false;
+                return true;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
-
+                if (sender instanceof Player) {
+                    Player player = (Player)sender;
+                    if (plugin.getIslands().hasIsland(player.getUniqueId())) {
+                        plugin.getIslands().homeTeleport(player);
+                    }
+                }
             }
 
             @Override
@@ -158,8 +162,12 @@ public class IslandCommand extends BSBCommand{
             public void onExecute(CommandSender sender, String label, String[] args) {
                 if (sender instanceof Player) {
                     Player player = (Player)sender;
-                    Schematic schematic = plugin.getSchematics().getSchematic("default");
-                    plugin.getIslands().newIsland(player, schematic);
+                    if (!plugin.getIslands().hasIsland(player.getUniqueId())) {
+                        Schematic schematic = plugin.getSchematics().getSchematic("default");
+                        plugin.getIslands().newIsland(player, schematic);
+                    } else {
+                        player.sendMessage(ChatColor.RED + "You already have an island!");
+                    }
                 }
             }
 

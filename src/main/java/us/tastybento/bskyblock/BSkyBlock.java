@@ -128,7 +128,15 @@ public class BSkyBlock extends JavaPlugin{
                     islandsManager.load();
                     
                     // Load schematics
-                    Settings.chestItems = new ItemStack[] {new ItemStack(Material.LAVA_BUCKET,1)};
+                    // TODO: load these from config.yml
+                    Settings.chestItems = new ItemStack[] {
+                            new ItemStack(Material.LAVA_BUCKET,1),
+                            new ItemStack(Material.ICE,2),
+                            new ItemStack(Material.MELON_SEEDS,1),
+                            new ItemStack(Material.BONE,2),
+                            new ItemStack(Material.COBBLESTONE,5),
+                            new ItemStack(Material.SAPLING,2)
+                            };
                     schematicsManager = new SchematicsMgr(plugin);
                     
                     getCommand("island").setExecutor(new IslandCommand(plugin));
