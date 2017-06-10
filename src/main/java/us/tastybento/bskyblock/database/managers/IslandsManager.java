@@ -6,6 +6,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
+import java.util.WeakHashMap;
 
 import org.bukkit.Location;
 
@@ -16,6 +17,8 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * The job of this class is manage all island related data.
+ * It also handles island ownership, including team, trustees, coops, etc.
+ * The data object that it uses is Island
  * @author tastybento
  *
  */
@@ -24,8 +27,8 @@ public class IslandsManager {
     private BSkyBlock plugin;
     private BSBDatabase database;
 
-    private HashMap<Location, Island> islands;
-    private HashMap<UUID, Island> islandsByUUID;
+    private WeakHashMap<Location, Island> islandsByLocation;
+    private WeakHashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
 
@@ -42,9 +45,10 @@ public class IslandsManager {
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
+        // Set up the database handler to store and retrieve Island classes
         handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
-        islands = new HashMap<Location, Island>();
-        islandsByUUID = new HashMap<UUID, Island>();
+        islandsByLocation = new WeakHashMap<Location, Island>();
+        islandsByUUID = new WeakHashMap<UUID, Island>();
         spawn = null;
     }
 
@@ -52,15 +56,13 @@ public class IslandsManager {
      * Clear and reload all islands from database
      */
     public void load(){
-        islands.clear();
+        islandsByLocation.clear();
         islandsByUUID.clear();
         spawn = null;
         try {
-            for (Object island : handler.loadObjects()) {
-                if (island instanceof Island) {
-                    islands.put(((Island)island).getCenter(), (Island)island);
-                    islandsByUUID.put(((Island)island).getOwner(), (Island)island);
-                }
+            for (Island island : handler.loadObjects()) {
+                islandsByLocation.put(island.getCenter(), island);
+                islandsByUUID.put(island.getOwner(), island);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -74,7 +76,7 @@ public class IslandsManager {
 
                 @Override
                 public void run() {
-                    for(Island island : islands.values()){
+                    for(Island island : islandsByLocation.values()){
                         try {
                             handler.saveObject(island);
                         } catch (Exception e) {
@@ -85,7 +87,7 @@ public class IslandsManager {
                 }
             });
         } else {
-            for(Island island : islands.values()){
+            for(Island island : islandsByLocation.values()){
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {
@@ -98,19 +100,20 @@ public class IslandsManager {
 
     public void shutdown(){
         save(false);
-        islands.clear();
+        islandsByLocation.clear();
+        islandsByUUID.clear();
     }
 
     public int getCount(){
-        return islands.size();
+        return islandsByLocation.size();
     }
 
     public boolean isIsland(Location location){
-        return islands.get(location) != null;
+        return islandsByLocation.get(location) != null;
     }
 
     public Island getIsland(Location location){
-        return islands.get(location);
+        return islandsByLocation.get(location);
     }
 
     /**
@@ -131,20 +134,26 @@ public class IslandsManager {
     }
 
     /**
-     * Create an island with owner
+     * Create an island with owner. Note this does not create the schematic. It just reates the island data object.
      * @param location
      * @param owner UUID
      */
     public Island createIsland(Location location, UUID owner){
         Island island = new Island(location, owner, Settings.islandProtectionRange);
-        islands.put(location, island);
+        islandsByLocation.put(location, island);
         if (owner != null)
             islandsByUUID.put(owner, island);
         return island;
     }
 
     public void deleteIsland(Location location){
-        //TODO
+        if (islandsByLocation.containsKey(location)) {
+            Island island = islandsByLocation.get(location);
+            if (island.getOwner() != null) {
+                islandsByUUID.remove(island.getOwner());
+            }
+            islandsByLocation.remove(location);
+        }
     }
 
     public Island getSpawn(){

@@ -546,6 +546,12 @@ public class Island extends DataObject {
         return center.getBlockZ();
     }
 
+    /**
+     * Checks if coords are in the island space
+     * @param x
+     * @param z
+     * @return true if in the island space
+     */
     public boolean inIslandSpace(int x, int z) {
         if (x >= center.getBlockX() - Settings.islandDistance / 2 && x < center.getBlockX() + Settings.islandDistance / 2 && z >= center.getBlockZ() - Settings.islandDistance / 2
                 && z < center.getBlockZ() + Settings.islandDistance / 2) {
