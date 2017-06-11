@@ -47,6 +47,9 @@ public class Island extends DataObject {
      * @author Tastybento
      */
     public enum SettingsFlag{
+        
+        ACID_DAMAGE,
+        
         // Can use Anvil
         ANVIL,
 

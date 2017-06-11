@@ -1,41 +1,65 @@
 package us.tastybento.bskyblock.config;
 
 import java.io.File;
-import java.util.HashMap;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLClassLoader;
 import java.util.Locale;
+import java.util.ResourceBundle;
 
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.ChatColor;
 
 import us.tastybento.bskyblock.BSkyBlock;
 
-/**
- * Contains all the texts sent to players.
- * The locale object is instantiated at server launch, but the texts are only loaded when needed.
- * 
- * @author Tastybento
- * @author Poslovitch
- */
 public class BSBLocale {
-    
+
+    final static String LOCALE_FOLDER = "locales";
     private BSkyBlock plugin;
-    
-    private String localeID;
-    private FileConfiguration locale = null;
-    private File localeFile = null;
-    private Locale localeObject;
-    
+    private String localeId;
+    private ResourceBundle rb;
+    Locale localeObject;
+
     /**
-     * Creates a locale object full of localized string for a language
+     * Provides localization
+     * Locale files are .yml and have the filename "bsb_[country and language tag].yml", e.g. bsb_en_GB.yml
      * @param plugin
-     * @param localeName - name of the yaml file that will be used
+     * @throws MalformedURLException
      */
-    public BSBLocale(BSkyBlock plugin, String localeID){
+    public BSBLocale(BSkyBlock plugin, String localeId) throws MalformedURLException {
         this.plugin = plugin;
-        this.localeID = localeID;
-        getLocale(localeID);
-        
-        localeObject = new Locale(localeID.substring(0, 2), localeID.substring(3, 5));
+        this.localeId = localeId;
+        // Check if the folder exists
+        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);
+        if (!localeDir.exists()) {
+            localeDir.mkdirs();
+        }
+        // Check if this file does not exist
+        File localeFile = new File(localeDir, localeId);
+        if (!localeFile.exists()) {
+            // Does not exist - look in JAR and save if possible
+            plugin.saveResource(LOCALE_FOLDER + localeId, false);
+        }
+        String languageTag = localeId.substring(4, localeId.length() - 4).replace('_', '-');
+        URL[] urls = {localeDir.toURI().toURL()};
+        ClassLoader loader = new URLClassLoader(urls);
+        localeObject = Locale.forLanguageTag(languageTag);
+        rb = ResourceBundle.getBundle("bsb", localeObject, loader, YamlResourceBundle.Control.INSTANCE);
+    }
+
+    /**
+     * Get text from the yml file for this locale
+     * @param reference - the YAML node where the text is
+     * @return Text for this locale reference or "" if the locale or the reference do not exist
+     */
+    public String get(String reference) {
+        // TODO: add placeholder conversion?
+        if (rb.containsKey(reference)) {
+            return ChatColor.translateAlternateColorCodes('&', rb.getString(reference));
+        } else if (!Settings.defaultLanguage.equals(localeId)){
+            // Try default lang
+            return plugin.getLocale().get(reference);
+        }
+        return "";
     }
     
     /**
@@ -62,57 +86,8 @@ public class BSBLocale {
      * Returns the locale identifier (e.g: en-GB)
      * @return the locale ID
      */
-    public String getLocaleID(){
-        return this.localeID;
+    public String getLocaleId(){
+        return this.localeObject.toLanguageTag();       
     }
-    
-    /**
-     * Returns the locale FileConfiguration
-     * @param localeID - name of the yaml file to get
-     * @return the FileConfiguration locale object
-     */
-    private FileConfiguration getLocale(String localeID){
-        if(locale == null){
-            reloadLocale(localeID);
-        }
-        return locale;
-    }
-    
-    /**
-     * Reloads the locale file
-     * @param localeID - name of the yaml file to reload
-     */
-    private void reloadLocale(String localeID){
-        // Make directory if it doesn't exist
-        File directory = new File(plugin.getDataFolder() + File.separator + "locales");
-        if(!directory.exists()) directory.mkdirs();
-        
-        if(localeFile == null) localeFile = new File(directory.getPath(), localeID + ".yml");
-        
-        if(localeFile.exists()){
-            locale = YamlConfiguration.loadConfiguration(localeFile);
-        } else {
-            // Look for defaults in the jars
-            if(plugin.getResource("locales/" + localeID + ".yml") != null){
-                plugin.saveResource("locales/" + localeID + ".yml", true);
-                localeFile = new File(directory.getPath(), localeID + ".yml");
-                locale = YamlConfiguration.loadConfiguration(localeFile);
-            } else {
-                plugin.getLogger().severe("Could not find locale file '" + localeID + "' !");
-            }
-        }
-    }
-    
-    /*      Localization        */
-    private HashMap<String, String> localization = new HashMap<String, String>();
-    
-    public String get(String id){
-        // If the text isn't loaded, load it.
-        if(!localization.containsKey(id)){
-            // Save the text to the HashMap.
-            // If the text doesn't exist in the locale file, save it as its id, to help debug.
-            localization.put(id, locale.getString(id, id));
-        }
-        return localization.get(id);
-    }
+
 }

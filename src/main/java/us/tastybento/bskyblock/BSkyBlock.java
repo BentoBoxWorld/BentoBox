@@ -1,6 +1,10 @@
 package us.tastybento.bskyblock;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.UUID;
 
 import org.bukkit.Material;
@@ -19,6 +23,7 @@ import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
+import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -27,6 +32,9 @@ import us.tastybento.bskyblock.util.VaultHelper;
  * @author Poslovitch
  */
 public class BSkyBlock extends JavaPlugin{
+
+    final static String LOCALE_FOLDER = "locales";
+
     private static BSkyBlock plugin;
 
     private HashMap<String, BSBLocale> locales = new HashMap<String, BSBLocale>();
@@ -35,10 +43,10 @@ public class BSkyBlock extends JavaPlugin{
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
     private OfflineHistoryMessages offlineHistoryMessages;
-    
+
     // Schematics
     private SchematicsMgr schematicsManager;
-    
+
     // Metrics
     private Metrics metrics;
 
@@ -56,7 +64,7 @@ public class BSkyBlock extends JavaPlugin{
             Settings.dbName = "ASkyBlock";
             Settings.dbUsername = "username";
             Settings.dbPassword = "password";
-*/
+             */
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
@@ -74,7 +82,7 @@ public class BSkyBlock extends JavaPlugin{
                 getLogger().warning("Could not set up economy! - Running without an economy.");
                 Settings.useEconomy = false;
             }
-            
+
             VaultHelper.setupPermissions();
 
             // These items have to be loaded when the server has done 1 tick.
@@ -97,7 +105,7 @@ public class BSkyBlock extends JavaPlugin{
                     // TODO: ideally this should be in a test class!
                     /*
                     UUID owner = UUID.fromString("ddf561c5-72b6-4ec6-a7ea-8b50a893beb2");
-                    
+
                     Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), owner);
                     // Add members
                     Set<UUID> randomSet = new HashSet<UUID>();
@@ -118,15 +126,15 @@ public class BSkyBlock extends JavaPlugin{
                     island.setName("new name");
                     island.setPurgeProtected(true);
                     islandsManager.save(false);
-    
-                    
+
+
                     getLogger().info("DEBUG: ************ Finished saving, now loading *************");
-                    
+
                      */
-                    
+
                     playersManager.load();
                     islandsManager.load();
-                    
+
                     // Load schematics
                     // TODO: load these from config.yml
                     Settings.chestItems = new ItemStack[] {
@@ -136,10 +144,14 @@ public class BSkyBlock extends JavaPlugin{
                             new ItemStack(Material.BONE,2),
                             new ItemStack(Material.COBBLESTONE,5),
                             new ItemStack(Material.SAPLING,2)
-                            };
+                    };
                     schematicsManager = new SchematicsMgr(plugin);
-                    
+
                     getCommand("island").setExecutor(new IslandCommand(plugin));
+
+                    Settings.defaultLanguage = "en-US";
+                    loadLocales();
+
                     /*
                      *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
@@ -150,7 +162,7 @@ public class BSkyBlock extends JavaPlugin{
                     for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
                         getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
                     }
-                    */
+                     */
                     // Save islands & players data asynchronously every X minutes
                     Settings.databaseBackupPeriod = 10 * 60 * 20;
                     plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
@@ -266,6 +278,59 @@ public class BSkyBlock extends JavaPlugin{
         if(locale.isEmpty() || !locales.containsKey(locale)) return locales.get(Settings.defaultLanguage);
 
         return locales.get(locale);
+    }
+
+    /**
+     * Loads all the locales available. If the locale folder does not exist, one will be created and
+     * filled with locale files from the jar.
+     */
+    public void loadLocales() {
+        // Describe the filter - we only want files that are correctly named
+        FilenameFilter ymlFilter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                //plugin.getLogger().info("DEBUG: filename = " + name);
+                if (name.toLowerCase().startsWith("bsb_") && name.toLowerCase().endsWith(".yml")) {
+                    // See if this is a valid locale
+                    //Locale localeObject = new Locale(name.substring(0, 2), name.substring(3, 5));
+                    Locale localeObject = Locale.forLanguageTag(name.substring(4, name.length() - 4));
+                    if (localeObject == null) {
+                        plugin.getLogger().severe("Filename '" + name + "' is an unknown locale, skipping...");
+                        return false;
+                    }
+                    return true;
+                } else {
+                    if (name.toLowerCase().endsWith(".yml")) {
+                        plugin.getLogger().severe("Filename '" + name + "' is not in the correct format for a locale file - skipping...");
+                    }
+                    return false;
+                }
+            }
+        };
+        // Run through the files and store the locales
+        File localeDir = new File(this.getDataFolder(), LOCALE_FOLDER);
+        // If the folder does not exist, then make it and fill with the locale files from the jar
+        if (!localeDir.exists()) {
+            localeDir.mkdir();
+            FileLister lister = new FileLister(this);
+            try {
+                for (String name : lister.listJar(LOCALE_FOLDER)) {
+                    this.saveResource(name,true);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        // Store all the locales available
+        for (String language : localeDir.list(ymlFilter)) {  
+            try {
+                BSBLocale locale = new BSBLocale(this, language);
+                locales.put(locale.getLocaleId(), locale);
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
+
+        }
     }
 
     /**

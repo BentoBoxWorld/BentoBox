@@ -416,7 +416,7 @@ public class IslandsManager {
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
         if (number ==1 ) {
-            Util.sendMessage(player, ChatColor.GREEN + "Teleported");
+            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player.getUniqueId()).get("island.teleport").replace("[label]", Settings.ISLANDCOMMAND));
         } else {
             Util.sendMessage(player, ChatColor.GREEN + "teleported to #" + number);
         }
