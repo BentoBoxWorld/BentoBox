@@ -38,7 +38,7 @@ public class BSkyBlock extends JavaPlugin{
     
     // Schematics
     private SchematicsMgr schematicsManager;
-
+    
     // Metrics
     private Metrics metrics;
 

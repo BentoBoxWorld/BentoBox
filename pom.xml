@@ -75,9 +75,9 @@
 		</dependency>
 		<dependency>
 			<groupId>spigotmc.org</groupId>
-			<artifactId>spigot-1.12</artifactId>
+			<artifactId>library-1.12</artifactId>
 			<scope>system</scope>
-			<systemPath>${server.jars}/spigot-1.12.jar</systemPath>
+			<systemPath>${server.jars}/library-1.12.jar</systemPath>
 			<version>1.12</version>
 		</dependency>
 	</dependencies>
