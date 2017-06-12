@@ -15,7 +15,8 @@ public class BSBLocale {
 
     final static String LOCALE_FOLDER = "locales";
     private BSkyBlock plugin;
-    private String localeId;
+    //private String localeId;
+    private String languageTag;
     private ResourceBundle rb;
     Locale localeObject;
 
@@ -27,7 +28,7 @@ public class BSBLocale {
      */
     public BSBLocale(BSkyBlock plugin, String localeId) throws MalformedURLException {
         this.plugin = plugin;
-        this.localeId = localeId;
+        //this.localeId = localeId;
         // Check if the folder exists
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);
         if (!localeDir.exists()) {
@@ -39,7 +40,7 @@ public class BSBLocale {
             // Does not exist - look in JAR and save if possible
             plugin.saveResource(LOCALE_FOLDER + localeId, false);
         }
-        String languageTag = localeId.substring(4, localeId.length() - 4).replace('_', '-');
+        languageTag = localeId.substring(4, localeId.length() - 4).replace('_', '-');
         URL[] urls = {localeDir.toURI().toURL()};
         ClassLoader loader = new URLClassLoader(urls);
         localeObject = Locale.forLanguageTag(languageTag);
@@ -53,9 +54,12 @@ public class BSBLocale {
      */
     public String get(String reference) {
         // TODO: add placeholder conversion?
+        plugin.getLogger().info("DEBUG: default lang = " + Settings.defaultLanguage);
+        plugin.getLogger().info("DEBUG: this locale = " + languageTag);
+        plugin.getLogger().info("DEBUG: reference = " + reference);
         if (rb.containsKey(reference)) {
             return ChatColor.translateAlternateColorCodes('&', rb.getString(reference));
-        } else if (!Settings.defaultLanguage.equals(localeId)){
+        } else if (!Settings.defaultLanguage.equals(languageTag)){
             // Try default lang
             return plugin.getLocale().get(reference);
         }

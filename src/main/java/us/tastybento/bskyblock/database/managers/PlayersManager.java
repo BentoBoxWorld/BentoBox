@@ -19,6 +19,7 @@ public class PlayersManager{
 
     private BSkyBlock plugin;
     private BSBDatabase database;
+    private AbstractDatabaseHandler<Players> handler;
 
     private HashMap<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
@@ -30,19 +31,62 @@ public class PlayersManager{
      *  
      * @param plugin
      */
+    @SuppressWarnings("unchecked")
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
+        // Set up the database handler to store and retrieve Players classes
+        handler = (AbstractDatabaseHandler<Players>) database.getHandler(plugin, Players.class);
         playerCache = new HashMap<UUID, Players>();
         inTeleport = new HashSet<UUID>();
     }
 
+    /**
+     * Load all players
+     */
     public void load(){
-        //TODO
+        playerCache.clear();
+        inTeleport.clear();
+        try {
+            for (Players player : handler.loadObjects()) {
+                playerCache.put(player.getPlayerUUID(), player);
+            }
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
     }
 
+    /**
+     * Save all players
+     * @param async - if true, save async
+     */
     public void save(boolean async){
-        // TODO
+        if(async){
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
+
+                @Override
+                public void run() {
+                    for(Players player : playerCache.values()){
+                        try {
+                            handler.saveObject(player);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
+                        } 
+                    }
+                }
+            });
+        } else {
+            for(Players player : playerCache.values()){
+                try {
+                    handler.saveObject(player);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                } 
+            }
+        }
     }
 
     public void shutdown(){
@@ -51,6 +95,9 @@ public class PlayersManager{
     }
 
     public Players getPlayer(UUID uuid){
+        if (!playerCache.containsKey(uuid)) {
+            addPlayer(uuid);
+        }
         return playerCache.get(uuid);
     }
 
@@ -61,12 +108,14 @@ public class PlayersManager{
     public Players addPlayer(final UUID playerUUID) {
         if (playerUUID == null)
             return null;
-        //plugin.getLogger().info("DEBUG: added player " + playerUUID);
+        plugin.getLogger().info("DEBUG: added player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
+            plugin.getLogger().info("DEBUG: new player");
             final Players player = new Players(playerUUID);
             playerCache.put(playerUUID, player);
             return player;
         } else {
+            plugin.getLogger().info("DEBUG: returning cache");
             return playerCache.get(playerUUID);
         }
     }

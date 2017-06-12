@@ -274,6 +274,10 @@ public class BSkyBlock extends JavaPlugin{
      * @return the locale for this player
      */
     public BSBLocale getLocale(UUID player){
+        getLogger().info("DEBUG: " + player);
+        getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
+        getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
+        getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
         String locale = getPlayers().getPlayer(player).getLocale();
         if(locale.isEmpty() || !locales.containsKey(locale)) return locales.get(Settings.defaultLanguage);
 

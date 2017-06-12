@@ -10,6 +10,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
+import us.tastybento.bskyblock.util.DeleteIslandBlocks;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 
@@ -243,13 +244,25 @@ public class IslandCommand extends BSBCommand{
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
                 // TODO Auto-generated method stub
-                return false;
+                return true;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
                 // TODO Auto-generated method stub
-
+                if (!(sender instanceof Player)) {
+                    Util.sendMessage(sender, plugin.getLocale().get("error.useInGame"));
+                }
+                Player player = (Player)sender;
+                if (plugin.getIslands().hasIsland(player.getUniqueId())) {
+                    // Delete island
+                    new DeleteIslandBlocks(plugin, plugin.getIslands().getIsland(player.getUniqueId()));
+                    // Create new island
+                    Schematic schematic = plugin.getSchematics().getSchematic("default");
+                    plugin.getIslands().newIsland(player, schematic);     
+                } else {
+                    Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("error.noIsland")); 
+                }
             }
 
             @Override

@@ -18,27 +18,32 @@ import us.tastybento.bskyblock.config.Settings;
  */
 public class Players extends DataObject {
     private HashMap<Integer, Location> homeLocations;
-    private UUID uuid;
+    private UUID uniqueId;
     private String playerName;
     private int resetsLeft;
-    private String locale;
+    private String locale = "";
     private boolean useControlPanel;
     private int deaths;
-    private HashMap<Location, Date> kickedList;
+    private HashMap<Location, Long> kickedList;
 
     /**
-     * @param uuid
+     * This is required for database storage
+     */
+    public Players() {}
+    
+    /**
+     * @param uniqueId
      *            Constructor - initializes the state variables
      * 
      */
-    public Players(final UUID uuid) {
-        this.uuid = uuid;
+    public Players(final UUID uniqueId) {
+        this.uniqueId = uniqueId;
         this.homeLocations = new HashMap<Integer,Location>();
         this.playerName = "";
         this.resetsLeft = Settings.resetLimit;
         this.locale = "";
         this.useControlPanel = Settings.useControlPanel;
-        this.kickedList = new HashMap<Location, Date>();
+        this.kickedList = new HashMap<Location, Long>();
     }
 
     /**
@@ -63,23 +68,60 @@ public class Players extends DataObject {
     }
 
     /**
-     * Provides a list of all home locations - used when searching for a safe spot to place someone
      * @return List of home locations
      */
     public HashMap<Integer,Location> getHomeLocations() {
-        HashMap<Integer,Location> result = new HashMap<Integer,Location>();
-        for (int number : homeLocations.keySet()) {
-            result.put(number, homeLocations.get(number));
-        }
-        return result;
+        return homeLocations;
+    }
+
+    /**
+     * @return the useControlPanel
+     */
+    public boolean isUseControlPanel() {
+        return useControlPanel;
+    }
+
+    /**
+     * @param useControlPanel the useControlPanel to set
+     */
+    public void setUseControlPanel(boolean useControlPanel) {
+        this.useControlPanel = useControlPanel;
+    }
+
+    /**
+     * @return the kickedList
+     */
+    public HashMap<Location, Long> getKickedList() {
+        return kickedList;
+    }
+
+    /**
+     * @param kickedList the kickedList to set
+     */
+    public void setKickedList(HashMap<Location, Long> kickedList) {
+        this.kickedList = kickedList;
+    }
+
+    /**
+     * @param homeLocations the homeLocations to set
+     */
+    public void setHomeLocations(HashMap<Integer, Location> homeLocations) {
+        this.homeLocations = homeLocations;
+    }
+
+    /**
+     * @param playerName the playerName to set
+     */
+    public void setPlayerName(String playerName) {
+        this.playerName = playerName;
     }
 
     public Player getPlayer() {
-        return Bukkit.getPlayer(uuid);
+        return Bukkit.getPlayer(uniqueId);
     }
 
     public UUID getPlayerUUID() {
-        return uuid;
+        return uniqueId;
     }
 
     public String getPlayerName() {
@@ -134,7 +176,7 @@ public class Players extends DataObject {
      * @param uuid
      */
     public void setPlayerUUID(final UUID uuid) {
-        this.uuid = uuid;
+        this.uniqueId = uuid;
     }
 
     /**
@@ -213,7 +255,7 @@ public class Players extends DataObject {
             // plugin.getLogger().info("DEBUG: Location is known");
             // The location is in the list
             // Check the date/time
-            Date kickedDate = kickedList.get(location);
+            Date kickedDate = new Date(kickedList.get(location));
             // plugin.getLogger().info("DEBUG: kicked date = " + kickedDate);
             Calendar coolDownTime = Calendar.getInstance();
             coolDownTime.setTime(kickedDate);
@@ -244,20 +286,18 @@ public class Players extends DataObject {
      */
     public void startInviteCoolDownTimer(Location location) {
         if (location != null) {
-            kickedList.put(location, new Date());
+            kickedList.put(location, System.currentTimeMillis());
         }
     }
 
     @Override
     public String getUniqueId() {
-        // TODO Auto-generated method stub
-        return null;
+        return uniqueId.toString();
     }
 
     @Override
     public void setUniqueId(String uniqueId) {
-        // TODO Auto-generated method stub
-
+        this.uniqueId = UUID.fromString(uniqueId);
     }
 
 }
