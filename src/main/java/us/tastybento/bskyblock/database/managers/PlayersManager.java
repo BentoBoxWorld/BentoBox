@@ -108,14 +108,14 @@ public class PlayersManager{
     public Players addPlayer(final UUID playerUUID) {
         if (playerUUID == null)
             return null;
-        plugin.getLogger().info("DEBUG: added player " + playerUUID);
+        //plugin.getLogger().info("DEBUG: added player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
             plugin.getLogger().info("DEBUG: new player");
             final Players player = new Players(playerUUID);
             playerCache.put(playerUUID, player);
             return player;
         } else {
-            plugin.getLogger().info("DEBUG: returning cache");
+            //plugin.getLogger().info("DEBUG: known player");
             return playerCache.get(playerUUID);
         }
     }

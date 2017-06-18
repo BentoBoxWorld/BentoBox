@@ -8,6 +8,7 @@ import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
+import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -36,6 +37,7 @@ public abstract class AbstractDatabaseHandler<T> {
     /** The SQL-select- and insert query */
     protected final String     selectQuery;
     protected final String     insertQuery;
+    protected final String     deleteQuery;
 
 
     protected BSkyBlock plugin;
@@ -57,15 +59,17 @@ public abstract class AbstractDatabaseHandler<T> {
         this.type = type;
         this.selectQuery = createSelectQuery();
         this.insertQuery = createInsertQuery();
+        this.deleteQuery = createDeleteQuery();
     }
 
     /**
-     * Create the SQL-String to insert into / select from the database
+     * Create the SQL-String to insert into / select / delete from the database
      * Not used in the flat file database
      * @return the SQL-String
      */
     protected abstract String createSelectQuery();
     protected abstract String createInsertQuery();
+    protected abstract String createDeleteQuery();
 
     /**
      * 
@@ -141,5 +145,18 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws NoSuchMethodException 
      */
     protected abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
+
+    /**
+     * Deletes the object with the unique id from the database
+     * @param instance
+     * @throws InvocationTargetException 
+     * @throws IllegalArgumentException 
+     * @throws IllegalAccessException 
+     * @throws IntrospectionException 
+     * @throws SQLException 
+     * @throws SecurityException 
+     * @throws NoSuchMethodException 
+     */
+    protected abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
 
 }

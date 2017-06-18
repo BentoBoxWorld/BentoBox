@@ -49,6 +49,11 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     protected String createInsertQuery() {
         return ""; // not used
     }
+    @Override
+    protected String createDeleteQuery() {
+        // TODO Auto-generated method stub
+        return null;
+    }
     /**
      * Creates a <T> filled with values from the corresponding
      * database file
@@ -220,7 +225,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
             if (method.getName().equals("getUniqueId")) {
                 // If the object does not have a unique name assigned to it already, one is created at random
-                plugin.getLogger().info("DEBUG: uniqueId = " + value);
+                //plugin.getLogger().info("DEBUG: uniqueId = " + value);
                 String id = (String)value;
                 if (id.isEmpty()) {
                     id = databaseConnecter.getUniqueId(type.getSimpleName());
@@ -230,7 +235,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Save the name for when the file is saved
                 filename = id;
             }
-            // UUID's need special serialization
+            // Collections need special serialization
             if (propertyDescriptor.getPropertyType().equals(HashMap.class) || propertyDescriptor.getPropertyType().equals(Map.class)) {
                 // Maps need to have keys serialized
                 //plugin.getLogger().info("DEBUG: Map for " + field.getName());
@@ -296,6 +301,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // If the value is null as a string, return null 
             return null;
         }
+        // Bukkit may have deserialized the object already
+        if (clazz.equals(value.getClass())) {
+            return value;
+        }
         // Types that need to be deserialized
         if (clazz.equals(UUID.class)) {
             value = UUID.fromString((String)value);
@@ -323,6 +332,23 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
         }
         return value;
+    }
+
+    @Override
+    protected void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+        // The file name of the Yaml file.
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", type);
+        Method method = propertyDescriptor.getReadMethod();
+        String fileName = (String) method.invoke(instance);
+        if (!fileName.endsWith(".yml")) {
+            fileName = fileName + ".yml";
+        }
+        File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
+        File tableFolder = new File(dataFolder, type.getSimpleName());
+        if (tableFolder.exists()) {
+            File file = new File(tableFolder, fileName);
+            file.delete();
+        }      
     }
 
 }

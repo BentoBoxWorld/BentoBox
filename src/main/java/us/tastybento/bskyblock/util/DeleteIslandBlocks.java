@@ -47,12 +47,21 @@ public class DeleteIslandBlocks {
     //private HashMap<Location, Material> blocksToClear = new HashMap<Location,Material>();
     private NMSAbstraction nms = null;
 
+    /**
+     * Deletes the island
+     * @param plugin
+     * @param island
+     */
     public DeleteIslandBlocks(final BSkyBlock plugin, final Island island) {
+        plugin.getLogger().info("DEBUG: deleting the island");
         final World world = island.getCenter().getWorld();
         if (world == null)
             return;
         // Determine if blocks need to be cleaned up or not
         boolean cleanUpBlocks = false;
+        plugin.getLogger().info("DEBUG: island protection = " + island.getProtectionRange());
+        // DEBUG
+        island.setProtectionRange(Settings.islandDistance);
         if (Settings.islandDistance - island.getProtectionRange() < 16) {
             cleanUpBlocks = true;
         }
@@ -61,8 +70,7 @@ public class DeleteIslandBlocks {
         final int minz = island.getMinProtectedZ();
         final int maxx = island.getMinProtectedX() + island.getProtectionRange();
         final int maxz = island.getMinProtectedZ() + island.getProtectionRange();
-        // plugin.getLogger().info("DEBUG: protection limits are: " + minx +
-        // ", " + minz + " to " + maxx + ", " + maxz );
+        plugin.getLogger().info("DEBUG: protection limits are: " + minx + ", " + minz + " to " + maxx + ", " + maxz );
         int islandSpacing = Settings.islandDistance - island.getProtectionRange();
         int minxX = (island.getCenter().getBlockX() - range - islandSpacing);
         int minzZ = (island.getCenter().getBlockZ() - range - islandSpacing);

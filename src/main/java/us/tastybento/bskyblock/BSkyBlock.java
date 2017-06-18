@@ -18,6 +18,7 @@ import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
@@ -64,7 +65,7 @@ public class BSkyBlock extends JavaPlugin{
             Settings.dbName = "ASkyBlock";
             Settings.dbUsername = "username";
             Settings.dbPassword = "password";
-             */
+            */
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config

@@ -255,11 +255,11 @@ public class IslandCommand extends BSBCommand{
                 }
                 Player player = (Player)sender;
                 if (plugin.getIslands().hasIsland(player.getUniqueId())) {
-                    // Delete island
-                    new DeleteIslandBlocks(plugin, plugin.getIslands().getIsland(player.getUniqueId()));
+                    plugin.getIslands().deletePlayerIsland(player.getUniqueId(), true);
                     // Create new island
                     Schematic schematic = plugin.getSchematics().getSchematic("default");
-                    plugin.getIslands().newIsland(player, schematic);     
+                    plugin.getIslands().newIsland(player, schematic); 
+                    
                 } else {
                     Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("error.noIsland")); 
                 }

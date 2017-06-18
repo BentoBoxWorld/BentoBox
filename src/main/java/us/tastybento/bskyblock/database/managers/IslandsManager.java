@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.database.managers;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -30,6 +32,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.schematics.Schematic.PasteReason;
+import us.tastybento.bskyblock.util.DeleteIslandBlocks;
 import us.tastybento.bskyblock.util.SafeSpotTeleport;
 import us.tastybento.bskyblock.util.Util;
 
@@ -173,6 +176,55 @@ public class IslandsManager {
             }
             islandsByLocation.remove(location);
         }
+    }
+
+    /**
+     * Delete island owned by UniqueId
+     * @param uniqueId
+     */
+    public void deleteIsland(UUID uniqueId){
+        if (islandsByUUID.containsKey(uniqueId)) {
+            Island island = islandsByLocation.get(uniqueId);
+            islandsByUUID.remove(uniqueId);
+            islandsByLocation.remove(island.getCenter());
+        }
+    }
+
+    /**
+     * Delete Island
+     * Called when an island is restarted or reset
+     *
+     * @param player
+     *            - player name String
+     * @param removeBlocks
+     *            - true to remove the island blocks
+     */
+    public void deletePlayerIsland(final UUID player, boolean removeBlocks) {
+        // Removes the island
+        //getLogger().info("DEBUG: deleting player island");
+        //CoopPlay.getInstance().clearAllIslandCoops(player);
+        //getWarpSignsListener().removeWarp(player);
+        Island island = getIsland(player);
+        if (island != null) {
+            if (removeBlocks) {
+                removePlayersFromIsland(island, player);
+                new DeleteIslandBlocks(plugin, island);
+                try {
+                    handler.deleteObject(island);
+                } catch (Exception e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+            } else {
+                island.setLocked(false);
+                island.setOwner(null);
+            }
+            //getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, island.getCenter()));
+        } else {
+            plugin.getLogger().severe("Could not delete player: " + player.toString() + " island!");
+            //plugin.getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, null));
+        }
+        //players.zeroPlayerData(player);
     }
 
     public Island getSpawn(){
@@ -423,7 +475,7 @@ public class IslandsManager {
         return true;
 
     }
-    
+
     /**
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
@@ -601,7 +653,7 @@ public class IslandsManager {
         // Nothing worked
         return null;
     }
-    
+
     /**
      * Checks if this location is safe for a player to teleport to. Used by
      * warps and boat exits Unsafe is any liquid or air and also if there's no
@@ -682,7 +734,7 @@ public class IslandsManager {
         //Bukkit.getLogger().info("DEBUG: safe!");
         return true;
     }
-    
+
     /**
      * Makes an island using schematic. No permission checks are made. They have to be decided
      * before this method is called.
@@ -690,15 +742,16 @@ public class IslandsManager {
      * @param schematic
      */
     public void newIsland(final Player player, final Schematic schematic) {
+        plugin.getLogger().info("DEBUG: new island");
         //long time = System.nanoTime();
         final UUID playerUUID = player.getUniqueId();
         boolean firstTime = false;
         if (!plugin.getPlayers().hasIsland(playerUUID)) {
             firstTime = true;
         }
-        //plugin.getLogger().info("DEBUG: finding island location");
+        plugin.getLogger().info("DEBUG: finding island location");
         Location next = getNextIsland(player.getUniqueId());
-        //plugin.getLogger().info("DEBUG: found " + next);
+        plugin.getLogger().info("DEBUG: found " + next);
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(playerUUID);
 
@@ -829,17 +882,20 @@ public class IslandsManager {
      * @return Location of island spot
      */
     private Location getNextIsland(UUID playerUUID) {
+        plugin.getLogger().info("DEBUG: last = " + last);
         // Find the next free spot
         if (last == null) {
             last = new Location(IslandWorld.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.islandHeight, Settings.islandZOffset + Settings.islandStartZ);
         }
         Location next = last.clone();
-
-        while (plugin.getIslands().isIsland(next)) {
+        plugin.getLogger().info("DEBUG: last 2 = " + last);
+        do {
+            plugin.getLogger().info("DEBUG: getting next loc");
             next = nextGridLocation(next);
-        }
+        } while (isIsland(next));
         // Make the last next, last
         last = next.clone();
+        plugin.getLogger().info("DEBUG: last 3 = " + last);
         return next;
     }
 
@@ -851,7 +907,7 @@ public class IslandsManager {
      * @return Location of next free island
      */
     private Location nextGridLocation(final Location lastIsland) {
-        // plugin.getLogger().info("DEBUG nextIslandLocation");
+        plugin.getLogger().info("DEBUG: nextIslandLocation - island distance = " + Settings.islandDistance);
         final int x = lastIsland.getBlockX();
         final int z = lastIsland.getBlockZ();
         final Location nextPos = lastIsland;
@@ -877,6 +933,40 @@ public class IslandsManager {
         }
         nextPos.setZ(nextPos.getZ() - Settings.islandDistance);
         return nextPos;
+    }
+    
+    /**
+     * This removes players from an island overworld and nether - used when reseting or deleting an island
+     * Mobs are killed when the chunks are refreshed.
+     * @param island to remove players from
+     * @param uuid 
+     */
+    public void removePlayersFromIsland(final Island island, UUID uuid) {
+        // Teleport players away
+        for (Player player : plugin.getServer().getOnlinePlayers()) {
+            if (island.inIslandSpace(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
+                //plugin.getLogger().info("DEBUG: in island space");
+                // Teleport island players to their island home
+                if (!player.getUniqueId().equals(uuid) && (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId()))) {
+                    //plugin.getLogger().info("DEBUG: home teleport");
+                    homeTeleport(player);
+                } else {
+                    //plugin.getLogger().info("DEBUG: move player to spawn");
+                    // Move player to spawn
+                    Island spawn = getSpawn();
+                    if (spawn != null) {
+                        // go to island spawn
+                        player.teleport(IslandWorld.getIslandWorld().getSpawnLocation());
+                        //plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
+                    } else {
+                        if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+                            plugin.getLogger().warning(
+                                    "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
+                        }
+                    }
+                }
+            }
+        }
     }
 
 }

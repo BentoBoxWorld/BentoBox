@@ -16,7 +16,6 @@ import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -291,6 +290,10 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         sb.append(")");
 
         return sb.toString();
+    }
+
+    protected String createDeleteQuery() {
+        return "DELETE FROM [table_name] WHERE uniqueId = ?";        
     }
 
     /**
@@ -720,5 +723,64 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         return value;
     }
+
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#deleteObject(java.lang.Object)
+     */
+    @Override
+    protected void deleteObject(T instance)
+            throws IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException {
+        // Delete this object from all tables
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+
+        try {
+            // Try to connect to the database
+            connection = databaseConnecter.createConnection();
+            // Get the uniqueId. As each class extends DataObject, it must have this method in it.
+            Method getUniqueId = type.getMethod("getUniqueId");
+            String uniqueId = (String) getUniqueId.invoke(instance);
+            //plugin.getLogger().info("DEBUG: Unique Id = " + uniqueId);
+            if (uniqueId.isEmpty()) {
+                throw new SQLException("uniqueId is blank");
+            }
+            // Delete from the main table
+            // First substitution is the table name
+            // deleteQuery is created in super from the createInsertQuery() method
+            preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + type.getCanonicalName() + "`"));
+            // Second is the unique ID
+            preparedStatement.setString(1, uniqueId);
+            preparedStatement.addBatch();
+            plugin.getLogger().info("DEBUG: DELETE Query " + preparedStatement.toString());
+            preparedStatement.executeBatch();
+            // Delete from any sub tables created from the object
+            // Run through the fields in the class using introspection
+            for (Field field : type.getDeclaredFields()) {
+                // Get the field's property descriptor
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                // Delete Collection tables
+                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                        propertyDescriptor.getPropertyType().equals(Map.class) ||
+                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    // First substitution is the table name
+                    preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + type.getCanonicalName() + "." + field.getName() + "`"));
+                    // Second is the unique ID
+                    preparedStatement.setString(1, uniqueId);
+                    preparedStatement.addBatch();
+                    // Execute
+                    plugin.getLogger().info("DEBUG: " + preparedStatement.toString());
+                    preparedStatement.executeBatch();
+                }
+            }
+        } finally {
+            // Close properly
+            MySQLDatabaseResourceCloser.close(preparedStatement);
+        }        
+
+    }
+
+
 
 }
