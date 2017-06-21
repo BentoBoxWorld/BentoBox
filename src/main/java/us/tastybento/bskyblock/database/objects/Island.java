@@ -684,7 +684,7 @@ public class Island extends DataObject {
     public void setLocked(boolean locked){
         if(locked){
             // Lock the island
-            IslandLockEvent event = new IslandLockEvent(this);
+            IslandLockEvent event = new IslandLockEvent(this, null); // TODO: Maybe a custom CommandSender for BSkyBlock ?
             Bukkit.getServer().getPluginManager().callEvent(event);
 
             if(!event.isCancelled()){
@@ -692,7 +692,7 @@ public class Island extends DataObject {
             }
         } else {
             // Unlock the island
-            IslandUnlockEvent event = new IslandUnlockEvent(this);
+            IslandUnlockEvent event = new IslandUnlockEvent(this, null);
             Bukkit.getServer().getPluginManager().callEvent(event);
 
             if(!event.isCancelled()){
