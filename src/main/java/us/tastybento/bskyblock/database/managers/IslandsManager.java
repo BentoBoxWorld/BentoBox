@@ -156,7 +156,7 @@ public class IslandsManager {
     }
 
     /**
-     * Create an island with owner. Note this does not create the schematic. It just reates the island data object.
+     * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
      * @param location
      * @param owner UUID
      */
@@ -206,6 +206,8 @@ public class IslandsManager {
         //getWarpSignsListener().removeWarp(player);
         Island island = getIsland(player);
         if (island != null) {
+            // Set the owner of the island to no one.
+            island.setOwner(null);
             if (removeBlocks) {
                 removePlayersFromIsland(island, player);
                 new DeleteIslandBlocks(plugin, island);
@@ -443,7 +445,7 @@ public class IslandsManager {
      */
     public boolean homeTeleport(final Player player, int number) {
         Location home = null;
-        //plugin.getLogger().info("home teleport called for #" + number);
+        plugin.getLogger().info("home teleport called for #" + number);
         home = getSafeHomeLocation(player.getUniqueId(), number);
         //plugin.getLogger().info("home get safe loc = " + home);
         // Check if the player is a passenger in a boat
@@ -458,12 +460,12 @@ public class IslandsManager {
             }
         }
         if (home == null) {
-            //plugin.getLogger().info("Fixing home location using safe spot teleport");
+            plugin.getLogger().info("Fixing home location using safe spot teleport");
             // Try to fix this teleport location and teleport the player if possible
             new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
             return true;
         }
-        //plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
+        plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
         //home.getChunk().load();
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
@@ -737,11 +739,24 @@ public class IslandsManager {
 
     /**
      * Makes an island using schematic. No permission checks are made. They have to be decided
-     * before this method is called.
+     * before this method is called. If oldIsland is not null, it will be deleted after the new
+     * island is made.
      * @param player
      * @param schematic
      */
-    public void newIsland(final Player player, final Schematic schematic) {
+    public void newIsland(Player player, Schematic schematic) {
+        newIsland(player, schematic, null);  
+    }
+    
+    /**
+     * Makes an island using schematic. No permission checks are made. They have to be decided
+     * before this method is called. If oldIsland is not null, it will be deleted after the new
+     * island is made.
+     * @param player
+     * @param schematic
+     * @param oldIsland - the old island to be deleted after the new island is made
+     */
+    public void newIsland(final Player player, final Schematic schematic, Island oldIsland) {
         plugin.getLogger().info("DEBUG: new island");
         //long time = System.nanoTime();
         final UUID playerUUID = player.getUniqueId();
@@ -752,6 +767,13 @@ public class IslandsManager {
         plugin.getLogger().info("DEBUG: finding island location");
         Location next = getNextIsland(player.getUniqueId());
         plugin.getLogger().info("DEBUG: found " + next);
+        
+        // Add to the grid
+        Island myIsland = plugin.getIslands().createIsland(next, playerUUID);
+        myIsland.setLevelHandicap(schematic.getLevelHandicap());
+        // Save the player so that if the server is reset weird things won't happen
+        plugin.getPlayers().save(true);
+        
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(playerUUID);
 
@@ -779,13 +801,13 @@ public class IslandsManager {
                 next = next.toVector().toLocation(IslandWorld.getNetherWorld());
                 // Set the player's island location to this new spot
                 //plugin.getPlayers().setIslandLocation(playerUUID, next);
-                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET);
+                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET, oldIsland);
             } else {
                 // Over world start
                 //plugin.getLogger().info("DEBUG: pasting");
                 //long timer = System.nanoTime();
                 // Paste the island and teleport the player home
-                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET);
+                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET, oldIsland);
                 //double diff = (System.nanoTime() - timer)/1000000;
                 //plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
                 //plugin.getLogger().info("DEBUG: pasted overworld");
@@ -809,11 +831,7 @@ public class IslandsManager {
                 }
             }
         } 
-        // Add to the grid
-        Island myIsland = plugin.getIslands().createIsland(next, playerUUID);
-        myIsland.setLevelHandicap(schematic.getLevelHandicap());
-        // Save the player so that if the server is reset weird things won't happen
-        plugin.getPlayers().save(true);
+
 
         // Start the reset cooldown
         //if (!firstTime) {
@@ -870,7 +888,7 @@ public class IslandsManager {
 
             @Override
             public void run() {
-                schematic.pasteSchematic(loc, player, false, PasteReason.PARTNER);
+                schematic.pasteSchematic(loc, player, false, PasteReason.PARTNER, null);
 
             }}, 60L);
 
@@ -967,6 +985,10 @@ public class IslandsManager {
                 }
             }
         }
+    }
+
+    public AbstractDatabaseHandler<Island> getHandler() {
+        return handler;
     }
 
 }

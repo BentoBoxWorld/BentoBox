@@ -335,7 +335,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @Override
-    protected void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
         // The file name of the Yaml file.
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", type);
         Method method = propertyDescriptor.getReadMethod();

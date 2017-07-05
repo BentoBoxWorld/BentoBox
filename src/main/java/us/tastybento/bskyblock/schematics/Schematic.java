@@ -70,6 +70,8 @@ import net.milkbowl.vault.economy.EconomyResponse;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.config.Settings.GameType;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.util.DeleteIslandBlocks;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
@@ -776,9 +778,10 @@ public class Schematic {
      * This method pastes a schematic.
      * @param loc
      * @param player
+     * @param oldIsland 
      * @param partner 
      */
-    public void pasteSchematic(final Location loc, final Player player, boolean teleport, final PasteReason reason) {
+    public void pasteSchematic(final Location loc, final Player player, boolean teleport, final PasteReason reason, Island oldIsland) {
         // If this is not a file schematic, paste the default island
         if (this.file == null) {
             if (Settings.GAMETYPE == GameType.ACIDISLAND) {
@@ -1042,6 +1045,7 @@ public class Schematic {
             //player.setInvulnerable(true);
             // Check distance. If it's too close, warp to spawn to try to clear the client's cache
             //plugin.getLogger().info("DEBUG: view dist = " + plugin.getServer().getViewDistance());
+            /*
             if (player.getWorld().equals(world)) {
                 //plugin.getLogger().info("DEBUG: same world");
                 int distSq = (int)((player.getLocation().distanceSquared(loc) - (Settings.islandDistance * Settings.islandDistance)/16));
@@ -1050,7 +1054,7 @@ public class Schematic {
                     //plugin.getLogger().info("DEBUG: teleporting");
                     player.teleport(world.getSpawnLocation());
                 }
-            }
+            }*/
             plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
 
                 @Override
@@ -1098,6 +1102,18 @@ public class Schematic {
                         if (!player.hasPermission(Settings.PERMPREFIX + "command.resetexempt")) {
                             //plugin.getLogger().info("DEBUG: Executing reset island commands");
                             //IslandCmd.runCommands(Settings.resetCommands, player);
+                        }
+                    }
+                    
+                    // Delete the old island if required
+                    if (oldIsland != null) {
+                        plugin.getLogger().info("DEBUG: Deleting old island");
+                        new DeleteIslandBlocks(plugin, oldIsland);
+                        try {
+                            plugin.getIslands().getHandler().deleteObject(oldIsland);
+                        } catch (Exception e) {
+                            // TODO Auto-generated catch block
+                            e.printStackTrace();
                         }
                     }
 

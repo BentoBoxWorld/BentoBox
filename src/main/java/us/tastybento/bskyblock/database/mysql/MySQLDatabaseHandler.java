@@ -728,7 +728,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#deleteObject(java.lang.Object)
      */
     @Override
-    protected void deleteObject(T instance)
+    public void deleteObject(T instance)
             throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException {
         // Delete this object from all tables

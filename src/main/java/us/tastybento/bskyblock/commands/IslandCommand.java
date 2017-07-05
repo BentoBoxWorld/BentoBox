@@ -10,7 +10,6 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
-import us.tastybento.bskyblock.util.DeleteIslandBlocks;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 
@@ -255,10 +254,16 @@ public class IslandCommand extends BSBCommand{
                 }
                 Player player = (Player)sender;
                 if (plugin.getIslands().hasIsland(player.getUniqueId())) {
-                    plugin.getIslands().deletePlayerIsland(player.getUniqueId(), true);
-                    // Create new island
+                    // Get the player's old island
+                    Island oldIsland = plugin.getIslands().getIsland(player.getUniqueId());
+                    plugin.getLogger().info("DEBUG: old island is at " + oldIsland.getCenter().getBlockX() + "," + oldIsland.getCenter().getBlockZ());
+                    // Remove them from this island (it still exists and will be deleted later)
+                    plugin.getIslands().removePlayer(player.getUniqueId());
+                    plugin.getLogger().info("DEBUG: old island's owner is " + oldIsland.getOwner());
+                    // Create new island and then delete the old one
+                    plugin.getLogger().info("DEBUG: making new island ");
                     Schematic schematic = plugin.getSchematics().getSchematic("default");
-                    plugin.getIslands().newIsland(player, schematic); 
+                    plugin.getIslands().newIsland(player, schematic, oldIsland); 
                     
                 } else {
                     Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("error.noIsland")); 

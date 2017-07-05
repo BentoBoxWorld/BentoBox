@@ -485,7 +485,7 @@ public class Island extends DataObject {
      * @return the island display name or the owner's name if none is set
      */
     public String getName(){
-        return (name != null) ? name : Bukkit.getServer().getOfflinePlayer(owner).getName();
+        return (name != null && owner != null) ? name : Bukkit.getServer().getOfflinePlayer(owner).getName();
     }
 
     /**

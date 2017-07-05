@@ -157,6 +157,6 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws SecurityException 
      * @throws NoSuchMethodException 
      */
-    protected abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
+    public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
 
 }
