@@ -38,538 +38,540 @@ general:
     use-in-game: "本命令仅在游戏中有效."
 
 # TODO: These are legacy strings and should be converted to a better format but will do for now
-acidBottle: "Acid Bottle"
-acidBucket: "Acid Bucket"
-acidLore: |
-    Do
-    not drink!
-    Beware!
+acidBottle: "受到辐射的水瓶"
+acidBucket: "污染的水桶"
+acidLore: |-
+    海水受到了核污染!
+    !
+    一切水源无法饮用!
+
 adminDeleteIsland: 
-  error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
-  noid: "Cannot identify island."
-  use: "Use &ldelete [name] &r&cto delete the player instead."
+  error: "使用 &ldeleteisland confirm &r&c来删除你所在的岛屿."
+  noid: "无法识别岛屿."
+  use: "或者使用 &ldelete [name] &r&c来删除一个玩家."
 adminHelp: 
-  add: "adds player to leader's team"
-  addrange: "adds to or substracts from the island's protection range"
-  clearreset: "resets the island reset limit for player"
-  clearresetall: "resets the island reset limit for all players"
-  cobblestats: "displays magic cobble generation stats"
-  completeChallenge: "marks a challenge as complete"
-  delete: "delete an island (removes blocks)."
-  help: "Admin Commands:"
-  info: "info for the given player"
-  infoisland: "provide info on the nearest island"
-  kick: "removes player from any team"
-  level: "provide detailed island level report on player"
-  listChallengeResets: "lists challenge reset schedules, if any"
-  lock: "locks/unlocks player's island"
-  purge: "delete inactive islands older than [TimeInDays]."
-  purgeallowdisallow: "allow/disallow island to be purged if it meets purge criteria"
-  purgeholes: "free up island holes for reuse"
-  purgeunowned: "remove unowned islands"
-  name: "Set name of player's island"
-  register: "set a player's island to your location"
-  reload: "reload configuration from file."
-  resetAllChallenges: "resets all of the player's challenges"
-  resetChallenge: "marks a challenge as incomplete"
-  resetChallengeForAll: "globally resets a challenge for every player with an optional repetition"
-  resetname: "Reset name of player's island"
-  resetsign: "Resets the sign you are looking at to the island owner"
-  setbiome: "sets leader's island biome"
-  setdeaths: "sets player's death count"
-  setlanguage: "sets the default language and resets every player to that language"
-  setrange: "changes the island's protection range"
-  setspawn: "sets the island world spawn to a location close to you"
-  settingsreset: "Resets all islands to default protection settings"
-  teamChatSpy: "Spy on team chats (on/off)"
-  topTen: "manually update the top 10 list"
-  topbreeders: "lists most populated islands currently loaded"
-  tp: "Teleport to a player's island"
-  tpnether: "Teleport to a player's nether island"
-  unregister: "deletes a player without deleting the island blocks"
+  add: "向领导者的队伍增加玩家"
+  addrange: "增加或减少岛屿的保护区域大小."
+  clearreset: "重置一个玩家的岛屿初始化次数."
+  clearresetall: "为所有玩家重置岛屿的初始化次数."
+  cobblestats: "显示magic cobble的生成统计数据."
+  completeChallenge: "标记一个挑战为已完成"
+  delete: "删除一个玩家的岛屿 (移除方块)."
+  help: "管理员指令:"
+  info: "显示指定玩家信息."
+  infoisland: "显示离你最近的岛屿信息."
+  kick: "从任何队伍中踢出玩家."
+  level: "为玩家提供岛屿等级详情."
+  listChallengeResets: "列出挑战重置时间表（若有）"
+  lock: "锁定或解锁玩家的岛屿."
+  purge: "删除超过 [TimeInDays] 天的不活跃岛屿."
+  purgeallowdisallow: "允许/禁止一个岛屿被删除（若它们达到删除标准）."
+  purgeholes: "重置空余的岛屿,以便重复使用."
+  purgeunowned: "移除无主岛屿."
+  name: "为玩家岛屿命名."
+  register: "设置玩家的岛屿在你的位置"
+  reload: "配置重读."
+  resetAllChallenges: "重置该玩家的的所有挑战"
+  resetChallenge: "标记一个挑战为未完成"
+  resetChallengeForAll: "重设全服务器每位玩家的挑战（可选重复）"
+  resetname: "重设玩家岛屿名称"
+  resetsign: "将你盯着看的牌子重设给岛主"
+  setbiome: "设置领导者岛屿的生物群系."
+  setdeaths: "设置玩家的死亡计数."
+  setrange: "改变岛屿的保护范围."
+  setlanguage: "设定默认语言并应用于所有玩家."
+  setspawn: "设置岛屿世界的重生点在你的附近."
+  settingsreset: "重设所有岛屿到默认保护设定"
+  teamChatSpy: "偷听岛屿team聊天(开启/关闭)"
+  topTen: "手动更新前十列表"
+  topbreeders: "列出目前载入的最活跃的岛屿"
+  tp: "传送到玩家岛屿"
+  tpnether: "传送到玩家的下界岛屿"
+  unregister: "删除一个玩家的岛屿信息,但不清除岛屿内方块"
 adminInfo: 
-  bannedPlayers: "Banned players"
-  errorNullTeamLeader: "Team leader should be null!"
-  errorTeamMembersExist: "Player has team members, but shouldn't!"
-  hoppers: "Island has [number] hoppers"
-  islandLocation: "Island Location"
-  isLocked: "Island is locked"
-  isProtected: "Island is purge protected"
-  isSpawn: "Island is spawn"
-  isUnlocked: "Island is unlocked"
-  isUnprotected: "Island is not purge protected"
-  lastLogin: "Last login"
-  maxSize: "Island max size (distance)"
-  player: "Player"
-  teamLeader: "Team Leader"
-  teamMembers: "Team Members"
-  title: "This is spawn island"
-  unowned: "This island is not owned by anyone right now."
+  bannedPlayers: "已被封禁的玩家"
+  errorNullTeamLeader: "团队领导必须为空!"
+  errorTeamMembersExist: "玩家拥有团队成员,但不应该!"
+  hoppers: "岛上有 [number] 个漏斗"
+  islandLocation: "岛屿坐标"
+  isLocked: "岛屿被锁定"
+  isProtected: "岛屿被保护免于清除"
+  isSpawn: "岛屿是出生地"
+  isUnlocked: "岛屿被解锁"
+  isUnprotected: "岛屿未被保护免于清除"
+  lastLogin: "最后登录"
+  maxSize: "岛屿最大大小（距离）"
+  player: "玩家"
+  teamLeader: "队伍领袖"
+  teamMembers: "队伍成员"
+  title: "这是出生地岛屿"
+  unowned: "本岛暂时无主."
 adminLock: 
-  adminLockedIsland: "Admin locked your island"
-  adminUnlockedIsland: "Admin unlocked your island"
-  errorInGame: "Must use command in-game while on an island!"
+  adminLockedIsland: "管理员锁定了你的岛屿"
+  adminUnlockedIsland: "管理员解锁了你的岛屿"
+  errorInGame: "必须在游戏内使用该命令!"
 adminRegister: 
-  hadIsland: "[name] had an island at [location]"
-  leadsTeam: "[name] leads a team. Kick players from it first."
-  noIsland: "There is no known island in this area!"
-  notSpawn: "You cannot take ownership of spawn!"
-  taking: "Taking ownership away from [name]"
+  hadIsland: "[name] 在 [location] 处拥有一个岛屿"
+  leadsTeam: "[name] 拥有一个队伍. 请先踢光队里的人."
+  noIsland: "本区域内无已知空岛!"
+  notSpawn: "你不能占领出生地!"
+  taking: "正从 [name] 玩家接管岛屿"
 adminResetChallengeForAll:
-  error: "Format for repeat time must is [integer number][m/h/d] (minutes, hours, days), e.g. 5h"
-  repeating: "Repeating [duration]"
-  reset: "Reset [date]"
+  error: "重复次数的格式必须是整数 [integer number][m/h/d] (minutes, hours, days), 例如. 5h"
+  repeating: "重复 [duration]"
+  reset: "重设 [date]"
 adminResetSign: 
-  errorExists: "That warp sign is already active and owned by [name]"
-  found: "Warp sign found!"
-  noSign: "You must be looking at a sign post to run this command."
-  rescued: "Warp sign rescued and assigned to [name]"
+  errorExists: "传送牌已被激活过并属于 [name]"
+  found: "发现传送牌!"
+  noSign: "在执行此命令时你必须盯着传送牌杆看."
+  rescued: "已拯救传送牌并指派给 [name]"
 adminReserve:
-  islandExists: "There is an island here already! Register the player instead!"
+  islandExists: "此地已有一岛屿! Register the player instead!"
 adminSetHome: 
-  homeSet: "Home set to [location]"
-  noneFound: "No safe location found!"
-  notOnPlayersIsland: "You are not on the player's island"
-  notSafe: "That location is not safe"
+  homeSet: "已设家于 [location]"
+  noneFound: "未发现安全位置!"
+  notOnPlayersIsland: "你不在玩家岛屿上"
+  notSafe: "这位置不安全"
 adminSetRange: 
-  invalid: "Invalid range!"
-  set: "Set new range to [number]"
-  tip: "Range must be between 10 to [max]"
-  updated: "Island range updated to [number]"
-  warning: "Warning - range is greater than island range [max]"
-  warning2: "Overlapped islands will act like spawn!"
+  invalid: "范围无效!"
+  set: "设定新范围为 [number]"
+  tip: "范围必须在 10 到 [max] 之间"
+  updated: "岛屿范围更新为 [number]"
+  warning: "警告 - 范围比岛屿范围 [max] 更大"
+  warning2: "重叠的岛屿将像出生地一样(无法被拥有)!"
 adminSetSpawn: 
-  center: "Island center [location]"
-  coords: "Protection coords [min] to [max]"
-  limits: "Island limits [min] to [max]"
-  locked: "Spawn is locked!"
-  move: "Move further away or unregister the owner."
-  ownedBy: "This island space is owned by [name]"
-  range: "Protection range = [number]"
-  set: "Set island spawn to your location."
-  setting: "Setting island spawn to your location [location]"
+  center: "岛屿中心 [location]"
+  coords: "保护坐标从 [min] 到 [max]"
+  limits: "岛屿限制从 [min] 到 [max]"
+  locked: "出生地被锁定!"
+  move: "再走远点或解除所有者的注册."
+  ownedBy: "本岛空间由 [name] 拥有"
+  range: "保护区域大小 = [number]"
+  set: "设定岛屿出生点到你的位置."
+  setting: "设定岛屿出生点到你的位置 [location]."
 adminTeam: 
-  addLeaderNoIsland: "Team leader does not have their own island so cannot have a team!"
-  addLeaderToOwn: "Cannot add a leader to their own team."
-  addedLeader: "Added the leader to this team!"
-  addingPlayer: "Adding player to team."
-  alreadyOnTeam: "Player was already on this team!"
-  kickLeader: "That player is a team leader. Remove team members first. Use '/[label] info [name]' to find team members."
-  nowUnowned: "[name] had an island at [location] that will become unowned now. You may want to delete it manually."
-  settingHome: "Setting player's home to the leader's home location"
+  addLeaderNoIsland: "团队领袖没有自己的岛屿所以不能拥有队员!"
+  addLeaderToOwn: "无法让领袖再次加入同一团队."
+  addedLeader: "已向团队加入领袖!"
+  addingPlayer: "正向团队加入玩家."
+  alreadyOnTeam: "玩家已经属于本队!"
+  kickLeader: "该玩家是一名团队领袖. 先踢光队员. 使用 '/[label] info [name]' 来查找队员."
+  nowUnowned: "[name] 在 [location] 的岛屿现将成为无主之岛. 你可以手动删除它了."
+  settingHome: "设定玩家的家到领袖的家的位置"
 adminTopBreeders: 
-  checking: "Checking [number] islands..."
-  finding: "Finding top breeders..."
-  nothing: "No creatures found."
+  checking: "正核对 [number] 个岛屿..."
+  finding: "正查找名列前茅的岛屿..."
+  nothing: "未发现生物."
 adminTopTen: 
-  finished: "Finished generation of the Top Ten list"
-  generating: "Generating the Top Ten list"
+  finished: 已生成前十名单列表
+  generating: 生成前十名单列表
 adminTp: 
-  manualWarp: "No safe spot found. Manually warp to somewhere near [location]."
+  manualWarp: "未发现安全地点. 在 [location] 附近手动传送."
 adminUnregister: 
-  keepBlocks: "Removing player from world, but keeping island at [location]"
-  onTeam: "Player is in a team - disband it first."
+  keepBlocks: "从世界中删除一个玩家, 但在 [location] 处仍保留原有空岛. "
+  onTeam: "玩家隶属于一个队伍——先把他赶出去."
 ban: 
-  alreadybanned: "[name] is already banned!"
-  banned: "You are banned from [name]'s island!"
-  fail: "[name] cannot be banned!"
-  helpBan: "ban a player from your island."
-  helpBanList: "list banned players."
-  helpUnban: "un-ban a player from your island."
-  lifted: "Ban lifted from [name]'s island!"
-  liftedsuccess: "Ban lifted for [name]!"
-  none: "None"
-  notbanned: "[name] is not banned!"
-  notteammember: "You cannot ban a team member!"
-  notyourself: "You cannot do that to yourself!"
-  success: "[name] is banned from the island!"
+  alreadybanned: "[name] 早就被列入了黑名单!"
+  banned: "你被列入 [name] 的岛屿的黑名单!"
+  fail: "[name] 无法被列入黑名单!"
+  helpBan: 将一个玩家列入岛屿黑名单.
+  helpUnban: 将一个玩家从岛屿黑名单中移除
+  helpBanList: "列出被封禁的玩家."
+  lifted: "被从 [name] 的岛屿黑名单中解除!"
+  liftedsuccess: "被 [name] 解除黑名单!"
+  none: "无"
+  notbanned: "[name] 未被列入黑名单!"
+  notteammember: 你无法将岛屿成员列入黑名单!
+  notyourself: 你不能那样对自己做!
+  success: "[name] 被岛屿列入黑名单!"
 biome: 
-  help: "open the biomes GUI."
-  paneltitle: "Select A Biome"
-  set: "Island biome set to [biome]!"
-  unknown: "Unknown biome!"
-  youbought: "Purchased for [cost]!"
+  help: 打开生物群系界面.
+  paneltitle: 选择一个生物群系
+  set: "岛屿生物群系设置为: [biome]!"
+  unknown: 未知生物群系!
+  youbought: "购买花费: [cost]!"
 boats: 
-  warning: "It's unsafe to exit the boat right now..."
+  warning: 现在离开船是一件危险的事情...
 challenges: 
-  colors: "Challenges will have different colors depending on if they are:"
-  complete: "Complete"
-  completeNotRepeatable: "Completed(not repeatable)"
-  completeRepeatable: "Completed(repeatable)"
-  completedtimes: "Completed [donetimes] out of [maxtimes]"
-  errorIslandLevel: "Your island must be level [level] to complete this challenge!"
-  errorItemsNotThere: "All required items must be close to you on your island!"
-  errorNotCloseEnough: "You must be standing within [number] blocks of all required items."
-  errorNotEnoughItems: "You do not have enough required item(s)"
-  errorNotOnIsland: "You must be on your island to do that!"
-  errorRewardProblem: "There was a problem giving your reward. Ask Admin to check log!"
-  erroryouaremissing: "You are missing"
-  expReward: "Exp reward"
-  firstTimeRewards: "First time reward(s)"
-  guititle: "ASkyBlock Challenges"
-  help1: "Use /c <name> to view information about a challenge."
-  help2: "Use /c complete <name> to attempt to complete that challenge."
-  incomplete: "Incomplete"
-  invalidChallengeName: "Invalid challenge name! Use /c help for more information"
-  itemTakeWarning: "All required items are taken when you complete this challenge!"
-  level: "Level"
-  maxreached: "Max reached [donetimes] out of [maxtimes]"
-  moneyReward: "Money reward"
-  name: "Challenge Name"
-  nameHasCompleted: "[name] has completed the [challenge] challenge!"
+  colors: "任务将根据不同难度显示不同颜色:"
+  complete: 已完成
+  completeNotRepeatable: 已完成(不可重复)
+  completeRepeatable: 已完成(可重复)
+  completedtimes: "完成次数 [donetimes] / [maxtimes]"
+  errorIslandLevel: "你的岛屿等级必须达到 [level] 级才能够完成这个任务!"
+  errorItemsNotThere: 所有任务所需物品必须在你的岛上!
+  errorNotCloseEnough: "任务所需物品必须在你 [number] 格范围内."
+  errorNotEnoughItems: 你没有足够的所需物品
+  errorNotOnIsland: 你只能够在你的岛屿上那样做!
+  errorRewardProblem: "奖励你物品的时候发生了未知错误,请联系管理员!"
+  erroryouaremissing: 未找到你的信息
+  expReward: 经验奖励
+  firstTimeRewards: 首次完成奖励
+  guititle: "ASkyBlock 挑战"
+  help1: "输入 /c <挑战名字> 来查询一个挑战的信息."
+  help2: "输入 /c complete <挑战名字> 完成一个挑战."
+  incomplete: 未完成
+  invalidChallengeName: "未知挑战名! 输入 /c help 获取更多信息"
+  itemTakeWarning: 当你完成挑战的时候所有挑战所需物品将会消失!
+  level: 等级
+  maxreached: "最大完成 [donetimes] / [maxtimes]"
+  moneyReward: 经济奖励
+  name: 挑战名称
+  nameHasCompleted: "恭喜玩家 [name] 完成了 [challenge] 挑战!"
   navigation: "Click to see [level] challenges!"
-  notRepeatable: "This Challenge is not repeatable!"
-  repeatRewards: "Repeat reward(s)"
-  rewards: "Reward(s)"
-  toComplete: "Complete [challengesToDo] more [thisLevel] challenges to unlock this level!"
-  toCompleteUse: "To complete this challenge, use"
-  unknownChallenge: "Unknown challenge name (check spelling)!"
-  youHaveCompleted: "You have completed the [challenge] challenge!"
-  youHaveNotUnlocked: "You have not unlocked this challenge yet!"
-  youRepeated: "You repeated the [challenge] challenge!"
-changingObsidiantoLava: "Changing obsidian back into lava. Be careful!"
+  notRepeatable: 这个挑战不可重复!
+  repeatRewards: 重复奖励
+  rewards: 奖励
+  toComplete: "请至少再完成 [challengesToDo] 个等级为 [thisLevel] 的挑战来解锁当前等级挑战!"
+  toCompleteUse: "完成这个挑战,输入"
+  unknownChallenge: "未知挑战名 (请检查拼写)!"
+  youHaveCompleted: "你完成了 [challenge] 挑战!"
+  youHaveNotUnlocked: 你还没有解锁当前挑战!
+  youRepeated: "你重复完成了 [challenge] 挑战!"
+changingObsidiantoLava: "成功将黑曜石变为岩浆,请当心!"
 checkteam: 
-  checkingTeam: "Checking Team of [name]"
+  checkingTeam: "检查 [name] 的团队"
 completechallenge: 
-  challangeCompleted: "Challenge: [challengename] has been completed for [name]"
-  errorChallengeDoesNotExist: "Challenge doesn't exist or is already completed"
+  challangeCompleted: "[挑战系统]: [name] 完成了 [challengename]  "
+  errorChallengeDoesNotExist: 挑战不存在或者已经完成
 confirm: 
-  errorTimeLimitExpired: "Time limit expired! Issue command again."
-coop:
-  cannotcoop: "Only island leader can coop a player." 
-  help: "give a player full access to your island"
-  invited: "[name] made [player] a coop player!"
-  listcoops: "list coop players"
-  madeyoucoopy: "[name] made you a coop player!"
-  notincoop: "[name] is not in your coop!"
-  onyourteam: "Player is already on your team!"
-  removed: "[name] removed your coop status!"
-  removesuccess: "[name] is no longer a coop player."
-  success: "[name] is now a coop player until they log out or you uncoop or expel them."
-  uncoop: "remove full island access from player"
-  useexpel: "Use expel or uncoop to remove."
+  errorTimeLimitExpired: "超时,请重新运行指令."
+coop: 
+  cannotcoop: "只有岛屿领袖才能赋予其他玩家岛屿完全访问权限." 
+  help: 暂时允许玩家完全访问你的岛屿
+  invited: "[name] 囚禁了 [player] !"
+  listcoops: "列出协作的玩家"
+  madeyoucoopy: "[name] 把你囚禁了,直到你下线或者他们驱逐你."
+  notincoop: "[name] 未在你的团队中!"
+  onyourteam: 玩家早就在你的团队中了!
+  removed: "[name] 取消了你的锁定状态!"
+  removesuccess: "[name] 不再是一个囚禁玩家."
+  success: "[name] 现在被你囚禁了,直到他们下线或者你驱逐他们."
+  uncoop: "移除玩家对您岛屿的完全访问"
+  useexpel: "输入 /expel 移除."
 deaths: 
-  deaths: "Deaths"
-  died: "died!"
-  leveldeaths: "&c[[number] deaths]"
+  deaths: "死亡次数"
+  died: "死了!"
+  leveldeaths: "&c[[number] 死]"
 delete: 
-  removing: "Removing [name]'s island."
-drankAcid: "drank acid."
-drankAcidAndDied: "just drank acid and died."
-error:
-  blockedbyapi: "A plugin using the API blocked this action."
-  commandNotReady: "You can't use that command right now."
-  maxIslands: "The world is full of islands! Try again later!"
-  noIsland: "You do not have an island!"
-  noIslandOther: "That player does not have an island!"
-  noPermission: "You don't have permission to use that command!"
-  notABlock: "That is not a block"
-  noTeam: "Player is not in a team."
-  notOnIsland: "You are not in an island space!"
-  offlinePlayer: "That player is offline or doesn't exist."
-  tooLong: "Too long. Maximum size is [length]."
-  tooShort: "Too short. Minimum size is [length]."
-  unknownCommand: "Unknown command."
-  unknownPlayer: "That player is unknown."
-  useInGame: "This command must be used in-game."
-  wrongWorld: "You cannot do that in this world."
+  removing: "移除了 [name] 的岛屿."
+drankAcid: 饮用辐射水源.
+drankAcidAndDied: 饮用受到辐射的水而死亡.
+error: 
+  blockedbyapi: "此行为被某个使用API的插件阻止."
+  commandNotReady: 你现在不能使用此命令.
+  maxIslands: "已达到世界最大容许岛屿数! 请稍后再试!"
+  noIsland: 你还没有获得一个岛屿!
+  noIslandOther: 玩家未拥有岛屿!
+  noPermission: 你没有权限那样做!
+  notABlock: "这不是一个方块"
+  noTeam: 玩家不再团队中.
+  notOnIsland: 你必须在你的岛屿上使用这个指令.
+  offlinePlayer: 玩家不在线或不存在.
+  tooLong: "太长. 最大长度为 [length]."
+  tooShort: "太短. 最小长度为 [length]."
+  unknownCommand: 未知指令.
+  unknownPlayer: 未知玩家.
+  useInGame: "这个指令必须在游戏内使用."
+  wrongWorld: "你无法在当前世界这样操作,请返回你的岛屿."
   minishopDisabled: "Minishop is disabled."
 expel: 
-  expelled: "You were expelled from that island!"
-  fail: "[name] cannot be expelled!"
-  notonisland: "Player is not trespassing on your island!"
-  notyourself: "You cannot expel yourself!"
-  success: "You expelled [name]!"
+  expelled: 你被驱逐出了岛屿!
+  fail: "[name] 无法被驱逐!"
+  notonisland: 玩家没有入侵你的岛屿!
+  notyourself: 你无法驱逐你自己!
+  success: "你驱逐了玩家: [name]!"
 general:
-  success: "Success!"
+  success: "成功!"
 invite: 
-  errorCantJoinIsland: "You couldn't join the island, maybe it's full."
-  errorCoolDown: "You can invite that player again in [time] minutes"
-  errorThatPlayerIsAlreadyInATeam: "That player is already in a team."
-  errorYouCannotInviteYourself: "You can not invite yourself!"
-  errorYouMustHaveIslandToInvite: "You must have an island in order to invite people to it!"
-  errorYourIslandIsFull: "Your island is full, you can't invite anyone else."
-  hasJoinedYourIsland: "[name] has joined your island!"
-  help: "Use [/[label] invite <playername>] to invite a player to your island."
-  inviteSentTo: "Invite sent to [name]"
-  nameHasInvitedYou: "[name] has invited you to join their island!"
-  onlyIslandOwnerCanInvite: "Only the leader can invite!"
-  removingInvite: "Removing your previous invite."
-  toAcceptOrReject: "to accept or reject the invite."
-  warningYouWillLoseIsland: "WARNING: You will lose your current island if you accept!"
-  youCanInvite: "You can invite [number] more players."
-  youCannotInvite: "You can't invite any more players."
-  youHaveJoinedAnIsland: "You have joined an island! Use /[label] team to see the other members."
+  errorCantJoinIsland: "你不能加入这个岛屿, 可能岛屿已满员."
+  errorCoolDown: "你需要等待 [time] 分钟后才能再次邀请那个玩家"
+  errorThatPlayerIsAlreadyInATeam: "这个玩家已经被被其他岛屿邀请了, 或者已经拥有自己的岛屿."
+  errorYouCannotInviteYourself: 你不能邀请你自己入住!
+  errorYouMustHaveIslandToInvite: "你必须拥有一个岛屿, 才能邀请其他玩家入住!"
+  errorYourIslandIsFull: "你的岛屿住满了人, 你没办法再邀请其他玩家了."
+  hasJoinedYourIsland: "[name] 加入了你的岛屿!"
+  help: "输入/[label] invite <玩家ID> 邀请玩家加入你的岛屿."
+  inviteSentTo: "邀请已发送给 [name]"
+  nameHasInvitedYou: "[name] 邀请你入住他的岛屿!"
+  onlyIslandOwnerCanInvite: 只有岛屿主人才能邀请其他玩家!
+  removingInvite: 移除了你之前邀请的玩家.
+  toAcceptOrReject: 来接受或拒绝岛屿入住邀请.
+  warningYouWillLoseIsland: "警告: 如果你接受, 你将失去当前这个岛屿!"
+  youCanInvite: "你还能邀请 [number] 个玩家."
+  youCannotInvite: 你无法邀请更多的玩家了.
+  youHaveJoinedAnIsland: "你加入了一个岛屿! 使用 /[label] team 来查看其他成员."
 island: 
-  blockValue: "[name] placed here may be worth [value]"
-  blockWorthless: "[name] is worthless" 
-  cannotTeleport: "You cannot teleport when falling!"
-  donate: "Welcome to A SkyBlock by tastybento"
+  blockValue: "置于此处的 [name] 可能价值[value]"
+  blockWorthless: "[name] 一毛不值" 
+  cannotTeleport: 你无法在下落过程中进行传送!
+  donate: 本汉化由tastybento和DuckSoft提供
   donatecolor: "aqua"
-  errorCouldNotCreateIsland: "Could not create your Island. Please contact a server moderator."
-  errorInvalidPlayer: "That player is invalid or does not have an island!"
-  errorLevelNotReady: "Can't use that command right now! Try again in a few seconds."
-  errorYouDoNotHavePermission: "You do not have permission to use that command!"
-  helpAcceptReject: "accept or reject an invitation."
-  helpChallenges: "/challenges: &fshow challenges"
-  helpColor: "&e"
-  helpControlPanel: "open the island GUI."
-  helpExpel: "force a player from your island."
-  helpInvite: "invite a player to join your island."
-  helpIsland: "start an island, or teleport to your island."
-  helpIslandSpawn: "go to spawn."
-  helpKick: "remove a team player from your island."
-  helpLeave: "leave another player's island."
-  helpLevel: "calculate your island level"
-  helpLevelPlayer: "see another player's island level."
-  helpLock: "Locks island so visitors cannot enter it"
-  helpMakeLeader: "transfer the island to <player>."
-  helpName: "Set a name for your island"
-  helpResetName: "reset your island name."
-  helpRestart: "restart your island and remove the old one."
-  helpSelectLanguage: "Select Language"
-  helpSetHome: "set your teleport point for /[label]."
-  helpSettings: "see island protection and game settings"
-  helpTeam: "view your team information."
-  helpTeleport: "teleport to your island."
-  helpTop: "see the top ranked islands."
-  helpValue: "see island level value of block in hand"
-  helpWarp: "Warp to <player>'s welcome sign."
-  helpWarps: "Lists all available welcome-sign warps."
-  islandDeletedLifeboats: "Island deleted! Head to the lifeboats!"
-  islandLevelis: "Island level is"
-  new: "Creating a new island for you..."
-  requiredPointsToNextLevel: "You need [points] more points to reach level [next]!"
-  resetConfirm: "Type /[label] confirm within [seconds] seconds to delete your island and restart!"
-  resetMustRemovePlayers: "You must remove all players from your island before you can restart it (/[label] kick <player>). See a list of players currently part of your island using /[label] team."
-  resetNoMore: "No more resets are allowed for your island!"
-  resetOnlyOwner: "Only the owner may restart this island. Leave this island in order to start your own (/[label] leave)."
-  resetPleaseWait: "Please wait, generating new island"
-  resetsLeft: "Resets left"
-  resetTo: "Cleared reset limit"
-  resetWait: "You have to wait [time] seconds before you can do that again."
-  resetYouHave: "You have [number] resets left."
-  subtitle: "by tastybento"
+  errorCouldNotCreateIsland: "无法为你创建岛屿. 请联系管理员."
+  errorInvalidPlayer: 玩家不存在或者他不曾拥有一个岛屿!
+  errorLevelNotReady: 请稍等数秒后再输入此指令!.
+  errorYouDoNotHavePermission: 你没有权限那样做!
+  helpAcceptReject: 接受或者拒绝别人的邀请.
+  helpChallenges: "输入指令/challenges: &7显示挑战任务"
+  helpColor: "&a"
+  helpControlPanel: 打开岛屿帮助界面.
+  helpExpel: 强制从你的岛屿上请走一个玩家.
+  helpInvite: 邀请玩家加入你的岛屿.
+  helpIsland: "开始岛屿生涯,或者回到你的岛屿."
+  helpIslandSpawn: 回到岛屿出生点.
+  helpKick: 将玩家从你的岛屿移除.
+  helpLeave: 离开了当前岛屿.
+  helpLevel: 计算你的岛屿等级
+  helpLevelPlayer: 查询玩家的岛屿等级.
+  helpLock: "岛屿已锁定,非岛屿成员无法传送至岛屿上"
+  helpMakeLeader: 将岛屿赠送给玩家.
+  helpName: "给你的岛屿起个名"
+  helpResetName: "重置你的岛屿名称."
+  helpRestart: 重新开始你的岛屿生涯.
+  helpSelectLanguage: "语言选择(Select Language)"
+  helpSetHome: 设置返回岛屿的传送坐标(需要在自己岛屿内设置).
+  helpSettings: 查看岛屿保护和游戏设置
+  helpTeam: 显示你团队的信息.
+  helpTeleport: 传送到你的岛屿.
+  helpTop: 查询岛屿等级排行榜.
+  helpValue: "查看手中方块的岛屿价值"
+  helpWarp: 传送到玩家的传送点.
+  helpWarps: 列出所有可用的传送点.
+  islandDeletedLifeboats: 岛屿已删除!
+  islandLevelis: 岛屿等级为
+  new: 正在为你创建一个新的岛屿...
+  requiredPointsToNextLevel: "你还需要 [points] 点数来达到 [next] 级!"
+  resetConfirm: "请在 [seconds] 秒内输入/[label] confirm 来确认你的操作,然后重新开始!"
+  resetMustRemovePlayers: "你只有将岛屿所有成员踢出才能重新开始 (/[label] kick <玩家ID>). 输入/[label] team 可以查询成员列表."
+  resetNoMore: 你无法再重新开始了!
+  resetOnlyOwner: "只有岛屿的主人才能那样做. 请输入/[label] leave离开当前团队,然后重新你的岛屿生涯."
+  resetPleaseWait: "请稍等,正在创建新的岛屿"
+  resetsLeft: "重设剩余次数"
+  resetTo: 清除重新开始限制
+  resetWait: "你需要等待 [time] 秒才能那样做."
+  resetYouHave: "你还有 [number] 次重新开始的机会."
+  subtitle: 请务必努力生存下去
   subtitlecolor: "blue"
-  teleport: "Teleporting you to your island. (/[label] help for more info)"
-  title: "A SkyBlock"
+  teleport: "[岛屿娘]:欢饮回来~我的主人. (输入/[label] help 获取更多帮助)"
+  title: ASkyBlock
   titlecolor: "gold"
-  unlimited: "Unlimited"
+  unlimited: "无限"
   url: ""
-islandProtected: "Island protected."
+islandProtected: 岛屿保护.
 islandguardsettings: 
-  TNTdamage: "TNT Damage"
-  allowed: "Allowed"
-  aciddamage: "Acid damage"
-  animalspawning: "Allow/Disallow Animal Spawning"
-  anvil: "Visitor anvil use"
-  armorstand: "Visitor armor stand use"
-  beacon: "Vistor beacon use"
-  bed: "Visitor bed use"
-  breakblocks: "Vistor block breaking"
-  breeding: "Vistor animal breeding"
-  brewingstand: "Visitor potion brewing"
-  bucket: "Visitor bucket use"
-  collectlava: "Visitor lava collection"
-  collectwater: "Visitor water collection"
-  chest: "Visitor chest use"
-  chestdamage: "Chest damage by TNT"
-  chorusfruit: "Visitor chorus fruit use"
-  creeperdamage: "Creeper damage"
-  creepergriefing: "Creeper griefing"
-  creeperpain: "Creeper explosions hurt"
-  croptrample: "Visitor crop trample"
-  disallowed: "Disallowed"
-  door: "Visitor door use"
-  eggs: "Visitor egg throwing"
-  enchantingtable: "Visitor enchanting"
-  enderpearl: "Visitor enderpearl use"
-  fire: "Fire"
-  fireextinguish: "Visitor fire extinguish"
-  firespread: "Fire spread"
-  furnace: "Visitor furnace use"
-  gate: "Visitor gate use"
-  horseinventoryaccess: "Visitor horse inventory access"
-  horseriding: "Visitor horse riding"
-  hurtanimals: "Visitor animal hurting"
-  hurtmonsters: "Visitor monster hurting"
-  joinleaveislandmessages: "Enter/exit island messages"
-  jukebox: "Visitor jukebox use"
-  leash: "Visitor leash use"
-  lever: "Visitor lever or button use"
-  milking: "Visitor cow milking"
-  monsterspawning: "Allow/Disallow Monster Spawning"
-  netherpvp: "Nether PvP"
-  placeblocks: "Visitor block placing"
-  portaluse: "Visitor portal use"
-  pressureplate: "Visitors activate pressure plates"
-  pvp: "PvP"
-  redstone: "Visitor redstone use"
-  settingsgeneraltitle: "World Settings"
-  settingsgeneraldesc: "General Island World Settings"
-  settingsislandtitle: "Island Settings"
-  settingsislanddesc: "Settings for this island"
-  settingsspawntitle: "Spawn Settings"
-  settingsspawndesc: "These rules apply at spawn"
-  shears: "Visitor sheep shearing"
-  spawnegg: "Spawn egg use"
-  teleportwhenfalling: "Teleport when falling"
-  title: "Island Guard Settings"
-  villagertrading: "Visitor villager trading"
-  visitordrop: "Visitor item drop"
-  visitorkeepitems: "Visitors keep items on death"
-  visitorpickup: "Visitor item pick-up"
-  withergriefing: "Wither griefing"
-  workbench: "Visitor workbench use"
+  TNTdamage: 是否开启TNT爆炸伤害
+  allowed: 允许
+  aciddamage: "酸雨伤害"
+  animalspawning: "允许/禁止动物出生"
+  anvil: 是否使用铁毡
+  armorstand: 是否使用盔甲架
+  beacon: 是否允许使用信标
+  bed: 是否允许使用床
+  breakblocks: 是否允许破坏
+  breeding: 是否允许喂养
+  brewingstand: 是否允许酿造药水
+  bucket: 是否允许使用桶
+  collectlava: "收集岩浆"
+  collectwater: "收集水"
+  chest: 是否允许使用箱子
+  chestdamage: TNT能否破坏箱子
+  chorusfruit: "是否允许使用紫颂果"
+  creeperdamage: 苦力怕伤害
+  creepergriefing: 苦力怕破坏
+  creeperpain: "苦力怕爆炸伤害"
+  croptrample: 是否允许践踏农作物
+  disallowed: 不允许
+  door: 是否允许使用门
+  eggs: "是否允许扔鸡蛋"
+  enchantingtable: 是否允许使用附魔台
+  enderpearl: 是否允许使用末影珍珠
+  fire: 是否允许使用打火石
+  fireextinguish: "熄灭火焰"
+  firespread: "火焰传播"
+  furnace: 是否允许使用熔炉
+  gate: 是否允许使用栅栏门
+  horseinventoryaccess: "是否允许参观者查看马的物品栏"
+  horseriding: "是否允许参观者骑马"
+  hurtanimals: 是否允许攻击动物
+  hurtmonsters: 是否允许攻击怪物
+  joinleaveislandmessages: "启用岛屿进入与离开消息"
+  jukebox: 是否允许使用唱片机
+  leash: 是否允许使用栓绳
+  lever: 是否允许使用开关按钮
+  milking: "挤奶"
+  monsterspawning: "允许/禁止岛屿刷怪"
+  netherpvp: 是否允许地狱PVP
+  placeblocks: 是否允许放置方块
+  portaluse: 是否允许使用传送门
+  pressureplate: "是否允许参观者激活压力盘"
+  pvp: 是否允许PVP
+  redstone: 是否允许使用红石
+  settingsgeneraltitle: "一般岛屿世界设定"
+  settingsgeneraldesc: "一般岛屿世界设定"
+  settingsislandtitle: "岛屿设定"
+  settingsislanddesc: "这些规则适用于岛屿的参观者"
+  settingsspawntitle: "出生地设定"
+  settingsspawndesc: "这些规则适用于出生地"
+  shears: 是否允许使用剪刀
+  spawnegg: 是否允许使用刷怪蛋
+  teleportwhenfalling: 下落时是否允许传送
+  title: 岛屿保护设置
+  villagertrading: "是否允许村民交易"
+  visitordrop: 是否允许访问者掉落物品
+  visitorkeepitems: 访问者死亡是否保存背包
+  visitorpickup: 是否允许访问者捡起物品
+  withergriefing: 凋零破坏
+  workbench: 是否允许使用合成台
 kick: 
-  errorNoTeam: "You do not have a team!"
-  errorNotPartOfTeam: "That player is not part of your island team!"
-  errorOnlyLeaderCan: "Only the leader can kick people off the island!"
-  errorPlayerNotInTeam: "That player is not in your team!"
-  nameRemoved: "[name] has been removed from the island."
-  nameRemovedYou: "[name] has removed you from their island!"
-lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
+  errorNoTeam: 你没有加入任何岛屿的团队!
+  errorNotPartOfTeam: 这个玩家不是你的岛屿成员之一!
+  errorOnlyLeaderCan: 只有岛屿主人才能踢人!
+  errorPlayerNotInTeam: 这个玩家不在你的岛屿团队中!
+  nameRemoved: "[name] 刚才已被驱逐出岛."
+  nameRemovedYou: "[name] 将你驱逐出了他的岛屿!"
+lavaTip: "温馨提示: 如果岩浆变成了黑曜石,可以使用铁桶右键变回岩浆."
 leave: 
-  canceled: "Leave canceled"
-  errorLeadersCannotLeave: "Leaders cannot leave an island. Make someone else the leader first."
-  errorYouAreTheLeader: "You cannot leave because you are the leader. Make someone the leader first."
-  errorYouCannotLeaveIsland: "You can't leave your island if you are the only person. Try restart if you want a new one!"
-  errorYouMustBeInWorld: "You must be in the island world to leave your team!"
-  nameHasLeftYourIsland: "[name] has left your island!"
-  warning: "Are you sure you want to leave the team? Type '[label] leave' again to confirm."
-  youHaveLeftTheIsland: "You have left the island and returned to the player spawn."
+  errorLeadersCannotLeave: "空岛主人无法离开岛屿.请输入 /[label] makeleader <玩家ID> 来转让岛屿"
+  errorYouAreTheLeader: "因为你是岛屿主人所以不能离开, 使用 /[label] makeleader <玩家> 来改变岛屿主人."
+  errorYouCannotLeaveIsland: "你无法离开岛屿当只剩下你一个人的时候.如果你想重新开始,请输入 /[label] restart!"
+  errorYouMustBeInWorld: 你只能够在你的岛屿上这样做!
+  errorYouMustBeInWorld: "你只能在岛屿世界离开你的队伍!"
+  nameHasLeftYourIsland: "[name] 离开了你的岛屿!"
+  warning: "你确定要离开队伍吗? 再次键入 '/[label] leave' 以确认."
+  youHaveLeftTheIsland: "你离开了岛屿, 并返回到了玩家出生地."
 level: 
-  calculating: "Calculating island level. This will take a few seconds..."
-  errornotYourIsland: "Only the leader can do that."
-  islandLevel: "Island level"
+  calculating: "正在计算岛屿等级,需要等待一段时间.请稍后..."
+  errornotYourIsland: 只有岛屿主人才能使用.
+  islandLevel: 岛屿等级
 lock: 
-  enteringspawn: "Entering Spawn"
-  islandlocked: "Island is locked to visitors"
-  leavingspawn: "Leaving Spawn"
-  locking: "Locking island"
-  nowentering: "Now entering [name]'s island"
-  nowleaving: "Now leaving [name]'s island"
-  unlocking: "Unlocking island"
+  enteringspawn: 进入出生点
+  islandlocked: 岛屿禁止游客访问
+  leavingspawn: 离开出生点
+  locking: 锁定岛屿
+  nowentering: "您所访问的是 [name] 的岛屿"
+  nowleaving: "你已经离开了 [name] 的岛屿"
+  unlocking: 解锁岛屿
 makeleader: 
-  errorGeneralError: "Could not change leaders."
-  errorNotYourIsland: "This isn't your island, so you can't give it away!"
-  errorPlayerMustBeOnline: "That player must be online to transfer the island."
-  errorRemoveAllPlayersFirst: "Remove all players from your team other than the player you are transferring to."
-  errorThatPlayerIsNotInTeam: "That player is not part of your island team!"
-  errorYouMustBeInTeam: "You must be in a team to transfer your island."
-  nameIsNowTheOwner: "[name] is now the owner of your island!"
-  youAreNowTheOwner: "You are now the owner of your island."
+  errorGeneralError: 不能改变岛屿主人.
+  errorNotYourIsland: "这不是你的岛屿, 所以你没有权限!"
+  errorPlayerMustBeOnline: 玩家只有在线才能接受你的岛屿.
+  errorRemoveAllPlayersFirst: "将所有玩家踢出团队,才能进行团队转让."
+  errorThatPlayerIsNotInTeam: 这个玩家不是你的岛屿成员之一!
+  errorYouMustBeInTeam: 你必须在一个团队中才能转让岛屿.
+  nameIsNowTheOwner: "[name] 现在是你的岛屿主人了!"
+  youAreNowTheOwner: 你现在是岛屿主人了.
 minishop: 
-  buy: "Buy(Left click)"
-  buyproblem: "There was a problem purchasing [description]"
-  islandhelpMiniShop: "Opens the MiniShop"
-  outofstock: "Out Of Stock"
-  sell: "Sell(Right click)"
-  sellproblem: "You do not have enough [description] to sell."
-  title: "&EMiniShop"
-  youbought: "You bought [number] [description] for [price]"
-  youcannotafford: "You cannot afford [description]!"
-  yousold: "You sold [number] [description] for [price]"
+  buy: 购买
+  buyproblem: 购买出错
+  islandhelpMiniShop: 打开迷你商店
+  outofstock: 物品卖完了哟
+  sell: 出售
+  sellproblem: 你没有足够的物品.
+  title: 迷你商店-左键购买右键出售
+  youbought: "你购买了 [number] 个[description], 花费了 [price]"
+  youcannotafford: 余额不足!
+  yousold: "你出售了 [number] 个 [description], 获得了 [price]"
 moblimits: 
-  entity: "Island [entity] limit of [number] reached!"
-  error: "Island animal breeding limit of [number] reached!"
-  hopper: "Island hopper limit of [number] reached!"
-  villager: "Island villager breeding limit of [number] reached!"
+  entity: "岛屿实体 [entity] 的数量达到极限([number])!"
+  error: "岛屿繁殖数量 [number] 达到极限!"
+  hopper: "岛屿漏斗放置数量 [number] 达到极限!"
+  villager: "岛屿村民繁殖数量 [number] 达到极限!"
 nether: 
-  spawnisprotected: "The Nether spawn area is protected."
+  spawnisprotected: "当前位置为地狱保护区,请勿破坏."
 news: 
-  headline: "[A Skyblock News] While you were offline..."
+  headline: "[岛屿快讯]: 你离线的时候发生了..."
 purge: 
-  acidFound: "There are [number] unowned islands. Do '/acid purge unowned confirm' to delete them within 20 seconds."
-  allowPurge: "Purge protection removed"
-  alreadyRunning: "Purge is already running, please wait for it to finish!"
-  calculating: "Calculating which islands have been inactive for more than [time] days."
-  countingUnowned: "Counting unowned islands and checking player files. This could take some time..."
-  finished: "Finished purging of inactive islands."
-  maxPurge: "Max purge is [number] islands. Run purge again afterwards to purge more."
-  noneFound: "No inactive islands to remove."
-  nowWaiting: "Now waiting..."
-  preventPurge: "Island is protected from purging"
-  purgeCancelled: "Purge cancelled."
-  removingAt: "Removing island at location [location]"
-  removingName: "Purge: Removing [name]'s island"
-  skyblockFound: "There are [number] unowned islands. Do '/asadmin purge unowned confirm' to delete them within 20 seconds."
-  stillChecking: "Still checking player files..."
-  thisWillRemove: "[number] inactive islands found. Islands with level < [level] will be removed."
-  typeConfirm: "Type /[label] confirm to proceed within 10 seconds"
-  usage: "Usage: /[label] purge [TimeInDays]"
-  warning: "DANGER! Do not run this with players on the server! MAKE BACKUP OF WORLD!"
+  acidFound: "已有 [number] 个无主岛屿. 使用 '/acid purge unowned confirm' 来在20s内删除它们."
+  allowPurge: 清楚保护已移除
+  alreadyRunning: "正在清理中,请等待清理完毕!"
+  calculating: "计算不活跃天数超过 [time] 天的岛屿."
+  countingUnowned: "正在计数无主岛屿并检查玩家文件. 可能会花一点时间..."
+  maxPurge: "一次最大清理数为 [number] 个岛屿. 再次运行purge命令以清理更多."
+  finished: 清理不活跃岛屿完成.
+  noneFound: 没有不活跃的岛屿被移除.
+  nowWaiting: "请等待..."
+  preventPurge: 岛屿是免受清除的
+  purgeCancelled: 取消清理.
+  removingAt: "正删除位于 [location] 的岛屿"
+  removingName: "清理: 移除了 [name] 的岛屿"
+  skyblockFound: "还有 [number] 个无主岛屿. 使用 '/asadmin purge unowned confirm' 来在20s内删除它们."
+  stillChecking: "仍在检查玩家文件..."
+  thisWillRemove: "这将会移除 [number] 个不活跃的岛屿!"
+  typeConfirm: "请在10秒内输入 /acid confirm 进行确定"
+  usage: "使用方式: /acid purge [TimeInDays]"
+  warning: "危险! 当服务器内还有玩家的时候请不要运行这个命令! 请将你的服务器进行备份！！！"
 register: 
-  errorBedrockNotFound: "Could not register the island!"
-  settingIsland: "Set [name]'s island to the nearest island."
+  errorBedrockNotFound: "基岩未找到: 无法设置岛屿!"
+  settingIsland: "设置 [name] 岛屿的基岩在你当前位置."
 reject: 
-  nameHasRejectedInvite: "[name] has rejected your island invite!"
-  youHaveNotBeenInvited: "You had not been invited to join a team."
-  youHaveRejectedInvitation: "You have rejected the invitation to join an island."
+  nameHasRejectedInvite: "[name] 拒绝了你的岛屿入驻邀请!"
+  youHaveNotBeenInvited: 你没有收到任何岛屿入住邀请.
+  youHaveRejectedInvitation: 你拒绝了岛屿入住邀请.
 reload: 
-  configReloaded: "Configuration reloaded from file."
+  configReloaded: 配置重读.
 resetallchallenges: 
-  success: "[name] has had all challenges reset."
+  success: "[name] 的所有挑战已经重置."
 resetchallenge: 
-  challengeReset: "Challenge: [challengename] has been reset for [name]"
-  errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
+  challengeReset: "[挑战系统]: [name] 的挑战: [challengename] 已经重置"
+  errorChallengeDoesNotExist: 挑战不存在或尚未完成
 schematics: 
-  title: "Select island..."
+  title: 请选择你想要的岛屿...
 sethome: 
-  errorNoIsland: "You are not part of an island. Returning you the spawn area!"
-  errorNotOnIsland: "You must be within your island boundaries to set home!"
-  errorNumHomes: "Homes can be 1 to [max]"
-  homeSet: "Your island home has been set to your current location."
+  errorNoIsland: "你不是岛屿的一员. 请返回你的岛屿!"
+  errorNotOnIsland: 你只能在你的岛屿范围内设置!
+  errorNumHomes: "家只能设置 1-[max] 个"
+  homeSet: 已经设置家在你当前位置.
 settingsReset:
-  done: "Done."
-  inprogress: "Protection settings being reset, please wait..."
+  done: "完成."
+  inprogress: "重设保护设置中, 请稍待..."
 sign: 
-  line1: "&1[A Skyblock]"
-  line2: "[player]"
-  line3: "Do not fall!"
-  line4: "Beware!"
+  line1: "&7[&c末日岛屿&7]"
+  line2: "&a[player]"
+  line3: "&c千万要当心!"
+  line4: "&c努力活下去吧！"
 sign-acidisland:
-   line1: "&1[AcidIsland]"
-   line2: "[player]"
-   line3: "Water is acid!"
-   line4: "Beware!"
-targetInPVPArea: "Target is in a no-PVP area!"
+  line1: "&7[&c末日岛屿&7]"
+  line2: "&a[player]"
+  line3: "&c千万要当心!"
+  line4: "&c努力活下去吧！"
+targetInPVPArea: 目标处于禁止PVP区域!
 team: 
-  listingMembers: "Listing your island members"
+  listingMembers: 显示你岛屿的成员
 teamchat: 
-  helpChat: "turn on/off team chat"
-  noTeam: "You are not in a team!"
-  noTeamAround: "None of your team are online!"
-  prefix: "[Team Chat]<{ISLAND_PLAYER}> "
-  spyoff: "Team chat spy off"
-  spyon: "Team chat spy on"
-  statusOff: "Team chat is off"
-  statusOn: "Team chat is on"
-topTen:
-  errorExcluded: "FYI: You are excluded from the top ten as you do not have [perm]"
-  errorNotReady: "Top ten list not generated yet!"
-  guiHeading: "&E&L<!> Island: &6&N[name]&7 (#[rank])"
-  guiTitle: "Top 10 Islands"
-  header: "These are the Top 10 islands:"
+  helpChat: 开启/关闭团队聊天
+  noTeam: 你不在一个团队中!
+  noTeamAround: 没有一个团队成员在线!
+  prefix: "[团队聊天]<{ISLAND_PLAYER}> "
+  spyoff: "关闭团队聊天窃听"
+  spyon: "打开团队聊天窃听"
+  statusOff: 团队聊天已经关闭
+  statusOn: 团队聊天已经开启
+topTen: 
+  errorExcluded: "仅供参考: 你被逐出了前十名, 因为你没有 [perm]"
+  errorNotReady: 前十名单未生成!
+  guiHeading: "&E&L<!> 岛屿: &6&N[name]&7 (#[rank])"
+  guiTitle: "前10岛屿"
+  header: "排名前10的岛屿:"
 warps: 
-  deactivate: "Deactivating old sign!"
-  errorDoesNotExist: "That warp doesn't exist!"
-  errorDuplicate: "Sorry! There is a sign already in that location!"
-  errorNoPerm: "You do not have permission to place Welcome Signs yet!"
-  errorNoPlace: "You must be on your island to place a Welcome Sign!"
-  errorNoRemove: "You can only remove your own Welcome Sign!"
-  errorNoWarpsYet: "There are no warps available yet!"
-  errorNotReadyYet: "That warp is not ready yet. Try again later."
-  errorNotSafe: "That warp is not safe right now. Try again later."
-  errorNotEnoughLevel: "You do not have enough island levels to create a Welcome Sign!"
-  next: "Next"
-  playerWarped: "[name] &2warped to your island!"
-  previous: "Previous"
-  removed: "Welcome sign removed!"
-  signRemoved: "Your welcome sign was removed!"
-  success: "Welcome sign placed successfully!"
-  title: "Island warps"
-  warpTip: "Create a warp by placing a sign with [WELCOME] at the top."
-  warpToPlayersSign: "Warping to <player>'s welcome sign."
-  warpsAvailable: "The following warps are available"
-  welcomeLine: "[WELCOME]"
+  deactivate: 旧的传送点被替换!
+  errorDoesNotExist: 传送点不存在!
+  errorDuplicate: 当前位置已经存在传送点!
+  errorNoPerm: 你没有权限创建岛屿传送点!
+  errorNoPlace: 你只能够在你的岛屿上创建传送点!
+  errorNoRemove: 你只能移除你自己的传送点!
+  errorNoWarpsYet: 没有任何传送点!
+  errorNotReadyYet: 传送点未准备好.请稍后再试.
+  errorNotSafe: 传送点不安全.请稍后再试.
+  errorNotEnoughLevel: "你的岛屿等级不够, 无法创建欢迎牌!"
+  next: 下一页
+  playerWarped: "[name] &e传送到了你的岛屿!"
+  previous: 上一页
+  removed: 传送点已经移除!
+  signRemoved: 你的岛屿传送点已经移除!
+  success: 空岛传送点成功创建!
+  title: 岛屿传送点
+  warpTip: "放置一个木牌,并且在木牌的第一行输入[传送点]以设置一个岛屿传送点."
+  warpToPlayersSign: "传送到玩家: <player>的岛屿传送点."
+  warpsAvailable: 以下的传送点可用
+  welcomeLine: "[传送点]"
+needRelog: "为看到改变, 你需要重新登录服务器."
