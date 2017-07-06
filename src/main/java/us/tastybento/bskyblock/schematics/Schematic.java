@@ -988,16 +988,16 @@ public class Schematic {
                 Sign sign = (Sign) signState;
                 if (sign.getLine(0).isEmpty()) {
                     // TODO Add sign
-                    //sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+                    sign.setLine(0, plugin.getLocale(player.getUniqueId()).get("sign.line1").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(1).isEmpty()) {
-                    //sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+                    sign.setLine(1, plugin.getLocale(player.getUniqueId()).get("sign.line2").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(2).isEmpty()) {
-                    //sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+                    sign.setLine(2, plugin.getLocale(player.getUniqueId()).get("sign.line3").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(3).isEmpty()) {
-                    //sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+                    sign.setLine(3, plugin.getLocale(player.getUniqueId()).get("sign.line4").replace("[player]", player.getName()));
                 }
                 // BlockFace direction = ((org.bukkit.material.Sign)
                 // sign.getData()).getFacing();

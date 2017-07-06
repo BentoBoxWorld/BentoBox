@@ -83,6 +83,7 @@ public class IslandsManager {
             for (Island island : handler.loadObjects()) {
                 islandsByLocation.put(island.getCenter(), island);
                 islandsByUUID.put(island.getOwner(), island);
+                addToGrid(island);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -163,9 +164,60 @@ public class IslandsManager {
         islandsByLocation.put(location, island);
         if (owner != null)
             islandsByUUID.put(owner, island);
+        addToGrid(island);
         return island;
     }
 
+    /**
+     * Adds an island to the grid register
+     * @param newIsland
+     */
+    private void addToGrid(Island newIsland) {
+        if (islandGrid.containsKey(newIsland.getMinX())) {
+            //plugin.getLogger().info("DEBUG: min x is in the grid :" + newIsland.getMinX());
+            TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
+            if (zEntry.containsKey(newIsland.getMinZ())) {
+                //plugin.getLogger().info("DEBUG: min z is in the grid :" + newIsland.getMinZ());
+                // Island already exists
+                Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
+                plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
+                plugin.getLogger().warning(
+                        "Island at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
+                                + conflict.getCenter().getBlockX() + ", " + conflict.getCenter().getBlockZ() + ")");
+                if (conflict.getOwner() != null) {
+                    plugin.getLogger().warning("Accepted island is owned by " + plugin.getPlayers().getName(conflict.getOwner()));
+                    plugin.getLogger().warning(conflict.getOwner().toString() + ".yml");
+                } else {
+                    plugin.getLogger().warning("Accepted island is unowned.");
+                }
+                if (newIsland.getOwner() != null) {
+                    plugin.getLogger().warning("Denied island is owned by " + plugin.getPlayers().getName(newIsland.getOwner()));
+                    plugin.getLogger().warning(newIsland.getOwner().toString() + ".yml");
+                } else {
+                    plugin.getLogger().warning("Denied island is unowned and was just found in the islands folder. Skipping it...");
+                }
+                plugin.getLogger().warning("Recommend that the denied player file is deleted otherwise weird things can happen.");
+                return;
+            } else {
+                // Add island
+                //plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
+                zEntry.put(newIsland.getMinZ(), newIsland);
+                islandGrid.put(newIsland.getMinX(), zEntry);
+                // plugin.getLogger().info("Debug: " + newIsland.toString());
+            }
+        } else {
+            // Add island
+            //plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
+            TreeMap<Integer, Island> zEntry = new TreeMap<Integer, Island>();
+            zEntry.put(newIsland.getMinZ(), newIsland);
+            islandGrid.put(newIsland.getMinX(), zEntry);
+        }
+    }
+
+    /**
+     * Deletes an island from the database. Does not remove blocks
+     * @param location
+     */
     public void deleteIsland(Location location){
         if (islandsByLocation.containsKey(location)) {
             Island island = islandsByLocation.get(location);
@@ -173,6 +225,29 @@ public class IslandsManager {
                 islandsByUUID.remove(island.getOwner());
             }
             islandsByLocation.remove(location);
+        }
+        // Remove from grid
+        // plugin.getLogger().info("DEBUG: deleting island at " + location);
+        Island island = getIslandAt(location);
+        if (island != null) {
+            int x = island.getMinX();
+            int z = island.getMinZ();
+            // plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
+            if (islandGrid.containsKey(x)) {
+                // plugin.getLogger().info("DEBUG: x found");
+                TreeMap<Integer, Island> zEntry = islandGrid.get(x);
+                if (zEntry.containsKey(z)) {
+                    // plugin.getLogger().info("DEBUG: z found - deleting the island");
+                    // Island exists - delete it
+                    Island deletedIsland = zEntry.get(z);
+                    deletedIsland.setOwner(null);
+                    deletedIsland.setLocked(false);
+                    zEntry.remove(z);
+                    islandGrid.put(x, zEntry);
+                } // else {
+                // plugin.getLogger().info("DEBUG: could not find z");
+                // }
+            }
         }
     }
 
@@ -332,14 +407,17 @@ public class IslandsManager {
      */
     public Island getIslandAt(Location location) {
         if (location == null) {
+            plugin.getLogger().info("DEBUG: location is null");
             return null;
         }
         // World check
         if (!inWorld(location)) {
+            plugin.getLogger().info("DEBUG: not in right world");
             return null;
         }
         // Check if it is spawn
         if (spawn != null && spawn.onIsland(location)) {
+            plugin.getLogger().info("DEBUG: spawn");
             return spawn;
         }
         return getIslandAt(location.getBlockX(), location.getBlockZ());
@@ -354,6 +432,8 @@ public class IslandsManager {
      * @return PlayerIsland or null
      */
     public Island getIslandAt(int x, int z) {
+        plugin.getLogger().info("DEBUG: getting island at " + x + "," + z);
+        plugin.getLogger().info("DEBUG: island grid is " + islandGrid.size());
         Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
         if (en != null) {
             Entry<Integer, Island> ent = en.getValue().floorEntry(z);
@@ -361,10 +441,10 @@ public class IslandsManager {
                 // Check if in the island range
                 Island island = ent.getValue();
                 if (island.inIslandSpace(x, z)) {
-                    // plugin.getLogger().info("DEBUG: In island space");
+                    plugin.getLogger().info("DEBUG: In island space");
                     return island;
                 }
-                //plugin.getLogger().info("DEBUG: not in island space");
+                plugin.getLogger().info("DEBUG: not in island space");
             }
         }
         return null;
@@ -745,7 +825,7 @@ public class IslandsManager {
     public void newIsland(Player player, Schematic schematic) {
         newIsland(player, schematic, null);  
     }
-    
+
     /**
      * Makes an island using schematic. No permission checks are made. They have to be decided
      * before this method is called. If oldIsland is not null, it will be deleted after the new
@@ -765,13 +845,13 @@ public class IslandsManager {
         plugin.getLogger().info("DEBUG: finding island location");
         Location next = getNextIsland(player.getUniqueId());
         plugin.getLogger().info("DEBUG: found " + next);
-        
+
         // Add to the grid
         Island myIsland = plugin.getIslands().createIsland(next, playerUUID);
         myIsland.setLevelHandicap(schematic.getLevelHandicap());
         // Save the player so that if the server is reset weird things won't happen
         plugin.getPlayers().save(true);
-        
+
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(playerUUID);
 
@@ -950,7 +1030,7 @@ public class IslandsManager {
         nextPos.setZ(nextPos.getZ() - Settings.islandDistance);
         return nextPos;
     }
-    
+
     /**
      * This removes players from an island overworld and nether - used when reseting or deleting an island
      * Mobs are killed when the chunks are refreshed.
@@ -994,7 +1074,7 @@ public class IslandsManager {
      */
     public void removeMobs(Location location) {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

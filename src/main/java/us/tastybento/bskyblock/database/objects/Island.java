@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
 import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
@@ -484,8 +485,16 @@ public class Island extends DataObject {
     /**
      * @return the island display name or the owner's name if none is set
      */
-    public String getName(){
-        return (name != null && owner != null) ? name : Bukkit.getServer().getOfflinePlayer(owner).getName();
+    public String getName() {
+       if (name != null) {
+           return name;
+       }
+       if (owner != null) {
+           OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(owner);
+           name = player.getName();
+           return player.getName();
+       }
+       return "";
     }
 
     /**

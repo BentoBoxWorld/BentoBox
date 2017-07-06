@@ -46,7 +46,18 @@ public class IslandCommand extends BSBCommand{
 
     @Override
     public void onExecuteDefault(CommandSender sender, String label, String[] args) {
-        // TODO Auto-generated method stub
+        if (sender instanceof Player) {
+            Player player = (Player)sender;
+            if (plugin.getIslands().hasIsland(player.getUniqueId())) {
+                // Has island
+                plugin.getIslands().homeTeleport(player);
+            } else {
+                // Create island
+                createIsland(player);
+            }
+        } else {
+            Util.sendMessage(sender, plugin.getLocale().get("general.errors.use-in-game"));
+        }
     }
 
     @Override
@@ -81,7 +92,7 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return true;
             }
 
@@ -97,7 +108,7 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -114,13 +125,13 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
@@ -140,7 +151,7 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return true;
             }
 
@@ -149,8 +160,7 @@ public class IslandCommand extends BSBCommand{
                 if (sender instanceof Player) {
                     Player player = (Player)sender;
                     if (!plugin.getIslands().hasIsland(player.getUniqueId())) {
-                        Schematic schematic = plugin.getSchematics().getSchematic("default");
-                        plugin.getIslands().newIsland(player, schematic);
+                        createIsland(player);
                     } else {
                         Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("island.error.YouAlreadyHaveAnIsland"));
                     }
@@ -159,7 +169,7 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -174,19 +184,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -201,19 +211,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -228,13 +238,13 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return true;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 if (!(sender instanceof Player)) {
                     Util.sendMessage(sender, plugin.getLocale().get("error.useInGame"));
                 }
@@ -258,7 +268,7 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -273,19 +283,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -414,19 +424,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -441,19 +451,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -468,19 +478,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -495,19 +505,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -522,19 +532,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -549,19 +559,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -576,19 +586,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -603,19 +613,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -630,19 +640,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -657,19 +667,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -684,19 +694,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -711,19 +721,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -738,19 +748,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -765,19 +775,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -792,19 +802,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -819,19 +829,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -846,19 +856,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -873,19 +883,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -900,19 +910,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -927,19 +937,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -954,19 +964,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -981,19 +991,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -1055,19 +1065,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -1082,19 +1092,19 @@ public class IslandCommand extends BSBCommand{
 
             @Override
             public boolean canExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return false;
             }
 
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
 
             }
 
             @Override
             public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
-                // TODO Auto-generated method stub
+                
                 return null;
             }
 
@@ -1103,6 +1113,16 @@ public class IslandCommand extends BSBCommand{
                 return new String[] {"<id>", plugin.getLocale(sender).get("help.island.language")};
             }
         });
+    }
+
+    /**
+     * Creates an island for player
+     * @param player
+     */
+    protected void createIsland(Player player) {
+        //TODO: Add panels, make a selection.
+        Schematic schematic = plugin.getSchematics().getSchematic("default");
+        plugin.getIslands().newIsland(player, schematic);        
     }
 
 }

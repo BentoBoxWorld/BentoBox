@@ -24,6 +24,8 @@ import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
+import us.tastybento.bskyblock.listeners.NetherEvents;
+import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
@@ -99,7 +101,7 @@ public class BSkyBlock extends JavaPlugin{
                     Settings.worldName = "BSkyBlock_world";
                     Settings.createNether = true;
                     Settings.createEnd = true;
-                    Settings.islandNether = false;
+                    Settings.islandNether = true;
                     Settings.islandEnd = false;
                     new IslandWorld(plugin);
 
@@ -156,6 +158,8 @@ public class BSkyBlock extends JavaPlugin{
                     PluginManager manager = getServer().getPluginManager();
                     // Player join events
                     manager.registerEvents(new JoinLeaveListener(plugin), plugin);
+                    manager.registerEvents(new NetherEvents(plugin), plugin);
+                    manager.registerEvents(new NetherPortals(plugin), plugin);
                     /*
                      *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
@@ -278,10 +282,10 @@ public class BSkyBlock extends JavaPlugin{
      * @return the locale for this player
      */
     public BSBLocale getLocale(UUID player){
-        getLogger().info("DEBUG: " + player);
-        getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
-        getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
-        getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
+        //getLogger().info("DEBUG: " + player);
+        //getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
+        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
+        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
         String locale = getPlayers().getPlayer(player).getLocale();
         if(locale.isEmpty() || !locales.containsKey(locale)) return locales.get(Settings.defaultLanguage);
 
