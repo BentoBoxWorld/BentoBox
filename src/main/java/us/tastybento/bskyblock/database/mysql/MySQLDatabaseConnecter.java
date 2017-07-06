@@ -60,4 +60,10 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
         
     }
 
+    @Override
+    public boolean uniqueIdExists(String simpleName, String key) {
+        // Not used
+        return false;
+    }
+
 }

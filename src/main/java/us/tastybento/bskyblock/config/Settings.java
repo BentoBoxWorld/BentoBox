@@ -214,4 +214,6 @@ public class Settings {
     public static int islandZOffset;
     public static int islandStartZ;
 
+    public static boolean logInRemoveMobs;
+
 }

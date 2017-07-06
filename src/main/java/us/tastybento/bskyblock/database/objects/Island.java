@@ -836,4 +836,11 @@ public class Island extends DataObject {
         this.levelHandicap = levelHandicap;
     }
 
+    /**
+     * @return true if island is locked, false if not
+     */
+    public boolean isLocked() {
+        return locked;
+    }
+
 }

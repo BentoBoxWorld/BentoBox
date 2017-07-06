@@ -44,6 +44,7 @@ public class Players extends DataObject {
         this.locale = "";
         this.useControlPanel = Settings.useControlPanel;
         this.kickedList = new HashMap<Location, Long>();
+        this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
     }
 
     /**

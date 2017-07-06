@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.database.managers;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -386,7 +384,7 @@ public class IslandsManager {
 
     /**
      * @param playerUUID
-     * @return ture if player has island
+     * @return true if player has island
      */
     public boolean hasIsland(UUID playerUUID) {
         return islandsByUUID.containsKey(playerUUID);
@@ -989,6 +987,14 @@ public class IslandsManager {
 
     public AbstractDatabaseHandler<Island> getHandler() {
         return handler;
+    }
+
+    /**
+     * @param location
+     */
+    public void removeMobs(Location location) {
+        // TODO Auto-generated method stub
+        
     }
 
 }

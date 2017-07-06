@@ -71,6 +71,11 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName(), key);
         return createObject(config);
     }
+    
+    @Override
+    public boolean objectExits(String key) {
+        return databaseConnecter.uniqueIdExists(type.getSimpleName(), key);
+    }
 
     /**
      * Loads all the records in this table and returns a list of them

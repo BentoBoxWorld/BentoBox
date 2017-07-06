@@ -159,4 +159,11 @@ public abstract class AbstractDatabaseHandler<T> {
      */
     public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
 
+    /**
+     * Checks if a key exists or not
+     * @param key
+     * @return true if this key exists
+     */
+    public abstract boolean objectExits(String key);
+
 }

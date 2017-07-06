@@ -1,5 +1,8 @@
 package us.tastybento.bskyblock.database.managers;
 
+import java.beans.IntrospectionException;
+import java.lang.reflect.InvocationTargetException;
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -42,7 +45,7 @@ public class PlayersManager{
     }
 
     /**
-     * Load all players
+     * Load all players - not normally used as to load all players into memory will be wasteful
      */
     public void load(){
         playerCache.clear();
@@ -108,14 +111,26 @@ public class PlayersManager{
     public Players addPlayer(final UUID playerUUID) {
         if (playerUUID == null)
             return null;
-        //plugin.getLogger().info("DEBUG: added player " + playerUUID);
+        plugin.getLogger().info("DEBUG: adding player " + playerUUID);       
         if (!playerCache.containsKey(playerUUID)) {
-            plugin.getLogger().info("DEBUG: new player");
-            final Players player = new Players(playerUUID);
+            plugin.getLogger().info("DEBUG: player not in cache");
+            Players player = null;
+            // If the player is in the database, load it, otherwise create a new player
+            if (handler.objectExits(playerUUID.toString())) {
+                plugin.getLogger().info("DEBUG: player in database");
+                try {
+                    player = handler.loadObject(playerUUID.toString());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            } else {
+                plugin.getLogger().info("DEBUG: new player");
+                player = new Players(playerUUID);
+            }
             playerCache.put(playerUUID, player);
             return player;
         } else {
-            //plugin.getLogger().info("DEBUG: known player");
+            plugin.getLogger().info("DEBUG: known player");
             return playerCache.get(playerUUID);
         }
     }
@@ -127,10 +142,18 @@ public class PlayersManager{
      *            
      */
     public void removeOnlinePlayer(final UUID player) {
+        // plugin.getLogger().info("Removing player from cache: " + player);
         if (playerCache.containsKey(player)) {
-            //database.savePlayerData(playerCache.get(player));
-            playerCache.remove(player);
-            // plugin.getLogger().info("Removing player from cache: " + player);
+            try {
+                handler.saveObject(playerCache.get(player));
+                playerCache.remove(player);
+            } catch (IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | SecurityException
+                    | InstantiationException | NoSuchMethodException
+                    | IntrospectionException | SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
         }
     }
 
@@ -139,7 +162,7 @@ public class PlayersManager{
      */
     public void removeAllPlayers() {
         for (UUID pl : playerCache.keySet()) {
-            //database.savePlayerData(playerCache.get(pl));
+            removeOnlinePlayer(pl);
         }
         playerCache.clear();
     }
@@ -163,9 +186,7 @@ public class PlayersManager{
             return true;
         } else {
             // Get from the database - do not add to cache yet
-            //return database.isPlayerKnown(uniqueID) ? true: false;
-            // TODO
-            return false;
+            return handler.objectExits(uniqueID.toString());
         }
     }
 
@@ -301,7 +322,6 @@ public class PlayersManager{
      * @param adminCheck - if made via an admin call, this will go out to the 'net and grab - may cause lag
      * @return UUID of player or null if unknown
      */
-    @SuppressWarnings("deprecation")
     public UUID getUUID(String string, boolean adminCheck) {
         // Look in the database if it ready
         //return database.getUUID(string, adminCheck);
@@ -556,7 +576,7 @@ public class PlayersManager{
     public void removeInTeleport(UUID uniqueId) {
         inTeleport.remove(uniqueId);    
     }
-    
+
     /**
      * @param uniqueId
      * @return true if a player is mid-teleport
@@ -571,8 +591,28 @@ public class PlayersManager{
      */
     public void resetPlayer(Player player) {
         // TODO Auto-generated method stub
-        
-    }
-    
 
+    }
+
+    /**
+     * Saves the player to the database
+     * @param playerUUID
+     */
+    public void save(UUID playerUUID) {
+        if (playerCache.containsKey(playerUUID)) {
+            Players player = playerCache.get(playerUUID);
+            try {
+                handler.saveObject(player);
+                plugin.getLogger().info("DEBUG: " + playerUUID + " saved");
+            } catch (IllegalAccessException | IllegalArgumentException
+                    | InvocationTargetException | SecurityException
+                    | InstantiationException | NoSuchMethodException
+                    | IntrospectionException | SQLException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+        } else {
+            plugin.getLogger().info("DEBUG: " + playerUUID + " is not in the cache to save");
+        }
+    }
 }

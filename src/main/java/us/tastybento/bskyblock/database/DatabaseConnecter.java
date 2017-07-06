@@ -33,6 +33,14 @@ public interface DatabaseConnecter {
      * @return a unique key for this record
      */
     public String getUniqueId(String tableName);
+    
+    /**
+     * Check if a key exists in the database in this table or not
+     * @param simpleName
+     * @param key
+     * @return true if it exists
+     */
+    public boolean uniqueIdExists(String simpleName, String key);
 
     /**
      * Loads a YAML file. Used by the flat file database
@@ -49,5 +57,6 @@ public interface DatabaseConnecter {
      * @param fileName - the name of the record. Must be unique.
      */
     public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName);
+
 }
 

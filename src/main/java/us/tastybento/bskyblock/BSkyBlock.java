@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.commands.IslandCommand;
@@ -18,11 +19,11 @@ import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
@@ -132,8 +133,6 @@ public class BSkyBlock extends JavaPlugin{
                     getLogger().info("DEBUG: ************ Finished saving, now loading *************");
 
                      */
-
-                    playersManager.load();
                     islandsManager.load();
 
                     // Load schematics
@@ -153,6 +152,10 @@ public class BSkyBlock extends JavaPlugin{
                     Settings.defaultLanguage = "en-US";
                     loadLocales();
 
+                    // Register Listeners
+                    PluginManager manager = getServer().getPluginManager();
+                    // Player join events
+                    manager.registerEvents(new JoinLeaveListener(plugin), plugin);
                     /*
                      *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
