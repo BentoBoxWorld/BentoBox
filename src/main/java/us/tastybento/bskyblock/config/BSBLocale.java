@@ -54,15 +54,19 @@ public class BSBLocale {
      */
     public String get(String reference) {
         // TODO: add placeholder conversion?
-        plugin.getLogger().info("DEBUG: default lang = " + Settings.defaultLanguage);
-        plugin.getLogger().info("DEBUG: this locale = " + languageTag);
-        plugin.getLogger().info("DEBUG: reference = " + reference);
+        //plugin.getLogger().info("DEBUG: default lang = " + Settings.defaultLanguage);
+        //plugin.getLogger().info("DEBUG: this locale = " + languageTag);
+        //plugin.getLogger().info("DEBUG: reference = " + reference);
         if (rb.containsKey(reference)) {
+            //plugin.getLogger().info("DEBUG: contains key");
             return ChatColor.translateAlternateColorCodes('&', rb.getString(reference));
         } else if (!Settings.defaultLanguage.equals(languageTag)){
+            //plugin.getLogger().info("DEBUG: try default");
             // Try default lang
             return plugin.getLocale().get(reference);
         }
+        plugin.getLogger().severe(reference + " not found in " + languageTag + " or default lang " + Settings.defaultLanguage);
+        plugin.getLogger().info("DEBUG: " + rb.keySet().toString());
         return "";
     }
     

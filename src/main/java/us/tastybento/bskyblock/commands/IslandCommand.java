@@ -62,20 +62,6 @@ public class IslandCommand extends BSBCommand{
             @Override
             public void onExecute(CommandSender sender, String label, String[] args) {
                 Util.sendMessage(sender, ChatColor.GOLD + "About " + ChatColor.GREEN + plugin.getDescription().getName() + ChatColor.GOLD + " v" + ChatColor.AQUA + plugin.getDescription().getVersion() + ChatColor.GOLD + ":");
-                Util.sendMessage(sender, ChatColor.GOLD + "This plugin is free software: you can redistribute");
-                Util.sendMessage(sender, ChatColor.GOLD + "it and/or modify it under the terms of the GNU");
-                Util.sendMessage(sender, ChatColor.GOLD + "General Public License as published by the Free");
-                Util.sendMessage(sender, ChatColor.GOLD + "Software Foundation, either version 3 of the License,");
-                Util.sendMessage(sender, ChatColor.GOLD + "or (at your option) any later version.");
-                Util.sendMessage(sender, ChatColor.GOLD + "This plugin is distributed in the hope that it");
-                Util.sendMessage(sender, ChatColor.GOLD + "will be useful, but WITHOUT ANY WARRANTY; without");
-                Util.sendMessage(sender, ChatColor.GOLD + "even the implied warranty of MERCHANTABILITY or");
-                Util.sendMessage(sender, ChatColor.GOLD + "FITNESS FOR A PARTICULAR PURPOSE.  See the");
-                Util.sendMessage(sender, ChatColor.GOLD + "GNU General Public License for more details.");
-                Util.sendMessage(sender, ChatColor.GOLD + "You should have received a copy of the GNU");
-                Util.sendMessage(sender, ChatColor.GOLD + "General Public License along with this plugin.");
-                Util.sendMessage(sender, ChatColor.GOLD + "If not, see <http://www.gnu.org/licenses/>.");
-                Util.sendMessage(sender, ChatColor.GOLD + "Souce code is available on GitHub.");
                 Util.sendMessage(sender, ChatColor.GOLD + "(c) 2014 - 2017 by Tastybento & Poslovitch");
             }
 
@@ -166,7 +152,7 @@ public class IslandCommand extends BSBCommand{
                         Schematic schematic = plugin.getSchematics().getSchematic("default");
                         plugin.getIslands().newIsland(player, schematic);
                     } else {
-                        player.sendMessage(ChatColor.RED + "You already have an island!");
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("island.error.YouAlreadyHaveAnIsland"));
                     }
                 }
             }
