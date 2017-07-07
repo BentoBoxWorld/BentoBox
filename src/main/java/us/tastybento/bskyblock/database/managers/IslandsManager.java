@@ -43,6 +43,7 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class IslandsManager {
 
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
 
@@ -407,17 +408,17 @@ public class IslandsManager {
      */
     public Island getIslandAt(Location location) {
         if (location == null) {
-            plugin.getLogger().info("DEBUG: location is null");
+            //plugin.getLogger().info("DEBUG: location is null");
             return null;
         }
         // World check
         if (!inWorld(location)) {
-            plugin.getLogger().info("DEBUG: not in right world");
+            //plugin.getLogger().info("DEBUG: not in right world");
             return null;
         }
         // Check if it is spawn
         if (spawn != null && spawn.onIsland(location)) {
-            plugin.getLogger().info("DEBUG: spawn");
+            //plugin.getLogger().info("DEBUG: spawn");
             return spawn;
         }
         return getIslandAt(location.getBlockX(), location.getBlockZ());
@@ -432,8 +433,10 @@ public class IslandsManager {
      * @return PlayerIsland or null
      */
     public Island getIslandAt(int x, int z) {
-        plugin.getLogger().info("DEBUG: getting island at " + x + "," + z);
-        plugin.getLogger().info("DEBUG: island grid is " + islandGrid.size());
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: getting island at " + x + "," + z);
+            plugin.getLogger().info("DEBUG: island grid is " + islandGrid.size());
+        }
         Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
         if (en != null) {
             Entry<Integer, Island> ent = en.getValue().floorEntry(z);
@@ -441,10 +444,12 @@ public class IslandsManager {
                 // Check if in the island range
                 Island island = ent.getValue();
                 if (island.inIslandSpace(x, z)) {
-                    plugin.getLogger().info("DEBUG: In island space");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: In island space");
                     return island;
                 }
-                plugin.getLogger().info("DEBUG: not in island space");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: not in island space");
             }
         }
         return null;
@@ -458,7 +463,17 @@ public class IslandsManager {
      * @return true if in the island world
      */
     protected boolean inWorld(Location loc) {
-        // TODO: determine if the world is correct
+        if (loc != null) {
+            if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
+                return true;
+            }
+            if (Settings.islandNether && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
+                return true;
+            }
+            if (Settings.islandEnd && loc.getWorld().equals(IslandWorld.getEndWorld())) {
+                return true;
+            }
+        }
         return true;
     }
 
@@ -1075,6 +1090,216 @@ public class IslandsManager {
     public void removeMobs(Location location) {
         // TODO Auto-generated method stub
 
+    }
+
+    /**
+     * Returns the island being public at the location or null if there is none
+     * 
+     * @param location
+     * @return PlayerIsland object
+     */
+    public Island getProtectedIslandAt(Location location) {
+        //plugin.getLogger().info("DEBUG: getProtectedIslandAt " + location);
+        // Try spawn
+        if (spawn != null && spawn.onIsland(location)) {
+            return spawn;
+        }
+        Island island = getIslandAt(location);
+        if (island == null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: no island at this location");
+            return null;
+        }
+        if (island.onIsland(location)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: on island");
+            return island;
+        }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: not in island protection zone");
+        return null;
+    }
+
+    /**
+     * Indicates whether a player is at the island spawn or not
+     * 
+     * @param playerLoc
+     * @return true if they are, false if they are not, or spawn does not exist
+     */
+    public boolean isAtSpawn(Location playerLoc) {
+        if (spawn == null) {
+            return false;
+        }
+        return spawn.onIsland(playerLoc);
+    }
+
+    /**
+     * Checks if a specific location is within the protected range of an island
+     * owned by the player
+     * 
+     * @param player
+     * @param loc
+     * @return true if location is on island of player
+     */
+    public boolean locationIsOnIsland(final Player player, final Location loc) {
+        if (player == null) {
+            return false;
+        }
+        // Get the player's island from the grid if it exists
+        Island island = getIslandAt(loc);
+        if (island != null) {
+            //plugin.getLogger().info("DEBUG: island here is " + island.getCenter());
+            // On an island in the grid
+            //plugin.getLogger().info("DEBUG: onIsland = " + island.onIsland(loc));
+            //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
+            //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
+
+            if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
+                //plugin.getLogger().info("DEBUG: allowed");
+                // In a protected zone but is on the list of acceptable players
+                return true;
+            } else {
+                // Not allowed
+                //plugin.getLogger().info("DEBUG: not allowed");
+                return false;
+            }
+        } else {
+            //plugin.getLogger().info("DEBUG: no island at this location");
+        }
+        // Not in the grid, so do it the old way
+        // Make a list of test locations and test them
+        Set<Location> islandTestLocations = new HashSet<Location>();
+        if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
+            islandTestLocations.add(getIslandLocation(player.getUniqueId()));
+        }
+        // TODO: Check any coop locations
+        /*
+        islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
+        if (islandTestLocations.isEmpty()) {
+            return false;
+        }*/
+        // Run through all the locations
+        for (Location islandTestLocation : islandTestLocations) {
+            if (loc.getWorld().equals(islandTestLocation.getWorld())) {
+                if (loc.getX() >= islandTestLocation.getX() - Settings.islandProtectionRange / 2
+                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2
+                        && loc.getZ() >= islandTestLocation.getZ() - Settings.islandProtectionRange / 2
+                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if an online player is in the protected area of their island, a team island or a
+     * coop island
+     * 
+     * @param player
+     * @return true if on valid island, false if not
+     */
+    public boolean playerIsOnIsland(final Player player) {
+        return playerIsOnIsland(player, true);
+    }
+
+    /**
+     * Checks if an online player is in the protected area of their island, a team island or a
+     * coop island
+     * @param player
+     * @param coop - if true, coop islands are included
+     * @return true if on valid island, false if not
+     */
+    public boolean playerIsOnIsland(final Player player, boolean coop) {
+        return locationIsAtHome(player, coop, player.getLocation());
+    }
+
+    /**
+     * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
+     * @param player
+     * @param coop
+     * @param loc
+     * @return true if the location is within home boundaries
+     */
+    public boolean locationIsAtHome(final Player player, boolean coop, Location loc) {
+        // Make a list of test locations and test them
+        Set<Location> islandTestLocations = new HashSet<Location>();
+        if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
+            islandTestLocations.add(plugin.getIslands().getIslandLocation(player.getUniqueId()));
+            // If new Nether
+            if (Settings.createNether && Settings.islandNether && IslandWorld.getNetherWorld() != null) {
+                islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(player.getUniqueId())));
+            }
+        } 
+        // TODO: Check coop locations
+        /*
+        if (coop) {
+            islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
+        }*/
+        if (islandTestLocations.isEmpty()) {
+            return false;
+        }
+        // Run through all the locations
+        for (Location islandTestLocation : islandTestLocations) {
+            // Must be in the same world as the locations being checked
+            // Note that getWorld can return null if a world has been deleted on the server
+            if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
+                int protectionRange = Settings.islandProtectionRange;
+                if (getIslandAt(islandTestLocation) != null) {
+                    // Get the protection range for this location if possible
+                    Island island = getProtectedIslandAt(islandTestLocation);
+                    if (island != null) {
+                        // We are in a protected island area.
+                        protectionRange = island.getProtectionRange();
+                    }
+                }
+                if (loc.getX() > islandTestLocation.getX() - protectionRange / 2
+                        && loc.getX() < islandTestLocation.getX() + protectionRange / 2
+                        && loc.getZ() > islandTestLocation.getZ() - protectionRange / 2
+                        && loc.getZ() < islandTestLocation.getZ() + protectionRange / 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generates a Nether version of the locations
+     * @param islandLocation
+     * @return
+     */
+    private Location netherIsland(Location islandLocation) {
+        //plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
+        return islandLocation.toVector().toLocation(IslandWorld.getNetherWorld());
+    }
+
+    /**
+     * Get name of the island owned by owner
+     * @param owner
+     * @return Returns the name of owner's island, or the owner's name if there is none.
+     */
+    public String getIslandName(UUID owner) {
+        String result = plugin.getPlayers().getName(owner);
+        if (islandsByUUID.containsKey(owner)) {
+            Island island = islandsByUUID.get(owner);
+            if (!island.getName().isEmpty()) {
+                result = island.getName(); 
+            }
+        }
+        return ChatColor.translateAlternateColorCodes('&', result) + ChatColor.RESET;
+    }
+
+    /**
+     * Set the island name
+     * @param owner
+     * @param name
+     */
+    public void setIslandName(UUID owner, String name) {
+        if (islandsByUUID.containsKey(owner)) {
+            Island island = islandsByUUID.get(owner);
+            island.setName(name);
+        }
     }
 
 }

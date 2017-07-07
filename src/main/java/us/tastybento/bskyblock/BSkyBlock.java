@@ -22,10 +22,14 @@ import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
+import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
-import us.tastybento.bskyblock.listeners.NetherEvents;
 import us.tastybento.bskyblock.listeners.NetherPortals;
+import us.tastybento.bskyblock.listeners.protection.IslandGuard;
+import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
+import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
+import us.tastybento.bskyblock.listeners.protection.NetherEvents;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
@@ -68,7 +72,7 @@ public class BSkyBlock extends JavaPlugin{
             Settings.dbName = "ASkyBlock";
             Settings.dbUsername = "username";
             Settings.dbPassword = "password";
-            */
+             */
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
@@ -97,12 +101,19 @@ public class BSkyBlock extends JavaPlugin{
                 @Override
                 public void run() {
                     // Create the world if it does not exist
-                    // TODO: get world name from config.yml
+                    // TODO: All these settings are placeholders and need to come from config.yml
                     Settings.worldName = "BSkyBlock_world";
                     Settings.createNether = true;
                     Settings.createEnd = true;
                     Settings.islandNether = true;
                     Settings.islandEnd = false;
+                    Settings.limitedBlocks = new HashMap<String, Integer>();
+                    Settings.defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
+                    for (SettingsFlag flag: SettingsFlag.values()) {
+                        Settings.defaultWorldSettings.put(flag, false);
+                    }
+                    Settings.defaultWorldSettings.put(SettingsFlag.ANIMAL_SPAWN, true);
+                    Settings.defaultWorldSettings.put(SettingsFlag.MONSTER_SPAWN, true);
                     new IslandWorld(plugin);
 
                     // Test: Create a random island and save it
@@ -155,11 +166,7 @@ public class BSkyBlock extends JavaPlugin{
                     loadLocales();
 
                     // Register Listeners
-                    PluginManager manager = getServer().getPluginManager();
-                    // Player join events
-                    manager.registerEvents(new JoinLeaveListener(plugin), plugin);
-                    manager.registerEvents(new NetherEvents(plugin), plugin);
-                    manager.registerEvents(new NetherPortals(plugin), plugin);
+                    registerListeners();
                     /*
                      *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
@@ -187,6 +194,17 @@ public class BSkyBlock extends JavaPlugin{
 
             });
         }
+    }
+
+    protected void registerListeners() {
+        PluginManager manager = getServer().getPluginManager();
+        // Player join events
+        manager.registerEvents(new JoinLeaveListener(this), this);
+        manager.registerEvents(new NetherEvents(this), this);
+        manager.registerEvents(new NetherPortals(this), this);
+        manager.registerEvents(new IslandGuard(this), this);
+        manager.registerEvents(new IslandGuard1_8(this), this);
+        manager.registerEvents(new IslandGuard1_9(this), this);
     }
 
     @Override

@@ -14,7 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with BSkyBlock.  If not, see <http://www.gnu.org/licenses/>.
  *******************************************************************************/
-package us.tastybento.bskyblock.listeners;
+package us.tastybento.bskyblock.listeners.protection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;

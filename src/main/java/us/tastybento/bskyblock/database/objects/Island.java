@@ -7,8 +7,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
 
 import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
@@ -425,6 +428,7 @@ public class Island extends DataObject {
     public long getCreatedDate(){
         return createdDate;
     }
+    
     /**
      * Get the Island Guard flag status
      * @param flag
@@ -434,6 +438,11 @@ public class Island extends DataObject {
         if(flags.containsKey(flag)) {
             return flags.get(flag);
         } else {
+            if (flag.equals(SettingsFlag.ANIMAL_SPAWN) || flag.equals(SettingsFlag.MONSTER_SPAWN)) {
+                flags.put(flag, true);
+                return true;
+            }
+            flags.put(flag, false);
             return false;
         }
     }
@@ -612,8 +621,8 @@ public class Island extends DataObject {
      */
     public boolean onIsland(Location target) {
         if (center.getWorld() != null) {
-            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange)) {
+            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange*2)
+                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange*2)) {
                 return true;
             }
         }
@@ -850,6 +859,57 @@ public class Island extends DataObject {
      */
     public boolean isLocked() {
         return locked;
+    }
+
+    /**
+     * @return spawn
+     */
+    public boolean isSpawn() {
+        return spawn;
+    }
+
+    /**
+     * @param material
+     * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
+     * a tile entity.
+     */
+    public int getTileEntityCount(Material material, World world) {
+        int result = 0; 
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
+                for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
+                    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
+                    if (onIsland(holder.getLocation())) {
+                        if (holder.getType() == material) {
+                            result++;
+                        } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
+                            if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
+                                result++;
+                            }
+                        } else if (material.equals(Material.FURNACE)) {
+                            if (holder.getType().equals(Material.BURNING_FURNACE)) {
+                                result++;
+                            }
+                        } else if (material.toString().endsWith("BANNER")) {
+                            if (holder.getType().toString().endsWith("BANNER")) {
+                                result++;
+                            }
+                        } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
+                            if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
+                                result++;
+                            }
+                        }
+                    }
+                }
+                for (Entity holder : world.getChunkAt(x, z).getEntities()) {
+                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+                    if (holder.getType().toString().equals(material.toString()) && onIsland(holder.getLocation())) {
+                        result++;
+                    }
+                }
+            }  
+        }
+        return result;
     }
 
 }
