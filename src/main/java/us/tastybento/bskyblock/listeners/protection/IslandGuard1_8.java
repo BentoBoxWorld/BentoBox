@@ -72,7 +72,7 @@ public class IslandGuard1_8 implements Listener {
         if (DEBUG) {
             plugin.getLogger().info("1.8 " + e.getEventName());
         }
-        if (!IslandGuard.inWorld(e.getPlayer())) {
+        if (!Util.inWorld(e.getPlayer())) {
             return;
         }
         if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ARMOR_STAND)) {
@@ -100,7 +100,7 @@ public class IslandGuard1_8 implements Listener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
-        if (!IslandGuard.inWorld(e.getPlayer())) {
+        if (!Util.inWorld(e.getPlayer())) {
             return;
         }
         if (e.getPlayer().isOp()) {
@@ -134,7 +134,7 @@ public class IslandGuard1_8 implements Listener {
         if (DEBUG) {
             plugin.getLogger().info("1.8 " + "Armor stand place " + e.getEventName());
         }
-        if (!IslandGuard.inWorld(p)) {
+        if (!Util.inWorld(p)) {
             return;
         }
         if (p.isOp() || VaultHelper.hasPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -181,7 +181,7 @@ public class IslandGuard1_8 implements Listener {
         if (!(e.getEntity() instanceof LivingEntity)) {
             return;
         }
-        if (!IslandGuard.inWorld(e.getEntity())) {
+        if (!Util.inWorld(e.getEntity())) {
             return;
         }
         final LivingEntity livingEntity = (LivingEntity) e.getEntity();

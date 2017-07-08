@@ -224,5 +224,6 @@ public class Settings {
     public static HashMap<String,Integer> limitedBlocks;
     public static boolean allowTNTPushing;
     public static boolean showInActionBar;
+    public static boolean allowVisitorKeepInvOnDeath;
 
 }

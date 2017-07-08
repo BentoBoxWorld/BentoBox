@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
 import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Stores all the info about an island
@@ -357,6 +358,8 @@ public class Island extends DataObject {
     private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
 
     private int levelHandicap;
+
+    private Location spawnPoint;
 
     public Island() {};
 
@@ -910,6 +913,22 @@ public class Island extends DataObject {
             }  
         }
         return result;
+    }
+
+    public boolean inIslandSpace(Location location) {
+        if (Util.inWorld(location)) {
+            return inIslandSpace(location.getBlockX(), location.getBlockZ());
+        }
+        return false;
+    }
+
+    public void setSpawnPoint(Location location) {
+        spawnPoint = location;
+
+    }
+
+    public Location getSpawnPoint() {
+        return spawnPoint;
     }
 
 }

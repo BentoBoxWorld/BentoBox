@@ -105,40 +105,6 @@ public class IslandGuard implements Listener {
 
     }
 
-    /**
-     * Determines if an entity is in the island world or not or
-     * in the new nether if it is activated
-     * @param entity
-     * @return
-     */
-    protected static boolean inWorld(Entity entity) {
-        return inWorld(entity.getLocation());
-    }
-
-    /**
-     * Determines if a block is in the island world or not
-     * @param block
-     * @return true if in the island world
-     */
-    protected static boolean inWorld(Block block) {
-        return inWorld(block.getLocation());
-    }
-
-    /**
-     * Determines if a location is in the island world or not or
-     * in the new nether if it is activated
-     * @param loc
-     * @return true if in the island world
-     */
-    protected static boolean inWorld(Location loc) {
-        if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
-            return true;
-        }
-        if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
-            return true;
-        }
-        return false;
-    }
 
     /**
      * Prevents visitors picking items from riding horses or other inventories
@@ -152,7 +118,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // World check
-        if (!inWorld(event.getWhoClicked())) {
+        if (!Util.inWorld(event.getWhoClicked())) {
             return;
         }
         if (event.getInventory().getHolder() instanceof Animals) {
@@ -228,7 +194,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info(e.getAttacker().getType().toString());
         }
-        if (inWorld(e.getVehicle())) {
+        if (Util.inWorld(e.getVehicle())) {
             if (!(e.getAttacker() instanceof Player)) {
                 return;
             }
@@ -246,7 +212,7 @@ public class IslandGuard implements Listener {
     public void onVehicleMove(final VehicleMoveEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: vehicle move = " + e.getVehicle());
-        if (!inWorld(e.getVehicle())) {
+        if (!Util.inWorld(e.getVehicle())) {
             return;
         }
 
@@ -367,7 +333,7 @@ public class IslandGuard implements Listener {
         if (e.getPlayer().isDead()) {
             return;
         }
-        if (!inWorld(e.getPlayer())) {
+        if (!Util.inWorld(e.getPlayer())) {
             return;
         }
         if (plugin.getIslands() == null) {
@@ -499,7 +465,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // If not in the right world, return
-        if (!inWorld(e.getEntity())) {
+        if (!Util.inWorld(e.getEntity())) {
             return;
         }
         // Deal with natural spawning
@@ -530,7 +496,7 @@ public class IslandGuard implements Listener {
             //plugin.getLogger().info(e.getEventName());
             //plugin.getLogger().info("Entity exploding is " + e.getEntity());
         }
-        if (!inWorld(e.getLocation())) {
+        if (!Util.inWorld(e.getLocation())) {
             return;
         }
         // Find out what is exploding
@@ -669,7 +635,7 @@ public class IslandGuard implements Listener {
         if (!(e.getEntity() instanceof Enderman)) {
             return;
         }
-        if (!inWorld(e.getEntity())) {
+        if (!Util.inWorld(e.getEntity())) {
             return;
         }
         // Prevent Enderman griefing at spawn
@@ -695,7 +661,7 @@ public class IslandGuard implements Listener {
         }
         if (!Settings.endermanDeathDrop)
             return;
-        if (!inWorld(e.getEntity())) {
+        if (!Util.inWorld(e.getEntity())) {
             return;
         }
         if (!(e.getEntity() instanceof Enderman)) {
@@ -735,7 +701,7 @@ public class IslandGuard implements Listener {
         if (Settings.allowAutoActivator && e.getPlayer().getName().equals("[CoFH]")) {
             return;
         }
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             if (actionAllowed(e.getPlayer(), e.getBlock().getLocation(), SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
@@ -748,7 +714,7 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onItemFrameDamage(final EntityDamageByEntityEvent e) {
         // Check world
-        if (!inWorld(e.getEntity()) || !(e.getEntity() instanceof ItemFrame)) {
+        if (!Util.inWorld(e.getEntity()) || !(e.getEntity() instanceof ItemFrame)) {
             return;
         }
         if (e.getDamager() instanceof Projectile) {
@@ -779,7 +745,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: remover = " + e.getRemover());
         }
         // Check world
-        if (!inWorld(e.getEntity()) || !(e.getEntity() instanceof ItemFrame)) {
+        if (!Util.inWorld(e.getEntity()) || !(e.getEntity() instanceof ItemFrame)) {
             return;
         }
         if (e.getRemover() instanceof Skeleton || e.getRemover() instanceof Golem) {
@@ -807,7 +773,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("DEBUG: Entity = " + e.getEntity());
         }
         // Check world
-        if (!inWorld(e.getEntity())) {
+        if (!Util.inWorld(e.getEntity())) {
             return;
         }
         // Get the island where the damage is occurring
@@ -1012,7 +978,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             // This permission bypasses protection
             if (e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
@@ -1074,7 +1040,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             // This permission bypasses protection
             if (e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
@@ -1130,7 +1096,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
                 if (!actionAllowed(e.getPlayer(), e.getBlock().getLocation(), SettingsFlag.LEASH)) {
                     Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
@@ -1153,7 +1119,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // plugin.getLogger().info(e.getEventName());
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             // This permission bypasses protection
             if (e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
@@ -1198,7 +1164,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
         }
         // Check world
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             if (actionAllowed(e.getPlayer(),e.getBed().getLocation(), SettingsFlag.BED)) {
                 return;
             }
@@ -1219,7 +1185,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info(e.getRemover().toString());
         }
-        if (inWorld(e.getEntity())) {
+        if (Util.inWorld(e.getEntity())) {
             if ((e.getRemover() instanceof Creeper) && !Settings.allowCreeperDamage) {
                 e.setCancelled(true);
                 return;
@@ -1272,7 +1238,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (inWorld(e.getEntity())) {
+        if (Util.inWorld(e.getEntity())) {
             if (e.getPlayer() != null) {
                 Player player = e.getPlayer();
                 if (actionAllowed(player, e.getEntity().getLocation(),SettingsFlag.LEASH)) {
@@ -1295,7 +1261,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (inWorld(e.getEntity())) {
+        if (Util.inWorld(e.getEntity())) {
             if (e.getPlayer() != null) {
                 Player player = e.getPlayer();
                 if (actionAllowed(player, e.getEntity().getLocation(),SettingsFlag.LEASH)) {
@@ -1311,7 +1277,7 @@ public class IslandGuard implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLiquidFlow(final BlockFromToEvent e) {
 	// Ignore non-island worlds
-	if (!inWorld(e.getBlock())) {
+	if (!Util.inWorld(e.getBlock())) {
 	    return;
 	}
 	// Only check lateral movement
@@ -1362,7 +1328,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             Player p = e.getPlayer();
             if (e.getBlockClicked() != null) {
                 // This is where the water or lava actually will be dumped
@@ -1409,7 +1375,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (!inWorld(e.getBlock().getLocation()) || !e.getBlock().getBiome().equals(Biome.HELL)) {
+        if (!Util.inWorld(e.getBlock().getLocation()) || !e.getBlock().getBiome().equals(Biome.HELL)) {
             return;
         }
         // plugin.getLogger().info("DEBUG: Item being dispensed is " +
@@ -1429,7 +1395,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             // This permission bypasses protection
             if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
@@ -1469,7 +1435,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (inWorld(e.getPlayer())) {
+        if (Util.inWorld(e.getPlayer())) {
             if (actionAllowed(e.getPlayer(), e.getEntity().getLocation(), SettingsFlag.SHEARING)) {
                 return;
             }
@@ -1490,7 +1456,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (!inWorld(e.getPlayer())) {
+        if (!Util.inWorld(e.getPlayer())) {
             return;
         }
         if (e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -2025,7 +1991,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(event.getEventName());
         }
         Player player = (Player) event.getWhoClicked();
-        if (inWorld(player) || player.getWorld().equals(IslandWorld.getNetherWorld())) {
+        if (Util.inWorld(player) || player.getWorld().equals(IslandWorld.getNetherWorld())) {
             if (event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
                 if (!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
                     Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player.getUniqueId()).get("general.errors.no-permission"));
@@ -2047,7 +2013,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("Ender chest " + event.getEventName());
         }
         Player player = (Player) event.getPlayer();
-        if (inWorld(player) || player.getWorld().equals(IslandWorld.getNetherWorld())) {
+        if (Util.inWorld(player) || player.getWorld().equals(IslandWorld.getNetherWorld())) {
             if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
                 if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
                     if (!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
@@ -2070,7 +2036,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info("Hit entity event " + e.getEventName());
         }
-        if (!inWorld(p)) {
+        if (!Util.inWorld(p)) {
             return;
         }
         if (p.isOp() || VaultHelper.hasPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -2218,7 +2184,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        if (!inWorld(e.getBlock())) {
+        if (!Util.inWorld(e.getBlock())) {
             //plugin.getLogger().info("DEBUG: Not in world");
             return;
         }
@@ -2239,7 +2205,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getSource().getType().toString());
         }
         if (e.getSource().getType() == Material.FIRE) {
-            if (!inWorld(e.getBlock())) {
+            if (!Util.inWorld(e.getBlock())) {
                 //plugin.getLogger().info("DEBUG: Not in world");
                 return;
             }
@@ -2256,7 +2222,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
             plugin.getLogger().info(e.getCause().name());
         }
-        if (!inWorld(e.getBlock())) {
+        if (!Util.inWorld(e.getBlock())) {
             //plugin.getLogger().info("DEBUG: Not in world");
             return;
         }
@@ -2351,7 +2317,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("pressure plate = " + e.getEventName());
             plugin.getLogger().info("action = " + e.getAction());
         }
-        if (!inWorld(e.getPlayer()) || !e.getAction().equals(Action.PHYSICAL)
+        if (!Util.inWorld(e.getPlayer()) || !e.getAction().equals(Action.PHYSICAL)
                 || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getIslands().playerIsOnIsland(e.getPlayer())) {
             //plugin.getLogger().info("DEBUG: Not in world");
@@ -2397,7 +2363,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
         }
         Location pistonLoc = e.getBlock().getLocation();
-        if (Settings.allowPistonPush || !inWorld(pistonLoc)) {
+        if (Settings.allowPistonPush || !Util.inWorld(pistonLoc)) {
             //plugin.getLogger().info("DEBUG: Not in world");
             return;
         }
@@ -2425,7 +2391,7 @@ public class IslandGuard implements Listener {
         if (DEBUG) {
             plugin.getLogger().info("egg throwing = " + e.getEventName());
         }
-        if (!inWorld(e.getPlayer()) || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+        if (!Util.inWorld(e.getPlayer()) || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getIslands().playerIsOnIsland(e.getPlayer()) || plugin.getIslands().isAtSpawn(e.getPlayer().getLocation())) {
             return;
         }
@@ -2454,7 +2420,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info(e.getEventName());
         }
         // Check world
-        if (!inWorld(e.getLocation())) {
+        if (!Util.inWorld(e.getLocation())) {
             return;
         }
         // Check if this is on an island
@@ -2498,7 +2464,7 @@ public class IslandGuard implements Listener {
             return;
         }
         // Check world
-        if (!inWorld(e.getBlock())) {
+        if (!Util.inWorld(e.getBlock())) {
             return;
         }
         // Check if this is on an island
@@ -2548,7 +2514,7 @@ public class IslandGuard implements Listener {
     public void onBlockRedstone(BlockRedstoneEvent e){
         if(Settings.disableOfflineRedstone) {
             // Check world
-            if (!inWorld(e.getBlock())) {
+            if (!Util.inWorld(e.getBlock())) {
                 return;
             }
             // Check if this is on an island
@@ -2568,7 +2534,7 @@ public class IslandGuard implements Listener {
     {
         if (!Settings.allowTNTPushing) {
             // Check world
-            if (!inWorld(event.getBlock())) {
+            if (!Util.inWorld(event.getBlock())) {
                 return;
             }
 
@@ -2590,7 +2556,7 @@ public class IslandGuard implements Listener {
     {
         if (!Settings.allowTNTPushing) {
             // Check world
-            if (!inWorld(event.getBlock())) {
+            if (!Util.inWorld(event.getBlock())) {
                 return;
             }
             for (Block block: event.getBlocks()) {
@@ -2619,7 +2585,7 @@ public class IslandGuard implements Listener {
             plugin.getLogger().info("splash affected entities = " + e.getAffectedEntities());
             //plugin.getLogger().info("splash hit entity = " + e.getHitEntity());
         }
-        if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
+        if (!Util.inWorld(e.getEntity().getLocation())) {
             return;
         }
         // Try to get the shooter

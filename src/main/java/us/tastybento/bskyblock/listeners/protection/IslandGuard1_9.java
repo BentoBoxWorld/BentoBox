@@ -68,7 +68,7 @@ public class IslandGuard1_9 implements Listener {
         }
         if (e.getEntity() instanceof Player && e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             Player player= (Player) e.getEntity();
-            if (!IslandGuard.inWorld(player)) {
+            if (!Util.inWorld(player)) {
                 return;
             }
             if (player.isOp()) {
@@ -104,7 +104,7 @@ public class IslandGuard1_9 implements Listener {
         if (DEBUG) {
             plugin.getLogger().info("1.9 " +e.getEventName());
         }
-        if (!IslandGuard.inWorld(e.getPlayer())) {
+        if (!Util.inWorld(e.getPlayer())) {
             return;
         }
         if (e.getPlayer().isOp()) {
@@ -138,7 +138,7 @@ public class IslandGuard1_9 implements Listener {
         if (DEBUG) {
             plugin.getLogger().info("1.9 " +"End crystal place " + e.getEventName());
         }
-        if (!IslandGuard.inWorld(p)) {
+        if (!Util.inWorld(p)) {
             return;
         }
         if (p.isOp() || VaultHelper.hasPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -188,7 +188,7 @@ public class IslandGuard1_9 implements Listener {
             plugin.getLogger().info("1.9 " +"IslandGuard 1_9 " + e.getEventName());
             plugin.getLogger().info("1.9 " +"Entity is " + e.getEntityType());
         }
-        if (e.getEntity() == null || !IslandGuard.inWorld(e.getEntity())) {
+        if (e.getEntity() == null || !Util.inWorld(e.getEntity())) {
             return;
         }
         if (!(e.getEntity() instanceof EnderCrystal)) {
@@ -265,7 +265,7 @@ public class IslandGuard1_9 implements Listener {
             return;
         }
 
-        if (!IslandGuard.inWorld(e.getLocation())) {
+        if (!Util.inWorld(e.getLocation())) {
             return;
         }
         // General settings irrespective of whether this is allowed or not
@@ -318,7 +318,7 @@ public class IslandGuard1_9 implements Listener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
-        if (!IslandGuard.inWorld(e.getPlayer())) {
+        if (!Util.inWorld(e.getPlayer())) {
             return;
         }
         if (e.getPlayer().isOp()) {
@@ -355,7 +355,7 @@ public class IslandGuard1_9 implements Listener {
             plugin.getLogger().info("1.9 id = " + e.getAreaEffectCloud().getEntityId());
             plugin.getLogger().info("1.9 hit entity = " + e.getHitEntity());
         }
-        if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
+        if (!Util.inWorld(e.getEntity().getLocation())) {
             return;
         }
         // Try to get the shooter
@@ -386,7 +386,7 @@ public class IslandGuard1_9 implements Listener {
             plugin.getLogger().info("1.9 lingering potion cause = " + e.getCause());
             plugin.getLogger().info("1.9 lingering potion damager = " + e.getDamager());
         }
-        if (!IslandGuard.inWorld(e.getEntity().getLocation())) {
+        if (!Util.inWorld(e.getEntity().getLocation())) {
             return;
         }
         if (e.getEntity() == null || e.getEntity().getUniqueId() == null) {

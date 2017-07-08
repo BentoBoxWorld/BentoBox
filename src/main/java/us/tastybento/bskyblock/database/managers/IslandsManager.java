@@ -412,7 +412,7 @@ public class IslandsManager {
             return null;
         }
         // World check
-        if (!inWorld(location)) {
+        if (!Util.inWorld(location)) {
             //plugin.getLogger().info("DEBUG: not in right world");
             return null;
         }
@@ -453,28 +453,6 @@ public class IslandsManager {
             }
         }
         return null;
-    }
-
-
-    /**
-     * Determines if a location is in the island world or not or
-     * in the new nether if it is activated
-     * @param loc
-     * @return true if in the island world
-     */
-    protected boolean inWorld(Location loc) {
-        if (loc != null) {
-            if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
-                return true;
-            }
-            if (Settings.netherIslands && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
-                return true;
-            }
-            if (Settings.endIslands && loc.getWorld().equals(IslandWorld.getEndWorld())) {
-                return true;
-            }
-        }
-        return true;
     }
 
     /**
@@ -1303,6 +1281,16 @@ public class IslandsManager {
             Island island = islandsByUUID.get(owner);
             island.setName(name);
         }
+    }
+
+    /**
+     * @return the spawnPoint or null if spawn does not exist
+     */
+    public Location getSpawnPoint() {
+        //plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
+        if (spawn == null)
+            return null;
+        return spawn.getSpawnPoint();
     }
 
 }

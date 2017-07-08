@@ -13,12 +13,15 @@ import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 
@@ -243,4 +246,45 @@ public class Util {
         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
                 "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
     }
+    
+    /**
+     * Determines if a location is in the island world or not or
+     * in the new nether if it is activated
+     * @param loc
+     * @return true if in the island world
+     */
+    public static boolean inWorld(Location loc) {
+        if (loc != null) {
+            if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
+                return true;
+            }
+            if (Settings.netherIslands && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
+                return true;
+            }
+            if (Settings.endIslands && loc.getWorld().equals(IslandWorld.getEndWorld())) {
+                return true;
+            }
+        }
+        return true;
+    }
+    
+    /**
+     * Determines if an entity is in the island world or not or
+     * in the new nether if it is activated
+     * @param entity
+     * @return
+     */
+    public static boolean inWorld(Entity entity) {
+        return inWorld(entity.getLocation());
+    }
+
+    /**
+     * Determines if a block is in the island world or not
+     * @param block
+     * @return true if in the island world
+     */
+    public static boolean inWorld(Block block) {
+        return inWorld(block.getLocation());
+    }
+
 }
