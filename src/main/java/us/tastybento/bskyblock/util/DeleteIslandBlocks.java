@@ -99,7 +99,7 @@ public class DeleteIslandBlocks {
                 }
                 if (regen) {
                     world.regenerateChunk(x, z);
-                    if (Settings.islandNether && Settings.createNether) {
+                    if (Settings.netherIslands && Settings.netherGenerate) {
                         if (world.equals(IslandWorld.getIslandWorld())) {
                             IslandWorld.getNetherWorld().regenerateChunk(x, z);
                         }
@@ -179,7 +179,7 @@ public class DeleteIslandBlocks {
                                             break;
                                         }
                                         // Nether, if it exists
-                                        if (Settings.islandNether && Settings.createNether && y < IslandWorld.getNetherWorld().getMaxHeight() - 8) {
+                                        if (Settings.netherIslands && Settings.netherGenerate && y < IslandWorld.getNetherWorld().getMaxHeight() - 8) {
                                             b = IslandWorld.getNetherWorld().getBlockAt(xCoord, y, zCoord);                                       
                                             bt = b.getType();
                                             if (!b.equals(Material.AIR)) {

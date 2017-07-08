@@ -42,8 +42,6 @@ public class IslandBlock {
     private int z;
     private List<String> signText;
     private BannerBlock banner;
-    private SkullBlock skull;
-    private PotBlock pot;
     private EntityType spawnerBlockType;
     // Chest contents
     private HashMap<Byte,ItemStack> chestContents = new HashMap<Byte,ItemStack>();
@@ -202,8 +200,6 @@ public class IslandBlock {
         this.z = z;
         signText = null;
         banner = null;
-        skull = null;
-        pot = null;
         spawnerBlockType = null;
         chestContents = new HashMap<Byte,ItemStack>();
     }
@@ -261,19 +257,6 @@ public class IslandBlock {
     public void setBanner(Map<String, Tag> map) {
         banner = new BannerBlock();
         banner.prep(map);
-    }
-    /**
-     * Sets this block up with all the skull data required
-     * @param map
-     * @param dataValue
-     */
-    public void setSkull(Map<String, Tag> map, int dataValue) {
-        skull = new SkullBlock();
-        skull.prep(map, dataValue);
-    }
-    public void setFlowerPot(Map<String, Tag> map){
-        pot = new PotBlock();
-        pot.prep(map);
     }
 
     /**
@@ -542,10 +525,6 @@ public class IslandBlock {
             sign.update();
         } else if (banner != null) {
             banner.set(block);
-        } else if (skull != null){
-            skull.set(block);
-        } else if (pot != null){
-            pot.set(nms, block);
         } else if (spawnerBlockType != null) {
             if (block.getTypeId() != typeId) {
                 block.setTypeId(typeId);

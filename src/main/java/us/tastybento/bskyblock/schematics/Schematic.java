@@ -1165,12 +1165,6 @@ public class Schematic {
                                     if (block.getTypeId() == Material.STANDING_BANNER.getId()) {
                                         block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
                                     }
-                                    else if (block.getTypeId() == Material.SKULL.getId()) {
-                                        block.setSkull(tileEntitiesMap.get(new BlockVector(x, y, z)), block.getData());
-                                    }
-                                    else if (block.getTypeId() == Material.FLOWER_POT.getId()) {
-                                        block.setFlowerPot(tileEntitiesMap.get(new BlockVector(x, y, z)));
-                                    }
                                 }
                                 // Monster spawner blocks
                                 if (block.getTypeId() == Material.MOB_SPAWNER.getId()) {

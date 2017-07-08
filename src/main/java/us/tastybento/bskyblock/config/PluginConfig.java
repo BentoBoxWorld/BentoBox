@@ -4,6 +4,8 @@ import java.util.HashMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.NotSetup.ConfigError;
+import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
+import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 
 /**
  * Loads the plugin configuration and the locales.
@@ -19,13 +21,8 @@ public class PluginConfig {
      * If there were errors, it setups the commands as "NotSetup" and generates a debug for admins to fix their configuration.
      * @return true if there wasn't any error, otherwise false.
      */
-    public static boolean loadPluginConfig(BSkyBlock plugin){
-        // Check if the config exists. It shouldn't happen, but the stack trace helps to know why.
-        try{
-            plugin.getConfig();
-        } catch (Exception exception){
-            exception.printStackTrace();
-        }
+    public static boolean loadPluginConfig(BSkyBlock plugin) {
+        plugin.saveDefaultConfig();
         
         // Initialize the errors list
         HashMap<ConfigError, Object> errors = new HashMap<ConfigError, Object>();
@@ -51,7 +48,26 @@ public class PluginConfig {
         if(Settings.purgeMaxIslandLevel < 0) errors.put(ConfigError.PURGE_ISLAND_LEVEL_TOO_LOW, Settings.purgeMaxIslandLevel);
         Settings.purgeRemoveUserData = plugin.getConfig().getBoolean("general.purge.remove-user-data", false);
         
-        // TODO Database
+        // Database
+        String dbType = plugin.getConfig().getString("general.database.type","FLATFILE");
+        boolean found = false;
+        for (DatabaseType type: DatabaseType.values()) {
+            if (type.name().equals(dbType.toUpperCase())) {
+                Settings.databaseType = type;
+                found = true;
+                break;
+            }
+        }
+        if (!found) {
+            plugin.getLogger().severe("Database type not found! Using FLATFILE");
+            Settings.databaseType = DatabaseType.FLATFILE;
+        }
+        Settings.dbHost = plugin.getConfig().getString("general.database.host", "localhost");
+        Settings.dbPort = plugin.getConfig().getInt("general.database.port",3306);
+        Settings.dbName = plugin.getConfig().getString("general.database.name", "BSkyBlock");
+        Settings.dbUsername = plugin.getConfig().getString("general.database.username");
+        Settings.dbPassword = plugin.getConfig().getString("general.database.password");
+
         
         Settings.recoverSuperFlat = plugin.getConfig().getBoolean("general.recover-super-flat", false);
         Settings.muteDeathMessages = plugin.getConfig().getBoolean("general.mute-death-messages", false);
@@ -65,14 +81,14 @@ public class PluginConfig {
         Settings.acidBlockedCommands = plugin.getConfig().getStringList("general.allow-teleport.acid-blocked-commands");
         
         // ********************* World *********************
-        Settings.worldName = plugin.getConfig().getString("world.world-name", "BSkyBlock");
+        Settings.worldName = plugin.getConfig().getString("world.world-name", "BSkyBlock_world");
         //TODO check if it is the same than before
         
-        Settings.islandDistance = plugin.getConfig().getInt("world.distance", 200);
-        // TODO check if it is the same than before
-        if(Settings.islandDistance % 2 != 0) errors.put(ConfigError.NOT_EVEN_ISLAND_DISTANCE, Settings.islandDistance);
-        if(Settings.islandDistance < 50) errors.put(ConfigError.ISLAND_DISTANCE_TOO_LOW, Settings.islandDistance);
-        
+        int distance = plugin.getConfig().getInt("world.distance-in-chunks", 24);
+        // TODO this is an arbitrary number
+        Settings.islandDistance = distance * 16;
+        if(distance < 50) errors.put(ConfigError.ISLAND_DISTANCE_TOO_LOW, Settings.islandDistance);
+
         Settings.islandProtectionRange = plugin.getConfig().getInt("world.protection-range", 100);
         if(Settings.islandProtectionRange % 2 != 0) errors.put(ConfigError.NOT_EVEN_PROTECTION_RANGE, Settings.islandProtectionRange);
         if(Settings.islandProtectionRange < 0) errors.put(ConfigError.PROTECTION_RANGE_TOO_LOW, Settings.islandProtectionRange);
@@ -97,7 +113,17 @@ public class PluginConfig {
             if(Settings.netherSpawnRadius < 0) errors.put(ConfigError.NETHER_SPAWN_RADIUS_TOO_LOW, Settings.netherSpawnRadius);
             if(Settings.netherSpawnRadius > 100) errors.put(ConfigError.NETHER_SPAWN_RADIUS_TOO_HIGH, Settings.netherSpawnRadius);
         }
-        
+        // TODO: add to config
+        Settings.endGenerate = true;
+        Settings.endIslands = false;
+        Settings.limitedBlocks = new HashMap<String, Integer>();
+        Settings.defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
+        for (SettingsFlag flag: SettingsFlag.values()) {
+            Settings.defaultWorldSettings.put(flag, false);
+        }
+        Settings.defaultWorldSettings.put(SettingsFlag.ANIMAL_SPAWN, true);
+        Settings.defaultWorldSettings.put(SettingsFlag.MONSTER_SPAWN, true);
+
         // Entities
         
         //TODO end loading

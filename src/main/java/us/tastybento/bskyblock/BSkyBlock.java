@@ -22,7 +22,6 @@ import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
-import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
@@ -64,15 +63,6 @@ public class BSkyBlock extends JavaPlugin{
 
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
-            // TEMP DEBUG DATABASE
-            /*
-            Settings.databaseType = DatabaseType.MYSQL;
-            Settings.dbHost = "localhost";
-            Settings.dbPort = 3306;
-            Settings.dbName = "ASkyBlock";
-            Settings.dbUsername = "username";
-            Settings.dbPassword = "password";
-             */
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
@@ -101,51 +91,8 @@ public class BSkyBlock extends JavaPlugin{
                 @Override
                 public void run() {
                     // Create the world if it does not exist
-                    // TODO: All these settings are placeholders and need to come from config.yml
-                    Settings.worldName = "BSkyBlock_world";
-                    Settings.createNether = true;
-                    Settings.createEnd = true;
-                    Settings.islandNether = true;
-                    Settings.islandEnd = false;
-                    Settings.limitedBlocks = new HashMap<String, Integer>();
-                    Settings.defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
-                    for (SettingsFlag flag: SettingsFlag.values()) {
-                        Settings.defaultWorldSettings.put(flag, false);
-                    }
-                    Settings.defaultWorldSettings.put(SettingsFlag.ANIMAL_SPAWN, true);
-                    Settings.defaultWorldSettings.put(SettingsFlag.MONSTER_SPAWN, true);
                     new IslandWorld(plugin);
-
-                    // Test: Create a random island and save it
-                    // TODO: ideally this should be in a test class!
-                    /*
-                    UUID owner = UUID.fromString("ddf561c5-72b6-4ec6-a7ea-8b50a893beb2");
-
-                    Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), owner);
-                    // Add members
-                    Set<UUID> randomSet = new HashSet<UUID>();
-                    island.addMember(owner);
-                    for (int i = 0; i < 10; i++) {
-                        randomSet.add(UUID.randomUUID());
-                        island.addMember(UUID.randomUUID());
-                        island.addToBanList(UUID.randomUUID());
-                    }
-                    island.setBanned(randomSet);
-                    island.setCoops(randomSet);
-                    island.setTrustees(randomSet);
-                    island.setMembers(randomSet);
-                    for (SettingsFlag flag: SettingsFlag.values()) {
-                        island.setFlag(flag, true);
-                    }
-                    island.setLocked(true);
-                    island.setName("new name");
-                    island.setPurgeProtected(true);
-                    islandsManager.save(false);
-
-
-                    getLogger().info("DEBUG: ************ Finished saving, now loading *************");
-
-                     */
+                    // Load islands from database
                     islandsManager.load();
 
                     // Load schematics

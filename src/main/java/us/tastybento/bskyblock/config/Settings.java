@@ -199,15 +199,11 @@ public class Settings {
     public static String dbUsername;
     public static String dbPassword;
 
-    public static boolean createNether;
-
     public static boolean useOwnGenerator;
 
-    public static boolean islandNether;
+    public static boolean endGenerate;
 
-    public static boolean createEnd;
-
-    public static boolean islandEnd;
+    public static boolean endIslands;
     public static boolean resetMoney;
     public static double acidDamage;
     public static int islandXOffset;

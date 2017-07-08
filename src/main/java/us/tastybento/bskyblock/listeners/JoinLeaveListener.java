@@ -42,7 +42,8 @@ public class JoinLeaveListener implements Listener {
             return;
         }
         if (plugin.getPlayers().isAKnownPlayer(playerUUID)) {
-            plugin.getLogger().info("DEBUG: known player");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: known player");
             // Load player
             players.addPlayer(playerUUID);
             // Reset resets if the admin changes it to or from unlimited
@@ -82,10 +83,11 @@ public class JoinLeaveListener implements Listener {
                 }
             }
         } else {
-            plugin.getLogger().info("DEBUG: not a known player");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: not a known player");
         }
     }
-    
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
         players.removeOnlinePlayer(event.getPlayer().getUniqueId());

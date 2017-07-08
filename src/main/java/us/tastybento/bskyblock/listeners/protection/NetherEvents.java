@@ -44,7 +44,7 @@ public class NetherEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: nether portal entity " + event.getFrom().getBlock().getType());
         // If the nether is disabled then quit immediately
-        if (!Settings.createNether || IslandWorld.getNetherWorld() == null) {
+        if (!Settings.netherGenerate || IslandWorld.getNetherWorld() == null) {
             return;
         }
         if (event.getEntity() == null) {
@@ -72,7 +72,7 @@ public class NetherEvents implements Listener {
             return;
         }
         // No entities may pass with the old nether
-        if (!Settings.islandNether) {
+        if (!Settings.netherIslands) {
             event.setCancelled(true);
             return;
         }
@@ -119,7 +119,7 @@ public class NetherEvents implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
         // plugin.getLogger().info("Block break");
-        if ((e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether") && !Settings.islandNether)
+        if ((e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether") && !Settings.netherIslands)
                 || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
             if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
@@ -143,7 +143,7 @@ public class NetherEvents implements Listener {
     public void onPlayerBlockPlace(final BlockPlaceEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
-        if (!Settings.islandNether) {
+        if (!Settings.netherIslands) {
             if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
                     || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
                 if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -160,7 +160,7 @@ public class NetherEvents implements Listener {
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: " + e.getEventName());
-        if (!Settings.islandNether) {
+        if (!Settings.netherIslands) {
             if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
                     || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
                 if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
@@ -180,7 +180,7 @@ public class NetherEvents implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        if (Settings.islandNether) {
+        if (Settings.netherIslands) {
             // Not used in the new nether
             return;
         }
@@ -214,7 +214,7 @@ public class NetherEvents implements Listener {
         if (!Settings.netherTrees) {
             return;
         }
-        if (!Settings.createNether || IslandWorld.getNetherWorld() == null) {
+        if (!Settings.netherGenerate || IslandWorld.getNetherWorld() == null) {
             return;
         }
         // Check world

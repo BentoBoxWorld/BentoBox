@@ -15,13 +15,15 @@
 package us.tastybento.bskyblock.config;
 
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.enumeration;
+import static java.util.Collections.unmodifiableList;
+import static java.util.stream.Collectors.toMap;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Reader;
 import java.util.AbstractMap.SimpleImmutableEntry;
-import static java.util.Arrays.asList;
-import static java.util.Collections.enumeration;
-import static java.util.Collections.unmodifiableList;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.Locale;
@@ -30,7 +32,6 @@ import java.util.Map.Entry;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
-import static java.util.stream.Collectors.toMap;
 import java.util.stream.Stream;
 
 import org.yaml.snakeyaml.Yaml;

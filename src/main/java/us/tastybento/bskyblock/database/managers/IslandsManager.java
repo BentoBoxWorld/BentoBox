@@ -467,10 +467,10 @@ public class IslandsManager {
             if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
                 return true;
             }
-            if (Settings.islandNether && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
+            if (Settings.netherIslands && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
                 return true;
             }
-            if (Settings.islandEnd && loc.getWorld().equals(IslandWorld.getEndWorld())) {
+            if (Settings.endIslands && loc.getWorld().equals(IslandWorld.getEndWorld())) {
                 return true;
             }
         }
@@ -538,7 +538,8 @@ public class IslandsManager {
      */
     public boolean homeTeleport(final Player player, int number) {
         Location home = null;
-        plugin.getLogger().info("home teleport called for #" + number);
+        if (DEBUG)
+            plugin.getLogger().info("home teleport called for #" + number);
         home = getSafeHomeLocation(player.getUniqueId(), number);
         //plugin.getLogger().info("home get safe loc = " + home);
         // Check if the player is a passenger in a boat
@@ -553,12 +554,14 @@ public class IslandsManager {
             }
         }
         if (home == null) {
-            plugin.getLogger().info("Fixing home location using safe spot teleport");
+            if (DEBUG)
+                plugin.getLogger().info("Fixing home location using safe spot teleport");
             // Try to fix this teleport location and teleport the player if possible
             new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
             return true;
         }
-        plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
         //home.getChunk().load();
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
@@ -883,7 +886,7 @@ public class IslandsManager {
             //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
             //plugin.getLogger().info("DEBUG: nether world is " + BSkyBlock.getNetherWorld());
             // Paste the starting island. If it is a HELL biome, then we start in the Nether
-            if (Settings.createNether && schematic.isInNether() && Settings.islandNether && IslandWorld.getNetherWorld() != null) {
+            if (Settings.netherGenerate && schematic.isInNether() && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
                 // Nether start
                 // Paste the overworld if it exists
                 if (!schematic.getPartnerName().isEmpty()) {
@@ -904,7 +907,7 @@ public class IslandsManager {
                 //double diff = (System.nanoTime() - timer)/1000000;
                 //plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
                 //plugin.getLogger().info("DEBUG: pasted overworld");
-                if (Settings.createNether && Settings.islandNether && IslandWorld.getNetherWorld() != null) {
+                if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
                     // Paste the other world schematic
                     final Location netherLoc = next.toVector().toLocation(IslandWorld.getNetherWorld());
                     if (schematic.getPartnerName().isEmpty()) {
@@ -1227,7 +1230,7 @@ public class IslandsManager {
         if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
             islandTestLocations.add(plugin.getIslands().getIslandLocation(player.getUniqueId()));
             // If new Nether
-            if (Settings.createNether && Settings.islandNether && IslandWorld.getNetherWorld() != null) {
+            if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
                 islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(player.getUniqueId())));
             }
         } 

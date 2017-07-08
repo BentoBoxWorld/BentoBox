@@ -45,7 +45,7 @@ public class NetherPortals implements Listener {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: nether portal entity " + event.getFrom().getBlock().getType());
         // If the nether is disabled then quit immediately
-        if (!Settings.createNether || IslandWorld.getNetherWorld() == null) {
+        if (!Settings.netherGenerate || IslandWorld.getNetherWorld() == null) {
             return;
         }
         if (event.getEntity() == null) {
@@ -73,7 +73,7 @@ public class NetherPortals implements Listener {
             return;
         }
         // No entities may pass with the old nether
-        if (!Settings.islandNether) {
+        if (!Settings.netherIslands) {
             event.setCancelled(true);
             return;
         }
@@ -98,7 +98,7 @@ public class NetherPortals implements Listener {
             plugin.getLogger().info("DEBUG: Player portal event - reason =" + event.getCause());
         UUID playerUUID = event.getPlayer().getUniqueId();
         // If the nether is disabled then quit immediately
-        if (!Settings.createNether || IslandWorld.getNetherWorld() == null) {
+        if (!Settings.netherGenerate || IslandWorld.getNetherWorld() == null) {
             return;
         }
         Location currentLocation = event.getFrom().clone();
@@ -159,7 +159,7 @@ public class NetherPortals implements Listener {
             if (home != null) {
                 homeWorld = home.getWorld();
             }
-            if (!Settings.islandNether) {
+            if (!Settings.netherIslands) {
                 // Legacy action
                 if (event.getFrom().getWorld().getEnvironment().equals(Environment.NORMAL)) {
                     // Going to Nether

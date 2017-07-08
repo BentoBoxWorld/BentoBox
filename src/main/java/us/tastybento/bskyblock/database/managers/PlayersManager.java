@@ -20,6 +20,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
 
 public class PlayersManager{
 
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
     private AbstractDatabaseHandler<Players> handler;
@@ -608,7 +609,8 @@ public class PlayersManager{
             Players player = playerCache.get(playerUUID);
             try {
                 handler.saveObject(player);
-                plugin.getLogger().info("DEBUG: " + playerUUID + " saved");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: " + playerUUID + " saved");
             } catch (IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | SecurityException
                     | InstantiationException | NoSuchMethodException
@@ -617,7 +619,8 @@ public class PlayersManager{
                 e.printStackTrace();
             }
         } else {
-            plugin.getLogger().info("DEBUG: " + playerUUID + " is not in the cache to save");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: " + playerUUID + " is not in the cache to save");
         }
     }
 }

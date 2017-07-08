@@ -134,7 +134,7 @@ public class IslandGuard implements Listener {
         if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
             return true;
         }
-        if (Settings.createNether && Settings.islandNether && IslandWorld.getNetherWorld() != null && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
+        if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
             return true;
         }
         return false;

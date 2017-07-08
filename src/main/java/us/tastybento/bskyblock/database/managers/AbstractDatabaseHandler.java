@@ -8,7 +8,6 @@ import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
-import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
