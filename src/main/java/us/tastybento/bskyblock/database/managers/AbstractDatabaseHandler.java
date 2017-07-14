@@ -8,7 +8,6 @@ import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
-import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -158,5 +157,12 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws NoSuchMethodException 
      */
     public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
+
+    /**
+     * Checks if a key exists or not
+     * @param key
+     * @return true if this key exists
+     */
+    public abstract boolean objectExits(String key);
 
 }

@@ -1,0 +1,189 @@
+package us.tastybento.bskyblock.listeners.protection;
+
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.player.PlayerCommandPreprocessEvent;
+import org.bukkit.event.player.PlayerDropItemEvent;
+import org.bukkit.event.player.PlayerPickupItemEvent;
+import org.bukkit.event.player.PlayerRespawnEvent;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
+import us.tastybento.bskyblock.util.Util;
+import us.tastybento.bskyblock.util.VaultHelper;
+
+/**
+ * @author tastybento
+ *         Provides protection to islands
+ */
+public class VisitorGuard implements Listener {
+    private final BSkyBlock plugin;
+    private static final boolean DEBUG = false;
+
+    public VisitorGuard(final BSkyBlock plugin) {
+        this.plugin = plugin;
+    }
+
+    /*
+     * Prevent dropping items if player dies on another island
+     * This option helps reduce the down side of dying due to traps, etc.
+     * Also handles muting of death messages
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onVistorDeath(final PlayerDeathEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        if (!Util.inWorld(e.getEntity())) {
+            return;
+        }
+        // Mute death messages
+        if (Settings.muteDeathMessages) {
+            e.setDeathMessage(null);
+        }
+        // If visitors will keep items and their level on death
+        // This will override any global settings
+        if (Settings.allowVisitorKeepInvOnDeath) {
+            // If the player is not a visitor then they die and lose everything -
+            // sorry :-(
+            Island island = plugin.getIslands().getProtectedIslandAt(e.getEntity().getLocation());
+            if (island != null && !island.getMembers().contains(e.getEntity().getUniqueId())) {
+                // They are a visitor
+                InventorySave.getInstance().savePlayerInventory(e.getEntity());
+                e.getDrops().clear();
+                e.setKeepLevel(true);
+                e.setDroppedExp(0);
+            }
+        }
+    }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onVistorSpawn(final PlayerRespawnEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        // This will override any global settings
+        if (Settings.allowVisitorKeepInvOnDeath) {
+            InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
+            InventorySave.getInstance().clearSavedInventory(e.getPlayer());
+        }
+    }
+    /*
+     * Prevent item pickup by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onVisitorPickup(final PlayerPickupItemEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        if (!Util.inWorld(e.getPlayer())) {
+            return;
+        }
+        Island island = plugin.getIslands().getIslandAt(e.getItem().getLocation());
+        if ((island != null && island.getFlag(SettingsFlag.ITEM_PICKUP)) 
+                || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
+            return;
+        }
+        e.setCancelled(true);
+    }
+
+    /*
+     * Prevent item drop by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onVisitorDrop(final PlayerDropItemEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        if (!Util.inWorld(e.getPlayer())) {
+            return;
+        }
+        Island island = plugin.getIslands().getIslandAt(e.getItemDrop().getLocation());
+        if ((island != null && island.getFlag(SettingsFlag.ITEM_DROP)) 
+                || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
+            return;
+        }
+        Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+        e.setCancelled(true);
+    }
+
+    /**
+     * Prevents visitors from using commands on islands, like /spawner
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
+        }
+        if (!Util.inWorld(e.getPlayer()) || e.getPlayer().isOp()
+                || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())) {
+            //plugin.getLogger().info("player is not in world or op etc.");
+            return;
+        }
+        // Check banned commands
+        //plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
+        String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
+        if (Settings.visitorBannedCommands.contains(args[0])) {
+            Util.sendMessage(e.getPlayer(), ChatColor.RED + plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+            e.setCancelled(true);
+        }
+    }
+
+    /**
+     * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onVisitorGetDamage(EntityDamageEvent e){
+        if(!Settings.invincibleVisitor) return;
+        if(!(e.getEntity() instanceof Player)) return;
+
+        Player p = (Player) e.getEntity();
+        if (!Util.inWorld(p) || plugin.getIslands().locationIsOnIsland(p, p.getLocation())) return;
+
+        if (Settings.invincibleVisitorOptions.contains(e.getCause())) e.setCancelled(true);
+
+        else if(e.getCause().equals(DamageCause.VOID)) {
+            if(plugin.getPlayers().hasIsland(p.getUniqueId())) {
+                Location safePlace = plugin.getIslands().getSafeHomeLocation(p.getUniqueId(), 1);
+                if (safePlace != null) {
+                    p.teleport(safePlace);
+                    // Set their fall distance to zero otherwise they crash onto their island and die
+                    p.setFallDistance(0);
+                    e.setCancelled(true);
+                    return;
+                } 
+            }
+            // No island, or no safe spot on island
+            if (plugin.getIslands().getSpawn() != null) {
+                p.teleport(plugin.getIslands().getSpawnPoint());
+                // Set their fall distance to zero otherwise they crash onto their island and die
+                p.setFallDistance(0);
+                e.setCancelled(true);
+                return;
+            }
+            // No island spawn, try regular spawn
+            if (!p.performCommand("spawn")) {
+                // If this command doesn't work, let them die otherwise they may get trapped in the void forever
+                return;
+            }
+            // Set their fall distance to zero otherwise they crash onto their island and die
+            p.setFallDistance(0);
+            e.setCancelled(true);
+        }
+    }
+
+}

@@ -164,7 +164,7 @@ public class SchematicsMgr {
                 if (schematic.isVisible()) {
                     // Check if it's a nether island, but the nether is not enables
                     if (schematic.getBiome().equals(Biome.HELL)) {
-                        if (Settings.createNether && IslandWorld.getNetherWorld() != null) {
+                        if (Settings.netherGenerate && IslandWorld.getNetherWorld() != null) {
                             result.add(schematic);
                         }
                     } else {

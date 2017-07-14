@@ -1,20 +1,3 @@
-/*******************************************************************************
- * This file is part of ASkyBlock.
- *
- *     ASkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ASkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ASkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
-
 package us.tastybento.bskyblock.schematics;
 
 import java.util.ArrayList;
@@ -59,8 +42,6 @@ public class IslandBlock {
     private int z;
     private List<String> signText;
     private BannerBlock banner;
-    private SkullBlock skull;
-    private PotBlock pot;
     private EntityType spawnerBlockType;
     // Chest contents
     private HashMap<Byte,ItemStack> chestContents = new HashMap<Byte,ItemStack>();
@@ -219,8 +200,6 @@ public class IslandBlock {
         this.z = z;
         signText = null;
         banner = null;
-        skull = null;
-        pot = null;
         spawnerBlockType = null;
         chestContents = new HashMap<Byte,ItemStack>();
     }
@@ -278,19 +257,6 @@ public class IslandBlock {
     public void setBanner(Map<String, Tag> map) {
         banner = new BannerBlock();
         banner.prep(map);
-    }
-    /**
-     * Sets this block up with all the skull data required
-     * @param map
-     * @param dataValue
-     */
-    public void setSkull(Map<String, Tag> map, int dataValue) {
-        skull = new SkullBlock();
-        skull.prep(map, dataValue);
-    }
-    public void setFlowerPot(Map<String, Tag> map){
-        pot = new PotBlock();
-        pot.prep(map);
     }
 
     /**
@@ -559,10 +525,6 @@ public class IslandBlock {
             sign.update();
         } else if (banner != null) {
             banner.set(block);
-        } else if (skull != null){
-            skull.set(block);
-        } else if (pot != null){
-            pot.set(nms, block);
         } else if (spawnerBlockType != null) {
             if (block.getTypeId() != typeId) {
                 block.setTypeId(typeId);

@@ -260,14 +260,13 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         sb.append("SELECT ");
         sb.append(super.getColumns(false));
         sb.append(" FROM ");
-
-        /* We assume the table-name exactly matches the canonical Name of T */
         sb.append("`");
         sb.append(type.getCanonicalName());
         sb.append("`");
 
         return sb.toString();
     }
+
 
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#createInsertQuery()
@@ -292,6 +291,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return sb.toString();
     }
 
+    @Override
     protected String createDeleteQuery() {
         return "DELETE FROM [table_name] WHERE uniqueId = ?";        
     }
@@ -781,6 +781,30 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     }
 
-
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExits(java.lang.String)
+     */
+    @Override
+    public boolean objectExits(String key) {
+        Connection connection = null;
+        PreparedStatement preparedStatement = null;
+        ResultSet resultSet = null;
+        String query = "SELECT * FROM `" + type.getCanonicalName() + "` WHERE uniqueId = ?";
+        try {
+            connection = databaseConnecter.createConnection();
+            preparedStatement = connection.prepareStatement(query);
+            preparedStatement.setString(1, key);
+            resultSet = preparedStatement.executeQuery();
+            return resultSet.next();
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } finally {
+            MySQLDatabaseResourceCloser.close(resultSet);
+            MySQLDatabaseResourceCloser.close(preparedStatement);
+            MySQLDatabaseResourceCloser.close(connection);
+        }
+        return false;
+    }
 
 }

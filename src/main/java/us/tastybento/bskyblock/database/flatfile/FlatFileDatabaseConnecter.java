@@ -111,4 +111,10 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         return uuid.toString();
     }
 
+    @Override
+    public boolean uniqueIdExists(String tableName, String key) {
+        File file = new File(dataFolder, tableName + File.separator + key + ".yml");
+        return file.exists();
+    }
+
 }

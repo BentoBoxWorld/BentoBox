@@ -11,6 +11,7 @@ import org.bukkit.potion.PotionEffectType;
 
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages.HistoryMessageType;
+import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 
 /**
  * All the plugin settings are here
@@ -198,20 +199,31 @@ public class Settings {
     public static String dbUsername;
     public static String dbPassword;
 
-    public static boolean createNether;
-
     public static boolean useOwnGenerator;
 
-    public static boolean islandNether;
+    public static boolean endGenerate;
 
-    public static boolean createEnd;
-
-    public static boolean islandEnd;
+    public static boolean endIslands;
     public static boolean resetMoney;
     public static double acidDamage;
     public static int islandXOffset;
     public static int islandStartX;
     public static int islandZOffset;
     public static int islandStartZ;
+
+    public static boolean logInRemoveMobs;
+    public static HashMap<SettingsFlag, Boolean> defaultWorldSettings;
+    public static boolean allowEndermanGriefing;
+    public static boolean endermanDeathDrop;
+    public static boolean allowTNTDamage;
+    public static boolean allowChestDamage;
+    public static boolean allowCreeperDamage;
+    public static boolean allowCreeperGriefing;
+    public static boolean allowAutoActivator;
+    public static boolean allowMobDamageToItemFrames;
+    public static HashMap<String,Integer> limitedBlocks;
+    public static boolean allowTNTPushing;
+    public static boolean showInActionBar;
+    public static boolean allowVisitorKeepInvOnDeath;
 
 }

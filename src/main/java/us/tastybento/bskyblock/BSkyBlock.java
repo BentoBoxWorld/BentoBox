@@ -11,6 +11,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.commands.IslandCommand;
@@ -18,11 +19,16 @@ import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.listeners.JoinLeaveListener;
+import us.tastybento.bskyblock.listeners.NetherPortals;
+import us.tastybento.bskyblock.listeners.protection.IslandGuard;
+import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
+import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
+import us.tastybento.bskyblock.listeners.protection.NetherEvents;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
@@ -57,15 +63,6 @@ public class BSkyBlock extends JavaPlugin{
 
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
-            // TEMP DEBUG DATABASE
-            /*
-            Settings.databaseType = DatabaseType.MYSQL;
-            Settings.dbHost = "localhost";
-            Settings.dbPort = 3306;
-            Settings.dbName = "ASkyBlock";
-            Settings.dbUsername = "username";
-            Settings.dbPassword = "password";
-            */
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
@@ -94,46 +91,8 @@ public class BSkyBlock extends JavaPlugin{
                 @Override
                 public void run() {
                     // Create the world if it does not exist
-                    // TODO: get world name from config.yml
-                    Settings.worldName = "BSkyBlock_world";
-                    Settings.createNether = true;
-                    Settings.createEnd = true;
-                    Settings.islandNether = false;
-                    Settings.islandEnd = false;
                     new IslandWorld(plugin);
-
-                    // Test: Create a random island and save it
-                    // TODO: ideally this should be in a test class!
-                    /*
-                    UUID owner = UUID.fromString("ddf561c5-72b6-4ec6-a7ea-8b50a893beb2");
-
-                    Island island = islandsManager.createIsland(new Location(getServer().getWorld("world"),0,0,0,0,0), owner);
-                    // Add members
-                    Set<UUID> randomSet = new HashSet<UUID>();
-                    island.addMember(owner);
-                    for (int i = 0; i < 10; i++) {
-                        randomSet.add(UUID.randomUUID());
-                        island.addMember(UUID.randomUUID());
-                        island.addToBanList(UUID.randomUUID());
-                    }
-                    island.setBanned(randomSet);
-                    island.setCoops(randomSet);
-                    island.setTrustees(randomSet);
-                    island.setMembers(randomSet);
-                    for (SettingsFlag flag: SettingsFlag.values()) {
-                        island.setFlag(flag, true);
-                    }
-                    island.setLocked(true);
-                    island.setName("new name");
-                    island.setPurgeProtected(true);
-                    islandsManager.save(false);
-
-
-                    getLogger().info("DEBUG: ************ Finished saving, now loading *************");
-
-                     */
-
-                    playersManager.load();
+                    // Load islands from database
                     islandsManager.load();
 
                     // Load schematics
@@ -153,6 +112,8 @@ public class BSkyBlock extends JavaPlugin{
                     Settings.defaultLanguage = "en-US";
                     loadLocales();
 
+                    // Register Listeners
+                    registerListeners();
                     /*
                      *DEBUG CODE
                     Island loadedIsland = islandsManager.getIsland(owner);
@@ -180,6 +141,17 @@ public class BSkyBlock extends JavaPlugin{
 
             });
         }
+    }
+
+    protected void registerListeners() {
+        PluginManager manager = getServer().getPluginManager();
+        // Player join events
+        manager.registerEvents(new JoinLeaveListener(this), this);
+        manager.registerEvents(new NetherEvents(this), this);
+        manager.registerEvents(new NetherPortals(this), this);
+        manager.registerEvents(new IslandGuard(this), this);
+        manager.registerEvents(new IslandGuard1_8(this), this);
+        manager.registerEvents(new IslandGuard1_9(this), this);
     }
 
     @Override
@@ -275,10 +247,10 @@ public class BSkyBlock extends JavaPlugin{
      * @return the locale for this player
      */
     public BSBLocale getLocale(UUID player){
-        getLogger().info("DEBUG: " + player);
-        getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
-        getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
-        getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
+        //getLogger().info("DEBUG: " + player);
+        //getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
+        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
+        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
         String locale = getPlayers().getPlayer(player).getLocale();
         if(locale.isEmpty() || !locales.containsKey(locale)) return locales.get(Settings.defaultLanguage);
 

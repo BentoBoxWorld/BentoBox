@@ -33,11 +33,11 @@ public class IslandWorld {
         islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld())
                 .createWorld();
         // Make the nether if it does not exist
-        if (Settings.createNether) {
+        if (Settings.netherGenerate) {
             if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
                 Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
             }
-            if (!Settings.islandNether) {
+            if (!Settings.netherIslands) {
                 netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
             } else {
                 netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
@@ -45,11 +45,11 @@ public class IslandWorld {
             }
         }
         // Make the end if it does not exist
-        if (Settings.createEnd) {
+        if (Settings.endGenerate) {
             if (plugin.getServer().getWorld(Settings.worldName + "_the_end") == null) {
                 Bukkit.getLogger().info("Creating " + plugin.getName() + "'s End World...");
             }
-            if (!Settings.islandEnd) {
+            if (!Settings.endIslands) {
                 endWorld = WorldCreator.name(Settings.worldName + "_the_end").type(WorldType.NORMAL).environment(World.Environment.THE_END).createWorld();
             } else {
                 endWorld = WorldCreator.name(Settings.worldName + "_the_end").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
@@ -70,13 +70,13 @@ public class IslandWorld {
                         "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
                     Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
                 }
-                if (netherWorld != null && Settings.createNether && Settings.islandNether) {
+                if (netherWorld != null && Settings.netherGenerate && Settings.netherIslands) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                             "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                             "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
                 }
-                if (endWorld != null && Settings.createEnd && Settings.islandEnd) {
+                if (endWorld != null && Settings.endGenerate && Settings.endIslands) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                             "mv import " + Settings.worldName + "_the_end end -g " + plugin.getName());
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),

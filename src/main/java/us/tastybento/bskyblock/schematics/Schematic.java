@@ -1,19 +1,3 @@
-/*******************************************************************************
- * This file is part of BSkyBlock.
- *
- *     BSkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     BSkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with BSkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
 package us.tastybento.bskyblock.schematics;
 
 import java.io.File;
@@ -988,16 +972,16 @@ public class Schematic {
                 Sign sign = (Sign) signState;
                 if (sign.getLine(0).isEmpty()) {
                     // TODO Add sign
-                    //sign.setLine(0, plugin.myLocale(player.getUniqueId()).signLine1.replace("[player]", player.getName()));
+                    sign.setLine(0, plugin.getLocale(player.getUniqueId()).get("sign.line1").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(1).isEmpty()) {
-                    //sign.setLine(1, plugin.myLocale(player.getUniqueId()).signLine2.replace("[player]", player.getName()));
+                    sign.setLine(1, plugin.getLocale(player.getUniqueId()).get("sign.line2").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(2).isEmpty()) {
-                    //sign.setLine(2, plugin.myLocale(player.getUniqueId()).signLine3.replace("[player]", player.getName()));
+                    sign.setLine(2, plugin.getLocale(player.getUniqueId()).get("sign.line3").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(3).isEmpty()) {
-                    //sign.setLine(3, plugin.myLocale(player.getUniqueId()).signLine4.replace("[player]", player.getName()));
+                    sign.setLine(3, plugin.getLocale(player.getUniqueId()).get("sign.line4").replace("[player]", player.getName()));
                 }
                 // BlockFace direction = ((org.bukkit.material.Sign)
                 // sign.getData()).getFacing();
@@ -1180,12 +1164,6 @@ public class Schematic {
                                 if (Util.isOnePointEight()) {
                                     if (block.getTypeId() == Material.STANDING_BANNER.getId()) {
                                         block.setBanner(tileEntitiesMap.get(new BlockVector(x, y, z)));
-                                    }
-                                    else if (block.getTypeId() == Material.SKULL.getId()) {
-                                        block.setSkull(tileEntitiesMap.get(new BlockVector(x, y, z)), block.getData());
-                                    }
-                                    else if (block.getTypeId() == Material.FLOWER_POT.getId()) {
-                                        block.setFlowerPot(tileEntitiesMap.get(new BlockVector(x, y, z)));
                                     }
                                 }
                                 // Monster spawner blocks

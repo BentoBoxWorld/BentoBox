@@ -1,19 +1,3 @@
-/*******************************************************************************
- * This file is part of BSkyBlock.
- *
- *     BSkyBlock is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     BSkyBlock is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with BSkyBlock.  If not, see <http://www.gnu.org/licenses/>.
- *******************************************************************************/
 package us.tastybento.bskyblock.util;
 
 import java.util.HashSet;
@@ -115,7 +99,7 @@ public class DeleteIslandBlocks {
                 }
                 if (regen) {
                     world.regenerateChunk(x, z);
-                    if (Settings.islandNether && Settings.createNether) {
+                    if (Settings.netherIslands && Settings.netherGenerate) {
                         if (world.equals(IslandWorld.getIslandWorld())) {
                             IslandWorld.getNetherWorld().regenerateChunk(x, z);
                         }
@@ -195,7 +179,7 @@ public class DeleteIslandBlocks {
                                             break;
                                         }
                                         // Nether, if it exists
-                                        if (Settings.islandNether && Settings.createNether && y < IslandWorld.getNetherWorld().getMaxHeight() - 8) {
+                                        if (Settings.netherIslands && Settings.netherGenerate && y < IslandWorld.getNetherWorld().getMaxHeight() - 8) {
                                             b = IslandWorld.getNetherWorld().getBlockAt(xCoord, y, zCoord);                                       
                                             bt = b.getType();
                                             if (!b.equals(Material.AIR)) {

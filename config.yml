@@ -48,11 +48,12 @@ general:
 
   ### Database-related Settings ###
   database:
-    # FLATFILE, MYSQL, SQLITE
+    # FLATFILE, MYSQL
     type: FLATFILE
-
-    mysql: 0 #TODO
-    sqlite: 0 #TODO
+    port: 3306
+    name: BSkyBlock
+    username: username
+    password: password
 
     # How often the data will be saved to file in mins. Default is 5 minutes.
     # This helps prevent issues if the server crashes.
@@ -95,18 +96,16 @@ general:
 world:
   # Name of the world - if it does not exist then it will be generated.
   # It acts like a prefix for nether and end (e.g. BSkyBlock, BSkyBlock_nether, BSkyBlock_end)
-  world-name: BSkyBlock
+  world-name: BSkyBlock_world
 
-  # Distance between islands in blocks - NEVER change this mid-game.
+  # Distance between islands in blocks IN CHUNKS (1 chunk = 16 blocks)
   # It is the same for every dimension : Overworld, Nether and End.
-  # Values for a new world:
-  # 400 - puts players distance enough that they usually cannot see each other
-  # 200 - allows some expansion of the protected zone (recommended)
-  # 110 - for compatibility with established worlds. Cozy.
-  # 50 - minimum - not recommended
-  # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY (E.G.: 110), OR RESET YOUR WORLD
-  # Value must be an even number (must end with 0, 2, 4, 6, 8)
-  distance: 200
+  # Recommended values for a new world:
+  # 24 - puts players distance enough that they usually cannot see each other
+  # 12 - allows some expansion of the protected zone (recommended)
+  # 4 - minimum - not recommended
+  # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY (E.G.: 24), OR RESET YOUR WORLD
+  distance-in-chunks: 24
 
   # Default protection range (even number). Min = 0, Recommended = 100
   # Larger values will take longer to calculate the island level

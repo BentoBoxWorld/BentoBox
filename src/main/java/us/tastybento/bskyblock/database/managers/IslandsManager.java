@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.database.managers;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -45,6 +43,7 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class IslandsManager {
 
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
 
@@ -85,6 +84,7 @@ public class IslandsManager {
             for (Island island : handler.loadObjects()) {
                 islandsByLocation.put(island.getCenter(), island);
                 islandsByUUID.put(island.getOwner(), island);
+                addToGrid(island);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
@@ -165,9 +165,60 @@ public class IslandsManager {
         islandsByLocation.put(location, island);
         if (owner != null)
             islandsByUUID.put(owner, island);
+        addToGrid(island);
         return island;
     }
 
+    /**
+     * Adds an island to the grid register
+     * @param newIsland
+     */
+    private void addToGrid(Island newIsland) {
+        if (islandGrid.containsKey(newIsland.getMinX())) {
+            //plugin.getLogger().info("DEBUG: min x is in the grid :" + newIsland.getMinX());
+            TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
+            if (zEntry.containsKey(newIsland.getMinZ())) {
+                //plugin.getLogger().info("DEBUG: min z is in the grid :" + newIsland.getMinZ());
+                // Island already exists
+                Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
+                plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
+                plugin.getLogger().warning(
+                        "Island at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
+                                + conflict.getCenter().getBlockX() + ", " + conflict.getCenter().getBlockZ() + ")");
+                if (conflict.getOwner() != null) {
+                    plugin.getLogger().warning("Accepted island is owned by " + plugin.getPlayers().getName(conflict.getOwner()));
+                    plugin.getLogger().warning(conflict.getOwner().toString() + ".yml");
+                } else {
+                    plugin.getLogger().warning("Accepted island is unowned.");
+                }
+                if (newIsland.getOwner() != null) {
+                    plugin.getLogger().warning("Denied island is owned by " + plugin.getPlayers().getName(newIsland.getOwner()));
+                    plugin.getLogger().warning(newIsland.getOwner().toString() + ".yml");
+                } else {
+                    plugin.getLogger().warning("Denied island is unowned and was just found in the islands folder. Skipping it...");
+                }
+                plugin.getLogger().warning("Recommend that the denied player file is deleted otherwise weird things can happen.");
+                return;
+            } else {
+                // Add island
+                //plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
+                zEntry.put(newIsland.getMinZ(), newIsland);
+                islandGrid.put(newIsland.getMinX(), zEntry);
+                // plugin.getLogger().info("Debug: " + newIsland.toString());
+            }
+        } else {
+            // Add island
+            //plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
+            TreeMap<Integer, Island> zEntry = new TreeMap<Integer, Island>();
+            zEntry.put(newIsland.getMinZ(), newIsland);
+            islandGrid.put(newIsland.getMinX(), zEntry);
+        }
+    }
+
+    /**
+     * Deletes an island from the database. Does not remove blocks
+     * @param location
+     */
     public void deleteIsland(Location location){
         if (islandsByLocation.containsKey(location)) {
             Island island = islandsByLocation.get(location);
@@ -175,6 +226,29 @@ public class IslandsManager {
                 islandsByUUID.remove(island.getOwner());
             }
             islandsByLocation.remove(location);
+        }
+        // Remove from grid
+        // plugin.getLogger().info("DEBUG: deleting island at " + location);
+        Island island = getIslandAt(location);
+        if (island != null) {
+            int x = island.getMinX();
+            int z = island.getMinZ();
+            // plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
+            if (islandGrid.containsKey(x)) {
+                // plugin.getLogger().info("DEBUG: x found");
+                TreeMap<Integer, Island> zEntry = islandGrid.get(x);
+                if (zEntry.containsKey(z)) {
+                    // plugin.getLogger().info("DEBUG: z found - deleting the island");
+                    // Island exists - delete it
+                    Island deletedIsland = zEntry.get(z);
+                    deletedIsland.setOwner(null);
+                    deletedIsland.setLocked(false);
+                    zEntry.remove(z);
+                    islandGrid.put(x, zEntry);
+                } // else {
+                // plugin.getLogger().info("DEBUG: could not find z");
+                // }
+            }
         }
     }
 
@@ -334,14 +408,17 @@ public class IslandsManager {
      */
     public Island getIslandAt(Location location) {
         if (location == null) {
+            //plugin.getLogger().info("DEBUG: location is null");
             return null;
         }
         // World check
-        if (!inWorld(location)) {
+        if (!Util.inWorld(location)) {
+            //plugin.getLogger().info("DEBUG: not in right world");
             return null;
         }
         // Check if it is spawn
         if (spawn != null && spawn.onIsland(location)) {
+            //plugin.getLogger().info("DEBUG: spawn");
             return spawn;
         }
         return getIslandAt(location.getBlockX(), location.getBlockZ());
@@ -356,6 +433,10 @@ public class IslandsManager {
      * @return PlayerIsland or null
      */
     public Island getIslandAt(int x, int z) {
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: getting island at " + x + "," + z);
+            plugin.getLogger().info("DEBUG: island grid is " + islandGrid.size());
+        }
         Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
         if (en != null) {
             Entry<Integer, Island> ent = en.getValue().floorEntry(z);
@@ -363,30 +444,20 @@ public class IslandsManager {
                 // Check if in the island range
                 Island island = ent.getValue();
                 if (island.inIslandSpace(x, z)) {
-                    // plugin.getLogger().info("DEBUG: In island space");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: In island space");
                     return island;
                 }
-                //plugin.getLogger().info("DEBUG: not in island space");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: not in island space");
             }
         }
         return null;
     }
 
-
-    /**
-     * Determines if a location is in the island world or not or
-     * in the new nether if it is activated
-     * @param loc
-     * @return true if in the island world
-     */
-    protected boolean inWorld(Location loc) {
-        // TODO: determine if the world is correct
-        return true;
-    }
-
     /**
      * @param playerUUID
-     * @return ture if player has island
+     * @return true if player has island
      */
     public boolean hasIsland(UUID playerUUID) {
         return islandsByUUID.containsKey(playerUUID);
@@ -445,7 +516,8 @@ public class IslandsManager {
      */
     public boolean homeTeleport(final Player player, int number) {
         Location home = null;
-        plugin.getLogger().info("home teleport called for #" + number);
+        if (DEBUG)
+            plugin.getLogger().info("home teleport called for #" + number);
         home = getSafeHomeLocation(player.getUniqueId(), number);
         //plugin.getLogger().info("home get safe loc = " + home);
         // Check if the player is a passenger in a boat
@@ -460,12 +532,14 @@ public class IslandsManager {
             }
         }
         if (home == null) {
-            plugin.getLogger().info("Fixing home location using safe spot teleport");
+            if (DEBUG)
+                plugin.getLogger().info("Fixing home location using safe spot teleport");
             // Try to fix this teleport location and teleport the player if possible
             new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
             return true;
         }
-        plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
         //home.getChunk().load();
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
@@ -747,7 +821,7 @@ public class IslandsManager {
     public void newIsland(Player player, Schematic schematic) {
         newIsland(player, schematic, null);  
     }
-    
+
     /**
      * Makes an island using schematic. No permission checks are made. They have to be decided
      * before this method is called. If oldIsland is not null, it will be deleted after the new
@@ -767,13 +841,13 @@ public class IslandsManager {
         plugin.getLogger().info("DEBUG: finding island location");
         Location next = getNextIsland(player.getUniqueId());
         plugin.getLogger().info("DEBUG: found " + next);
-        
+
         // Add to the grid
         Island myIsland = plugin.getIslands().createIsland(next, playerUUID);
         myIsland.setLevelHandicap(schematic.getLevelHandicap());
         // Save the player so that if the server is reset weird things won't happen
         plugin.getPlayers().save(true);
-        
+
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(playerUUID);
 
@@ -790,7 +864,7 @@ public class IslandsManager {
             //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
             //plugin.getLogger().info("DEBUG: nether world is " + BSkyBlock.getNetherWorld());
             // Paste the starting island. If it is a HELL biome, then we start in the Nether
-            if (Settings.createNether && schematic.isInNether() && Settings.islandNether && IslandWorld.getNetherWorld() != null) {
+            if (Settings.netherGenerate && schematic.isInNether() && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
                 // Nether start
                 // Paste the overworld if it exists
                 if (!schematic.getPartnerName().isEmpty()) {
@@ -811,7 +885,7 @@ public class IslandsManager {
                 //double diff = (System.nanoTime() - timer)/1000000;
                 //plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
                 //plugin.getLogger().info("DEBUG: pasted overworld");
-                if (Settings.createNether && Settings.islandNether && IslandWorld.getNetherWorld() != null) {
+                if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
                     // Paste the other world schematic
                     final Location netherLoc = next.toVector().toLocation(IslandWorld.getNetherWorld());
                     if (schematic.getPartnerName().isEmpty()) {
@@ -952,7 +1026,7 @@ public class IslandsManager {
         nextPos.setZ(nextPos.getZ() - Settings.islandDistance);
         return nextPos;
     }
-    
+
     /**
      * This removes players from an island overworld and nether - used when reseting or deleting an island
      * Mobs are killed when the chunks are refreshed.
@@ -989,6 +1063,234 @@ public class IslandsManager {
 
     public AbstractDatabaseHandler<Island> getHandler() {
         return handler;
+    }
+
+    /**
+     * @param location
+     */
+    public void removeMobs(Location location) {
+        // TODO Auto-generated method stub
+
+    }
+
+    /**
+     * Returns the island being public at the location or null if there is none
+     * 
+     * @param location
+     * @return PlayerIsland object
+     */
+    public Island getProtectedIslandAt(Location location) {
+        //plugin.getLogger().info("DEBUG: getProtectedIslandAt " + location);
+        // Try spawn
+        if (spawn != null && spawn.onIsland(location)) {
+            return spawn;
+        }
+        Island island = getIslandAt(location);
+        if (island == null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: no island at this location");
+            return null;
+        }
+        if (island.onIsland(location)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: on island");
+            return island;
+        }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: not in island protection zone");
+        return null;
+    }
+
+    /**
+     * Indicates whether a player is at the island spawn or not
+     * 
+     * @param playerLoc
+     * @return true if they are, false if they are not, or spawn does not exist
+     */
+    public boolean isAtSpawn(Location playerLoc) {
+        if (spawn == null) {
+            return false;
+        }
+        return spawn.onIsland(playerLoc);
+    }
+
+    /**
+     * Checks if a specific location is within the protected range of an island
+     * owned by the player
+     * 
+     * @param player
+     * @param loc
+     * @return true if location is on island of player
+     */
+    public boolean locationIsOnIsland(final Player player, final Location loc) {
+        if (player == null) {
+            return false;
+        }
+        // Get the player's island from the grid if it exists
+        Island island = getIslandAt(loc);
+        if (island != null) {
+            //plugin.getLogger().info("DEBUG: island here is " + island.getCenter());
+            // On an island in the grid
+            //plugin.getLogger().info("DEBUG: onIsland = " + island.onIsland(loc));
+            //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
+            //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
+
+            if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
+                //plugin.getLogger().info("DEBUG: allowed");
+                // In a protected zone but is on the list of acceptable players
+                return true;
+            } else {
+                // Not allowed
+                //plugin.getLogger().info("DEBUG: not allowed");
+                return false;
+            }
+        } else {
+            //plugin.getLogger().info("DEBUG: no island at this location");
+        }
+        // Not in the grid, so do it the old way
+        // Make a list of test locations and test them
+        Set<Location> islandTestLocations = new HashSet<Location>();
+        if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
+            islandTestLocations.add(getIslandLocation(player.getUniqueId()));
+        }
+        // TODO: Check any coop locations
+        /*
+        islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
+        if (islandTestLocations.isEmpty()) {
+            return false;
+        }*/
+        // Run through all the locations
+        for (Location islandTestLocation : islandTestLocations) {
+            if (loc.getWorld().equals(islandTestLocation.getWorld())) {
+                if (loc.getX() >= islandTestLocation.getX() - Settings.islandProtectionRange / 2
+                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange / 2
+                        && loc.getZ() >= islandTestLocation.getZ() - Settings.islandProtectionRange / 2
+                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange / 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Checks if an online player is in the protected area of their island, a team island or a
+     * coop island
+     * 
+     * @param player
+     * @return true if on valid island, false if not
+     */
+    public boolean playerIsOnIsland(final Player player) {
+        return playerIsOnIsland(player, true);
+    }
+
+    /**
+     * Checks if an online player is in the protected area of their island, a team island or a
+     * coop island
+     * @param player
+     * @param coop - if true, coop islands are included
+     * @return true if on valid island, false if not
+     */
+    public boolean playerIsOnIsland(final Player player, boolean coop) {
+        return locationIsAtHome(player, coop, player.getLocation());
+    }
+
+    /**
+     * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
+     * @param player
+     * @param coop
+     * @param loc
+     * @return true if the location is within home boundaries
+     */
+    public boolean locationIsAtHome(final Player player, boolean coop, Location loc) {
+        // Make a list of test locations and test them
+        Set<Location> islandTestLocations = new HashSet<Location>();
+        if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
+            islandTestLocations.add(plugin.getIslands().getIslandLocation(player.getUniqueId()));
+            // If new Nether
+            if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
+                islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(player.getUniqueId())));
+            }
+        } 
+        // TODO: Check coop locations
+        /*
+        if (coop) {
+            islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
+        }*/
+        if (islandTestLocations.isEmpty()) {
+            return false;
+        }
+        // Run through all the locations
+        for (Location islandTestLocation : islandTestLocations) {
+            // Must be in the same world as the locations being checked
+            // Note that getWorld can return null if a world has been deleted on the server
+            if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
+                int protectionRange = Settings.islandProtectionRange;
+                if (getIslandAt(islandTestLocation) != null) {
+                    // Get the protection range for this location if possible
+                    Island island = getProtectedIslandAt(islandTestLocation);
+                    if (island != null) {
+                        // We are in a protected island area.
+                        protectionRange = island.getProtectionRange();
+                    }
+                }
+                if (loc.getX() > islandTestLocation.getX() - protectionRange / 2
+                        && loc.getX() < islandTestLocation.getX() + protectionRange / 2
+                        && loc.getZ() > islandTestLocation.getZ() - protectionRange / 2
+                        && loc.getZ() < islandTestLocation.getZ() + protectionRange / 2) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Generates a Nether version of the locations
+     * @param islandLocation
+     * @return
+     */
+    private Location netherIsland(Location islandLocation) {
+        //plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
+        return islandLocation.toVector().toLocation(IslandWorld.getNetherWorld());
+    }
+
+    /**
+     * Get name of the island owned by owner
+     * @param owner
+     * @return Returns the name of owner's island, or the owner's name if there is none.
+     */
+    public String getIslandName(UUID owner) {
+        String result = plugin.getPlayers().getName(owner);
+        if (islandsByUUID.containsKey(owner)) {
+            Island island = islandsByUUID.get(owner);
+            if (!island.getName().isEmpty()) {
+                result = island.getName(); 
+            }
+        }
+        return ChatColor.translateAlternateColorCodes('&', result) + ChatColor.RESET;
+    }
+
+    /**
+     * Set the island name
+     * @param owner
+     * @param name
+     */
+    public void setIslandName(UUID owner, String name) {
+        if (islandsByUUID.containsKey(owner)) {
+            Island island = islandsByUUID.get(owner);
+            island.setName(name);
+        }
+    }
+
+    /**
+     * @return the spawnPoint or null if spawn does not exist
+     */
+    public Location getSpawnPoint() {
+        //plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
+        if (spawn == null)
+            return null;
+        return spawn.getSpawnPoint();
     }
 
 }
