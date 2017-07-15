@@ -162,6 +162,16 @@ public class Island extends DataObject {
 
         // Can open gates
         GATE,
+        
+        // TODO comments
+        GHAST_HURT,
+        GHAST_GRIEGING,
+        GHAST_BLOW_UP_CHEST,
+        GHAST_BLOW_UP_TRAPPED_CHEST,
+        GHAST_BLOW_UP_DISPENSER,
+        GHAST_BLOW_UP_DROPPER,
+        GHAST_BLOW_UP_HOPPER,
+        GHAST_BLOW_UP_SHULKER_BOX,
 
         // Can hurt animals (e.g. cows) - Villagers excluded
         HURT_ANIMALS,
@@ -200,6 +210,7 @@ public class Island extends DataObject {
         ANIMAL_SPAWN,
 
         // Monster projectiles can destroy item frames (skeleten arrows, shulker shots)
+        // TODO split this flag
         MONSTER_DESTROY_ITEM_FRAMES,
 
         // Monsters can spawn
@@ -249,6 +260,9 @@ public class Island extends DataObject {
         
         // Can activate gold pressure plates
         PRESSURE_PLATE_GOLD,
+        
+        // Allow pushing of players and entities
+        PUSHING,
 
         // Can do PvP in the overworld
         PVP_OVERWORLD,
@@ -283,7 +297,7 @@ public class Island extends DataObject {
         // Can throw splash potions
         THROW_SPLASH_POTIONS,
         
-        // Can throz lingering potions
+        // Can throw lingering potions
         THROW_LINGERING_POTIONS,
 
         // Allow TNT to hurt entities (but not to destroy blocks)
