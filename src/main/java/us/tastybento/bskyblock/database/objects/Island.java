@@ -76,12 +76,9 @@ public class Island extends DataObject {
         // Can use brewing stand
         BREWING,
 
-        // Can use wooden buttons
-        BUTTON_WOOD,
+        // Can use buttons
+        BUTTON,
         
-        // Can use stone buttons
-        BUTTON_STONE,
-
         // Can empty or fill buckets
         BUCKET,
 
@@ -100,26 +97,11 @@ public class Island extends DataObject {
         // Allow creepers to hurt entities (but not to destroy blocks)
         CREEPER_HURT,
 
-        // Allow creepers to destroy blocks
-        CREEPER_GRIEFING,
+        // Allow monsters, e.g. creepers, ghasts, withers to destroy blocks, including item frames
+        MONSTER_GRIEFING,
 
-        // Allow creepers to blow up normal chests (only if creeper_griefing is enabled)
-        CREEPER_BLOW_UP_CHEST,
-        
-        // Allow creepers to blow up trapped chests (only if creeper_griefing is enabled)
-        CREEPER_BLOW_UP_TRAPPED_CHEST,
-
-        // Allow creepers to blow up dispensers (only if creeper_griefing is enabled)
-        CREEPER_BLOW_UP_DISPENSER,
-
-        // Allow creepers to blow up droppers (only if creeper_griefing is enabled)
-        CREEPER_BLOW_UP_DROPPER,
-
-        // Allow creepers to blow up hoppers (only if creeper_griefing is enabled)
-        CREEPER_BLOW_UP_HOPPER,
-
-        // Allow creepers to blow up shulker boxes (only if creeper_griefing is enabled)
-        CREEPER_BLOW_UP_SHULKER_BOX,
+        // Allow monsters to blow up any inventory block, e.g. chests, dispenser, shulker box
+        MONSTER_BLOW_UP_CHEST,
 
         // Can trample crops
         CROP_TRAMPLE,
@@ -127,13 +109,13 @@ public class Island extends DataObject {
         // Can open doors
         DOOR,
         
-        // Can open trapdoors
+        // Can open trapdoors, iron or wood
         TRAPDOOR,
 
-        // Can dye sheeps
+        // Can dye sheep
         DYEING,
 
-        // Can use Elytras
+        // Can use Elytra
         ELYTRA,
 
         // Can use the enchanting table
@@ -163,16 +145,6 @@ public class Island extends DataObject {
         // Can open gates
         GATE,
         
-        // TODO comments
-        GHAST_HURT,
-        GHAST_GRIEGING,
-        GHAST_BLOW_UP_CHEST,
-        GHAST_BLOW_UP_TRAPPED_CHEST,
-        GHAST_BLOW_UP_DISPENSER,
-        GHAST_BLOW_UP_DROPPER,
-        GHAST_BLOW_UP_HOPPER,
-        GHAST_BLOW_UP_SHULKER_BOX,
-
         // Can hurt animals (e.g. cows) - Villagers excluded
         HURT_ANIMALS,
 
@@ -209,10 +181,6 @@ public class Island extends DataObject {
         // Animals can spawn
         ANIMAL_SPAWN,
 
-        // Monster projectiles can destroy item frames (skeleten arrows, shulker shots)
-        // TODO split this flag
-        MONSTER_DESTROY_ITEM_FRAMES,
-
         // Monsters can spawn
         MONSTER_SPAWN,
 
@@ -225,23 +193,8 @@ public class Island extends DataObject {
         // Can operate jukeboxes, noteblocks
         MUSIC,
 
-        // Can open normal chests
+        // Can open chests or other inventory blocks, e.g., dispensers, droppers, hoppers, etc.
         OPEN_CHESTS,
-        
-        // Can open trapped chests
-        OPEN_TRAPPED_CHESTS,
-
-        // Can open dispensers
-        OPEN_DISPENSERS,
-
-        // Can open droppers
-        OPEN_DROPPERS,
-
-        // Can open hoppers
-        OPEN_HOPPERS,
-
-        // Can open shulker boxes
-        OPEN_SHULKER_BOXES,
 
         // Can place blocks
         PLACE_BLOCKS,
@@ -249,21 +202,9 @@ public class Island extends DataObject {
         // Can go through portals
         PORTAL,
 
-        // Can activate wooden pressure plates
-        PRESSURE_PLATE_WOOD,
+        // Can activate pressure plates
+        PRESSURE_PLATE,
         
-        // Can activate stone pressure plates
-        PRESSURE_PLATE_STONE,
-        
-        // Can activate iron pressure plates
-        PRESSURE_PLATE_IRON,
-        
-        // Can activate gold pressure plates
-        PRESSURE_PLATE_GOLD,
-        
-        // Allow pushing of players and entities
-        PUSHING,
-
         // Can do PvP in the overworld
         PVP_OVERWORLD,
 
@@ -279,7 +220,7 @@ public class Island extends DataObject {
         // Can use spawn eggs
         SPAWN_EGGS,
 
-        // Can shear sheeps
+        // Can shear sheep
         SHEARING,
 
         // Can throw chicken eggs
@@ -306,50 +247,11 @@ public class Island extends DataObject {
         // Allow TNT to destroy blocks
         TNT_GRIEFING,
         
-        // Allow TNTs to blow up normal chests (only if TNT_griefing is enabled)
+        // Allow TNTs to blow up any chest or inventory block (only if TNT_griefing is enabled)
         TNT_BLOW_UP_CHEST,
         
-        // Allow TNTs to blow up trapped chests (only if TNT_griefing is enabled)
-        TNT_BLOW_UP_TRAPPED_CHEST,
-
-        // Allow TNTs to blow up dispensers (only if TNT_griefing is enabled)
-        TNT_BLOW_UP_DISPENSER,
-
-        // Allow TNTs to blow up droppers (only if TNT_griefing is enabled)
-        TNT_BLOW_UP_DROPPER,
-
-        // Allow TNTs to blow up hoppers (only if TNT_griefing is enabled)
-        TNT_BLOW_UP_HOPPER,
-
-        // Allow TNTs to blow up shulker boxes (only if TNT_griefing is enabled)
-        TNT_BLOW_UP_SHULKER_BOX,
-
         // Can trade with villagers
-        VILLAGER_TRADING,
-
-        // Allow Withers to hurt entities (but not to destroy blocks)
-        WITHER_HURT,
-
-        // Allow Wither to destroy blocks
-        WITHER_GRIEFING,
-
-        // Allow withers to blow up normal chests (only if wither_griefing is enabled)
-        WITHER_BLOW_UP_CHEST,
-        
-        // Allow withers to blow up trapped chests (only if wither_griefing is enabled)
-        WITHER_BLOW_UP_TRAPPED_CHEST,
-
-        // Allow withers to blow up dispensers (only if wither_griefing is enabled)
-        WITHER_BLOW_UP_DISPENSER,
-
-        // Allow withers to blow up droppers (only if wither_griefing is enabled)
-        WITHER_BLOW_UP_DROPPER,
-
-        // Allow withers to blow up hoppers (only if wither_griefing is enabled)
-        WITHER_BLOW_UP_HOPPER,
-
-        // Allow withers to blow up shulker boxes (only if wither_griefing is enabled)
-        WITHER_BLOW_UP_SHULKER_BOX
+        VILLAGER_TRADING
     }
 
     //// Island ////    
