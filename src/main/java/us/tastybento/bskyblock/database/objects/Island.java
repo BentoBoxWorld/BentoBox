@@ -76,8 +76,11 @@ public class Island extends DataObject {
         // Can use brewing stand
         BREWING,
 
-        // Can use buttons
-        BUTTON,
+        // Can use wooden buttons
+        BUTTON_WOOD,
+        
+        // Can use stone buttons
+        BUTTON_STONE,
 
         // Can empty or fill buckets
         BUCKET,
@@ -100,8 +103,11 @@ public class Island extends DataObject {
         // Allow creepers to destroy blocks
         CREEPER_GRIEFING,
 
-        // Allow creepers to blow up chests (only if creeper_griefing is enabled)
+        // Allow creepers to blow up normal chests (only if creeper_griefing is enabled)
         CREEPER_BLOW_UP_CHEST,
+        
+        // Allow creepers to blow up trapped chests (only if creeper_griefing is enabled)
+        CREEPER_BLOW_UP_TRAPPED_CHEST,
 
         // Allow creepers to blow up dispensers (only if creeper_griefing is enabled)
         CREEPER_BLOW_UP_DISPENSER,
@@ -118,8 +124,11 @@ public class Island extends DataObject {
         // Can trample crops
         CROP_TRAMPLE,
 
-        // Can open doors or trapdoors
+        // Can open doors
         DOOR,
+        
+        // Can open trapdoors
+        TRAPDOOR,
 
         // Can dye sheeps
         DYEING,
@@ -153,6 +162,16 @@ public class Island extends DataObject {
 
         // Can open gates
         GATE,
+        
+        // TODO comments
+        GHAST_HURT,
+        GHAST_GRIEGING,
+        GHAST_BLOW_UP_CHEST,
+        GHAST_BLOW_UP_TRAPPED_CHEST,
+        GHAST_BLOW_UP_DISPENSER,
+        GHAST_BLOW_UP_DROPPER,
+        GHAST_BLOW_UP_HOPPER,
+        GHAST_BLOW_UP_SHULKER_BOX,
 
         // Can hurt animals (e.g. cows) - Villagers excluded
         HURT_ANIMALS,
@@ -191,6 +210,7 @@ public class Island extends DataObject {
         ANIMAL_SPAWN,
 
         // Monster projectiles can destroy item frames (skeleten arrows, shulker shots)
+        // TODO split this flag
         MONSTER_DESTROY_ITEM_FRAMES,
 
         // Monsters can spawn
@@ -205,8 +225,11 @@ public class Island extends DataObject {
         // Can operate jukeboxes, noteblocks
         MUSIC,
 
-        // Can open chests
+        // Can open normal chests
         OPEN_CHESTS,
+        
+        // Can open trapped chests
+        OPEN_TRAPPED_CHESTS,
 
         // Can open dispensers
         OPEN_DISPENSERS,
@@ -226,15 +249,30 @@ public class Island extends DataObject {
         // Can go through portals
         PORTAL,
 
-        // Can activate pressure plates
-        PRESSURE_PLATE,
+        // Can activate wooden pressure plates
+        PRESSURE_PLATE_WOOD,
+        
+        // Can activate stone pressure plates
+        PRESSURE_PLATE_STONE,
+        
+        // Can activate iron pressure plates
+        PRESSURE_PLATE_IRON,
+        
+        // Can activate gold pressure plates
+        PRESSURE_PLATE_GOLD,
+        
+        // Allow pushing of players and entities
+        PUSHING,
 
         // Can do PvP in the overworld
         PVP_OVERWORLD,
 
         // Can do PvP in the nether
         PVP_NETHER,
-
+        
+        // Can do PvP in the end
+        PVP_END,
+        
         // Can interact with redstone items (repeaters, comparators)
         REDSTONE,
 
@@ -258,15 +296,21 @@ public class Island extends DataObject {
 
         // Can throw splash potions
         THROW_SPLASH_POTIONS,
+        
+        // Can throw lingering potions
+        THROW_LINGERING_POTIONS,
 
         // Allow TNT to hurt entities (but not to destroy blocks)
         TNT_HURT,
 
         // Allow TNT to destroy blocks
         TNT_GRIEFING,
-
-        // Allow TNTs to blow up chests (only if TNT_griefing is enabled)
+        
+        // Allow TNTs to blow up normal chests (only if TNT_griefing is enabled)
         TNT_BLOW_UP_CHEST,
+        
+        // Allow TNTs to blow up trapped chests (only if TNT_griefing is enabled)
+        TNT_BLOW_UP_TRAPPED_CHEST,
 
         // Allow TNTs to blow up dispensers (only if TNT_griefing is enabled)
         TNT_BLOW_UP_DISPENSER,
@@ -289,8 +333,11 @@ public class Island extends DataObject {
         // Allow Wither to destroy blocks
         WITHER_GRIEFING,
 
-        // Allow withers to blow up chests (only if wither_griefing is enabled)
+        // Allow withers to blow up normal chests (only if wither_griefing is enabled)
         WITHER_BLOW_UP_CHEST,
+        
+        // Allow withers to blow up trapped chests (only if wither_griefing is enabled)
+        WITHER_BLOW_UP_TRAPPED_CHEST,
 
         // Allow withers to blow up dispensers (only if wither_griefing is enabled)
         WITHER_BLOW_UP_DISPENSER,
@@ -930,5 +977,4 @@ public class Island extends DataObject {
     public Location getSpawnPoint() {
         return spawnPoint;
     }
-
 }
