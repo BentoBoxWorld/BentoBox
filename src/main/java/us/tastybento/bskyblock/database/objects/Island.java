@@ -1,22 +1,17 @@
 package us.tastybento.bskyblock.database.objects;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
-
 import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.UUID;
 
 /**
  * Stores all the info about an island
@@ -168,6 +163,9 @@ public class Island extends DataObject {
 
         // Can pickup items
         ITEM_PICKUP,
+
+        // Keep inventory on death
+        KEEP_INVENTORY,
 
         // Can leash or unleash animals
         LEASH,

@@ -1,11 +1,10 @@
 package us.tastybento.bskyblock.listeners.protection;
 
+import org.bukkit.entity.Player;
+import us.tastybento.bskyblock.BSkyBlock;
+
 import java.util.HashMap;
 import java.util.UUID;
-
-import org.bukkit.entity.Player;
-
-import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * Stashes inventories when required for a player
@@ -63,4 +62,13 @@ public class InventorySave {
         return instance;
     }
 
+    /**
+     * Returns whether the player's inventory has been stored to give him back.
+     *
+     * @param uuid UUID of the player
+     * @return <code>true</code> if the inventory is stored, <code>false</code> otherwise
+     */
+    public static boolean isStored(UUID uuid) {
+        return instance.inventories.containsKey(uuid);
+    }
 }
