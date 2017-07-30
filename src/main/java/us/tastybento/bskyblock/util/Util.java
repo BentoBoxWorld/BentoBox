@@ -1,5 +1,17 @@
 package us.tastybento.bskyblock.util;
 
+import org.bukkit.*;
+import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.util.nms.NMSAbstraction;
+import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
+
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -8,23 +20,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.generators.IslandWorld;
-import us.tastybento.bskyblock.util.nms.NMSAbstraction;
-import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
-
 /**
  * A set of utility methods
  * 
@@ -32,7 +27,7 @@ import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
  * @author Poslovitch
  */
 public class Util {
-    private static BSkyBlock plugin = BSkyBlock.getInstance();
+    private static BSkyBlock plugin = BSkyBlock.getPlugin();
 
     public static void sendMessage(CommandSender receiver, String message){
         message = PlaceholderHandler.replacePlaceholders(receiver, message);
