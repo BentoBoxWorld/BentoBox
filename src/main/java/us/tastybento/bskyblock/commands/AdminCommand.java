@@ -1,17 +1,20 @@
 package us.tastybento.bskyblock.commands;
 
-import java.util.List;
-
 import org.bukkit.command.CommandSender;
-
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.config.Settings;
+
+import java.util.List;
 
 public class AdminCommand extends BSBCommand{
     
     BSkyBlock plugin;
 
     public AdminCommand(BSkyBlock plugin) {
-        super(plugin, true);
+        super(plugin, Settings.ADMINCOMMAND, true);
+        plugin.getCommand(Settings.ADMINCOMMAND).setExecutor(this);
+        plugin.getCommand(Settings.ADMINCOMMAND).setTabCompleter(this);
+        this.plugin = plugin;
     }
 
     @Override
@@ -20,24 +23,24 @@ public class AdminCommand extends BSBCommand{
         registerArgument(new String[] {"delete"}, new CommandArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String label, String[] args) {
+            public boolean canExecute(CommandSender sender, String[] args) {
                 // TODO Auto-generated method stub
                 return true;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String label, String[] args) {
+            public void onExecute(CommandSender sender, String[] args) {
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String label, String[] args) {
+            public List<String> onTabComplete(CommandSender sender, String[] args) {
                 // TODO Auto-generated method stub
                 return null;
             }
 
             @Override
-            public String[] getHelp(CommandSender sender, String label){
+            public String[] getHelp(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.admin.delete")};
             }
         });
@@ -45,13 +48,13 @@ public class AdminCommand extends BSBCommand{
     }
 
     @Override
-    public boolean canExecute(CommandSender sender, String label) {
+    public boolean canExecute(CommandSender sender) {
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
-    public void onExecuteDefault(CommandSender sender, String label, String[] args) {
+    public void onExecuteDefault(CommandSender sender, String[] args) {
 
         
     }

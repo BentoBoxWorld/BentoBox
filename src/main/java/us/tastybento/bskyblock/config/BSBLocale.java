@@ -1,15 +1,14 @@
 package us.tastybento.bskyblock.config;
 
+import org.bukkit.ChatColor;
+import us.tastybento.bskyblock.BSkyBlock;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Locale;
 import java.util.ResourceBundle;
-
-import org.bukkit.ChatColor;
-
-import us.tastybento.bskyblock.BSkyBlock;
 
 public class BSBLocale {
 

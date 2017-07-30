@@ -1,19 +1,12 @@
 package us.tastybento.bskyblock;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.UUID;
-
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-
+import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.PluginConfig;
@@ -32,6 +25,13 @@ import us.tastybento.bskyblock.listeners.protection.NetherEvents;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
+
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.UUID;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
@@ -107,10 +107,11 @@ public class BSkyBlock extends JavaPlugin{
                     };
                     schematicsManager = new SchematicsMgr(plugin);
 
-                    getCommand("island").setExecutor(new IslandCommand(plugin));
-
                     Settings.defaultLanguage = "en-US";
                     loadLocales();
+
+                    new IslandCommand(BSkyBlock.this);
+                    new AdminCommand(BSkyBlock.this);
 
                     // Register Listeners
                     registerListeners();
