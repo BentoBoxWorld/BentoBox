@@ -39,7 +39,7 @@ public class VisitorGuard implements Listener {
      * Also handles muting of death messages
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVistorDeath(final PlayerDeathEvent e) {
+    public void onVisitorDeath(final PlayerDeathEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -50,29 +50,25 @@ public class VisitorGuard implements Listener {
         if (Settings.muteDeathMessages) {
             e.setDeathMessage(null);
         }
-        // If visitors will keep items and their level on death
-        // This will override any global settings
-        if (Settings.allowVisitorKeepInvOnDeath) {
-            // If the player is not a visitor then they die and lose everything -
-            // sorry :-(
-            Island island = plugin.getIslands().getProtectedIslandAt(e.getEntity().getLocation());
-            if (island != null && !island.getMembers().contains(e.getEntity().getUniqueId())) {
-                // They are a visitor
-                InventorySave.getInstance().savePlayerInventory(e.getEntity());
-                e.getDrops().clear();
-                e.setKeepLevel(true);
-                e.setDroppedExp(0);
-            }
+        // If visitors will keep items and their level on death. This overrides any global settings.
+        // If the player is not a visitor then they die and lose everything - sorry :-(
+        Island island = plugin.getIslands().getProtectedIslandAt(e.getEntity().getLocation());
+        if (island != null && !island.getMembers().contains(e.getEntity().getUniqueId()) && island.getFlag(SettingsFlag.KEEP_INVENTORY)) {
+            // They are a visitor
+            InventorySave.getInstance().savePlayerInventory(e.getEntity());
+            e.getDrops().clear();
+            e.setKeepLevel(true);
+            e.setDroppedExp(0);
         }
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVistorSpawn(final PlayerRespawnEvent e) {
+    public void onVisitorSpawn(final PlayerRespawnEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
-        // This will override any global settings
-        if (Settings.allowVisitorKeepInvOnDeath) {
+        // If the player died on an island and his inventory has been saved, give it him back. This will override any global settings.
+        if (InventorySave.isStored(e.getPlayer().getUniqueId())) {
             InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
             InventorySave.getInstance().clearSavedInventory(e.getPlayer());
         }
@@ -147,7 +143,7 @@ public class VisitorGuard implements Listener {
      * @param e
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onVisitorGetDamage(EntityDamageEvent e){
+    public void onVisitorReceiveDamage(EntityDamageEvent e){
         if(!Settings.invincibleVisitor) return;
         if(!(e.getEntity() instanceof Player)) return;
 
