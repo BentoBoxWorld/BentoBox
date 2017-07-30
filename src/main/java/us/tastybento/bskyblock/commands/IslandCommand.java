@@ -4,6 +4,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
@@ -18,18 +19,18 @@ import java.util.List;
  * @author Tastybento
  * @author Poslovitch
  */
-public class IslandCommand extends BSBCommand{
+public class IslandCommand extends AbstractCommand {
     private BSkyBlock plugin;
 
     public IslandCommand(BSkyBlock plugin) {
-        super(plugin, Settings.ISLANDCOMMAND, true);
+        super(Settings.ISLANDCOMMAND, true);
         plugin.getCommand(Settings.ISLANDCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ISLANDCOMMAND).setTabCompleter(this);
         this.plugin = plugin;
     }
 
     @Override
-    public boolean canExecute(CommandSender sender) {
+    public boolean canUse(CommandSender sender) {
         if(!(sender instanceof Player)){
             Util.sendMessage(sender, plugin.getLocale(sender).get("general.errors.use-in-game"));
             return false;
@@ -46,7 +47,7 @@ public class IslandCommand extends BSBCommand{
     }
 
     @Override
-    public void onExecuteDefault(CommandSender sender, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
         if (sender instanceof Player) {
             Player player = (Player)sender;
             if (plugin.getIslands().hasIsland(player.getUniqueId())) {
@@ -64,15 +65,15 @@ public class IslandCommand extends BSBCommand{
     @Override
     public void setup() {
         /* /is about - Display plugin's info (license, version, authors) */
-        registerArgument(new String[] {"about"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"about"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 return true;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 Util.sendMessage(sender, ChatColor.GOLD + "About " + ChatColor.GREEN + plugin.getDescription().getName() + ChatColor.GOLD + " v" + ChatColor.AQUA + plugin.getDescription().getVersion() + ChatColor.GOLD + ":");
                 Util.sendMessage(sender, ChatColor.GOLD + "Copyright (c) 2017 tastybento, Poslovitch");
                 Util.sendMessage(sender, ChatColor.GOLD + "All rights reserved.");
@@ -105,7 +106,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 return null;
             }
 
@@ -116,16 +117,16 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is go [<1-x>] - Teleport player to his island or the specified home */
-        registerArgument(new String[] {"go", "home", "h"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"go", "home", "h"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return true;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 if (sender instanceof Player) {
                     Player player = (Player)sender;
                     if (plugin.getIslands().hasIsland(player.getUniqueId())) {
@@ -135,7 +136,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -149,22 +150,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is spawn - Teleport player to spawn */
-        registerArgument(new String[] {"spawn"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"spawn"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 return null;
             }
 
@@ -175,16 +176,16 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is create - Create an island for this player (show the schematic selection panel if enabled) */
-        registerArgument(new String[] {"create", "auto"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"create", "auto"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return true;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 if (sender instanceof Player) {
                     Player player = (Player)sender;
                     if (!plugin.getIslands().hasIsland(player.getUniqueId())) {
@@ -196,7 +197,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -208,22 +209,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is info [player] - Display info about (specified) player's island*/
-        registerArgument(new String[] {"info"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"info"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -235,22 +236,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is cp [<on/off>] - Open Control Panel or toggle it */
-        registerArgument(new String[] {"controlpanel", "cp"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"controlpanel", "cp"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -262,16 +263,16 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is reset - Reset the island */
-        registerArgument(new String[] {"reset", "restart"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"reset", "restart"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return true;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
                 if (!(sender instanceof Player)) {
                     Util.sendMessage(sender, plugin.getLocale().get("error.useInGame"));
@@ -295,7 +296,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -307,22 +308,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is sethome - Set a home where the player is located */
-        registerArgument(new String[] {"sethome"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"sethome"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -334,10 +335,10 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is name <name> - Set island display name */
-        registerArgument(new String[] {"name"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"name"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 Player player = (Player) sender;
 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
@@ -359,7 +360,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 Player player = (Player) sender;
 
                 // Explain command
@@ -392,7 +393,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 return null;
             }
 
@@ -403,10 +404,10 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is resetname - Reset island display name */
-        registerArgument(new String[] {"resetname"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"resetname"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 Player player = (Player) sender;
 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
@@ -428,7 +429,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 Player player = (Player) sender;
 
                 // Resets the island name
@@ -437,7 +438,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 return null;
             }
 
@@ -448,22 +449,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is limits - Show the (tile) entities limits */
-        registerArgument(new String[] {"limits"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"limits"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -475,22 +476,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is team - Display island team info */
-        registerArgument(new String[] {"team"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"team"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -502,22 +503,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is invite <player> - Invite a player to join the island */
-        registerArgument(new String[] {"invite"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"invite"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -529,22 +530,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is uninvite <player> - Deletes the invite to join the island */
-        registerArgument(new String[] {"uninvite"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"uninvite"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -556,22 +557,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is leave - Leave the island */
-        registerArgument(new String[] {"leave"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"leave"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -583,22 +584,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is kick <player> - Kick the specified player from island team */
-        registerArgument(new String[] {"kick"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"kick"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -610,22 +611,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is accept [player] - Accept invite */
-        registerArgument(new String[] {"accept"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"accept"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -637,22 +638,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is reject [player] - Reject invite */
-        registerArgument(new String[] {"reject"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"reject"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -664,22 +665,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is makeleader <player> - Set the specified player as leader/owner of the island */
-        registerArgument(new String[] {"makeleader", "transfer"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"makeleader", "transfer"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -691,22 +692,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is teamchat - Toggle TeamChat */
-        registerArgument(new String[] {"teamchat", "tc"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"teamchat", "tc"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -718,22 +719,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is biomes - Change island biome */
-        registerArgument(new String[] {"biomes"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"biomes"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -745,22 +746,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is expel <player> - Expel a visitor/coop from the island */
-        registerArgument(new String[] {"expel"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"expel"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -772,22 +773,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is expel - Expel every visitor/coop from the island */
-        registerArgument(new String[] {"expelall", "expel!"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"expelall", "expel!"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -799,22 +800,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is ban <player> - Ban a player from the island */
-        registerArgument(new String[] {"ban"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"ban"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -826,22 +827,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is unban <player> - Unban player from the island */
-        registerArgument(new String[] {"unban"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"unban"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -853,22 +854,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is banlist - Display island banned players */
-        registerArgument(new String[] {"banlist", "bl"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"banlist", "bl"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -880,22 +881,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is trust <player> - Trust a player */
-        registerArgument(new String[] {"trust"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"trust"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -907,22 +908,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is untrust <player> - Untrust a player */
-        registerArgument(new String[] {"untrust"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"untrust"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -934,22 +935,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is trustlist - Display trust players */
-        registerArgument(new String[] {"trustlist", "tl"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"trustlist", "tl"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -961,22 +962,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is coop <player> - Coop a player */
-        registerArgument(new String[] {"coop"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"coop"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -988,22 +989,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is uncoop <player> - Uncoop a player */
-        registerArgument(new String[] {"uncoop"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"uncoop"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -1015,22 +1016,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is cooplist - Display coop players */
-        registerArgument(new String[] {"cooplist", "cl"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"cooplist", "cl"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -1042,10 +1043,10 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is lock - Toggle island lock */
-        registerArgument(new String[] {"lock", "unlock"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"lock", "unlock"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 Player player = (Player) sender;
 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.lock")){
@@ -1062,7 +1063,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 Player player = (Player) sender;
                 Island island = plugin.getIslands().getIsland(player.getUniqueId());
 
@@ -1078,7 +1079,7 @@ public class IslandCommand extends BSBCommand{
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 return null;
             }
 
@@ -1089,22 +1090,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is settings - Display Settings menu */
-        registerArgument(new String[] {"settings"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"settings"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }
@@ -1116,22 +1117,22 @@ public class IslandCommand extends BSBCommand{
         });
 
         /* /is language <id> - Set the language */
-        registerArgument(new String[] {"language", "lang"}, new CommandArgumentHandler() {
+        addArgument(new String[] {"language", "lang"}, new ArgumentHandler() {
 
             @Override
-            public boolean canExecute(CommandSender sender, String[] args) {
+            public boolean canUse(CommandSender sender) {
                 
                 return false;
             }
 
             @Override
-            public void onExecute(CommandSender sender, String[] args) {
+            public void execute(CommandSender sender, String[] args) {
                 
 
             }
 
             @Override
-            public List<String> onTabComplete(CommandSender sender, String[] args) {
+            public List<String> tabComplete(CommandSender sender, String[] args) {
                 
                 return null;
             }

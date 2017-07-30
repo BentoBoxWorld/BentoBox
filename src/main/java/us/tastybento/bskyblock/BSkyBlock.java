@@ -201,14 +201,6 @@ public class BSkyBlock extends JavaPlugin{
     }
 
     /**
-     * Returns BSkyBlock object instance
-     * @return BSkyBlock instance
-     */
-    public static BSkyBlock getInstance(){
-        return plugin;
-    }
-
-    /**
      * Returns an HashMap of locale identifier and the related object
      * @return the locales
      */
