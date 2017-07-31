@@ -37,6 +37,8 @@ general:
   errors:
     no-permission: "You don't have permission to execute this command."
     use-in-game: "This command is only available in game."
+    no-team: "You do not have a team!"
+    offline-player: "That player is offline or doesn't exist."
   
 # TODO: These are legacy strings and should be converted to a better format but will do for now
 acidBottle: "Acid Bottle"

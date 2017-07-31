@@ -1,8 +1,18 @@
 package us.tastybento.bskyblock.commands;
 
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
+
+import org.apache.commons.lang.math.NumberUtils;
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.PermissionAttachmentInfo;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
@@ -10,8 +20,6 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
-
-import java.util.List;
 
 /**
  * "/island" command
@@ -21,6 +29,12 @@ import java.util.List;
  */
 public class IslandCommand extends AbstractCommand {
     private BSkyBlock plugin;
+    /**
+     * Invite list - invited player name string (key), inviter name string
+     * (value)
+     */
+    private final HashMap<UUID, UUID> inviteList = new HashMap<UUID, UUID>();
+
 
     public IslandCommand(BSkyBlock plugin) {
         super(Settings.ISLANDCOMMAND, true);
@@ -83,11 +97,11 @@ public class IslandCommand extends AbstractCommand {
 
                 Util.sendMessage(sender, ChatColor.GOLD + "    * Redistributions of source code must retain the above copyright notice,");
                 Util.sendMessage(sender, ChatColor.GOLD + "      this list of conditions and the following disclaimer.");
-      
+
                 Util.sendMessage(sender, ChatColor.GOLD + "    * Redistributions in binary form must reproduce the above copyright");
                 Util.sendMessage(sender, ChatColor.GOLD + "      notice, this list of conditions and the following disclaimer in the");
                 Util.sendMessage(sender, ChatColor.GOLD + "      documentation and/or other materials provided with the distribution.");
-      
+
                 Util.sendMessage(sender, ChatColor.GOLD + "    * Neither the name of the BSkyBlock team nor the names of its");
                 Util.sendMessage(sender, ChatColor.GOLD + "      contributors may be used to endorse or promote products derived from");
                 Util.sendMessage(sender, ChatColor.GOLD + "      this software without specific prior written permission.");
@@ -121,7 +135,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return true;
             }
 
@@ -137,7 +151,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -154,13 +168,13 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
@@ -180,7 +194,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return true;
             }
 
@@ -198,7 +212,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -213,19 +227,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -240,19 +254,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -267,13 +281,13 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return true;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
                 if (!(sender instanceof Player)) {
                     Util.sendMessage(sender, plugin.getLocale().get("error.useInGame"));
                 }
@@ -289,7 +303,7 @@ public class IslandCommand extends AbstractCommand {
                     plugin.getLogger().info("DEBUG: making new island ");
                     Schematic schematic = plugin.getSchematics().getSchematic("default");
                     plugin.getIslands().newIsland(player, schematic, oldIsland); 
-                    
+
                 } else {
                     Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("error.noIsland")); 
                 }
@@ -297,7 +311,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -312,19 +326,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -453,19 +467,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -480,24 +494,72 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+                if (sender instanceof Player) {
+                    if (VaultHelper.hasPerm((Player)sender, Settings.PERMPREFIX + "team.create")) {
+                        return true;
+                    }
+                }
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
-
+                plugin.getLogger().info("DEBUG: executing team command");
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
             @Override
             public String[] getHelp(CommandSender sender){
+                plugin.getLogger().info("DEBUG: executing team help");
+                Player player = (Player)sender;
+                UUID playerUUID = player.getUniqueId();
+                if (plugin.getPlayers().inTeam(playerUUID)) {
+                    UUID teamLeader = plugin.getIslands().getTeamLeader(playerUUID);
+                    Set<UUID> teamMembers = plugin.getIslands().getMembers(teamLeader);
+                    if (teamLeader.equals(playerUUID)) {
+                        int maxSize = Settings.maxTeamSize;
+                        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                            if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+                                if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
+                                    maxSize = Settings.maxTeamSize;
+                                    break;
+                                } else {
+                                    // Get the max value should there be more than one
+                                    String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
+                                    if (spl.length > 1) {
+                                        if (!NumberUtils.isDigits(spl[1])) {
+                                            plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+
+                                        } else {
+                                            maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                        }
+                                    }
+                                }
+                            }
+                            // Do some sanity checking
+                            if (maxSize < 1) {
+                                maxSize = 1;
+                            }
+                        }  
+                        if (teamMembers.size() < maxSize) {
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.youCanInvite").replace("[number]", String.valueOf(maxSize - teamMembers.size())));
+                        } else {
+                            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorYourIslandIsFull"));
+                        }
+                    }
+                    Util.sendMessage(player, ChatColor.YELLOW + plugin.getLocale(sender).get("team.listingMembers") + ":");
+                    // Display members in the list
+                    for (UUID m : plugin.getIslands().getMembers(teamLeader)) {
+                        Util.sendMessage(player, ChatColor.WHITE + plugin.getPlayers().getName(m));
+                    }
+                } else {
+                    Util.sendMessage(sender, plugin.getLocale(sender).get("general.errors.no-team"));
+                }
                 return new String[] {null, plugin.getLocale(sender).get("help.island.team")};
             }
         });
@@ -507,19 +569,153 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+                if (sender instanceof Player) {
+                    if (VaultHelper.hasPerm((Player)sender, Settings.PERMPREFIX + "team.create")) {
+                        plugin.getLogger().info("DEBUG: has perm");
+                        return true;
+                    }
+                }
+                plugin.getLogger().info("DEBUG: does not have perm");
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+                plugin.getLogger().info("DEBUG: executing invite");
+                Player player = (Player)sender;
+                UUID playerUUID = player.getUniqueId();
+                if (args.length == 0) {
+                    // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
+                    //TODO
+                    return;
+                }
+                if (args.length == 1) {
+                    // Only online players can be invited
+                    @SuppressWarnings("deprecation")
+                    Player invitedPlayer = plugin.getServer().getPlayer(args[1]);
+                    if (invitedPlayer == null) {
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("general.errors.offline-player"));
+                        return;  
+                    }                                
+                    UUID invitedPlayerUUID = invitedPlayer.getUniqueId();
+                    // Player issuing the command must have an island
+                    if (!plugin.getPlayers().hasIsland(player.getUniqueId())) {
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorYouMustHaveIslandToInvite"));
+                        return;
+                    }
+                    // Player cannot invite themselves
+                    if (player.getName().equalsIgnoreCase(args[1])) {
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorYouCannotInviteYourself"));
+                        return;
+                    }
+                    // Check if this player can be invited to this island, or
+                    // whether they are still on cooldown
+                    long time = plugin.getPlayers().getInviteCoolDownTime(invitedPlayerUUID, plugin.getIslands().getIslandLocation(playerUUID));
+                    if (time > 0 && !player.isOp()) {
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorCoolDown").replace("[time]", String.valueOf(time)));
+                        return;
+                    }
+                    // If the player already has a team then check that they are
+                    // the leader, etc
+                    if (plugin.getPlayers().inTeam(player.getUniqueId())) {
+                        UUID teamLeader = plugin.getIslands().getTeamLeader(playerUUID);
+                        Set<UUID> teamMembers = plugin.getIslands().getMembers(teamLeader);
+                        // Leader?
+                        if (teamLeader.equals(player.getUniqueId())) {
+                            // Invited player is free and not in a team
+                            if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+                                // Player has space in their team
+                                int maxSize = Settings.maxTeamSize;
+                                // Dynamic team sizes with permissions
+                                for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+                                    if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
+                                        if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
+                                            maxSize = Settings.maxTeamSize;
+                                            break;
+                                        } else {
+                                            // Get the max value should there be more than one
+                                            String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
+                                            if (spl.length > 1) {
+                                                if (!NumberUtils.isDigits(spl[1])) {
+                                                    plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
 
+                                                } else {
+                                                    maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
+                                                }
+                                            }
+                                        }
+                                    }
+                                    // Do some sanity checking
+                                    if (maxSize < 1) {
+                                        maxSize = 1;
+                                    }
+                                }                            
+                                if (teamMembers.size() < maxSize) {
+                                    // If that player already has an invite out
+                                    // then retract it.
+                                    // Players can only have one invite out at a
+                                    // time - interesting
+                                    if (inviteList.containsValue(playerUUID)) {
+                                        inviteList.remove(Util.getKeyByValue(inviteList, player.getUniqueId()));
+                                        Util.sendMessage(player, ChatColor.YELLOW + plugin.getLocale(sender).get("invite.removingInvite"));
+                                    }
+                                    // Put the invited player (key) onto the
+                                    // list with inviter (value)
+                                    // If someone else has invited a player,
+                                    // then this invite will overwrite the
+                                    // previous invite!
+                                    inviteList.put(invitedPlayerUUID, player.getUniqueId());
+                                    Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[1]));
+                                    // Send message to online player
+                                    Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), plugin.getLocale(invitedPlayerUUID).get("invite.nameHasInvitedYou").replace("[name]", player.getName()));
+                                    Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
+                                            ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.getLocale(invitedPlayerUUID).get("invite.toAcceptOrReject"));
+                                    if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+                                        Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.RED + plugin.getLocale(invitedPlayerUUID).get("invite.warningYouWillLoseIsland"));
+                                    }
+                                } else {
+                                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorYourIslandIsFull"));
+                                }
+                            } else {
+                                Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorThatPlayerIsAlreadyInATeam"));
+                            }
+                        } else {
+                            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorYouMustHaveIslandToInvite"));
+                        }
+                    } else {
+                        // First-time invite player does not have a team
+                        // Check if invitee is in a team or not
+                        if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
+                            // If the inviter already has an invite out, remove
+                            // it
+                            if (inviteList.containsValue(playerUUID)) {
+                                inviteList.remove(Util.getKeyByValue(inviteList, player.getUniqueId()));
+                                Util.sendMessage(player, ChatColor.YELLOW + plugin.getLocale(sender).get("invite.removingInvite"));
+                            }
+                            // Place the player and invitee on the invite list
+                            inviteList.put(invitedPlayerUUID, player.getUniqueId());
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[1]));
+                            Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), plugin.getLocale(invitedPlayerUUID).get("invite.nameHasInvitedYou").replace("[name]", player.getName()));
+                            Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
+                                    ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.getLocale(invitedPlayerUUID).get("invite.toAcceptOrReject"));
+                            // Check if the player has an island and warn
+                            // accordingly
+                            // plugin.getLogger().info("DEBUG: invited player = "
+                            // + invitedPlayerUUID.toString());
+                            if (plugin.getPlayers().hasIsland(invitedPlayerUUID)) {
+                                // plugin.getLogger().info("DEBUG: invited player has island");
+                                Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.RED + plugin.getLocale(invitedPlayerUUID).get("invite.warningYouWillLoseIsland"));
+                            }
+                        } else {
+                            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorThatPlayerIsAlreadyInATeam"));
+                        }
+                    }
+                }
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -534,19 +730,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -561,19 +757,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -588,19 +784,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -615,19 +811,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -642,19 +838,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -669,19 +865,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -696,19 +892,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -723,19 +919,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -750,19 +946,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -777,19 +973,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -804,19 +1000,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -831,19 +1027,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -858,19 +1054,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -885,19 +1081,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -912,19 +1108,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -939,19 +1135,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -966,19 +1162,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -993,19 +1189,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -1020,19 +1216,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -1094,19 +1290,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 
@@ -1121,19 +1317,19 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                
+
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                
+
 
             }
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-                
+
                 return null;
             }
 

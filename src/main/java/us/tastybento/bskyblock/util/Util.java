@@ -19,6 +19,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * A set of utility methods
@@ -282,4 +284,19 @@ public class Util {
         return inWorld(block.getLocation());
     }
 
+    /**
+     * One-to-one relationship, you can return the first matched key
+     * 
+     * @param map
+     * @param value
+     * @return key
+     */
+    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
+        for (Entry<T, E> entry : map.entrySet()) {
+            if (value.equals(entry.getValue())) {
+                return entry.getKey();
+            }
+        }
+        return null;
+    }
 }

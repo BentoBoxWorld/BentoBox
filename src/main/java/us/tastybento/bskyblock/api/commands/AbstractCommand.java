@@ -1,13 +1,14 @@
 package us.tastybento.bskyblock.api.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -17,6 +18,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     private Map<String, ArgumentHandler> argumentsMap;
     private Map<String, String> aliasesMap;
+    public String label;
 
     private final String name;
 
@@ -26,7 +28,9 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     protected AbstractCommand(String name, boolean help) {
         this.name = name;
         this.help = help;
-
+        // These are not initialized elsewhere, so need to be done so. Initialize with size 1 to save memory
+        this.aliasesMap = new HashMap<String,String>(1);
+        this.argumentsMap = new HashMap<String, ArgumentHandler>(1);
         // Register the help argument if needed
         if (help) {
 
@@ -99,13 +103,16 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        this.label = label;
         if (this.canUse(sender)) {
             if(args.length >= 1) {
                 ArgumentHandler handler = getHandler(args[0]); // Store the handler to save some calculations
                 if (handler != null && handler.canUse(sender)) {
                     handler.execute(sender, args);
                 } else if (help) {
-                    argumentsMap.get("help").execute(sender, args);
+                    if (argumentsMap.containsKey("help")) {
+                        argumentsMap.get("help").execute(sender, args);
+                    }
                 } else {
                     this.execute(sender, args);
                 }
