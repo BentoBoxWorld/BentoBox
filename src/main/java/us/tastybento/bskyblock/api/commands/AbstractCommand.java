@@ -1,19 +1,13 @@
 package us.tastybento.bskyblock.api.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
 import us.tastybento.bskyblock.BSkyBlock;
+
+import java.util.*;
 
 /**
  *
@@ -21,30 +15,29 @@ import us.tastybento.bskyblock.BSkyBlock;
  */
 public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
+    private BSkyBlock plugin;
+
     private Map<String, ArgumentHandler> argumentsMap;
     private Map<String, String> aliasesMap;
+
     public String label;
     public boolean isPlayer;
     public boolean inTeam;
-    public UUID playerUUID;
     public UUID teamLeaderUUID;
     public Set<UUID> teamMembers;
     public Player player;
-
-    private final String name;
+    public UUID playerUUID;
 
     private final boolean help;
-    private BSkyBlock plugin;
-    
     private static final int MAX_PER_PAGE = 7;
 
-    protected AbstractCommand(String name, boolean help, BSkyBlock plugin) {
-        this.name = name;
-        this.help = help;
+    protected AbstractCommand(BSkyBlock plugin, String label, boolean help) {
         this.plugin = plugin;
-        // These are not initialized elsewhere, so need to be done so. Initialize with size 1 to save memory
-        this.aliasesMap = new HashMap<String,String>(1);
         this.argumentsMap = new HashMap<String, ArgumentHandler>(1);
+        this.aliasesMap = new HashMap<String,String>(1);
+        this.label = label;
+        this.help = help;
+
         // Register the help argument if needed
         if (help) {
 
@@ -70,7 +63,11 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     public abstract void execute(CommandSender sender, String[] args);
 
     public void addArgument(String[] names, ArgumentHandler handler) {
-
+        // TODO add some security checks to avoid duplicates
+        argumentsMap.put(names[0], handler);
+        for (int i = 1 ; i < names.length ; i++) {
+            aliasesMap.put(names[0], names[i]);
+        }
     }
 
     public ArgumentHandler getHandler(String argument) {
@@ -117,7 +114,6 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        this.label = label;
         if (this.canUse(sender)) {
             // Check if the command sender is a player or not
             if (sender instanceof Player) {
@@ -131,6 +127,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
                 teamMembers = plugin.getIslands().getMembers(teamLeaderUUID);
             }
+
             if(args.length >= 1) {
                 ArgumentHandler handler = getHandler(args[0]); // Store the handler to save some calculations
                 if (handler != null && handler.canUse(sender)) {

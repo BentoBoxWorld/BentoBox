@@ -1,16 +1,11 @@
 package us.tastybento.bskyblock.commands;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
-
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
@@ -18,6 +13,10 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * "/island" command
@@ -35,7 +34,7 @@ public class IslandCommand extends AbstractCommand {
 
 
     public IslandCommand(BSkyBlock plugin) {
-        super(Settings.ISLANDCOMMAND, true, plugin);
+        super(plugin, Settings.ISLANDCOMMAND, true);
         plugin.getCommand(Settings.ISLANDCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ISLANDCOMMAND).setTabCompleter(this);
         this.plugin = plugin;
