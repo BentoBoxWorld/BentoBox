@@ -4,11 +4,16 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
+import org.bukkit.entity.Player;
+
+import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  *
@@ -19,15 +24,24 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     private Map<String, ArgumentHandler> argumentsMap;
     private Map<String, String> aliasesMap;
     public String label;
+    public boolean isPlayer;
+    public boolean inTeam;
+    public UUID playerUUID;
+    public UUID teamLeaderUUID;
+    public Set<UUID> teamMembers;
+    public Player player;
 
     private final String name;
 
     private final boolean help;
+    private BSkyBlock plugin;
+    
     private static final int MAX_PER_PAGE = 7;
 
-    protected AbstractCommand(String name, boolean help) {
+    protected AbstractCommand(String name, boolean help, BSkyBlock plugin) {
         this.name = name;
         this.help = help;
+        this.plugin = plugin;
         // These are not initialized elsewhere, so need to be done so. Initialize with size 1 to save memory
         this.aliasesMap = new HashMap<String,String>(1);
         this.argumentsMap = new HashMap<String, ArgumentHandler>(1);
@@ -105,6 +119,18 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         this.label = label;
         if (this.canUse(sender)) {
+            // Check if the command sender is a player or not
+            if (sender instanceof Player) {
+                isPlayer = true;
+                player = (Player)sender;
+                playerUUID = player.getUniqueId();
+            }
+            // Check if the player is in a team or not and if so, grab the team leader's UUID
+            if (plugin.getPlayers().inTeam(playerUUID)) {
+                inTeam = true;
+                teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
+                teamMembers = plugin.getIslands().getMembers(teamLeaderUUID);
+            }
             if(args.length >= 1) {
                 ArgumentHandler handler = getHandler(args[0]); // Store the handler to save some calculations
                 if (handler != null && handler.canUse(sender)) {

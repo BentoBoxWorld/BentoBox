@@ -12,7 +12,7 @@ public class AdminCommand extends AbstractCommand {
     BSkyBlock plugin;
 
     public AdminCommand(BSkyBlock plugin) {
-        super(Settings.ADMINCOMMAND, true);
+        super(Settings.ADMINCOMMAND, true, plugin);
         plugin.getCommand(Settings.ADMINCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ADMINCOMMAND).setTabCompleter(this);
         this.plugin = plugin;

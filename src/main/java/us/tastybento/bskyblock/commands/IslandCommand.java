@@ -1,9 +1,7 @@
 package us.tastybento.bskyblock.commands;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
@@ -37,7 +35,7 @@ public class IslandCommand extends AbstractCommand {
 
 
     public IslandCommand(BSkyBlock plugin) {
-        super(Settings.ISLANDCOMMAND, true);
+        super(Settings.ISLANDCOMMAND, true, plugin);
         plugin.getCommand(Settings.ISLANDCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ISLANDCOMMAND).setTabCompleter(this);
         this.plugin = plugin;
@@ -516,12 +514,8 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public String[] getHelp(CommandSender sender){
                 plugin.getLogger().info("DEBUG: executing team help");
-                Player player = (Player)sender;
-                UUID playerUUID = player.getUniqueId();
-                if (plugin.getPlayers().inTeam(playerUUID)) {
-                    UUID teamLeader = plugin.getIslands().getTeamLeader(playerUUID);
-                    Set<UUID> teamMembers = plugin.getIslands().getMembers(teamLeader);
-                    if (teamLeader.equals(playerUUID)) {
+                if (inTeam) {
+                    if (teamLeaderUUID.equals(playerUUID)) {
                         int maxSize = Settings.maxTeamSize;
                         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
                             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
@@ -554,7 +548,7 @@ public class IslandCommand extends AbstractCommand {
                     }
                     Util.sendMessage(player, ChatColor.YELLOW + plugin.getLocale(sender).get("team.listingMembers") + ":");
                     // Display members in the list
-                    for (UUID m : plugin.getIslands().getMembers(teamLeader)) {
+                    for (UUID m : teamMembers) {
                         Util.sendMessage(player, ChatColor.WHITE + plugin.getPlayers().getName(m));
                     }
                 } else {
@@ -569,8 +563,8 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
-                if (sender instanceof Player) {
-                    if (VaultHelper.hasPerm((Player)sender, Settings.PERMPREFIX + "team.create")) {
+                if (isPlayer) {
+                    if (VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team.create")) {
                         plugin.getLogger().info("DEBUG: has perm");
                         return true;
                     }
@@ -582,8 +576,6 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 plugin.getLogger().info("DEBUG: executing invite");
-                Player player = (Player)sender;
-                UUID playerUUID = player.getUniqueId();
                 if (args.length == 0) {
                     // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
                     //TODO
@@ -617,11 +609,9 @@ public class IslandCommand extends AbstractCommand {
                     }
                     // If the player already has a team then check that they are
                     // the leader, etc
-                    if (plugin.getPlayers().inTeam(player.getUniqueId())) {
-                        UUID teamLeader = plugin.getIslands().getTeamLeader(playerUUID);
-                        Set<UUID> teamMembers = plugin.getIslands().getMembers(teamLeader);
+                    if (inTeam) {
                         // Leader?
-                        if (teamLeader.equals(player.getUniqueId())) {
+                        if (teamLeaderUUID.equals(player.getUniqueId())) {
                             // Invited player is free and not in a team
                             if (!plugin.getPlayers().inTeam(invitedPlayerUUID)) {
                                 // Player has space in their team
