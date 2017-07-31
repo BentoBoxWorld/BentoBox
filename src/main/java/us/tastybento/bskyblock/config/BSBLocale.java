@@ -49,7 +49,7 @@ public class BSBLocale {
     /**
      * Get text from the yml file for this locale
      * @param reference - the YAML node where the text is
-     * @return Text for this locale reference or "" if the locale or the reference do not exist
+     * @return Text for this locale reference or the reference is nothing has been found
      */
     public String get(String reference) {
         // TODO: add placeholder conversion?
@@ -65,8 +65,7 @@ public class BSBLocale {
             return plugin.getLocale().get(reference);
         }
         plugin.getLogger().severe(reference + " not found in " + languageTag + " or default lang " + Settings.defaultLanguage);
-        plugin.getLogger().info("DEBUG: " + rb.keySet().toString());
-        return "";
+        return reference; // Return reference for debug purposes, like for the mods.
     }
     
     /**
