@@ -122,7 +122,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return null;
             }
         });
@@ -153,7 +153,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 // TODO check if multiple homes
                 if(VaultHelper.hasPerm((Player) sender, "todo")) return new String[] {"[1-x]", plugin.getLocale(sender).get("help.island.go-homes")};
                 return new String[] {null, plugin.getLocale(sender).get("help.island.go")};
@@ -181,7 +181,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.spawn")};
             }
         });
@@ -214,7 +214,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"[schematic]", plugin.getLocale(sender).get("help.island.create")};
             }
         });
@@ -241,7 +241,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"[player]", plugin.getLocale(sender).get("help.island.info")};
             }
         });
@@ -268,7 +268,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"[on/off]", plugin.getLocale(sender).get("help.island.control-panel")};
             }
         });
@@ -302,7 +302,7 @@ public class IslandCommand extends AbstractCommand {
                     plugin.getIslands().newIsland(player, schematic, oldIsland); 
 
                 } else {
-                    Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("error.noIsland")); 
+                    Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("general.errors.no-island"));
                 }
             }
 
@@ -313,7 +313,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.reset")};
             }
         });
@@ -340,7 +340,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.sethome")};
             }
         });
@@ -376,7 +376,7 @@ public class IslandCommand extends AbstractCommand {
 
                 // Explain command
                 if(args.length == 1){
-                    //TODO Util.sendMessage(player, getHelpMessage(player, label, args[0], getHelp(sender, label)));
+                    //TODO Util.sendMessage(player, getHelpMessage(player, label, args[0], usage(sender, label)));
                     return;
                 }
 
@@ -409,7 +409,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<name>", plugin.getLocale(sender).get("help.island.name")};
             }
         });
@@ -454,7 +454,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.resetname")};
             }
         });
@@ -481,7 +481,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.limits")};
             }
         });
@@ -511,7 +511,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 plugin.getLogger().info("DEBUG: executing team help");
                 if (inTeam) {
                     if (teamLeaderUUID.equals(playerUUID)) {
@@ -709,7 +709,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.invite")};
             }
         });
@@ -736,7 +736,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.uninvite")};
             }
         });
@@ -763,7 +763,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.leave")};
             }
         });
@@ -790,7 +790,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.kick")};
             }
         });
@@ -817,7 +817,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"[player]", plugin.getLocale(sender).get("help.island.accept")};
             }
         });
@@ -844,7 +844,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"[player]", plugin.getLocale(sender).get("help.island.reject")};
             }
         });
@@ -871,7 +871,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.makeleader")};
             }
         });
@@ -898,7 +898,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.teamchat")};
             }
         });
@@ -925,7 +925,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.biomes")};
             }
         });
@@ -952,7 +952,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.expel")};
             }
         });
@@ -979,7 +979,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.expelall")};
             }
         });
@@ -1006,7 +1006,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.ban")};
             }
         });
@@ -1033,7 +1033,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.unban")};
             }
         });
@@ -1060,7 +1060,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.banlist")};
             }
         });
@@ -1087,7 +1087,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.trust")};
             }
         });
@@ -1114,7 +1114,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.untrust")};
             }
         });
@@ -1141,7 +1141,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.trustlist")};
             }
         });
@@ -1168,7 +1168,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.coop")};
             }
         });
@@ -1195,7 +1195,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<player>", plugin.getLocale(sender).get("help.island.uncoop")};
             }
         });
@@ -1222,7 +1222,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.cooplist")};
             }
         });
@@ -1269,7 +1269,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.lock")};
             }
         });
@@ -1296,7 +1296,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.island.settings")};
             }
         });
@@ -1323,7 +1323,7 @@ public class IslandCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {"<id>", plugin.getLocale(sender).get("help.island.language")};
             }
         });

@@ -17,10 +17,10 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     private BSkyBlock plugin;
 
-    private Map<String, ArgumentHandler> argumentsMap;
-    private Map<String, String> aliasesMap;
+    private final Map<String, ArgumentHandler> argumentsMap;
+    private final Map<String, String> aliasesMap;
 
-    public String label;
+    public final String label;
     public boolean isPlayer;
     public boolean inTeam;
     public UUID teamLeaderUUID;
@@ -33,14 +33,34 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     protected AbstractCommand(BSkyBlock plugin, String label, boolean help) {
         this.plugin = plugin;
-        this.argumentsMap = new HashMap<String, ArgumentHandler>(1);
-        this.aliasesMap = new HashMap<String,String>(1);
+        this.argumentsMap = new HashMap<>(1);
+        this.aliasesMap = new HashMap<>(1);
         this.label = label;
         this.help = help;
 
         // Register the help argument if needed
         if (help) {
+            addArgument(new String[]{"help", "?"}, new ArgumentHandler() {
+                @Override
+                public boolean canUse(CommandSender sender) {
+                    return true; // If the player has access to this command, he can get help
+                }
 
+                @Override
+                public void execute(CommandSender sender, String[] args) {
+
+                }
+
+                @Override
+                public List<String> tabComplete(CommandSender sender, String[] args) {
+                    return null; // No tab options for this one
+                }
+
+                @Override
+                public String[] usage(CommandSender sender) {
+                    return new String[] {"", ""};
+                }
+            });
         }
 
         // Register the other arguments
@@ -54,7 +74,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         boolean canUse(CommandSender sender);
         void execute(CommandSender sender, String[] args);
         List<String> tabComplete(CommandSender sender, String[] args);
-        String[] getHelp(CommandSender sender);
+        String[] usage(CommandSender sender);
     }
 
     public abstract void setup();

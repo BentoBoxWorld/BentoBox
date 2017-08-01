@@ -41,7 +41,7 @@ public class AdminCommand extends AbstractCommand {
             }
 
             @Override
-            public String[] getHelp(CommandSender sender){
+            public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.admin.delete")};
             }
         });

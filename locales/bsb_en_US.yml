@@ -38,6 +38,8 @@ general:
     no-permission: "You don't have permission to execute this command."
     use-in-game: "This command is only available in game."
     no-team: "You do not have a team!"
+    no-island: "You do not have an island!"
+    not-leader: "You are not the leader of your island!"
     offline-player: "That player is offline or doesn't exist."
   
 # TODO: These are legacy strings and should be converted to a better format but will do for now
