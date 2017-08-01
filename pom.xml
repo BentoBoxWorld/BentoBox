@@ -4,7 +4,7 @@
 	<groupId>us.tastybento</groupId>
 	<artifactId>bskyblock</artifactId>
 	<packaging>jar</packaging>
-	<version>0.0.1</version>
+	<version>alpha-0.0.1</version>
 	<name>BSkyBlock</name>
 	<description>The next generation of ASkyBlock</description>
 	<properties>
@@ -13,7 +13,6 @@
 	</properties>
 	<build>
 		<defaultGoal>clean package install</defaultGoal>
-		<finalName>bskyblock</finalName>
 		<resources>
 			<resource>
 				<targetPath>.</targetPath>
