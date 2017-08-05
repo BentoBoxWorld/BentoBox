@@ -18,6 +18,7 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -298,5 +299,43 @@ public class Util {
             }
         }
         return null;
+    }
+
+    /**
+     * Return a list of online players this player can see, i.e. are not invisible
+     * @param player - if null, all player names on the server are shown
+     * @return
+     */
+    public static List<String> getOnlinePlayerList(Player player) {
+        final List<String> returned = new ArrayList<String>();
+        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
+            if (player == null) {
+                returned.add(p.getName());
+            } else if (player.canSee(p)) {
+                returned.add(p.getName()); 
+            }
+        }
+        return returned;
+    }
+    
+    /**
+     * Returns all of the items that begin with the given start, 
+     * ignoring case.  Intended for tabcompletion. 
+     * 
+     * @param list
+     * @param start
+     * @return List of items that start with the letters
+     */
+    public static List<String> tabLimit(final List<String> list, final String start) {
+        final List<String> returned = new ArrayList<String>();
+        for (String s : list) {
+            if (s == null)
+                continue;
+            if (s.toLowerCase().startsWith(start.toLowerCase())) {
+                returned.add(s);
+            }
+        }
+
+        return returned;
     }
 }

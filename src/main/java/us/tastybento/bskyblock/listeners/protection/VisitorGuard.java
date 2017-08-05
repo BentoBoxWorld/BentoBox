@@ -8,10 +8,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
-import org.bukkit.event.player.PlayerPickupItemEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -72,25 +72,6 @@ public class VisitorGuard implements Listener {
             InventorySave.getInstance().loadPlayerInventory(e.getPlayer());
             InventorySave.getInstance().clearSavedInventory(e.getPlayer());
         }
-    }
-    /*
-     * Prevent item pickup by visitors
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVisitorPickup(final PlayerPickupItemEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info(e.getEventName());
-        }
-        if (!Util.inWorld(e.getPlayer())) {
-            return;
-        }
-        Island island = plugin.getIslands().getIslandAt(e.getItem().getLocation());
-        if ((island != null && island.getFlag(SettingsFlag.ITEM_PICKUP)) 
-                || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getItem().getLocation())) {
-            return;
-        }
-        e.setCancelled(true);
     }
 
     /*
@@ -178,6 +159,29 @@ public class VisitorGuard implements Listener {
             }
             // Set their fall distance to zero otherwise they crash onto their island and die
             p.setFallDistance(0);
+            e.setCancelled(true);
+        }
+    }
+
+    /*
+     * Prevent item pickup by visitors
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onVisitorPickup(final EntityPickupItemEvent e) {
+        if (DEBUG) {
+            plugin.getLogger().info(e.getEventName());
+        }
+        if (e.getEntity() instanceof Player) {
+            Player player = (Player)e.getEntity();
+            if (!Util.inWorld(player)) {
+                return;
+            }
+            Island island = plugin.getIslands().getIslandAt(e.getItem().getLocation());
+            if ((island != null && island.getFlag(SettingsFlag.ITEM_PICKUP)) 
+                    || player.isOp() || VaultHelper.hasPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")
+                    || plugin.getIslands().locationIsOnIsland(player, e.getItem().getLocation())) {
+                return;
+            }
             e.setCancelled(true);
         }
     }

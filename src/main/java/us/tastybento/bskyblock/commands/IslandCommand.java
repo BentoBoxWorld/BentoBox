@@ -1,11 +1,17 @@
 package us.tastybento.bskyblock.commands;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
@@ -13,10 +19,6 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
 
 /**
  * "/island" command
@@ -502,17 +504,6 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 plugin.getLogger().info("DEBUG: executing team command");
-            }
-
-            @Override
-            public List<String> tabComplete(CommandSender sender, String[] args) {
-
-                return null;
-            }
-
-            @Override
-            public String[] usage(CommandSender sender){
-                plugin.getLogger().info("DEBUG: executing team help");
                 if (inTeam) {
                     if (teamLeaderUUID.equals(playerUUID)) {
                         int maxSize = Settings.maxTeamSize;
@@ -553,6 +544,18 @@ public class IslandCommand extends AbstractCommand {
                 } else {
                     Util.sendMessage(sender, plugin.getLocale(sender).get("general.errors.no-team"));
                 }
+            }
+
+            @Override
+            public List<String> tabComplete(CommandSender sender, String[] args) {
+
+                return null;
+            }
+
+            @Override
+            public String[] usage(CommandSender sender){
+                plugin.getLogger().info("DEBUG: executing team help");
+
                 return new String[] {null, plugin.getLocale(sender).get("help.island.team")};
             }
         });
@@ -562,19 +565,24 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public boolean canUse(CommandSender sender) {
+                plugin.getLogger().info("DEBUG: invite player command canUse check");
                 if (isPlayer) {
+                    plugin.getLogger().info("DEBUG: is player");
                     if (VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team.create")) {
-                        plugin.getLogger().info("DEBUG: has perm");
+                        plugin.getLogger().info("DEBUG: " + player.getName() + " has perm");
                         return true;
+                    } else {
+                        plugin.getLogger().info("DEBUG: " + player.getName() + " does not have perm");
                     }
+                } else {
+                    plugin.getLogger().info("DEBUG: is not a player");
                 }
-                plugin.getLogger().info("DEBUG: does not have perm");
+                plugin.getLogger().info("DEBUG: does not have perm: " + Settings.PERMPREFIX + "team.create");
                 return false;
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                plugin.getLogger().info("DEBUG: executing invite");
                 if (args.length == 0) {
                     // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
                     //TODO
@@ -583,7 +591,7 @@ public class IslandCommand extends AbstractCommand {
                 if (args.length == 1) {
                     // Only online players can be invited
                     @SuppressWarnings("deprecation")
-                    Player invitedPlayer = plugin.getServer().getPlayer(args[1]);
+                    Player invitedPlayer = plugin.getServer().getPlayer(args[0]);
                     if (invitedPlayer == null) {
                         Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("general.errors.offline-player"));
                         return;  
@@ -595,7 +603,7 @@ public class IslandCommand extends AbstractCommand {
                         return;
                     }
                     // Player cannot invite themselves
-                    if (player.getName().equalsIgnoreCase(args[1])) {
+                    if (player.getName().equalsIgnoreCase(args[0])) {
                         Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("invite.errorYouCannotInviteYourself"));
                         return;
                     }
@@ -704,8 +712,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public List<String> tabComplete(CommandSender sender, String[] args) {
-
-                return null;
+                return Util.getOnlinePlayerList(player);
             }
 
             @Override
