@@ -1,16 +1,18 @@
 package us.tastybento.bskyblock.commands;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
@@ -32,7 +34,7 @@ public class IslandCommand extends AbstractCommand {
      * Invite list - invited player name string (key), inviter name string
      * (value)
      */
-    private final HashMap<UUID, UUID> inviteList = new HashMap<UUID, UUID>();
+    private final BiMap<UUID, UUID> inviteList = HashBiMap.create();
 
 
     public IslandCommand(BSkyBlock plugin) {
@@ -43,20 +45,18 @@ public class IslandCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean canUse(CommandSender sender) {
+    public CanUseResp canUse(CommandSender sender) {
         if(!(sender instanceof Player)){
-            Util.sendMessage(sender, plugin.getLocale(sender).get("general.errors.use-in-game"));
-            return false;
+            return new CanUseResp(plugin.getLocale(sender).get("general.errors.use-in-game"));
         }
 
         Player player = (Player) sender;
         // Basic permission check to even use /island
         if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")){
-            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
-            return false;
+            return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
         }
 
-        return true;
+        return new CanUseResp(true);
     }
 
     @Override
@@ -81,8 +81,8 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"about"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
-                return true;
+            public CanUseResp canUse(CommandSender sender) {
+                return new CanUseResp(true);
             }
 
             @Override
@@ -133,9 +133,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"go", "home", "h"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -166,9 +166,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"spawn"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -192,9 +192,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"create", "auto"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -225,9 +225,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"info"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -252,9 +252,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"controlpanel", "cp"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -279,9 +279,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"reset", "restart"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -324,9 +324,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"sethome"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -351,25 +351,22 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"name"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
                 Player player = (Player) sender;
 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                 }
 
                 if(!plugin.getIslands().hasIsland(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
                 }
 
                 if(!plugin.getIslands().isOwner(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.not-leader"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.not-leader"));
                 }
 
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -420,25 +417,22 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"resetname"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
                 Player player = (Player) sender;
 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                 }
 
                 if(!plugin.getIslands().hasIsland(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
                 }
 
                 if(!plugin.getIslands().isOwner(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.not-leader"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.not-leader"));
                 }
 
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -465,9 +459,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"limits"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -492,13 +486,15 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"team"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
                 if (sender instanceof Player) {
-                    if (VaultHelper.hasPerm((Player)sender, Settings.PERMPREFIX + "team.create")) {
-                        return true;
+                    if (!VaultHelper.hasPerm((Player)sender, Settings.PERMPREFIX + "team.create")) {
+                        return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
+                    } else {
+                        return new CanUseResp(true);
                     }
                 }
-                return false;
+                return new CanUseResp(plugin.getLocale(sender).get("general.errors.use-in-game"));
             }
 
             @Override
@@ -564,21 +560,14 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"invite"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
-                plugin.getLogger().info("DEBUG: invite player command canUse check");
+            public CanUseResp canUse(CommandSender sender) {
                 if (isPlayer) {
-                    plugin.getLogger().info("DEBUG: is player");
                     if (VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team.create")) {
-                        plugin.getLogger().info("DEBUG: " + player.getName() + " has perm");
-                        return true;
-                    } else {
-                        plugin.getLogger().info("DEBUG: " + player.getName() + " does not have perm");
+                        return new CanUseResp(true);
                     }
-                } else {
-                    plugin.getLogger().info("DEBUG: is not a player");
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                 }
-                plugin.getLogger().info("DEBUG: does not have perm: " + Settings.PERMPREFIX + "team.create");
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -586,6 +575,12 @@ public class IslandCommand extends AbstractCommand {
                 if (args.length == 0) {
                     // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
                     //TODO
+                    if (inviteList.containsKey(playerUUID)) {
+                        OfflinePlayer inviter = plugin.getServer().getOfflinePlayer(inviteList.get(playerUUID));
+                        Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.nameHasInvitedYou").replace("[name]", inviter.getName()));
+                    } else {
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("island.help.Invite"));
+                    }
                     return;
                 }
                 if (args.length == 1) {
@@ -653,7 +648,7 @@ public class IslandCommand extends AbstractCommand {
                                     // Players can only have one invite out at a
                                     // time - interesting
                                     if (inviteList.containsValue(playerUUID)) {
-                                        inviteList.remove(Util.getKeyByValue(inviteList, player.getUniqueId()));
+                                        inviteList.inverse().remove(playerUUID);
                                         Util.sendMessage(player, ChatColor.YELLOW + plugin.getLocale(sender).get("invite.removingInvite"));
                                     }
                                     // Put the invited player (key) onto the
@@ -662,7 +657,7 @@ public class IslandCommand extends AbstractCommand {
                                     // then this invite will overwrite the
                                     // previous invite!
                                     inviteList.put(invitedPlayerUUID, player.getUniqueId());
-                                    Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[1]));
+                                    Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[0]));
                                     // Send message to online player
                                     Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), plugin.getLocale(invitedPlayerUUID).get("invite.nameHasInvitedYou").replace("[name]", player.getName()));
                                     Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
@@ -686,12 +681,12 @@ public class IslandCommand extends AbstractCommand {
                             // If the inviter already has an invite out, remove
                             // it
                             if (inviteList.containsValue(playerUUID)) {
-                                inviteList.remove(Util.getKeyByValue(inviteList, player.getUniqueId()));
+                                inviteList.inverse().remove(playerUUID);
                                 Util.sendMessage(player, ChatColor.YELLOW + plugin.getLocale(sender).get("invite.removingInvite"));
                             }
                             // Place the player and invitee on the invite list
                             inviteList.put(invitedPlayerUUID, player.getUniqueId());
-                            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[1]));
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[0]));
                             Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), plugin.getLocale(invitedPlayerUUID).get("invite.nameHasInvitedYou").replace("[name]", player.getName()));
                             Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
                                     ChatColor.WHITE + "/" + label + " [accept/reject]" + ChatColor.YELLOW + " " + plugin.getLocale(invitedPlayerUUID).get("invite.toAcceptOrReject"));
@@ -717,7 +712,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public String[] usage(CommandSender sender){
-                return new String[] {"<player>", plugin.getLocale(sender).get("help.island.invite")};
+                return new String[] {"<player>", plugin.getLocale(sender).get("island.help.Invite")};
             }
         });
 
@@ -725,15 +720,30 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"uninvite"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
-
-                return false;
+            public CanUseResp canUse(CommandSender sender) {
+                if (isPlayer) {
+                    if (VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team.create")) {
+                        return new CanUseResp(true);
+                    }
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
+                }
+                return new CanUseResp(false);
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-
-
+                    // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
+                    if (inviteList.inverse().containsKey(playerUUID)) {
+                        Player invitee = plugin.getServer().getPlayer(inviteList.inverse().get(playerUUID));
+                        if (invitee != null) {
+                            inviteList.inverse().remove(playerUUID);
+                            Util.sendMessage(invitee, ChatColor.RED + plugin.getLocale(invitee.getUniqueId()).get("invite.nameHasUninvitedYou").replace("[name]", player.getName()));
+                            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(playerUUID).get("general.success"));
+                        }
+                    } else {
+                        Util.sendMessage(player, ChatColor.RED + plugin.getLocale(sender).get("island.help.Invite"));
+                    }
+                    return;
             }
 
             @Override
@@ -752,9 +762,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"leave"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -779,9 +789,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"kick"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -806,9 +816,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"accept"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -833,9 +843,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"reject"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -860,9 +870,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"makeleader", "transfer"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -887,9 +897,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"teamchat", "tc"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -914,9 +924,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"biomes"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -941,9 +951,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"expel"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -968,9 +978,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"expelall", "expel!"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -995,9 +1005,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"ban"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1022,9 +1032,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"unban"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1049,9 +1059,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"banlist", "bl"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1076,9 +1086,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"trust"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1103,9 +1113,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"untrust"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1130,9 +1140,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"trustlist", "tl"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1157,9 +1167,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"coop"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1184,9 +1194,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"uncoop"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1211,9 +1221,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"cooplist", "cl"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1238,20 +1248,18 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"lock", "unlock"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
                 Player player = (Player) sender;
 
                 if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.lock")){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-permission"));
                 }
 
                 if(!plugin.getIslands().hasIsland(player.getUniqueId())){
-                    Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
-                    return false;
+                    return new CanUseResp(ChatColor.RED + plugin.getLocale(player).get("general.errors.no-island"));
                 }
 
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -1285,9 +1293,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"settings"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override
@@ -1312,9 +1320,9 @@ public class IslandCommand extends AbstractCommand {
         addArgument(new String[] {"language", "lang"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
 
-                return false;
+                return new CanUseResp(false);
             }
 
             @Override

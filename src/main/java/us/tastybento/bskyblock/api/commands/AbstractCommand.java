@@ -51,8 +51,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         if (help) {
             addArgument(new String[]{"help", "?"}, new ArgumentHandler() {
                 @Override
-                public boolean canUse(CommandSender sender) {
-                    return true; // If the player has access to this command, he can get help
+                public CanUseResp canUse(CommandSender sender) {
+                    return new CanUseResp(true); // If the player has access to this command, he can get help
                 }
 
                 @Override
@@ -80,7 +80,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
      *
      */
     public interface ArgumentHandler {
-        boolean canUse(CommandSender sender);
+        CanUseResp canUse(CommandSender sender);
         void execute(CommandSender sender, String[] args);
         List<String> tabComplete(CommandSender sender, String[] args);
         String[] usage(CommandSender sender);
@@ -88,7 +88,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     public abstract void setup();
 
-    public abstract boolean canUse(CommandSender sender);
+    public abstract CanUseResp canUse(CommandSender sender);
     public abstract void execute(CommandSender sender, String[] args);
 
     public void addArgument(String[] names, ArgumentHandler handler) {
@@ -144,10 +144,11 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         checkForPlayer(sender);
-        if (this.canUse(sender)) {
+        CanUseResp canUse = this.canUse(sender);
+        if (canUse.isAllowed()) {
             if(args.length >= 1) {
                 ArgumentHandler handler = getHandler(args[0]); // Store the handler to save some calculations
-                if (handler != null && handler.canUse(sender)) {
+                if (handler != null && handler.canUse(sender).isAllowed()) {
                     handler.execute(sender, clean(Arrays.copyOfRange(args, 1, args.length)));
                 } else if (help) {
                     if (argumentsMap.containsKey("help")) {
@@ -161,6 +162,9 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 // No args
                 this.execute(sender, args);
             }
+        } else {
+            // Sender cannot use this command - tell them why
+            Util.sendMessage(sender, canUse.errorResponse);
         }
         return true;
     }
@@ -170,16 +174,16 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         List<String> options = new ArrayList<String>();
         checkForPlayer(sender);
         String lastArg = (args.length != 0 ? args[args.length - 1] : "");
-        if (canUse(sender)) {
+        if (canUse(sender).isAllowed()) {
             if (args.length <= 1) {
                 // Go through every argument, check if player can use it and if so, add it in tab options
                 for(String argument : argumentsMap.keySet()) {
-                    if (getHandler(argument).canUse(sender)) options.add(argument);
+                    if (getHandler(argument).canUse(sender).isAllowed()) options.add(argument);
                 }
             } else {
                 // If player can execute the argument, get its tab-completer options
                 ArgumentHandler handler = getHandler(args[0]);
-                if (handler != null && handler.canUse(sender)) {
+                if (handler != null && handler.canUse(sender).isAllowed()) {
                     // We remove the 1st arg - and remove any blank args caused by hitting space before the tab
                     List<String> tabOptions = handler.tabComplete(sender, clean(Arrays.copyOfRange(args, 1, args.length)));
                     if (tabOptions != null) options.addAll(tabOptions);
@@ -212,6 +216,60 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
             teamMembers = plugin.getIslands().getMembers(teamLeaderUUID);
         }
+        
+    }
+    
+    /**
+     * Response class for the canUse check
+     * @author tastybento
+     *
+     */
+    public class CanUseResp {
+        private boolean allowed;
+        private String errorResponse; // May be shown if required
+        
+        /**
+         * Cannot use situation
+         * @param errorResponse - error response
+         */
+        public CanUseResp(String errorResponse) {
+            this.allowed = false;
+            this.errorResponse = errorResponse;
+        }
+        
+        /**
+         * Can or cannot use situation, no error response.
+         * @param b
+         */
+        public CanUseResp(boolean b) {
+            this.allowed = b;
+            this.errorResponse = "";
+        }
+        /**
+         * @return the allowed
+         */
+        public boolean isAllowed() {
+            return allowed;
+        }
+        /**
+         * @param allowed the allowed to set
+         */
+        public void setAllowed(boolean allowed) {
+            this.allowed = allowed;
+        }
+        /**
+         * @return the errorResponse
+         */
+        public String getErrorResponse() {
+            return errorResponse;
+        }
+        /**
+         * @param errorResponse the errorResponse to set
+         */
+        public void setErrorResponse(String errorResponse) {
+            this.errorResponse = errorResponse;
+        }
+        
         
     }
 }

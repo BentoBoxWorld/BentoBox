@@ -297,6 +297,7 @@ invite:
   help: "Use [/[label] invite <playername>] to invite a player to your island."
   inviteSentTo: "Invite sent to [name]"
   nameHasInvitedYou: "[name] has invited you to join their island!"
+  nameHasUninvitedYou: "[name] has removed the invite to join their island!"
   onlyIslandOwnerCanInvite: "Only the leader can invite!"
   removingInvite: "Removing your previous invite."
   toAcceptOrReject: "to accept or reject the invite."

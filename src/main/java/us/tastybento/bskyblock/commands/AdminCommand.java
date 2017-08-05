@@ -24,9 +24,9 @@ public class AdminCommand extends AbstractCommand {
         addArgument(new String[] {"delete"}, new ArgumentHandler() {
 
             @Override
-            public boolean canUse(CommandSender sender) {
+            public CanUseResp canUse(CommandSender sender) {
                 // TODO Auto-generated method stub
-                return true;
+                return new CanUseResp(true);
             }
 
             @Override
@@ -49,9 +49,9 @@ public class AdminCommand extends AbstractCommand {
     }
 
     @Override
-    public boolean canUse(CommandSender sender) {
+    public CanUseResp canUse(CommandSender sender) {
         // TODO Auto-generated method stub
-        return true;
+        return new CanUseResp(true);
     }
 
     @Override

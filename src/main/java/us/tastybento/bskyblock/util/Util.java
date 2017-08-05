@@ -286,22 +286,6 @@ public class Util {
     }
 
     /**
-     * One-to-one relationship, you can return the first matched key
-     * 
-     * @param map
-     * @param value
-     * @return key
-     */
-    public static <T, E> T getKeyByValue(Map<T, E> map, E value) {
-        for (Entry<T, E> entry : map.entrySet()) {
-            if (value.equals(entry.getValue())) {
-                return entry.getKey();
-            }
-        }
-        return null;
-    }
-
-    /**
      * Return a list of online players this player can see, i.e. are not invisible
      * @param player - if null, all player names on the server are shown
      * @return
