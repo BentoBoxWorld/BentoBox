@@ -117,26 +117,31 @@ public class PlayersManager{
     public Players addPlayer(final UUID playerUUID) {
         if (playerUUID == null)
             return null;
-        //plugin.getLogger().info("DEBUG: adding player " + playerUUID);       
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: adding player " + playerUUID);       
         if (!playerCache.containsKey(playerUUID)) {
-            //plugin.getLogger().info("DEBUG: player not in cache");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: player not in cache");
             Players player = null;
             // If the player is in the database, load it, otherwise create a new player
             if (handler.objectExits(playerUUID.toString())) {
-                //plugin.getLogger().info("DEBUG: player in database");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: player in database");
                 try {
                     player = handler.loadObject(playerUUID.toString());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             } else {
-                //plugin.getLogger().info("DEBUG: new player");
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: new player");
                 player = new Players(playerUUID);
             }
             playerCache.put(playerUUID, player);
             return player;
         } else {
-            //plugin.getLogger().info("DEBUG: known player");
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: known player");
             return playerCache.get(playerUUID);
         }
     }

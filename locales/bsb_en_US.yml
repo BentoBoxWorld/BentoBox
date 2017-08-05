@@ -289,7 +289,9 @@ expel:
 invite: 
   errorCantJoinIsland: "You couldn't join the island, maybe it's full."
   errorCoolDown: "You can invite that player again in [time] minutes"
+  errorNoOneInvitedYou: "No one invited you"
   errorThatPlayerIsAlreadyInATeam: "That player is already in a team."
+  errorYouAreAlreadyOnATeam: "You are already on a team!"
   errorYouCannotInviteYourself: "You can not invite yourself!"
   errorYouMustHaveIslandToInvite: "You must have an island in order to invite people to it!"
   errorYourIslandIsFull: "Your island is full, you can't invite anyone else."

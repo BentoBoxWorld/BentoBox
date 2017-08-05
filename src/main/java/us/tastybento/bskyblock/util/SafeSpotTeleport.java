@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.ChunkSnapshot;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -216,6 +217,13 @@ public class SafeSpotTeleport {
                                 Vector velocity = entity.getVelocity();
                                 entity.teleport(destination);
                                 entity.setVelocity(velocity);
+                                // Exit spectator mode if in it
+                                if (entity instanceof Player) {
+                                    Player player = (Player)entity;
+                                    if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                                        player.setGameMode(GameMode.SURVIVAL);
+                                    }
+                                }   
                             }});
                     } else {
                         // We did not find a spot

@@ -30,7 +30,7 @@ public class Players extends DataObject {
      * This is required for database storage
      */
     public Players() {}
-    
+
     /**
      * @param uniqueId
      *            Constructor - initializes the state variables
@@ -61,11 +61,16 @@ public class Players extends DataObject {
      * @return Location of this home or null if not available
      */
     public Location getHomeLocation(int number) {
-        if (homeLocations.containsKey(number)) {
-            return homeLocations.get(number);
-        } else {
-            return null;
-        }
+        /*
+         * Bukkit.getLogger().info("DEBUG: getting home location " + number);
+        
+        Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
+        for (Entry<Integer, Location> en : homeLocations.entrySet()) {
+            Bukkit.getLogger().info("DEBUG: " + en.getKey() + " ==> " + en.getValue());
+            if (number == en.getKey())
+                Bukkit.getLogger().info("DEBUG: key = number");
+        }*/
+        return homeLocations.get(Integer.valueOf(number));
     }
 
     /**
@@ -107,6 +112,7 @@ public class Players extends DataObject {
      * @param homeLocations the homeLocations to set
      */
     public void setHomeLocations(HashMap<Integer, Location> homeLocations) {
+        Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
         this.homeLocations = homeLocations;
     }
 
