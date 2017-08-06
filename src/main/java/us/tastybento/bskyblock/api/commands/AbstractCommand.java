@@ -1,23 +1,14 @@
 package us.tastybento.bskyblock.api.commands;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
-
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.util.Util;
+
+import java.util.*;
 
 /**
  *
@@ -63,7 +54,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 }
 
                 @Override
-                public List<String> tabComplete(CommandSender sender, String[] args) {
+                public Set<String> tabComplete(CommandSender sender, String[] args) {
                     return null; // No tab options for this one
                 }
 
@@ -84,7 +75,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     public interface ArgumentHandler {
         CanUseResp canUse(CommandSender sender);
         void execute(CommandSender sender, String[] args);
-        List<String> tabComplete(CommandSender sender, String[] args);
+        Set<String> tabComplete(CommandSender sender, String[] args);
         String[] usage(CommandSender sender);
     }
 
@@ -187,7 +178,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 ArgumentHandler handler = getHandler(args[0]);
                 if (handler != null && handler.canUse(sender).isAllowed()) {
                     // We remove the 1st arg - and remove any blank args caused by hitting space before the tab
-                    List<String> tabOptions = handler.tabComplete(sender, clean(Arrays.copyOfRange(args, 1, args.length)));
+                    Set<String> tabOptions = handler.tabComplete(sender, clean(Arrays.copyOfRange(args, 1, args.length)));
                     if (tabOptions != null) options.addAll(tabOptions);
                 }
             }

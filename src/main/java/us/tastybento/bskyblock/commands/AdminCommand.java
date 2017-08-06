@@ -5,7 +5,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
 
-import java.util.List;
+import java.util.Set;
 
 public class AdminCommand extends AbstractCommand {
     
@@ -35,7 +35,7 @@ public class AdminCommand extends AbstractCommand {
             }
 
             @Override
-            public List<String> tabComplete(CommandSender sender, String[] args) {
+            public Set<String> tabComplete(CommandSender sender, String[] args) {
                 // TODO Auto-generated method stub
                 return null;
             }
