@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,6 +47,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         this.aliasesMap = new HashMap<>(1);
         this.label = label;
         this.help = help;
+        this.teamMembers = new HashSet<UUID>(1);
 
         // Register the help argument if needed
         if (help) {
@@ -209,12 +211,20 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             isPlayer = true;
             player = (Player)sender;
             playerUUID = player.getUniqueId();
+        } else {
+            isPlayer = false;
+            player = null;
+            playerUUID = null;
         }
         // Check if the player is in a team or not and if so, grab the team leader's UUID
         if (plugin.getPlayers().inTeam(playerUUID)) {
             inTeam = true;
             teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
             teamMembers = plugin.getIslands().getMembers(teamLeaderUUID);
+        } else {
+            inTeam = false;
+            teamLeaderUUID = null;
+            teamMembers.clear();
         }
         
     }

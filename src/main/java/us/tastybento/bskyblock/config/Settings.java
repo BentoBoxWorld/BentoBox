@@ -224,5 +224,7 @@ public class Settings {
     public static boolean allowTNTPushing;
     public static boolean showInActionBar;
     public static boolean teamJoinDeathReset;
+    public static long leaveConfirmWait;
+    public static boolean leaveConfirmation;
 
 }

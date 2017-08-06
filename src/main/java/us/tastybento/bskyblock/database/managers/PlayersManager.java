@@ -233,23 +233,17 @@ public class PlayersManager{
      */
     public boolean inTeam(final UUID playerUUID) {
         addPlayer(playerUUID);
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island == null) {
-            return false;
-        }
-        return island.getMembers().size() > 1 ? true: false;
+        return plugin.getIslands().getMembers(playerUUID).size() > 1 ? true: false;
     }
 
     /**
-     * Removes any island associated with this player and generally cleans up
-     * the player
+     * Clears player home locations
      * 
      * @param playerUUID
      */
-    public void zeroPlayerData(UUID playerUUID) {
+    public void clearPlayerHomes(UUID playerUUID) {
         Players player = addPlayer(playerUUID);
         player.clearHomeLocations();
-        plugin.getIslands().removePlayer(playerUUID);
         /*
          * TODO
         playerCache.get(playerUUID).save(); // Needed?

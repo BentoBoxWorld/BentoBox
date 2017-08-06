@@ -877,4 +877,8 @@ public class Island extends DataObject {
     public Location getSpawnPoint() {
         return spawnPoint;
     }
+
+    public void removeMember(UUID playerUUID) {
+        this.members.remove(playerUUID);    
+    }
 }

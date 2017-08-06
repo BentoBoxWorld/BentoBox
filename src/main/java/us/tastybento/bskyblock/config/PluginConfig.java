@@ -124,7 +124,10 @@ public class PluginConfig {
         Settings.defaultWorldSettings.put(SettingsFlag.ANIMAL_SPAWN, true);
         Settings.defaultWorldSettings.put(SettingsFlag.MONSTER_SPAWN, true);
 
-        // Entities
+        // Team
+        Settings.maxTeamSize = plugin.getConfig().getInt("island.max-team-size", 4);
+        Settings.leaveConfirmation = plugin.getConfig().getBoolean("require-confirmation.leave", true);
+        Settings.leaveConfirmWait = plugin.getConfig().getLong("require-confirmation.leave-wait", 10) * 20;
         
         //TODO end loading
         

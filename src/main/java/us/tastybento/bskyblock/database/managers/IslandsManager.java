@@ -1,11 +1,11 @@
 package us.tastybento.bskyblock.database.managers;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.UUID;
-import java.util.WeakHashMap;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
@@ -25,6 +25,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.events.island.IslandLeaveEvent;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -44,12 +45,12 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class IslandsManager {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
 
-    private WeakHashMap<Location, Island> islandsByLocation;
-    private WeakHashMap<UUID, Island> islandsByUUID;
+    private HashMap<Location, Island> islandsByLocation;
+    private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
 
@@ -69,8 +70,8 @@ public class IslandsManager {
         database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Island classes
         handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
-        islandsByLocation = new WeakHashMap<Location, Island>();
-        islandsByUUID = new WeakHashMap<UUID, Island>();
+        islandsByLocation = new HashMap<Location, Island>();
+        islandsByUUID = new HashMap<UUID, Island>();
         spawn = null;
     }
 
@@ -85,6 +86,9 @@ public class IslandsManager {
             for (Island island : handler.loadObjects()) {
                 islandsByLocation.put(island.getCenter(), island);
                 islandsByUUID.put(island.getOwner(), island);
+                for (UUID member: island.getMembers()) {
+                    islandsByUUID.put(member, island);
+                }
                 addToGrid(island);
             }
         } catch (Exception e) {
@@ -323,15 +327,24 @@ public class IslandsManager {
      * @param playerUUID
      */
     public void removePlayer(UUID playerUUID) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: removing player");
         Island island = islandsByUUID.get(playerUUID);
         if (island != null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: island found");
             if (island.getOwner() != null && island.getOwner().equals(playerUUID)) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: player is the owner of this island");
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);
             }
             island.getMembers().remove(playerUUID);
         }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: removing reference to island by UUID");
+        islandsByUUID.remove(playerUUID);
     }
 
     /**
@@ -354,14 +367,10 @@ public class IslandsManager {
         }
 
         // TODO: Fire a join team event. If canceled, return false
-
-        if (!setLeaveTeam(playerUUID)) {
-            // Player not allowed to leave team
-            return false;
-        }
         // Add player to new island
         teamIsland.addMember(playerUUID);
-        
+        islandsByUUID.put(playerUUID, teamIsland);
+
         return true;
     }
 
@@ -371,10 +380,29 @@ public class IslandsManager {
      * @return true if successful, false if not
      */
     public boolean setLeaveTeam(UUID playerUUID) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: leaving team");
         // Try to remove player from old island
         // TODO: Fire an event, if not cancelled, zero the player data
-        plugin.getPlayers().zeroPlayerData(playerUUID);
-        return true;
+        Island island = islandsByUUID.get(playerUUID);
+        if (island != null) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: island found");
+            IslandLeaveEvent leaveEvent = new IslandLeaveEvent(island, playerUUID);
+
+            plugin.getServer().getPluginManager().callEvent(leaveEvent);
+            if (leaveEvent.isCancelled()) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: leave event was canceled");
+                return false;
+            }
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: clearing player data");
+            plugin.getPlayers().clearPlayerHomes(playerUUID);
+            removePlayer(playerUUID);
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -387,7 +415,7 @@ public class IslandsManager {
         Island island = islandsByUUID.get(playerUUID);
         if (island != null)
             return island.getMembers();
-        return null;
+        return new HashSet<UUID>(0);
     }
 
     /**
