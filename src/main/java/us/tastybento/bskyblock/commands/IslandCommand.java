@@ -40,7 +40,7 @@ public class IslandCommand extends AbstractCommand {
     protected Set<UUID> leavingPlayers = new HashSet<UUID>();
 
     public IslandCommand(BSkyBlock plugin) {
-        super(plugin, Settings.ISLANDCOMMAND, true);
+        super(plugin, Settings.ISLANDCOMMAND, new String[] {"is"}, true);
         plugin.getCommand(Settings.ISLANDCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ISLANDCOMMAND).setTabCompleter(this);
         this.plugin = plugin;
@@ -51,7 +51,7 @@ public class IslandCommand extends AbstractCommand {
         if(!(sender instanceof Player)){
             return new CanUseResp(plugin.getLocale(sender).get("general.errors.use-in-game"));
         }
-        
+
         // Basic permission check to even use /island
         if(!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")){
             return new CanUseResp(ChatColor.RED + plugin.getLocale(sender).get("general.errors.no-permission"));

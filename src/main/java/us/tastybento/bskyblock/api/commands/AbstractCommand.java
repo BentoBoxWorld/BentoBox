@@ -22,6 +22,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     private final Map<String, String> aliasesMap;
 
     public final String label;
+    public final String[] aliases;
     public boolean isPlayer;
     public boolean inTeam;
     public UUID teamLeaderUUID;
@@ -32,11 +33,12 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     private final boolean help;
     private static final int MAX_PER_PAGE = 7;
 
-    protected AbstractCommand(BSkyBlock plugin, String label, boolean help) {
+    protected AbstractCommand(BSkyBlock plugin, String label, String[] aliases, boolean help) {
         this.plugin = plugin;
-        this.argumentsMap = new HashMap<>(1);
+        this.argumentsMap = new LinkedHashMap<>(1);
         this.aliasesMap = new HashMap<>(1);
         this.label = label;
+        this.aliases = aliases;
         this.help = help;
         this.teamMembers = new HashSet<UUID>(1);
 
@@ -50,7 +52,27 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
                 @Override
                 public void execute(CommandSender sender, String[] args) {
+                    List<String> help = new ArrayList<>();
 
+                    for(String arg : argumentsMap.keySet()) {
+                        String[] usage = argumentsMap.get(arg).usage(sender);
+                        if (usage == null) usage = new String[2];
+
+                        System.out.println(label);
+                        System.out.println(arg);
+                        System.out.println(usage[0]);
+                        System.out.println(usage[1]);
+
+                        String msg = plugin.getLocale(sender).get("help.syntax").replace("[label]", (aliases[0] != null) ? aliases[0] : label)
+                                .replace("[command]", arg)
+                                .replace("[args]", (usage != null && usage[0] != null) ? usage[0] : "")
+                                .replace("[info]", (usage != null && usage[1] != null) ? usage[1] : "");
+                        help.add(msg);
+                    }
+
+                    Util.sendMessage(sender, plugin.getLocale(sender).get("help.header"));
+                    for(String cmd : help) Util.sendMessage(sender, cmd);
+                    Util.sendMessage(sender, plugin.getLocale(sender).get("help.end"));
                 }
 
                 @Override
