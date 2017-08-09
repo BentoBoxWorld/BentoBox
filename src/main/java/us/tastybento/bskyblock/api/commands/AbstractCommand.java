@@ -52,26 +52,11 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
                 @Override
                 public void execute(CommandSender sender, String[] args) {
-                    List<String> help = new ArrayList<>();
-
-                    for(String arg : argumentsMap.keySet()) {
-                        String[] usage = argumentsMap.get(arg).usage(sender);
-                        if (usage == null) usage = new String[2];
-
-                        System.out.println(label);
-                        System.out.println(arg);
-                        System.out.println(usage[0]);
-                        System.out.println(usage[1]);
-
-                        String msg = plugin.getLocale(sender).get("help.syntax").replace("[label]", (aliases[0] != null) ? aliases[0] : label)
-                                .replace("[command]", arg)
-                                .replace("[args]", (usage != null && usage[0] != null) ? usage[0] : "")
-                                .replace("[info]", (usage != null && usage[1] != null) ? usage[1] : "");
-                        help.add(msg);
-                    }
-
                     Util.sendMessage(sender, plugin.getLocale(sender).get("help.header"));
-                    for(String cmd : help) Util.sendMessage(sender, cmd);
+                    for(String arg : argumentsMap.keySet()){
+                        ArgumentHandler handler = getHandler(arg);
+                        if (handler.canUse(sender).isAllowed()) Util.sendMessage(sender, handler.getShortDescription(sender));
+                    }
                     Util.sendMessage(sender, plugin.getLocale(sender).get("help.end"));
                 }
 
@@ -94,11 +79,39 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     /**
      *
      */
-    public interface ArgumentHandler {
-        CanUseResp canUse(CommandSender sender);
-        void execute(CommandSender sender, String[] args);
-        Set<String> tabComplete(CommandSender sender, String[] args);
-        String[] usage(CommandSender sender);
+    public abstract class ArgumentHandler {
+        public abstract CanUseResp canUse(CommandSender sender);
+        public abstract void execute(CommandSender sender, String[] args);
+        public abstract Set<String> tabComplete(CommandSender sender, String[] args);
+        public abstract String[] usage(CommandSender sender);
+
+        public String getShortDescription(CommandSender sender) {
+            String msg = plugin.getLocale(sender).get("help.syntax");
+            msg = msg.replace("[label]", (aliases[0] != null) ? aliases[0] : label);
+
+            String command = "";
+            for(Map.Entry<String, ArgumentHandler> entry : argumentsMap.entrySet()) {
+                if (entry.getValue().equals(this)) {
+                    command = entry.getKey();
+                    break;
+                }
+            }
+
+            String cmds = command;
+            for(String alias : getAliases(command)) {
+                cmds += plugin.getLocale(sender).get("help.syntax-alias-separator") + alias;
+            }
+
+            msg = msg.replace("[command]", cmds);
+
+            String[] usage = argumentsMap.get(command).usage(sender);
+            if (usage == null) usage = new String[2];
+
+            msg = msg.replace("[args]", (usage != null && usage[0] != null) ? usage[0] : "")
+                    .replace("[info]", (usage != null && usage[1] != null) ? usage[1] : "");
+
+            return msg;
+        }
     }
 
     public abstract void setup();
@@ -152,8 +165,14 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         else return alias;
     }
 
-    public List<String> getAliases(String argument) {
-        return null; //TODO
+    public Set<String> getAliases(String argument) {
+        Set<String> aliases = new HashSet<>();
+
+        for (Map.Entry<String, String> entry : aliasesMap.entrySet()) {
+            if (entry.getKey().equals(argument)) aliases.add(entry.getValue());
+        }
+
+        return aliases;
     }
 
     @Override
@@ -165,6 +184,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 ArgumentHandler handler = getHandler(args[0]); // Store the handler to save some calculations
                 if (handler != null && handler.canUse(sender).isAllowed()) {
                     handler.execute(sender, clean(Arrays.copyOfRange(args, 1, args.length)));
+                } else if (handler != null && !handler.canUse(sender).isAllowed() && !handler.canUse(sender).getErrorResponse().isEmpty()) {
+                    Util.sendMessage(sender, handler.canUse(sender).errorResponse);
                 } else if (help) {
                     if (argumentsMap.containsKey("help")) {
                         argumentsMap.get("help").execute(sender, clean(Arrays.copyOfRange(args, 1, args.length)));
