@@ -44,11 +44,11 @@ public class Settings {
     // The island command
     public final static String ISLANDCOMMAND = "island";
     // The challenge command
-    public static final String CHALLENGECOMMAND = "asc";
+    public static final String CHALLENGECOMMAND = "bsc";
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
     // Admin command
-    public static final String ADMINCOMMAND = "asadmin";
+    public static final String ADMINCOMMAND = "bsadmin";
     
     /*      GENERAL     */
     public static boolean metrics;
