@@ -2,7 +2,7 @@ name: BSkyBlock
 main: us.tastybento.bskyblock.BSkyBlock
 version: ${version}
 
-authors: [Tastybento, Poslovitch]
+authors: [tastybento, Poslovitch]
 
 depend: [Vault]
 softdepend: [Herochat, DeluxeChat, PlaceholderAPI, MVdWPlaceholderAPI]
@@ -16,11 +16,11 @@ commands:
         aliases: [is, island]
         usage:  |
              /island help
-    asadmin:
+    bsadmin:
         description: Admin commands
         usage:  |
-            /asadmin
-    asc:
+            /bsadmin
+    bsc:
         description: Game challenges
         aliases: [c, challenge, aschallenge, challenges]
         usage:  |  

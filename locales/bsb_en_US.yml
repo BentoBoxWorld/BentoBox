@@ -41,6 +41,7 @@ general:
     no-island: "You do not have an island!"
     not-leader: "You are not the leader of your island!"
     offline-player: "That player is offline or doesn't exist."
+    unknown-player: "Unknown player!"
   
 # TODO: These are legacy strings and should be converted to a better format but will do for now
 acidBottle: "Acid Bottle"
