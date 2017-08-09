@@ -941,7 +941,7 @@ public class IslandCommand extends AbstractCommand {
                     return;
                 }
                 // targetPlayer is the new leader
-                //plugin.getIslands().getIsland(playerUUID).makeLeader(targetPlayer);
+                plugin.getIslands().getIsland(playerUUID).setOwner(targetPlayer);
                 Util.sendMessage(player, ChatColor.GREEN
                         + plugin.getLocale(playerUUID).get("makeLeader.nameIsNowTheOwner").replace("[name]", plugin.getPlayers().getName(targetPlayer)));
 
