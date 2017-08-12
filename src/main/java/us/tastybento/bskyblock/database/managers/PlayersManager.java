@@ -8,7 +8,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -327,10 +329,13 @@ public class PlayersManager{
      * @param adminCheck - if made via an admin call, this will go out to the 'net and grab - may cause lag
      * @return UUID of player or null if unknown
      */
+    @SuppressWarnings("deprecation")
     public UUID getUUID(String string, boolean adminCheck) {
         // Look in the database if it ready
+        // TODO: finish this!
+        return Bukkit.getOfflinePlayer(string).getUniqueId();
+        
         //return database.getUUID(string, adminCheck);
-        return null;
     }
 
     /**

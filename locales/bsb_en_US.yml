@@ -552,7 +552,10 @@ sign-acidisland:
    line3: "Water is acid!"
    line4: "Beware!"
 targetInPVPArea: "Target is in a no-PVP area!"
-team: 
+team:
+  color: "&b"
+  leader-color: "&a"
+  leader: " - Leader" 
   listingMembers: "Listing your island members"
 teamchat: 
   helpChat: "turn on/off team chat"

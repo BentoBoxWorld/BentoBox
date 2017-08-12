@@ -6,6 +6,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.config.BSBLocale;
+import us.tastybento.bskyblock.database.managers.IslandsManager;
+import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.util.Util;
 
 import java.util.*;
@@ -312,8 +315,34 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
          */
         public void setErrorResponse(String errorResponse) {
             this.errorResponse = errorResponse;
-        }
-        
-        
+        } 
     }
+    // These methods below just neaten up the code in the commands so "plugin." isn't always used
+    /**
+     * @return PlayersManager
+     */
+    protected PlayersManager getPlayers() {
+        return plugin.getPlayers();
+    }
+    /**
+     * @return IslandsManager
+     */
+    protected IslandsManager getIslands() {
+        return plugin.getIslands();
+    }
+    /**
+     * @param sender
+     * @return Locale for sender
+     */
+    protected BSBLocale getLocale(CommandSender sender) {
+        return plugin.getLocale(sender);
+    }
+    /**
+     * @param uuid
+     * @return Locale for UUID
+     */
+    protected BSBLocale getLocale(UUID uuid) {
+        return plugin.getLocale(uuid);
+    }
+
 }

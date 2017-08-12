@@ -487,10 +487,15 @@ public class IslandsManager {
 
     /**
      * @param playerUUID
-     * @return true if player has island
+     * @return true if player has island and owns it
      */
     public boolean hasIsland(UUID playerUUID) {
-        return islandsByUUID.containsKey(playerUUID);
+        if (islandsByUUID.containsKey(playerUUID) && islandsByUUID.get(playerUUID).getOwner() != null) {
+            if (islandsByUUID.get(playerUUID).getOwner().equals(playerUUID)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
