@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.GameMode;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -21,10 +22,7 @@ import com.google.common.collect.HashBiMap;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.api.events.team.PlayerAcceptInviteEvent;
-import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.database.managers.IslandsManager;
-import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
@@ -447,7 +445,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: executing team command");
+                    plugin.getLogger().info("DEBUG: executing team command for " + teamLeaderUUID);
                 if (teamLeaderUUID.equals(playerUUID)) {
                     int maxSize = Settings.maxTeamSize;
                     for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
@@ -475,7 +473,7 @@ public class IslandCommand extends AbstractCommand {
                     if (teamMembers.size() < maxSize) {
                         Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("invite.youCanInvite").replace("[number]", String.valueOf(maxSize - teamMembers.size())));
                     } else {
-                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorYourIslandIsFull"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YourIslandIsFull"));
                     }
                 }
                 Util.sendMessage(player, ChatColor.YELLOW + getLocale(sender).get("team.listingMembers"));
@@ -517,7 +515,7 @@ public class IslandCommand extends AbstractCommand {
                     if (getPlayers().inTeam(playerUUID)) {
                         return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.not-leader")); 
                     }
-                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("invite.errorYouMustHaveIslandToInvite"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("invite.error.YouMustHaveIslandToInvite"));
                 }
                 return new CanUseResp(true);
             }
@@ -546,19 +544,19 @@ public class IslandCommand extends AbstractCommand {
                     UUID invitedPlayerUUID = invitedPlayer.getUniqueId();
                     // Player cannot invite themselves
                     if (playerUUID.equals(invitedPlayerUUID)) {
-                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorYouCannotInviteYourself"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YouCannotInviteYourself"));
                         return;
                     }
                     // Check if this player can be invited to this island, or
                     // whether they are still on cooldown
                     long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(playerUUID));
                     if (time > 0 && !player.isOp()) {
-                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorCoolDown").replace("[time]", String.valueOf(time)));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.CoolDown").replace("[time]", String.valueOf(time)));
                         return;
                     }
                     // Player cannot invite someone already on a team
                     if (getPlayers().inTeam(invitedPlayerUUID)) {
-                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorThatPlayerIsAlreadyInATeam"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.ThatPlayerIsAlreadyInATeam"));
                         return;
                     }
                     // Check if player has space on their team
@@ -588,7 +586,7 @@ public class IslandCommand extends AbstractCommand {
                     }
                     if (teamMembers.size() < maxSize) {
                         // If that player already has an invite out then retract it.
-                        // Players can only have one invite out at a time - interesting
+                        // Players can only have one invite one at a time - interesting
                         if (inviteList.containsValue(playerUUID)) {
                             inviteList.inverse().remove(playerUUID);
                             Util.sendMessage(player, ChatColor.YELLOW + getLocale(sender).get("invite.removingInvite"));
@@ -605,7 +603,7 @@ public class IslandCommand extends AbstractCommand {
                             Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.RED + getLocale(invitedPlayerUUID).get("invite.warningYouWillLoseIsland"));
                         }
                     } else {
-                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorYourIslandIsFull"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YourIslandIsFull"));
                     }
                 }
             }
@@ -793,53 +791,67 @@ public class IslandCommand extends AbstractCommand {
             public void execute(CommandSender sender, String[] args) {
                 // Check if player has been invited
                 if (!inviteList.containsKey(playerUUID)) {
-                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorNoOneInvitedYou"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.NoOneInvitedYou"));
                     return;
                 }
                 // Check if player is already in a team
                 if (getPlayers().inTeam(playerUUID)) {
-                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.errorYouAreAlreadyOnATeam"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YouAreAlreadyOnATeam"));
                     return;
                 }
-                // If the invitee has an island of their own
-                if (getPlayers().hasIsland(playerUUID)) {
-                    plugin.getLogger().info(player.getName() + "'s island will be deleted because they joined a party.");
-                    getIslands().deletePlayerIsland(playerUUID, true);
-                    plugin.getLogger().info("Island deleted.");
+                // Get the team leader
+                UUID prospectiveTeamLeaderUUID = inviteList.get(playerUUID);
+                if (!getIslands().hasIsland(prospectiveTeamLeaderUUID)) {
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.InvalidInvite"));
+                    inviteList.remove(playerUUID);
+                    return;  
                 }
-                // Set the team leader
-                teamLeaderUUID = inviteList.get(playerUUID);
-                // TODO implement this
-                getPlayers().resetPlayer(player);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Invite is valid");
+                // Remove the invite
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Removing player from invite list");
+                inviteList.remove(playerUUID);
+                // Put player into Spectator mode
+                player.setGameMode(GameMode.SPECTATOR);
                 // Add the player to the team
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: adding " + playerUUID + " to team " + teamLeaderUUID);
-                getIslands().setJoinTeam(playerUUID, inviteList.get(playerUUID));
+                    plugin.getLogger().info("DEBUG: adding " + playerUUID + " to team " + prospectiveTeamLeaderUUID);
+                Island island = getIslands().getIsland(prospectiveTeamLeaderUUID);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: team members = " + island.getMembers().toString());
+                if (!getIslands().setJoinTeam(playerUUID, prospectiveTeamLeaderUUID)) {
+                    // Not allowed (blocked by another listener)
+                    return;
+                }
+
+                // TODO implement this
+                //getPlayers().resetPlayer(player);
+
                 setResetWaitTime(player);
+
                 if (Settings.teamJoinDeathReset) {
                     getPlayers().setDeaths(player.getUniqueId(), 0);
                 }
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: team leader's home is " + getPlayers().getHomeLocation(teamLeaderUUID));
+                    plugin.getLogger().info("DEBUG: Setting home. team leader's home is " + getPlayers().getHomeLocation(prospectiveTeamLeaderUUID));
                 // Set the player's home
-                getPlayers().setHomeLocation(playerUUID, getPlayers().getHomeLocation(teamLeaderUUID));
+                getPlayers().setHomeLocation(playerUUID, getPlayers().getHomeLocation(prospectiveTeamLeaderUUID));
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: teleporting player to new island");
                 getIslands().homeTeleport(player);
 
                 // Fire event so add-ons can run commands, etc.
                 plugin.getServer().getPluginManager().callEvent(new PlayerAcceptInviteEvent(player));
-                Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("invite.youHaveJoinedAnIsland"));
+                Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("invite.youHaveJoinedAnIsland").replace("[label]", Settings.ISLANDCOMMAND));
 
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Removing player from invite list");
                 if (plugin.getServer().getPlayer(inviteList.get(playerUUID)) != null) {
                     Util.sendMessage(plugin.getServer().getPlayer(inviteList.get(playerUUID)),
                             ChatColor.GREEN + getLocale(sender).get("invite.hasJoinedYourIsland").replace("[name]", player.getName()));
                 }
-                // Remove the invite
-                inviteList.remove(playerUUID);
-                getIslands().save(true);
+                getIslands().save(false);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMembers().toString());
             }
 
             @Override

@@ -1,27 +1,29 @@
 package us.tastybento.bskyblock.util;
 
-import org.bukkit.*;
-import org.bukkit.block.Block;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.generators.IslandWorld;
-import us.tastybento.bskyblock.util.nms.NMSAbstraction;
-import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
-
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
+
+import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.util.nms.NMSAbstraction;
+import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 
 /**
  * A set of utility methods

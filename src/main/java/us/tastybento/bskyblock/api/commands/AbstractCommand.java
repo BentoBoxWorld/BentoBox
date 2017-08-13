@@ -1,17 +1,27 @@
 package us.tastybento.bskyblock.api.commands;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.util.Util;
-
-import java.util.*;
 
 /**
  *
@@ -38,12 +48,12 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     protected AbstractCommand(BSkyBlock plugin, String label, String[] aliases, boolean help) {
         this.plugin = plugin;
-        this.argumentsMap = new LinkedHashMap<>(1);
-        this.aliasesMap = new HashMap<>(1);
+        this.argumentsMap = new LinkedHashMap<>();
+        this.aliasesMap = new HashMap<>();
         this.label = label;
         this.aliases = aliases;
         this.help = help;
-        this.teamMembers = new HashSet<UUID>(1);
+        this.teamMembers = new HashSet<UUID>();
 
         // Register the help argument if needed
         if (help) {
@@ -250,8 +260,6 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             playerUUID = player.getUniqueId();
         } else {
             isPlayer = false;
-            player = null;
-            playerUUID = null;
         }
         // Check if the player is in a team or not and if so, grab the team leader's UUID
         if (plugin.getPlayers().inTeam(playerUUID)) {
@@ -260,8 +268,6 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             teamMembers = plugin.getIslands().getMembers(teamLeaderUUID);
         } else {
             inTeam = false;
-            teamLeaderUUID = null;
-            teamMembers.clear();
         }
         
     }

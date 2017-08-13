@@ -1,11 +1,12 @@
 package us.tastybento.bskyblock.commands;
 
+import java.util.Set;
+
 import org.bukkit.command.CommandSender;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
-
-import java.util.Set;
 
 public class AdminCommand extends AbstractCommand {
     

@@ -112,7 +112,7 @@ public class Players extends DataObject {
      * @param homeLocations the homeLocations to set
      */
     public void setHomeLocations(HashMap<Integer, Location> homeLocations) {
-        Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
+        //Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
         this.homeLocations = homeLocations;
     }
 

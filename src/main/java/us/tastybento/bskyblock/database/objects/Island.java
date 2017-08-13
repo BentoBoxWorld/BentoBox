@@ -1,17 +1,22 @@
 package us.tastybento.bskyblock.database.objects;
 
-import org.bukkit.*;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
-import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
-import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
-import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.util.Util;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
+import org.bukkit.block.BlockState;
+import org.bukkit.entity.Entity;
+
+import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
+import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
+import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Stores all the info about an island
@@ -408,7 +413,6 @@ public class Island extends DataObject {
      */
     public Set<UUID> getMembers(){
         if (members == null) {
-            Bukkit.getLogger().info("DEBUG: members = null");
             members = new HashSet<UUID>();
         }
         return members;
@@ -673,7 +677,6 @@ public class Island extends DataObject {
      * @param members - the members to set
      */
     public void setMembers(Set<UUID> members){
-        //Bukkit.getLogger().info("DEBUG: setting members = " + members);
         this.members = members;
     }
 

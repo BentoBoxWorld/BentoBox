@@ -115,8 +115,8 @@ public class DeleteIslandBlocks {
                 }
             }
         }
-        // Remove from database
-        plugin.getIslands().deleteIsland(island.getCenter());
+        // Do not do this: Remove from database
+        //plugin.getIslands().deleteIsland(island.getCenter());
         // Clear up any chunks
         if (!chunksToClear.isEmpty()) {
             try {
