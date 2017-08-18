@@ -9,9 +9,9 @@ import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * Stashes inventories when required for a player
- * 
+ *
  * @author tastybento
- * 
+ *
  */
 public class InventorySave {
     private static InventorySave instance = new InventorySave(BSkyBlock.getPlugin());
@@ -21,7 +21,7 @@ public class InventorySave {
      * Saves the inventory of a player
      */
     public InventorySave(BSkyBlock plugin) {
-        inventories = new HashMap<UUID, InventoryStore>();
+        inventories = new HashMap<>();
     }
 
     /** Save player's inventory
@@ -43,7 +43,7 @@ public class InventorySave {
     }
     /**
      * Load the player's inventory
-     * 
+     *
      * @param player
      */
     public void loadPlayerInventory(Player player) {

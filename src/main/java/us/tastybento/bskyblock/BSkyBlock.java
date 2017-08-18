@@ -45,7 +45,7 @@ public class BSkyBlock extends JavaPlugin{
 
     private static BSkyBlock plugin;
 
-    private HashMap<String, BSBLocale> locales = new HashMap<String, BSBLocale>();
+    private HashMap<String, BSBLocale> locales = new HashMap<>();
 
     // Databases
     private PlayersManager playersManager;
@@ -165,7 +165,7 @@ public class BSkyBlock extends JavaPlugin{
         plugin = null;
     }
 
-    private void registerCustomCharts(){   
+    private void registerCustomCharts(){
         metrics.addCustomChart(new Metrics.SingleLineChart("islands_count") {
 
             @Override
@@ -293,7 +293,7 @@ public class BSkyBlock extends JavaPlugin{
             }
         }
         // Store all the locales available
-        for (String language : localeDir.list(ymlFilter)) {  
+        for (String language : localeDir.list(ymlFilter)) {
             try {
                 BSBLocale locale = new BSBLocale(this, language);
                 locales.put(locale.getLocaleId(), locale);

@@ -11,7 +11,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 /**
  * This class runs when the config file is not set up enough, or is unsafe.
  * It provides useful information to the admin on what is wrong.
- * 
+ *
  * @author Tastybento
  * @author Poslovitch
  */
@@ -30,7 +30,7 @@ public class NotSetup implements CommandExecutor{
         ISLAND_HEIGHT_TOO_LOW(3, 304),
         NETHER_SPAWN_RADIUS_TOO_LOW(3, 305),
         NETHER_SPAWN_RADIUS_TOO_HIGH(3, 306);
-        
+
         /*
          * Priority:
          * 0 - CRITICAL
@@ -45,7 +45,7 @@ public class NotSetup implements CommandExecutor{
             this.priority = priority;
             this.id = id;
         }
-        
+
         public static ConfigError getById(int id){
             for(ConfigError e : ConfigError.values()){
                 if(e.id == id) return e;
@@ -53,13 +53,13 @@ public class NotSetup implements CommandExecutor{
             return null;
         }
     }
-    
+
     private BSkyBlock plugin;
     private List<Error> errors;
-    
+
     /**
      * Handles plugin operation if a critical config-related issue happened
-     * 
+     *
      * @param plugin
      * @param errors
      */
@@ -67,10 +67,10 @@ public class NotSetup implements CommandExecutor{
         this.plugin = plugin;
         this.errors = errors;
     }
-    
+
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
-        
+
         return true;
     }
 }

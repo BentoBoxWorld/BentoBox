@@ -60,17 +60,18 @@ public class IslandsManager {
      */
     private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
-    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<Integer, TreeMap<Integer, Island>>();
+    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
 
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
      */
     private Island spawn;
 
-    // Metrics data
-    private int metrics_createdcount = 0;
     private AbstractDatabaseHandler<Island> handler;
     private Location last;
+
+    // Metrics data
+    private int metrics_createdcount = 0;
 
     @SuppressWarnings("unchecked")
     public IslandsManager(BSkyBlock plugin){
@@ -79,7 +80,7 @@ public class IslandsManager {
         // Set up the database handler to store and retrieve Island classes
         handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
         islandsByLocation = HashBiMap.create();
-        islandsByUUID = new HashMap<UUID, Island>();
+        islandsByUUID = new HashMap<>();
         spawn = null;
     }
 
@@ -100,36 +101,24 @@ public class IslandsManager {
                 addToGrid(island);
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
 
     public void save(boolean async){
-        if(async){
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    for(Island island : islandsByLocation.values()){
-                        try {
-                            handler.saveObject(island);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } 
-                    }
-                }
-            });
-        } else {
+        Runnable save = () -> {
             for(Island island : islandsByLocation.values()){
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
-                } 
+                }
             }
+        };
+        if(async){
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+        } else {
+            save.run();
         }
     }
 
@@ -145,10 +134,6 @@ public class IslandsManager {
 
     public boolean isIsland(Location location){
         return islandsByLocation.get(location) != null;
-    }
-
-    public Island getIsland(Location location){
-        return islandsByLocation.get(location);
     }
 
     /**
@@ -234,7 +219,7 @@ public class IslandsManager {
 
     /**
      * Deletes an island from the database. Does not remove blocks
-     * @param location
+     * @param island
      */
     public void deleteIslandFromCache(Island island) {
         islandsByLocation.inverse().remove(island);
@@ -296,7 +281,6 @@ public class IslandsManager {
                 try {
                     handler.deleteObject(island);
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
                 }
                 // Remove blocks from world
@@ -312,16 +296,6 @@ public class IslandsManager {
 
     public Island getSpawn(){
         return spawn;
-    }
-
-    // Metrics-related methods //
-
-    public int metrics_getCreatedCount(){
-        return metrics_createdcount;
-    }
-
-    public void metrics_setCreatedCount(int count){
-        this.metrics_createdcount = count;
     }
 
     /**
@@ -353,7 +327,6 @@ public class IslandsManager {
      * Puts a player in a team. Removes them from their old island if required.
      * @param playerUUID
      * @param teamLeader
-     * @param islandLocation
      * @return true if successful, false if not
      */
     public boolean setJoinTeam(UUID playerUUID, UUID teamLeader) {
@@ -409,7 +382,7 @@ public class IslandsManager {
         }
         // Save the database
         save(false);
-        
+
         return true;
     }
 
@@ -446,7 +419,7 @@ public class IslandsManager {
 
     /**
      * Returns a set of island member UUID's for the island of playerUUID
-     * 
+     *
      * @param playerUUID
      * @return Set of team UUIDs
      */
@@ -471,9 +444,9 @@ public class IslandsManager {
     /**
      * Returns the island at the location or null if there is none.
      * This includes the full island space, not just the protected area
-     * 
+     *
      * @param location
-     * @return PlayerIsland object
+     * @return Island object
      */
     public Island getIslandAt(Location location) {
         if (location == null) {
@@ -496,10 +469,10 @@ public class IslandsManager {
     /**
      * Returns the island at the x,z location or null if there is none.
      * This includes the full island space, not just the protected area.
-     * 
+     *
      * @param x
      * @param z
-     * @return PlayerIsland or null
+     * @return Island or null
      */
     public Island getIslandAt(int x, int z) {
         if (DEBUG2) {
@@ -540,7 +513,7 @@ public class IslandsManager {
     /**
      * Returns the player's island location.
      * Returns an island location OR a team island location
-     * 
+     *
      * @param playerUUID
      * @return Location of player's island or null if one does not exist
      */
@@ -557,7 +530,7 @@ public class IslandsManager {
     public Set<UUID> getBanList(UUID playerUUID) {
         // Get player's island
         Island island = getIsland(playerUUID);
-        return island == null ? new HashSet<UUID>(): island.getBanned();
+        return island == null ? new HashSet<>(): island.getBanned();
     }
 
     /**
@@ -566,7 +539,7 @@ public class IslandsManager {
      */
     public boolean isOwner(UUID uniqueId) {
         if (hasIsland(uniqueId)) {
-            return getIsland(uniqueId).getOwner().equals(uniqueId) ? true : false;
+            return getIsland(uniqueId).getOwner().equals(uniqueId);
         }
         return false;
     }
@@ -574,7 +547,7 @@ public class IslandsManager {
     /**
      * This teleports player to their island. If not safe place can be found
      * then the player is sent to spawn via /spawn command
-     * 
+     *
      * @param player
      * @return true if the home teleport is successful
      */
@@ -589,7 +562,7 @@ public class IslandsManager {
      * @return true if successful, false if not
      */
     public boolean homeTeleport(final Player player, int number) {
-        Location home = null;
+        Location home;
         if (DEBUG)
             plugin.getLogger().info("home teleport called for #" + number);
         home = getSafeHomeLocation(player.getUniqueId(), number);
@@ -628,13 +601,12 @@ public class IslandsManager {
             player.setGameMode(GameMode.SURVIVAL);
         }
         return true;
-
     }
 
     /**
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
-     * 
+     *
      * @param playerUUID UUID of player
      * @param number - starting home location e.g., 1
      * @return Location of a safe teleport spot or null if one cannot be found
@@ -821,7 +793,7 @@ public class IslandsManager {
             }
             //plugin.getLogger().info("DEBUG: Radii " + minXradius + "," + minYradius + "," + minZradius + 
             //    "," + maxXradius + "," + maxYradius + "," + maxZradius);
-        } while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth 
+        } while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth
                 || maxYradius < height);
         // Nothing worked
         return null;
@@ -831,7 +803,7 @@ public class IslandsManager {
      * Checks if this location is safe for a player to teleport to. Used by
      * warps and boat exits Unsafe is any liquid or air and also if there's no
      * space
-     * 
+     *
      * @param l
      *            - Location to be checked
      * @return true if safe, otherwise false
@@ -916,7 +888,7 @@ public class IslandsManager {
      * @param schematic
      */
     public void newIsland(Player player, Schematic schematic) {
-        newIsland(player, schematic, null);  
+        newIsland(player, schematic, null);
     }
 
     /**
@@ -1004,7 +976,7 @@ public class IslandsManager {
                     }
                 }
             }
-        } 
+        }
 
 
         // Start the reset cooldown
@@ -1013,7 +985,7 @@ public class IslandsManager {
         //}
         // Set the custom protection range if appropriate
         // Dynamic island range sizes with permissions
-        int range = Settings.islandProtectionRange;        
+        int range = Settings.islandProtectionRange;
         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
             if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
                 if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
@@ -1098,7 +1070,7 @@ public class IslandsManager {
     /**
      * Finds the next free island spot based off the last known island Uses
      * island_distance setting from the config file Builds up in a grid fashion
-     * 
+     *
      * @param lastIsland
      * @return Location of next free island
      */
@@ -1136,7 +1108,7 @@ public class IslandsManager {
      * This removes players from an island overworld and nether - used when reseting or deleting an island
      * Mobs are killed when the chunks are refreshed.
      * @param island to remove players from
-     * @param uuid 
+     * @param uuid
      */
     public void removePlayersFromIsland(final Island island, UUID uuid) {
         // Teleport players away
@@ -1180,9 +1152,9 @@ public class IslandsManager {
 
     /**
      * Returns the island being public at the location or null if there is none
-     * 
+     *
      * @param location
-     * @return PlayerIsland object
+     * @return Island object
      */
     public Island getProtectedIslandAt(Location location) {
         //plugin.getLogger().info("DEBUG: getProtectedIslandAt " + location);
@@ -1208,7 +1180,7 @@ public class IslandsManager {
 
     /**
      * Indicates whether a player is at the island spawn or not
-     * 
+     *
      * @param playerLoc
      * @return true if they are, false if they are not, or spawn does not exist
      */
@@ -1222,7 +1194,7 @@ public class IslandsManager {
     /**
      * Checks if a specific location is within the protected range of an island
      * owned by the player
-     * 
+     *
      * @param player
      * @param loc
      * @return true if location is on island of player
@@ -1281,7 +1253,7 @@ public class IslandsManager {
     /**
      * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
-     * 
+     *
      * @param player
      * @return true if on valid island, false if not
      */
@@ -1316,7 +1288,7 @@ public class IslandsManager {
             if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
                 islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(player.getUniqueId())));
             }
-        } 
+        }
         // TODO: Check coop locations
         /*
         if (coop) {
@@ -1370,7 +1342,7 @@ public class IslandsManager {
         if (islandsByUUID.containsKey(owner)) {
             Island island = islandsByUUID.get(owner);
             if (!island.getName().isEmpty()) {
-                result = island.getName(); 
+                result = island.getName();
             }
         }
         return ChatColor.translateAlternateColorCodes('&', result) + ChatColor.RESET;
@@ -1398,4 +1370,13 @@ public class IslandsManager {
         return spawn.getSpawnPoint();
     }
 
+    // Metrics-related methods //
+
+    public int metrics_getCreatedCount(){
+        return metrics_createdcount;
+    }
+
+    public void metrics_setCreatedCount(int count){
+        this.metrics_createdcount = count;
+    }
 }

@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * Fired when a player joins an existing island.
- * 
+ *
  * @author tastybento
  * @since 1.0
  */

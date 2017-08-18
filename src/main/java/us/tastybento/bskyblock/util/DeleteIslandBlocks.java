@@ -21,13 +21,13 @@ import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 
 /**
  * Deletes islands fast using chunk regeneration
- * 
+ *
  * @author tastybento
- * 
+ *
  */
 public class DeleteIslandBlocks {
     protected static final int CLEAN_RATE = 2;
-    private Set<Pair> chunksToClear = new HashSet<Pair>();
+    private Set<Pair> chunksToClear = new HashSet<>();
     //private HashMap<Location, Material> blocksToClear = new HashMap<Location,Material>();
     private NMSAbstraction nms = null;
 
@@ -133,7 +133,7 @@ public class DeleteIslandBlocks {
                 public void run() {
                     Iterator<Pair> it = chunksToClear.iterator();
                     int count = 0;
-                    while (it.hasNext() && count++ < CLEAN_RATE) {                    
+                    while (it.hasNext() && count++ < CLEAN_RATE) {
                         Pair pair = it.next();
                         //plugin.getLogger().info("DEBUG: There are " + chunksToClear.size() + " chunks that need to be cleared up");
                         //plugin.getLogger().info("DEBUG: Deleting chunk " + pair.getLeft() + ", " + pair.getRight());                       
@@ -142,12 +142,12 @@ public class DeleteIslandBlocks {
                             for (int z = 0; z < 16; z ++) {
                                 int xCoord = pair.getLeft() * 16 + x;
                                 int zCoord = pair.getRight() * 16 + z;
-                                if (island.inIslandSpace(xCoord, zCoord)) {                                 
+                                if (island.inIslandSpace(xCoord, zCoord)) {
                                     //plugin.getLogger().info(xCoord + "," + zCoord + " is in island space - deleting column");
                                     // Delete all the blocks here
                                     for (int y = 0; y < IslandWorld.getIslandWorld().getMaxHeight(); y ++) {
                                         // Overworld
-                                        Block b = IslandWorld.getIslandWorld().getBlockAt(xCoord, y, zCoord);                                       
+                                        Block b = IslandWorld.getIslandWorld().getBlockAt(xCoord, y, zCoord);
                                         Material bt = b.getType();
                                         Material setTo = Material.AIR;
                                         // Split depending on below or above water line
@@ -157,57 +157,57 @@ public class DeleteIslandBlocks {
                                         // Grab anything out of containers (do that it is
                                         // destroyed)                                  
                                         switch (bt) {
-                                        case CHEST:
-                                        case TRAPPED_CHEST:                                           
-                                        case FURNACE:
-                                        case DISPENSER:
-                                        case HOPPER:
-                                            final InventoryHolder ih = ((InventoryHolder)b.getState());
-                                            ih.getInventory().clear();                                            
-                                            b.setType(setTo);
-                                            break;
-                                        case AIR:   
-                                            if (setTo.equals(Material.STATIONARY_WATER)) {
+                                            case CHEST:
+                                            case TRAPPED_CHEST:
+                                            case FURNACE:
+                                            case DISPENSER:
+                                            case HOPPER:
+                                                final InventoryHolder ih = ((InventoryHolder)b.getState());
+                                                ih.getInventory().clear();
+                                                b.setType(setTo);
+                                                break;
+                                            case AIR:
+                                                if (setTo.equals(Material.STATIONARY_WATER)) {
+                                                    nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                                }
+                                            case STATIONARY_WATER:
+                                                if (setTo.equals(Material.AIR)) {
+                                                    nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                                }
+                                            default:
                                                 nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
-                                            }
-                                        case STATIONARY_WATER:
-                                            if (setTo.equals(Material.AIR)) {
-                                                nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
-                                            }
-                                        default:
-                                            nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
-                                            break;
+                                                break;
                                         }
                                         // Nether, if it exists
                                         if (Settings.netherIslands && Settings.netherGenerate && y < IslandWorld.getNetherWorld().getMaxHeight() - 8) {
-                                            b = IslandWorld.getNetherWorld().getBlockAt(xCoord, y, zCoord);                                       
+                                            b = IslandWorld.getNetherWorld().getBlockAt(xCoord, y, zCoord);
                                             bt = b.getType();
-                                            if (!b.equals(Material.AIR)) {
-                                                setTo = Material.AIR;                                            
+                                            if (!bt.equals(Material.AIR)) {
+                                                setTo = Material.AIR;
                                                 // Grab anything out of containers (do that it is
                                                 // destroyed)                                  
                                                 switch (bt) {
-                                                case CHEST:
-                                                case TRAPPED_CHEST:                                           
-                                                case FURNACE:
-                                                case DISPENSER:
-                                                case HOPPER:
-                                                    final InventoryHolder ih = ((InventoryHolder)b.getState());
-                                                    ih.getInventory().clear();                                            
-                                                    b.setType(setTo);
-                                                    break;
-                                                 default:
-                                                    nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
-                                                    break;
+                                                    case CHEST:
+                                                    case TRAPPED_CHEST:
+                                                    case FURNACE:
+                                                    case DISPENSER:
+                                                    case HOPPER:
+                                                        final InventoryHolder ih = ((InventoryHolder)b.getState());
+                                                        ih.getInventory().clear();
+                                                        b.setType(setTo);
+                                                        break;
+                                                    default:
+                                                        nms.setBlockSuperFast(b, setTo.getId(), (byte)0, false);
+                                                        break;
                                                 }
                                             }
                                         }
                                     }
-                                }                                
+                                }
                             }
                         }
-                        it.remove();                        
-                    } 
+                        it.remove();
+                    }
                     if (chunksToClear.isEmpty()){
                         plugin.getLogger().info("Finished island deletion");
                         this.cancel();
@@ -217,7 +217,7 @@ public class DeleteIslandBlocks {
 
         }
     }
-    
+
     /**
      * Class that pairs two ints together
      * @author tastybento

@@ -87,7 +87,7 @@ public class Schematic {
     private String description;
     private int rating;
     private boolean useDefaultChest;
-    private Material icon;    
+    private Material icon;
     private Biome biome;
     private boolean usePhysics;
     private boolean pasteEntities;
@@ -142,7 +142,7 @@ public class Schematic {
         perm = "";
         icon = Material.MAP;
         rating = 50;
-        useDefaultChest = true;	
+        useDefaultChest = true;
         biome = Settings.defaultBiome;
         usePhysics = Settings.usePhysics;
         file = null;
@@ -269,7 +269,7 @@ public class Schematic {
             attachable.add(Material.BIRCH_DOOR.getId());
             attachable.add(Material.SPRUCE_DOOR.getId());
             attachable.add(Material.DARK_OAK_DOOR.getId());
-            attachable.add(Material.JUNGLE_DOOR.getId());  
+            attachable.add(Material.JUNGLE_DOOR.getId());
         }
 
         // Entities
@@ -380,7 +380,7 @@ public class Schematic {
                                     ent.setType(type);
                                     break;
                                 }
-                            }                            
+                            }
                         }
                     }
 
@@ -478,7 +478,7 @@ public class Schematic {
                                     if (itemEntry.getValue() instanceof StringTag){
                                         ent.setId(((StringTag) itemEntry.getValue()).getValue());
                                     }
-                                } 
+                                }
                             }
                         }
                     } else if (entry.getKey().equals("TileX")){
@@ -583,7 +583,7 @@ public class Schematic {
                     } else if (blocks[index] == 2) {
                         // Grass
                         grassBlocks.add(new Vector(x,y,z));
-                    } 
+                    }
                 }
             }
         }
@@ -762,8 +762,8 @@ public class Schematic {
      * This method pastes a schematic.
      * @param loc
      * @param player
-     * @param oldIsland 
-     * @param partner 
+     * @param oldIsland
+     * @param partner
      */
     public void pasteSchematic(final Location loc, final Player player, boolean teleport, final PasteReason reason, Island oldIsland) {
         // If this is not a file schematic, paste the default island
@@ -895,7 +895,7 @@ public class Schematic {
                         spawned.setVelocity(ent.getMotion());
                         if (ent.getType() == EntityType.SHEEP) {
                             Sheep sheep = (Sheep)spawned;
-                            if (ent.isSheared()) {   
+                            if (ent.isSheared()) {
                                 sheep.setSheared(true);
                             }
                             DyeColor[] set = DyeColor.values();
@@ -951,7 +951,7 @@ public class Schematic {
             grass = gr;
         } else {
             grass = null;
-        }	
+        }
 
         //Bukkit.getLogger().info("DEBUG cow location " + grass);
         Block blockToChange = null;
@@ -1088,7 +1088,7 @@ public class Schematic {
                             //IslandCmd.runCommands(Settings.resetCommands, player);
                         }
                     }
-                    
+
                     // Delete the old island if required
                     if (oldIsland != null) {
                         plugin.getLogger().info("DEBUG: Deleting old island");
@@ -1237,7 +1237,7 @@ public class Schematic {
 
     public void setIcon(Material icon, int damage) {
         this.icon = icon;
-        this.durability = damage;    
+        this.durability = damage;
     }
     /**
      * @param icon the icon to set
@@ -1302,7 +1302,7 @@ public class Schematic {
      * Creates the AcidIsland default island block by block
      * @param islandLoc
      * @param player
-     * @param reason 
+     * @param reason
      */
     @SuppressWarnings("deprecation")
     public void generateIslandBlocks(final Location islandLoc, final Player player, PasteReason reason) {
@@ -1476,7 +1476,7 @@ public class Schematic {
             //plugin.getLogger().info("DEBUG: Reset");
             if (!player.hasPermission(Settings.PERMPREFIX + "command.resetexempt")) {
                 //plugin.getLogger().info("DEBUG: Executing reset island commands");
-               // IslandCmd.runCommands(Settings.resetCommands, player);
+                // IslandCmd.runCommands(Settings.resetCommands, player);
             }
         }
         if (!islandCompanion.isEmpty()) {
@@ -1490,7 +1490,7 @@ public class Schematic {
     }
     /**
      * Get child tag of a NBT structure.
-     * 
+     *
      * @param items
      *            The parent tag map
      * @param key
@@ -1529,7 +1529,7 @@ public class Schematic {
                     //plugin.getLogger().info("DEBUG: name is " + name);
                     companion.setCustomName(name);
                     companion.setCustomNameVisible(true);
-                } 
+                }
             }
         }
     }

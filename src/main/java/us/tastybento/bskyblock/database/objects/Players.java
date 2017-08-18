@@ -13,7 +13,7 @@ import us.tastybento.bskyblock.config.Settings;
 
 /**
  * Tracks the following info on the player
- * 
+ *
  * @author tastybento
  */
 public class Players extends DataObject {
@@ -34,16 +34,16 @@ public class Players extends DataObject {
     /**
      * @param uniqueId
      *            Constructor - initializes the state variables
-     * 
+     *
      */
     public Players(final UUID uniqueId) {
         this.uniqueId = uniqueId;
-        this.homeLocations = new HashMap<Integer,Location>();
+        this.homeLocations = new HashMap<>();
         this.playerName = "";
         this.resetsLeft = Settings.resetLimit;
         this.locale = "";
         this.useControlPanel = Settings.useControlPanel;
-        this.kickedList = new HashMap<Location, Long>();
+        this.kickedList = new HashMap<>();
         this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
     }
 
@@ -70,7 +70,7 @@ public class Players extends DataObject {
             if (number == en.getKey())
                 Bukkit.getLogger().info("DEBUG: key = number");
         }*/
-        return homeLocations.get(Integer.valueOf(number));
+        return homeLocations.get(number);
     }
 
     /**
@@ -156,7 +156,7 @@ public class Players extends DataObject {
 
     /**
      * Stores the home location of the player in a String format
-     * 
+     *
      * @param l
      *            a Bukkit location
      */
@@ -251,7 +251,7 @@ public class Players extends DataObject {
 
     /**
      * Can invite or still waiting for cool down to end
-     * 
+     *
      * @param location
      *            to check
      * @return number of mins/hours left until cool down ends

@@ -16,10 +16,7 @@ public class IslandWorld {
     private static World endWorld;
 
     /**
-     * Returns the World object for the island world named in config.yml.
-     * If the world does not exist then it is created.
-     *
-     * @return Bukkit World object for the BSkyBlock overworld
+     * Generates the Skyblock worlds.
      */
     public IslandWorld(BSkyBlock plugin) {
         if (Settings.useOwnGenerator) {

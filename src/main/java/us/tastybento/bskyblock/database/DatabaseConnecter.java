@@ -6,15 +6,15 @@ import java.sql.SQLException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 /**
- * 
+ *
  * Creates a connection to a database.
- * 
+ *
  */
 public interface DatabaseConnecter {
 
     /**
      * Establishes a new connection to the database
-     * 
+     *
      * @return A new connection to the database
      * @throws SQLException
      */
@@ -22,18 +22,18 @@ public interface DatabaseConnecter {
 
     /**
      * Returns the connection url
-     * 
+     *
      * @return
      */
     public String getConnectionUrl();
 
     /**
      * Looks through the database (or files) and returns a known unique key
-     * @param tableName 
+     * @param tableName
      * @return a unique key for this record
      */
     public String getUniqueId(String tableName);
-    
+
     /**
      * Check if a key exists in the database in this table or not
      * @param simpleName

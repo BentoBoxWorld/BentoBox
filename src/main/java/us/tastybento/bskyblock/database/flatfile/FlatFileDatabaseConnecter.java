@@ -26,14 +26,12 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     @Override
     public Connection createConnection() throws SQLException {
-        // TODO Auto-generated method stub
-        return null;
+        return null; // Not used
     }
 
     @Override
     public String getConnectionUrl() {
-        // TODO Auto-generated method stub
-        return null;
+        return null; // Not used
     }
 
     /**

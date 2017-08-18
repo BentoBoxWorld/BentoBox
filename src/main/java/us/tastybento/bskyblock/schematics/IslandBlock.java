@@ -44,9 +44,9 @@ public class IslandBlock {
     private BannerBlock banner;
     private EntityType spawnerBlockType;
     // Chest contents
-    private HashMap<Byte,ItemStack> chestContents = new HashMap<Byte,ItemStack>();
-    public static final HashMap<String, Material> WEtoM = new HashMap<String, Material>();
-    public static final HashMap<String, EntityType> WEtoME = new HashMap<String, EntityType>();
+    private HashMap<Byte,ItemStack> chestContents = new HashMap<>();
+    public static final HashMap<String, Material> WEtoM = new HashMap<>();
+    public static final HashMap<String, EntityType> WEtoME = new HashMap<>();
 
     static {
         // Establish the World Edit to Material look up
@@ -201,7 +201,7 @@ public class IslandBlock {
         signText = null;
         banner = null;
         spawnerBlockType = null;
-        chestContents = new HashMap<Byte,ItemStack>();
+        chestContents = new HashMap<>();
     }
     /**
      * @return the type
@@ -265,7 +265,7 @@ public class IslandBlock {
      */
     public void setSpawnerType(Map<String, Tag> tileData) {
         //Bukkit.getLogger().info("DEBUG: " + tileData.toString());
-        String creatureType = "";        
+        String creatureType = "";
         if (tileData.containsKey("EntityId")) {
             creatureType = ((StringTag) tileData.get("EntityId")).getValue().toUpperCase();
         } else if (tileData.containsKey("SpawnData")) {
@@ -298,8 +298,8 @@ public class IslandBlock {
      * @param tileData
      */
     public void setSign(Map<String, Tag> tileData) {
-        signText = new ArrayList<String>();
-        List<String> text = new ArrayList<String>();
+        signText = new ArrayList<>();
+        List<String> text = new ArrayList<>();
         for (int i = 1; i < 5; i++) {
             String line = ((StringTag) tileData.get("Text" + String.valueOf(i))).getValue();
             // This value can actually be a string that says null sometimes.
@@ -374,7 +374,7 @@ public class IslandBlock {
                                                     Bukkit.getLogger().warning("Unknown format " + value +" in sign when pasting schematic, skipping...");
                                                 }
                                             }
-                                        }   
+                                        }
                                     }
                                 } else {
                                     // This is unformatted text. It is included in "". A reset is required to clear
@@ -382,7 +382,7 @@ public class IslandBlock {
                                     if (format.length()>1) {
                                         lineText += ChatColor.RESET + format.substring(format.indexOf('"')+1,format.lastIndexOf('"'));
                                     }
-                                } 
+                                }
                             }
                         } else {
                             // No extra tag

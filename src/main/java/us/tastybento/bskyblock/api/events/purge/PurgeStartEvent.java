@@ -11,7 +11,7 @@ import org.bukkit.event.HandlerList;
  * This event is fired when islands to remove have been chosen and before starting to remove them.
  * You can remove or add islands to remove.
  * Canceling this event will cancel the purge
- * 
+ *
  * @author Poslovitch
  * @since 1.0
  */

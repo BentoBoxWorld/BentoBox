@@ -29,9 +29,9 @@ import us.tastybento.bskyblock.util.Util;
 /**
  * Class that creates a list of <T>s filled with values from the corresponding
  * database-table.
- * 
+ *
  * @author tastybento
- * 
+ *
  * @param <T>
  */
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
@@ -51,27 +51,27 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
     @Override
     protected String createDeleteQuery() {
-        // TODO Auto-generated method stub
-        return null;
+        return ""; // Not used
     }
+
     /**
      * Creates a <T> filled with values from the corresponding
      * database file
-     * 
+     *
      * @return <T> filled with values from the corresponding database file
-     * @throws IntrospectionException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws ClassNotFoundException 
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws ClassNotFoundException
      */
     @Override
     public T loadObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException  {
         YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName(), key);
         return createObject(config);
     }
-    
+
     @Override
     public boolean objectExits(String key) {
         return databaseConnecter.uniqueIdExists(type.getSimpleName(), key);
@@ -85,7 +85,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      * @throws IntrospectionException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException {
@@ -114,19 +114,19 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return list;
     }
     /**
-     * 
+     *
      * Creates a list of <T>s filled with values from the provided ResultSet
-     * 
+     *
      * @param config - YAML config file
-     * 
+     *
      * @return <T> filled with values
-     * 
+     *
      * @throws InstantiationException
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
         T instance = type.newInstance();
@@ -202,7 +202,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     /**
      * Inserts T into the corresponding database-table
-     * 
+     *
      * @param instance that should be inserted into the database
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
@@ -300,7 +300,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return object;
     }
 
-    private Object deserialize(Object value, Class<? extends Object> clazz) { 
+    private Object deserialize(Object value, Class<? extends Object> clazz) {
         //plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getCanonicalName());
         if (value instanceof String && value.equals("null")) {
             // If the value is null as a string, return null 
@@ -353,7 +353,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (tableFolder.exists()) {
             File file = new File(tableFolder, fileName);
             file.delete();
-        }      
+        }
     }
 
 }

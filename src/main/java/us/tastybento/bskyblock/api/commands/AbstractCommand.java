@@ -53,7 +53,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         this.label = label;
         this.aliases = aliases;
         this.help = help;
-        this.teamMembers = new HashSet<UUID>();
+        this.teamMembers = new HashSet<>();
 
         // Register the help argument if needed
         if (help) {
@@ -120,8 +120,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             String[] usage = argumentsMap.get(command).usage(sender);
             if (usage == null) usage = new String[2];
 
-            msg = msg.replace("[args]", (usage != null && usage[0] != null) ? usage[0] : "")
-                    .replace("[info]", (usage != null && usage[1] != null) ? usage[1] : "");
+            msg = msg.replace("[args]", (usage[0] != null) ? usage[0] : "")
+                    .replace("[info]", (usage[1] != null) ? usage[1] : "");
 
             return msg;
         }
@@ -150,8 +150,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     }
 
     public boolean isAlias(String argument) {
-        if (aliasesMap.containsValue(argument)) return true;
-        return false;
+        return aliasesMap.containsValue(argument);
     }
 
     public void addAliases(String parent, String... aliases) {
@@ -220,7 +219,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     @Override
     public List<String> onTabComplete(CommandSender sender, Command command, String label, String[] args){
-        List<String> options = new ArrayList<String>();
+        List<String> options = new ArrayList<>();
         checkForPlayer(sender);
         String lastArg = (args.length != 0 ? args[args.length - 1] : "");
         if (canUse(sender).isAllowed()) {
@@ -243,11 +242,11 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     }
 
     private static String[] clean(final String[] v) {
-        List<String> list = new ArrayList<String>(Arrays.asList(v));
+        List<String> list = new ArrayList<>(Arrays.asList(v));
         list.removeAll(Collections.singleton(""));
         return list.toArray(new String[list.size()]);
     }
-    
+
     /**
      * Sets some variables and flags if this is a player
      * @param sender
@@ -269,9 +268,9 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         } else {
             inTeam = false;
         }
-        
+
     }
-    
+
     /**
      * Response class for the canUse check
      * @author tastybento
@@ -280,7 +279,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     public class CanUseResp {
         private boolean allowed;
         private String errorResponse; // May be shown if required
-        
+
         /**
          * Cannot use situation
          * @param errorResponse - error response
@@ -289,7 +288,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             this.allowed = false;
             this.errorResponse = errorResponse;
         }
-        
+
         /**
          * Can or cannot use situation, no error response.
          * @param b
@@ -321,7 +320,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
          */
         public void setErrorResponse(String errorResponse) {
             this.errorResponse = errorResponse;
-        } 
+        }
     }
     // These methods below just neaten up the code in the commands so "plugin." isn't always used
     /**

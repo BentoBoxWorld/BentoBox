@@ -9,7 +9,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * Fired when a player exits an island's protected area
- * 
+ *
  * @author tastybento
  * @since 1.0
  */

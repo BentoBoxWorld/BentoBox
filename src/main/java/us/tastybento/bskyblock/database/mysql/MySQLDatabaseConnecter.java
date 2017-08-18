@@ -10,11 +10,11 @@ import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
 public class MySQLDatabaseConnecter implements DatabaseConnecter {
-    
+
     private String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
     private Connection connection = null;
-    
+
     /**
      * Class for MySQL database connections using the settings provided
      * @param dbSettings
@@ -57,7 +57,7 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
     @Override
     public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName) {
         // Not used
-        
+
     }
 
     @Override

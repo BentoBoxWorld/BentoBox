@@ -54,7 +54,7 @@ public class IslandGuard1_9 implements Listener {
 
     public IslandGuard1_9(final BSkyBlock plugin) {
         this.plugin = plugin;
-        this.thrownPotions = new HashMap<Integer, UUID>();
+        this.thrownPotions = new HashMap<>();
     }
 
     /**
@@ -96,7 +96,7 @@ public class IslandGuard1_9 implements Listener {
 
     /**
      * Handle interaction with end crystals 1.9
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
@@ -217,7 +217,7 @@ public class IslandGuard1_9 implements Listener {
                 plugin.getLogger().info("1.9 " +"Damager is a projectile shot by " + p.getName());
             }
         }
-        if (p != null) {  
+        if (p != null) {
             if (p.isOp() || VaultHelper.hasPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Bypassing protection");
@@ -274,18 +274,18 @@ public class IslandGuard1_9 implements Listener {
             e.blockList().clear();
         } else {
             if (!Settings.allowChestDamage) {
-                List<Block> toberemoved = new ArrayList<Block>();
+                List<Block> toberemoved = new ArrayList<>();
                 // Save the chest blocks in a list
                 for (Block b : e.blockList()) {
                     switch (b.getType()) {
-                    case CHEST:
-                    case ENDER_CHEST:
-                    case STORAGE_MINECART:
-                    case TRAPPED_CHEST:
-                        toberemoved.add(b);
-                        break;
-                    default:
-                        break;
+                        case CHEST:
+                        case ENDER_CHEST:
+                        case STORAGE_MINECART:
+                        case TRAPPED_CHEST:
+                            toberemoved.add(b);
+                            break;
+                        default:
+                            break;
                     }
                 }
                 // Now delete them
@@ -306,7 +306,7 @@ public class IslandGuard1_9 implements Listener {
      * Handle blocks that need special treatment
      * Tilling of coarse dirt into dirt using off-hand (regular hand is in 1.8)
      * Usually prevented because it could lead to an endless supply of dirt with gravel
-     * 
+     *
      * @param e
      */
     @SuppressWarnings("deprecation")
@@ -359,21 +359,13 @@ public class IslandGuard1_9 implements Listener {
             return;
         }
         // Try to get the shooter
-        Projectile projectile = (Projectile) e.getEntity();
+        Projectile projectile = e.getEntity();
         plugin.getLogger().info("shooter = " + projectile.getShooter());
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
-            plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: Effect finished");
-                    thrownPotions.remove(e.getAreaEffectCloud().getEntityId());
-
-                }}, e.getAreaEffectCloud().getDuration());
+            plugin.getServer().getScheduler().runTaskLater(plugin, () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
         }
     }
 
@@ -441,18 +433,14 @@ public class IslandGuard1_9 implements Listener {
 
             // Players being hurt PvP
             if (e.getEntity() instanceof Player) {
-                if (pvp) {
-                    if (DEBUG) plugin.getLogger().info("DEBUG: PVP allowed");
-                    return;
-                } else {
+                if (!pvp) {
                     if (DEBUG) plugin.getLogger().info("DEBUG: PVP not allowed");
                     e.setCancelled(true);
-                    return;
                 }
             }
         }
     }
-    
+
     /**
      * Checks if action is allowed for player in location for flag
      * @param uuid
@@ -478,7 +466,7 @@ public class IslandGuard1_9 implements Listener {
         }
         return false;
     }
-    
+
     /**
      * Action allowed in this location
      * @param location

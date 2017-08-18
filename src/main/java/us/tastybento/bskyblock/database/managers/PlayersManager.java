@@ -33,7 +33,7 @@ public class PlayersManager{
      * Provides a memory cache of online player information
      * This is the one-stop-shop of player info
      * If the player is not cached, then a request is made to Players to obtain it
-     *  
+     *
      * @param plugin
      */
     @SuppressWarnings("unchecked")
@@ -42,8 +42,8 @@ public class PlayersManager{
         database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Players classes
         handler = (AbstractDatabaseHandler<Players>) database.getHandler(plugin, Players.class);
-        playerCache = new HashMap<UUID, Players>();
-        inTeleport = new HashSet<UUID>();
+        playerCache = new HashMap<>();
+        inTeleport = new HashSet<>();
     }
 
     /**
@@ -57,7 +57,6 @@ public class PlayersManager{
                 playerCache.put(player.getPlayerUUID(), player);
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -67,30 +66,20 @@ public class PlayersManager{
      * @param async - if true, save async
      */
     public void save(boolean async){
-        if(async){
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    for(Players player : playerCache.values()){
-                        try {
-                            handler.saveObject(player);
-                        } catch (Exception e) {
-                            // TODO Auto-generated catch block
-                            e.printStackTrace();
-                        } 
-                    }
-                }
-            });
-        } else {
+        Runnable save = () -> {
             for(Players player : playerCache.values()){
                 try {
                     handler.saveObject(player);
                 } catch (Exception e) {
-                    // TODO Auto-generated catch block
                     e.printStackTrace();
-                } 
+                }
             }
+        };
+
+        if(async){
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+        } else {
+            save.run();
         }
     }
 
@@ -119,7 +108,7 @@ public class PlayersManager{
         if (playerUUID == null)
             return null;
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: adding player " + playerUUID);       
+            plugin.getLogger().info("DEBUG: adding player " + playerUUID);
         if (!playerCache.containsKey(playerUUID)) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: player not in cache");
@@ -149,9 +138,9 @@ public class PlayersManager{
 
     /**
      * Stores the player's info and removes the player from the cache
-     * 
+     *
      * @param player - UUID of player
-     *            
+     *
      */
     public void removeOnlinePlayer(final UUID player) {
         // plugin.getLogger().info("Removing player from cache: " + player);
@@ -163,7 +152,6 @@ public class PlayersManager{
                     | InvocationTargetException | SecurityException
                     | InstantiationException | NoSuchMethodException
                     | IntrospectionException | SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         }
@@ -185,11 +173,11 @@ public class PlayersManager{
 
     /**
      * Checks if the player is known or not
-     * 
+     *
      * @param uniqueID
      * @return true if player is know, otherwise false
      */
-    public boolean isAKnownPlayer(final UUID uniqueID) {
+    public boolean isKnown(final UUID uniqueID) {
         if (uniqueID == null) {
             return false;
         }
@@ -204,7 +192,7 @@ public class PlayersManager{
 
     /**
      * Returns the player object for the named player
-     * 
+     *
      * @param playerUUID
      *            - String name of player
      * @return - player object
@@ -216,7 +204,7 @@ public class PlayersManager{
 
     /**
      * Checks if player has an island.
-     * 
+     *
      * @param playerUUID
      *            - string name of player
      * @return true if player has island
@@ -228,18 +216,18 @@ public class PlayersManager{
 
     /**
      * Checks if player is in a Team from cache if available
-     * 
+     *
      * @param playerUUID
      * @return true if player in a team
      */
     public boolean inTeam(final UUID playerUUID) {
         addPlayer(playerUUID);
-        return plugin.getIslands().getMembers(playerUUID).size() > 1 ? true: false;
+        return plugin.getIslands().getMembers(playerUUID).size() > 1;
     }
 
     /**
      * Clears player home locations
-     * 
+     *
      * @param playerUUID
      */
     public void clearPlayerHomes(UUID playerUUID) {
@@ -283,9 +271,9 @@ public class PlayersManager{
 
     /**
      * Returns the home location, or null if none
-     * 
+     *
      * @param playerUUID
-     * @param number 
+     * @param number
      * @return Home location or null if none
      */
     public Location getHomeLocation(UUID playerUUID, int number) {
@@ -333,7 +321,7 @@ public class PlayersManager{
         // Look in the database if it ready
         // TODO: finish this!
         return Bukkit.getOfflinePlayer(string).getUniqueId();
-        
+
         //return database.getUUID(string, adminCheck);
     }
 
@@ -351,7 +339,7 @@ public class PlayersManager{
     /**
      * Obtains the name of the player from their UUID
      * Player must have logged into the game before
-     * 
+     *
      * @param playerUUID
      * @return String - playerName
      */
@@ -365,7 +353,7 @@ public class PlayersManager{
 
     /**
      * Reverse lookup - returns the owner of an island from the location
-     * 
+     *
      * @param loc
      * @return UUID of owner of island
      */
@@ -382,7 +370,7 @@ public class PlayersManager{
 
     /**
      * Gets how many island resets the player has left
-     * 
+     *
      * @param playerUUID
      * @return number of resets
      */
@@ -393,7 +381,7 @@ public class PlayersManager{
 
     /**
      * Sets how many resets the player has left
-     * 
+     *
      * @param playerUUID
      * @param resets
      */
@@ -405,7 +393,7 @@ public class PlayersManager{
     /**
      * Returns how long the player must wait before they can be invited to an
      * island with the location
-     * 
+     *
      * @param playerUUID
      * @param location
      * @return time to wait in minutes/hours
@@ -419,7 +407,7 @@ public class PlayersManager{
      * Starts the timer for the player for this location before which they can
      * be invited
      * Called when they are kicked from an island or leave.
-     * 
+     *
      * @param playerUUID
      * @param location
      */
@@ -435,9 +423,7 @@ public class PlayersManager{
      */
     public String getLocale(UUID playerUUID) {
         addPlayer(playerUUID);
-        if (playerUUID == null) {
-            return "";
-        }
+        if (playerUUID == null) return "";
         return playerCache.get(playerUUID).getLocale();
     }
 
@@ -472,9 +458,9 @@ public class PlayersManager{
      * Unban target from player's island
      * @param playerUUID
      * @param targetUUID
-     * @return 
+     * @return
      */
-    public boolean unBan(UUID playerUUID, UUID targetUUID) {
+    public boolean unban(UUID playerUUID, UUID targetUUID) {
         addPlayer(playerUUID);
         addPlayer(targetUUID);
         Island island = plugin.getIslands().getIsland(playerUUID);
@@ -517,7 +503,7 @@ public class PlayersManager{
     public void clearResets(int resetLimit) {
         for (Players player : playerCache.values()) {
             player.setResetsLeft(resetLimit);
-        }   
+        }
     }
 
     /**
@@ -575,7 +561,7 @@ public class PlayersManager{
      * @param uniqueId
      */
     public void setInTeleport(UUID uniqueId) {
-        inTeleport.add(uniqueId); 
+        inTeleport.add(uniqueId);
     }
 
     /**
@@ -583,7 +569,7 @@ public class PlayersManager{
      * @param uniqueId
      */
     public void removeInTeleport(UUID uniqueId) {
-        inTeleport.remove(uniqueId);    
+        inTeleport.remove(uniqueId);
     }
 
     /**
@@ -591,7 +577,7 @@ public class PlayersManager{
      * @return true if a player is mid-teleport
      */
     public boolean isInTeleport(UUID uniqueId) {
-        return inTeleport.contains(uniqueId);        
+        return inTeleport.contains(uniqueId);
     }
 
     /**
@@ -618,7 +604,6 @@ public class PlayersManager{
                     | InvocationTargetException | SecurityException
                     | InstantiationException | NoSuchMethodException
                     | IntrospectionException | SQLException e) {
-                // TODO Auto-generated catch block
                 e.printStackTrace();
             }
         } else {

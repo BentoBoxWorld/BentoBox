@@ -28,29 +28,29 @@ import org.bukkit.event.HandlerList;
  * @since 1.0
  */
 public class PlayerRejectInviteEvent extends Event {
-    private static final HandlerList handlers = new HandlerList();
+	private static final HandlerList handlers = new HandlerList();
 	private final Player player;
-	
+
 	/**
 	 * @param player
 	 */
 	public PlayerRejectInviteEvent(Player player) {
 		this.player = player;
 	}
-	
+
 	/**
 	 * @return the player
 	 */
 	public Player getPlayer() {
 		return this.player;
 	}
-	
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
 
-    public static HandlerList getHandlerList() {
-        return handlers;
-    }
+	@Override
+	public HandlerList getHandlers() {
+		return handlers;
+	}
+
+	public static HandlerList getHandlerList() {
+		return handlers;
+	}
 }

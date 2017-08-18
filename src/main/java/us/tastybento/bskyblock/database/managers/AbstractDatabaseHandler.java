@@ -11,10 +11,7 @@ import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
- * 
- * @param <T>
- */
-/**
+ *
  * @author tastybento
  *
  * @param <T>
@@ -44,7 +41,7 @@ public abstract class AbstractDatabaseHandler<T> {
 
     /**
      * Constructor
-     * 
+     *
      * @param type
      *            The type of the objects that should be created and filled with
      *            values from the database or inserted into the database
@@ -71,7 +68,7 @@ public abstract class AbstractDatabaseHandler<T> {
     protected abstract String createDeleteQuery();
 
     /**
-     * 
+     *
      * Creates a comma-separated-String with the names of the variables in this
      * class
      * Not used in Flat File database.
@@ -108,9 +105,9 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      * @throws IntrospectionException
-     * @throws SecurityException 
-     * @throws SQLException 
-     * @throws ClassNotFoundException 
+     * @throws SecurityException
+     * @throws SQLException
+     * @throws ClassNotFoundException
      */
     protected abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
@@ -119,42 +116,42 @@ public abstract class AbstractDatabaseHandler<T> {
      * database file
      * @param uniqueId
      * @return <T>
-     * @throws IntrospectionException 
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
-     * @throws InstantiationException 
-     * @throws SQLException 
-     * @throws ClassNotFoundException 
-     * @throws SecurityException 
+     * @throws IntrospectionException
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws InstantiationException
+     * @throws SQLException
+     * @throws ClassNotFoundException
+     * @throws SecurityException
      */
     protected abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Save T into the corresponding database
-     * 
+     *
      * @param instance that should be inserted into the database
      * @throws IllegalAccessException
      * @throws IllegalArgumentException
      * @throws InvocationTargetException
      * @throws IntrospectionException
-     * @throws InstantiationException 
-     * @throws SecurityException 
-     * @throws SQLException 
-     * @throws NoSuchMethodException 
+     * @throws InstantiationException
+     * @throws SecurityException
+     * @throws SQLException
+     * @throws NoSuchMethodException
      */
     protected abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
 
     /**
      * Deletes the object with the unique id from the database
      * @param instance
-     * @throws InvocationTargetException 
-     * @throws IllegalArgumentException 
-     * @throws IllegalAccessException 
-     * @throws IntrospectionException 
-     * @throws SQLException 
-     * @throws SecurityException 
-     * @throws NoSuchMethodException 
+     * @throws InvocationTargetException
+     * @throws IllegalArgumentException
+     * @throws IllegalAccessException
+     * @throws IntrospectionException
+     * @throws SQLException
+     * @throws SecurityException
+     * @throws NoSuchMethodException
      */
     public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
 

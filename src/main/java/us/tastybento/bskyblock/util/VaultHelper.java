@@ -17,7 +17,7 @@ public class VaultHelper {
 
     /**
      * Sets up the economy instance
-     * 
+     *
      * @return true if successful
      */
     public static boolean setupEconomy() {
@@ -31,7 +31,7 @@ public class VaultHelper {
 
     /**
      * Sets up the permissions instance
-     * 
+     *
      * @return true if successful
      */
     public static boolean setupPermissions() {
@@ -45,7 +45,7 @@ public class VaultHelper {
 
     /**
      * Checks permission of player in the world the player is in now
-     * 
+     *
      * @param player
      * @param perm
      * @return true if the player has the perm
@@ -56,7 +56,7 @@ public class VaultHelper {
 
     /**
      * Checks permission of player in world 
-     * 
+     *
      * @param player
      * @param perm
      * @param world
@@ -68,14 +68,14 @@ public class VaultHelper {
 
     /**
      * Adds permission to player
-     * 
+     *
      * @param player
      * @param perm
      */
     public static void addPerm(final Player player, final String perm) {
         permission.playerAdd(player, perm);
     }
-    
+
     /**
      * Add permission to player in world
      * @param player
@@ -88,7 +88,7 @@ public class VaultHelper {
 
     /**
      * Removes a player's permission
-     * 
+     *
      * @param player
      * @param perm
      */
@@ -98,7 +98,7 @@ public class VaultHelper {
 
     /**
      * Removes a player's permission in world
-     * 
+     *
      * @param player
      * @param perm
      * @param world

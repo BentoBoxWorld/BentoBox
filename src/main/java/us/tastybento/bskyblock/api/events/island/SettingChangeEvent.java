@@ -10,7 +10,7 @@ import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
  * This event is fired when a player changes a setting on his island
  * <p>
  * Canceling this event will result in canceling the change.
- * 
+ *
  * @author Poslovitch
  * @since 1.0
  */

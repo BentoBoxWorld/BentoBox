@@ -27,7 +27,7 @@ import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 
 /**
  * A set of utility methods
- * 
+ *
  * @author Tastybento
  * @author Poslovitch
  */
@@ -36,7 +36,7 @@ public class Util {
 
     public static void sendMessage(CommandSender receiver, String message){
         message = PlaceholderHandler.replacePlaceholders(receiver, message);
-        
+
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             for(String part : message.split("\n")){
                 receiver.sendMessage(part);
@@ -56,8 +56,8 @@ public class Util {
      * @throws NoSuchMethodException
      */
     public static NMSAbstraction getNMSHandler() throws ClassNotFoundException, IllegalArgumentException,
-    SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
-    NoSuchMethodException {
+            SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
         String serverPackageName = plugin.getServer().getClass().getPackage().getName();
         String pluginPackageName = plugin.getClass().getPackage().getName();
         String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
@@ -79,13 +79,13 @@ public class Util {
     /**
      * Converts a serialized location to a Location. Returns null if string is
      * empty
-     * 
+     *
      * @param s
      *            - serialized location in format "world:x:y:z"
      * @return Location
      */
     static public Location getLocationString(final String s) {
-        if (s == null || s.trim() == "") {
+        if (s == null || s.trim().equals("")) {
             return null;
         }
         final String[] parts = s.split(":");
@@ -116,7 +116,7 @@ public class Util {
     /**
      * Converts a location to a simple string representation
      * If location is null, returns empty string
-     * 
+     *
      * @param location
      * @return String of location
      */
@@ -126,14 +126,14 @@ public class Util {
         }
         return location.getWorld().getName() + ":" + location.getBlockX() + ":" + location.getBlockY() + ":" + location.getBlockZ() + ":" + Float.floatToIntBits(location.getYaw()) + ":" + Float.floatToIntBits(location.getPitch());
     }
-    
+
     /**
      * Get a list of parameter types for the collection argument in this method
      * @param writeMethod
      * @return
      */
     public static List<Type> getCollectionParameterTypes(Method writeMethod) {
-        List<Type> result = new ArrayList<Type>();
+        List<Type> result = new ArrayList<>();
         // Get the return type
         // This uses a trick to extract what the arguments are of the writeMethod of the field.
         // In this way, we can deduce what type needs to be written at runtime.
@@ -164,7 +164,7 @@ public class Util {
     public static List<ItemStack> getPlayerInHandItems(Player player) {
         List<ItemStack> result = new ArrayList<ItemStack>(2);
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
-        || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
             if (player.getItemInHand() != null)
                 result.add(player.getItemInHand());
             return result;
@@ -178,11 +178,11 @@ public class Util {
 
     /**
      * Converts a name like IRON_INGOT into Iron Ingot to improve readability
-     * 
+     *
      * @param ugly
      *            The string such as IRON_INGOT
      * @return A nicer version, such as Iron Ingot
-     * 
+     *
      *         Credits to mikenon on GitHub!
      */
     public static String prettifyText(String ugly) {
@@ -214,7 +214,7 @@ public class Util {
     @SuppressWarnings("deprecation")
     public static boolean playerIsHolding(Player player, Material type) {
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
-        || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
             if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
                 return true;
             }
@@ -228,7 +228,7 @@ public class Util {
         }
         return false;
     }
-    
+
     /**
      * Display message to player in action bar (1.11+ or chat)
      * @param player
@@ -246,7 +246,7 @@ public class Util {
         plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
                 "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
     }
-    
+
     /**
      * Determines if a location is in the island world or not or
      * in the new nether if it is activated
@@ -267,7 +267,7 @@ public class Util {
         }
         return true;
     }
-    
+
     /**
      * Determines if an entity is in the island world or not or
      * in the new nether if it is activated
@@ -293,27 +293,27 @@ public class Util {
      * @return
      */
     public static List<String> getOnlinePlayerList(Player player) {
-        final List<String> returned = new ArrayList<String>();
+        final List<String> returned = new ArrayList<>();
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
             if (player == null) {
                 returned.add(p.getName());
             } else if (player.canSee(p)) {
-                returned.add(p.getName()); 
+                returned.add(p.getName());
             }
         }
         return returned;
     }
-    
+
     /**
      * Returns all of the items that begin with the given start, 
      * ignoring case.  Intended for tabcompletion. 
-     * 
+     *
      * @param list
      * @param start
      * @return List of items that start with the letters
      */
     public static List<String> tabLimit(final List<String> list, final String start) {
-        final List<String> returned = new ArrayList<String>();
+        final List<String> returned = new ArrayList<>();
         for (String s : list) {
             if (s == null)
                 continue;

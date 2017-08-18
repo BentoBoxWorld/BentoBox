@@ -4,7 +4,7 @@ import org.bukkit.inventory.ItemStack;
 
 /**
  * Where the inventory data is stored
- * 
+ *
  * @author tastybento
  */
 public class InventoryStore {

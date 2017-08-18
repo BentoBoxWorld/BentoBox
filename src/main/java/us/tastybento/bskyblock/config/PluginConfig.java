@@ -25,7 +25,7 @@ public class PluginConfig {
         plugin.saveDefaultConfig();
         
         // Initialize the errors list
-        HashMap<ConfigError, Object> errors = new HashMap<ConfigError, Object>();
+        HashMap<ConfigError, Object> errors = new HashMap<>();
         
         //TODO config version
         
@@ -116,8 +116,8 @@ public class PluginConfig {
         // TODO: add to config
         Settings.endGenerate = true;
         Settings.endIslands = false;
-        Settings.limitedBlocks = new HashMap<String, Integer>();
-        Settings.defaultWorldSettings = new HashMap<SettingsFlag, Boolean>();
+        Settings.limitedBlocks = new HashMap<>();
+        Settings.defaultWorldSettings = new HashMap<>();
         for (SettingsFlag flag: SettingsFlag.values()) {
             Settings.defaultWorldSettings.put(flag, false);
         }

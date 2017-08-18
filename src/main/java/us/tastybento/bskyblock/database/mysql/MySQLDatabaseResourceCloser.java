@@ -9,7 +9,7 @@ public class MySQLDatabaseResourceCloser {
 
     /**
      * Closes the provided ResultSets
-     * 
+     *
      * @param resultSets
      *            ResultSets that should be closed
      */
@@ -18,19 +18,21 @@ public class MySQLDatabaseResourceCloser {
         if (resultSets == null)
             return;
 
-        for (ResultSet resultSet : resultSets)
-            if (resultSet != null)
+        for (ResultSet resultSet : resultSets) {
+            if (resultSet != null) {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
                     /* Do some exception-logging here. */
                     e.printStackTrace();
                 }
+            }
+        }
     }
 
     /**
      * Closes the provided Statements
-     * 
+     *
      * @param statements
      *            Statements that should be closed
      */
@@ -43,35 +45,38 @@ public class MySQLDatabaseResourceCloser {
         if (statements == null)
             return;
 
-        for (Statement statement : statements)
-            if (statement != null)
+        for (Statement statement : statements) {
+            if (statement != null) {
                 try {
                     statement.close();
                 } catch (SQLException e) {
                     /* Do some exception-logging here. */
                     e.printStackTrace();
                 }
+            }
+        }
     }
 
     /**
      * Closes the provided Connections
-     * 
+     *
      * @param connections
      *            Connections that should be closed
      */
     public static void close(Connection... connections) {
-
         if (connections == null)
             return;
 
-        for (Connection connection : connections)
-            if (connection != null)
+        for (Connection connection : connections) {
+            if (connection != null) {
                 try {
                     connection.close();
                 } catch (SQLException e) {
                     /* Do some exception-logging here. */
                     e.printStackTrace();
                 }
+            }
+        }
     }
 }
 

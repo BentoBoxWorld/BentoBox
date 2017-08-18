@@ -43,15 +43,15 @@ public class IslandCommand extends AbstractCommand {
      */
     private final BiMap<UUID, UUID> inviteList = HashBiMap.create();
     // The time a player has to wait until they can reset their island again
-    private HashMap<UUID, Long> resetWaitTime = new HashMap<UUID, Long>();
-    protected Set<UUID> leavingPlayers = new HashSet<UUID>();
+    private HashMap<UUID, Long> resetWaitTime = new HashMap<>();
+    protected Set<UUID> leavingPlayers = new HashSet<>();
 
     public IslandCommand(BSkyBlock plugin) {
         super(plugin, Settings.ISLANDCOMMAND, new String[]{"is"}, true);
         plugin.getCommand(Settings.ISLANDCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ISLANDCOMMAND).setTabCompleter(this);
         this.plugin = plugin;
-    }    
+    }
 
     @Override
     public CanUseResp canUse(CommandSender sender) {
@@ -466,9 +466,7 @@ public class IslandCommand extends AbstractCommand {
                             }
                         }
                         // Do some sanity checking
-                        if (maxSize < 1) {
-                            maxSize = 1;
-                        }
+                        if (maxSize < 1) maxSize = 1;
                     }
                     if (teamMembers.size() < maxSize) {
                         Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("invite.youCanInvite").replace("[number]", String.valueOf(maxSize - teamMembers.size())));
@@ -513,7 +511,7 @@ public class IslandCommand extends AbstractCommand {
                 if (!getPlayers().hasIsland(playerUUID)) {
                     // If the player is in a team, they are not the leader
                     if (getPlayers().inTeam(playerUUID)) {
-                        return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.not-leader")); 
+                        return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.not-leader"));
                     }
                     return new CanUseResp(ChatColor.RED + getLocale(sender).get("invite.error.YouMustHaveIslandToInvite"));
                 }
@@ -580,9 +578,7 @@ public class IslandCommand extends AbstractCommand {
                             }
                         }
                         // Do some sanity checking
-                        if (maxSize < 1) {
-                            maxSize = 1;
-                        }
+                        if (maxSize < 1) maxSize = 1;
                     }
                     if (teamMembers.size() < maxSize) {
                         // If that player already has an invite out then retract it.
@@ -648,7 +644,6 @@ public class IslandCommand extends AbstractCommand {
                 } else {
                     Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("island.help.invite"));
                 }
-                return;
             }
 
             @Override
@@ -687,18 +682,15 @@ public class IslandCommand extends AbstractCommand {
                         if (Settings.leaveConfirmation && !leavingPlayers.contains(playerUUID)) {
                             leavingPlayers.add(playerUUID);
                             Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.Warning"));
-                            new BukkitRunnable() {
 
-                                @Override
-                                public void run() {
-                                    // If the player is still on the list, remove them and cancel the leave
-                                    if (leavingPlayers.contains(playerUUID)) {
-                                        leavingPlayers.remove(playerUUID);
-                                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.Canceled"));
-                                    }
+                            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                                // If the player is still on the list, remove them and cancel the leave
+                                if (leavingPlayers.contains(playerUUID)) {
+                                    leavingPlayers.remove(playerUUID);
+                                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.Canceled"));
                                 }
+                            }, Settings.leaveConfirmWait * 20L);
 
-                            }.runTaskLater(plugin, Settings.leaveConfirmWait * 20L);
                             return;
                         }
                         // Remove from confirmation list
@@ -804,7 +796,7 @@ public class IslandCommand extends AbstractCommand {
                 if (!getIslands().hasIsland(prospectiveTeamLeaderUUID)) {
                     Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.InvalidInvite"));
                     inviteList.remove(playerUUID);
-                    return;  
+                    return;
                 }
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Invite is valid");
@@ -831,7 +823,7 @@ public class IslandCommand extends AbstractCommand {
                 setResetWaitTime(player);
 
                 if (Settings.teamJoinDeathReset) {
-                    getPlayers().setDeaths(player.getUniqueId(), 0);
+                    getPlayers().setDeaths(playerUUID, 0);
                 }
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Setting home. team leader's home is " + getPlayers().getHomeLocation(prospectiveTeamLeaderUUID));
@@ -1404,7 +1396,7 @@ public class IslandCommand extends AbstractCommand {
      * @param player
      */
     private void setResetWaitTime(final Player player) {
-        resetWaitTime.put(player.getUniqueId(), Long.valueOf(Calendar.getInstance().getTimeInMillis() + Settings.resetWait * 1000));
+        resetWaitTime.put(player.getUniqueId(), Calendar.getInstance().getTimeInMillis() + Settings.resetWait * 1000);
     }
 
     /**

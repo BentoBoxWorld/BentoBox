@@ -29,7 +29,7 @@ public class SchematicsMgr {
         this.plugin = plugin;
         loadSchematics();
     }
-    
+
     /**
      * Loads schematics. If the default
      * island is not included, it will be made
@@ -90,7 +90,7 @@ public class SchematicsMgr {
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not load default nether schematic!");
                     e.printStackTrace();
-                }  
+                }
             } else {
                 plugin.getLogger().severe("Could not find default nether schematic!");
             }
@@ -130,7 +130,7 @@ public class SchematicsMgr {
                 schematics.get("nether").setUseDefaultChest(false);
             }
         }
-        
+
         // TODO: Load other settings from config.yml
     }
 
@@ -142,7 +142,7 @@ public class SchematicsMgr {
     public Schematic getSchematic(String name) {
         return schematics.get(name);
     }
-    
+
     /**
      * List schematics this player can access. If @param ignoreNoPermission is true, then only
      * schematics with a specific permission set will be checked. I.e., no common schematics will
@@ -152,7 +152,7 @@ public class SchematicsMgr {
      * @return List of schematics this player can use based on their permission level
      */
     public List<Schematic> getSchematics(Player player, boolean ignoreNoPermission) {
-        List<Schematic> result = new ArrayList<Schematic>();
+        List<Schematic> result = new ArrayList<>();
         // Find out what schematics this player can choose from
         //Bukkit.getLogger().info("DEBUG: Checking schematics for " + player.getName());
         for (Schematic schematic : schematics.values()) {
@@ -175,14 +175,7 @@ public class SchematicsMgr {
             }
         }
         // Sort according to order
-        Collections.sort(result, new Comparator<Schematic>() {
-
-            @Override
-            public int compare(Schematic o1, Schematic o2) {
-                return ((o2.getOrder() < o1.getOrder()) ? 1 : -1);
-            }
-
-        });
+        Collections.sort(result, (s1, s2) -> (s2.getOrder() < s1.getOrder()) ? 1 : -1);
         return result;
     }
 

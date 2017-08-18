@@ -41,7 +41,7 @@ public class JoinLeaveListener implements Listener {
         if (playerUUID == null) {
             return;
         }
-        if (plugin.getPlayers().isAKnownPlayer(playerUUID)) {
+        if (plugin.getPlayers().isKnown(playerUUID)) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: known player");
             // Load player

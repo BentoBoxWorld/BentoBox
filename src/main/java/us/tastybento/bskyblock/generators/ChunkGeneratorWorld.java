@@ -1,4 +1,4 @@
- package us.tastybento.bskyblock.generators;
+package us.tastybento.bskyblock.generators;
 
 import java.util.Arrays;
 import java.util.List;
@@ -35,7 +35,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < Settings.seaHeight; y++) {
-                        setBlock(result, x, y, z, (byte) Material.STATIONARY_WATER.getId()); 
+                        setBlock(result, x, y, z, (byte) Material.STATIONARY_WATER.getId());
                     }
                 }
             }
@@ -111,33 +111,33 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
                     if (r > 0.5D) {
                         // Have blobs of glowstone
                         switch (random.nextInt(4)) {
-                        case 1:
-                            // Single block
-                            setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
-                            if (x < 14 && z < 14) {
-                                setBlock(result, x + 1, (maxHeight - 8), z + 1, (byte) Material.GLOWSTONE.getId());
-                                setBlock(result, x + 2, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
-                                setBlock(result, x + 1, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
-                                setBlock(result, x + 1, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
-                            }
-                            break;
-                        case 2:
-                            // Stalatite
-                            for (int i = 0; i < random.nextInt(10); i++) {
-                                setBlock(result, x, (maxHeight - 8 - i), z, (byte) Material.GLOWSTONE.getId());
-                            }
-                        case 3:
-                            setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
-                            if (x > 3 && z > 3) {
-                                for (int xx = 0; xx < 3; xx++) {
-                                    for (int zz = 0; zz < 3; zz++) {
-                                        setBlock(result, x - xx, (maxHeight - 8 - random.nextInt(2)), z - xx, (byte) Material.GLOWSTONE.getId());
+                            case 1:
+                                // Single block
+                                setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
+                                if (x < 14 && z < 14) {
+                                    setBlock(result, x + 1, (maxHeight - 8), z + 1, (byte) Material.GLOWSTONE.getId());
+                                    setBlock(result, x + 2, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
+                                    setBlock(result, x + 1, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
+                                    setBlock(result, x + 1, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
+                                }
+                                break;
+                            case 2:
+                                // Stalatite
+                                for (int i = 0; i < random.nextInt(10); i++) {
+                                    setBlock(result, x, (maxHeight - 8 - i), z, (byte) Material.GLOWSTONE.getId());
+                                }
+                            case 3:
+                                setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
+                                if (x > 3 && z > 3) {
+                                    for (int xx = 0; xx < 3; xx++) {
+                                        for (int zz = 0; zz < 3; zz++) {
+                                            setBlock(result, x - xx, (maxHeight - 8 - random.nextInt(2)), z - xx, (byte) Material.GLOWSTONE.getId());
+                                        }
                                     }
                                 }
-                            }
-                            break;
-                        default:
-                            setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
+                                break;
+                            default:
+                                setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
                         }
                         setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
                     } else {

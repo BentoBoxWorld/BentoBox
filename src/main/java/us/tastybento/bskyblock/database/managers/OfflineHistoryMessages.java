@@ -22,7 +22,7 @@ public class OfflineHistoryMessages {
     private BSBDatabase database;
 
     // Offline Messages
-    private HashMap<UUID, List<String>> messages = new HashMap<UUID, List<String>>();
+    private HashMap<UUID, List<String>> messages = new HashMap<>();
 
     public OfflineHistoryMessages(BSkyBlock plugin){
         this.plugin = plugin;
@@ -34,16 +34,14 @@ public class OfflineHistoryMessages {
     }
 
     public void save(boolean async){
-        if(async){
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    //database.saveOfflineHistoryMessages(messages);
-                }
-            });
-        } else {
+        Runnable save = () -> {
             //database.saveOfflineHistoryMessages(messages);
+        };
+
+        if(async){
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+        } else {
+            save.run();
         }
     }
 
@@ -63,7 +61,7 @@ public class OfflineHistoryMessages {
         TEAM,
         ISLAND,
         DEATH,
-        PERSONAL;
+        PERSONAL
     }
 
     /**
@@ -115,7 +113,7 @@ public class OfflineHistoryMessages {
             if (playerMessages != null) {
                 playerMessages.add(message);
             } else {
-                playerMessages = new ArrayList<String>(Arrays.asList(message));
+                playerMessages = new ArrayList<>(Arrays.asList(message));
             }
             messages.put(playerUUID, playerMessages);
         }

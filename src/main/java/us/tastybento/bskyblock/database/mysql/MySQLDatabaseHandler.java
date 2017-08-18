@@ -36,11 +36,11 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
 
 /**
- * 
+ *
  * Class that inserts a <T> into the corresponding database-table.
- * 
+ *
  * @author tastybento
- * 
+ *
  * @param <T>
  */
 public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
@@ -54,7 +54,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     private static HashMap<String, String> mySQLmapping;
     {
-        mySQLmapping = new HashMap<String, String>();
+        mySQLmapping = new HashMap<>();
         mySQLmapping.put(boolean.class.getTypeName(), "BOOL");
         mySQLmapping.put(byte.class.getTypeName(), "TINYINT");
         mySQLmapping.put(short.class.getTypeName(), "SMALLINT");
@@ -106,10 +106,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         try {
             createSchema();
         } catch (IntrospectionException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         }
     }
@@ -169,7 +167,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             sql += " PRIMARY KEY (uniqueId))";
             //plugin.getLogger().info("DEBUG: SQL string = " + sql);
             // Prepare and execute the database statements
-            pstmt = connection.prepareStatement(sql.toString());
+            pstmt = connection.prepareStatement(sql);
             pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -293,12 +291,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     @Override
     protected String createDeleteQuery() {
-        return "DELETE FROM [table_name] WHERE uniqueId = ?";        
+        return "DELETE FROM [table_name] WHERE uniqueId = ?";
     }
 
     /**
      * Inserts a <T> into the corresponding database-table
-     *  
+     *
      * @param instance <T> that should be inserted into the corresponding database-table. Must extend DataObject.
      * @throws SQLException
      * @throws SecurityException
@@ -307,16 +305,16 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws InvocationTargetException
-     * @throws NoSuchMethodException 
+     * @throws NoSuchMethodException
      */
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#insertObject(java.lang.Object)
      */
     @Override
     public void saveObject(T instance) throws SQLException,
-    SecurityException, IllegalArgumentException,
-    InstantiationException, IllegalAccessException,
-    IntrospectionException, InvocationTargetException, NoSuchMethodException {
+            SecurityException, IllegalArgumentException,
+            InstantiationException, IllegalAccessException,
+            IntrospectionException, InvocationTargetException, NoSuchMethodException {
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -437,7 +435,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param clazz - the known class of value
      * @return the object to write to the database
      */
-    private Object serialize(Object value, Class<? extends Object> clazz) { 
+    private Object serialize(Object value, Class<? extends Object> clazz) {
         //plugin.getLogger().info("DEBUG: serialize - class is " + clazz.getTypeName());
         if (value == null) {
             // If the value is null to start, return null as a string
@@ -446,22 +444,22 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Types that need to be serialized
         // TODO - add others, like Date, Timestamp, etc.
         if (clazz.equals(UUID.class)) {
-            value = ((UUID)value).toString();
-        } 
+            value = value.toString();
+        }
         else
             // Bukkit Types
             if (clazz.equals(Location.class)) {
                 // Serialize
                 value = Util.getStringLocation(((Location)value));
             } else
-                if (clazz.equals(World.class)) {
-                    // Serialize - get the name
-                    value = ((World)value).getName();            
-                } else
-                    if (clazz.getSuperclass() != null && clazz.getSuperclass().equals(Enum.class)) {
-                        //Custom enums are a child of the Enum class. Just get the names of each one.
-                        value = ((Enum<?>)value).name();
-                    }
+            if (clazz.equals(World.class)) {
+                // Serialize - get the name
+                value = ((World)value).getName();
+            } else
+            if (clazz.getSuperclass() != null && clazz.getSuperclass().equals(Enum.class)) {
+                //Custom enums are a child of the Enum class. Just get the names of each one.
+                value = ((Enum<?>)value).name();
+            }
         if (value == null) {
             // The value could become null from the above checks
             return "null";
@@ -473,10 +471,10 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     /**
      * Creates a list of <T>s filled with values from the corresponding
      * database-table
-     * 
+     *
      * @return List of <T>s filled with values from the corresponding
      *         database-table
-     * 
+     *
      * @throws SQLException
      * @throws SecurityException
      * @throws IllegalArgumentException
@@ -484,13 +482,13 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws InvocationTargetException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     @Override
     public List<T> loadObjects() throws SQLException,
-    SecurityException, IllegalArgumentException,
-    InstantiationException, IllegalAccessException,
-    IntrospectionException, InvocationTargetException, ClassNotFoundException {
+            SecurityException, IllegalArgumentException,
+            InstantiationException, IllegalAccessException,
+            IntrospectionException, InvocationTargetException, ClassNotFoundException {
 
         Connection connection = null;
         Statement statement = null;
@@ -515,8 +513,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     protected T loadObject(String uniqueId) throws InstantiationException,
-    IllegalAccessException, IllegalArgumentException,
-    InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
+            IllegalAccessException, IllegalArgumentException,
+            InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -543,15 +541,15 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
 
     /**
-     * 
+     *
      * Creates a list of <T>s filled with values from the provided ResultSet
-     * 
+     *
      * @param resultSet
      *            ResultSet that contains the result of the
      *            database-select-query
-     * 
+     *
      * @return List of <T>s filled with values from the provided ResultSet
-     * 
+     *
      * @throws SecurityException
      * @throws IllegalArgumentException
      * @throws SQLException
@@ -559,7 +557,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws IllegalAccessException
      * @throws IntrospectionException
      * @throws InvocationTargetException
-     * @throws ClassNotFoundException 
+     * @throws ClassNotFoundException
      */
     @SuppressWarnings("unchecked")
     private List<T> createObjects(ResultSet resultSet)
@@ -608,7 +606,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // Set the unique ID
                     collStatement.setObject(1, uniqueId);
                     //plugin.getLogger().info("DEBUG: collStatement = " + collStatement.toString());
-                    ResultSet collectionResultSet = collStatement.executeQuery();                   
+                    ResultSet collectionResultSet = collStatement.executeQuery();
                     //plugin.getLogger().info("DEBUG: collectionResultSet = " + collectionResultSet.toString());
                     // Do single dimension types (set and list)
                     if (propertyDescriptor.getPropertyType().equals(Set.class)) {
@@ -689,7 +687,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @return the deserialized value
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Object deserialize(Object value, Class<? extends Object> clazz) { 
+    private Object deserialize(Object value, Class<? extends Object> clazz) {
         //plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getTypeName());
         if (value instanceof String && value.equals("null")) {
             // If the value is null as a string, return null 
@@ -777,7 +775,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         } finally {
             // Close properly
             MySQLDatabaseResourceCloser.close(preparedStatement);
-        }        
+        }
 
     }
 
@@ -797,7 +795,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             resultSet = preparedStatement.executeQuery();
             return resultSet.next();
         } catch (SQLException e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
         } finally {
             MySQLDatabaseResourceCloser.close(resultSet);

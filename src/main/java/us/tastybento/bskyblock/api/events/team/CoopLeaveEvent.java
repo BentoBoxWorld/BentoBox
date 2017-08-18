@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * Fired when a player leaves an island coop
- * 
+ *
  * @author tastybento
  * @since 1.0
  */
@@ -26,7 +26,7 @@ public class CoopLeaveEvent extends IslandEvent {
         this.player = player;
         this.expeller = expeller;
     }
-    
+
     /**
      * The UUID of the player who left
      * @return the player who left the coop
@@ -34,7 +34,7 @@ public class CoopLeaveEvent extends IslandEvent {
     public UUID getPlayer() {
         return player;
     }
-    
+
     /**
      * @return the expelling player
      */

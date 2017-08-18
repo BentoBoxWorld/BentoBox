@@ -9,7 +9,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * Fired when a player enters an island's area
- * 
+ *
  * @author tastybento
  * @since 1.0
  */

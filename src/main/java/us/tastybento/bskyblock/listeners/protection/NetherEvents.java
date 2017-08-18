@@ -36,7 +36,7 @@ public class NetherEvents implements Listener {
     /**
      * This handles non-player portal use
      * Currently disables portal use by entities
-     * 
+     *
      * @param event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -84,7 +84,7 @@ public class NetherEvents implements Listener {
         }
         // Vehicles
         if (event.getEntity() instanceof Vehicle) {
-            Vehicle vehicle = (Vehicle)event.getEntity();   
+            Vehicle vehicle = (Vehicle)event.getEntity();
             vehicle.eject();
         }
         new SafeSpotTeleport(plugin, event.getEntity(), dest);
@@ -95,23 +95,19 @@ public class NetherEvents implements Listener {
 
     /**
      * Function to check proximity to nether spawn location
-     * 
+     *
      * @param player
      * @return true if in the spawn area, false if not
      */
     private boolean awayFromSpawn(Player player) {
         Vector p = player.getLocation().toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = player.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
-        if (spawn.distanceSquared(p) < (Settings.netherSpawnRadius * Settings.netherSpawnRadius)) {
-            return false;
-        } else {
-            return true;
-        }
+        return spawn.distanceSquared(p) < (Settings.netherSpawnRadius * Settings.netherSpawnRadius);
     }
 
     /**
      * Prevents blocks from being broken
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -136,7 +132,7 @@ public class NetherEvents implements Listener {
 
     /**
      * Prevents placing of blocks
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW)
@@ -175,7 +171,7 @@ public class NetherEvents implements Listener {
 
     /**
      * Prevent the Nether spawn from being blown up
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -203,7 +199,7 @@ public class NetherEvents implements Listener {
 
     /**
      * Converts trees to gravel and glowstone
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

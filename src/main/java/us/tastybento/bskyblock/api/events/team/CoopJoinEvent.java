@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * Fired when a player joins an island team as a coop member
- * 
+ *
  * @author tastybento
  * @since 1.0
  */
@@ -24,7 +24,7 @@ public class CoopJoinEvent extends IslandEvent {
         this.player = player;
         this.inviter = inviter;
     }
-    
+
     /**
      * The UUID of the player who were coop'd
      * @return the coop'd
@@ -32,7 +32,7 @@ public class CoopJoinEvent extends IslandEvent {
     public UUID getPlayer() {
         return player;
     }
-    
+
     /**
      * The UUID of the player who invited the player to join the island
      * @return the inviter

@@ -9,7 +9,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  * This event is fired when an island is going to be unlocked.
  * <p>
  * Cancelling this event will result in keeping the island locked.
- * 
+ *
  * @author Poslovitch
  * @since 1.0
  */

@@ -68,33 +68,33 @@ public class BSBLocale {
         plugin.getLogger().severe(reference + " not found in " + languageTag + " or default lang " + Settings.defaultLanguage);
         return reference; // Return reference for debug purposes, like for the mods.
     }
-    
+
     /**
      * Returns the locale language
      * @return the locale language
      */
     public String getLanguageName(){
         if(localeObject == null) return "unknown";
-        
+
         return localeObject.getDisplayLanguage(localeObject);
     }
-    
+
     /**
      * Returns the locale country
      * @return the locale country
      */
     public String getCountryName(){
         if(localeObject == null) return "unknown";
-        
+
         return localeObject.getDisplayCountry(localeObject);
     }
-    
+
     /**
      * Returns the locale identifier (e.g: en-GB)
      * @return the locale ID
      */
     public String getLocaleId(){
-        return this.localeObject.toLanguageTag();       
+        return this.localeObject.toLanguageTag();
     }
 
 }

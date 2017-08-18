@@ -5,7 +5,7 @@ import org.bukkit.event.HandlerList;
 
 /**
  * Fired when BSkyBlock is ready to play and all files are loaded
- * 
+ *
  * @author tastybento
  * @since 1.0
  */

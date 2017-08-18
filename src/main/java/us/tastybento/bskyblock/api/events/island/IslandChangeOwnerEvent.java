@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * Fired when the owner of an island changes
- * 
+ *
  * @author Poslovitch
  * @version 1.0
  */

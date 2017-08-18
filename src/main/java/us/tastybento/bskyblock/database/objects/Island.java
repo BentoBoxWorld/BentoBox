@@ -22,7 +22,7 @@ import us.tastybento.bskyblock.util.Util;
  * Stores all the info about an island
  * Managed by IslandsManager
  * Responsible for team information as well.
- * 
+ *
  * @author Tastybento
  * @author Poslovitch
  */
@@ -42,19 +42,18 @@ public class Island extends DataObject {
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
-
     }
 
     /**
      * Island Guard Settings flags
      * Covers island, spawn and system settings
-     * 
+     *
      * @author Tastybento
      */
     public enum SettingsFlag{
-        
+
         ACID_DAMAGE,
-        
+
         // Can use Anvil
         ANVIL,
 
@@ -78,7 +77,7 @@ public class Island extends DataObject {
 
         // Can use buttons
         BUTTON,
-        
+
         // Can empty or fill buckets
         BUCKET,
 
@@ -108,7 +107,7 @@ public class Island extends DataObject {
 
         // Can open doors
         DOOR,
-        
+
         // Can open trapdoors, iron or wood
         TRAPDOOR,
 
@@ -144,7 +143,7 @@ public class Island extends DataObject {
 
         // Can open gates
         GATE,
-        
+
         // Can hurt animals (e.g. cows) - Villagers excluded
         HURT_ANIMALS,
 
@@ -207,16 +206,16 @@ public class Island extends DataObject {
 
         // Can activate pressure plates
         PRESSURE_PLATE,
-        
+
         // Can do PvP in the overworld
         PVP_OVERWORLD,
 
         // Can do PvP in the nether
         PVP_NETHER,
-        
+
         // Can do PvP in the end
         PVP_END,
-        
+
         // Can interact with redstone items (repeaters, comparators)
         REDSTONE,
 
@@ -240,7 +239,7 @@ public class Island extends DataObject {
 
         // Can throw splash potions
         THROW_SPLASH_POTIONS,
-        
+
         // Can throw lingering potions
         THROW_LINGERING_POTIONS,
 
@@ -249,10 +248,10 @@ public class Island extends DataObject {
 
         // Allow TNT to destroy blocks
         TNT_GRIEFING,
-        
+
         // Allow TNTs to blow up any chest or inventory block (only if TNT_griefing is enabled)
         TNT_BLOW_UP_CHEST,
-        
+
         // Can trade with villagers
         VILLAGER_TRADING
     }
@@ -285,7 +284,6 @@ public class Island extends DataObject {
 
     // Time parameters
     private long createdDate;
-
     private long updatedDate;
 
     //// Team ////
@@ -293,27 +291,27 @@ public class Island extends DataObject {
     private UUID owner;
 
     // Members (use set because each value must be unique)
-    private Set<UUID> members = new HashSet<UUID>();
+    private Set<UUID> members = new HashSet<>();
 
     // Trustees
-    private Set<UUID> trustees = new HashSet<UUID>();
+    private Set<UUID> trustees = new HashSet<>();
     // Coops
-    private Set<UUID> coops = new HashSet<UUID>();
+    private Set<UUID> coops = new HashSet<>();
 
     // Banned players
-    private Set<UUID> banned = new HashSet<UUID>();
+    private Set<UUID> banned = new HashSet<>();
     //// State ////
     private boolean locked = false;
     private boolean spawn = false;
     private boolean purgeProtected = false;
     //// Protection ////
-    private HashMap<SettingsFlag, Boolean> flags = new HashMap<SettingsFlag, Boolean>();
+    private HashMap<SettingsFlag, Boolean> flags = new HashMap<>();
 
     private int levelHandicap;
 
     private Location spawnPoint;
 
-    public Island() {};
+    public Island() {}
 
     public Island(Location location, UUID owner, int protectionRange) {
         this.members.add(owner);
@@ -336,8 +334,8 @@ public class Island extends DataObject {
     public void addMember(UUID playerUUID) {
         members.add(playerUUID);
         banned.remove(playerUUID);
-
     }
+
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
@@ -365,25 +363,28 @@ public class Island extends DataObject {
     public Set<UUID> getBanned() {
         return banned;
     }
+
     /**
      * @return the center Location
      */
     public Location getCenter(){
         return center;
     }
+
     /**
      * @return the coop players of the island
      */
     public Set<UUID> getCoops(){
         return coops;
     }
+
     /**
      * @return the date when the island was created
      */
     public long getCreatedDate(){
         return createdDate;
     }
-    
+
     /**
      * Get the Island Guard flag status
      * @param flag
@@ -408,15 +409,17 @@ public class Island extends DataObject {
     public HashMap<SettingsFlag, Boolean> getFlags() {
         return flags;
     }
+
     /**
      * @return the members of the island (owner included)
      */
     public Set<UUID> getMembers(){
         if (members == null) {
-            members = new HashSet<UUID>();
+            members = new HashSet<>();
         }
         return members;
     }
+
     /**
      * @return the minProtectedX
      */
@@ -449,15 +452,15 @@ public class Island extends DataObject {
      * @return the island display name or the owner's name if none is set
      */
     public String getName() {
-       if (name != null) {
-           return name;
-       }
-       if (owner != null) {
-           OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(owner);
-           name = player.getName();
-           return player.getName();
-       }
-       return "";
+        if (name != null) {
+            return name;
+        }
+        if (owner != null) {
+            OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(owner);
+            name = player.getName();
+            return player.getName();
+        }
+        return "";
     }
 
     /**
@@ -569,7 +572,7 @@ public class Island extends DataObject {
 
     /**
      * Checks if a location is within this island's protected area
-     * 
+     *
      * @param target
      * @return true if it is, false if not
      */
@@ -789,7 +792,7 @@ public class Island extends DataObject {
      */
     public void toggleFlag(SettingsFlag flag){
         if(flags.containsKey(flag)) {
-            flags.put(flag, (flags.get(flag)) ? false : true);
+            flags.put(flag, (flags.get(flag)));
         }
     }
 
@@ -827,7 +830,7 @@ public class Island extends DataObject {
      * a tile entity.
      */
     public int getTileEntityCount(Material material, World world) {
-        int result = 0; 
+        int result = 0;
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
@@ -860,7 +863,7 @@ public class Island extends DataObject {
                         result++;
                     }
                 }
-            }  
+            }
         }
         return result;
     }
@@ -882,6 +885,6 @@ public class Island extends DataObject {
     }
 
     public void removeMember(UUID playerUUID) {
-        this.members.remove(playerUUID);    
+        this.members.remove(playerUUID);
     }
 }

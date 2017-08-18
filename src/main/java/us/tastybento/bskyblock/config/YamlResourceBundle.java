@@ -14,7 +14,6 @@
  */
 package us.tastybento.bskyblock.config;
 
-
 import static java.util.Arrays.asList;
 import static java.util.Collections.enumeration;
 import static java.util.Collections.unmodifiableList;
@@ -86,14 +85,14 @@ public class YamlResourceBundle extends ResourceBundle {
                         e -> e.getKey(),
                         e -> e.getValue(),
                         (oldValue, newValue) -> newValue
-                        ));
+                ));
     }
 
     /**
      * Flatten yaml tree structure.
      *
      * @param entry {@link Entry} of yaml tree.
-     * @return {@link Stream} of entries.
+     * @return {@link Stream} of entries
      */
     private static Stream<Entry<String, Object>> flattenYamlTree(Entry<?, ?> entry) {
         String key = entry.getKey().toString();
@@ -110,8 +109,8 @@ public class YamlResourceBundle extends ResourceBundle {
             return Stream.concat(
                     Stream.of(new SimpleImmutableEntry<>(key, value)),
                     valueAsList.stream()
-                    .map(v -> new SimpleImmutableEntry<>(key + "[" + index.getAndIncrement() + "]", v))
-                    );
+                            .map(v -> new SimpleImmutableEntry<>(key + "[" + index.getAndIncrement() + "]", v))
+            );
         }
         return Stream.of(new SimpleImmutableEntry<>(key, value));
     }
@@ -159,8 +158,8 @@ public class YamlResourceBundle extends ResourceBundle {
         /** {@inheritDoc} */
         @Override
         public ResourceBundle newBundle(String baseName,
-                Locale locale, String format, ClassLoader loader, boolean reload)
-                        throws IllegalAccessException, InstantiationException, IOException {
+                                        Locale locale, String format, ClassLoader loader, boolean reload)
+                throws IllegalAccessException, InstantiationException, IOException {
             if (!getFormats(baseName).contains(format)) {
                 return null;
             }

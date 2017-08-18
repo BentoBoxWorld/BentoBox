@@ -12,7 +12,7 @@ public abstract class BSBDatabase {
 
     /**
      * Gets the type of database being used. Currently supported options are
-     * FLATFILE, MYSQL and SQLITE. Default is FLATFILE
+     * FLATFILE and MYSQL. Default is FLATFILE
      * @return Database type
      */
     public static BSBDatabase getDatabase(){

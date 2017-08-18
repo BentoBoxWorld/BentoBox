@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 /**
  * This event is fired when a player resets an island
- * 
+ *
  * @author tastybento
  * @since 1.0
  */

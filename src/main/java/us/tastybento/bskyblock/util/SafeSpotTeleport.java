@@ -20,7 +20,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 /**
  * A class that calculates finds a safe spot asynchronously and then teleports the player there. 
  * @author tastybento
- * 
+ *
  */
 public class SafeSpotTeleport {
 
@@ -56,7 +56,7 @@ public class SafeSpotTeleport {
      */
     public SafeSpotTeleport(final BSkyBlock plugin, final Entity player, final Location l) {
         new SafeSpotTeleport(plugin, player, l, 1, "", false);
-    } 
+    }
     /**
      * Teleport to a safe spot on an island
 
@@ -88,7 +88,7 @@ public class SafeSpotTeleport {
                 for (int z = island.getMinProtectedZ() /16; z <= (island.getMinProtectedZ() + island.getProtectionRange() - 1)/16; z++) {
                     // This includes the center spots again, so is not as efficient...
                     chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
-                }  
+                }
             }
             //plugin.getLogger().info("DEBUG: size of chunk ss = " + chunkSnapshot.size());
             final List<ChunkSnapshot> finalChunk = chunkSnapshot;
@@ -223,23 +223,20 @@ public class SafeSpotTeleport {
                                     if (player.getGameMode().equals(GameMode.SPECTATOR)) {
                                         player.setGameMode(GameMode.SURVIVAL);
                                     }
-                                }   
+                                }
                             }});
                     } else {
                         // We did not find a spot
-                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                //plugin.getLogger().info("DEBUG: safe spot not found");
-                                if (entity instanceof Player) {
-                                    if (!failureMessage.isEmpty()) {
-                                        Util.sendMessage(((Player)entity), failureMessage);
-                                    } else {
-                                        Util.sendMessage(((Player)entity), ChatColor.RED + "Warp not safe");
-                                    }
+                        plugin.getServer().getScheduler().runTask(plugin, () -> {
+                            //plugin.getLogger().info("DEBUG: safe spot not found");
+                            if (entity instanceof Player) {
+                                if (!failureMessage.isEmpty()) {
+                                    Util.sendMessage(entity, failureMessage);
+                                } else {
+                                    Util.sendMessage(entity, ChatColor.RED + "Warp not safe");
                                 }
-                            }});
+                            }
+                        });
                     }
                 }
 
@@ -249,7 +246,7 @@ public class SafeSpotTeleport {
                  * @param x
                  * @param y
                  * @param z
-                 * @param worldHeight 
+                 * @param worldHeight
                  * @return
                  */
                 @SuppressWarnings("deprecation")
@@ -262,44 +259,44 @@ public class SafeSpotTeleport {
                             // Now there is a chance that this is a safe spot
                             // Check for safe ground
                             Material mat = Material.getMaterial(type);
-                            if (!mat.toString().contains("FENCE") 
+                            if (!mat.toString().contains("FENCE")
                                     && !mat.toString().contains("DOOR")
                                     && !mat.toString().contains("GATE")
                                     && !mat.toString().contains("PLATE")) {
                                 switch (mat) {
-                                // Unsafe
-                                case ANVIL:
-                                case BARRIER:
-                                case BOAT:
-                                case CACTUS:
-                                case DOUBLE_PLANT:
-                                case ENDER_PORTAL:
-                                case FIRE:
-                                case FLOWER_POT:
-                                case LADDER:
-                                case LAVA:
-                                case LEVER:
-                                case LONG_GRASS:
-                                case PISTON_EXTENSION:
-                                case PISTON_MOVING_PIECE:
-                                case PORTAL:
-                                case SIGN_POST:
-                                case SKULL:
-                                case STANDING_BANNER:
-                                case STATIONARY_LAVA:
-                                case STATIONARY_WATER:
-                                case STONE_BUTTON:
-                                case TORCH:
-                                case TRIPWIRE:
-                                case WATER:
-                                case WEB:
-                                case WOOD_BUTTON:
-                                    //System.out.println("Block is dangerous " + mat.toString());
-                                    break;
-                                default:
-                                    // Safe
-                                    // System.out.println("Block is safe " + mat.toString());
-                                    return true;
+                                    // Unsafe
+                                    case ANVIL:
+                                    case BARRIER:
+                                    case BOAT:
+                                    case CACTUS:
+                                    case DOUBLE_PLANT:
+                                    case ENDER_PORTAL:
+                                    case FIRE:
+                                    case FLOWER_POT:
+                                    case LADDER:
+                                    case LAVA:
+                                    case LEVER:
+                                    case LONG_GRASS:
+                                    case PISTON_EXTENSION:
+                                    case PISTON_MOVING_PIECE:
+                                    case PORTAL:
+                                    case SIGN_POST:
+                                    case SKULL:
+                                    case STANDING_BANNER:
+                                    case STATIONARY_LAVA:
+                                    case STATIONARY_WATER:
+                                    case STONE_BUTTON:
+                                    case TORCH:
+                                    case TRIPWIRE:
+                                    case WATER:
+                                    case WEB:
+                                    case WOOD_BUTTON:
+                                        //System.out.println("Block is dangerous " + mat.toString());
+                                        break;
+                                    default:
+                                        // Safe
+                                        // System.out.println("Block is safe " + mat.toString());
+                                        return true;
                                 }
                             }
                         }
@@ -308,40 +305,4 @@ public class SafeSpotTeleport {
                 }});
         }
     }
-
-    /**
-     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
-     * @return NMSAbstraction class
-     * @throws ClassNotFoundException
-     * @throws IllegalArgumentException
-     * @throws SecurityException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
-     */
-    /*
-    private NMSAbstraction checkVersion() throws ClassNotFoundException, IllegalArgumentException,
-    SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
-    NoSuchMethodException {
-	String serverPackageName = plugin.getServer().getClass().getPackage().getName();
-	String pluginPackageName = plugin.getClass().getPackage().getName();
-	String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
-	Class<?> clazz;
-	try {
-	    //plugin.getLogger().info("DEBUG: Trying " + pluginPackageName + ".nms." + version + ".NMSHandler");
-	    clazz = Class.forName(pluginPackageName + ".nms." + version + ".NMSHandler");
-	} catch (Exception e) {
-	    plugin.getLogger().info("No NMS Handler found, falling back to Bukkit API.");
-	    clazz = Class.forName(pluginPackageName + ".nms.fallback.NMSHandler");
-	}
-	//plugin.getLogger().info("DEBUG: " + serverPackageName);
-	//plugin.getLogger().info("DEBUG: " + pluginPackageName);
-	// Check if we have a NMSAbstraction implementing class at that location.
-	if (NMSAbstraction.class.isAssignableFrom(clazz)) {
-	    return (NMSAbstraction) clazz.getConstructor().newInstance();
-	} else {
-	    throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
-	}
-    }*/
 }

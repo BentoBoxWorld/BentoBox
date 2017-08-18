@@ -35,27 +35,16 @@ public class FileLister{
      * @throws IOException
      */
     public List<String> list(String folderPath, boolean checkJar) throws IOException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
 
         // Check if the folder exists
         File localeDir = new File(plugin.getDataFolder(), folderPath);
         if (localeDir.exists()) {
-            FilenameFilter ymlFilter = new FilenameFilter() {
-                @Override
-                public boolean accept(File dir, String name) {
-                    String lowercaseName = name.toLowerCase();
-                    //plugin.getLogger().info("DEBUG: filename = " + name);
-                    if (lowercaseName.endsWith(".yml")) {
-                        return true;
-                    } else {
-                        return false;
-                    }
-                }
-            };
+            FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase().endsWith(".yml");
             return Arrays.asList(localeDir.list(ymlFilter));
         } else if (checkJar) {
             // Else look in the JAR
-            File jarfile = null;
+            File jarfile;
 
             /**
              * Get the jar file from the plugin.
@@ -98,9 +87,9 @@ public class FileLister{
     }
 
     public List<String> listJar(String folderPath) throws IOException {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         // Look in the JAR
-        File jarfile = null;
+        File jarfile;
 
         /**
          * Get the jar file from the plugin.

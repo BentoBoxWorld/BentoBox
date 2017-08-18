@@ -9,7 +9,7 @@ import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.config.Settings;
 
 public class AdminCommand extends AbstractCommand {
-    
+
     BSkyBlock plugin;
 
     public AdminCommand(BSkyBlock plugin) {
@@ -26,7 +26,6 @@ public class AdminCommand extends AbstractCommand {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
-                // TODO Auto-generated method stub
                 return new CanUseResp(true);
             }
 
@@ -37,7 +36,6 @@ public class AdminCommand extends AbstractCommand {
 
             @Override
             public Set<String> tabComplete(CommandSender sender, String[] args) {
-                // TODO Auto-generated method stub
                 return null;
             }
 
@@ -46,19 +44,18 @@ public class AdminCommand extends AbstractCommand {
                 return new String[] {null, plugin.getLocale(sender).get("help.admin.delete")};
             }
         });
-        
+
     }
 
     @Override
     public CanUseResp canUse(CommandSender sender) {
-        // TODO Auto-generated method stub
         return new CanUseResp(true);
     }
 
     @Override
     public void execute(CommandSender sender, String[] args) {
 
-        
+
     }
 
 }

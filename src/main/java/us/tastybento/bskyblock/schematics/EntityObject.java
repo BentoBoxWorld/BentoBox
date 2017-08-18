@@ -33,7 +33,7 @@ public class EntityObject {
     // Items informations
     private Byte count = null;
     private Short damage = null;
-    private String id = null; 
+    private String id = null;
 
     /**
      * @return the type

@@ -8,9 +8,8 @@ public class SQLiteDatabase extends BSBDatabase{
 
     @Override
     public AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> type) {
-       // return new SQLLiteDatabaseHandler<Island>(plugin, Island.class, new FlatFileDatabaseConnecter(plugin, null));
+        // return new SQLLiteDatabaseHandler<Island>(plugin, Island.class, new FlatFileDatabaseConnecter(plugin, null));
         return null;
     }
-
 
 }

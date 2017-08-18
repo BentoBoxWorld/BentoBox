@@ -25,7 +25,7 @@ import us.tastybento.bskyblock.util.Util;
 
 /**
  * This class manages flying mobs. If they exist the spawned island's limits they will be removed.
- * 
+ *
  * @author tastybento
  *
  */
@@ -39,38 +39,35 @@ public class FlyingMobEvents implements Listener {
      */
     public FlyingMobEvents(BSkyBlock plugin) {
         this.plugin = plugin;
-        this.mobSpawnInfo = new WeakHashMap<Entity, Island>();
-        new BukkitRunnable() {
+        this.mobSpawnInfo = new WeakHashMap<>();
 
-            public void run() {
-                //Bukkit.getLogger().info("DEBUG: checking - mobspawn size = " + mobSpawnInfo.size());
-                Iterator<Entry<Entity, Island>> it = mobSpawnInfo.entrySet().iterator();
-                while (it.hasNext()) {
-                    Entry<Entity, Island> entry = it.next();
-                    if (entry.getKey() == null) {
-                        //Bukkit.getLogger().info("DEBUG: removing null entity");
-                        it.remove();
-                    } else {
-                        if (entry.getKey() instanceof LivingEntity) {
-                            if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
-                                //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
-                                it.remove();
-                                // Kill mob
-                                LivingEntity mob = (LivingEntity)entry.getKey();
-                                mob.setHealth(0);
-                                entry.getKey().remove();
-                            } else {
-                                //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
-                            }
-                        } else {
-                            // Not living entity
+        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            //Bukkit.getLogger().info("DEBUG: checking - mobspawn size = " + mobSpawnInfo.size());
+            Iterator<Entry<Entity, Island>> it = mobSpawnInfo.entrySet().iterator();
+            while (it.hasNext()) {
+                Entry<Entity, Island> entry = it.next();
+                if (entry.getKey() == null) {
+                    //Bukkit.getLogger().info("DEBUG: removing null entity");
+                    it.remove();
+                } else {
+                    if (entry.getKey() instanceof LivingEntity) {
+                        if (!entry.getValue().inIslandSpace(entry.getKey().getLocation())) {
+                            //Bukkit.getLogger().info("DEBUG: removing entity outside of island");
                             it.remove();
+                            // Kill mob
+                            LivingEntity mob = (LivingEntity)entry.getKey();
+                            mob.setHealth(0);
+                            entry.getKey().remove();
+                        } else {
+                            //Bukkit.getLogger().info("DEBUG: entity " + entry.getKey().getName() + " is in island space");
                         }
+                    } else {
+                        // Not living entity
+                        it.remove();
                     }
-                }               
+                }
             }
-
-        }.runTaskTimer(plugin, 20L, 20L);
+        }, 20L, 20L);
     }
 
     /**
@@ -108,12 +105,12 @@ public class FlyingMobEvents implements Listener {
         if (e.getEntity() == null || !Util.inWorld(e.getEntity())) {
             return;
         }
-        if (mobSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
+        if (mobSpawnInfo.containsKey(e.getEntity())) {
             // We know about this mob
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: We know about this mob");
             }
-            if (!mobSpawnInfo.get(e.getEntity().getUniqueId()).inIslandSpace(e.getLocation())) {
+            if (!mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getLocation())) {
                 // Cancel the explosion and block damage
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: cancel flying mob explosion");
@@ -140,7 +137,7 @@ public class FlyingMobEvents implements Listener {
         if (e.getEntityType() == EntityType.WITHER) {
             //plugin.getLogger().info("DEBUG: Wither");
             // Check the location
-            if (mobSpawnInfo.containsKey(e.getEntity().getUniqueId())) {
+            if (mobSpawnInfo.containsKey(e.getEntity())) {
                 // We know about this wither
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: We know about this wither");
@@ -163,12 +160,12 @@ public class FlyingMobEvents implements Listener {
                 //plugin.getLogger().info("DEBUG: shooter is wither");
                 Wither wither = (Wither)projectile.getShooter();
                 // Check the location
-                if (mobSpawnInfo.containsKey(wither.getUniqueId())) {
+                if (mobSpawnInfo.containsKey(wither)) {
                     // We know about this wither
                     if (DEBUG) {
                         plugin.getLogger().info("DEBUG: We know about this wither");
                     }
-                    if (!mobSpawnInfo.get(wither.getUniqueId()).inIslandSpace(e.getEntity().getLocation())) {
+                    if (!mobSpawnInfo.get(wither).inIslandSpace(e.getEntity().getLocation())) {
                         // Cancel the explosion
                         if (DEBUG) {
                             plugin.getLogger().info("DEBUG: cancel wither skull explosion");
