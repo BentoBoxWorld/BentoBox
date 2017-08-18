@@ -322,6 +322,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             this.errorResponse = errorResponse;
         }
     }
+
     // These methods below just neaten up the code in the commands so "plugin." isn't always used
     /**
      * @return PlayersManager

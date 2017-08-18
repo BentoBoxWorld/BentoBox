@@ -233,7 +233,7 @@ public class SafeSpotTeleport {
                                 if (!failureMessage.isEmpty()) {
                                     Util.sendMessage(entity, failureMessage);
                                 } else {
-                                    Util.sendMessage(entity, ChatColor.RED + "Warp not safe");
+                                    Util.sendMessage(entity, "Warp not safe");
                                 }
                             }
                         });
