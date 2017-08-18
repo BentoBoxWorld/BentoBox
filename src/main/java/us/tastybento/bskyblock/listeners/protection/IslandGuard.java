@@ -1720,9 +1720,23 @@ public class IslandGuard implements Listener {
                     break;
                 case STONE_BUTTON:
                 case WOOD_BUTTON:
+                    if (island == null) {
+                        if (Settings.defaultWorldSettings.get(SettingsFlag.BUTTON)) {
+                            return;
+                        } else {
+                            Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+                            e.setCancelled(true);
+                            return;
+                        }
+                    }
+                    if (!island.getFlag(SettingsFlag.LEVER)) {
+                        Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+                        e.setCancelled(true);
+                        return;
+                    }
+                    break;
                 case LEVER:
                     if (island == null) {
-                        // TODO: BUTTON?
                         if (Settings.defaultWorldSettings.get(SettingsFlag.LEVER)) {
                             return;
                         } else {
