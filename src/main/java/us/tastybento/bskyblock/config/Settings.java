@@ -100,9 +100,7 @@ public class Settings {
     public static int spawnLimitWaterAnimals;
     public static HashMap<EntityType, Integer> entityLimits;
     public static HashMap<String, Integer> tileEntityLimits;
-    
-    public static boolean disableOfflineRedstone;
-    
+
     /*      ISLAND      */
     public static int maxTeamSize;
     public static int maxHomes;

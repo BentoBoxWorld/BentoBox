@@ -2462,29 +2462,6 @@ public class IslandGuard implements Listener {
         }
     }
 
-    /**
-     * Stop redstone if team members are offline and disableOfflineRedstone is TRUE.
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onBlockRedstone(BlockRedstoneEvent e){
-        if(Settings.disableOfflineRedstone) {
-            // Check world
-            if (!Util.inWorld(e.getBlock())) {
-                return;
-            }
-            // Check if this is on an island
-            Island island = plugin.getIslands().getIslandAt(e.getBlock().getLocation());
-            if (island == null || island.isSpawn()) {
-                return;
-            }
-            for(UUID member : island.getMembers()){
-                if(plugin.getServer().getPlayer(member) != null) return;
-            }
-            e.setNewCurrent(0);
-        }
-    }
-
     @EventHandler(priority=EventPriority.LOW)
     public void onEvent(BlockPistonExtendEvent event) {
         if (!Settings.allowTNTPushing) {
