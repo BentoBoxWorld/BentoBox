@@ -7,30 +7,7 @@
 # Tastybento: maintainer
 # Poslovitch: maintainer
 #
-# This translation is adapted to version : [4.0]
-
-not-setup:
-  header: |-
-      More set up is required before the plugin can start...
-      Edit config.yml. Then restart server.
-  distance: "Make sure you set island distance. If upgrading, set it to what it was before."
-  generator: |-
-      The world generator for the island world is not registered.
-      Potential reasons are:
-        1. If you are configuring the island world as the only server world
-           Make sure you have added the world to bukkit.yml
-        2. You reloaded instead of restarting the server. Reboot and try again.
-  generator-multiverse: "  3. Your Multiverse plugin is out of date. Upgrade to the latest version."
-  world-name: |-
-      The world name in config.yml is different to the world name in islands.yml.
-      If this is intentional, we assume you are doing a full reset.
-      If so, delete islands.yml and the previous world.
-      If not, correct the world name in config.yml and restart. This is probably the case if you are upgrading.
-  config-outdated: |-
-      The config.yml file looks outdated.
-      Make sure you updated your configuration after upgrading.
-      If this error is still happening, you probably edited the old config rather than editing the new one.
-      If so, please remove the current config.yml, work on config.new.yml and rename it to config.yml.
+# This translation is adapted to version : [alpha-0.0.1]
 
 general:
   success: "Success!"
@@ -48,6 +25,39 @@ help:
   header: "&7=========== BSKYBLOCK ==========="
   syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
   end: "&7================================="
+  island:
+    about: "display info about %bsb_plugin_name%"
+    go: "teleport you to your island"
+    go-homes: "teleport you to the specified home"
+    spawn: "teleport you to the spawn"
+    create: "create an island"
+    info: "display info about your island"
+    controlpanel: "open the island GUI or toggle it"
+    reset: "restart your island and remove the old one"
+    sethome: "set your teleport point for /island"
+    name: "set a name for your island"
+    resetname: "reset your island name"
+    team: "display detailed info about your team"
+    invite: "invite a player to join your island"
+    uninvite: "cancel the pending invite to join your island"
+    leave: "leave your island"
+    kick: "remove a member from your island"
+    accept: "accept an invitation"
+    reject: "reject an invitation"
+    makeleader: "transfer the island ownership to a member"
+    expel: "expel a visitor from your island"
+    ban: "ban a player from your island"
+    unban: "unban a player from your island"
+    banlist: "list banned players"
+    trust: "give a player full access to your island"
+    untrust: "remove full island access from player"
+    trustlist: "list players who have full access to your island"
+    coop: "give a player a temporary access to your island"
+    uncoop: "remove temporary island access from player"
+    cooplist: "list players who have temporary access to your island"
+    lock: "lock/unlock your island so visitors cannot enter it"
+    settings: "display island settings"
+    language: "select language"
 
 # TODO: These are legacy strings and should be converted to a better format but will do for now
 acidBottle: "Acid Bottle"
