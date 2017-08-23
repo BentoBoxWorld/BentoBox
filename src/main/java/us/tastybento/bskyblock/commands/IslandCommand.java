@@ -128,7 +128,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public String[] usage(CommandSender sender) {
-                return null;
+                return new String[] {null, getLocale(sender).get("help.island.about")};
             }
         });
 
@@ -259,7 +259,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public String[] usage(CommandSender sender) {
-                return new String[]{"[on/off]", getLocale(sender).get("help.island.control-panel")};
+                return new String[]{"[on/off]", getLocale(sender).get("help.island.controlpanel")};
             }
         });
 
@@ -1010,30 +1010,6 @@ public class IslandCommand extends AbstractCommand {
             }
         });
 
-        /* /is teamchat - Toggle TeamChat */
-        addArgument(new String[]{"teamchat", "tc"}, new ArgumentHandler() {
-
-            @Override
-            public CanUseResp canUse(CommandSender sender) {
-                return new CanUseResp(false);
-            }
-
-            @Override
-            public void execute(CommandSender sender, String[] args) {
-
-            }
-
-            @Override
-            public Set<String> tabComplete(CommandSender sender, String[] args) {
-                return null;
-            }
-
-            @Override
-            public String[] usage(CommandSender sender) {
-                return new String[]{null, getLocale(sender).get("help.island.teamchat")};
-            }
-        });
-
         /* /is expel <player> - Expel a visitor/coop from the island */
         addArgument(new String[]{"expel"}, new ArgumentHandler() {
 
@@ -1055,30 +1031,6 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.expel")};
-            }
-        });
-
-        /* /is expelall - Expel every visitor/coop from the island */
-        addArgument(new String[]{"expelall", "expel!"}, new ArgumentHandler() {
-
-            @Override
-            public CanUseResp canUse(CommandSender sender) {
-                return new CanUseResp(false);
-            }
-
-            @Override
-            public void execute(CommandSender sender, String[] args) {
-
-            }
-
-            @Override
-            public Set<String> tabComplete(CommandSender sender, String[] args) {
-                return null;
-            }
-
-            @Override
-            public String[] usage(CommandSender sender) {
-                return new String[]{null, getLocale(sender).get("help.island.expelall")};
             }
         });
 
