@@ -24,6 +24,7 @@ general:
 help:
   header: "&7=========== BSKYBLOCK ==========="
   syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
+  syntax-alias-separator: "/"
   end: "&7================================="
   island:
     about: "display info about %bsb_plugin_name%"
@@ -229,7 +230,7 @@ challenges:
   erroryouaremissing: "You are missing"
   expReward: "Exp reward"
   firstTimeRewards: "First time reward(s)"
-  guititle: "ASkyBlock Challenges"
+  guititle: "BSkyBlock Challenges"
   help1: "Use /c <name> to view information about a challenge."
   help2: "Use /c complete <name> to attempt to complete that challenge."
   incomplete: "Incomplete"
@@ -452,12 +453,16 @@ islandguardsettings:
   withergriefing: "Wither griefing"
   workbench: "Visitor workbench use"
 kick: 
-  errorNoTeam: "You do not have a team!"
-  errorNotPartOfTeam: "That player is not part of your island team!"
-  errorOnlyLeaderCan: "Only the leader can kick people off the island!"
-  errorPlayerNotInTeam: "That player is not in your team!"
-  nameRemoved: "[name] has been removed from the island."
-  nameRemovedYou: "[name] has removed you from their island!"
+  canceled: "Kick canceled"
+  error:
+    noTeam: "You do not have a team!"
+    notPartOfTeam: "That player is not part of your island team!"
+    onlyLeaderCan: "Only the leader can kick people off the island!"
+    playerNotInTeam: "That player is not in your team!"
+    youCannotKickYourself: "You cannot kick yourself!"
+  nameRemoved: "[name] removed from the island."
+  nameRemovedYou: "[name] removed you from their island!"
+  warning: "Are you sure you want to kick the player? Type the command again to confirm."
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
 leave: 
   canceled: "Leave canceled"
@@ -554,7 +559,7 @@ settingsReset:
   done: "Done."
   inprogress: "Protection settings being reset, please wait..."
 sign: 
-  line1: "&1[A Skyblock]"
+  line1: "&1[BSkyblock]"
   line2: "[player]"
   line3: "Do not fall!"
   line4: "Beware!"

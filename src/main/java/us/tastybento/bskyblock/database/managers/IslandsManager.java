@@ -269,24 +269,7 @@ public class IslandsManager {
         //getWarpSignsListener().removeWarp(player);
         final Island island = getIsland(player);
         if (island != null) {
-            // Set the owner of the island to no one.
-            island.setOwner(null);
-            island.setLocked(false);
-            if (removeBlocks) {
-                // Remove players from island
-                removePlayersFromIsland(island, player);
-                // Remove island from the cache
-                deleteIslandFromCache(island);
-                // Remove the island from the database
-                try {
-                    handler.deleteObject(island);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                // Remove blocks from world
-                new DeleteIslandBlocks(plugin, island);
-            }
-            //getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, island.getCenter()));
+            deleteIsland(island, removeBlocks);
         } else {
             plugin.getLogger().severe("Could not delete player: " + player.toString() + " island!");
             //plugin.getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, null));
@@ -329,55 +312,14 @@ public class IslandsManager {
      * @param teamLeader
      * @return true if successful, false if not
      */
-    public boolean setJoinTeam(UUID playerUUID, UUID teamLeader) {
-        Island teamIsland = islandsByUUID.get(teamLeader);
-        if (teamIsland == null) {
-            // Something odd here, team leader does not have an island!
-            plugin.getLogger().severe("Team leader does not have an island!");
-            return false;
-        }
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: new team member list 0:");
-            plugin.getLogger().info(teamIsland.getMembers().toString());
-        }
-        if (teamIsland.getMembers().contains(playerUUID)) {
-            // Player already on island
-            return true;
-        }
-
-        // TODO: Fire a join team event. If canceled, return false
-        // Find out if the player had an old island
-        if (islandsByUUID.containsKey(playerUUID)) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: player is a member of an old island");
-            Island oldIsland = islandsByUUID.get(playerUUID);
-            oldIsland.removeMember(playerUUID);
-            if (oldIsland.getOwner() != null && oldIsland.getOwner().equals(playerUUID)) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: player's old island was theirs - deleting from grid");
-                // Delete old island
-                oldIsland.setOwner(null);
-                oldIsland.setLocked(false);
-                islandsByLocation.remove(oldIsland.getCenter());
-                new DeleteIslandBlocks(plugin, oldIsland);
-                try {
-                    handler.deleteObject(oldIsland);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: new team member list 1:");
-            plugin.getLogger().info(teamIsland.getMembers().toString());
-        }
+    public boolean setJoinTeam(Island teamIsland, UUID playerUUID) {
         // Add player to new island
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Adding player to new island");
         teamIsland.addMember(playerUUID);
         islandsByUUID.put(playerUUID, teamIsland);
         if (DEBUG) {
-            plugin.getLogger().info("DEBUG: new team member list 2:");
+            plugin.getLogger().info("DEBUG: new team member list:");
             plugin.getLogger().info(teamIsland.getMembers().toString());
         }
         // Save the database
@@ -1110,13 +1052,13 @@ public class IslandsManager {
      * @param island to remove players from
      * @param uuid
      */
-    public void removePlayersFromIsland(final Island island, UUID uuid) {
+    public void removePlayersFromIsland(final Island island) {
         // Teleport players away
         for (Player player : plugin.getServer().getOnlinePlayers()) {
             if (island.inIslandSpace(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
                 //plugin.getLogger().info("DEBUG: in island space");
                 // Teleport island players to their island home
-                if (!player.getUniqueId().equals(uuid) && (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId()))) {
+                if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
                     //plugin.getLogger().info("DEBUG: home teleport");
                     homeTeleport(player);
                 } else {
@@ -1378,5 +1320,34 @@ public class IslandsManager {
 
     public void metrics_setCreatedCount(int count){
         this.metrics_createdcount = count;
+    }
+
+    /**
+     * Deletes island. If island is null, it does nothing
+     * @param island
+     * @param removeBlocks - if the island blocks should be removed or not
+     */
+    public void deleteIsland(Island island, boolean removeBlocks) {
+        if (island == null)
+            return;
+        // Set the owner of the island to no one.
+        island.setOwner(null);
+        island.setLocked(false);
+        if (removeBlocks) {
+            // Remove players from island
+            removePlayersFromIsland(island);
+            // Remove island from the cache
+            deleteIslandFromCache(island);
+            // Remove the island from the database
+            try {
+                handler.deleteObject(island);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            // Remove blocks from world
+            new DeleteIslandBlocks(plugin, island);
+        }
+        //getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, island.getCenter()));
+        
     }
 }
