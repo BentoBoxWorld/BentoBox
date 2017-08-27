@@ -17,11 +17,20 @@ general:
     no-team: "You do not have a team!"
     no-island: "You do not have an island!"
     already-have-island: "You already have an island!"
+    no-safe-location: "No safe location found on island!"
     not-leader: "You are not the leader of your island!"
     offline-player: "That player is offline or doesn't exist."
     unknown-player: "Unknown player!"
   
 help:
+  admin:
+    team:
+      command: "info/makeleader/add/kick/delete - admin teams"
+      info: "info <player> - show info player's team"
+      makeleader: "makeleader <player> - make player the leader of a team"
+      add: "add <player1> <player2> - add player1 to player2's team"
+      kick: "kick <player> - remove player from team"
+      delete: "delete <player> - kicks all players from team leaving just the leader"
   header: "&7=========== BSKYBLOCK ==========="
   syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
   syntax-alias-separator: "/"
@@ -67,7 +76,16 @@ acidLore: |
     Do
     not drink!
     Beware!
-
+admin:
+  errors:
+    no-team: "Player does not have a team!"
+    no-island: "Player does not have an island!"
+    already-have-island: "Player already has an island!"
+  team:
+    error:
+      already-a-leader: "Player is already a leader"
+      alreadyInTeam: "Those players are already in the same team!"
+      player-is-a-team-leader: "Error: player is team leader."
 adminDeleteIsland: 
   error: "Use &ldeleteisland confirm &r&cto delete the island you are on."
   noid: "Cannot identify island."
@@ -460,8 +478,8 @@ kick:
     onlyLeaderCan: "Only the leader can kick people off the island!"
     playerNotInTeam: "That player is not in your team!"
     youCannotKickYourself: "You cannot kick yourself!"
-  nameRemoved: "[name] removed from the island."
-  nameRemovedYou: "[name] removed you from their island!"
+  nameRemoved: "[name] removed from the team."
+  nameRemovedYou: "[name] removed you from the team!"
   warning: "Are you sure you want to kick the player? Type the command again to confirm."
 lavaTip: "Tip: If obsidian was not intended, it can be scooped back up again with a bucket."
 leave: 
@@ -492,8 +510,8 @@ makeleader:
   errorRemoveAllPlayersFirst: "Remove all players from your team other than the player you are transferring to."
   errorThatPlayerIsNotInTeam: "That player is not part of your island team!"
   errorYouMustBeInTeam: "You must be in a team to transfer your island."
-  nameIsNowTheOwner: "[name] is now the owner of your island!"
-  youAreNowTheOwner: "You are now the owner of your island."
+  nameIsNowTheOwner: "[name] is now the island leader!"
+  youAreNowTheOwner: "You are now the island leader!"
 minishop: 
   buy: "Buy(Left click)"
   buyproblem: "There was a problem purchasing [description]"
@@ -573,7 +591,7 @@ team:
   color: "&b"
   leader-color: "&a"
   leader: " - Leader" 
-  listingMembers: "Listing your island members"
+  listingMembers: "Listing island members"
 teamchat: 
   helpChat: "turn on/off team chat"
   noTeam: "You are not in a team!"

@@ -531,15 +531,15 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
                 // Player issuing the command must have an island
                 if (!getPlayers().hasIsland(playerUUID)) {
                     // If the player is in a team, they are not the leader
                     if (getPlayers().inTeam(playerUUID)) {
-                        return new CanUseResp(getLocale(sender).get("general.errors.not-leader"));
+                        return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.not-leader"));
                     }
-                    return new CanUseResp(getLocale(sender).get("invite.error.YouMustHaveIslandToInvite"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("invite.error.YouMustHaveIslandToInvite"));
                 }
                 return new CanUseResp(true);
             }
@@ -551,9 +551,9 @@ public class IslandCommand extends AbstractCommand {
                     //TODO
                     if (inviteList.containsKey(playerUUID)) {
                         OfflinePlayer inviter = plugin.getServer().getOfflinePlayer(inviteList.get(playerUUID));
-                        Util.sendMessage(player, getLocale(sender).get("invite.nameHasInvitedYou").replace("[name]", inviter.getName()));
+                        Util.sendMessage(player, ChatColor.GOLD + getLocale(sender).get("invite.nameHasInvitedYou").replace("[name]", inviter.getName()));
                     } else {
-                        Util.sendMessage(player, getLocale(sender).get("help.island.invite"));
+                        Util.sendMessage(player, ChatColor.GOLD + getLocale(sender).get("help.island.invite"));
                     }
                     return;
                 }
@@ -561,29 +561,29 @@ public class IslandCommand extends AbstractCommand {
                     // Only online players can be invited
                     UUID invitedPlayerUUID = getPlayers().getUUID(args[0]);
                     if (invitedPlayerUUID == null) {
-                        Util.sendMessage(player, getLocale(sender).get("general.errors.offline-player"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("general.errors.offline-player"));
                         return;
                     }
                     Player invitedPlayer = plugin.getServer().getPlayer(invitedPlayerUUID);
                     if (invitedPlayer == null) {
-                        Util.sendMessage(player, getLocale(sender).get("general.errors.offline-player"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("general.errors.offline-player"));
                         return;
                     }
                     // Player cannot invite themselves
                     if (playerUUID.equals(invitedPlayerUUID)) {
-                        Util.sendMessage(player, getLocale(sender).get("invite.error.YouCannotInviteYourself"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YouCannotInviteYourself"));
                         return;
                     }
                     // Check if this player can be invited to this island, or
                     // whether they are still on cooldown
                     long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(playerUUID));
                     if (time > 0 && !player.isOp()) {
-                        Util.sendMessage(player, getLocale(sender).get("invite.error.CoolDown").replace("[time]", String.valueOf(time)));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.CoolDown").replace("[time]", String.valueOf(time)));
                         return;
                     }
                     // Player cannot invite someone already on a team
                     if (getPlayers().inTeam(invitedPlayerUUID)) {
-                        Util.sendMessage(player, getLocale(sender).get("invite.error.ThatPlayerIsAlreadyInATeam"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.ThatPlayerIsAlreadyInATeam"));
                         return;
                     }
                     // Check if player has space on their team
@@ -614,21 +614,21 @@ public class IslandCommand extends AbstractCommand {
                         // Players can only have one invite one at a time - interesting
                         if (inviteList.containsValue(playerUUID)) {
                             inviteList.inverse().remove(playerUUID);
-                            Util.sendMessage(player, getLocale(sender).get("invite.removingInvite"));
+                            Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.removingInvite"));
                         }
                         // Put the invited player (key) onto the list with inviter (value)
                         // If someone else has invited a player, then this invite will overwrite the previous invite!
                         inviteList.put(invitedPlayerUUID, playerUUID);
                         Util.sendMessage(player, getLocale(sender).get("invite.inviteSentTo").replace("[name]", args[0]));
                         // Send message to online player
-                        Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), getLocale(invitedPlayerUUID).get("invite.nameHasInvitedYou").replace("[name]", player.getName()));
-                        Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),
+                        Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.GOLD + getLocale(invitedPlayerUUID).get("invite.nameHasInvitedYou").replace("[name]", player.getName()));
+                        Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID),ChatColor.GOLD + 
                                 "/" + label + " [accept/reject]" + " " + getLocale(invitedPlayerUUID).get("invite.toAcceptOrReject"));
                         if (getPlayers().hasIsland(invitedPlayerUUID)) {
-                            Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), getLocale(invitedPlayerUUID).get("invite.warningYouWillLoseIsland"));
+                            Util.sendMessage(Bukkit.getPlayer(invitedPlayerUUID), ChatColor.RED + getLocale(invitedPlayerUUID).get("invite.warningYouWillLoseIsland"));
                         }
                     } else {
-                        Util.sendMessage(player, getLocale(sender).get("invite.error.YourIslandIsFull"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YourIslandIsFull"));
                     }
                 }
             }
@@ -654,7 +654,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
                 // Can only use if you have an invite out there
                 return new CanUseResp(inviteList.inverse().containsKey(playerUUID));
@@ -667,11 +667,11 @@ public class IslandCommand extends AbstractCommand {
                     Player invitee = plugin.getServer().getPlayer(inviteList.inverse().get(playerUUID));
                     if (invitee != null) {
                         inviteList.inverse().remove(playerUUID);
-                        Util.sendMessage(invitee, getLocale(invitee.getUniqueId()).get("invite.nameHasUninvitedYou").replace("[name]", player.getName()));
-                        Util.sendMessage(player, getLocale(sender).get("general.success"));
+                        Util.sendMessage(invitee, ChatColor.RED + getLocale(invitee.getUniqueId()).get("invite.nameHasUninvitedYou").replace("[name]", player.getName()));
+                        Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("general.success"));
                     }
                 } else {
-                    Util.sendMessage(player, getLocale(sender).get("help.island.invite"));
+                    Util.sendMessage(player, ChatColor.YELLOW + getLocale(sender).get("help.island.invite"));
                 }
             }
 
@@ -692,7 +692,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
                 // Can only leave if you are not the leader
                 return new CanUseResp(inTeam && !teamLeaderUUID.equals(playerUUID));
@@ -704,19 +704,19 @@ public class IslandCommand extends AbstractCommand {
                     if (getPlayers().inTeam(playerUUID)) {
                         // Team leaders cannot leave
                         if (teamLeaderUUID != null && teamLeaderUUID.equals(playerUUID)) {
-                            Util.sendMessage(player, getLocale(sender).get("leave.errorYouAreTheLeader"));
+                            Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouAreTheLeader"));
                             return;
                         }
                         // Check for confirmation
                         if (Settings.leaveConfirmation && !leavingPlayers.contains(playerUUID)) {
                             leavingPlayers.add(playerUUID);
-                            Util.sendMessage(player, getLocale(sender).get("leave.warning"));
+                            Util.sendMessage(player, ChatColor.GOLD + getLocale(sender).get("leave.warning"));
 
                             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                                 // If the player is still on the list, remove them and cancel the leave
                                 if (leavingPlayers.contains(playerUUID)) {
                                     leavingPlayers.remove(playerUUID);
-                                    Util.sendMessage(player, getLocale(sender).get("leave.canceled"));
+                                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.canceled"));
                                 }
                             }, Settings.leaveConfirmWait * 20L);
 
@@ -734,11 +734,11 @@ public class IslandCommand extends AbstractCommand {
                         // cannot join again before the cool down ends
                         getPlayers().startInviteCoolDownTimer(playerUUID, getIslands().getIslandLocation(teamLeaderUUID));
 
-                        Util.sendMessage(player, getLocale(sender).get("leave.youHaveLeftTheIsland"));
+                        Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("leave.youHaveLeftTheIsland"));
                         // Tell the leader if they are online
                         if (plugin.getServer().getPlayer(teamLeaderUUID) != null) {
                             Player leader = plugin.getServer().getPlayer(teamLeaderUUID);
-                            Util.sendMessage(leader, getLocale(teamLeaderUUID).get("leave.nameHasLeftYourIsland").replace("[name]", player.getName()));
+                            Util.sendMessage(leader, ChatColor.RED + getLocale(teamLeaderUUID).get("leave.nameHasLeftYourIsland").replace("[name]", player.getName()));
                         } else {
                             // TODO: Leave them a message
                             //plugin.getMessages().setMessage(teamLeader, plugin.myLocale(teamLeader).leavenameHasLeftYourIsland.replace("[name]", player.getName()));
@@ -750,10 +750,10 @@ public class IslandCommand extends AbstractCommand {
                             player.teleport(player.getWorld().getSpawnLocation());
                         }
                     } else {
-                        Util.sendMessage(player, getLocale(sender).get("leave.errorYouCannotLeaveIsland"));
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouCannotLeaveIsland"));
                     }
                 } else {
-                    Util.sendMessage(player, getLocale(sender).get("leave.errorYouMustBeInWorld"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouMustBeInWorld"));
                 }
             }
 
@@ -774,7 +774,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
 
                 return new CanUseResp(inTeam && teamLeaderUUID.equals(playerUUID));
@@ -789,24 +789,24 @@ public class IslandCommand extends AbstractCommand {
                 // Only team members can be kicked
                 UUID targetPlayerUUID = getPlayers().getUUID(args[0]);
                 if (targetPlayerUUID == null || !getIslands().getMembers(playerUUID).contains(targetPlayerUUID)) {
-                    Util.sendMessage(player, getLocale(sender).get("kick.error.notPartOfTeam"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("kick.error.notPartOfTeam"));
                     return;
                 }
                 // Player cannot kick themselves
                 if (playerUUID.equals(targetPlayerUUID)) {
-                    Util.sendMessage(player, getLocale(sender).get("kick.error.youCannotKickYourself"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("kick.error.youCannotKickYourself"));
                     return;
                 }
                 // Check for confirmation
                 if (Settings.confirmKick && !kickingPlayers.contains(playerUUID)) {
                     kickingPlayers.add(playerUUID);
-                    Util.sendMessage(player, getLocale(sender).get("kick.warning"));
+                    Util.sendMessage(player, ChatColor.GOLD + getLocale(sender).get("kick.warning"));
 
                     plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
                         // If the player is still on the list, remove them and cancel the leave
                         if (kickingPlayers.contains(playerUUID)) {
                             kickingPlayers.remove(playerUUID);
-                            Util.sendMessage(player, getLocale(sender).get("kick.canceled"));
+                            Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("kick.canceled"));
                         }
                     }, Settings.confirmKickWait * 20L);
 
@@ -823,11 +823,11 @@ public class IslandCommand extends AbstractCommand {
                 // cannot join again before the cool down ends
                 getPlayers().startInviteCoolDownTimer(targetPlayerUUID, getIslands().getIslandLocation(teamLeaderUUID));
                 // Tell the player they kicked okay
-                Util.sendMessage(player, getLocale(sender).get("kick.nameRemoved").replace("[name]", getPlayers().getName(targetPlayerUUID)));
+                Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("kick.nameRemoved").replace("[name]", getPlayers().getName(targetPlayerUUID)));
                 // Tell the target if they are online
                 if (plugin.getServer().getPlayer(targetPlayerUUID) != null) {
                     Player target = plugin.getServer().getPlayer(targetPlayerUUID);
-                    Util.sendMessage(target, getLocale(targetPlayerUUID).get("kick.nameRemovedYou").replace("[name]", player.getName()));
+                    Util.sendMessage(target, ChatColor.RED + getLocale(targetPlayerUUID).get("kick.nameRemovedYou").replace("[name]", player.getName()));
                 } else {
                     // TODO: Leave them an offline message
                 }
@@ -866,18 +866,18 @@ public class IslandCommand extends AbstractCommand {
             public void execute(CommandSender sender, String[] args) {
                 // Check if player has been invited
                 if (!inviteList.containsKey(playerUUID)) {
-                    Util.sendMessage(player, getLocale(sender).get("invite.error.NoOneInvitedYou"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.NoOneInvitedYou"));
                     return;
                 }
                 // Check if player is already in a team
                 if (getPlayers().inTeam(playerUUID)) {
-                    Util.sendMessage(player, getLocale(sender).get("invite.error.YouAreAlreadyOnATeam"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.YouAreAlreadyOnATeam"));
                     return;
                 }
                 // Get the team leader
                 UUID prospectiveTeamLeaderUUID = inviteList.get(playerUUID);
                 if (!getIslands().hasIsland(prospectiveTeamLeaderUUID)) {
-                    Util.sendMessage(player, getLocale(sender).get("invite.error.InvalidInvite"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.error.InvalidInvite"));
                     inviteList.remove(playerUUID);
                     return;
                 }
@@ -917,11 +917,11 @@ public class IslandCommand extends AbstractCommand {
 
                 // Fire event so add-ons can run commands, etc.
                 plugin.getServer().getPluginManager().callEvent(new PlayerAcceptInviteEvent(player));
-                Util.sendMessage(player, getLocale(sender).get("invite.youHaveJoinedAnIsland").replace("[label]", Settings.ISLANDCOMMAND));
+                Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("invite.youHaveJoinedAnIsland").replace("[label]", Settings.ISLANDCOMMAND));
 
                 if (plugin.getServer().getPlayer(inviteList.get(playerUUID)) != null) {
                     Util.sendMessage(plugin.getServer().getPlayer(inviteList.get(playerUUID)),
-                            getLocale(sender).get("invite.hasJoinedYourIsland").replace("[name]", player.getName()));
+                            ChatColor.GREEN + getLocale(sender).get("invite.hasJoinedYourIsland").replace("[name]", player.getName()));
                 }
                 getIslands().save(false);
                 if (DEBUG)
@@ -945,7 +945,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
                 // Can use if invited
                 return new CanUseResp(inviteList.containsKey(player.getUniqueId()));
@@ -955,18 +955,18 @@ public class IslandCommand extends AbstractCommand {
             public void execute(CommandSender sender, String[] args) {
                 // Reject /island reject
                 if (inviteList.containsKey(player.getUniqueId())) {
-                    Util.sendMessage(player, getLocale(playerUUID).get("reject.youHaveRejectedInvitation"));
+                    Util.sendMessage(player, ChatColor.GREEN + getLocale(playerUUID).get("reject.youHaveRejectedInvitation"));
                     // If the player is online still then tell them directly
                     // about the rejection
                     if (Bukkit.getPlayer(inviteList.get(player.getUniqueId())) != null) {
                         Util.sendMessage(Bukkit.getPlayer(inviteList.get(playerUUID)),
-                                getLocale(playerUUID).get("reject.nameHasRejectedInvite").replace("[name]", player.getName()));
+                                ChatColor.RED + getLocale(playerUUID).get("reject.nameHasRejectedInvite").replace("[name]", player.getName()));
                     }
                     // Remove this player from the global invite list
                     inviteList.remove(player.getUniqueId());
                 } else {
                     // Someone typed /island reject and had not been invited
-                    Util.sendMessage(player, getLocale(playerUUID).get("reject.youHaveNotBeenInvited"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("reject.youHaveNotBeenInvited"));
                 }
             }
 
@@ -987,7 +987,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
                 // Can use if in a team
                 return new CanUseResp(inTeam && teamLeaderUUID.equals(playerUUID));
@@ -998,23 +998,23 @@ public class IslandCommand extends AbstractCommand {
                 plugin.getLogger().info("DEBUG: arg[0] = " + args[0]);
                 UUID targetPlayer = getPlayers().getUUID(args[0]);
                 if (targetPlayer == null) {
-                    Util.sendMessage(player, getLocale(playerUUID).get("general.errors.unknown-player"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("general.errors.unknown-player"));
                     return;
                 }
                 if (!getPlayers().inTeam(playerUUID)) {
-                    Util.sendMessage(player, getLocale(playerUUID).get("makeleader.errorYouMustBeInTeam"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorYouMustBeInTeam"));
                     return;
                 }
                 if (!teamLeaderUUID.equals(playerUUID)) {
-                    Util.sendMessage(player, getLocale(playerUUID).get("makeleader.errorNotYourIsland"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorNotYourIsland"));
                     return;
                 }
                 if (targetPlayer.equals(playerUUID)) {
-                    Util.sendMessage(player, getLocale(playerUUID).get("makeleader.errorGeneralError"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorGeneralError"));
                     return;
                 }
                 if (!teamMembers.contains(targetPlayer)) {
-                    Util.sendMessage(player, getLocale(playerUUID).get("makeleader.errorThatPlayerIsNotInTeam"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorThatPlayerIsNotInTeam"));
                     return;
                 }
                 // targetPlayer is the new leader
@@ -1026,11 +1026,11 @@ public class IslandCommand extends AbstractCommand {
                 Player target = plugin.getServer().getPlayer(targetPlayer);
                 if (target == null) {
                     // TODO offline messaging
-                    //plugin.getMessages().setMessage(targetPlayer, getLocale(playerUUID).get("makeLeader.youAreNowTheOwner"));
+                    //plugin.getMessages().setMessage(targetPlayer, getLocale(playerUUID).get("makeleader.youAreNowTheOwner"));
 
                 } else {
                     // Online
-                    Util.sendMessage(plugin.getServer().getPlayer(targetPlayer), getLocale(targetPlayer).get("makeLeader.youAreNowTheOwner"));
+                    Util.sendMessage(plugin.getServer().getPlayer(targetPlayer), ChatColor.GREEN + getLocale(targetPlayer).get("makeleader.youAreNowTheOwner"));
                     // Check if new leader has a lower range permission than the island size
                     boolean hasARangePerm = false;
                     int range = Settings.islandProtectionRange;
@@ -1339,11 +1339,11 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public CanUseResp canUse(CommandSender sender) {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.lock")) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
                 }
 
                 if (!getIslands().hasIsland(playerUUID)) {
-                    return new CanUseResp(getLocale(sender).get("general.errors.no-island"));
+                    return new CanUseResp(ChatColor.RED + getLocale(sender).get("general.errors.no-island"));
                 }
 
                 return new CanUseResp(true);

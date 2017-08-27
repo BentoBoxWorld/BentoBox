@@ -115,6 +115,10 @@ public class IslandsManager {
         }
     }
 
+    /**
+     * Save the islands to the database
+     * @param async - if true, saving will be done async
+     */
     public void save(boolean async){
         Runnable save = () -> {
             for(Island island : islandsByLocation.values()){
