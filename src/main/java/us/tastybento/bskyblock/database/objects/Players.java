@@ -135,10 +135,6 @@ public class Players extends DataObject {
         return playerName;
     }
 
-    public void setPlayerN(String playerName) {
-        this.playerName = playerName;
-    }
-
     /**
      * @return the resetsLeft
      */

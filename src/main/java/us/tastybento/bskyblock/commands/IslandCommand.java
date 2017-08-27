@@ -501,6 +501,8 @@ public class IslandCommand extends AbstractCommand {
                 Util.sendMessage(player, getLocale(sender).get("team.listingMembers"));
                 // Display members in the list
                 for (UUID m : teamMembers) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: member " + m);
                     if (teamLeaderUUID.equals(m)) {
                         Util.sendMessage(player, getLocale(sender).get("team.leader-color") + getPlayers().getName(m) + getLocale(sender).get("team.leader"));
                     } else {

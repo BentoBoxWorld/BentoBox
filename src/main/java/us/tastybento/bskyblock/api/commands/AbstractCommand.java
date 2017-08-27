@@ -46,6 +46,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     private final boolean help;
     private static final int MAX_PER_PAGE = 7;
 
+    private static final boolean DEBUG = false;
+
     protected AbstractCommand(BSkyBlock plugin, String label, String[] aliases, boolean help) {
         this.plugin = plugin;
         this.argumentsMap = new LinkedHashMap<>();
@@ -252,6 +254,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
      * @param sender
      */
     private void checkForPlayer(CommandSender sender) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: checkForPlayer");
         // Check if the command sender is a player or not
         if (sender instanceof Player) {
             isPlayer = true;
@@ -262,9 +266,19 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         }
         // Check if the player is in a team or not and if so, grab the team leader's UUID
         if (plugin.getPlayers().inTeam(playerUUID)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: player in team");
             inTeam = true;
             teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: team leader UUID = " + teamLeaderUUID);
             teamMembers = plugin.getIslands().getMembers(teamLeaderUUID);
+            if (DEBUG) {
+                plugin.getLogger().info("DEBUG: teammembers = ");
+                for (UUID member: teamMembers) {
+                    plugin.getLogger().info("DEBUG: " + member);
+                }
+            }
         } else {
             inTeam = false;
         }

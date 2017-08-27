@@ -66,8 +66,12 @@ public class PlayersManager{
      * @param async - if true, save async
      */
     public void save(boolean async){
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: saving " + async);
         Runnable save = () -> {
             for(Players player : playerCache.values()){
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
                 try {
                     handler.saveObject(player);
                 } catch (Exception e) {
@@ -331,8 +335,10 @@ public class PlayersManager{
      * @param name
      */
     public void setPlayerName(UUID uniqueId, String name) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Setting player name to " + name + " for " + uniqueId);
         addPlayer(uniqueId);
-        playerCache.get(uniqueId).setPlayerN(name);
+        playerCache.get(uniqueId).setPlayerName(name);
         //database.savePlayerName(name, uniqueId);
     }
 
@@ -344,10 +350,14 @@ public class PlayersManager{
      * @return String - playerName
      */
     public String getName(UUID playerUUID) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: Geting player name");
         if (playerUUID == null) {
             return "";
         }
         addPlayer(playerUUID);
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: name is " + playerCache.get(playerUUID).getPlayerName());
         return playerCache.get(playerUUID).getPlayerName();
     }
 
@@ -595,11 +605,12 @@ public class PlayersManager{
      */
     public void save(UUID playerUUID) {
         if (playerCache.containsKey(playerUUID)) {
-            Players player = playerCache.get(playerUUID);
+            final Players player = playerCache.get(playerUUID);
             try {
-                handler.saveObject(player);
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: " + playerUUID + " saved");
+                    plugin.getLogger().info("DEBUG: saving player by uuid " + player.getPlayerName() + " " + playerUUID + " saved");
+                handler.saveObject(player);
+                
             } catch (IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | SecurityException
                     | InstantiationException | NoSuchMethodException

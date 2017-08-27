@@ -49,7 +49,7 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class IslandsManager {
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private static final boolean DEBUG2 = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
@@ -92,10 +92,20 @@ public class IslandsManager {
         islandsByUUID.clear();
         spawn = null;
         try {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: loading grid");
             for (Island island : handler.loadObjects()) {
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: addin island at "+ island.getCenter());
                 islandsByLocation.put(island.getCenter(), island);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: owner = " + island.getOwner());
                 islandsByUUID.put(island.getOwner(), island);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: island has " + island.getMembers().size() + " members");
                 for (UUID member: island.getMembers()) {
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: " + member);
                     islandsByUUID.put(member, island);
                 }
                 addToGrid(island);
