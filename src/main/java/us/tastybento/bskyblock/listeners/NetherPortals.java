@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.listeners;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;

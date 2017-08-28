@@ -29,7 +29,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.events.island.IslandLeaveEvent;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -345,32 +344,12 @@ public class IslandsManager {
     /**
      * Called when a player leaves a team
      * @param playerUUID
-     * @return true if successful, false if not
      */
-    public boolean setLeaveTeam(UUID playerUUID) {
+    public void setLeaveTeam(UUID playerUUID) {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: leaving team");
-        // Try to remove player from old island
-        // TODO: Fire an event, if not cancelled, zero the player data
-        Island island = islandsByUUID.get(playerUUID);
-        if (island != null) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: island found");
-            IslandLeaveEvent leaveEvent = new IslandLeaveEvent(island, playerUUID);
-
-            plugin.getServer().getPluginManager().callEvent(leaveEvent);
-            if (leaveEvent.isCancelled()) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: leave event was canceled");
-                return false;
-            }
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: clearing player data");
-            plugin.getPlayers().clearPlayerHomes(playerUUID);
-            removePlayer(playerUUID);
-            return true;
-        }
-        return false;
+        plugin.getPlayers().clearPlayerHomes(playerUUID);
+        removePlayer(playerUUID);
     }
 
     /**
@@ -1362,6 +1341,6 @@ public class IslandsManager {
             new DeleteIslandBlocks(plugin, island);
         }
         //getServer().getPluginManager().callEvent(new IslandDeleteEvent(player, island.getCenter()));
-        
+
     }
 }

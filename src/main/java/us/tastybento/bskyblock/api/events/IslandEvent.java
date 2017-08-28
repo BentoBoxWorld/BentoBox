@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.api.events;
 
+import java.util.UUID;
+
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -29,6 +31,13 @@ public class IslandEvent extends Event implements Cancellable{
      */
     public Island getIsland(){
         return this.island;
+    }
+    
+    /**
+     * @return the owner of the island
+     */
+    public UUID getOwner() {
+        return this.getOwner();
     }
 
     @Override

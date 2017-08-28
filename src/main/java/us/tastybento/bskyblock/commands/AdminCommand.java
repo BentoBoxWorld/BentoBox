@@ -13,7 +13,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
-import us.tastybento.bskyblock.api.events.team.PlayerAcceptInviteEvent;
+import us.tastybento.bskyblock.api.events.island.TeamEvent;
+import us.tastybento.bskyblock.api.events.island.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -98,6 +99,14 @@ public class AdminCommand extends AbstractCommand {
                     }
                     switch (args[0].toLowerCase()) {
                     case "info":
+                        // Fire event so add-ons can run commands, etc.
+                        TeamEvent event = new TeamEvent(getIslands().getIsland(targetPlayer))
+                        .admin(true)
+                        .reason(TeamReason.INFO)
+                        .involvedPlayer(targetPlayer);
+                        plugin.getServer().getPluginManager().callEvent(event);
+                        if (event.isCancelled()) return;
+                        // Display info
                         Util.sendMessage(sender, getLocale(sender).get("team.listingMembers"));
                         // Display members in the list
                         for (UUID m : getIslands().getMembers(targetPlayer)) {
@@ -116,6 +125,14 @@ public class AdminCommand extends AbstractCommand {
                             Util.sendMessage(sender, ChatColor.RED + "'" + args[1] + "' - " + getLocale(playerUUID).get("admin.team.error.already-a-leader"));
                             return;
                         }
+                        // Fire event so add-ons can run commands, etc.
+                        TeamEvent event2 = new TeamEvent(getIslands().getIsland(targetPlayer))
+                                .admin(true)
+                                .reason(TeamReason.MAKELEADER)
+                                .involvedPlayer(targetPlayer);
+                        plugin.getServer().getPluginManager().callEvent(event2);
+                        if (event2.isCancelled()) return;
+                        // Display info
                         getIslands().getIsland(targetPlayer).setOwner(targetPlayer);
                         Util.sendMessage(sender, ChatColor.GREEN
                                 + getLocale(sender).get("makeleader.nameIsNowTheOwner").replace("[name]", getPlayers().getName(targetPlayer)));
@@ -183,6 +200,14 @@ public class AdminCommand extends AbstractCommand {
                             Util.sendMessage(sender, ChatColor.RED + "'" + args[1] + "' - " + getLocale(playerUUID).get("admin.team.error.player-is-a-team-leader"));
                             return;
                         }
+                        // Fire event so add-ons can run commands, etc.
+                        TeamEvent event3 = new TeamEvent(getIslands().getIsland(targetPlayer))
+                                .admin(true)
+                                .reason(TeamReason.KICK)
+                                .involvedPlayer(targetPlayer);
+                        plugin.getServer().getPluginManager().callEvent(event3);
+                        if (event3.isCancelled()) return;
+                        // Display info
                         // Remove from team
                         getIslands().setLeaveTeam(targetPlayer);
                         // Tell the player they kicked okay
@@ -197,11 +222,18 @@ public class AdminCommand extends AbstractCommand {
                         getIslands().save(true);
                         return;
                     case "delete":
+                        // Fire event so add-ons can run commands, etc.
+                        TeamEvent event4 = new TeamEvent(getIslands().getIsland(targetPlayer))
+                        .admin(true)
+                        .reason(TeamReason.DELETE)
+                        .involvedPlayer(targetPlayer);
+                        plugin.getServer().getPluginManager().callEvent(event4);
+                        if (event4.isCancelled()) return;
                         UUID teamLeader = getIslands().getTeamLeader(targetPlayer);
                         for (UUID m : getIslands().getMembers(targetPlayer)) {
                             if (DEBUG)
                                 plugin.getLogger().info("DEBUG: member " + m);
-                            //Only the team leader gets to stay
+                            // Only the team leader gets to stay
                             if (!teamLeader.equals(m)) {
                                 getIslands().setLeaveTeam(targetPlayer);
                             } else {
@@ -250,6 +282,13 @@ public class AdminCommand extends AbstractCommand {
                         }
                         // Get the team's island
                         Island teamIsland = getIslands().getIsland(targetPlayer2);
+                        // Fire event so add-ons can run commands, etc.
+                        TeamEvent event = new TeamEvent(teamIsland)
+                                .admin(true)
+                                .reason(TeamReason.JOIN)
+                                .involvedPlayer(targetPlayer);
+                        plugin.getServer().getPluginManager().callEvent(event);
+                        if (event.isCancelled()) return;
                         // Move player to team's island
                         Location newHome = getIslands().getSafeHomeLocation(targetPlayer2, 1);
                         if (newHome != null) {

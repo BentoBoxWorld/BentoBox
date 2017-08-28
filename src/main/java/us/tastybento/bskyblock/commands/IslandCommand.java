@@ -21,6 +21,8 @@ import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
+import us.tastybento.bskyblock.api.events.island.TeamEvent;
+import us.tastybento.bskyblock.api.events.island.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.api.events.team.PlayerAcceptInviteEvent;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -469,7 +471,11 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: executing team command for " + teamLeaderUUID);
+                    plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
+                // Fire event so add-ons can run commands, etc.
+                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.INFO).involvedPlayer(playerUUID);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
                 if (teamLeaderUUID.equals(playerUUID)) {
                     int maxSize = Settings.maxTeamSize;
                     for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
@@ -616,6 +622,10 @@ public class IslandCommand extends AbstractCommand {
                             inviteList.inverse().remove(playerUUID);
                             Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.removingInvite"));
                         }
+                        // Fire event so add-ons can run commands, etc.
+                        TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.INVITE).involvedPlayer(invitedPlayerUUID);
+                        plugin.getServer().getPluginManager().callEvent(event);
+                        if (event.isCancelled()) return;
                         // Put the invited player (key) onto the list with inviter (value)
                         // If someone else has invited a player, then this invite will overwrite the previous invite!
                         inviteList.put(invitedPlayerUUID, playerUUID);
@@ -662,7 +672,10 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
+                // Fire event so add-ons can run commands, etc.
+                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.UNINVITE).involvedPlayer(playerUUID);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
                 if (inviteList.inverse().containsKey(playerUUID)) {
                     Player invitee = plugin.getServer().getPlayer(inviteList.inverse().get(playerUUID));
                     if (invitee != null) {
@@ -700,60 +713,56 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-                if (Util.inWorld(player)) {
-                    if (getPlayers().inTeam(playerUUID)) {
-                        // Team leaders cannot leave
-                        if (teamLeaderUUID != null && teamLeaderUUID.equals(playerUUID)) {
-                            Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouAreTheLeader"));
-                            return;
-                        }
-                        // Check for confirmation
-                        if (Settings.leaveConfirmation && !leavingPlayers.contains(playerUUID)) {
-                            leavingPlayers.add(playerUUID);
-                            Util.sendMessage(player, ChatColor.GOLD + getLocale(sender).get("leave.warning"));
+                if (getPlayers().inTeam(playerUUID)) {
+                    // Team leaders cannot leave
+                    if (teamLeaderUUID != null && teamLeaderUUID.equals(playerUUID)) {
+                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouAreTheLeader"));
+                        return;
+                    }
+                    // Fire event so add-ons can run commands, etc.
+                    TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.LEAVE).involvedPlayer(playerUUID);
+                    plugin.getServer().getPluginManager().callEvent(event);
+                    if (event.isCancelled()) return;
+                    // Check for confirmation
+                    if (Settings.leaveConfirmation && !leavingPlayers.contains(playerUUID)) {
+                        leavingPlayers.add(playerUUID);
+                        Util.sendMessage(player, ChatColor.GOLD + getLocale(sender).get("leave.warning"));
 
-                            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                                // If the player is still on the list, remove them and cancel the leave
-                                if (leavingPlayers.contains(playerUUID)) {
-                                    leavingPlayers.remove(playerUUID);
-                                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.canceled"));
-                                }
-                            }, Settings.leaveConfirmWait * 20L);
+                        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+                            // If the player is still on the list, remove them and cancel the leave
+                            if (leavingPlayers.contains(playerUUID)) {
+                                leavingPlayers.remove(playerUUID);
+                                Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.canceled"));
+                            }
+                        }, Settings.leaveConfirmWait * 20L);
 
-                            return;
-                        }
-                        // Remove from confirmation list
-                        leavingPlayers.remove(playerUUID);
-                        // Remove from team
-                        if (!getIslands().setLeaveTeam(playerUUID)) {
-                            //Util.sendMessage(player, getLocale(playerUUID).get("leaveerrorYouCannotLeaveIsland);
-                            // If this is canceled, fail silently
-                            return;
-                        }
-                        // Log the location that this player left so they
-                        // cannot join again before the cool down ends
-                        getPlayers().startInviteCoolDownTimer(playerUUID, getIslands().getIslandLocation(teamLeaderUUID));
+                        return;
+                    }
+                    // Remove from confirmation list
+                    leavingPlayers.remove(playerUUID);
+                    // Remove from team
+                    getIslands().setLeaveTeam(playerUUID);
+                    // Log the location that this player left so they
+                    // cannot join again before the cool down ends
+                    getPlayers().startInviteCoolDownTimer(playerUUID, getIslands().getIslandLocation(teamLeaderUUID));
 
-                        Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("leave.youHaveLeftTheIsland"));
-                        // Tell the leader if they are online
-                        if (plugin.getServer().getPlayer(teamLeaderUUID) != null) {
-                            Player leader = plugin.getServer().getPlayer(teamLeaderUUID);
-                            Util.sendMessage(leader, ChatColor.RED + getLocale(teamLeaderUUID).get("leave.nameHasLeftYourIsland").replace("[name]", player.getName()));
-                        } else {
-                            // TODO: Leave them a message
-                            //plugin.getMessages().setMessage(teamLeader, plugin.myLocale(teamLeader).leavenameHasLeftYourIsland.replace("[name]", player.getName()));
-                        }
-
-                        // Clear all player variables and save
-                        getPlayers().resetPlayer(player);
-                        if (!player.performCommand(Settings.SPAWNCOMMAND)) {
-                            player.teleport(player.getWorld().getSpawnLocation());
-                        }
+                    Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("leave.youHaveLeftTheIsland"));
+                    // Tell the leader if they are online
+                    if (plugin.getServer().getPlayer(teamLeaderUUID) != null) {
+                        Player leader = plugin.getServer().getPlayer(teamLeaderUUID);
+                        Util.sendMessage(leader, ChatColor.RED + getLocale(teamLeaderUUID).get("leave.nameHasLeftYourIsland").replace("[name]", player.getName()));
                     } else {
-                        Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouCannotLeaveIsland"));
+                        // TODO: Leave them a message
+                        //plugin.getMessages().setMessage(teamLeader, plugin.myLocale(teamLeader).leavenameHasLeftYourIsland.replace("[name]", player.getName()));
+                    }
+
+                    // Clear all player variables and save
+                    getPlayers().resetPlayer(player);
+                    if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+                        player.teleport(player.getWorld().getSpawnLocation());
                     }
                 } else {
-                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouMustBeInWorld"));
+                    Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("leave.errorYouCannotLeaveIsland"));
                 }
             }
 
@@ -797,6 +806,10 @@ public class IslandCommand extends AbstractCommand {
                     Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("kick.error.youCannotKickYourself"));
                     return;
                 }
+                // Fire event so add-ons can run commands, etc.
+                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.KICK).involvedPlayer(targetPlayerUUID);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
                 // Check for confirmation
                 if (Settings.confirmKick && !kickingPlayers.contains(playerUUID)) {
                     kickingPlayers.add(playerUUID);
@@ -815,10 +828,7 @@ public class IslandCommand extends AbstractCommand {
                 // Remove from confirmation list
                 kickingPlayers.remove(playerUUID);
                 // Remove from team
-                if (!getIslands().setLeaveTeam(targetPlayerUUID)) {
-                    // If this is canceled, fail silently
-                    return;
-                }
+                getIslands().setLeaveTeam(targetPlayerUUID);
                 // Log the location that this player left so they
                 // cannot join again before the cool down ends
                 getPlayers().startInviteCoolDownTimer(targetPlayerUUID, getIslands().getIslandLocation(teamLeaderUUID));
@@ -883,6 +893,10 @@ public class IslandCommand extends AbstractCommand {
                 }
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Invite is valid");
+                // Fire event so add-ons can run commands, etc.
+                TeamEvent event = new TeamEvent(getIslands().getIsland(prospectiveTeamLeaderUUID)).reason(TeamReason.JOIN).involvedPlayer(playerUUID);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
                 // Remove the invite
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Removing player from invite list");
@@ -954,16 +968,22 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 // Reject /island reject
-                if (inviteList.containsKey(player.getUniqueId())) {
+                if (inviteList.containsKey(playerUUID)) {
+                    // Fire event so add-ons can run commands, etc.
+                    TeamEvent event = new TeamEvent(getIslands().getIsland(inviteList.get(playerUUID))).reason(TeamReason.REJECT).involvedPlayer(playerUUID);
+                    plugin.getServer().getPluginManager().callEvent(event);
+                    if (event.isCancelled()) return;
+                    
+                    // Remove this player from the global invite list
+                    inviteList.remove(player.getUniqueId());
                     Util.sendMessage(player, ChatColor.GREEN + getLocale(playerUUID).get("reject.youHaveRejectedInvitation"));
-                    // If the player is online still then tell them directly
+                    // If the leader is online tell them directly
                     // about the rejection
-                    if (Bukkit.getPlayer(inviteList.get(player.getUniqueId())) != null) {
+                    if (Bukkit.getPlayer(inviteList.get(playerUUID)) != null) {
                         Util.sendMessage(Bukkit.getPlayer(inviteList.get(playerUUID)),
                                 ChatColor.RED + getLocale(playerUUID).get("reject.nameHasRejectedInvite").replace("[name]", player.getName()));
                     }
-                    // Remove this player from the global invite list
-                    inviteList.remove(player.getUniqueId());
+                    
                 } else {
                     // Someone typed /island reject and had not been invited
                     Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("reject.youHaveNotBeenInvited"));
@@ -996,8 +1016,8 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 plugin.getLogger().info("DEBUG: arg[0] = " + args[0]);
-                UUID targetPlayer = getPlayers().getUUID(args[0]);
-                if (targetPlayer == null) {
+                UUID targetUUID = getPlayers().getUUID(args[0]);
+                if (targetUUID == null) {
                     Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("general.errors.unknown-player"));
                     return;
                 }
@@ -1009,33 +1029,38 @@ public class IslandCommand extends AbstractCommand {
                     Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorNotYourIsland"));
                     return;
                 }
-                if (targetPlayer.equals(playerUUID)) {
+                if (targetUUID.equals(playerUUID)) {
                     Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorGeneralError"));
                     return;
                 }
-                if (!teamMembers.contains(targetPlayer)) {
+                if (!teamMembers.contains(targetUUID)) {
                     Util.sendMessage(player, ChatColor.RED + getLocale(playerUUID).get("makeleader.errorThatPlayerIsNotInTeam"));
                     return;
                 }
-                // targetPlayer is the new leader
-                getIslands().getIsland(playerUUID).setOwner(targetPlayer);
+                // Fire event so add-ons can run commands, etc.
+                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.MAKELEADER).involvedPlayer(targetUUID);
+                plugin.getServer().getPluginManager().callEvent(event);
+                if (event.isCancelled()) return;
+                
+                // target is the new leader
+                getIslands().getIsland(playerUUID).setOwner(targetUUID);
                 Util.sendMessage(player, ChatColor.GREEN
-                        + getLocale(playerUUID).get("makeleader.nameIsNowTheOwner").replace("[name]", getPlayers().getName(targetPlayer)));
+                        + getLocale(playerUUID).get("makeleader.nameIsNowTheOwner").replace("[name]", getPlayers().getName(targetUUID)));
 
                 // Check if online
-                Player target = plugin.getServer().getPlayer(targetPlayer);
+                Player target = plugin.getServer().getPlayer(targetUUID);
                 if (target == null) {
                     // TODO offline messaging
                     //plugin.getMessages().setMessage(targetPlayer, getLocale(playerUUID).get("makeleader.youAreNowTheOwner"));
 
                 } else {
                     // Online
-                    Util.sendMessage(plugin.getServer().getPlayer(targetPlayer), ChatColor.GREEN + getLocale(targetPlayer).get("makeleader.youAreNowTheOwner"));
+                    Util.sendMessage(plugin.getServer().getPlayer(targetUUID), ChatColor.GREEN + getLocale(targetUUID).get("makeleader.youAreNowTheOwner"));
                     // Check if new leader has a lower range permission than the island size
                     boolean hasARangePerm = false;
                     int range = Settings.islandProtectionRange;
                     // Check for zero protection range
-                    Island islandByOwner = getIslands().getIsland(targetPlayer);
+                    Island islandByOwner = getIslands().getIsland(targetUUID);
                     if (islandByOwner.getProtectionRange() == 0) {
                         plugin.getLogger().warning("Player " + player.getName() + "'s island had a protection range of 0. Setting to default " + range);
                         islandByOwner.setProtectionRange(range);
@@ -1069,8 +1094,8 @@ public class IslandCommand extends AbstractCommand {
 
                         // Range can go up or down
                         if (range != islandByOwner.getProtectionRange()) {
-                            Util.sendMessage(player, getLocale(targetPlayer).get("admin.SetRangeUpdated").replace("[number]", String.valueOf(range)));
-                            Util.sendMessage(target, getLocale(targetPlayer).get("admin.SetRangeUpdated").replace("[number]", String.valueOf(range)));
+                            Util.sendMessage(player, getLocale(targetUUID).get("admin.SetRangeUpdated").replace("[number]", String.valueOf(range)));
+                            Util.sendMessage(target, getLocale(targetUUID).get("admin.SetRangeUpdated").replace("[number]", String.valueOf(range)));
                             plugin.getLogger().info(
                                     "Makeleader: Island protection range changed from " + islandByOwner.getProtectionRange() + " to "
                                             + range + " for " + player.getName() + " due to permission.");
