@@ -13,8 +13,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
-import us.tastybento.bskyblock.api.events.island.TeamEvent;
-import us.tastybento.bskyblock.api.events.island.TeamEvent.TeamReason;
+import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -100,10 +100,10 @@ public class AdminCommand extends AbstractCommand {
                     switch (args[0].toLowerCase()) {
                     case "info":
                         // Fire event so add-ons can run commands, etc.
-                        TeamEvent event = new TeamEvent(getIslands().getIsland(targetPlayer))
-                        .admin(true)
-                        .reason(TeamReason.INFO)
-                        .involvedPlayer(targetPlayer);
+                        TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(targetPlayer))
+                                .admin(true)
+                                .reason(TeamReason.INFO)
+                                .involvedPlayer(targetPlayer).build();
                         plugin.getServer().getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
                         // Display info
@@ -126,10 +126,10 @@ public class AdminCommand extends AbstractCommand {
                             return;
                         }
                         // Fire event so add-ons can run commands, etc.
-                        TeamEvent event2 = new TeamEvent(getIslands().getIsland(targetPlayer))
+                        TeamEvent event2 = TeamEvent.builder().island(getIslands().getIsland(targetPlayer))
                                 .admin(true)
                                 .reason(TeamReason.MAKELEADER)
-                                .involvedPlayer(targetPlayer);
+                                .involvedPlayer(targetPlayer).build();
                         plugin.getServer().getPluginManager().callEvent(event2);
                         if (event2.isCancelled()) return;
                         // Display info
@@ -201,10 +201,10 @@ public class AdminCommand extends AbstractCommand {
                             return;
                         }
                         // Fire event so add-ons can run commands, etc.
-                        TeamEvent event3 = new TeamEvent(getIslands().getIsland(targetPlayer))
+                        TeamEvent event3 = TeamEvent.builder().island(getIslands().getIsland(targetPlayer))
                                 .admin(true)
                                 .reason(TeamReason.KICK)
-                                .involvedPlayer(targetPlayer);
+                                .involvedPlayer(targetPlayer).build();
                         plugin.getServer().getPluginManager().callEvent(event3);
                         if (event3.isCancelled()) return;
                         // Display info
@@ -223,10 +223,10 @@ public class AdminCommand extends AbstractCommand {
                         return;
                     case "delete":
                         // Fire event so add-ons can run commands, etc.
-                        TeamEvent event4 = new TeamEvent(getIslands().getIsland(targetPlayer))
+                        TeamEvent event4 = TeamEvent.builder().island(getIslands().getIsland(targetPlayer))
                         .admin(true)
                         .reason(TeamReason.DELETE)
-                        .involvedPlayer(targetPlayer);
+                        .involvedPlayer(targetPlayer).build();
                         plugin.getServer().getPluginManager().callEvent(event4);
                         if (event4.isCancelled()) return;
                         UUID teamLeader = getIslands().getTeamLeader(targetPlayer);
@@ -283,10 +283,10 @@ public class AdminCommand extends AbstractCommand {
                         // Get the team's island
                         Island teamIsland = getIslands().getIsland(targetPlayer2);
                         // Fire event so add-ons can run commands, etc.
-                        TeamEvent event = new TeamEvent(teamIsland)
+                        TeamEvent event = TeamEvent.builder().island(teamIsland)
                                 .admin(true)
                                 .reason(TeamReason.JOIN)
-                                .involvedPlayer(targetPlayer);
+                                .involvedPlayer(targetPlayer).build();
                         plugin.getServer().getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
                         // Move player to team's island

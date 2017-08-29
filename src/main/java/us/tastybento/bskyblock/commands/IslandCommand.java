@@ -21,9 +21,8 @@ import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
-import us.tastybento.bskyblock.api.events.island.TeamEvent;
-import us.tastybento.bskyblock.api.events.island.TeamEvent.TeamReason;
-import us.tastybento.bskyblock.api.events.team.PlayerAcceptInviteEvent;
+import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
@@ -473,7 +472,7 @@ public class IslandCommand extends AbstractCommand {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
                 // Fire event so add-ons can run commands, etc.
-                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.INFO).involvedPlayer(playerUUID);
+                TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.INFO).involvedPlayer(playerUUID).build();
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 if (teamLeaderUUID.equals(playerUUID)) {
@@ -623,7 +622,7 @@ public class IslandCommand extends AbstractCommand {
                             Util.sendMessage(player, ChatColor.RED + getLocale(sender).get("invite.removingInvite"));
                         }
                         // Fire event so add-ons can run commands, etc.
-                        TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.INVITE).involvedPlayer(invitedPlayerUUID);
+                        TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.INVITE).involvedPlayer(invitedPlayerUUID).build();
                         plugin.getServer().getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
                         // Put the invited player (key) onto the list with inviter (value)
@@ -673,7 +672,7 @@ public class IslandCommand extends AbstractCommand {
             @Override
             public void execute(CommandSender sender, String[] args) {
                 // Fire event so add-ons can run commands, etc.
-                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.UNINVITE).involvedPlayer(playerUUID);
+                TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.UNINVITE).involvedPlayer(playerUUID).build();
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 if (inviteList.inverse().containsKey(playerUUID)) {
@@ -720,7 +719,7 @@ public class IslandCommand extends AbstractCommand {
                         return;
                     }
                     // Fire event so add-ons can run commands, etc.
-                    TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.LEAVE).involvedPlayer(playerUUID);
+                    TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.LEAVE).involvedPlayer(playerUUID).build();
                     plugin.getServer().getPluginManager().callEvent(event);
                     if (event.isCancelled()) return;
                     // Check for confirmation
@@ -807,7 +806,7 @@ public class IslandCommand extends AbstractCommand {
                     return;
                 }
                 // Fire event so add-ons can run commands, etc.
-                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.KICK).involvedPlayer(targetPlayerUUID);
+                TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.KICK).involvedPlayer(targetPlayerUUID).build();
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 // Check for confirmation
@@ -894,7 +893,7 @@ public class IslandCommand extends AbstractCommand {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Invite is valid");
                 // Fire event so add-ons can run commands, etc.
-                TeamEvent event = new TeamEvent(getIslands().getIsland(prospectiveTeamLeaderUUID)).reason(TeamReason.JOIN).involvedPlayer(playerUUID);
+                TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(prospectiveTeamLeaderUUID)).reason(TeamReason.JOIN).involvedPlayer(playerUUID).build();
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 // Remove the invite
@@ -929,8 +928,6 @@ public class IslandCommand extends AbstractCommand {
                 // Put player back into normal mode
                 player.setGameMode(GameMode.SURVIVAL);
 
-                // Fire event so add-ons can run commands, etc.
-                plugin.getServer().getPluginManager().callEvent(new PlayerAcceptInviteEvent(player));
                 Util.sendMessage(player, ChatColor.GREEN + getLocale(sender).get("invite.youHaveJoinedAnIsland").replace("[label]", Settings.ISLANDCOMMAND));
 
                 if (plugin.getServer().getPlayer(inviteList.get(playerUUID)) != null) {
@@ -970,7 +967,7 @@ public class IslandCommand extends AbstractCommand {
                 // Reject /island reject
                 if (inviteList.containsKey(playerUUID)) {
                     // Fire event so add-ons can run commands, etc.
-                    TeamEvent event = new TeamEvent(getIslands().getIsland(inviteList.get(playerUUID))).reason(TeamReason.REJECT).involvedPlayer(playerUUID);
+                    TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(inviteList.get(playerUUID))).reason(TeamReason.REJECT).involvedPlayer(playerUUID).build();
                     plugin.getServer().getPluginManager().callEvent(event);
                     if (event.isCancelled()) return;
                     
@@ -1038,7 +1035,7 @@ public class IslandCommand extends AbstractCommand {
                     return;
                 }
                 // Fire event so add-ons can run commands, etc.
-                TeamEvent event = new TeamEvent(getIslands().getIsland(playerUUID)).reason(TeamReason.MAKELEADER).involvedPlayer(targetUUID);
+                TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.MAKELEADER).involvedPlayer(targetUUID).build();
                 plugin.getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return;
                 
