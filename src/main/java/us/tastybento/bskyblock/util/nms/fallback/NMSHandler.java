@@ -8,8 +8,9 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.SpawnEgg;
-import org.bukkit.potion.Potion;
+import org.bukkit.inventory.meta.PotionMeta;
+import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
@@ -48,8 +49,11 @@ public class NMSHandler implements NMSAbstraction{
      */
     @Override
     public ItemStack getSpawnEgg(EntityType type, int amount) {
-        SpawnEgg egg = new SpawnEgg(type);
-        return egg.toItemStack(amount);
+        ItemStack egg = new ItemStack(Material.MONSTER_EGG, amount);
+        SpawnEggMeta spm = (SpawnEggMeta)egg.getItemMeta();
+        spm.setSpawnedType(type);
+        egg.setItemMeta(spm);
+        return egg;
     }
 
     @Override
@@ -82,7 +86,6 @@ public class NMSHandler implements NMSAbstraction{
     
     }
 
-    @SuppressWarnings("deprecation")
     @Override
     public ItemStack setPotion(Material itemMaterial, Tag itemTags,
             ItemStack chestItem) {
@@ -126,10 +129,11 @@ public class NMSHandler implements NMSAbstraction{
             }else{
                 return chestItem;
             }
-            Potion potion = new Potion(type);
-            potion.setHasExtendedDuration(_long);
-            potion.setLevel(strong ? 2 : 1);
-            chestItem = potion.toItemStack(chestItem.getAmount());
+            chestItem = new ItemStack(Material.POTION, chestItem.getAmount());
+            PotionMeta pm = (PotionMeta)chestItem.getItemMeta();
+            PotionData pd = new PotionData(type, _long, strong);
+            pm.setBasePotionData(pd);
+            chestItem.setItemMeta(pm);
         }
     
         return chestItem;
