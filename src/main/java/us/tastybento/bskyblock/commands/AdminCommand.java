@@ -13,6 +13,8 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
+import us.tastybento.bskyblock.api.commands.ArgumentHandler;
+import us.tastybento.bskyblock.api.commands.CanUseResp;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -39,7 +41,7 @@ public class AdminCommand extends AbstractCommand {
     @Override
     public void setup() {
         /* /asadmin delete <name> - delete name's island */
-        addArgument(new String[] {"delete"}, new ArgumentHandler() {
+        addArgument(new String[] {"delete"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -63,7 +65,7 @@ public class AdminCommand extends AbstractCommand {
         });
 
         /* /asadmin team - manage teams */
-        addArgument(new String[] {"team"}, new ArgumentHandler() {
+        addArgument(new String[] {"team"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {

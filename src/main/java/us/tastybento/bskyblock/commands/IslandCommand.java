@@ -21,6 +21,8 @@ import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
+import us.tastybento.bskyblock.api.commands.ArgumentHandler;
+import us.tastybento.bskyblock.api.commands.CanUseResp;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -83,7 +85,7 @@ public class IslandCommand extends AbstractCommand {
     @Override
     public void setup() {
         /* /is about - Display plugin's info (license, version, authors) */
-        addArgument(new String[]{"about"}, new ArgumentHandler() {
+        addArgument(new String[]{"about"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -135,7 +137,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is go [<1-x>] - Teleport player to his island or the specified home */
-        addArgument(new String[]{"go", "home", "h"}, new ArgumentHandler() {
+        addArgument(new String[]{"go", "home", "h"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -169,7 +171,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is spawn - Teleport player to spawn */
-        addArgument(new String[]{"spawn"}, new ArgumentHandler() {
+        addArgument(new String[]{"spawn"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -196,7 +198,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is create - Create an island for this player (show the schematic selection panel if enabled) */
-        addArgument(new String[]{"create", "auto"}, new ArgumentHandler() {
+        addArgument(new String[]{"create", "auto"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -229,7 +231,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is info [player] - Display info about (specified) player's island*/
-        addArgument(new String[]{"info"}, new ArgumentHandler() {
+        addArgument(new String[]{"info"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -256,7 +258,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is cp [<on/off>] - Open Control Panel or toggle it */
-        addArgument(new String[]{"controlpanel", "cp"}, new ArgumentHandler() {
+        addArgument(new String[]{"controlpanel", "cp"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -283,7 +285,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is reset - Reset the island */
-        addArgument(new String[]{"reset", "restart"}, new ArgumentHandler() {
+        addArgument(new String[]{"reset", "restart"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -331,7 +333,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is sethome - Set a home where the player is located */
-        addArgument(new String[]{"sethome"}, new ArgumentHandler() {
+        addArgument(new String[]{"sethome"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -358,7 +360,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is name <name> - Set island display name */
-        addArgument(new String[]{"name"}, new ArgumentHandler() {
+        addArgument(new String[]{"name"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -419,7 +421,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is resetname - Reset island display name */
-        addArgument(new String[]{"resetname"}, new ArgumentHandler() {
+        addArgument(new String[]{"resetname"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -457,7 +459,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is team - Display island team info */
-        addArgument(new String[]{"team"}, new ArgumentHandler() {
+        addArgument(new String[]{"team"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -531,7 +533,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is invite <player> - Invite a player to join the island */
-        addArgument(new String[]{"invite"}, new ArgumentHandler() {
+        addArgument(new String[]{"invite"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -658,7 +660,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is uninvite <player> - Deletes the invite to join the island */
-        addArgument(new String[]{"uninvite"}, new ArgumentHandler() {
+        addArgument(new String[]{"uninvite"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -699,7 +701,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is leave - Leave the island */
-        addArgument(new String[]{"leave"}, new ArgumentHandler() {
+        addArgument(new String[]{"leave"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -777,7 +779,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is kick <player> - Kick the specified player from island team */
-        addArgument(new String[]{"kick"}, new ArgumentHandler() {
+        addArgument(new String[]{"kick"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -860,7 +862,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is accept [player] - Accept invite */
-        addArgument(new String[]{"accept"}, new ArgumentHandler() {
+        addArgument(new String[]{"accept"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -951,7 +953,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is reject [player] - Reject invite */
-        addArgument(new String[]{"reject"}, new ArgumentHandler() {
+        addArgument(new String[]{"reject"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -999,7 +1001,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is makeleader <player> - Set the specified player as leader/owner of the island */
-        addArgument(new String[]{"makeleader", "transfer"}, new ArgumentHandler() {
+        addArgument(new String[]{"makeleader", "transfer"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1115,7 +1117,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is expel <player> - Expel a visitor/coop from the island */
-        addArgument(new String[]{"expel"}, new ArgumentHandler() {
+        addArgument(new String[]{"expel"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1139,7 +1141,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is ban <player> - Ban a player from the island */
-        addArgument(new String[]{"ban"}, new ArgumentHandler() {
+        addArgument(new String[]{"ban"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1163,7 +1165,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is unban <player> - Unban player from the island */
-        addArgument(new String[]{"unban"}, new ArgumentHandler() {
+        addArgument(new String[]{"unban"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1187,7 +1189,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is banlist - Display island banned players */
-        addArgument(new String[]{"banlist", "bl"}, new ArgumentHandler() {
+        addArgument(new String[]{"banlist", "bl"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1212,7 +1214,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is trust <player> - Trust a player */
-        addArgument(new String[]{"trust"}, new ArgumentHandler() {
+        addArgument(new String[]{"trust"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1236,7 +1238,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is untrust <player> - Untrust a player */
-        addArgument(new String[]{"untrust"}, new ArgumentHandler() {
+        addArgument(new String[]{"untrust"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1260,7 +1262,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is trustlist - Display trust players */
-        addArgument(new String[]{"trustlist", "tl"}, new ArgumentHandler() {
+        addArgument(new String[]{"trustlist", "tl"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1284,7 +1286,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is coop <player> - Coop a player */
-        addArgument(new String[]{"coop"}, new ArgumentHandler() {
+        addArgument(new String[]{"coop"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1308,7 +1310,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is uncoop <player> - Uncoop a player */
-        addArgument(new String[]{"uncoop"}, new ArgumentHandler() {
+        addArgument(new String[]{"uncoop"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1332,7 +1334,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is cooplist - Display coop players */
-        addArgument(new String[]{"cooplist", "cl"}, new ArgumentHandler() {
+        addArgument(new String[]{"cooplist", "cl"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1356,7 +1358,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is lock - Toggle island lock */
-        addArgument(new String[]{"lock", "unlock"}, new ArgumentHandler() {
+        addArgument(new String[]{"lock", "unlock"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1398,7 +1400,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is settings - Display Settings menu */
-        addArgument(new String[]{"settings"}, new ArgumentHandler() {
+        addArgument(new String[]{"settings"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1422,7 +1424,7 @@ public class IslandCommand extends AbstractCommand {
         });
 
         /* /is language <id> - Set the language */
-        addArgument(new String[]{"language", "lang"}, new ArgumentHandler() {
+        addArgument(new String[]{"language", "lang"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1464,5 +1466,9 @@ public class IslandCommand extends AbstractCommand {
         //TODO: Add panels, make a selection.
         Schematic schematic = plugin.getSchematics().getSchematic("default");
         getIslands().newIsland(player, schematic);
+    }
+    
+    public void addSubCommand(String[] names, ArgumentHandler handler) {
+        addArgument(names, handler);
     }
 }

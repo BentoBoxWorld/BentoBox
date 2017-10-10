@@ -58,6 +58,8 @@ public class BSkyBlock extends JavaPlugin{
     // Metrics
     private Metrics metrics;
 
+    private IslandCommand islandCommand;
+
     @Override
     public void onEnable(){
         plugin = this;
@@ -84,6 +86,9 @@ public class BSkyBlock extends JavaPlugin{
 
             VaultHelper.setupPermissions();
 
+            // Set up commands
+            islandCommand = new IslandCommand(BSkyBlock.this);
+            
             // These items have to be loaded when the server has done 1 tick.
             // Note Worlds are not loaded this early, so any Locations or World reference will be null
             // at this point. Therefore, the 1 tick scheduler is required.
@@ -111,7 +116,7 @@ public class BSkyBlock extends JavaPlugin{
                     Settings.defaultLanguage = "en-US";
                     loadLocales();
 
-                    new IslandCommand(BSkyBlock.this);
+                    
                     new AdminCommand(BSkyBlock.this);
 
                     // Register Listeners
@@ -143,6 +148,10 @@ public class BSkyBlock extends JavaPlugin{
 
             });
         }
+    }
+
+    public IslandCommand getIslandCommand() {
+        return islandCommand;
     }
 
     protected void registerListeners() {

@@ -31,7 +31,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     private BSkyBlock plugin;
 
-    private final Map<String, ArgumentHandler> argumentsMap;
+    public final Map<String, ArgumentHandler> argumentsMap;
     private final Map<String, String> aliasesMap;
 
     public final String label;
@@ -59,7 +59,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
         // Register the help argument if needed
         if (help) {
-            addArgument(new String[]{"help", "?"}, new ArgumentHandler() {
+            addArgument(new String[]{"help", "?"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
                 @Override
                 public CanUseResp canUse(CommandSender sender) {
                     return new CanUseResp(true); // If the player has access to this command, he can get help
@@ -91,43 +91,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         setup();
     }
 
-    /**
-     *
-     */
-    public abstract class ArgumentHandler {
-        public abstract CanUseResp canUse(CommandSender sender);
-        public abstract void execute(CommandSender sender, String[] args);
-        public abstract Set<String> tabComplete(CommandSender sender, String[] args);
-        public abstract String[] usage(CommandSender sender);
 
-        public String getShortDescription(CommandSender sender) {
-            String msg = plugin.getLocale(sender).get("help.syntax");
-            msg = msg.replace("[label]", (aliases[0] != null) ? aliases[0] : label);
-
-            String command = "";
-            for(Map.Entry<String, ArgumentHandler> entry : argumentsMap.entrySet()) {
-                if (entry.getValue().equals(this)) {
-                    command = entry.getKey();
-                    break;
-                }
-            }
-
-            String cmds = command;
-            for(String alias : getAliases(command)) {
-                cmds += plugin.getLocale(sender).get("help.syntax-alias-separator") + alias;
-            }
-
-            msg = msg.replace("[command]", cmds);
-
-            String[] usage = argumentsMap.get(command).usage(sender);
-            if (usage == null) usage = new String[2];
-
-            msg = msg.replace("[args]", (usage[0] != null) ? usage[0] : "")
-                    .replace("[info]", (usage[1] != null) ? usage[1] : "");
-
-            return msg;
-        }
-    }
 
     public abstract void setup();
 
@@ -177,16 +141,6 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
             return null;
         }
         else return alias;
-    }
-
-    public Set<String> getAliases(String argument) {
-        Set<String> aliases = new HashSet<>();
-
-        for (Map.Entry<String, String> entry : aliasesMap.entrySet()) {
-            if (entry.getKey().equals(argument)) aliases.add(entry.getValue());
-        }
-
-        return aliases;
     }
 
     @Override
@@ -285,58 +239,6 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     }
 
-    /**
-     * Response class for the canUse check
-     * @author tastybento
-     *
-     */
-    public class CanUseResp {
-        private boolean allowed;
-        private String errorResponse; // May be shown if required
-
-        /**
-         * Cannot use situation
-         * @param errorResponse - error response
-         */
-        public CanUseResp(String errorResponse) {
-            this.allowed = false;
-            this.errorResponse = errorResponse;
-        }
-
-        /**
-         * Can or cannot use situation, no error response.
-         * @param b
-         */
-        public CanUseResp(boolean b) {
-            this.allowed = b;
-            this.errorResponse = "";
-        }
-        /**
-         * @return the allowed
-         */
-        public boolean isAllowed() {
-            return allowed;
-        }
-        /**
-         * @param allowed the allowed to set
-         */
-        public void setAllowed(boolean allowed) {
-            this.allowed = allowed;
-        }
-        /**
-         * @return the errorResponse
-         */
-        public String getErrorResponse() {
-            return errorResponse;
-        }
-        /**
-         * @param errorResponse the errorResponse to set
-         */
-        public void setErrorResponse(String errorResponse) {
-            this.errorResponse = errorResponse;
-        }
-    }
-
     // These methods below just neaten up the code in the commands so "plugin." isn't always used
     /**
      * @return PlayersManager
@@ -363,6 +265,12 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
      */
     protected BSBLocale getLocale(UUID uuid) {
         return plugin.getLocale(uuid);
+    }
+
+
+
+    public Map<String, ArgumentHandler> getArgumentsMap() {
+        return argumentsMap;
     }
 
 }
