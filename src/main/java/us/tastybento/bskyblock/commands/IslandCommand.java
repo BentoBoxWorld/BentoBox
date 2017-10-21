@@ -85,7 +85,7 @@ public class IslandCommand extends AbstractCommand {
     @Override
     public void setup() {
         /* /is about - Display plugin's info (license, version, authors) */
-        addArgument(new String[]{"about"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -134,10 +134,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[] {null, getLocale(sender).get("help.island.about")};
             }
-        });
+        }.alias("about"));
 
         /* /is go [<1-x>] - Teleport player to his island or the specified home */
-        addArgument(new String[]{"go", "home", "h"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -168,10 +168,10 @@ public class IslandCommand extends AbstractCommand {
                     return new String[]{"[1-x]", getLocale(sender).get("help.island.go-homes")};
                 return new String[]{null, getLocale(sender).get("help.island.go")};
             }
-        });
+        }.alias("go").alias("home").alias("h"));
 
         /* /is spawn - Teleport player to spawn */
-        addArgument(new String[]{"spawn"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -195,10 +195,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.spawn")};
             }
-        });
+        }.alias("spawn"));
 
         /* /is create - Create an island for this player (show the schematic selection panel if enabled) */
-        addArgument(new String[]{"create", "auto"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -228,10 +228,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"[schematic]", getLocale(sender).get("help.island.create")};
             }
-        });
+        }.alias("create").alias("auto"));
 
         /* /is info [player] - Display info about (specified) player's island*/
-        addArgument(new String[]{"info"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -255,10 +255,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"[player]", getLocale(sender).get("help.island.info")};
             }
-        });
+        }.alias("info"));
 
         /* /is cp [<on/off>] - Open Control Panel or toggle it */
-        addArgument(new String[]{"controlpanel", "cp"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -282,10 +282,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"[on/off]", getLocale(sender).get("help.island.controlpanel")};
             }
-        });
+        }.alias("cp").alias("controlpanel"));
 
         /* /is reset - Reset the island */
-        addArgument(new String[]{"reset", "restart"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -330,10 +330,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.reset")};
             }
-        });
+        }.alias("reset").alias("restart"));
 
         /* /is sethome - Set a home where the player is located */
-        addArgument(new String[]{"sethome"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -357,10 +357,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.sethome")};
             }
-        });
+        }.alias("sethome"));
 
         /* /is name <name> - Set island display name */
-        addArgument(new String[]{"name"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -418,10 +418,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<name>", getLocale(sender).get("help.island.name")};
             }
-        });
+        }.alias("name"));
 
         /* /is resetname - Reset island display name */
-        addArgument(new String[]{"resetname"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -456,10 +456,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.resetname")};
             }
-        });
+        }.alias("resetname"));
 
         /* /is team - Display island team info */
-        addArgument(new String[]{"team"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -530,10 +530,10 @@ public class IslandCommand extends AbstractCommand {
 
                 return new String[]{null, getLocale(sender).get("help.island.team")};
             }
-        });
+        }.alias("team"));
 
         /* /is invite <player> - Invite a player to join the island */
-        addArgument(new String[]{"invite"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -657,10 +657,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.invite")};
             }
-        });
+        }.alias("invite"));
 
         /* /is uninvite <player> - Deletes the invite to join the island */
-        addArgument(new String[]{"uninvite"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -698,10 +698,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"", getLocale(sender).get("help.island.uninvite")};
             }
-        });
+        }.alias("uninvite"));
 
         /* /is leave - Leave the island */
-        addArgument(new String[]{"leave"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -776,10 +776,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.leave")};
             }
-        });
+        }.alias("leave"));
 
         /* /is kick <player> - Kick the specified player from island team */
-        addArgument(new String[]{"kick"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -859,10 +859,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.kick")};
             }
-        });
+        }.alias("kick"));
 
         /* /is accept [player] - Accept invite */
-        addArgument(new String[]{"accept"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -950,10 +950,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"[player]", getLocale(sender).get("help.island.accept")};
             }
-        });
+        }.alias("accept"));
 
         /* /is reject [player] - Reject invite */
-        addArgument(new String[]{"reject"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -998,10 +998,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"[player]", getLocale(sender).get("help.island.reject")};
             }
-        });
+        }.alias("reject"));
 
         /* /is makeleader <player> - Set the specified player as leader/owner of the island */
-        addArgument(new String[]{"makeleader", "transfer"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1114,10 +1114,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.makeleader")};
             }
-        });
+        }.alias("makeleader").alias("transfer"));
 
         /* /is expel <player> - Expel a visitor/coop from the island */
-        addArgument(new String[]{"expel"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1138,10 +1138,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.expel")};
             }
-        });
+        }.alias("expel"));
 
         /* /is ban <player> - Ban a player from the island */
-        addArgument(new String[]{"ban"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1162,10 +1162,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.ban")};
             }
-        });
+        }.alias("ban"));
 
         /* /is unban <player> - Unban player from the island */
-        addArgument(new String[]{"unban"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1186,10 +1186,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.unban")};
             }
-        });
+        }.alias("unban"));
 
         /* /is banlist - Display island banned players */
-        addArgument(new String[]{"banlist", "bl"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1211,10 +1211,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.banlist")};
             }
-        });
+        }.alias("banlist").alias("bl"));
 
         /* /is trust <player> - Trust a player */
-        addArgument(new String[]{"trust"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1235,10 +1235,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.trust")};
             }
-        });
+        }.alias("trust"));
 
         /* /is untrust <player> - Untrust a player */
-        addArgument(new String[]{"untrust"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1259,10 +1259,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.untrust")};
             }
-        });
+        }.alias("untrust"));
 
         /* /is trustlist - Display trust players */
-        addArgument(new String[]{"trustlist", "tl"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1283,10 +1283,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.trustlist")};
             }
-        });
+        }.alias("trustlist").alias("tl"));
 
         /* /is coop <player> - Coop a player */
-        addArgument(new String[]{"coop"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1307,10 +1307,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.coop")};
             }
-        });
+        }.alias("coop"));
 
         /* /is uncoop <player> - Uncoop a player */
-        addArgument(new String[]{"uncoop"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1331,10 +1331,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<player>", getLocale(sender).get("help.island.uncoop")};
             }
-        });
+        }.alias("uncoop"));
 
         /* /is cooplist - Display coop players */
-        addArgument(new String[]{"cooplist", "cl"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1355,10 +1355,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.cooplist")};
             }
-        });
+        }.alias("cooplist").alias("cl"));
 
         /* /is lock - Toggle island lock */
-        addArgument(new String[]{"lock", "unlock"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1397,10 +1397,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.lock")};
             }
-        });
+        }.alias("lock").alias("unlock"));
 
         /* /is settings - Display Settings menu */
-        addArgument(new String[]{"settings"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1421,10 +1421,10 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{null, getLocale(sender).get("help.island.settings")};
             }
-        });
+        }.alias("settings"));
 
         /* /is language <id> - Set the language */
-        addArgument(new String[]{"language", "lang"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -1445,7 +1445,7 @@ public class IslandCommand extends AbstractCommand {
             public String[] usage(CommandSender sender) {
                 return new String[]{"<id>", getLocale(sender).get("help.island.language")};
             }
-        });
+        }.alias("language").alias("lang"));
     }
 
     /**
@@ -1468,7 +1468,7 @@ public class IslandCommand extends AbstractCommand {
         getIslands().newIsland(player, schematic);
     }
     
-    public void addSubCommand(String[] names, ArgumentHandler handler) {
-        addArgument(names, handler);
+    public void addSubCommand(ArgumentHandler handler) {
+        addArgument(handler);
     }
 }

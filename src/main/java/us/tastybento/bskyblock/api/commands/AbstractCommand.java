@@ -18,6 +18,9 @@ import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.events.command.CommandEvent;
+import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
@@ -32,8 +35,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     private BSkyBlock plugin;
 
     public final Map<String, ArgumentHandler> argumentsMap;
-    private final Map<String, String> aliasesMap;
-
+    public final Set<ArgumentHandler> handlers;
     public final String label;
     public final String[] aliases;
     public boolean isPlayer;
@@ -51,7 +53,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     protected AbstractCommand(BSkyBlock plugin, String label, String[] aliases, boolean help) {
         this.plugin = plugin;
         this.argumentsMap = new LinkedHashMap<>();
-        this.aliasesMap = new HashMap<>();
+        this.handlers = new HashSet<>();
         this.label = label;
         this.aliases = aliases;
         this.help = help;
@@ -59,7 +61,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
         // Register the help argument if needed
         if (help) {
-            addArgument(new String[]{"help", "?"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+            addArgument(new ArgumentHandler(label) {
                 @Override
                 public CanUseResp canUse(CommandSender sender) {
                     return new CanUseResp(true); // If the player has access to this command, he can get help
@@ -68,8 +70,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 @Override
                 public void execute(CommandSender sender, String[] args) {
                     Util.sendMessage(sender, plugin.getLocale(sender).get("help.header"));
-                    for(String arg : argumentsMap.keySet()){
-                        ArgumentHandler handler = getHandler(arg);
+                    for(ArgumentHandler handler: handlers){
                         if (handler.canUse(sender).isAllowed()) Util.sendMessage(sender, handler.getShortDescription(sender));
                     }
                     Util.sendMessage(sender, plugin.getLocale(sender).get("help.end"));
@@ -84,7 +85,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 public String[] usage(CommandSender sender) {
                     return new String[] {"", ""};
                 }
-            });
+            }.alias("help").alias("?"));
         }
 
         // Register the other arguments
@@ -98,54 +99,26 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     public abstract CanUseResp canUse(CommandSender sender);
     public abstract void execute(CommandSender sender, String[] args);
 
-    public void addArgument(String[] names, ArgumentHandler handler) {
-        // TODO add some security checks to avoid duplicates
-        argumentsMap.put(names[0], handler);
-        for (int i = 1 ; i < names.length ; i++) {
-            aliasesMap.put(names[0], names[i]);
+    public void addArgument(ArgumentHandler handler) {
+        for (String argument : handler.getAliases()) {
+            argumentsMap.put(argument, handler);
         }
+        handlers.add(handler);
     }
 
     public ArgumentHandler getHandler(String argument) {
-        if (isAlias(argument)) return argumentsMap.get(getParent(argument));
-        else return argumentsMap.get(argument);
-    }
-
-    public void setHandler(String argument, ArgumentHandler handler) {
-        if (argumentsMap.containsKey(argument)) argumentsMap.put(argument, handler);
-    }
-
-    public boolean isAlias(String argument) {
-        return aliasesMap.containsValue(argument);
-    }
-
-    public void addAliases(String parent, String... aliases) {
-        if (argumentsMap.containsKey(parent)) {
-            for (String alias : aliases) {
-                if (!aliasesMap.containsKey(alias) && !aliasesMap.containsValue(alias)) aliasesMap.put(parent, alias);
-            }
-        }
-    }
-
-    public void removeAliases(String... aliases) {
-        for (String alias : aliases) {
-            if (aliasesMap.containsValue(alias)) aliasesMap.remove(getParent(alias));
-        }
-    }
-
-    public String getParent(String alias) {
-        if (isAlias(alias)) {
-            for(String parent : aliasesMap.keySet()) {
-                if (aliasesMap.get(parent).equals(alias)) return parent;
-            }
-            return null;
-        }
-        else return alias;
+        return argumentsMap.get(argument);
     }
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         checkForPlayer(sender);
+
+        // Fire command event
+        CommandEvent event = CommandEvent.builder().setSender(sender).setCommand(command).setLabel(label).setArgs(args).build();
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (event.isCancelled()) return true;
+
         CanUseResp canUse = this.canUse(sender);
         if (canUse.isAllowed()) {
             if(args.length >= 1) {
@@ -181,8 +154,8 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
         if (canUse(sender).isAllowed()) {
             if (args.length <= 1) {
                 // Go through every argument, check if player can use it and if so, add it in tab options
-                for(String argument : argumentsMap.keySet()) {
-                    if (getHandler(argument).canUse(sender).isAllowed()) options.add(argument);
+                for(ArgumentHandler handler: handlers) {
+                    if (handler.canUse(sender).isAllowed()) options.addAll(handler.aliasSet);
                 }
             } else {
                 // If player can execute the argument, get its tab-completer options

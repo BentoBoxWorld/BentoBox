@@ -41,7 +41,7 @@ public class AdminCommand extends AbstractCommand {
     @Override
     public void setup() {
         /* /asadmin delete <name> - delete name's island */
-        addArgument(new String[] {"delete"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -62,10 +62,10 @@ public class AdminCommand extends AbstractCommand {
             public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.admin.delete")};
             }
-        });
+        }.alias("delete"));
 
         /* /asadmin team - manage teams */
-        addArgument(new String[] {"team"}, new ArgumentHandler(plugin, label, aliases, argumentsMap) {
+        addArgument(new ArgumentHandler(label) {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
@@ -353,7 +353,7 @@ public class AdminCommand extends AbstractCommand {
             public String[] usage(CommandSender sender){
                 return new String[] {null, plugin.getLocale(sender).get("help.admin.team.command")};
             }
-        });
+        }.alias("team"));
 
     }
 
