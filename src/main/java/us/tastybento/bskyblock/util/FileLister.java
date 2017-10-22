@@ -11,19 +11,18 @@ import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.java.JavaPlugin;
-
-import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * @author Tastybento
  * @author Poslovitch
  */
 public class FileLister{
-    private BSkyBlock plugin;
+    private Plugin plugin;
 
-    public FileLister(BSkyBlock plugin){
-        this.plugin = plugin;
+    public FileLister(Plugin level){
+        this.plugin = level;
     }
 
     /**

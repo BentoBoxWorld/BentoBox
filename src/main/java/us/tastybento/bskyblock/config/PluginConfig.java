@@ -35,9 +35,9 @@ public class PluginConfig {
         Settings.metrics = plugin.getConfig().getBoolean("general.metrics", true);
         Settings.checkUpdates = plugin.getConfig().getBoolean("general.check-updates", true);
         
-        loadLocales(plugin);
+        //loadLocales(plugin);
         Settings.defaultLanguage = plugin.getConfig().getString("general.default-language", "en-US");
-        if(!plugin.getLocales().containsKey(Settings.defaultLanguage)) errors.put(ConfigError.UNKNOWN_LANGUAGE, Settings.defaultLanguage);
+        //if(!plugin.getLocales().containsKey(Settings.defaultLanguage)) errors.put(ConfigError.UNKNOWN_LANGUAGE, Settings.defaultLanguage);
         
         Settings.useEconomy = plugin.getConfig().getBoolean("general.use-economy", true);
         Settings.startingMoney = plugin.getConfig().getDouble("general.starting-money", 10.0);

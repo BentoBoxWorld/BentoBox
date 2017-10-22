@@ -17,6 +17,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
+import us.tastybento.bskyblock.config.LocaleManager;
+import us.tastybento.bskyblock.config.NotSetup.ConfigError;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
@@ -41,12 +43,8 @@ import us.tastybento.bskyblock.util.VaultHelper;
  */
 public class BSkyBlock extends JavaPlugin{
 
-    final static String LOCALE_FOLDER = "locales";
-
     private static BSkyBlock plugin;
-
-    private HashMap<String, BSBLocale> locales = new HashMap<>();
-
+    
     // Databases
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
@@ -59,6 +57,8 @@ public class BSkyBlock extends JavaPlugin{
     private Metrics metrics;
 
     private IslandCommand islandCommand;
+
+    protected LocaleManager localeManager;
 
     @Override
     public void onEnable(){
@@ -114,7 +114,7 @@ public class BSkyBlock extends JavaPlugin{
                     schematicsManager = new SchematicsMgr(plugin);
 
                     Settings.defaultLanguage = "en-US";
-                    loadLocales();
+                    localeManager = new LocaleManager(plugin);
 
                     
                     new AdminCommand(BSkyBlock.this);
@@ -211,109 +211,6 @@ public class BSkyBlock extends JavaPlugin{
     }
 
     /**
-     * Returns an HashMap of locale identifier and the related object
-     * @return the locales
-     */
-    public HashMap<String, BSBLocale> getLocales(){
-        return locales;
-    }
-
-    /**
-     * Set the available locales
-     * @param locales - the locales to set
-     */
-    public void setLocales(HashMap<String, BSBLocale> locales){
-        this.locales = locales;
-    }
-
-    /**
-     * Returns the default locale
-     * @return the default locale
-     */
-    public BSBLocale getLocale(){
-        return locales.get(Settings.defaultLanguage);
-    }
-
-    /**
-     * Returns the locale for the specified CommandSender
-     * @param sender - CommandSender to get the locale
-     * @return if sender is a player, the player's locale, otherwise the default locale
-     */
-    public BSBLocale getLocale(CommandSender sender){
-        if(sender instanceof Player) return getLocale(((Player) sender).getUniqueId());
-        else return getLocale();
-    }
-
-    /**
-     * Returns the locale for the specified player
-     * @param player - Player to get the locale
-     * @return the locale for this player
-     */
-    public BSBLocale getLocale(UUID player){
-        //getLogger().info("DEBUG: " + player);
-        //getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
-        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
-        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
-        String locale = getPlayers().getPlayer(player).getLocale();
-        if(locale.isEmpty() || !locales.containsKey(locale)) return locales.get(Settings.defaultLanguage);
-
-        return locales.get(locale);
-    }
-
-    /**
-     * Loads all the locales available. If the locale folder does not exist, one will be created and
-     * filled with locale files from the jar.
-     */
-    public void loadLocales() {
-        // Describe the filter - we only want files that are correctly named
-        FilenameFilter ymlFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                //plugin.getLogger().info("DEBUG: filename = " + name);
-                if (name.toLowerCase().startsWith("bsb_") && name.toLowerCase().endsWith(".yml")) {
-                    // See if this is a valid locale
-                    //Locale localeObject = new Locale(name.substring(0, 2), name.substring(3, 5));
-                    Locale localeObject = Locale.forLanguageTag(name.substring(4, name.length() - 4));
-                    if (localeObject == null) {
-                        plugin.getLogger().severe("Filename '" + name + "' is an unknown locale, skipping...");
-                        return false;
-                    }
-                    return true;
-                } else {
-                    if (name.toLowerCase().endsWith(".yml")) {
-                        plugin.getLogger().severe("Filename '" + name + "' is not in the correct format for a locale file - skipping...");
-                    }
-                    return false;
-                }
-            }
-        };
-        // Run through the files and store the locales
-        File localeDir = new File(this.getDataFolder(), LOCALE_FOLDER);
-        // If the folder does not exist, then make it and fill with the locale files from the jar
-        if (!localeDir.exists()) {
-            localeDir.mkdir();
-            FileLister lister = new FileLister(this);
-            try {
-                for (String name : lister.listJar(LOCALE_FOLDER)) {
-                    this.saveResource(name,true);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-        // Store all the locales available
-        for (String language : localeDir.list(ymlFilter)) {
-            try {
-                BSBLocale locale = new BSBLocale(this, language);
-                locales.put(locale.getLocaleId(), locale);
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            }
-
-        }
-    }
-
-    /**
      * Returns the player database
      * @return the player database
      */
@@ -338,6 +235,22 @@ public class BSkyBlock extends JavaPlugin{
      */
     public SchematicsMgr getSchematics() {
         return schematicsManager;
+    }
+
+    /**
+     * @param sender
+     * @return Locale object for sender
+     */
+    public BSBLocale getLocale(CommandSender sender) {
+        return localeManager.getLocale(sender);
+    }
+
+    /**
+     * @param uuid
+     * @return Locale object for UUID
+     */
+    public BSBLocale getLocale(UUID uuid) {
+        return localeManager.getLocale(uuid);
     }
 
 }

@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.util;
 
+import java.io.File;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
@@ -15,9 +16,11 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
@@ -323,5 +326,45 @@ public class Util {
         }
 
         return returned;
+    }
+
+    /**
+     * Loads a YAML file and if it does not exist it is looked for in the JAR
+     * 
+     * @param file
+     * @return
+     */
+    public static YamlConfiguration loadYamlFile(Plugin plugin, String file) {
+        File dataFolder = plugin.getDataFolder();
+        File yamlFile = new File(dataFolder, file);
+
+        YamlConfiguration config = null;
+        if (yamlFile.exists()) {
+            try {
+                config = new YamlConfiguration();
+                config.load(yamlFile);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            // Create the missing file
+            config = new YamlConfiguration();
+            if (!file.startsWith("players")) {
+                plugin.getLogger().info("No " + file + " found. Creating it...");
+            }
+            try {
+                if (plugin.getResource(file) != null) {
+                    plugin.getLogger().info("Using default found in jar file.");
+                    plugin.saveResource(file, false);
+                    config = new YamlConfiguration();
+                    config.load(yamlFile);
+                } else {
+                    config.save(yamlFile);
+                }
+            } catch (Exception e) {
+                plugin.getLogger().severe("Could not create the " + file + " file!");
+            }
+        }
+        return config;
     }
 }

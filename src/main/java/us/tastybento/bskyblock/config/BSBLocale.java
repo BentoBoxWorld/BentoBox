@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.config;
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -8,13 +9,14 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 
 import org.bukkit.ChatColor;
+import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.util.FileLister;
 
 public class BSBLocale {
 
     final static String LOCALE_FOLDER = "locales";
-    private BSkyBlock plugin;
+    private Plugin plugin;
     //private String localeId;
     private String languageTag;
     private ResourceBundle rb;
@@ -26,7 +28,7 @@ public class BSBLocale {
      * @param plugin
      * @throws MalformedURLException
      */
-    public BSBLocale(BSkyBlock plugin, String localeId) throws MalformedURLException {
+    public BSBLocale(Plugin plugin, String localeId) throws MalformedURLException {
         this.plugin = plugin;
         //this.localeId = localeId;
         // Check if the folder exists
@@ -62,8 +64,8 @@ public class BSBLocale {
             return ChatColor.translateAlternateColorCodes('&', rb.getString(reference));
         } else if (!Settings.defaultLanguage.equals(languageTag)){
             //plugin.getLogger().info("DEBUG: try default");
-            // Try default lang
-            return plugin.getLocale().get(reference);
+            // TODO: Try default lang
+            return reference;
         }
         plugin.getLogger().severe(reference + " not found in " + languageTag + " or default lang " + Settings.defaultLanguage);
         return reference; // Return reference for debug purposes, like for the mods.
