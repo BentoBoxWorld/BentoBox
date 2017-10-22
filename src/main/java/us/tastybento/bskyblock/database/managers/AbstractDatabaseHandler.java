@@ -77,7 +77,7 @@ public abstract class AbstractDatabaseHandler<T> {
      *            instead of the names of the variables
      * @return
      */
-    protected String getColumns(boolean usePlaceHolders) {
+    public String getColumns(boolean usePlaceHolders) {
         StringBuilder sb = new StringBuilder();
 
         boolean first = true;
@@ -109,7 +109,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws SQLException
      * @throws ClassNotFoundException
      */
-    protected abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
+    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Creates a <T> filled with values from the corresponding
@@ -125,7 +125,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws ClassNotFoundException
      * @throws SecurityException
      */
-    protected abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
+    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Save T into the corresponding database
@@ -140,7 +140,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @throws SQLException
      * @throws NoSuchMethodException
      */
-    protected abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
+    public abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
 
     /**
      * Deletes the object with the unique id from the database

@@ -37,6 +37,7 @@ import us.tastybento.bskyblock.util.Util;
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
+    private static final boolean DEBUG = false;
     public FlatFileDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
     }
@@ -135,66 +136,81 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
             Method method = propertyDescriptor.getWriteMethod();
-            //plugin.getLogger().info("DEBUG: " + field.getName() + ": " + propertyDescriptor.getPropertyType().getTypeName());
-            if (propertyDescriptor.getPropertyType().equals(HashMap.class)) {
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: " + field.getName() + ": " + propertyDescriptor.getPropertyType().getTypeName());
+            if (config.contains(field.getName())) {
+                if (propertyDescriptor.getPropertyType().equals(HashMap.class)) {
 
-                // Note that we have no idea what type this is
-                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                // collectionTypes should be 2 long
-                Type keyType = collectionTypes.get(0);
-                Type valueType = collectionTypes.get(1);
-                //plugin.getLogger().info("DEBUG: is HashMap<" + keyType.getTypeName() + ", " + valueType.getTypeName() + ">");
-                // TODO: this may not work with all keys. Further serialization may be required.
-                HashMap<Object,Object> value = new HashMap<Object, Object>();
-                for (String key : config.getConfigurationSection(field.getName()).getKeys(false)) {
-                    Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
-                    Object mapValue = deserialize(config.get(field.getName() + "." + key), Class.forName(valueType.getTypeName()));
-                    value.put(mapKey, mapValue);
+                    // Note that we have no idea what type this is
+                    List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                    // collectionTypes should be 2 long
+                    Type keyType = collectionTypes.get(0);
+                    Type valueType = collectionTypes.get(1);
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: is HashMap<" + keyType.getTypeName() + ", " + valueType.getTypeName() + ">");
+                    // TODO: this may not work with all keys. Further serialization may be required.
+                    HashMap<Object,Object> value = new HashMap<Object, Object>();
+                    for (String key : config.getConfigurationSection(field.getName()).getKeys(false)) {
+                        Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
+                        Object mapValue = deserialize(config.get(field.getName() + "." + key), Class.forName(valueType.getTypeName()));
+                        if (DEBUG) {
+                            plugin.getLogger().info("DEBUG: mapKey = " + mapKey + " (" + mapKey.getClass().getCanonicalName() + ")");
+                            plugin.getLogger().info("DEBUG: mapValue = " + mapValue + " (" + mapValue.getClass().getCanonicalName() + ")");
+                        }
+                        value.put(mapKey, mapValue);
+                    }
+                    method.invoke(instance, value);
+                } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
+                        plugin.getLogger().info("DEBUG: adding a set");
+                    }
+                    // Loop through the collection resultset 
+                    // Note that we have no idea what type this is
+                    List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                    // collectionTypes should be only 1 long
+                    Type setType = collectionTypes.get(0);
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: is HashSet<" + setType.getTypeName() + ">");
+                    Set<Object> value = new HashSet<Object>();
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                        plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
+                    }
+                    for (Object listValue: config.getList(field.getName())) {
+                        //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
+                        ((Set<Object>) value).add(deserialize(listValue,Class.forName(setType.getTypeName())));
+                    }
+
+                    // TODO: this may not work with all keys. Further serialization may be required.
+                    //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
+                    method.invoke(instance, value);
+                } else if (propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    //plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: adding a set");
+                    // Loop through the collection resultset 
+                    // Note that we have no idea what type this is
+                    List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                    // collectionTypes should be only 1 long
+                    Type setType = collectionTypes.get(0);
+                    List<Object> value = new ArrayList<Object>();
+                    //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                    //plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
+                    for (Object listValue: config.getList(field.getName())) {
+                        //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
+                        ((List<Object>) value).add(deserialize(listValue,Class.forName(setType.getTypeName())));
+                    }
+                    // TODO: this may not work with all keys. Further serialization may be required.
+                    //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
+                    method.invoke(instance, value);
+                } else {
+                    // Not a collection
+                    Object value = config.get(field.getName());
+                    method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
+
                 }
-                method.invoke(instance, value);
-            } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
-                //plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
-                //plugin.getLogger().info("DEBUG: adding a set");
-                // Loop through the collection resultset 
-                // Note that we have no idea what type this is
-                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                // collectionTypes should be only 1 long
-                Type setType = collectionTypes.get(0);
-                //plugin.getLogger().info("DEBUG: is HashSet<" + setType.getTypeName() + ">");
-                Set<Object> value = new HashSet<Object>();
-                //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                //plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
-                for (Object listValue: config.getList(field.getName())) {
-                    //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                    ((Set<Object>) value).add(deserialize(listValue,Class.forName(setType.getTypeName())));
-                }
-                // TODO: this may not work with all keys. Further serialization may be required.
-                //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
-                method.invoke(instance, value);
-            } else if (propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                //plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
-                //plugin.getLogger().info("DEBUG: adding a set");
-                // Loop through the collection resultset 
-                // Note that we have no idea what type this is
-                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                // collectionTypes should be only 1 long
-                Type setType = collectionTypes.get(0);
-                List<Object> value = new ArrayList<Object>();
-                //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                //plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
-                for (Object listValue: config.getList(field.getName())) {
-                    //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                    ((List<Object>) value).add(deserialize(listValue,Class.forName(setType.getTypeName())));
-                }
-                // TODO: this may not work with all keys. Further serialization may be required.
-                //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
-                method.invoke(instance, value);
-            } else {
-                // Not a collection
-                Object value = config.get(field.getName());
-                method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
             }
-
         }
 
         return instance;
@@ -301,7 +317,12 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private Object deserialize(Object value, Class<? extends Object> clazz) {
-        //plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getCanonicalName());
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getCanonicalName());
+            plugin.getLogger().info("DEBUG: value  is " + value);
+            if (value != null)
+                plugin.getLogger().info("DEBUG: value class  is " + value.getClass().getCanonicalName());
+        }
         if (value instanceof String && value.equals("null")) {
             // If the value is null as a string, return null 
             return null;
@@ -311,6 +332,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             return value;
         }
         // Types that need to be deserialized
+        if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
+            return new Long((Integer)value); 
+        }
         if (clazz.equals(UUID.class)) {
             value = UUID.fromString((String)value);
         }

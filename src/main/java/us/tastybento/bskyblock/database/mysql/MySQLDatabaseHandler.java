@@ -540,7 +540,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#selectObject(java.lang.String)
      */
     @Override
-    protected T loadObject(String uniqueId) throws InstantiationException,
+    public T loadObject(String uniqueId) throws InstantiationException,
             IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
         Connection connection = null;
