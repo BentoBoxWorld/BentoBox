@@ -14,7 +14,6 @@ public abstract class ArgumentHandler {
     private BSkyBlock plugin;
     public Set<String> aliasSet;
     public final String label;
-    public String command;
 
     public abstract CanUseResp canUse(CommandSender sender);
     public abstract void execute(CommandSender sender, String[] args);
@@ -35,7 +34,11 @@ public abstract class ArgumentHandler {
 
         String cmds = "";
         for(String alias : aliasSet) {
-            cmds += plugin.getLocale(sender).get("help.syntax-alias-separator") + alias;
+            if (cmds.isEmpty()) {
+                cmds = alias;
+            } else {
+                cmds += plugin.getLocale(sender).get("help.syntax-alias-separator") + alias;
+            }
         }
 
         msg = msg.replace("[command]", cmds);
@@ -48,11 +51,11 @@ public abstract class ArgumentHandler {
 
         return msg;
     }
-    
+
     public Set<String> getAliases() {
         return aliasSet;
     }
-    
+
     public ArgumentHandler alias(String alias) {
         aliasSet.add(alias);
         return this;

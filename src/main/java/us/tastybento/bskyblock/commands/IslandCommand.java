@@ -1468,7 +1468,4 @@ public class IslandCommand extends AbstractCommand {
         getIslands().newIsland(player, schematic);
     }
     
-    public void addSubCommand(ArgumentHandler handler) {
-        addArgument(handler);
-    }
 }

@@ -24,6 +24,7 @@ general:
   
 help:
   admin:
+    delete: "delete an island (removes blocks)"
     team:
       command: "info/makeleader/add/kick/delete - admin teams"
       info: "info <player> - show info player's team"
@@ -35,6 +36,7 @@ help:
   syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
   syntax-alias-separator: "/"
   end: "&7================================="
+  this: "this help"
   island:
     about: "display info about %bsb_plugin_name%"
     go: "teleport you to your island"

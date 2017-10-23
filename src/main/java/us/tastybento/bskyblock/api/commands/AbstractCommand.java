@@ -70,7 +70,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
                 @Override
                 public void execute(CommandSender sender, String[] args) {
                     Util.sendMessage(sender, plugin.getLocale(sender).get("help.header"));
-                    for(ArgumentHandler handler: handlers){
+                    for(ArgumentHandler handler: handlers) {
                         if (handler.canUse(sender).isAllowed()) Util.sendMessage(sender, handler.getShortDescription(sender));
                     }
                     Util.sendMessage(sender, plugin.getLocale(sender).get("help.end"));
@@ -83,7 +83,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
                 @Override
                 public String[] usage(CommandSender sender) {
-                    return new String[] {"", ""};
+                    return new String[] {"", plugin.getLocale(sender).get("help.this")};
                 }
             }.alias("help").alias("?"));
         }

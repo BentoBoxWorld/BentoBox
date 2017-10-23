@@ -9,11 +9,13 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.commands.ArgumentHandler;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
@@ -44,7 +46,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
 public class BSkyBlock extends JavaPlugin{
 
     private static BSkyBlock plugin;
-    
+
     // Databases
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
@@ -59,6 +61,8 @@ public class BSkyBlock extends JavaPlugin{
     private IslandCommand islandCommand;
 
     protected LocaleManager localeManager;
+
+    private AdminCommand adminCommand;
 
     @Override
     public void onEnable(){
@@ -88,7 +92,8 @@ public class BSkyBlock extends JavaPlugin{
 
             // Set up commands
             islandCommand = new IslandCommand(BSkyBlock.this);
-            
+            adminCommand = new AdminCommand(BSkyBlock.this);
+
             // These items have to be loaded when the server has done 1 tick.
             // Note Worlds are not loaded this early, so any Locations or World reference will be null
             // at this point. Therefore, the 1 tick scheduler is required.
@@ -116,8 +121,8 @@ public class BSkyBlock extends JavaPlugin{
                     Settings.defaultLanguage = "en-US";
                     localeManager = new LocaleManager(plugin);
 
-                    
-                    new AdminCommand(BSkyBlock.this);
+
+
 
                     // Register Listeners
                     registerListeners();
@@ -253,4 +258,22 @@ public class BSkyBlock extends JavaPlugin{
         return localeManager.getLocale(uuid);
     }
 
+    /**
+     * Add a new sub command to BSkyBlock
+     * @param argHandler - must specify either the island or admin command
+     * @return true if successful, false if not
+     */
+    public boolean addSubCommand(ArgumentHandler argHandler) {
+        switch (argHandler.label) {
+        case Settings.ISLANDCOMMAND:
+            islandCommand.addArgument(argHandler);
+            break;
+        case Settings.ADMINCOMMAND:
+            adminCommand.addArgument(argHandler);
+            break;
+        default:
+            return false;
+        }
+        return true;
+    }
 }
