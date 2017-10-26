@@ -15,11 +15,15 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
+import org.bukkit.material.SimpleAttachableMaterialData;
+import org.bukkit.material.TrapDoor;
 import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -367,4 +371,96 @@ public class Util {
         }
         return config;
     }
+
+    public static void runCommand(final Player player, final String string) {
+        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+
+            @Override
+            public void run() {
+                player.performCommand(string);               
+            }});
+
+    }
+
+    /**
+     * Checks if this location is safe for a player to teleport to. Used by
+     * warps and boat exits Unsafe is any liquid or air and also if there's no
+     * space
+     * 
+     * @param l
+     *            - Location to be checked
+     * @return true if safe, otherwise false
+     */
+    public static boolean isSafeLocation(final Location l) {
+        if (l == null) {
+            return false;
+        }
+        // TODO: improve the safe location finding.
+        //Bukkit.getLogger().info("DEBUG: " + l.toString());
+        final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
+        final Block space1 = l.getBlock();
+        final Block space2 = l.getBlock().getRelative(BlockFace.UP);
+        //Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
+        //Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
+        //Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
+        // Portals are not "safe"
+        if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
+                || space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
+            return false;
+        }
+        // If ground is AIR, then this is either not good, or they are on slab,
+        // stair, etc.
+        if (ground.getType() == Material.AIR) {
+            // Bukkit.getLogger().info("DEBUG: air");
+            return false;
+        }
+        // In ASkyBlock, liquid may be unsafe
+        if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
+            // Check if acid has no damage
+            if (Settings.acidDamage > 0D) {
+                // Bukkit.getLogger().info("DEBUG: acid");
+                return false;
+            } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
+                    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
+                    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
+                // Lava check only
+                // Bukkit.getLogger().info("DEBUG: lava");
+                return false;
+            }
+        }
+        MaterialData md = ground.getState().getData();
+        if (md instanceof SimpleAttachableMaterialData) {
+            //Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
+            if (md instanceof TrapDoor) {
+                TrapDoor trapDoor = (TrapDoor)md;
+                if (trapDoor.isOpen()) {
+                    //Bukkit.getLogger().info("DEBUG: trapdoor open");
+                    return false;
+                }
+            } else {
+                return false;
+            }
+            //Bukkit.getLogger().info("DEBUG: trapdoor closed");
+        }
+        if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().equals(Material.FENCE)
+                || ground.getType().equals(Material.NETHER_FENCE) || ground.getType().equals(Material.SIGN_POST) || ground.getType().equals(Material.WALL_SIGN)) {
+            // Bukkit.getLogger().info("DEBUG: cactus");
+            return false;
+        }
+        // Check that the space is not solid
+        // The isSolid function is not fully accurate (yet) so we have to
+        // check
+        // a few other items
+        // isSolid thinks that PLATEs and SIGNS are solid, but they are not
+        if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN_POST) && !space1.getType().equals(Material.WALL_SIGN)) {
+            return false;
+        }
+        if (space2.getType().isSolid()&& !space2.getType().equals(Material.SIGN_POST) && !space2.getType().equals(Material.WALL_SIGN)) {
+            return false;
+        }
+        // Safe
+        //Bukkit.getLogger().info("DEBUG: safe!");
+        return true;
+    }
+
 }
