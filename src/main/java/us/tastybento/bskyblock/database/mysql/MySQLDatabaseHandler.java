@@ -85,7 +85,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         mySQLmapping.put(Map.class.getTypeName(), "BOOL");
         mySQLmapping.put(HashMap.class.getTypeName(), "BOOL");
         mySQLmapping.put(ArrayList.class.getTypeName(), "BOOL");
-        
+
         // Enums
         mySQLmapping.put(Enum.class.getTypeName(), "VARCHAR(254)");
 
@@ -324,9 +324,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public void saveObject(T instance) throws SQLException,
-            SecurityException, IllegalArgumentException,
-            InstantiationException, IllegalAccessException,
-            IntrospectionException, InvocationTargetException, NoSuchMethodException {
+    SecurityException, IllegalArgumentException,
+    InstantiationException, IllegalAccessException,
+    IntrospectionException, InvocationTargetException, NoSuchMethodException {
 
         Connection connection = null;
         PreparedStatement preparedStatement = null;
@@ -478,14 +478,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Serialize
                 value = Util.getStringLocation(((Location)value));
             } else
-            if (clazz.equals(World.class)) {
-                // Serialize - get the name
-                value = ((World)value).getName();
-            } else
-            if (clazz.getSuperclass() != null && clazz.getSuperclass().equals(Enum.class)) {
-                //Custom enums are a child of the Enum class. Just get the names of each one.
-                value = ((Enum<?>)value).name();
-            }
+                if (clazz.equals(World.class)) {
+                    // Serialize - get the name
+                    value = ((World)value).getName();
+                } else
+                    if (clazz.getSuperclass() != null && clazz.getSuperclass().equals(Enum.class)) {
+                        //Custom enums are a child of the Enum class. Just get the names of each one.
+                        value = ((Enum<?>)value).name();
+                    }
         if (value == null) {
             // The value could become null from the above checks
             return "null";
@@ -512,9 +512,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public List<T> loadObjects() throws SQLException,
-            SecurityException, IllegalArgumentException,
-            InstantiationException, IllegalAccessException,
-            IntrospectionException, InvocationTargetException, ClassNotFoundException {
+    SecurityException, IllegalArgumentException,
+    InstantiationException, IllegalAccessException,
+    IntrospectionException, InvocationTargetException, ClassNotFoundException {
 
         Connection connection = null;
         Statement statement = null;
@@ -541,8 +541,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public T loadObject(String uniqueId) throws InstantiationException,
-            IllegalAccessException, IllegalArgumentException,
-            InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
+    IllegalAccessException, IllegalArgumentException,
+    InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
         Connection connection = null;
         Statement statement = null;
         ResultSet resultSet = null;
@@ -660,7 +660,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
                         }
                     } else if (propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                        //plugin.getLogger().info("DEBUG: Adding a list ");
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: Adding a list ");
                         // Loop through the collection resultset 
                         // Note that we have no idea what type this is
                         List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
@@ -675,7 +676,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         }
                     } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
                             propertyDescriptor.getPropertyType().equals(HashMap.class)) {
-                        //plugin.getLogger().info("DEBUG: Adding a map ");
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: Adding a map ");
                         // Loop through the collection resultset 
                         // Note that we have no idea what type this is
                         List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
@@ -683,16 +685,20 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         Type keyType = collectionTypes.get(0);
                         Type valueType = collectionTypes.get(1);
                         value = new HashMap<Object, Object>();
-                        //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
                         while (collectionResultSet.next()) {
-                            //plugin.getLogger().info("DEBUG: adding to the map");
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: adding to the map");
                             //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
                             // Work through the columns
                             // Key
                             Object key = deserialize(collectionResultSet.getObject(1),Class.forName(keyType.getTypeName()));
-                            //plugin.getLogger().info("DEBUG: key = " + key);
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: key = " + key);
                             Object mapValue = deserialize(collectionResultSet.getObject(2),Class.forName(valueType.getTypeName()));
-                            //plugin.getLogger().info("DEBUG: value = " + mapValue);
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: value = " + mapValue);
                             ((Map<Object,Object>) value).put(key,mapValue);
                         }
                     } else {
@@ -701,11 +707,18 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         value = true;
                     }
                 } else {
-                    //plugin.getLogger().info("DEBUG: regular type");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: regular type");
                     value = deserialize(value, propertyDescriptor.getPropertyType());
                 }
-                //plugin.getLogger().info("DEBUG: invoking method " + method.getName());
-                //plugin.getLogger().info("DEBUG: value class = " + value.getClass().getName());
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: invoking method " + method.getName());
+                    if (value == null) {
+                        plugin.getLogger().info("DEBUG: value = null");
+                    } else {
+                        plugin.getLogger().info("DEBUG: value class = " + value.getClass().getName());
+                    }
+                }
                 // Write the value to the class
                 method.invoke(instance, value);
             }
@@ -724,7 +737,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Object deserialize(Object value, Class<? extends Object> clazz) {
-        //plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getTypeName());
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getTypeName());
         if (value instanceof String && value.equals("null")) {
             // If the value is null as a string, return null 
             return null;
