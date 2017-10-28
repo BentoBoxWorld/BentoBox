@@ -9,6 +9,15 @@ BSkyBlock (Better SkyBlock) represents a turning point on ASkyBlock's history : 
 
 **Discover today BSkyBlock, its gameplay overhaul, and enjoy the Skyblock revival!**
 
+Add-ons
+=======
+BSkyBlock is built to enable add-ons (plugins that use the BSkyBlock API). Here is a list of the current ones:
+
+* Level - provides island level calculation and a top ten
+* Welcome Warps - provides the warp sign feature
+
+You can find the projects on tastybento's GitHub.
+
 Bugs and Feature requests
 =========================
 File bug and feature requests here: https://github.com/tastybento/bskyblock/issues
