@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -154,7 +155,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         String setSql = "CREATE TABLE IF NOT EXISTS `" + type.getCanonicalName() + "." + field.getName() + "` ("
                                 + "uniqueId VARCHAR(36) NOT NULL, ";
                         // Get columns separated by commas
-                        setSql += getCollectionColumns(writeMethod,false,true);
+                        setSql += getCollectionColumnString(writeMethod,false,true);
                         // Close the SQL string
                         setSql += ")";
 
@@ -166,7 +167,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         collections.executeUpdate();
                     }
                 } else {
-                    // The Java type is not in the hashmap, so we'll jus guess that it can be stored in a string
+                    // The Java type is not in the hashmap, so we'll just guess that it can be stored in a string
                     // This should NOT be used in general because every type should be in the hashmap
                     sql += field.getName() + " VARCHAR(254),";
                     plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
@@ -191,6 +192,35 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
     }
 
+    /**
+     *
+     * Creates a comma-separated-String with the names of the variables in this
+     * class
+     * Not used in Flat File database.
+     * @param usePlaceHolders
+     *            true, if PreparedStatement-placeholders ('?') should be used
+     *            instead of the names of the variables
+     * @return
+     */
+    public String getColumns(boolean usePlaceHolders) {
+        StringBuilder sb = new StringBuilder();
+
+        boolean first = true;
+        /* Iterate the column-names */
+        for (Field f : type.getDeclaredFields()) {
+            if (first)
+                first = false;
+            else
+                sb.append(", ");
+
+            if (usePlaceHolders)
+                sb.append("?");
+            else
+                sb.append("`" + f.getName() + "`");
+        }
+
+        return sb.toString();
+    }
 
     /**
      * Returns a string of columns separated by commas that represent the parameter types of this method
@@ -203,61 +233,81 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param createSchema if true contains the columns types
      * @return Returns a string of columns separated by commas.
      */
-    private String getCollectionColumns(Method writeMethod, boolean usePlaceHolders, boolean createSchema) {
-        String columns = "";
+    private String getCollectionColumnString(Method writeMethod, boolean usePlaceHolders, boolean createSchema) {
+        StringBuilder sb = new StringBuilder();
+        List<String> cols = getCollentionColumnList(writeMethod, createSchema);
+        boolean first = true;
+        for (String col : cols) {
+            // Add commas
+            if (first)
+                first = false;
+            else
+                sb.append(", ");
+            // this is used if the string is going to be used to insert something so the value will replace the ?
+            if (usePlaceHolders)
+                sb.append("?");
+            else
+                sb.append(col);
+        }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: collection column string = " + sb.toString());
+        return sb.toString();
+    }
+
+    /**
+     * Returns a list of columns that represent the parameter types of this method
+     * @param method
+     * @param createSchema if true contains the columns types
+     * @return Returns a list of columns separated by commas.
+     */
+    private List<String> getCollentionColumnList(Method method, boolean createSchema) {
+        List<String> columns = new ArrayList<>();
+        for (Entry<String,String> en : getCollectionColumnMap(method).entrySet()) {
+            String col = en.getKey();
+            if (createSchema) {
+                col += " " + en.getValue();
+            }
+            columns.add(col);
+            if (DEBUG)
+                plugin.getLogger().info("DEBUG: collection columns = " + col);
+        }
+        
+        return columns;
+    }
+
+    /**
+     * Returns a map of column names and their types
+     * @param method
+     * @return
+     */
+    private Map<String,String> getCollectionColumnMap(Method method) {
+        Map<String,String> columns = new LinkedHashMap<>();
         // Get the return type
         // This uses a trick to extract what the arguments are of the writeMethod of the field.
         // In this way, we can deduce what type needs to be written at runtime.
-        Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
+        Type[] genericParameterTypes = method.getGenericParameterTypes();
         // There could be more than one argument, so step through them
         for (int i = 0; i < genericParameterTypes.length; i++) {
             // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if( genericParameterTypes[i] instanceof ParameterizedType ) {
+            if (genericParameterTypes[i] instanceof ParameterizedType) {
                 // Get the actual type arguments of the parameter 
                 Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
                 //parameters[0] contains java.lang.String for method like "method(List<String> value)"
                 // Run through them one by one and create a SQL string
                 int index = 0;
-                boolean first = true;
                 for (Type type : parameters) {
-                    //plugin.getLogger().info("DEBUG: set type = " + type.getTypeName());
-                    // first is used to add commas in the right place
-                    if (first)
-                        first = false;
-                    else
-                        columns += ", ";
-                    // this is used if the string is going to be used to insert something so the value will replace the ?
-                    if (usePlaceHolders) {
-                        columns +="?";
-                    } else {
-                        // This is a request for column names. 
-                        String setMapping = mySQLmapping.get(type.getTypeName());
-                        // We know the mapping of this type
-                        if (setMapping != null) {
-                            // Write the name of this type, followed by an index number to make it unique
-                            columns += "`" + type.getTypeName() + "_" + index + "`";
-                            // If this is the schema, then we also need to add the mapping type
-                            if (createSchema) {
-                                columns += " " + setMapping;
-                            }
-                        } else {
-                            // We do not know the type, oops
-                            // Write the name of this type, followed by an index number to make it unique
-                            columns += "`" + type.getTypeName() + "_" + index + "`";
-                            if (createSchema) {
-                                // If this is the schema, then guess the mapping type
-                                columns += " VARCHAR(254)";
-                            }
-                        }
-                    }
-                    // Increment the index so each column has a unique name
-                    index++;
+                    // This is a request for column names.
+                    String setMapping = mySQLmapping.get(type.getTypeName());
+                    columns.put("`" + type.getTypeName() + "_" + index + "`", setMapping != null ? setMapping : "VARCHAR(254)");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: collection column = " + "`" + type.getTypeName() + "_" + index + "`" + setMapping);
                 }
+                // Increment the index so each column has a unique name
+                index++;
             }
         }
         return columns;
     }
-
 
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#createSelectQuery()
@@ -268,7 +318,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         StringBuilder sb = new StringBuilder();
 
         sb.append("SELECT ");
-        sb.append(super.getColumns(false));
+        sb.append(getColumns(false));
         sb.append(" FROM ");
         sb.append("`");
         sb.append(type.getCanonicalName());
@@ -292,10 +342,10 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         sb.append(type.getCanonicalName());
         sb.append("`");
         sb.append("(");
-        sb.append(super.getColumns(false));
+        sb.append(getColumns(false));
         sb.append(")");
         sb.append(" VALUES (");
-        sb.append(super.getColumns(true));
+        sb.append(getColumns(true));
         sb.append(")");
 
         return sb.toString();
@@ -380,9 +430,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // Insert into the table
                     String setSql = "INSERT INTO `" + type.getCanonicalName() + "." + field.getName() + "` (uniqueId, ";
                     // Get the columns we are going to insert, just the names of them
-                    setSql += getCollectionColumns(propertyDescriptor.getWriteMethod(), false, false) + ") ";
+                    setSql += getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false) + ") ";
                     // Get all the ?'s for the columns
-                    setSql += "VALUES ('" + uniqueId + "'," + getCollectionColumns(propertyDescriptor.getWriteMethod(), true, false) + ")";
+                    setSql += "VALUES ('" + uniqueId + "'," + getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false) + ")";
                     // Prepare the statement
                     collStatement = connection.prepareStatement(setSql);
                     if (DEBUG)
@@ -417,9 +467,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             Entry<?,?> en = (Entry<?, ?>) it.next();
                             // Get the key and serialize it
                             Object key = serialize(en.getKey(), en.getKey().getClass());
-                            //plugin.getLogger().info("DEBUG: key class = " + en.getKey().getClass().getTypeName());
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: key class = " + en.getKey().getClass().getTypeName());
                             // Get the value and serialize it
                             Object mapValue = serialize(en.getValue(), en.getValue().getClass());
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: mapValue = " + mapValue);
                             // Write the objects into prepared statement
                             collStatement.setObject(1, key);
                             collStatement.setObject(2, mapValue);
@@ -550,7 +603,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.getLogger().info("DEBUG: loading object for " + uniqueId);
         try {
             connection = databaseConnecter.createConnection();
-            String query = "SELECT " + super.getColumns(false) + " FROM `" + type.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
+            String query = "SELECT " + getColumns(false) + " FROM `" + type.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, uniqueId);
             if (DEBUG)
@@ -569,9 +622,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             MySQLDatabaseResourceCloser.close(connection);
         }
     }
-
-
-
 
     /**
      *
@@ -630,7 +680,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // value is just of type boolean right now
                     String setSql = "SELECT ";
                     // Get the columns, just the names of them, no ?'s or types
-                    setSql += getCollectionColumns(method, false, false) + " ";
+                    setSql += getCollectionColumnString(method, false, false) + " ";
                     setSql += "FROM `" + type.getCanonicalName() + "." + field.getName() + "` ";
                     // We will need to fill in the ? later with the unique id of the class from the database
                     setSql += "WHERE uniqueId = ?";

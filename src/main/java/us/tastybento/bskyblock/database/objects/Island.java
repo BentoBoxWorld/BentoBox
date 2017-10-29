@@ -533,6 +533,7 @@ public class Island extends DataObject {
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
+        //Bukkit.getLogger().info("DEBUG: center - " + center);
         if (x >= center.getBlockX() - Settings.islandDistance / 2 && x < center.getBlockX() + Settings.islandDistance / 2 && z >= center.getBlockZ() - Settings.islandDistance / 2
                 && z < center.getBlockZ() + Settings.islandDistance / 2) {
             return true;

@@ -6,7 +6,7 @@ package us.tastybento.bskyblock.database.objects;
  *
  */
 public abstract class DataObject {
-
+	
     /**
      * @return the uniqueId
      */
@@ -17,5 +17,4 @@ public abstract class DataObject {
      */
     public abstract void setUniqueId(String uniqueId);
     
-
 }

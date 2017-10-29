@@ -68,36 +68,6 @@ public abstract class AbstractDatabaseHandler<T> {
     protected abstract String createDeleteQuery();
 
     /**
-     *
-     * Creates a comma-separated-String with the names of the variables in this
-     * class
-     * Not used in Flat File database.
-     * @param usePlaceHolders
-     *            true, if PreparedStatement-placeholders ('?') should be used
-     *            instead of the names of the variables
-     * @return
-     */
-    public String getColumns(boolean usePlaceHolders) {
-        StringBuilder sb = new StringBuilder();
-
-        boolean first = true;
-        /* Iterate the column-names */
-        for (Field f : type.getDeclaredFields()) {
-            if (first)
-                first = false;
-            else
-                sb.append(", ");
-
-            if (usePlaceHolders)
-                sb.append("?");
-            else
-                sb.append("`" + f.getName() + "`");
-        }
-
-        return sb.toString();
-    }
-
-    /**
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
      * @throws InstantiationException
