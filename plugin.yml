@@ -31,11 +31,17 @@ permissions:
     children:
       bskyblock.island.*:
         children:
+          bskyblock.island.create:
+            description: Allow island command usage
+            default: true
           bskyblock.island.home:
             description: Allow teleporting to player island
             default: true
-          bskyblock.island.create:
-            description: Let the player use the /island command
+          bskyblock.island.reset:
+            description: Player can use the island reset or restart command
+            default: true  
+          bskyblock.island.sethome:
+            description: Let the player use the sethome command
             default: true
           bskyblock.island.info:
             description: Let the player check their island level

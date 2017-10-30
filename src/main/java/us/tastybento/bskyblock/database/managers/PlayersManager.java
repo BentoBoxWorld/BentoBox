@@ -252,6 +252,7 @@ public class PlayersManager{
     public void setHomeLocation(UUID playerUUID, Location location, int number) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,number);
+        this.save(true);
     }
 
     /**
@@ -262,6 +263,7 @@ public class PlayersManager{
     public void setHomeLocation(UUID playerUUID, Location location) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,1);
+        this.save(true);
     }
 
     /**

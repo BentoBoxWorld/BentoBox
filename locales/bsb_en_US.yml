@@ -71,6 +71,12 @@ help:
     settings: "display island settings"
     language: "select language"
 
+sethome:
+  error:
+     NumHomes: "Homes can be 1 to [max]"
+     NotOnIsland: "You must be within your island boundaries to set home!"
+  homeSet: "Your island home has been set to your current location."
+  
 # TODO: These are legacy strings and should be converted to a better format but will do for now
 acidBottle: "Acid Bottle"
 acidBucket: "Acid Bucket"
@@ -404,6 +410,7 @@ island:
   subtitle: "by tastybento"
   subtitlecolor: "blue"
   teleport: "Teleporting you to your island. (/[label] help for more info)"
+  teleported: "Teleported to home #[number]"
   title: "BSkyBlock"
   titlecolor: "gold"
   unlimited: "Unlimited"
@@ -570,11 +577,7 @@ resetchallenge:
   errorChallengeDoesNotExist: "Challenge doesn't exist or isn't yet completed"
 schematics: 
   title: "Select island..."
-sethome: 
-  errorNoIsland: "You are not part of an island. Returning you the spawn area!"
-  errorNotOnIsland: "You must be within your island boundaries to set home!"
-  errorNumHomes: "Homes can be 1 to [max]"
-  homeSet: "Your island home has been set to your current location."
+
 settingsReset:
   done: "Done."
   inprogress: "Protection settings being reset, please wait..."

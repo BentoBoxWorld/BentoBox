@@ -62,7 +62,7 @@ public class Players extends DataObject {
      */
     public Location getHomeLocation(int number) {
         /*
-         * Bukkit.getLogger().info("DEBUG: getting home location " + number);
+         Bukkit.getLogger().info("DEBUG: getting home location " + number);
         
         Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
         for (Entry<Integer, Location> en : homeLocations.entrySet()) {
@@ -169,8 +169,7 @@ public class Players extends DataObject {
         if (location == null) {
             homeLocations.clear();
         } else {
-            // Make the location x,y,z integer, but keep the yaw and pitch
-            homeLocations.put(number, new Location(location.getWorld(),location.getBlockX(),location.getBlockY(),location.getBlockZ(),location.getYaw(), location.getPitch()));
+            homeLocations.put(number, location);
         }
     }
 

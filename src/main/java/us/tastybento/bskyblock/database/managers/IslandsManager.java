@@ -529,7 +529,7 @@ public class IslandsManager {
         if (number ==1 ) {
             Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player.getUniqueId()).get("island.teleport").replace("[label]", Settings.ISLANDCOMMAND));
         } else {
-            Util.sendMessage(player, ChatColor.GREEN + "teleported to #" + number);
+            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player.getUniqueId()).get("island.teleported").replace("[number]", String.valueOf(number)));
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
@@ -558,9 +558,8 @@ public class IslandsManager {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Home location " + l);
         if (l != null) {
-            // Homes are stored as integers and need correcting to be more central
             if (isSafeLocation(l)) {
-                return l.clone().add(new Vector(0.5D,0,0.5D));
+                return l;
             }
             // To cover slabs, stairs and other half blocks, try one block above
             Location lPlusOne = l.clone();
@@ -569,7 +568,7 @@ public class IslandsManager {
                 if (isSafeLocation(lPlusOne)) {
                     // Adjust the home location accordingly
                     plugin.getPlayers().setHomeLocation(playerUUID, lPlusOne, number);
-                    return lPlusOne.clone().add(new Vector(0.5D,0,0.5D));
+                    return lPlusOne;
                 }
             }
         }
@@ -585,7 +584,7 @@ public class IslandsManager {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG:island loc is safe");
                 plugin.getPlayers().setHomeLocation(playerUUID, l, number);
-                return l.clone().add(new Vector(0.5D,0,0.5D));
+                return l;
             } else {
                 // try team leader's home
                 if (DEBUG)
@@ -598,7 +597,7 @@ public class IslandsManager {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: team leader's home is safe");
                         plugin.getPlayers().setHomeLocation(playerUUID, tlh, number);
-                        return tlh.clone().add(new Vector(0.5D,0,0.5D));
+                        return tlh;
                     }
                 }
             }
