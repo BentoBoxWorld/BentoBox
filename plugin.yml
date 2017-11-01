@@ -69,7 +69,7 @@ permissions:
             default: true
           bskyblock.island.name:
             description: Player can set the name of their island
-            default: false
+            default: true
           bskyblock.island.spawn:
             description: Player can use the island spawn command if spawn exists
             default: true
