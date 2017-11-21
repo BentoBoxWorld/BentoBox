@@ -1,6 +1,8 @@
-package us.tastybento.bskyblock.api.events.team;
+package us.tastybento.bskyblock.api.events.island;
 
 import java.util.UUID;
+
+import org.bukkit.Location;
 
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -11,18 +13,19 @@ import us.tastybento.bskyblock.database.objects.Island;
  * @author tastybento
  * @since 1.0
  */
-public class TeamEvent extends IslandBaseEvent {
-    public enum TeamReason {
-        INVITE,
-        JOIN,
-        REJECT,
-        LEAVE,
-        KICK,
-        MAKELEADER,
-        INFO,
+public class IslandEvent extends IslandBaseEvent {
+    public enum Reason {
+        CREATE,
+        CREATED,
         DELETE,
-        UNKNOWN,
-        UNINVITE
+        DELETED,
+        ENTER,
+        EXIT,
+        LOCK,
+        RESET,
+        RESETTED,
+        UNLOCK,
+        UNKNOWN
     };
     
     /**
@@ -36,28 +39,35 @@ public class TeamEvent extends IslandBaseEvent {
     /**
      * Reason for this event
      */
-    private final TeamReason reason;
+    private final Reason reason;
+    
+    /**
+     * Location related to the event
+     */
+    private Location location;
 
-    private TeamEvent(Island island, UUID player, boolean admin, TeamReason reason) {
+    private IslandEvent(Island island, UUID player, boolean admin, Reason reason, Location location) {
         // Final variables have to be declared in the constuctor
         super(island);
         this.player = player;
         this.admin = admin;
         this.reason = reason;
+        this.location = location;
     }
     
-    public static TeamEventBuilder builder() {
-        return new TeamEventBuilder();
+    public static IslandEventBuilder builder() {
+        return new IslandEventBuilder();
     }
     
-    public static class TeamEventBuilder {
+    public static class IslandEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private Island island;
         private UUID player;
-        private TeamReason reason = TeamReason.UNKNOWN;
+        private Reason reason = Reason.UNKNOWN;
         private boolean admin;
+        private Location location;
         
-        public TeamEventBuilder island(Island island) {
+        public IslandEventBuilder island(Island island) {
             this.island = island;
             return this;
         }
@@ -67,7 +77,7 @@ public class TeamEvent extends IslandBaseEvent {
          * @param admin
          * @return TeamEvent
          */
-        public TeamEventBuilder admin(boolean admin) {
+        public IslandEventBuilder admin(boolean admin) {
             this.admin = admin;
             return this;
         }
@@ -76,7 +86,7 @@ public class TeamEvent extends IslandBaseEvent {
          * @param reason for the event
          * @return
          */
-        public TeamEventBuilder reason(TeamReason reason) {
+        public IslandEventBuilder reason(Reason reason) {
             this.reason = reason;
             return this;
         }
@@ -85,13 +95,18 @@ public class TeamEvent extends IslandBaseEvent {
          * @param player involved in the event
          * @return
          */
-        public TeamEventBuilder involvedPlayer(UUID player) {
+        public IslandEventBuilder involvedPlayer(UUID player) {
             this.player = player;
             return this;
         }
         
-        public TeamEvent build() {
-            return new TeamEvent(island, player, admin, reason);
+        public IslandEvent build() {
+            return new IslandEvent(island, player, admin, reason, location);
+        }
+
+        public IslandEventBuilder location(Location location) {
+            this.location = location;
+            return this;
         }
         
     }
@@ -113,8 +128,12 @@ public class TeamEvent extends IslandBaseEvent {
     /**
      * @return the reason for this team event
      */
-    public TeamReason getReason() {
+    public Reason getReason() {
         return reason;
+    }
+
+    public Location getLocation() {
+        return location;
     }
 
 }

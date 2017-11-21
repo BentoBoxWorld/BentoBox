@@ -3,6 +3,8 @@ package us.tastybento.bskyblock.database.managers;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Set;
@@ -68,8 +70,22 @@ public class PlayersManager{
     public void save(boolean async){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: saving " + async);
-        Runnable save = () -> {
-            for(Players player : playerCache.values()){
+        Collection<Players> set = Collections.unmodifiableCollection(playerCache.values());
+        if(async){
+            Runnable save = () -> {
+                for(Players player : set){
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
+                    try {
+                        handler.saveObject(player);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            };
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+        } else {
+            for(Players player : set){
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
                 try {
@@ -78,12 +94,6 @@ public class PlayersManager{
                     e.printStackTrace();
                 }
             }
-        };
-
-        if(async){
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
-        } else {
-            save.run();
         }
     }
 

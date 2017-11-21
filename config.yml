@@ -98,21 +98,16 @@ world:
   # It acts like a prefix for nether and end (e.g. BSkyBlock, BSkyBlock_nether, BSkyBlock_end)
   world-name: BSkyBlock_world
 
-  # Distance between islands in blocks IN CHUNKS (1 chunk = 16 blocks)
+  # Radius of island in blocks. (So distance between islands is twice this)  
+  # Will be rounded up to the nearest 16 blocks.
   # It is the same for every dimension : Overworld, Nether and End.
-  # Recommended values for a new world:
-  # 24 - puts players distance enough that they usually cannot see each other
-  # 12 - allows some expansion of the protected zone (recommended)
-  # 4 - minimum - not recommended
-  # IF YOU ARE UPGRADING YOU MUST USE YOUR OLD VALUE EXACTLY (E.G.: 24), OR RESET YOUR WORLD
-  distance-in-chunks: 24
+  # This value cannot be changed mid-game and the plugin will not start if it is different.
+  distance: 64
 
-  # Default protection range (even number). Min = 0, Recommended = 100
-  # Larger values will take longer to calculate the island level
-  # Admins can change protection sizes for players individually using /asadmin setrange
-  # or set this permission: askyblock.island.range.<number>
-  # For optimal performance, keep protection range at least 16 blocks less than distance.
-  protection-range: 100
+  # Default protection range radius in blocks. Cannot be larger than distance.
+  # Admins can change protection sizes for players individually using /bsadmin setrange
+  # or set this permission: bskyblock.island.range.<number>
+  protection-range: 50
 
   # Start islands at these coordinates. This is where new islands will start in the
   # world. These must be a factor of your island distance, but the plugin will auto

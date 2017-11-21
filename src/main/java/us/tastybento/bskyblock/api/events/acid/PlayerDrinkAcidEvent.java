@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.api.events.acid;
 
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.api.events.IslandEvent;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
@@ -10,7 +10,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  * @author Poslovitch
  * @since 1.0
  */
-public class PlayerDrinkAcidEvent extends IslandEvent {
+public class PlayerDrinkAcidEvent extends IslandBaseEvent {
     private final Player player;
 
     public PlayerDrinkAcidEvent(Island island, Player player) {

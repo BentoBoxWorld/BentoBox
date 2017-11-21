@@ -13,8 +13,8 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
-import us.tastybento.bskyblock.api.events.island.IslandLockEvent;
-import us.tastybento.bskyblock.api.events.island.IslandUnlockEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -261,7 +261,7 @@ public class Island extends DataObject {
     private Location center;
 
     // Island range
-    private int range;
+    private int range = Settings.islandDistance;
 
     // Coordinates of the island area
     private int minX;
@@ -320,8 +320,9 @@ public class Island extends DataObject {
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
         this.center = location;
-        this.minX = center.getBlockX() - Settings.islandDistance;
-        this.minZ = center.getBlockZ() - Settings.islandDistance;
+        this.range = Settings.islandDistance;
+        this.minX = center.getBlockX() - range;
+        this.minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;
         this.minProtectedX = center.getBlockX() - protectionRange;
         this.minProtectedZ = center.getBlockZ() - protectionRange;
@@ -534,11 +535,7 @@ public class Island extends DataObject {
      */
     public boolean inIslandSpace(int x, int z) {
         //Bukkit.getLogger().info("DEBUG: center - " + center);
-        if (x >= center.getBlockX() - Settings.islandDistance / 2 && x < center.getBlockX() + Settings.islandDistance / 2 && z >= center.getBlockZ() - Settings.islandDistance / 2
-                && z < center.getBlockZ() + Settings.islandDistance / 2) {
-            return true;
-        }
-        return false;
+        return (x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2) ? true: false;
     }
 
     /**
@@ -578,9 +575,9 @@ public class Island extends DataObject {
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
-        if (center.getWorld() != null) {
-            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange*2)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange*2)) {
+        if (center != null && center.getWorld() != null) {
+            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2)
+                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2)) {
                 return true;
             }
         }
@@ -660,7 +657,7 @@ public class Island extends DataObject {
     public void setLocked(boolean locked){
         if(locked){
             // Lock the island
-            IslandLockEvent event = new IslandLockEvent(this, null); // TODO: Maybe a custom CommandSender for BSkyBlock ?
+            IslandEvent event = IslandEvent.builder().island(this).reason(Reason.LOCK).build();
             Bukkit.getServer().getPluginManager().callEvent(event);
 
             if(!event.isCancelled()){
@@ -668,7 +665,7 @@ public class Island extends DataObject {
             }
         } else {
             // Unlock the island
-            IslandUnlockEvent event = new IslandUnlockEvent(this, null);
+            IslandEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build(); 
             Bukkit.getServer().getPluginManager().callEvent(event);
 
             if(!event.isCancelled()){

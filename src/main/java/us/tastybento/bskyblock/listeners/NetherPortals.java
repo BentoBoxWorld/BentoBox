@@ -15,7 +15,7 @@ import org.bukkit.event.player.PlayerPortalEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.database.managers.IslandsManager;
+import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.generators.IslandWorld;

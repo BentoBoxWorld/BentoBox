@@ -13,7 +13,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  * @author Poslovitch
  * @version 1.0
  */
-public class IslandEvent extends Event implements Cancellable{
+public class IslandBaseEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private boolean cancelled;
 
@@ -22,7 +22,7 @@ public class IslandEvent extends Event implements Cancellable{
     /**
      * @param island
      */
-    public IslandEvent(Island island){
+    public IslandBaseEvent(Island island){
         this.island = island;
     }
 

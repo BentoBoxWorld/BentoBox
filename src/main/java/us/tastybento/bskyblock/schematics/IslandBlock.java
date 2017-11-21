@@ -511,6 +511,7 @@ public class IslandBlock {
         // Only paste air if it is below the sea level and in the overworld
         Block block = new Location(blockLoc.getWorld(), x, y, z).add(blockLoc).getBlock();
         block.setBiome(biome);
+        block.getChunk().load();
         nms.setBlockSuperFast(block, typeId, data, usePhysics);
         if (signText != null) {
             if (block.getTypeId() != typeId) {

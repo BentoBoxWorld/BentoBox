@@ -75,8 +75,8 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.events.island.IslandEnterEvent;
-import us.tastybento.bskyblock.api.events.island.IslandExitEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
@@ -383,7 +383,12 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire entry event
-            final IslandEnterEvent event = new IslandEnterEvent(islandTo, e.getPlayer().getUniqueId(), e.getTo());
+            final IslandEvent event = IslandEvent.builder()
+                    .island(islandTo)
+                    .reason(Reason.ENTER)
+                    .involvedPlayer(e.getPlayer().getUniqueId())
+                    .location(e.getTo())
+                    .build();
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo == null && islandFrom != null && (islandFrom.getOwner() != null || islandFrom.isSpawn())) {
             // Leaving
@@ -397,7 +402,12 @@ public class IslandGuard implements Listener {
                     Util.sendEnterExit(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("lock.nowleaving").replace("[name]", plugin.getIslands().getIslandName(islandFrom.getOwner())));                    }
             }
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(islandFrom, e.getPlayer().getUniqueId(), e.getFrom());
+            final IslandEvent event = IslandEvent.builder()
+                    .island(islandTo)
+                    .reason(Reason.EXIT)
+                    .involvedPlayer(e.getPlayer().getUniqueId())
+                    .location(e.getFrom())
+                    .build();
             plugin.getServer().getPluginManager().callEvent(event);
         } else if (islandTo != null && islandFrom != null && !islandTo.equals(islandFrom)) {
             // Adjacent islands or overlapping protections
@@ -421,10 +431,20 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire exit event
-            final IslandExitEvent event = new IslandExitEvent(islandFrom, e.getPlayer().getUniqueId(), e.getFrom());
+            final IslandEvent event = IslandEvent.builder()
+                    .island(islandTo)
+                    .reason(Reason.EXIT)
+                    .involvedPlayer(e.getPlayer().getUniqueId())
+                    .location(e.getFrom())
+                    .build();
             plugin.getServer().getPluginManager().callEvent(event);
             // Fire entry event
-            final IslandEnterEvent event2 = new IslandEnterEvent(islandTo, e.getPlayer().getUniqueId(), e.getTo());
+            final IslandEvent event2 = IslandEvent.builder()
+                    .island(islandTo)
+                    .reason(Reason.ENTER)
+                    .involvedPlayer(e.getPlayer().getUniqueId())
+                    .location(e.getTo())
+                    .build();
             plugin.getServer().getPluginManager().callEvent(event2);
         }
     }

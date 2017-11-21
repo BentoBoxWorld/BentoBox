@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.commands;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
@@ -45,24 +47,146 @@ public class AdminCommand extends AbstractCommand {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
-                return new CanUseResp(true);
+                return new CanUseResp(!(sender instanceof Player)
+                        || VaultHelper.hasPerm(player, Settings.PERMPREFIX + "admin.delete"));
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
+                if (args.length > 0) {
+                    // Convert name to a UUID
+                    UUID targetPlayer = getPlayers().getUUID(args[0]);
+                    if (targetPlayer == null) {
+                        Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("general.errors.unknown-player"));
+                        return;
+                    }
 
+                    Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("delete.removing").replace("[name]", args[0]));
+                    getIslands().deleteIsland(targetPlayer, true);
+                }
             }
 
             @Override
             public Set<String> tabComplete(CommandSender sender, String[] args) {
-                return null;
+                Set<String> result = new HashSet<>();
+                if (args.length == 1) {
+                    result.addAll(Util.getOnlinePlayerList(player));
+                }
+                return result;
             }
 
             @Override
             public String[] usage(CommandSender sender){
-                return new String[] {null, plugin.getLocale(sender).get("help.admin.delete")};
+                return new String[] {null, getLocale(sender).get("help.admin.delete")};
             }
         }.alias("delete"));
+
+
+        /* /asadmin unregister <name> - unregister name's island */
+        addArgument(new ArgumentHandler(label) {
+
+            @Override
+            public CanUseResp canUse(CommandSender sender) {
+                return new CanUseResp(!(sender instanceof Player)
+                        || VaultHelper.hasPerm(player, Settings.PERMPREFIX + "admin.unregister"));
+            }
+
+            @Override
+            public void execute(CommandSender sender, String[] args) {
+                if (args.length > 0) {
+                    // Convert name to a UUID
+                    UUID targetPlayer = getPlayers().getUUID(args[0]);
+                    if (targetPlayer == null) {
+                        Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("general.errors.unknown-player"));
+                        return;
+                    }
+                    Island island = getIslands().getIsland(targetPlayer);
+                    if (island != null) {
+                        Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminUnregister.keepBlocks").replace("[location]", island.getCenter().toString()));
+                        getIslands().deleteIsland(targetPlayer, false);
+                    } else {
+                        // Error
+                    }
+                }
+            }
+
+            @Override
+            public Set<String> tabComplete(CommandSender sender, String[] args) {
+                Set<String> result = new HashSet<>();
+                if (args.length == 1) {
+                    result.addAll(Util.getOnlinePlayerList(player));
+                }
+                return result;
+            }
+
+            @Override
+            public String[] usage(CommandSender sender){
+                return new String[] {null, getLocale(sender).get("adminHelp.unregister")};
+            }
+        }.alias("unregister"));
+
+        /* /asadmin info - show info on island */
+        addArgument(new ArgumentHandler(label) {
+
+            @Override
+            public CanUseResp canUse(CommandSender sender) {
+                return new CanUseResp(!(sender instanceof Player)
+                        || VaultHelper.hasPerm(player, Settings.PERMPREFIX + "admin.info"));
+            }
+
+            @Override
+            public void execute(CommandSender sender, String[] args) {
+                if (args.length > 0) {
+                    // Convert name to a UUID
+                    UUID targetPlayer = getPlayers().getUUID(args[0]);
+                    if (targetPlayer == null) {
+                        Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("general.errors.unknown-player"));
+                        return;
+                    }
+                    showInfo(targetPlayer, sender);
+                } else {
+                    if (!(sender instanceof Player)) {
+                        Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("general.errors.use-in-game"));
+                        return;
+                    }
+                    Island island = getIslands().getIslandAt(((Player)sender).getLocation());
+                    if (island == null) {
+                        Util.sendMessage(sender, ChatColor.RED + "Sorry, could not find an island. Move closer?");
+                        return;
+                    }
+                    if (island.isSpawn()) {
+                        Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("adminInfo.title"));
+                        Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminSetSpawncenter").replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
+                        Util.sendMessage(sender, ChatColor.YELLOW + (getLocale(sender).get("adminSetSpawnlimits").replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
+                                (island.getMinX() + island.getRange() - 1) + "," + (island.getMinZ() + island.getRange() - 1)));
+                        Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminSetSpawnrange").replace("[number]",String.valueOf(island.getProtectionRange())));
+                        Util.sendMessage(sender, ChatColor.YELLOW + (getLocale(sender).get("adminSetSpawncoords").replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ())).replace("[max]",
+                                + (island.getMinProtectedX() + island.getProtectionRange() - 1) + ", "
+                                        + (island.getMinProtectedZ() + island.getProtectionRange() - 1)));
+                        if (island.isLocked()) {
+                            Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("adminSetSpawnlocked"));
+                        }
+                        return;
+                    }
+                    showInfo(island.getOwner(), sender);
+                    return;
+                }
+            }
+
+            @Override
+            public Set<String> tabComplete(CommandSender sender, String[] args) {
+                Set<String> result = new HashSet<>();
+                if (args.length == 1) {
+                    result.addAll(Util.getOnlinePlayerList(player));
+                }
+                return result;
+            }
+
+            @Override
+            public String[] usage(CommandSender sender){
+                return new String[] {null, getLocale(sender).get("adminHelp.infoisland")};
+            }
+        }.alias("info"));
 
         /* /asadmin team - manage teams */
         addArgument(new ArgumentHandler(label) {
@@ -103,9 +227,9 @@ public class AdminCommand extends AbstractCommand {
                     case "info":
                         // Fire event so add-ons can run commands, etc.
                         TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(targetPlayer))
-                                .admin(true)
-                                .reason(TeamReason.INFO)
-                                .involvedPlayer(targetPlayer).build();
+                        .admin(true)
+                        .reason(TeamReason.INFO)
+                        .involvedPlayer(targetPlayer).build();
                         plugin.getServer().getPluginManager().callEvent(event);
                         if (event.isCancelled()) return;
                         // Display info
@@ -336,25 +460,124 @@ public class AdminCommand extends AbstractCommand {
                     }
                 }
                 // Wrong command syntax or arguments, show help
-                Util.sendMessage(sender, plugin.getLocale(sender).get("help.admin.team.command"));
-                Util.sendMessage(sender, plugin.getLocale(sender).get("help.admin.team.info"));
-                Util.sendMessage(sender, plugin.getLocale(sender).get("help.admin.team.makeleader"));
-                Util.sendMessage(sender, plugin.getLocale(sender).get("help.admin.team.add"));
-                Util.sendMessage(sender, plugin.getLocale(sender).get("help.admin.team.kick"));
-                Util.sendMessage(sender, plugin.getLocale(sender).get("help.admin.team.delete"));
+                Util.sendMessage(sender, getLocale(sender).get("help.admin.team.command"));
+                Util.sendMessage(sender, getLocale(sender).get("help.admin.team.info"));
+                Util.sendMessage(sender, getLocale(sender).get("help.admin.team.makeleader"));
+                Util.sendMessage(sender, getLocale(sender).get("help.admin.team.add"));
+                Util.sendMessage(sender, getLocale(sender).get("help.admin.team.kick"));
+                Util.sendMessage(sender, getLocale(sender).get("help.admin.team.delete"));
             }
 
             @Override
             public Set<String> tabComplete(CommandSender sender, String[] args) {
-                return null;
+                Set<String> result = new HashSet<>();
+                if (args.length == 1) {
+                    result.add("info");
+                    result.add("makeleader");
+                    result.add("kick");
+                    result.add("delete");
+                    result.add("add");
+                } else if (args.length == 1) {
+                    result.addAll(Util.getOnlinePlayerList(player));
+                }
+                return result;
             }
 
             @Override
             public String[] usage(CommandSender sender){
-                return new String[] {null, plugin.getLocale(sender).get("help.admin.team.command")};
+                return new String[] {null, getLocale(sender).get("help.admin.team.command")};
             }
         }.alias("team"));
 
+    }
+
+    /**
+     * Shows info on a player
+     *
+     * @param playerUUID
+     * @param sender
+     */
+    private void showInfo(UUID playerUUID, CommandSender sender) {
+        // Show info on player
+        Util.sendMessage(sender, getLocale(sender).get("adminInfo.player") + ": " + ChatColor.GREEN + getPlayers().getName(playerUUID));
+        Util.sendMessage(sender, ChatColor.WHITE + "UUID: " + playerUUID.toString());
+        // Last login
+        try {
+            Date d = new Date(plugin.getServer().getOfflinePlayer(playerUUID).getLastPlayed());
+            Util.sendMessage(sender, ChatColor.GOLD + getLocale(sender).get("adminInfo.lastLogin") + ": " + d.toString());
+        } catch (Exception e) {
+        }
+        Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("general.deaths") + ": " + getPlayers().getDeaths(playerUUID));
+        String resetsLeft = getLocale(sender).get("general.unlimited");
+        if (getPlayers().getResetsLeft(playerUUID) >= 0) {
+            resetsLeft = String.valueOf(getPlayers().getResetsLeft(playerUUID)) + " / " + String.valueOf(Settings.resetLimit);
+        }
+        Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("adminInfo.resetsLeft") + ": " + resetsLeft);
+        // Teams
+        if (getPlayers().inTeam(playerUUID)) {
+            final UUID leader = getIslands().getTeamLeader(playerUUID);
+            final Set<UUID> pList = getIslands().getMembers(leader);
+            Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("adminInfo.teamLeader") + ": " + getPlayers().getName(leader));
+            Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("adminInfo.teamMembers") + ":");
+            for (UUID member : pList) {
+                if (!member.equals(leader)) {
+                    Util.sendMessage(sender, ChatColor.WHITE + " - " + getPlayers().getName(member));
+                }
+            }
+        } else {
+            Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("error.noTeam"));
+            if (getIslands().getMembers(playerUUID).size() > 1) {
+                Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("adminInfo.errorTeamMembersExist"));
+            }
+        }
+        // Island info
+        Island island = getIslands().getIsland(playerUUID);
+        if (island != null) {
+            Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminInfo.islandLocation") + ":" + ChatColor.WHITE + " (" + island.getCenter().getBlockX() + ","
+                    + island.getCenter().getBlockY() + "," + island.getCenter().getBlockZ() + ")");
+            Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminSetSpawn.center").replace("[location]", island.getCenter().getBlockX() + "," + island.getCenter().getBlockZ()));
+            Util.sendMessage(sender, ChatColor.YELLOW + (getLocale(sender).get("adminSetSpawn.limits").replace("[min]", island.getMinX() + "," + island.getMinZ())).replace("[max]",
+                    (island.getMinX() + island.getRange()*2 - 1) + "," + (island.getMinZ() + island.getRange()*2 - 1)));
+            Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminSetSpawn.range").replace("[number]",String.valueOf(island.getProtectionRange())));
+            Util.sendMessage(sender, ChatColor.YELLOW + (getLocale(sender).get("adminSetSpawn.coords").replace("[min]",  island.getMinProtectedX() + ", " + island.getMinProtectedZ())).replace("[max]",
+                    + (island.getMinProtectedX() + island.getProtectionRange()*2 - 1) + ", "
+                            + (island.getMinProtectedZ() + island.getProtectionRange()*2 - 1)));
+            if (island.isSpawn()) {
+                Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminInfo.isSpawn"));
+            }
+            if (island.isLocked()) {
+                Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminInfo.isLocked"));
+            } else {
+                Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminInfo.isUnlocked"));
+            }
+            /*
+            if (island.isPurgeProtected()) {
+                Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("adminInfoIsProtected"));
+            } else {
+                Util.sendMessage(sender, ChatColor.GREEN + getLocale(sender).get("adminInfoIsUnprotected"));
+            }*/
+            Set<UUID> banList = getIslands().getBanList(playerUUID);
+            if (!banList.isEmpty()) {
+                Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminInfo.bannedPlayers") + ":");
+                String list = "";
+                for (UUID uuid : banList) {
+                    Player target = plugin.getServer().getPlayer(uuid);
+                    if (target != null) {
+                        //online
+                        list += target.getName() + ", ";
+                    } else {
+                        list += getPlayers().getName(uuid) + ", ";
+                    }
+                }
+                if (!list.isEmpty()) {
+                    Util.sendMessage(sender, ChatColor.RED + list.substring(0, list.length()-2));
+                }
+            }
+            // Number of hoppers
+            // Util.sendMessage(sender, ChatColor.YELLOW + getLocale(sender).get("adminInfoHoppers").replace("[number]", String.valueOf(island.getHopperCount())));
+        } else {
+            Util.sendMessage(sender, ChatColor.RED + getLocale(sender).get("error.noIslandOther"));
+        }
     }
 
     @Override

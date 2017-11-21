@@ -10,6 +10,8 @@
 # This translation is adapted to version : [alpha-0.0.1]
 
 general:
+  deaths: "Deaths"
+  unlimited: "Unlimited"
   success: "Success!"
   errors:
     no-permission: "You don't have permission to execute this command."
@@ -21,6 +23,7 @@ general:
     not-leader: "You are not the leader of your island!"
     offline-player: "That player is offline or doesn't exist."
     unknown-player: "Unknown player!"
+    general: "That command is not ready yet - contact admin"
   
 help:
   admin:
@@ -151,6 +154,7 @@ adminInfo:
   lastLogin: "Last login"
   maxSize: "Island max size (distance)"
   player: "Player"
+  resetsLeft: "Resets left"
   teamLeader: "Team Leader"
   teamMembers: "Team Members"
   title: "This is spawn island"

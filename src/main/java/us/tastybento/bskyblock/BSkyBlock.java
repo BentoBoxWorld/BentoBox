@@ -1,16 +1,9 @@
 package us.tastybento.bskyblock;
 
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -20,13 +13,12 @@ import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.LocaleManager;
-import us.tastybento.bskyblock.config.NotSetup.ConfigError;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
+import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
@@ -35,7 +27,6 @@ import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
 import us.tastybento.bskyblock.listeners.protection.NetherEvents;
 import us.tastybento.bskyblock.schematics.SchematicsMgr;
-import us.tastybento.bskyblock.util.FileLister;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -70,6 +61,7 @@ public class BSkyBlock extends JavaPlugin{
 
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
+            
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
@@ -103,54 +95,62 @@ public class BSkyBlock extends JavaPlugin{
                 public void run() {
                     // Create the world if it does not exist
                     new IslandWorld(plugin);
-                    // Load islands from database
-                    islandsManager.load();
-
-                    // Load schematics
-                    // TODO: load these from config.yml
-                    Settings.chestItems = new ItemStack[] {
-                            new ItemStack(Material.LAVA_BUCKET,1),
-                            new ItemStack(Material.ICE,2),
-                            new ItemStack(Material.MELON_SEEDS,1),
-                            new ItemStack(Material.BONE,2),
-                            new ItemStack(Material.COBBLESTONE,5),
-                            new ItemStack(Material.SAPLING,2)
-                    };
-                    schematicsManager = new SchematicsMgr(plugin);
-
-                    Settings.defaultLanguage = "en-US";
-                    localeManager = new LocaleManager(plugin);
-
-
-
-
-                    // Register Listeners
-                    registerListeners();
-                    /*
-                     *DEBUG CODE
-                    Island loadedIsland = islandsManager.getIsland(owner);
-                    getLogger().info("Island name = " + loadedIsland.getName());
-                    getLogger().info("Island locked = " + loadedIsland.getLocked());
-                    //getLogger().info("Random set = " + randomSet);
-                    getLogger().info("Island coops = " + loadedIsland.getCoops());
-                    for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
-                        getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
-                    }
-                     */
-                    // Save islands & players data asynchronously every X minutes
-                    Settings.databaseBackupPeriod = 10 * 60 * 20;
-                    plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+                    
+                    getServer().getScheduler().runTask(plugin, new Runnable() {
 
                         @Override
                         public void run() {
-                            playersManager.save(true);
-                            islandsManager.save(true);
-                            offlineHistoryMessages.save(true);
-                        }
-                    }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
-                }
-                // TODO Auto-generated method stub
+                         // Load islands from database
+                            islandsManager.load();
 
+                            // Load schematics
+                            // TODO: load these from config.yml
+                            Settings.chestItems = new ItemStack[] {
+                                    new ItemStack(Material.LAVA_BUCKET,1),
+                                    new ItemStack(Material.ICE,2),
+                                    new ItemStack(Material.MELON_SEEDS,1),
+                                    new ItemStack(Material.BONE,2),
+                                    new ItemStack(Material.COBBLESTONE,5),
+                                    new ItemStack(Material.SAPLING,2)
+                            };
+                            schematicsManager = new SchematicsMgr(plugin);
+
+                            Settings.defaultLanguage = "en-US";
+                            localeManager = new LocaleManager(plugin);
+
+
+
+
+                            // Register Listeners
+                            registerListeners();
+                            /*
+                             *DEBUG CODE
+                            Island loadedIsland = islandsManager.getIsland(owner);
+                            getLogger().info("Island name = " + loadedIsland.getName());
+                            getLogger().info("Island locked = " + loadedIsland.getLocked());
+                            //getLogger().info("Random set = " + randomSet);
+                            getLogger().info("Island coops = " + loadedIsland.getCoops());
+                            for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
+                                getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
+                            }
+                             */
+                            // Save islands & players data asynchronously every X minutes
+                            Settings.databaseBackupPeriod = 10 * 60 * 20;
+                            plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+
+                                @Override
+                                public void run() {
+                                    playersManager.save(true);
+                                    islandsManager.save(true);
+                                    offlineHistoryMessages.save(true);
+                                }
+                            }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
+                        }
+                        // TODO Auto-generated method stub
+
+                            
+                        });
+                } 
             });
         }
     }
@@ -176,7 +176,6 @@ public class BSkyBlock extends JavaPlugin{
         playersManager.shutdown();
         islandsManager.shutdown();
         //offlineHistoryMessages.shutdown();
-        plugin = null;
     }
 
     private void registerCustomCharts(){

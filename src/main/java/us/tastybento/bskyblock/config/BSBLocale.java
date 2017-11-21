@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock.config;
 
 import java.io.File;
-import java.io.FilenameFilter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -10,8 +9,6 @@ import java.util.ResourceBundle;
 
 import org.bukkit.ChatColor;
 import org.bukkit.plugin.Plugin;
-
-import us.tastybento.bskyblock.util.FileLister;
 
 public class BSBLocale {
 

@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.commands;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -26,6 +27,7 @@ import us.tastybento.bskyblock.api.commands.CanUseResp;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.database.managers.island.NewIsland;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
@@ -303,7 +305,7 @@ public class IslandCommand extends AbstractCommand {
                 if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.reset")) {
                     return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
                 }
-                if (getIslands().hasIsland(playerUUID)) {
+                if (!getIslands().hasIsland(playerUUID)) {
                     return new CanUseResp(getLocale(sender).get("general.errors.no-island"));
                 }
                 if (!getIslands().isOwner(playerUUID)) {
@@ -329,7 +331,13 @@ public class IslandCommand extends AbstractCommand {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: making new island ");
                 Schematic schematic = plugin.getSchematics().getSchematic("default");
-                getIslands().newIsland(player, schematic, oldIsland);
+                try {
+                    new NewIsland.Builder().player(player).schematic(schematic).oldIsland(oldIsland).build();
+                } catch (IOException e) {
+                    plugin.getLogger().severe("Could not create island for player.");
+                    Util.sendMessage(sender, ChatColor.RED + plugin.getLocale(sender).get("general.errors.general"));
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -1514,7 +1522,13 @@ public class IslandCommand extends AbstractCommand {
     protected void createIsland(Player player) {
         //TODO: Add panels, make a selection.
         Schematic schematic = plugin.getSchematics().getSchematic("default");
-        getIslands().newIsland(player, schematic);
+        try {
+            new NewIsland.Builder().player(player).schematic(schematic).build();
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not create island for player.");
+            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.general"));
+            e.printStackTrace();
+        }
     }
 
 }

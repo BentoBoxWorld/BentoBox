@@ -55,7 +55,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.config.Settings.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.util.DeleteIslandBlocks;
+import us.tastybento.bskyblock.util.DeleteIslandChunks;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
@@ -1092,7 +1092,7 @@ public class Schematic {
                     // Delete the old island if required
                     if (oldIsland != null) {
                         plugin.getLogger().info("DEBUG: Deleting old island");
-                        new DeleteIslandBlocks(plugin, oldIsland);
+                        new DeleteIslandChunks(plugin, oldIsland);
                         try {
                             plugin.getIslands().getHandler().deleteObject(oldIsland);
                         } catch (Exception e) {

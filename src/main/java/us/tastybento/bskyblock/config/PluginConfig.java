@@ -84,13 +84,11 @@ public class PluginConfig {
         Settings.worldName = plugin.getConfig().getString("world.world-name", "BSkyBlock_world");
         //TODO check if it is the same than before
         
-        int distance = plugin.getConfig().getInt("world.distance-in-chunks", 24);
-        // TODO this is an arbitrary number
-        Settings.islandDistance = distance * 16;
-        if(distance < 50) errors.put(ConfigError.ISLAND_DISTANCE_TOO_LOW, Settings.islandDistance);
+        int distance = plugin.getConfig().getInt("world.distance", 208);
+        Settings.islandDistance = Math.round((long)distance/16) * 16;
+        if(distance < 48) errors.put(ConfigError.ISLAND_DISTANCE_TOO_LOW, Settings.islandDistance);
 
         Settings.islandProtectionRange = plugin.getConfig().getInt("world.protection-range", 100);
-        if(Settings.islandProtectionRange % 2 != 0) errors.put(ConfigError.NOT_EVEN_PROTECTION_RANGE, Settings.islandProtectionRange);
         if(Settings.islandProtectionRange < 0) errors.put(ConfigError.PROTECTION_RANGE_TOO_LOW, Settings.islandProtectionRange);
         if(Settings.islandProtectionRange > Settings.islandDistance) errors.put(ConfigError.PROTECTION_RANGE_HIGHER_THAN_ISLAND_DISTANCE, Settings.islandProtectionRange);
         

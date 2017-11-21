@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.api.events.island;
 
 import java.util.UUID;
 
-import us.tastybento.bskyblock.api.events.IslandEvent;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 
@@ -14,7 +14,7 @@ import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
  * @author Poslovitch
  * @since 1.0
  */
-public class SettingChangeEvent extends IslandEvent {
+public class SettingChangeEvent extends IslandBaseEvent {
     private final UUID player;
     private final SettingsFlag editedSetting;
     private final boolean setTo;

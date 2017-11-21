@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.api.events.team;
 
 import java.util.UUID;
 
-import us.tastybento.bskyblock.api.events.IslandEvent;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
@@ -11,7 +11,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  * @author Poslovitch
  * @since 1.0
  */
-public class TeamChatEvent extends IslandEvent {
+public class TeamChatEvent extends IslandBaseEvent {
 	private final UUID player;
 	private String message;
 

@@ -38,7 +38,7 @@ import us.tastybento.bskyblock.util.Util;
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
 	private static final String DATABASE_FOLDER_NAME = "database";
-	private static final boolean DEBUG = false;
+	private static final boolean DEBUG = true;
 	public FlatFileDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
 		super(plugin, type, databaseConnecter);
 	}

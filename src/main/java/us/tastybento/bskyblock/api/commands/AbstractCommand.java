@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.api.commands;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -19,11 +18,9 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.BSBLocale;
-import us.tastybento.bskyblock.database.managers.IslandsManager;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
+import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -46,7 +43,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     public UUID playerUUID;
 
     private final boolean help;
-    private static final int MAX_PER_PAGE = 7;
+    //private static final int MAX_PER_PAGE = 7;
 
     private static final boolean DEBUG = false;
 

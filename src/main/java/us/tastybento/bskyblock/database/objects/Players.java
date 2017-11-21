@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.config.Settings;
  */
 public class Players extends DataObject {
     private HashMap<Integer, Location> homeLocations;
-    private UUID uniqueId;
+    private String uniqueId;
     private String playerName;
     private int resetsLeft;
     private String locale = "";
@@ -37,7 +37,7 @@ public class Players extends DataObject {
      *
      */
     public Players(final UUID uniqueId) {
-        this.uniqueId = uniqueId;
+        this.uniqueId = uniqueId.toString();
         this.homeLocations = new HashMap<>();
         this.playerName = "";
         this.resetsLeft = Settings.resetLimit;
@@ -124,11 +124,11 @@ public class Players extends DataObject {
     }
 
     public Player getPlayer() {
-        return Bukkit.getPlayer(uniqueId);
+        return Bukkit.getPlayer(UUID.fromString(uniqueId));
     }
 
     public UUID getPlayerUUID() {
-        return uniqueId;
+        return UUID.fromString(uniqueId);
     }
 
     public String getPlayerName() {
@@ -178,7 +178,7 @@ public class Players extends DataObject {
      * @param uuid
      */
     public void setPlayerUUID(final UUID uuid) {
-        this.uniqueId = uuid;
+        this.uniqueId = uuid.toString();
     }
 
     /**
@@ -299,7 +299,9 @@ public class Players extends DataObject {
 
     @Override
     public void setUniqueId(String uniqueId) {
-        this.uniqueId = UUID.fromString(uniqueId);
+        //Bukkit.getLogger().info("DEBUG: uniqueId = " + uniqueId);
+        this.uniqueId = uniqueId;
+        //Bukkit.getLogger().info("DEBUG: UUID = " + this.uniqueId);
     }
 
 }
