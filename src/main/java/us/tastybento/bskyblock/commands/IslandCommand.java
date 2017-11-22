@@ -319,6 +319,7 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public void execute(CommandSender sender, String[] args) {
+                player.setGameMode(GameMode.SPECTATOR);
                 // Get the player's old island
                 Island oldIsland = getIslands().getIsland(playerUUID);
                 if (DEBUG)
@@ -332,7 +333,11 @@ public class IslandCommand extends AbstractCommand {
                     plugin.getLogger().info("DEBUG: making new island ");
                 Schematic schematic = plugin.getSchematics().getSchematic("default");
                 try {
-                    new NewIsland.Builder().player(player).schematic(schematic).oldIsland(oldIsland).build();
+                    NewIsland.builder()
+                    .player(player)
+                    .schematic(schematic)
+                    .oldIsland(oldIsland)
+                    .build();
                 } catch (IOException e) {
                     plugin.getLogger().severe("Could not create island for player.");
                     Util.sendMessage(sender, ChatColor.RED + plugin.getLocale(sender).get("general.errors.general"));
@@ -1523,7 +1528,10 @@ public class IslandCommand extends AbstractCommand {
         //TODO: Add panels, make a selection.
         Schematic schematic = plugin.getSchematics().getSchematic("default");
         try {
-            new NewIsland.Builder().player(player).schematic(schematic).build();
+            NewIsland.builder()
+            .player(player)
+            .schematic(schematic)
+            .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");
             Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.general"));

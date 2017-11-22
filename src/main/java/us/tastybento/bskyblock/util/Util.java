@@ -274,7 +274,7 @@ public class Util {
                 return true;
             }
         }
-        return true;
+        return false;
     }
 
     /**
