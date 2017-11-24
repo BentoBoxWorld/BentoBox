@@ -20,11 +20,7 @@ commands:
         description: Admin commands
         usage:  |
             /bsadmin help
-    bsc:
-        description: Game challenges
-        aliases: [c, challenge, bschallenge, challenges]
-        usage:  |  
-            /challenge
+
 permissions:    
   bskyblock.*:
     default: false

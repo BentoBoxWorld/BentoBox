@@ -53,7 +53,7 @@ public class IslandCommand extends AbstractCommand {
     protected Set<UUID> kickingPlayers = new HashSet<>();
 
     public IslandCommand(BSkyBlock plugin) {
-        super(plugin, Settings.ISLANDCOMMAND, new String[]{"is"}, true);
+        super(Settings.ISLANDCOMMAND, new String[]{"is"}, true);
         plugin.getCommand(Settings.ISLANDCOMMAND).setExecutor(this);
         plugin.getCommand(Settings.ISLANDCOMMAND).setTabCompleter(this);
         this.plugin = plugin;

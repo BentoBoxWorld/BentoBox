@@ -5,6 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 import java.util.List;
 
+import org.bukkit.plugin.Plugin;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 
@@ -35,7 +37,7 @@ public abstract class AbstractDatabaseHandler<T> {
     protected final String     deleteQuery;
 
 
-    protected BSkyBlock plugin;
+    protected Plugin plugin;
 
 
     /**
@@ -48,7 +50,7 @@ public abstract class AbstractDatabaseHandler<T> {
      *            Contains the settings to create a connection to the database
      *            like host/port/database/user/password
      */
-    protected AbstractDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
+    protected AbstractDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
         this.type = type;

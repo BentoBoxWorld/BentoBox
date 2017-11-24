@@ -21,8 +21,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
@@ -39,7 +39,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
     private static final boolean DEBUG = false;
-    public FlatFileDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
+    public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
     }
 
@@ -269,23 +269,28 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (propertyDescriptor.getPropertyType().equals(HashMap.class) || propertyDescriptor.getPropertyType().equals(Map.class)) {
                 // Maps need to have keys serialized
                 //plugin.getLogger().info("DEBUG: Map for " + field.getName());
-                Map<Object, Object> result = new HashMap<Object, Object>();
-                for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
-                    // Serialize all key types
-                    // TODO: also need to serialize values?
-                    result.put(serialize(object.getKey()), object.getValue());
+                if (value != null) {
+                    Map<Object, Object> result = new HashMap<Object, Object>();
+                    for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
+                        // Serialize all key types
+                        // TODO: also need to serialize values?
+                        result.put(serialize(object.getKey()), object.getValue());
+                    }
+                    // Save the list in the config file
+                    config.set(field.getName(), result);
                 }
-                // Save the list in the config file
-                config.set(field.getName(), result);
             } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
                 // Sets need to be serialized as string lists
-                //plugin.getLogger().info("DEBUG: Set for " + field.getName());
-                List<Object> list = new ArrayList<Object>();
-                for (Object object : (Set<Object>)value) {
-                    list.add(serialize(object));
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: Set for " + field.getName());
+                if (value != null) {
+                    List<Object> list = new ArrayList<Object>();
+                    for (Object object : (Set<Object>)value) {
+                        list.add(serialize(object));
+                    }
+                    // Save the list in the config file
+                    config.set(field.getName(), list);
                 }
-                // Save the list in the config file
-                config.set(field.getName(), list);
             } else {
                 // For all other data that doesn't need special serialization
                 config.set(field.getName(), serialize(value));

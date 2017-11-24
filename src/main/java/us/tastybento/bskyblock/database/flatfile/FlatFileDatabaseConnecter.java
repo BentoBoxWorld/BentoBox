@@ -6,8 +6,8 @@ import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
@@ -15,11 +15,11 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
-    private BSkyBlock plugin;
+    private Plugin plugin;
     private File dataFolder;
 
 
-    public FlatFileDatabaseConnecter(BSkyBlock plugin, DatabaseConnectionSettingsImpl databaseConnectionSettingsImpl) {
+    public FlatFileDatabaseConnecter(Plugin plugin, DatabaseConnectionSettingsImpl databaseConnectionSettingsImpl) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }

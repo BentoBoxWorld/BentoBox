@@ -30,8 +30,8 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
@@ -99,7 +99,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param databaseConnecter - authentication details for the database
      */
-    public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
+    public MySQLDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
         try {
             connection = databaseConnecter.createConnection();

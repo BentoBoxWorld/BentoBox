@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.database;
 
-import us.tastybento.bskyblock.BSkyBlock;
+import org.bukkit.plugin.Plugin;
+
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
@@ -41,6 +42,6 @@ public abstract class BSBDatabase {
      * @param dataObjectClass
      * @return database handler
      */
-    public abstract AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> dataObjectClass);
+    public abstract AbstractDatabaseHandler<?> getHandler(Plugin plugin, Class<?> dataObjectClass);
 
 }

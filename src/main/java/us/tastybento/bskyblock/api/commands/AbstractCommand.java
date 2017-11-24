@@ -29,7 +29,7 @@ import us.tastybento.bskyblock.util.Util;
  */
 public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
-    private BSkyBlock plugin;
+    private BSkyBlock plugin = BSkyBlock.getPlugin();
 
     public final Map<String, ArgumentHandler> argumentsMap;
     public final Set<ArgumentHandler> handlers;
@@ -47,8 +47,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
     private static final boolean DEBUG = false;
 
-    protected AbstractCommand(BSkyBlock plugin, String label, String[] aliases, boolean help) {
-        this.plugin = plugin;
+    protected AbstractCommand(String label, String[] aliases, boolean help) {
         this.argumentsMap = new LinkedHashMap<>();
         this.handlers = new HashSet<>();
         this.label = label;
