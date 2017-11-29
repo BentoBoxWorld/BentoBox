@@ -22,6 +22,7 @@ import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
+import us.tastybento.bskyblock.listeners.PanelListener;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
@@ -34,7 +35,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
  * @author Tastybento
  * @author Poslovitch
  */
-public class BSkyBlock extends JavaPlugin{
+public class BSkyBlock extends JavaPlugin {
 
     private static BSkyBlock plugin;
 
@@ -168,6 +169,7 @@ public class BSkyBlock extends JavaPlugin{
         manager.registerEvents(new IslandGuard(this), this);
         manager.registerEvents(new IslandGuard1_8(this), this);
         manager.registerEvents(new IslandGuard1_9(this), this);
+        manager.registerEvents(new PanelListener(this), this);
     }
 
     @Override
