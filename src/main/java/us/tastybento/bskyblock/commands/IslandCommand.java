@@ -29,6 +29,7 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.panels.LanguagePanel;
 import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
@@ -1490,12 +1491,12 @@ public class IslandCommand extends AbstractCommand {
 
             @Override
             public CanUseResp canUse(CommandSender sender) {
-                return new CanUseResp(false);
+                return new CanUseResp(true);
             }
 
             @Override
             public void execute(CommandSender sender, String[] args) {
-
+                LanguagePanel.openPanel((Player) sender);
             }
 
             @Override
