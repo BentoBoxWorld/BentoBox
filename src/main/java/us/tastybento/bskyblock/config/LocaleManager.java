@@ -1,35 +1,37 @@
 package us.tastybento.bskyblock.config;
 
-import org.bukkit.command.CommandSender;
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.localization.LocaleHandler;
-
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
-public class LocaleManager {
+import us.tastybento.bskyblock.BSkyBlock;
 
-    public static final String LOCALE_FOLDER = "localization";
-
+/**
+ * Handles the BSkyBlock locale
+ * @author ben
+ *
+ */
+public class LocaleManager extends AbstractLocaleManager {
+    
     private BSkyBlock plugin;
-    private Map<String, LocaleHandler> handlers = new HashMap<>();
 
     public LocaleManager(BSkyBlock plugin) {
+        super(plugin);
         this.plugin = plugin;
     }
 
-    public void registerLocaleHandler(LocaleHandler handler) {
-        handlers.put(handler.getIdentifier(), handler);
-        handler.setupLocales();
-        handler.loadLocales();
-    }
+    @Override
+    /**
+     * Returns the locale for the specified player
+     * @param player - Player to get the locale
+     * @return the locale for this player
+     */
+    public BSBLocale getLocale(UUID player){
+        //getLogger().info("DEBUG: " + player);
+        //getLogger().info("DEBUG: " + getPlayers() == null ? "Players is null":"Players in not null");
+        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player));
+        //getLogger().info("DEBUG: " + getPlayers().getPlayer(player).getLocale());
+        String locale = plugin.getPlayers().getPlayer(player).getLocale();
+        if(locale.isEmpty() || !getLocales().containsKey(locale)) return getLocales().get(Settings.defaultLanguage);
 
-    public String get(CommandSender sender, String reference) {
-        return reference;
-    }
-
-    public String get(UUID uuid, String reference) {
-        return reference;
+        return getLocales().get(locale);
     }
 }

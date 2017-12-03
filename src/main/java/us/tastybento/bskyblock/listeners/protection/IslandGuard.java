@@ -121,7 +121,7 @@ public class IslandGuard implements Listener {
                 return;
             }
             // Elsewhere - not allowed
-            Util.sendMessage(event.getWhoClicked(), "island.protected");
+            Util.sendMessage(event.getWhoClicked(), plugin.getLocale(event.getWhoClicked().getUniqueId()).get("island.protected"));
             event.setCancelled(true);
         }
     }

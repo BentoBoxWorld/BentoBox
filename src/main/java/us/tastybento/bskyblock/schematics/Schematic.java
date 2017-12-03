@@ -52,7 +52,6 @@ import org.bukkit.util.Vector;
 
 import net.milkbowl.vault.economy.EconomyResponse;
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.localization.Variable;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.config.Settings.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -973,16 +972,16 @@ public class Schematic {
                 Sign sign = (Sign) signState;
                 if (sign.getLine(0).isEmpty()) {
                     // TODO Add sign
-                    sign.setLine(0, Util.getMessage(player, "sign.line1", new Variable("[player]", player.getName())));
+                    sign.setLine(0, plugin.getLocale(player.getUniqueId()).get("sign.line1").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(1).isEmpty()) {
-                    sign.setLine(1, Util.getMessage(player, "sign.line2", new Variable("[player]", player.getName())));
+                    sign.setLine(1, plugin.getLocale(player.getUniqueId()).get("sign.line2").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(2).isEmpty()) {
-                    sign.setLine(2, Util.getMessage(player, "sign.line3", new Variable("[player]", player.getName())));
+                    sign.setLine(2, plugin.getLocale(player.getUniqueId()).get("sign.line3").replace("[player]", player.getName()));
                 }
                 if (sign.getLine(3).isEmpty()) {
-                    sign.setLine(3, Util.getMessage(player, "sign.line4", new Variable("[player]", player.getName())));
+                    sign.setLine(3, plugin.getLocale(player.getUniqueId()).get("sign.line4").replace("[player]", player.getName()));
                 }
                 // BlockFace direction = ((org.bukkit.material.Sign)
                 // sign.getData()).getFacing();

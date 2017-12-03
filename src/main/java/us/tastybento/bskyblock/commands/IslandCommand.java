@@ -63,12 +63,12 @@ public class IslandCommand extends AbstractCommand {
     @Override
     public CanUseResp canUse(CommandSender sender) {
         if (!(sender instanceof Player)) {
-            return new CanUseResp(Util.getMessage(sender, "general.errors.use-in-game"));
+            return new CanUseResp(getLocale(sender).get("general.errors.use-in-game"));
         }
 
         // Basic permission check to even use /island
         if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")) {
-            return new CanUseResp(Util.getMessage(sender, "general.errors.no-permission"));
+            return new CanUseResp(getLocale(sender).get("general.errors.no-permission"));
         }
 
         return new CanUseResp(true);
@@ -1535,7 +1535,7 @@ public class IslandCommand extends AbstractCommand {
             .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");
-            Util.sendMessage(player, "general.errors.general");
+            Util.sendMessage(player, ChatColor.RED + plugin.getLocale(player).get("general.errors.general"));
             e.printStackTrace();
         }
     }

@@ -9,9 +9,9 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.api.commands.ArgumentHandler;
-import us.tastybento.bskyblock.api.localization.BSBLocale;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
+import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.LocaleManager;
 import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
@@ -244,10 +244,19 @@ public class BSkyBlock extends JavaPlugin {
     }
 
     /**
-     * @return LocaleManager object
+     * @param sender
+     * @return Locale object for sender
      */
-    public LocaleManager getLocaleManager() {
-        return localeManager;
+    public BSBLocale getLocale(CommandSender sender) {
+        return localeManager.getLocale(sender);
+    }
+
+    /**
+     * @param uuid
+     * @return Locale object for UUID
+     */
+    public BSBLocale getLocale(UUID uuid) {
+        return localeManager.getLocale(uuid);
     }
 
     /**
