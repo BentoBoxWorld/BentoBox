@@ -21,6 +21,7 @@ import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.localization.Variable;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
@@ -623,10 +624,10 @@ public class IslandsManager {
         //home.getChunk().load();
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
-        if (number ==1 ) {
-            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player.getUniqueId()).get("island.teleport").replace("[label]", Settings.ISLANDCOMMAND));
+        if (number == 1) {
+            Util.sendMessage(player, "island.teleport", new Variable("[label]", Settings.ISLANDCOMMAND));
         } else {
-            Util.sendMessage(player, ChatColor.GREEN + plugin.getLocale(player.getUniqueId()).get("island.teleported").replace("[number]", String.valueOf(number)));
+            Util.sendMessage(player, "island.teleported", new Variable("[number]", String.valueOf(number)));
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
@@ -853,7 +854,6 @@ public class IslandsManager {
      * This removes players from an island overworld and nether - used when reseting or deleting an island
      * Mobs are killed when the chunks are refreshed.
      * @param island to remove players from
-     * @param uuid
      */
     public void removePlayersFromIsland(final Island island) {
         // Teleport players away
@@ -929,7 +929,6 @@ public class IslandsManager {
     /**
      * Puts a player in a team. Removes them from their old island if required.
      * @param playerUUID
-     * @param teamLeader
      * @return true if successful, false if not
      */
     public boolean setJoinTeam(Island teamIsland, UUID playerUUID) {

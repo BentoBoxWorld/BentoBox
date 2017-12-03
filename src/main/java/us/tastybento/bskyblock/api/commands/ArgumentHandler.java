@@ -29,7 +29,7 @@ public abstract class ArgumentHandler {
 
     public String getShortDescription(CommandSender sender) {
         // syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
-        String msg = plugin.getLocale(sender).get("help.syntax");
+        String msg = plugin.getLocaleManager().get(sender, "help.syntax");
         msg = msg.replace("[label]", label);
 
         String cmds = "";
@@ -37,7 +37,7 @@ public abstract class ArgumentHandler {
             if (cmds.isEmpty()) {
                 cmds = alias;
             } else {
-                cmds += plugin.getLocale(sender).get("help.syntax-alias-separator") + alias;
+                cmds += plugin.getLocaleManager().get(sender, "help.syntax-alias-separator") + alias;
             }
         }
 

@@ -117,7 +117,7 @@ public class NetherPortals implements Listener {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Portal use not allowed");
             if (!event.getPlayer().isOp() && !VaultHelper.hasPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
-                Util.sendMessage(event.getPlayer(), plugin.getLocale(event.getPlayer().getUniqueId()).get("island.protected"));
+                Util.sendMessage(event.getPlayer(), "island.protected");
                 event.setCancelled(true);
                 return;
             }
@@ -139,7 +139,7 @@ public class NetherPortals implements Listener {
                             // end_place.getBlock().getType(),end_place.getBlock().getData());
                             return;
                         } else {
-                            Util.sendMessage(event.getPlayer(), plugin.getLocale(event.getPlayer().getUniqueId()).get("warps.error.NotSafe"));
+                            Util.sendMessage(event.getPlayer(), "warps.error.not-safe");
                             plugin.getIslands().homeTeleport(event.getPlayer());
                             return;
                         }
@@ -229,7 +229,7 @@ public class NetherPortals implements Listener {
                                 } else {
                                     plugin.getLogger().severe("Cannot teleport player to nether because there is no nether schematic");
                                     event.setCancelled(true);
-                                    Util.sendMessage(event.getPlayer(), plugin.getLocale(event.getPlayer().getUniqueId()).get("warps.error.NotSafe"));
+                                    Util.sendMessage(event.getPlayer(), "warps.error.not-safe");
                                     return;
                                 }
                             }

@@ -9,17 +9,18 @@ import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
+import us.tastybento.bskyblock.util.Util;
 
 public class LanguagePanel {
 
     public static void openPanel(Player player) {
         PanelBuilder panelBuilder = new PanelBuilder()
-                .setName(BSkyBlock.getPlugin().getLocale(player).get("panel.languages"));
+                .setName(Util.getMessage(player, "panel.languages.title"));
 
         PanelItem test = new PanelItemBuilder()
                 .setIcon(new ItemStack(Material.BEDROCK))
-                .setName(BSkyBlock.getPlugin().getLocale(player).get("panel.languages.test.name"))
-                .setDescription(BSkyBlock.getPlugin().getLocale(player).get("panel.languages.test.description"))
+                .setName(Util.getMessage(player, "panel.languages.test.name"))
+                .setDescription(Util.getMessage(player, "panel.languages.test.description"))
                 .setGlow(true)
                 .setClickHandler(new PanelItem.ClickHandler() {
                     @Override
@@ -32,8 +33,8 @@ public class LanguagePanel {
 
         PanelItem something = new PanelItemBuilder()
                 .setIcon(new ItemStack(Material.ANVIL))
-                .setName(BSkyBlock.getPlugin().getLocale(player).get("panel.languages.something.name"))
-                .setDescription(BSkyBlock.getPlugin().getLocale(player).get("panel.languages.something.description"))
+                .setName(Util.getMessage(player, "panel.languages.something.name"))
+                .setDescription(Util.getMessage(player, "panel.languages.something.description"))
                 .build();
 
         panelBuilder.addItem(1, test);

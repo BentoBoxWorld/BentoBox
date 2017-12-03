@@ -12,7 +12,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package us.tastybento.bskyblock.config;
+package us.tastybento.bskyblock.util;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.enumeration;

@@ -29,6 +29,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.localization.Variable;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
@@ -43,8 +44,23 @@ import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 public class Util {
     private static BSkyBlock plugin = BSkyBlock.getPlugin();
 
-    public static void sendMessage(CommandSender receiver, String message){
+    /**
+     * Temporary placeholder method. Wont stay.
+     * @param receiver
+     * @param reference
+     * @param variables
+     */
+    public static String getMessage(CommandSender receiver, String reference, Variable... variables) {
+        String message = plugin.getLocaleManager().get(receiver, reference);
+        for (Variable variable: variables) {
+            message = variable.apply(message);
+        }
         message = PlaceholderHandler.replacePlaceholders(receiver, message);
+        return message;
+    }
+
+    public static void sendMessage(CommandSender receiver, String reference, Variable... variables){
+        String message = getMessage(receiver, reference, variables);
 
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             for(String part : message.split("\n")){

@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
-import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.util.Util;
@@ -65,11 +64,11 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
                 @Override
                 public void execute(CommandSender sender, String[] args) {
-                    Util.sendMessage(sender, plugin.getLocale(sender).get("help.header"));
+                    Util.sendMessage(sender, "help.header");
                     for(ArgumentHandler handler: handlers) {
                         if (handler.canUse(sender).isAllowed()) Util.sendMessage(sender, handler.getShortDescription(sender));
                     }
-                    Util.sendMessage(sender, plugin.getLocale(sender).get("help.end"));
+                    Util.sendMessage(sender, "help.end");
                 }
 
                 @Override
@@ -79,7 +78,7 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
 
                 @Override
                 public String[] usage(CommandSender sender) {
-                    return new String[] {"", plugin.getLocale(sender).get("help.this")};
+                    return new String[] {"", "help.this"};
                 }
             }.alias("help").alias("?"));
         }
@@ -221,22 +220,6 @@ public abstract class AbstractCommand implements CommandExecutor, TabCompleter {
     protected IslandsManager getIslands() {
         return plugin.getIslands();
     }
-    /**
-     * @param sender
-     * @return Locale for sender
-     */
-    protected BSBLocale getLocale(CommandSender sender) {
-        return plugin.getLocale(sender);
-    }
-    /**
-     * @param uuid
-     * @return Locale for UUID
-     */
-    protected BSBLocale getLocale(UUID uuid) {
-        return plugin.getLocale(uuid);
-    }
-
-
 
     public Map<String, ArgumentHandler> getArgumentsMap() {
         return argumentsMap;
