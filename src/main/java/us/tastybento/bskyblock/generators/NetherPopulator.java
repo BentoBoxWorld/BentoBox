@@ -118,17 +118,6 @@ public class NetherPopulator extends BlockPopulator {
                             b.getRelative(BlockFace.UP).setType(Material.NETHER_WARTS);
                         }
                     }
-                    // Mob spawn
-                    /*
-                     * if (y == Settings.island_level &&
-                     * b.getType().equals(Material.NETHERRACK)) {
-                     * Entity e =
-                     * world.spawnEntity(b.getRelative(BlockFace.UP,1)
-                     * .getLocation(), EntityType.PIG_ZOMBIE);
-                     * Bukkit.getLogger().info(e.toString());
-                     * //}
-                     * }
-                     */
                 }
             }
         }

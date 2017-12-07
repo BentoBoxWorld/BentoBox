@@ -22,35 +22,23 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
     PerlinOctaveGenerator gen;
     //BSkyBlock plugin = BSkyBlock.getPlugin();
 
-    @SuppressWarnings("deprecation")
-    public byte[][] generateBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid) {
-        // Bukkit.getLogger().info("DEBUG: world environment = " + world.getEnvironment().toString());
+    @Override
+    public ChunkData generateChunkData(World world, Random random, int chunkX, int chunkZ, ChunkGenerator.BiomeGrid biomeGrid) {
         if (world.getEnvironment().equals(World.Environment.NETHER)) {
-            return generateNetherBlockSections(world, random, chunkX, chunkZ, biomeGrid);
+            return generateNetherChunks(world, random, chunkX, chunkZ, biomeGrid);
         }
-        byte[][] result = new byte[world.getMaxHeight() / 16][];
-        if (Settings.seaHeight == 0) {
-            return result;
-        } else {
+        ChunkData result = createChunkData(world);
+        if (Settings.seaHeight != 0) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
                     for (int y = 0; y < Settings.seaHeight; y++) {
-                        setBlock(result, x, y, z, (byte) Material.STATIONARY_WATER.getId());
+                        result.setBlock(x, y, z, Material.STATIONARY_WATER);
                     }
                 }
             }
-            return result;
-        }
-    }
 
-    void setBlock(byte[][] result, int x, int y, int z, byte blkid) {
-        // is this chunk part already initialized?
-        if (result[y >> 4] == null) {
-            // Initialize the chunk part
-            result[y >> 4] = new byte[4096];
         }
-        // set the block (look above, how this is done)
-        result[y >> 4][((y & 0xF) << 8) | (z << 4) | x] = blkid;
+        return result;
     }
 
     // This needs to be set to return true to override minecraft's default
@@ -68,13 +56,10 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
     /*
      * Nether Section
      */
-    @SuppressWarnings("deprecation")
-    private byte[][] generateNetherBlockSections(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid) {
-        // Bukkit.getLogger().info("DEBUG: world environment(nether) = " +
-        // world.getEnvironment().toString());
+    private ChunkData generateNetherChunks(World world, Random random, int chunkX, int chunkZ, BiomeGrid biomeGrid) {
+        ChunkData result = createChunkData(world);
         rand.setSeed(world.getSeed());
         gen = new PerlinOctaveGenerator((long) (random.nextLong() * random.nextGaussian()), 8);
-        byte[][] result = new byte[world.getMaxHeight() / 16][];
         // This is a nether generator
         if (!world.getEnvironment().equals(Environment.NETHER)) {
             return result;
@@ -87,23 +72,21 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
                     // Bukkit.getLogger().info("debug: " + x + ", " +
                     // (world.getMaxHeight()-1) + ", " + z);
                     int maxHeight = world.getMaxHeight();
-                    setBlock(result, x, (maxHeight - 1), z, (byte) Material.BEDROCK.getId());
+                    result.setBlock(x, (maxHeight - 1), z, Material.BEDROCK);
                     // Next three layers are a mix of bedrock and netherrack
                     for (int y = 2; y < 5; y++) {
                         double r = gen.noise(x, (maxHeight - y), z, 0.5, 0.5);
                         if (r > 0D) {
-                            setBlock(result, x, (maxHeight - y), z, (byte) Material.BEDROCK.getId());
-                        } else {
-                            setBlock(result, x, (maxHeight - y), z, (byte) Material.NETHERRACK.getId());
+                            result.setBlock(x, (maxHeight - y), z, Material.BEDROCK);
                         }
                     }
                     // Next three layers are a mix of netherrack and air
                     for (int y = 5; y < 8; y++) {
                         double r = gen.noise(x, maxHeight - y, z, 0.5, 0.5);
                         if (r > 0D) {
-                            setBlock(result, x, (maxHeight - y), z, (byte) Material.NETHERRACK.getId());
+                            result.setBlock(x, (maxHeight - y), z, Material.NETHERRACK);
                         } else {
-                            setBlock(result, x, (maxHeight - y), z, (byte) Material.AIR.getId());
+                            result.setBlock(x, (maxHeight - y), z, Material.AIR);
                         }
                     }
                     // Layer 8 may be glowstone
@@ -111,37 +94,37 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
                     if (r > 0.5D) {
                         // Have blobs of glowstone
                         switch (random.nextInt(4)) {
-                            case 1:
-                                // Single block
-                                setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
-                                if (x < 14 && z < 14) {
-                                    setBlock(result, x + 1, (maxHeight - 8), z + 1, (byte) Material.GLOWSTONE.getId());
-                                    setBlock(result, x + 2, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
-                                    setBlock(result, x + 1, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
-                                    setBlock(result, x + 1, (maxHeight - 8), z + 2, (byte) Material.GLOWSTONE.getId());
-                                }
-                                break;
-                            case 2:
-                                // Stalatite
-                                for (int i = 0; i < random.nextInt(10); i++) {
-                                    setBlock(result, x, (maxHeight - 8 - i), z, (byte) Material.GLOWSTONE.getId());
-                                }
-                            case 3:
-                                setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
-                                if (x > 3 && z > 3) {
-                                    for (int xx = 0; xx < 3; xx++) {
-                                        for (int zz = 0; zz < 3; zz++) {
-                                            setBlock(result, x - xx, (maxHeight - 8 - random.nextInt(2)), z - xx, (byte) Material.GLOWSTONE.getId());
-                                        }
+                        case 1:
+                            // Single block
+                            result.setBlock(x, (maxHeight - 8), z, Material.GLOWSTONE);
+                            if (x < 14 && z < 14) {
+                                result.setBlock(x + 1, (maxHeight - 8), z + 1, Material.GLOWSTONE);
+                                result.setBlock(x + 2, (maxHeight - 8), z + 2, Material.GLOWSTONE);
+                                result.setBlock(x + 1, (maxHeight - 8), z + 2, Material.GLOWSTONE);
+                                result.setBlock(x + 1, (maxHeight - 8), z + 2, Material.GLOWSTONE);
+                            }
+                            break;
+                        case 2:
+                            // Stalatite
+                            for (int i = 0; i < random.nextInt(10); i++) {
+                                result.setBlock(x, (maxHeight - 8 - i), z, Material.GLOWSTONE);
+                            }
+                        case 3:
+                            result.setBlock(x, (maxHeight - 8), z, Material.GLOWSTONE);
+                            if (x > 3 && z > 3) {
+                                for (int xx = 0; xx < 3; xx++) {
+                                    for (int zz = 0; zz < 3; zz++) {
+                                        result.setBlock(x - xx, (maxHeight - 8 - random.nextInt(2)), z - xx, Material.GLOWSTONE);
                                     }
                                 }
-                                break;
-                            default:
-                                setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
+                            }
+                            break;
+                        default:
+                            result.setBlock(x, (maxHeight - 8), z, Material.GLOWSTONE);
                         }
-                        setBlock(result, x, (maxHeight - 8), z, (byte) Material.GLOWSTONE.getId());
+                        result.setBlock(x, (maxHeight - 8), z, Material.GLOWSTONE);
                     } else {
-                        setBlock(result, x, (maxHeight - 8), z, (byte) Material.AIR.getId());
+                        result.setBlock(x, (maxHeight - 8), z, Material.AIR);
                     }
                 }
             }
