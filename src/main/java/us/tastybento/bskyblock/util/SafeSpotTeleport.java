@@ -100,7 +100,6 @@ public class SafeSpotTeleport {
             //plugin.getLogger().info("DEBUG:world height = " + worldHeight);
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
 
-                @SuppressWarnings("deprecation")
                 @Override
                 public void run() {
                     // Find a safe spot, defined as a solid block, with 2 air spaces above it
@@ -111,12 +110,6 @@ public class SafeSpotTeleport {
                     ChunkSnapshot safeChunk = null;
                     ChunkSnapshot portalChunk = null;
                     boolean safeSpotFound = false;
-                    /*
-		    try {
-			nms = checkVersion();
-		    } catch (Exception e) {
-			e.printStackTrace();
-		    }*/
                     Vector safeSpotInChunk = null;
                     Vector portalPart = null;
                     double distance = 0D;
@@ -128,7 +121,7 @@ public class SafeSpotTeleport {
                                 for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
                                     //System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
                                     // Check for portal - only if this is not a safe home search
-                                    if (!setHome && chunk.getBlockTypeId(x, y, z) == Material.PORTAL.getId()) {
+                                    if (!setHome && chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
                                         if (portalPart == null || (distance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
                                             // First one found or a closer one, save the chunk the position and the distance
                                             portalChunk = chunk;
@@ -163,7 +156,7 @@ public class SafeSpotTeleport {
                         x = portalPart.getBlockX();
                         y = portalPart.getBlockY();
                         z = portalPart.getBlockZ();
-                        while (portalChunk.getBlockTypeId(x,y,z) == Material.PORTAL.getId()) {
+                        while (portalChunk.getBlockType(x,y,z).equals(Material.PORTAL)) {
                             y--;
                         }
                         //System.out.print("DEBUG: Portal teleport loc = " + (16 * portalChunk.getX() + x) + "," + (y) + "," + (16 * portalChunk.getZ() + z));
