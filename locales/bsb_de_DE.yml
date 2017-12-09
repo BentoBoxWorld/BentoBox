@@ -102,7 +102,7 @@ adminInfo:
   isUnlocked: "Insel ist nicht abgeschlossen"
   isUnprotected: "Insel ist nicht Purge-geschützt"
   lastLogin: "Letzter Login"
-  maxSize: "Insel maximale Größe (Distanz)
+  maxSize: "Insel maximale Größe (Distanz)"
   player: "Spieler"
   teamLeader: "Teamleiter"
   teamMembers: "Teammitglieder"
