@@ -30,7 +30,6 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.panels.LanguagePanel;
-import us.tastybento.bskyblock.schematics.Schematic;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 
@@ -332,11 +331,9 @@ public class IslandCommand extends AbstractCommand {
                 // Create new island and then delete the old one
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: making new island ");
-                Schematic schematic = plugin.getSchematics().getSchematic("default");
                 try {
                     NewIsland.builder()
                     .player(player)
-                    .schematic(schematic)
                     .oldIsland(oldIsland)
                     .build();
                 } catch (IOException e) {
@@ -1527,11 +1524,9 @@ public class IslandCommand extends AbstractCommand {
      */
     protected void createIsland(Player player) {
         //TODO: Add panels, make a selection.
-        Schematic schematic = plugin.getSchematics().getSchematic("default");
         try {
             NewIsland.builder()
             .player(player)
-            .schematic(schematic)
             .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");

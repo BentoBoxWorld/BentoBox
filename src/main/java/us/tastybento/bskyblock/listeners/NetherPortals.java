@@ -19,8 +19,8 @@ import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.generators.IslandWorld;
-import us.tastybento.bskyblock.schematics.Schematic;
-import us.tastybento.bskyblock.schematics.Schematic.PasteReason;
+import us.tastybento.bskyblock.island.builders.IslandBuilder;
+import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
 import us.tastybento.bskyblock.util.SafeSpotTeleport;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
@@ -220,18 +220,12 @@ public class NetherPortals implements Listener {
                             if (plugin.getIslands().bigScan(netherIsland, 20) == null) {
                                 if (DEBUG)
                                     plugin.getLogger().info("DEBUG: big scan is null");
-                                plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName() + " using default nether schematic");
-                                Schematic nether = plugin.getSchematics().getSchematic("nether");
-                                if (nether != null) {
-                                    if (DEBUG)
-                                        plugin.getLogger().info("DEBUG: pasting at " + island.getCenter().toVector());
-                                    nether.pasteSchematic(netherIsland, event.getPlayer(), false, PasteReason.PARTNER, island);
-                                } else {
-                                    plugin.getLogger().severe("Cannot teleport player to nether because there is no nether schematic");
-                                    event.setCancelled(true);
-                                    Util.sendMessage(event.getPlayer(), plugin.getLocale(event.getPlayer().getUniqueId()).get("warps.error.NotSafe"));
-                                    return;
-                                }
+                                plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName());
+                                new IslandBuilder(island)
+                                    .setPlayer(event.getPlayer())
+                                    .setDefaultChestItems(Settings.chestItems)
+                                    .setType(IslandType.NETHER)
+                                    .build();
                             }
                         }
                         if (DEBUG)

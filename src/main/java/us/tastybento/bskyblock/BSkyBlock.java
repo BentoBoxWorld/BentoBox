@@ -27,7 +27,6 @@ import us.tastybento.bskyblock.listeners.protection.IslandGuard;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
 import us.tastybento.bskyblock.listeners.protection.NetherEvents;
-import us.tastybento.bskyblock.schematics.SchematicsMgr;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
@@ -43,9 +42,6 @@ public class BSkyBlock extends JavaPlugin {
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
     private OfflineHistoryMessages offlineHistoryMessages;
-
-    // Schematics
-    private SchematicsMgr schematicsManager;
 
     // Metrics
     private Metrics metrics;
@@ -114,7 +110,6 @@ public class BSkyBlock extends JavaPlugin {
                                     new ItemStack(Material.COBBLESTONE,5),
                                     new ItemStack(Material.SAPLING,2)
                             };
-                            schematicsManager = new SchematicsMgr(plugin);
 
                             Settings.defaultLanguage = "en-US";
                             localeManager = new LocaleManager(plugin);
@@ -234,13 +229,6 @@ public class BSkyBlock extends JavaPlugin {
 
     public static BSkyBlock getPlugin() {
         return plugin;
-    }
-
-    /**
-     * @return the schematics
-     */
-    public SchematicsMgr getSchematics() {
-        return schematicsManager;
     }
 
     /**

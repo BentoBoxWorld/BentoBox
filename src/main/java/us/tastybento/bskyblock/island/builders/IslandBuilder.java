@@ -8,13 +8,13 @@ import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.Chest;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.DirectionalContainer;
+import org.bukkit.material.Chest;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
@@ -123,18 +123,17 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        World world = island.getCenter().getWorld();
         int y = 0;
         for (int x_space = x - 4; x_space <= x + 4; x_space++) {
             for (int z_space = z - 4; z_space <= z + 4; z_space++) {
-                final Block b = world.getBlockAt(x_space, y, z_space);
+                Block b = world.getBlockAt(x_space, y, z_space);
                 b.setType(Material.BEDROCK);
             }
         }
         for (y = 1; y < islandHeight + 5; y++) {
             for (int x_space = x - 4; x_space <= x + 4; x_space++) {
                 for (int z_space = z - 4; z_space <= z + 4; z_space++) {
-                    final Block b = world.getBlockAt(x_space, y, z_space);
+                    Block b = world.getBlockAt(x_space, y, z_space);
                     if (y < (islandHeight / 2)) {
                         b.setType(Material.SANDSTONE);
                     } else {
@@ -147,7 +146,7 @@ public class IslandBuilder {
         for (y = 0; y < islandHeight + 5; y++) {
             for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
                 for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
-                    final Block b = world.getBlockAt(x_space, y, z_space);
+                    Block b = world.getBlockAt(x_space, y, z_space);
                     b.setType(Material.STATIONARY_WATER);
                 }
             }
@@ -156,7 +155,7 @@ public class IslandBuilder {
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 2; x_space <= x + 2; x_space++) {
                 for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
+                    Block blockToChange = world.getBlockAt(x_space, y, z_space);
                     blockToChange.setType(Material.GRASS);
                 }
             }
@@ -209,10 +208,10 @@ public class IslandBuilder {
         // Add island items
         y = islandHeight;
         // Add tree (natural)
-        final Location treeLoc = new Location(world, x, y + 5D, z);
+        Location treeLoc = new Location(world, x, y + 5D, z);
         world.generateTree(treeLoc, TreeType.ACACIA);
         // Place the cow
-        //final Location location = new Location(world, x, (islandHeight + 5), z - 2);
+        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
@@ -235,11 +234,17 @@ public class IslandBuilder {
         int y = 0;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-                for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
-                    blockToChange.setType(Material.GRASS);
+            for (int x_space = x - 3; x_space <= x + 3; x_space++) {
+                for (int z_space = z - 3; z_space <= z + 3; z_space++) {
+                    world.getBlockAt(x_space, y, z_space).setType(Material.GRASS);
                 }
+            }
+        }
+
+        // Then cut off the corners to make it round-ish
+        for (int x_space = x - 3; x_space <= x + 3; x_space += 6) {
+            for (int z_space = z - 3; z_space <= z + 3; z_space += 6) {
+                world.getBlockAt(x_space, y-1, z_space).setType(Material.AIR);
             }
         }
         // Place bedrock - MUST be there (ensures island are not
@@ -290,10 +295,10 @@ public class IslandBuilder {
         // Add island items
         y = islandHeight;
         // Add tree (natural)
-        final Location treeLoc = new Location(world, x, y + 5D, z);
+        Location treeLoc = new Location(world, x, y + 5D, z);
         world.generateTree(treeLoc, TreeType.TREE);
         // Place the cow
-        //final Location location = new Location(world, x, (islandHeight + 5), z - 2);
+        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
@@ -309,15 +314,18 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        World world = island.getCenter().getWorld();
         int y = 0;
-        // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 2; x_space <= x + 2; x_space++) {
                 for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
-                    blockToChange.setType(Material.NETHER_BRICK);
+                    world.getBlockAt(x_space, y, z_space).setType(Material.NETHER_BRICK);
                 }
+            }
+        }
+        // Then cut off the corners to make it round-ish
+        for (int x_space = x - 3; x_space <= x + 3; x_space += 6) {
+            for (int z_space = z - 3; z_space <= z + 3; z_space += 6) {
+                world.getBlockAt(x_space, y-1, z_space).setType(Material.AIR);
             }
         }
         // Place bedrock - MUST be there (ensures island are not
@@ -368,10 +376,10 @@ public class IslandBuilder {
         // Add island items
         y = islandHeight;
         // Add tree (natural)
-        final Location treeLoc = new Location(world, x, y + 5D, z);
+        Location treeLoc = new Location(world, x, y + 5D, z);
         world.generateTree(treeLoc, TreeType.TREE);
         // Place the cow
-        //final Location location = new Location(world, x, (islandHeight + 5), z - 2);
+        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
@@ -387,15 +395,19 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        World world = island.getCenter().getWorld();
         int y = 0;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 2; x_space <= x + 2; x_space++) {
                 for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                    final Block blockToChange = world.getBlockAt(x_space, y, z_space);
-                    blockToChange.setType(Material.END_BRICKS);
+                    world.getBlockAt(x_space, y, z_space).setType(Material.END_BRICKS);
                 }
+            }
+        }
+        // Then cut off the corners to make it round-ish
+        for (int x_space = x - 3; x_space <= x + 3; x_space += 6) {
+            for (int z_space = z - 3; z_space <= z + 3; z_space += 6) {
+                world.getBlockAt(x_space, y-1, z_space).setType(Material.AIR);
             }
         }
         // Place bedrock - MUST be there (ensures island are not
@@ -446,11 +458,11 @@ public class IslandBuilder {
         // Add island items
         y = islandHeight;
         // Add tree (natural)
-        final Location treeLoc = new Location(world, x, y + 5D, z);
+        Location treeLoc = new Location(world, x, y + 5D, z);
         world.spawnEntity(treeLoc, EntityType.ENDER_CRYSTAL);
         //world.generateTree(treeLoc, TreeType.TREE);
         // Place the cow
-        //final Location location = new Location(world, x, (islandHeight + 5), z - 2);
+        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
@@ -474,20 +486,17 @@ public class IslandBuilder {
     }
 
     private void placeChest(int x, int y, int z) {
+        // Fill the chest and orient it correctly
         Block blockToChange = world.getBlockAt(x, y, z);
         blockToChange.setType(Material.CHEST);
-        // Only set if the config has items in it
+        BlockState state = blockToChange.getState();
+        Chest chest = new Chest(BlockFace.SOUTH);
+        state.setData(chest);
         if (defaultChestItems.length > 0) {
-            final Chest chest = (Chest) blockToChange.getState();
-            final Inventory inventory = chest.getInventory();
-            inventory.clear();
-            inventory.setContents(defaultChestItems);
-            chest.update();
+            InventoryHolder ih = (InventoryHolder) state;
+            ih.getInventory().setContents(defaultChestItems);
         }
-        // Fill the chest and orient it correctly (1.8 faces it north!
-        DirectionalContainer dc = (DirectionalContainer) blockToChange.getState().getData();
-        dc.setFacingDirection(BlockFace.SOUTH);
-        //blockToChange.setData(dc.getData(), true);
+        state.update();
     }
 }
 

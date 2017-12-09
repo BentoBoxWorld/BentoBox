@@ -10,8 +10,8 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
-import us.tastybento.bskyblock.schematics.Schematic;
-import us.tastybento.bskyblock.schematics.Schematic.PasteReason;
+import us.tastybento.bskyblock.island.builders.IslandBuilder;
+import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
 
 /**
  * Create and paste a new island
@@ -22,14 +22,10 @@ public class NewIsland {
     private static final boolean DEBUG = false;
     private final BSkyBlock plugin = BSkyBlock.getPlugin();
     private Island island;
-    private final Island oldIsland;
-    private final Schematic schematic;
     private final Player player;
 
-    private NewIsland(Island oldIsland, Schematic schematic, Player player) {
+    private NewIsland(Island oldIsland, Player player) {
         super();
-        this.oldIsland = oldIsland;
-        this.schematic = schematic;
         this.player = player;
         newIsland();
         if (oldIsland != null) {
@@ -60,7 +56,6 @@ public class NewIsland {
      */
     public static class Builder {
         private Island oldIsland;
-        private Schematic schematic;
         private Player player;
 
         public Builder oldIsland(Island oldIsland) {
@@ -68,10 +63,6 @@ public class NewIsland {
             return this;
         }
 
-        public Builder schematic(Schematic schematic) {
-            this.schematic = schematic;
-            return this;
-        }
 
         public Builder player(Player player) {
             this.player = player;
@@ -79,8 +70,8 @@ public class NewIsland {
         }
 
         public Island build() throws IOException {
-            if (schematic != null && player != null) {
-                NewIsland newIsland = new NewIsland(oldIsland,schematic, player);
+            if (player != null) {
+                NewIsland newIsland = new NewIsland(oldIsland, player);
                 return newIsland.getIsland();
             }
             throw new IOException("Insufficient parameters. Must have a schematic and a player");
@@ -88,8 +79,7 @@ public class NewIsland {
     }
 
     /**
-     * Makes an island using schematic. No permission checks are made. They have to be decided
-     * before this method is called.
+     * Makes an island.
      */
     public void newIsland() {
         if (DEBUG)
@@ -107,8 +97,7 @@ public class NewIsland {
             plugin.getLogger().info("DEBUG: found " + next);
 
         // Add to the grid
-        Island myIsland = plugin.getIslands().createIsland(next, playerUUID);
-        myIsland.setLevelHandicap(schematic.getLevelHandicap());
+        island = plugin.getIslands().createIsland(next, playerUUID);
         // Save the player so that if the server is reset weird things won't happen
         plugin.getPlayers().save(true);
         plugin.getIslands().save(true);
@@ -118,74 +107,29 @@ public class NewIsland {
 
         // Set the biome
         //BiomesPanel.setIslandBiome(next, schematic.getBiome());
-        // Teleport to the new home
-        if (schematic.isPlayerSpawn()) {
-            // Set home and teleport
-            plugin.getPlayers().setHomeLocation(playerUUID, schematic.getPlayerSpawn(next), 1);
+        // Set home loction
+        plugin.getPlayers().setHomeLocation(playerUUID, next, 1);
+
+        // Create island
+        new IslandBuilder(island)
+        .setPlayer(player)
+        .setDefaultChestItems(Settings.chestItems)
+        .setType(IslandType.ISLAND)
+        .build();
+        if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
+            new IslandBuilder(island)
+            .setPlayer(player)
+            .setDefaultChestItems(Settings.chestItems)
+            .setType(IslandType.NETHER)
+            .build();
         }
-
-        // Create island based on schematic
-        if (schematic != null) {
-            //plugin.getLogger().info("DEBUG: pasting schematic " + schematic.getName() + " " + schematic.getPerm());
-            //plugin.getLogger().info("DEBUG: nether world is " + BSkyBlock.getNetherWorld());
-            // Paste the starting island. If it is a HELL biome, then we start in the Nether
-            if (Settings.netherGenerate && schematic.isInNether() && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
-                // Nether start
-                // Paste the overworld if it exists
-                if (!schematic.getPartnerName().isEmpty()) {
-                    // A partner schematic is available
-                    pastePartner(plugin.getSchematics().getSchematic(schematic.getPartnerName()),next, player);
-                }
-                // Switch home location to the Nether
-                next = next.toVector().toLocation(IslandWorld.getNetherWorld());
-                // Set the player's island location to this new spot
-                //plugin.getPlayers().setIslandLocation(playerUUID, next);
-                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET, oldIsland);
-            } else {
-                // Over world start
-                //plugin.getLogger().info("DEBUG: pasting");
-                //long timer = System.nanoTime();
-                // Paste the island and teleport the player home
-                schematic.pasteSchematic(next, player, true, firstTime ? PasteReason.NEW_ISLAND: PasteReason.RESET, oldIsland);
-                //double diff = (System.nanoTime() - timer)/1000000;
-                //plugin.getLogger().info("DEBUG: nano time = " + diff + " ms");
-                //plugin.getLogger().info("DEBUG: pasted overworld");
-                if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
-                    // Paste the other world schematic
-                    final Location netherLoc = next.toVector().toLocation(IslandWorld.getNetherWorld());
-                    if (schematic.getPartnerName().isEmpty()) {
-                        // This will paste the over world schematic again
-                        //plugin.getLogger().info("DEBUG: pasting nether");
-                        pastePartner(schematic, netherLoc, player);
-                        //plugin.getLogger().info("DEBUG: pasted nether");
-                    } else {
-                        if (plugin.getSchematics().getAll().containsKey(schematic.getPartnerName())) {
-                            //plugin.getLogger().info("DEBUG: pasting partner");
-                            // A partner schematic is available
-                            pastePartner(plugin.getSchematics().getAll().get(schematic.getPartnerName()),netherLoc, player);
-                        } else {
-                            plugin.getLogger().severe("Partner schematic heading '" + schematic.getPartnerName() + "' does not exist");
-                        }
-                    }
-                }
-            }
+        if (Settings.endGenerate && Settings.endIslands && IslandWorld.getEndWorld() != null) {
+            new IslandBuilder(island)
+            .setPlayer(player)
+            .setDefaultChestItems(Settings.chestItems)
+            .setType(IslandType.END)
+            .build();
         }
-    }
-
-    /**
-     * Does a delayed pasting of the partner island
-     * @param schematic
-     * @param player
-     */
-    private void pastePartner(final Schematic schematic, final Location loc, final Player player) {
-        plugin.getServer().getScheduler().runTaskLater(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                schematic.pasteSchematic(loc, player, false, PasteReason.PARTNER, null);
-
-            }}, 60L);
-
     }
 
     /**
