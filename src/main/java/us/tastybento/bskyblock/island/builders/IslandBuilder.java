@@ -13,6 +13,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
@@ -377,7 +378,7 @@ public class IslandBuilder {
         y = islandHeight;
         // Add tree (natural)
         Location treeLoc = new Location(world, x, y + 5D, z);
-        treeLoc.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
+        treeLoc.getBlock().getRelative(BlockFace.DOWN).setType(Material.DIRT);
         world.generateTree(treeLoc, TreeType.TREE);
         // Place the cow
         //Location location = new Location(world, x, (islandHeight + 5), z - 2);
@@ -495,12 +496,10 @@ public class IslandBuilder {
         state.setData(chest);
         state.update();
         if (chestItems.length > 0) {
-            Bukkit.getLogger().info("DEBUG: chest items = " + chestItems.toString());
-            org.bukkit.block.Chest chestBlock = (org.bukkit.block.Chest) state;
-            chestBlock.getInventory().addItem(chestItems);
-            chestBlock.update();
-        } else {
-            Bukkit.getLogger().info("DEBUG: no chest items");
+            InventoryHolder chestBlock = (InventoryHolder) state;
+            for (ItemStack item: chestItems) {
+                chestBlock.getInventory().addItem(item);
+            }
         }
     }
 }
