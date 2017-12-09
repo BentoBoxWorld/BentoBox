@@ -7,7 +7,6 @@ import java.util.List;
 
 import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 /**

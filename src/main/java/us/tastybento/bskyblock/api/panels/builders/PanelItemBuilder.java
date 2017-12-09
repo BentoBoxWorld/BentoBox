@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.api.panels.builders;
 
 import org.bukkit.inventory.ItemStack;
+
 import us.tastybento.bskyblock.api.panels.PanelItem;
 
 public class PanelItemBuilder {

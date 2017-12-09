@@ -113,20 +113,20 @@ public class NewIsland {
         // Create island
         new IslandBuilder(island)
         .setPlayer(player)
-        .setDefaultChestItems(Settings.chestItems)
+        .setChestItems(Settings.chestItems)
         .setType(IslandType.ISLAND)
         .build();
         if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
             new IslandBuilder(island)
             .setPlayer(player)
-            .setDefaultChestItems(Settings.chestItems)
+            .setChestItems(Settings.chestItems)
             .setType(IslandType.NETHER)
             .build();
         }
         if (Settings.endGenerate && Settings.endIslands && IslandWorld.getEndWorld() != null) {
             new IslandBuilder(island)
             .setPlayer(player)
-            .setDefaultChestItems(Settings.chestItems)
+            .setChestItems(Settings.chestItems)
             .setType(IslandType.END)
             .build();
         }

@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.island.builders;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -12,7 +13,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.Sign;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
@@ -40,7 +40,7 @@ public class IslandBuilder {
     private World world;
     private IslandType type = IslandType.ISLAND;
     //private List<String> companionNames = new ArrayList<>();
-    private ItemStack[] defaultChestItems;
+    private ItemStack[] chestItems;
     //private List<Entity> companions = new ArrayList<>();
     private UUID playerUUID;
     private String playerName;
@@ -87,10 +87,10 @@ public class IslandBuilder {
 
 
     /**
-     * @param defaultChestItems the defaultChestItems to set
+     * @param chestItems the default chestItems to set
      */
-    public IslandBuilder setDefaultChestItems(ItemStack[] defaultChestItems) {
-        this.defaultChestItems = defaultChestItems;
+    public IslandBuilder setChestItems(ItemStack[] chestItems) {
+        this.chestItems = chestItems;
         return this;
     }
 
@@ -316,8 +316,8 @@ public class IslandBuilder {
 
         int y = 0;
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-                for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+            for (int x_space = x - 3; x_space <= x + 3; x_space++) {
+                for (int z_space = z - 3; z_space <= z + 3; z_space++) {
                     world.getBlockAt(x_space, y, z_space).setType(Material.NETHER_BRICK);
                 }
             }
@@ -377,6 +377,7 @@ public class IslandBuilder {
         y = islandHeight;
         // Add tree (natural)
         Location treeLoc = new Location(world, x, y + 5D, z);
+        treeLoc.getBlock().getRelative(BlockFace.DOWN).setType(Material.NETHERRACK);
         world.generateTree(treeLoc, TreeType.TREE);
         // Place the cow
         //Location location = new Location(world, x, (islandHeight + 5), z - 2);
@@ -398,8 +399,8 @@ public class IslandBuilder {
         int y = 0;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-                for (int z_space = z - 2; z_space <= z + 2; z_space++) {
+            for (int x_space = x - 3; x_space <= x + 3; x_space++) {
+                for (int z_space = z - 3; z_space <= z + 3; z_space++) {
                     world.getBlockAt(x_space, y, z_space).setType(Material.END_BRICKS);
                 }
             }
@@ -478,7 +479,7 @@ public class IslandBuilder {
         if (this.playerUUID != null) {
             Sign sign = (Sign) blockToChange.getState();
             for (int i=0; i<4; i++) {
-                sign.setLine(i, BSkyBlock.getPlugin().getLocale(playerUUID).get("signLine" + i).replace("[player]", playerName));
+                sign.setLine(i, BSkyBlock.getPlugin().getLocale(playerUUID).get("island.sign.line" + i).replace("[player]", playerName));
             }         
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();
@@ -492,11 +493,15 @@ public class IslandBuilder {
         BlockState state = blockToChange.getState();
         Chest chest = new Chest(BlockFace.SOUTH);
         state.setData(chest);
-        if (defaultChestItems.length > 0) {
-            InventoryHolder ih = (InventoryHolder) state;
-            ih.getInventory().setContents(defaultChestItems);
-        }
         state.update();
+        if (chestItems.length > 0) {
+            Bukkit.getLogger().info("DEBUG: chest items = " + chestItems.toString());
+            org.bukkit.block.Chest chestBlock = (org.bukkit.block.Chest) state;
+            chestBlock.getInventory().addItem(chestItems);
+            chestBlock.update();
+        } else {
+            Bukkit.getLogger().info("DEBUG: no chest items");
+        }
     }
 }
 

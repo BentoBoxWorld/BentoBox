@@ -1,5 +1,8 @@
 package us.tastybento.bskyblock.listeners;
 
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -8,14 +11,10 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.ClickType;
 import us.tastybento.bskyblock.api.panels.Panel;
-import us.tastybento.bskyblock.api.panels.PanelItem;
-
-import java.util.HashMap;
-import java.util.UUID;
 
 public class PanelListener implements Listener {
 

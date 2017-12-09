@@ -411,6 +411,11 @@ island:
      To: "Cleared reset limit"
      Wait: "You have to wait [time] seconds before you can do that again."
      YouHave: "You have [number] resets left."
+  sign:
+    line0: "Welcome!"
+    line1: "[player]"
+    line2: ""
+    line3: ""
   subtitle: "by tastybento"
   subtitlecolor: "blue"
   teleport: "Teleporting you to your island. (/[label] help for more info)"

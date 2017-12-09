@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.panels;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.ClickType;
 import us.tastybento.bskyblock.api.panels.Panel;

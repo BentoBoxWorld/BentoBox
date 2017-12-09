@@ -6,12 +6,14 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Vehicle;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
+import org.bukkit.event.world.StructureGrowEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
@@ -27,7 +29,7 @@ import us.tastybento.bskyblock.util.VaultHelper;
 
 public class NetherPortals implements Listener {
     private final BSkyBlock plugin;
-    private final static boolean DEBUG = false;
+    private final static boolean DEBUG = true;
 
     public NetherPortals(BSkyBlock plugin) {
         this.plugin = plugin;
@@ -223,7 +225,7 @@ public class NetherPortals implements Listener {
                                 plugin.getLogger().warning("Creating nether island for " + event.getPlayer().getName());
                                 new IslandBuilder(island)
                                     .setPlayer(event.getPlayer())
-                                    .setDefaultChestItems(Settings.chestItems)
+                                    .setChestItems(Settings.chestItems)
                                     .setType(IslandType.NETHER)
                                     .build();
                             }
@@ -243,6 +245,35 @@ public class NetherPortals implements Listener {
                 break;
             default:
                 break;
+        }
+    }
+
+    /**
+     * Converts trees to gravel and glowstone
+     * 
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onTreeGrow(final StructureGrowEvent e) {
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: " + e.getEventName());
+    
+        if (!Settings.netherTrees) {
+            return;
+        }
+        if (!Settings.netherGenerate || IslandWorld.getNetherWorld() == null) {
+            return;
+        }
+        // Check world
+        if (!e.getLocation().getWorld().equals(IslandWorld.getNetherWorld())) {
+            return;
+        }
+        for (BlockState b : e.getBlocks()) {
+            if (b.getType() == Material.LOG || b.getType() == Material.LOG_2) {
+                b.setType(Material.GRAVEL);
+            } else if (b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {
+                b.setType(Material.GLOWSTONE);
+            }
         }
     }
 

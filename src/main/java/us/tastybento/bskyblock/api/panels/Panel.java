@@ -1,11 +1,12 @@
 package us.tastybento.bskyblock.api.panels;
 
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
-import us.tastybento.bskyblock.listeners.PanelListener;
 
-import java.util.Map;
+import us.tastybento.bskyblock.listeners.PanelListener;
 
 public class Panel {
 
