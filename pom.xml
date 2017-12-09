@@ -82,10 +82,6 @@
 		</dependency>
 	</dependencies>
 	<repositories>
-	   <repository>
-            <id>AWE-mvn-repo</id>
-            <url>https://raw.github.com/SBPrime/AsyncWorldEdit-API/maven-artifact/</url>
-        </repository>
 		<repository>
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
