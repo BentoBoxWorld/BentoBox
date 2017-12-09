@@ -893,7 +893,8 @@ public class IslandsManager {
             Runnable save = () -> {
                 int index = 1;
                 for(Island island : collection){
-                    plugin.getLogger().info("DEBUG: saving island async " + index++);
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: saving island async " + index++);
                     try {
                         handler.saveObject(island);
                     } catch (Exception e) {
@@ -905,7 +906,8 @@ public class IslandsManager {
         } else {
             int index = 1;
             for(Island island : collection){
-                plugin.getLogger().info("DEBUG: saving island " + index++);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: saving island " + index++);
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {

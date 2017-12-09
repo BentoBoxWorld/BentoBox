@@ -7,6 +7,8 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.events.island.IslandEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
@@ -23,10 +25,12 @@ public class NewIsland {
     private final BSkyBlock plugin = BSkyBlock.getPlugin();
     private Island island;
     private final Player player;
+    private final Reason reason;
 
-    private NewIsland(Island oldIsland, Player player) {
+    private NewIsland(Island oldIsland, Player player, Reason reason) {
         super();
         this.player = player;
+        this.reason = reason;
         newIsland();
         if (oldIsland != null) {
             // Delete the old island
@@ -57,6 +61,7 @@ public class NewIsland {
     public static class Builder {
         private Island oldIsland;
         private Player player;
+        private Reason reason;
 
         public Builder oldIsland(Island oldIsland) {
             this.oldIsland = oldIsland;
@@ -69,9 +74,14 @@ public class NewIsland {
             return this;
         }
 
+        public Builder reason(Reason reason) {
+            this.reason = reason;
+            return this;
+        }
+
         public Island build() throws IOException {
             if (player != null) {
-                NewIsland newIsland = new NewIsland(oldIsland, player);
+                NewIsland newIsland = new NewIsland(oldIsland, player, reason);
                 return newIsland.getIsland();
             }
             throw new IOException("Insufficient parameters. Must have a schematic and a player");
@@ -110,26 +120,55 @@ public class NewIsland {
         // Set home loction
         plugin.getPlayers().setHomeLocation(playerUUID, next, 1);
 
-        // Create island
-        new IslandBuilder(island)
-        .setPlayer(player)
-        .setChestItems(Settings.chestItems)
-        .setType(IslandType.ISLAND)
-        .build();
-        if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
+        // Fire event
+        IslandEvent event = IslandEvent.builder()
+                .involvedPlayer(player.getUniqueId())
+                .reason(reason)
+                .island(island)
+                .location(island.getCenter())
+                .build();
+        plugin.getServer().getPluginManager().callEvent(event);
+        if (!event.isCancelled()) {
+            // Create island
             new IslandBuilder(island)
             .setPlayer(player)
             .setChestItems(Settings.chestItems)
-            .setType(IslandType.NETHER)
+            .setType(IslandType.ISLAND)
             .build();
+            if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
+                new IslandBuilder(island)
+                .setPlayer(player)
+                .setChestItems(Settings.chestItems)
+                .setType(IslandType.NETHER)
+                .build();
+            }
+            if (Settings.endGenerate && Settings.endIslands && IslandWorld.getEndWorld() != null) {
+                new IslandBuilder(island)
+                .setPlayer(player)
+                .setChestItems(Settings.chestItems)
+                .setType(IslandType.END)
+                .build();
+            }
         }
-        if (Settings.endGenerate && Settings.endIslands && IslandWorld.getEndWorld() != null) {
-            new IslandBuilder(island)
-            .setPlayer(player)
-            .setChestItems(Settings.chestItems)
-            .setType(IslandType.END)
-            .build();
+        // Fire exit event
+        Reason reasonDone = Reason.CREATED;
+        switch (reason) {
+        case CREATE:
+            reasonDone = Reason.CREATED;
+            break;
+        case RESET:
+            reasonDone = Reason.RESETTED;
+            break;
+        default:
+            break;
         }
+        event = IslandEvent.builder()
+                .involvedPlayer(player.getUniqueId())
+                .reason(reasonDone)
+                .island(island)
+                .location(island.getCenter())
+                .build();
+        plugin.getServer().getPluginManager().callEvent(event);
     }
 
     /**

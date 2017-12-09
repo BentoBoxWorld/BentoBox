@@ -24,6 +24,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.AbstractCommand;
 import us.tastybento.bskyblock.api.commands.ArgumentHandler;
 import us.tastybento.bskyblock.api.commands.CanUseResp;
+import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -334,6 +335,7 @@ public class IslandCommand extends AbstractCommand {
                 try {
                     NewIsland.builder()
                     .player(player)
+                    .reason(Reason.RESET)
                     .oldIsland(oldIsland)
                     .build();
                 } catch (IOException e) {
@@ -1527,6 +1529,7 @@ public class IslandCommand extends AbstractCommand {
         try {
             NewIsland.builder()
             .player(player)
+            .reason(Reason.CREATE)
             .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");
