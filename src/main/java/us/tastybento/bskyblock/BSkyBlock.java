@@ -8,7 +8,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.tastybento.bskyblock.api.commands.ArgumentHandler;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
@@ -82,8 +81,8 @@ public class BSkyBlock extends JavaPlugin {
             VaultHelper.setupPermissions();
 
             // Set up commands
-            islandCommand = new IslandCommand(BSkyBlock.this);
-            adminCommand = new AdminCommand(BSkyBlock.this);
+            islandCommand = new IslandCommand();
+            adminCommand = new AdminCommand();
 
             // These items have to be loaded when the server has done 1 tick.
             // Note Worlds are not loaded this early, so any Locations or World reference will be null
@@ -257,24 +256,5 @@ public class BSkyBlock extends JavaPlugin {
             e.printStackTrace();
         }
         return nmsHandler;
-    }
-
-    /**
-     * Add a new sub command to BSkyBlock
-     * @param argHandler - must specify either the island or admin command
-     * @return true if successful, false if not
-     */
-    public boolean addSubCommand(ArgumentHandler argHandler) {
-        switch (argHandler.label) {
-        case Settings.ISLANDCOMMAND:
-            islandCommand.addArgument(argHandler);
-            break;
-        case Settings.ADMINCOMMAND:
-            adminCommand.addArgument(argHandler);
-            break;
-        default:
-            return false;
-        }
-        return true;
     }
 }

@@ -10,17 +10,6 @@ softdepend: [Herochat, DeluxeChat, PlaceholderAPI, MVdWPlaceholderAPI]
 load: startup
 loadbefore: [Multiverse-Core]
 
-commands:
-    island:
-        description: Main player command
-        aliases: [is]
-        usage:  |
-             /island help
-    bsadmin:
-        description: Admin commands
-        usage:  |
-            /bsadmin help
-
 permissions:    
   bskyblock.*:
     default: false
