@@ -45,16 +45,6 @@ public class Util {
 
     private static NMSAbstraction nmsHandler;
 
-    public static void sendMessage(CommandSender receiver, String message){
-        message = PlaceholderHandler.replacePlaceholders(receiver, message);
-
-        if (!ChatColor.stripColor(message).trim().isEmpty()) {
-            for(String part : message.split("\n")){
-                receiver.sendMessage(part);
-            }
-        }
-    }
-
     /**
      * Checks what version the server is running and picks the appropriate NMS handler, or fallback
      * @return NMSAbstraction class
@@ -239,24 +229,6 @@ public class Util {
             return true;
         }
         return false;
-    }
-
-    /**
-     * Display message to player in action bar (1.11+ or chat)
-     * @param player
-     * @param message
-     */
-    public static void sendEnterExit(Player player, String message) {
-        if (!Settings.showInActionBar
-                || plugin.getServer().getVersion().contains("(MC: 1.7")
-                || plugin.getServer().getVersion().contains("(MC: 1.8")
-                || plugin.getServer().getVersion().contains("(MC: 1.9")
-                || plugin.getServer().getVersion().contains("(MC: 1.10")) {
-            sendMessage(player, message);
-            return;
-        }
-        plugin.getServer().dispatchCommand(plugin.getServer().getConsoleSender(),
-                "minecraft:title " + player.getName() + " actionbar {\"text\":\"" + ChatColor.stripColor(message) + "\"}");
     }
 
     /**

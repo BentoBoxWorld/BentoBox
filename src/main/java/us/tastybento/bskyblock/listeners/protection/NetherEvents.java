@@ -123,7 +123,7 @@ public class NetherEvents implements Listener {
             if (DEBUG)
                 plugin.getLogger().info("Block break in island nether");
             if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
-                Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("nether.spawnisprotected"));
+                e.getPlayer().sendMessage(plugin.getLocale(e.getPlayer()).get("nether.spawnisprotected"));
                 e.setCancelled(true);
             }
         }

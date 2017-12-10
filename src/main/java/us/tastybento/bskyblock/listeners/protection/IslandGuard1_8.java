@@ -78,7 +78,7 @@ public class IslandGuard1_8 implements Listener {
                 return;
             }
             e.setCancelled(true);
-            Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+            e.getPlayer().sendMessage(plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
         }
     }
 
@@ -155,7 +155,7 @@ public class IslandGuard1_8 implements Listener {
                         int count = island.getTileEntityCount(Material.ARMOR_STAND,e.getPlayer().getWorld());
                         //plugin.getLogger().info("1.8 " + "DEBUG: count is " + count + " limit is " + Settings.limitedBlocks.get("ARMOR_STAND"));
                         if (Settings.limitedBlocks.get("ARMOR_STAND") <= count) {
-                            Util.sendMessage(e.getPlayer(), (plugin.getLocale(e.getPlayer().getUniqueId()).get("moblimits.entity").replace("[entity]",
+                            e.getPlayer().sendMessage((plugin.getLocale(e.getPlayer().getUniqueId()).get("moblimits.entity").replace("[entity]",
                                     Util.prettifyText(Material.ARMOR_STAND.toString()))).replace("[number]", String.valueOf(Settings.limitedBlocks.get("ARMOR_STAND"))));
                             e.setCancelled(true);
                             return;
@@ -165,7 +165,7 @@ public class IslandGuard1_8 implements Listener {
                 }
                 // plugin.getLogger().info("1.8 " + "DEBUG: stand place cancelled");
                 e.setCancelled(true);
-                Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+                e.getPlayer().sendMessage(plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
                 e.getPlayer().updateInventory();
             }
         }
@@ -203,7 +203,7 @@ public class IslandGuard1_8 implements Listener {
             if (island != null && island.getFlag(SettingsFlag.BREAK_BLOCKS)) {
                 return;
             }
-            Util.sendMessage(p, plugin.getLocale(p.getUniqueId()).get("island.protected"));
+            p.sendMessage(plugin.getLocale(p.getUniqueId()).get("island.protected"));
             e.setCancelled(true);
         }
     }

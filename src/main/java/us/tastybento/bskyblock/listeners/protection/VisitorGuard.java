@@ -90,7 +90,7 @@ public class VisitorGuard implements Listener {
                 || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
-        Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+        e.getPlayer().sendMessage(plugin.getLocale(e.getPlayer()).get("island.protected"));
         e.setCancelled(true);
     }
 
@@ -113,7 +113,7 @@ public class VisitorGuard implements Listener {
         //plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
         String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
         if (Settings.visitorBannedCommands.contains(args[0])) {
-            Util.sendMessage(e.getPlayer(), plugin.getLocale(e.getPlayer().getUniqueId()).get("island.protected"));
+            e.getPlayer().sendMessage(plugin.getLocale(e.getPlayer()).get("island.protected"));
             e.setCancelled(true);
         }
     }

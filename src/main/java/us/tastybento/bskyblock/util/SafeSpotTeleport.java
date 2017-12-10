@@ -223,9 +223,9 @@ public class SafeSpotTeleport {
                             //plugin.getLogger().info("DEBUG: safe spot not found");
                             if (entity instanceof Player) {
                                 if (!failureMessage.isEmpty()) {
-                                    Util.sendMessage(entity, failureMessage);
+                                    entity.sendMessage(failureMessage);
                                 } else {
-                                    Util.sendMessage(entity, "Warp not safe");
+                                    entity.sendMessage("Warp not safe");
                                 }
                             }
                         });

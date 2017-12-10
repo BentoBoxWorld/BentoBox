@@ -77,7 +77,7 @@ public class JoinLeaveListener implements Listener {
                         && !VaultHelper.hasPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: No bypass - teleporting");
-                    Util.sendMessage(player, plugin.getLocale(player.getUniqueId()).get("locked.islandlocked"));
+                    player.sendMessage(plugin.getLocale(player).get("locked.islandlocked"));
                     plugin.getIslands().homeTeleport(player);
                 }
             }
