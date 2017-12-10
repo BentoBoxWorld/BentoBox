@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.util;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -30,6 +31,7 @@ import org.bukkit.plugin.Plugin;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 
 /**
@@ -41,6 +43,8 @@ import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 public class Util {
     private static BSkyBlock plugin = BSkyBlock.getPlugin();
 
+    private static NMSAbstraction nmsHandler;
+
     public static void sendMessage(CommandSender receiver, String message){
         message = PlaceholderHandler.replacePlaceholders(receiver, message);
 
@@ -48,6 +52,39 @@ public class Util {
             for(String part : message.split("\n")){
                 receiver.sendMessage(part);
             }
+        }
+    }
+
+    /**
+     * Checks what version the server is running and picks the appropriate NMS handler, or fallback
+     * @return NMSAbstraction class
+     * @throws ClassNotFoundException
+     * @throws IllegalArgumentException
+     * @throws SecurityException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws InvocationTargetException
+     * @throws NoSuchMethodException
+     */
+    public static NMSAbstraction getNMSHandler() throws ClassNotFoundException, IllegalArgumentException,
+            SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
+            NoSuchMethodException {
+        String serverPackageName = plugin.getServer().getClass().getPackage().getName();
+        String pluginPackageName = plugin.getClass().getPackage().getName();
+        String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+        Class<?> clazz;
+        try {
+            clazz = Class.forName(pluginPackageName + ".util.nms." + version + ".NMSHandler");
+        } catch (Exception e) {
+            plugin.getLogger().info("No NMS Handler found for " + version + ", falling back to Bukkit API.");
+            clazz = Class.forName(pluginPackageName + ".util.nms.fallback.NMSHandler");
+        }
+        // Check if we have a NMSAbstraction implementing class at that location.
+        if (NMSAbstraction.class.isAssignableFrom(clazz)) {
+            nmsHandler = (NMSAbstraction) clazz.getConstructor().newInstance();
+            return nmsHandler;
+        } else {
+            throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
         }
     }
 

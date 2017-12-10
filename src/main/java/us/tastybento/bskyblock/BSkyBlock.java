@@ -27,7 +27,9 @@ import us.tastybento.bskyblock.listeners.protection.IslandGuard;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
 import us.tastybento.bskyblock.listeners.protection.NetherEvents;
+import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
+import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
@@ -245,6 +247,16 @@ public class BSkyBlock extends JavaPlugin {
      */
     public BSBLocale getLocale(UUID uuid) {
         return localeManager.getLocale(uuid);
+    }
+
+    public NMSAbstraction getNMSHandler() {
+        NMSAbstraction nmsHandler = null;
+        try {
+            nmsHandler = Util.getNMSHandler();
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+        return nmsHandler;
     }
 
     /**
