@@ -30,7 +30,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public CompositeCommand(String label, String description, String... aliases) {
         super(label);
         this.setDescription(description);
-        this.setAliases(new ArrayList<String>(Arrays.asList(aliases)));
+        this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
 
         this.subCommands = new LinkedHashMap<>();
 
@@ -40,13 +40,18 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     public abstract void setup();
+    public abstract boolean execute(CommandSender sender, String[] args);
 
     public Map<String, CommandArgument> getSubCommands() {
         return subCommands;
     }
 
     public CommandArgument getSubCommand(String label) {
-        return subCommands.getOrDefault(label, null);
+        for (Map.Entry<String, CommandArgument> entry : subCommands.entrySet()) {
+            if (entry.getKey().equalsIgnoreCase(label)) return subCommands.get(label);
+            else if (entry.getValue().getAliases().contains(label)) return subCommands.get(entry.getValue().getLabel());
+        }
+        return null;
     }
 
     public void addSubCommand(CommandArgument subCommand) {
@@ -62,9 +67,34 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     @Override
-    public boolean execute(CommandSender commandSender, String s, String[] strings) {
-        commandSender.sendMessage("Hi! I'm working!");
-        return false;
+    public boolean execute(CommandSender sender, String label, String[] args) {
+        if (args.length >= 1) {
+            // Store the latest subCommand found
+            CommandArgument subCommand = null;
+
+            for (int i = 0 ; i < args.length ; i++) {
+                // get the subcommand corresponding to the label
+                if (subCommand == null) subCommand = getSubCommand(args[i]);
+                else subCommand = subCommand.getSubCommand(args[i]);
+
+                if (subCommand != null) { // check if this subcommand exists
+                    if (!subCommand.hasSubCommmands()) { // if it has not any subcommands
+                        subCommand.execute(sender, args); //TODO: "cut" the args to only send the needed ones
+                    }
+                    // else continue the loop
+                    // TODO: adapt this part to make it works with arguments that are not subcommands
+                }
+                // TODO: get the help
+                else {
+                    //TODO: say "unknown command"
+                }
+            }
+        } else {
+            // No args : execute the default behaviour
+            this.execute(sender, args);
+        }
+
+        return true;
     }
 
     @Override
