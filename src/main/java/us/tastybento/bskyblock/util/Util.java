@@ -43,7 +43,20 @@ import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 public class Util {
     private static BSkyBlock plugin = BSkyBlock.getPlugin();
 
-    private static NMSAbstraction nmsHandler;
+    private static String serverVersion = null;
+    private static NMSAbstraction nmsHandler = null;
+
+    /**
+     * Returns the server version
+     * @return
+     */
+    public static String getServerVersion() {
+        if (serverVersion == null) {
+            String serverPackageName = plugin.getServer().getClass().getPackage().getName();
+            serverVersion = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+        }
+        return serverVersion;
+    }
 
     /**
      * Checks what version the server is running and picks the appropriate NMS handler, or fallback
@@ -59,9 +72,8 @@ public class Util {
     public static NMSAbstraction getNMSHandler() throws ClassNotFoundException, IllegalArgumentException,
             SecurityException, InstantiationException, IllegalAccessException, InvocationTargetException,
             NoSuchMethodException {
-        String serverPackageName = plugin.getServer().getClass().getPackage().getName();
         String pluginPackageName = plugin.getClass().getPackage().getName();
-        String version = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
+        String version = getServerVersion();
         Class<?> clazz;
         try {
             clazz = Class.forName(pluginPackageName + ".util.nms." + version + ".NMSHandler");
@@ -71,7 +83,7 @@ public class Util {
         }
         // Check if we have a NMSAbstraction implementing class at that location.
         if (NMSAbstraction.class.isAssignableFrom(clazz)) {
-            nmsHandler = (NMSAbstraction) clazz.getConstructor().newInstance();
+            if (nmsHandler == null) nmsHandler = (NMSAbstraction) clazz.getConstructor().newInstance();
             return nmsHandler;
         } else {
             throw new IllegalStateException("Class " + clazz.getName() + " does not implement NMSAbstraction");
