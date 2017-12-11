@@ -23,8 +23,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.subCommands = new LinkedHashMap<>();
 
         this.setup();
-
-        plugin.getNMSHandler().getServerCommandMap().register(label, this);
     }
 
     public CompositeCommand(String label, String description, String... aliases) {
@@ -35,8 +33,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.subCommands = new LinkedHashMap<>();
 
         this.setup();
-
-        plugin.getNMSHandler().getServerCommandMap().register(label, this);
     }
 
     public abstract void setup();
