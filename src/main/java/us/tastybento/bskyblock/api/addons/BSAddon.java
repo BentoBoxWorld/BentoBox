@@ -3,7 +3,7 @@ package us.tastybento.bskyblock.api.addons;
 public abstract class BSAddon {
 
     private AddonDescription description;
-    private boolean enabled;
+    private AddonState state;
 
     public abstract void enable();
     public abstract void disable();
@@ -13,11 +13,8 @@ public abstract class BSAddon {
         return description;
     }
 
-    public boolean isEnabled() {
-        return enabled;
-    }
-
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
-    }
+    public AddonState getState()    {   return state;                               }
+    public boolean isEnabled()      {   return state == AddonState.ENABLED;         }
+    public boolean isDisabled()     {   return state == AddonState.DISABLED;        }
+    public boolean isIncompatible() {   return state == AddonState.INCOMPATIBLE;    }
 }
