@@ -5,7 +5,7 @@ import us.tastybento.bskyblock.api.addons.BSAddon;
 import java.util.ArrayList;
 import java.util.List;
 
-public final class AddonManager {
+public final class AddonsManager {
 
     private final List<BSAddon> addons = new ArrayList<>();
 
