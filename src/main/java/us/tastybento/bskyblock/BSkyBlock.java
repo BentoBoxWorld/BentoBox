@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.BSModule;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
@@ -26,6 +27,7 @@ import us.tastybento.bskyblock.listeners.protection.IslandGuard;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
 import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
 import us.tastybento.bskyblock.listeners.protection.NetherEvents;
+import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
@@ -35,7 +37,7 @@ import us.tastybento.bskyblock.util.nms.NMSAbstraction;
  * @author Tastybento
  * @author Poslovitch
  */
-public class BSkyBlock extends JavaPlugin {
+public class BSkyBlock extends JavaPlugin implements BSModule {
 
     private static BSkyBlock plugin;
 
@@ -47,9 +49,8 @@ public class BSkyBlock extends JavaPlugin {
     // Metrics
     private Metrics metrics;
 
-    // Commands
-    private IslandCommand islandCommand;
-    private AdminCommand adminCommand;
+    // Managers
+    private CommandsManager commandsManager;
 
     protected LocaleManager localeManager;
 
@@ -79,8 +80,9 @@ public class BSkyBlock extends JavaPlugin {
             VaultHelper.setupPermissions();
 
             // Set up commands
-            islandCommand = new IslandCommand();
-            adminCommand = new AdminCommand();
+            commandsManager = new CommandsManager();
+            commandsManager.registerCommand(this, new IslandCommand());
+            commandsManager.registerCommand(this, new AdminCommand());
 
             // These items have to be loaded when the server has done 1 tick.
             // Note Worlds are not loaded this early, so any Locations or World reference will be null
@@ -141,10 +143,6 @@ public class BSkyBlock extends JavaPlugin {
                 } 
             });
         }
-    }
-
-    public IslandCommand getIslandCommand() {
-        return islandCommand;
     }
 
     private void registerListeners() {
@@ -247,5 +245,14 @@ public class BSkyBlock extends JavaPlugin {
             e.printStackTrace();
         }
         return nmsHandler;
+    }
+
+    public CommandsManager getCommandsManager() {
+        return commandsManager;
+    }
+
+    @Override
+    public String getIdentifier() {
+        return getDescription().getName();
     }
 }
