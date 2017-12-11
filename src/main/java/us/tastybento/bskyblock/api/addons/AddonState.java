@@ -4,6 +4,7 @@ public enum AddonState {
     LOADING,
     ENABLING,
     ENABLED,
+    RELOADING,
     DISABLING,
     DISABLED,
     INCOMPATIBLE

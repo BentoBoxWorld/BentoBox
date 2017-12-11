@@ -12,6 +12,7 @@ public abstract class BSAddon implements BSModule {
     public abstract void enable();
     public abstract void disable();
     public abstract void load();
+    public abstract void reload();
 
     public AddonDescription getDescription() {
         return description;
