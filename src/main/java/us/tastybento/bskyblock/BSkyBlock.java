@@ -47,11 +47,11 @@ public class BSkyBlock extends JavaPlugin {
     // Metrics
     private Metrics metrics;
 
+    // Commands
     private IslandCommand islandCommand;
+    private AdminCommand adminCommand;
 
     protected LocaleManager localeManager;
-
-    private AdminCommand adminCommand;
 
     @Override
     public void onEnable(){
@@ -63,10 +63,8 @@ public class BSkyBlock extends JavaPlugin {
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
             // Only load metrics if set to true in config
-            if(Settings.metrics) metrics = new Metrics(plugin);
-
-            // If metrics are loaded, register the custom data charts
-            if(metrics != null){
+            if(Settings.metrics) {
+                metrics = new Metrics(plugin);
                 registerCustomCharts();
             }
 
@@ -98,10 +96,9 @@ public class BSkyBlock extends JavaPlugin {
 
                         @Override
                         public void run() {
-                         // Load islands from database
+                            // Load islands from database
                             islandsManager.load();
 
-                            // Load schematics
                             // TODO: load these from config.yml
                             Settings.chestItems = new ItemStack[] {
                                     new ItemStack(Material.LAVA_BUCKET,1),
@@ -114,9 +111,6 @@ public class BSkyBlock extends JavaPlugin {
 
                             Settings.defaultLanguage = "en-US";
                             localeManager = new LocaleManager(plugin);
-
-
-
 
                             // Register Listeners
                             registerListeners();
@@ -143,10 +137,7 @@ public class BSkyBlock extends JavaPlugin {
                                 }
                             }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
                         }
-                        // TODO Auto-generated method stub
-
-                            
-                        });
+                    });
                 } 
             });
         }
@@ -156,7 +147,7 @@ public class BSkyBlock extends JavaPlugin {
         return islandCommand;
     }
 
-    protected void registerListeners() {
+    private void registerListeners() {
         PluginManager manager = getServer().getPluginManager();
         // Player join events
         manager.registerEvents(new JoinLeaveListener(this), this);
