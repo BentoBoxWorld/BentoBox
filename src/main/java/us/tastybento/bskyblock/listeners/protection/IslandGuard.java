@@ -1983,52 +1983,6 @@ public class IslandGuard implements Listener {
     }
 
     /**
-     * Prevents crafting of EnderChest unless the player has permission
-     *
-     * @param event
-     */
-    @EventHandler(priority = EventPriority.LOW)
-    public void onCraft(CraftItemEvent event) {
-        if (DEBUG) {
-            plugin.getLogger().info(event.getEventName());
-        }
-        Player player = (Player) event.getWhoClicked();
-        if (Util.inWorld(player) || player.getWorld().equals(IslandWorld.getNetherWorld())) {
-            if (event.getRecipe().getResult().getType() == Material.ENDER_CHEST) {
-                if (!(player.hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
-                    player.sendMessage(plugin.getLocale(player).get("general.errors.no-permission"));
-                    event.setCancelled(true);
-                }
-            }
-        }
-    }
-
-    /**
-     * Prevents usage of an Ender Chest
-     *
-     * @param event
-     */
-
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onEnderChestEvent(PlayerInteractEvent event) {
-        if (DEBUG) {
-            plugin.getLogger().info("Ender chest " + event.getEventName());
-        }
-        Player player = (Player) event.getPlayer();
-        if (Util.inWorld(player) || player.getWorld().equals(IslandWorld.getNetherWorld())) {
-            if (event.getAction() == Action.RIGHT_CLICK_BLOCK) {
-                if (event.getClickedBlock().getType() == Material.ENDER_CHEST) {
-                    if (!(event.getPlayer().hasPermission(Settings.PERMPREFIX + "craft.enderchest"))) {
-                        player.sendMessage(plugin.getLocale(player).get("general.errors.no-permission"));
-                        event.setCancelled(true);
-                    }
-                }
-            }
-        }
-    }
-
-
-    /**
      * Handles hitting minecarts or feeding animals
      * @param e
      */
