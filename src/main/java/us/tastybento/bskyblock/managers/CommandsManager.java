@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.managers;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.BSModule;
@@ -36,7 +35,7 @@ public final class CommandsManager {
     public Command getCommand(String label) {
         for (List<Command> cmds : commands.values()) {
             for (Command cmd : cmds) {
-                if (cmd.getLabel().equalsIgnoreCase(label)) return cmd;
+                if (cmd.getLabel().equals(label) || cmd.getAliases().contains(label)) return cmd;
             }
         }
         return null;
