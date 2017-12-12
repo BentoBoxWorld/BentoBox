@@ -255,4 +255,9 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
     public String getIdentifier() {
         return getDescription().getName();
     }
+
+    @Override
+    public boolean isAddon() {
+        return false;
+    }
 }

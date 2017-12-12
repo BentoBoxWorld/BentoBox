@@ -31,4 +31,9 @@ public abstract class BSAddon implements BSModule {
     public String getIdentifier() {
         return getDescription().getName();
     }
+
+    @Override
+    public boolean isAddon() {
+        return true;
+    }
 }
