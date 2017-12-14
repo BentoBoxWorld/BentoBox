@@ -25,6 +25,8 @@ public abstract class AbstractIslandTeamCommandArgument extends CommandArgument 
     protected HashMap<UUID, Long> resetWaitTime = new HashMap<>();
     protected Set<UUID> leavingPlayers = new HashSet<>();
     protected Set<UUID> kickingPlayers = new HashSet<>();
+    
+    // TODO: It would be good if these could be auto-provided
     protected CommandSender sender;
     protected Player player;
     protected UUID playerUUID;
