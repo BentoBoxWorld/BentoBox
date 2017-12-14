@@ -4,29 +4,28 @@
 package us.tastybento.bskyblock.commands.island;
 
 import java.util.Set;
+import java.util.UUID;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
  * @author ben
  *
  */
-public class IslandGo extends CommandArgument {
+public class IslandSetnameCommand extends CommandArgument {
 
     /**
      * @param label
      * @param aliases
      */
-    public IslandGo() {
-        super("go", "home", "h");
+    public IslandSetnameCommand() {
+        super("resetname");
     }
 
     /* (non-Javadoc)
@@ -39,27 +38,28 @@ public class IslandGo extends CommandArgument {
             return true;
         }
         Player player = (Player)sender;
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.home")) {
+        UUID playerUUID = player.getUniqueId();
+
+        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
             return true;
         }
-        if (!getIslands().hasIsland(player.getUniqueId())) {
+
+        if (!getIslands().hasIsland(playerUUID)) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-island"));
             return true;
         }
-        if (args.length == 1 && NumberUtils.isDigits(args[0])) {
-            int homeValue = Integer.valueOf(args[0]);
-            int maxHomes = Util.getPermValue(player, Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
-            if (homeValue > 1  && homeValue <= maxHomes) {
-                getIslands().homeTeleport(player, homeValue);
-                return true;
-            }
+
+        if (!getIslands().isOwner(playerUUID)) {
+            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.not-leader"));
+            return true;
         }
-        getIslands().homeTeleport(player);
+        // Resets the island name
+        getIslands().getIsland(playerUUID).setName(null);
+
+        sender.sendMessage(getLocale(sender).get("general.success"));
         return true;
     }
-
-
 
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#tabComplete(org.bukkit.command.CommandSender, java.lang.String[])

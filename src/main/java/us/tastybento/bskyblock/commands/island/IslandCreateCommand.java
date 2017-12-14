@@ -20,13 +20,13 @@ import us.tastybento.bskyblock.util.VaultHelper;
  * @author ben
  *
  */
-public class IslandCreate extends CommandArgument {
+public class IslandCreateCommand extends CommandArgument {
 
     /**
      * @param label
      * @param aliases
      */
-    public IslandCreate() {
+    public IslandCreateCommand() {
         super("create", "auto");
     }
 

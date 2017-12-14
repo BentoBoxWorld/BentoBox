@@ -18,14 +18,14 @@ import us.tastybento.bskyblock.util.VaultHelper;
  * @author ben
  *
  */
-public class IslandSetName extends CommandArgument {
+public class IslandResetnameCommand extends CommandArgument {
 
     /**
      * @param label
      * @param aliases
      */
-    public IslandSetName() {
-        super("resetname");
+    public IslandResetnameCommand() {
+        super("setname");
     }
 
     /* (non-Javadoc)
@@ -54,8 +54,30 @@ public class IslandSetName extends CommandArgument {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.not-leader"));
             return true;
         }
-        // Resets the island name
-        getIslands().getIsland(playerUUID).setName(null);
+        // Explain command
+        if (args.length == 1) {
+            //TODO Util.sendMessage(player, getHelpMessage(player, label, args[0], usage(sender, label)));
+            return true;
+        }
+
+        // Naming the island
+        String name = args[1];
+        for (int i = 2; i < args.length; i++) name += " " + args[i];
+
+        // Check if the name isn't too short or too long
+        if (name.length() < Settings.nameMinLength) {
+            sender.sendMessage(getLocale(sender).get("general.errors.too-short").replace("[length]", String.valueOf(Settings.nameMinLength)));
+            return true;
+        }
+        if (name.length() > Settings.nameMaxLength) {
+            sender.sendMessage(getLocale(sender).get("general.errors.too-long").replace("[length]", String.valueOf(Settings.nameMaxLength)));
+            return true;
+        }
+
+        // Set the name
+        if (VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name.format"))
+            getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
+        else getIslands().getIsland(playerUUID).setName(name);
 
         sender.sendMessage(getLocale(sender).get("general.success"));
         return true;
