@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.island;
+package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.Set;
 import java.util.UUID;
@@ -6,16 +6,13 @@ import java.util.UUID;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.util.VaultHelper;
 
-public class IslandTeamCommand extends CommandArgument {
+public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
 
     private static final boolean DEBUG = false;
 
@@ -26,16 +23,9 @@ public class IslandTeamCommand extends CommandArgument {
 
     @Override
     public boolean execute(CommandSender sender, String[] args) {
-        if (!isPlayer(sender)) {
-            sender.sendMessage(getLocale(sender).get("general.errors.use-in-game"));
-            return true;
-        }
-        Player player = (Player)sender;
-        UUID playerUUID = player.getUniqueId();
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
-            return true;
-        }
+        // Check team perm and get variables set
+        if (!checkTeamPerm()) return true;
+
         if (DEBUG)
             plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
         // Fire event so add-ons can run commands, etc.

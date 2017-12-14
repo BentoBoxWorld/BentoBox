@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.island;
+package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.Set;
 import java.util.UUID;
@@ -30,9 +30,6 @@ public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
             return true;
         }
-        // Get the invite list
-        // TODO
-        
         // Can only use if you have an invite out there
         if(!inviteList.inverse().containsKey(playerUUID)) {
             return true;
@@ -62,7 +59,6 @@ public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument
 
     @Override
     public Set<String> tabComplete(CommandSender sender, String[] args) {
-        // TODO Auto-generated method stub
         return null;
     }
 }

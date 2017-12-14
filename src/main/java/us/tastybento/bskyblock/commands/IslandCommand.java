@@ -3,7 +3,7 @@ package us.tastybento.bskyblock.commands;
 import org.bukkit.command.CommandSender;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
-import us.tastybento.bskyblock.commands.island.IslandTeamCommand;
+import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
 import us.tastybento.bskyblock.config.Settings;
 
 public class IslandCommand extends CompositeCommand {
