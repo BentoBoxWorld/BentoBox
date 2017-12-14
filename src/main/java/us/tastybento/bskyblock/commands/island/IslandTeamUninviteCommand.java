@@ -7,23 +7,13 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
-import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.VaultHelper;
 
-public class IslandTeamUninviteCommand extends CommandArgument {
+public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument {
     
-    /**
-     * TODO: this actually needs to be the same as what is in the IslandTeamInvite class!
-     */
-    private final BiMap<UUID, UUID> inviteList = HashBiMap.create();
-
-
     public IslandTeamUninviteCommand() {
         super("uninvite");
     }

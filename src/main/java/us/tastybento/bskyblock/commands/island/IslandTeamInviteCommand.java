@@ -12,23 +12,13 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
-
-import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.VaultHelper;
 
-public class IslandTeamInviteCommand extends CommandArgument {
-    /**
-     * Invite list - invited player name string (key), inviter name string
-     * (value)
-     */
-    private final BiMap<UUID, UUID> inviteList = HashBiMap.create();
-
+public class IslandTeamInviteCommand extends AbstractIslandTeamCommandArgument {
 
     public IslandTeamInviteCommand() {
         super("invite");

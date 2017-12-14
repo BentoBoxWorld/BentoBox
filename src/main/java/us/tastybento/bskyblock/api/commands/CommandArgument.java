@@ -29,6 +29,8 @@ public abstract class CommandArgument {
         this.subCommands = new LinkedHashMap<>();
     }
 
+    public CommandArgument() {}
+
     public abstract boolean execute(CommandSender sender, String[] args);
     public abstract Set<String> tabComplete(CommandSender sender, String[] args);
 
