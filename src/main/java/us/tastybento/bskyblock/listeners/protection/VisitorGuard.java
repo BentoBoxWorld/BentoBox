@@ -95,30 +95,6 @@ public class VisitorGuard implements Listener {
     }
 
     /**
-     * Prevents visitors from using commands on islands, like /spawner
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onVisitorCommand(final PlayerCommandPreprocessEvent e) {
-        if (DEBUG) {
-            plugin.getLogger().info("Visitor command " + e.getEventName() + ": " + e.getMessage());
-        }
-        if (!Util.inWorld(e.getPlayer()) || e.getPlayer().isOp()
-                || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getPlayer().getLocation())) {
-            //plugin.getLogger().info("player is not in world or op etc.");
-            return;
-        }
-        // Check banned commands
-        //plugin.getLogger().info(Settings.visitorCommandBlockList.toString());
-        String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
-        if (Settings.visitorBannedCommands.contains(args[0])) {
-            e.getPlayer().sendMessage(plugin.getLocale(e.getPlayer()).get("island.protected"));
-            e.setCancelled(true);
-        }
-    }
-
-    /**
      * Prevents visitors from getting damage if invinciblevisitors option is set to TRUE
      * @param e
      */

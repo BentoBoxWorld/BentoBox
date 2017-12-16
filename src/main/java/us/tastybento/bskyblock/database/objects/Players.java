@@ -22,7 +22,6 @@ public class Players extends DataObject {
     private String playerName;
     private int resetsLeft;
     private String locale = "";
-    private boolean useControlPanel;
     private int deaths;
     private HashMap<Location, Long> kickedList;
 
@@ -42,7 +41,6 @@ public class Players extends DataObject {
         this.playerName = "";
         this.resetsLeft = Settings.resetLimit;
         this.locale = "";
-        this.useControlPanel = Settings.useControlPanel;
         this.kickedList = new HashMap<>();
         this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
     }
@@ -78,20 +76,6 @@ public class Players extends DataObject {
      */
     public HashMap<Integer,Location> getHomeLocations() {
         return homeLocations;
-    }
-
-    /**
-     * @return the useControlPanel
-     */
-    public boolean isUseControlPanel() {
-        return useControlPanel;
-    }
-
-    /**
-     * @param useControlPanel the useControlPanel to set
-     */
-    public void setUseControlPanel(boolean useControlPanel) {
-        this.useControlPanel = useControlPanel;
     }
 
     /**
@@ -200,21 +184,6 @@ public class Players extends DataObject {
      */
     public void setLocale(String locale) {
         this.locale = locale;
-    }
-
-    /**
-     * Sets whether a player uses the control panel or not
-     * @param b
-     */
-    public void setControlPanel(boolean b) {
-        useControlPanel = b;
-    }
-
-    /**
-     * @return useControlPanel
-     */
-    public boolean getControlPanel() {
-        return useControlPanel;
     }
 
     /**

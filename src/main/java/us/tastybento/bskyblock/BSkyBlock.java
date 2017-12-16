@@ -13,10 +13,8 @@ import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.BSBLocale;
 import us.tastybento.bskyblock.config.LocaleManager;
-import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.managers.OfflineHistoryMessages;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
@@ -44,7 +42,6 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
     // Databases
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
-    private OfflineHistoryMessages offlineHistoryMessages;
 
     // Metrics
     private Metrics metrics;
@@ -59,7 +56,7 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
         plugin = this;
 
         // Load configuration and locales. If there are no errors, load the plugin.
-        if(PluginConfig.loadPluginConfig(this)){
+        //if(PluginConfig.loadPluginConfig(this)){
             
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
@@ -68,9 +65,6 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
                 metrics = new Metrics(plugin);
                 registerCustomCharts();
             }
-
-            offlineHistoryMessages = new OfflineHistoryMessages(this);
-            offlineHistoryMessages.load();
 
             if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
                 getLogger().warning("Could not set up economy! - Running without an economy.");
@@ -135,14 +129,13 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
                                 public void run() {
                                     playersManager.save(true);
                                     islandsManager.save(true);
-                                    offlineHistoryMessages.save(true);
                                 }
                             }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
                         }
                     });
                 } 
             });
-        }
+        //}
     }
 
     private void registerListeners() {
@@ -162,7 +155,6 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
         // Save data
         playersManager.shutdown();
         islandsManager.shutdown();
-        //offlineHistoryMessages.shutdown();
     }
 
     private void registerCustomCharts(){

@@ -529,27 +529,6 @@ public class PlayersManager{
     }
 
     /**
-     * Sets whether the player uses the control panel or not when doing /island
-     * @param b
-     */
-    public void setControlPanel(UUID playerUUID, boolean b) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setControlPanel(b);
-
-    }
-
-    /**
-     * Gets whether the player uses the control panel or not when doing /island
-     * @param playerUUID
-     * @return true if they use the control panel
-     */
-    public boolean getControlPanel(UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getControlPanel();
-
-    }
-
-    /**
      * Add death to player
      * @param playerUUID
      */
