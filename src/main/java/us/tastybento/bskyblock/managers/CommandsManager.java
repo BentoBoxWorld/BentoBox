@@ -1,13 +1,14 @@
 package us.tastybento.bskyblock.managers;
 
-import org.bukkit.command.Command;
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.BSModule;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.command.Command;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.BSModule;
 
 public final class CommandsManager {
 

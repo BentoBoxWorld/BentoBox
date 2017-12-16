@@ -12,7 +12,6 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
  * @author ben

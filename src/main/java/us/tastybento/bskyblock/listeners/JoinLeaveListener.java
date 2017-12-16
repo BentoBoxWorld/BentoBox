@@ -13,8 +13,6 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.util.Util;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 public class JoinLeaveListener implements Listener {
 

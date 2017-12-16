@@ -19,7 +19,6 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 public class PlayersManager{
 

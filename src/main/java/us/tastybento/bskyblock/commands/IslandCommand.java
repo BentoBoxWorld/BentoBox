@@ -1,8 +1,15 @@
 package us.tastybento.bskyblock.commands;
 
 import org.bukkit.command.CommandSender;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
+import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
+import us.tastybento.bskyblock.commands.island.IslandGoCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
+import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
+import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
 import us.tastybento.bskyblock.config.Settings;
 
@@ -15,6 +22,12 @@ public class IslandCommand extends CompositeCommand {
     @Override
     public void setup() {
         this.addSubCommand(new IslandAboutCommand());
+        this.addSubCommand(new IslandCreateCommand());
+        this.addSubCommand(new IslandGoCommand());
+        this.addSubCommand(new IslandResetCommand());
+        this.addSubCommand(new IslandResetnameCommand());
+        this.addSubCommand(new IslandSethomeCommand());
+        this.addSubCommand(new IslandSetnameCommand());
         this.addSubCommand(new IslandTeamCommand());
     }
 

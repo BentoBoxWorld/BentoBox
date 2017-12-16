@@ -1,11 +1,11 @@
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.Set;
+
 import org.bukkit.command.CommandSender;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.CommandArgument;
-
-import java.util.Set;
 
 public class IslandAboutCommand extends CommandArgument {
 

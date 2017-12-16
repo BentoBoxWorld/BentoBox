@@ -1,10 +1,7 @@
 package us.tastybento.bskyblock.util.nms;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
 import org.bukkit.entity.Player;
-
-import java.util.Map;
 
 public interface NMSAbstraction {
 

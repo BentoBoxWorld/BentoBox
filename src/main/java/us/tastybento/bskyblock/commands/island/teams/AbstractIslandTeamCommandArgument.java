@@ -15,7 +15,6 @@ import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 public abstract class AbstractIslandTeamCommandArgument extends CommandArgument {
     

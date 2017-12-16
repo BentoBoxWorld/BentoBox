@@ -1,14 +1,15 @@
 package us.tastybento.bskyblock.api.commands;
 
-import org.bukkit.command.Command;
-import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginIdentifiableCommand;
-import us.tastybento.bskyblock.BSkyBlock;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginIdentifiableCommand;
+
+import us.tastybento.bskyblock.BSkyBlock;
 
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand {
 

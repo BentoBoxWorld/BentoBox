@@ -1,11 +1,12 @@
 package us.tastybento.bskyblock.commands.admin;
 
+import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.CommandArgument;
-
-import java.util.Set;
 
 public class AdminVersionCommand extends CommandArgument {
 

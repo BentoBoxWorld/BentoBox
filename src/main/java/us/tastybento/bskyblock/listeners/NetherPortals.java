@@ -24,8 +24,6 @@ import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.island.builders.IslandBuilder;
 import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
 import us.tastybento.bskyblock.util.SafeSpotTeleport;
-import us.tastybento.bskyblock.util.Util;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 public class NetherPortals implements Listener {
     private final BSkyBlock plugin;

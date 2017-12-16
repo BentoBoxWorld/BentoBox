@@ -39,7 +39,6 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.Util;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
  * @author tastybento

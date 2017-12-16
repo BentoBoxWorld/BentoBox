@@ -10,7 +10,6 @@ import org.bukkit.entity.Player;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument {
     

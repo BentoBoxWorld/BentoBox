@@ -1,9 +1,9 @@
 package us.tastybento.bskyblock.managers;
 
-import us.tastybento.bskyblock.api.addons.BSAddon;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import us.tastybento.bskyblock.api.addons.BSAddon;
 
 public final class AddonsManager {
 

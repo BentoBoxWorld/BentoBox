@@ -14,7 +14,6 @@ import us.tastybento.bskyblock.api.commands.CommandArgument;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
-import us.tastybento.bskyblock.util.VaultHelper;
 
 /**
  * @author ben

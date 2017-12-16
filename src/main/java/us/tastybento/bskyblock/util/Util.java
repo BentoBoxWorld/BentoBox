@@ -11,13 +11,11 @@ import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -32,7 +30,6 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
-import us.tastybento.bskyblock.util.placeholders.PlaceholderHandler;
 
 /**
  * A set of utility methods
