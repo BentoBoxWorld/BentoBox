@@ -544,7 +544,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             return "null";
         }
         return value;
-
     }
 
     /**
