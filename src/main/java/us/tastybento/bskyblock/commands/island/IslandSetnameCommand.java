@@ -20,10 +20,6 @@ import us.tastybento.bskyblock.util.VaultHelper;
  */
 public class IslandSetnameCommand extends CommandArgument {
 
-    /**
-     * @param label
-     * @param aliases
-     */
     public IslandSetnameCommand() {
         super("resetname");
     }
@@ -40,7 +36,7 @@ public class IslandSetnameCommand extends CommandArgument {
         Player player = (Player)sender;
         UUID playerUUID = player.getUniqueId();
 
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.name")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "island.name")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
             return true;
         }

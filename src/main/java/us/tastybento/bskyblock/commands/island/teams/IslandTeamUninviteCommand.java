@@ -26,7 +26,7 @@ public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument
         }
         Player player = (Player)sender;
         UUID playerUUID = player.getUniqueId();
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "team")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "team")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
             return true;
         }

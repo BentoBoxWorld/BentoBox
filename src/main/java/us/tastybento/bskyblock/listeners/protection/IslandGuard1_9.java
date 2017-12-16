@@ -70,11 +70,8 @@ public class IslandGuard1_9 implements Listener {
             if (!Util.inWorld(player)) {
                 return;
             }
-            if (player.isOp()) {
-                return;
-            }
             // This permission bypasses protection
-            if (VaultHelper.hasPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+            if (player.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
             }
             // Check island
@@ -106,11 +103,8 @@ public class IslandGuard1_9 implements Listener {
         if (!Util.inWorld(e.getPlayer())) {
             return;
         }
-        if (e.getPlayer().isOp()) {
-            return;
-        }
         // This permission bypasses protection
-        if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+        if (e.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
             return;
         }
         if (e.getRightClicked() != null && e.getRightClicked().getType().equals(EntityType.ENDER_CRYSTAL)) {
@@ -140,7 +134,7 @@ public class IslandGuard1_9 implements Listener {
         if (!Util.inWorld(p)) {
             return;
         }
-        if (p.isOp() || VaultHelper.hasPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+        if (p.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
             // You can do anything if you are Op
             return;
         }
@@ -217,7 +211,7 @@ public class IslandGuard1_9 implements Listener {
             }
         }
         if (p != null) {
-            if (p.isOp() || VaultHelper.hasPerm(p, Settings.PERMPREFIX + "mod.bypassprotect")) {
+            if (p.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                 if (DEBUG) {
                     plugin.getLogger().info("1.9 " +"Bypassing protection");
                 }
@@ -320,12 +314,8 @@ public class IslandGuard1_9 implements Listener {
         if (!Util.inWorld(e.getPlayer())) {
             return;
         }
-        if (e.getPlayer().isOp()) {
-            return;
-        }
         // This permission bypasses protection
-        if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
-                || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "craft.dirt")) {
+        if (e.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
             return;
         }
         // Prevents tilling of coarse dirt into dirt
@@ -453,7 +443,7 @@ public class IslandGuard1_9 implements Listener {
             return actionAllowed(location, flag);
         }
         // This permission bypasses protection
-        if (player.isOp() || VaultHelper.hasPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")) {
+        if (player.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
             return true;
         }
         Island island = plugin.getIslands().getProtectedIslandAt(location);

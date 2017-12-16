@@ -26,7 +26,7 @@ public class IslandSethomeCommand extends CommandArgument {
         }
         Player player = (Player)sender;
         UUID playerUUID = player.getUniqueId();
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.sethome")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "island.sethome")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
             return true;
         }

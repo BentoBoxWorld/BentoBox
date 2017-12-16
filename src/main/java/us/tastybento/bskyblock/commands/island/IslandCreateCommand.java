@@ -22,10 +22,6 @@ import us.tastybento.bskyblock.util.VaultHelper;
  */
 public class IslandCreateCommand extends CommandArgument {
 
-    /**
-     * @param label
-     * @param aliases
-     */
     public IslandCreateCommand() {
         super("create", "auto");
     }
@@ -41,7 +37,7 @@ public class IslandCreateCommand extends CommandArgument {
         }
         Player player = (Player)sender;
 
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.create")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "island.create")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
         }
         if (getIslands().hasIsland(player.getUniqueId())) {

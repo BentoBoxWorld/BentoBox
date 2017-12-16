@@ -86,7 +86,7 @@ public class VisitorGuard implements Listener {
         }
         Island island = plugin.getIslands().getIslandAt(e.getItemDrop().getLocation());
         if ((island != null && island.getFlag(SettingsFlag.ITEM_DROP)) 
-                || e.getPlayer().isOp() || VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")
+                || e.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")
                 || plugin.getIslands().locationIsOnIsland(e.getPlayer(), e.getItemDrop().getLocation())) {
             return;
         }
@@ -153,7 +153,7 @@ public class VisitorGuard implements Listener {
             }
             Island island = plugin.getIslands().getIslandAt(e.getItem().getLocation());
             if ((island != null && island.getFlag(SettingsFlag.ITEM_PICKUP)) 
-                    || player.isOp() || VaultHelper.hasPerm(player, Settings.PERMPREFIX + "mod.bypassprotect")
+                    || player.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")
                     || plugin.getIslands().locationIsOnIsland(player, e.getItem().getLocation())) {
                 return;
             }

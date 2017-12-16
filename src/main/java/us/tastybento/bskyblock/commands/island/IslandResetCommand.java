@@ -30,7 +30,7 @@ public class IslandResetCommand extends CommandArgument {
             return true;
         }
         Player player = (Player)sender;
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.reset")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "island.reset")) {
             sender.sendMessage(getLocale(sender).get("general.errors.no-permission"));
             return true;
         }

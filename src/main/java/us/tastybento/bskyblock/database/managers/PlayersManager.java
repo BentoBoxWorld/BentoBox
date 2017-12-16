@@ -507,7 +507,7 @@ public class PlayersManager{
         addPlayer(targetUUID);
         // Check if the target player has a permission bypass (admin.noban)
         Player target = plugin.getServer().getPlayer(targetUUID);
-        if (target != null && VaultHelper.hasPerm(target, Settings.PERMPREFIX + "admin.noban")) {
+        if (target != null && target.hasPermission(Settings.PERMPREFIX + "admin.noban")) {
             return false;
         }
         Island island = plugin.getIslands().getIsland(playerUUID);

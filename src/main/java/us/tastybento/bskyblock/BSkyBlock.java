@@ -71,8 +71,6 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
                 Settings.useEconomy = false;
             }
 
-            VaultHelper.setupPermissions();
-
             // Set up commands
             commandsManager = new CommandsManager();
             commandsManager.registerCommand(this, new IslandCommand());

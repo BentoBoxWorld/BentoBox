@@ -118,7 +118,7 @@ public class NetherPortals implements Listener {
             // Portals use is not allowed
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Portal use not allowed");
-            if (!event.getPlayer().isOp() && !VaultHelper.hasPerm(event.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+            if (!event.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                 event.getPlayer().sendMessage(plugin.getLocale(event.getPlayer()).get("island.protected"));
                 event.setCancelled(true);
                 return;

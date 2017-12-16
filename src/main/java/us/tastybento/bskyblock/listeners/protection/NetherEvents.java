@@ -117,7 +117,7 @@ public class NetherEvents implements Listener {
         // plugin.getLogger().info("Block break");
         if ((e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether") && !Settings.netherIslands)
                 || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-            if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+            if (e.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                 return;
             }
             if (DEBUG)
@@ -142,7 +142,7 @@ public class NetherEvents implements Listener {
         if (!Settings.netherIslands) {
             if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
                     || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-                if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+                if (e.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                     return;
                 }
                 if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {
@@ -159,7 +159,7 @@ public class NetherEvents implements Listener {
         if (!Settings.netherIslands) {
             if (e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_nether")
                     || e.getPlayer().getWorld().getName().equalsIgnoreCase(Settings.worldName + "_the_end")) {
-                if (VaultHelper.hasPerm(e.getPlayer(), Settings.PERMPREFIX + "mod.bypassprotect")) {
+                if (e.getPlayer().hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                     return;
                 }
                 if (!awayFromSpawn(e.getPlayer()) && !e.getPlayer().isOp()) {

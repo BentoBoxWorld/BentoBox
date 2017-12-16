@@ -21,10 +21,6 @@ import us.tastybento.bskyblock.util.VaultHelper;
  */
 public class IslandGoCommand extends CommandArgument {
 
-    /**
-     * @param label
-     * @param aliases
-     */
     public IslandGoCommand() {
         super("go", "home", "h");
     }
@@ -39,7 +35,7 @@ public class IslandGoCommand extends CommandArgument {
             return true;
         }
         Player player = (Player)sender;
-        if (!VaultHelper.hasPerm(player, Settings.PERMPREFIX + "island.home")) {
+        if (!player.hasPermission(Settings.PERMPREFIX + "island.home")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
             return true;
         }
