@@ -164,11 +164,6 @@ public class Util {
         return result;
     }
 
-    public static boolean isOnePointEight() {
-        // TODO Auto-generated method stub
-        return false;
-    }
-
     /**
      * Results a list of items in a player's hands. Works for older versions of servers
      * @param player
