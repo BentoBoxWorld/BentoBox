@@ -5,9 +5,9 @@ import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -23,7 +23,8 @@ public class IslandSethomeCommand extends CommandArgument {
             sender.sendMessage(getLocale(sender).get("general.errors.use-in-game"));
             return true;
         }
-        Player player = (Player)sender;
+        User player = User.getInstance(sender);
+        //Player player = (Player)sender;
         UUID playerUUID = player.getUniqueId();
         if (!player.hasPermission(Settings.PERMPREFIX + "island.sethome")) {
             sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
