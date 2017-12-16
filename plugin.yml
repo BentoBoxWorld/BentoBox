@@ -4,7 +4,6 @@ version: ${version}
 
 authors: [tastybento, Poslovitch]
 
-depend: [Vault]
 softdepend: [Herochat, DeluxeChat, PlaceholderAPI, MVdWPlaceholderAPI]
 
 load: startup

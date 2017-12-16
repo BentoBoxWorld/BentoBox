@@ -27,7 +27,6 @@ import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
 import us.tastybento.bskyblock.listeners.protection.NetherEvents;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.util.Util;
-import us.tastybento.bskyblock.util.VaultHelper;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 
 /**
@@ -60,15 +59,14 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
             
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
+
             // Only load metrics if set to true in config
+
             if(Settings.metrics) {
                 metrics = new Metrics(plugin);
-                registerCustomCharts();
-            }
 
-            if (Settings.useEconomy && !VaultHelper.setupEconomy()) {
-                getLogger().warning("Could not set up economy! - Running without an economy.");
-                Settings.useEconomy = false;
+                registerCustomCharts();
+
             }
 
             // Set up commands
