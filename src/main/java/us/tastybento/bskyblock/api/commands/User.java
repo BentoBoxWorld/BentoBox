@@ -18,31 +18,24 @@ import us.tastybento.bskyblock.BSkyBlock;
 
 public class User {
 
-    private final BSkyBlock plugin = BSkyBlock.getPlugin();
-    private final Player player;
-    private final CommandSender sender;
-    private final UUID playerUUID;
     private static Map<UUID, User> users = new HashMap<>();
-
-    private User(Player player) {
-        this.player = player;
-        this.sender = player;
-        this.playerUUID = player.getUniqueId();
-        users.put(player.getUniqueId(), this);
+    /**
+     * Get an instance of User from a CommandSender
+     * @param sender
+     * @return user
+     */
+    public static User getInstance(CommandSender sender) {
+        if (sender instanceof Player) {
+            return getInstance((Player)sender);
+        }
+        // Console
+        return new User(sender);
     }
-
-    private User(CommandSender sender) {
-        this.player = null;
-        this.playerUUID = null;
-        this.sender = sender;
-    }
-    
-    private User(UUID playerUUID) {
-        this.player = Bukkit.getPlayer(playerUUID);
-        this.playerUUID = playerUUID;
-        this.sender = null;
-    }
-
+    /**
+     * Get an instance of User from a Player object
+     * @param player
+     * @return user
+     */
     public static User getInstance(Player player) {
         if (player == null)
             return null;
@@ -51,15 +44,11 @@ public class User {
         }
         return new User(player);
     }
-
-    public static User getInstance(CommandSender sender) {
-        if (sender instanceof Player) {
-            return getInstance((Player)sender);
-        }
-        // Console
-        return new User(sender);
-    }
-
+    /**
+     * Get an instance of User from a UUID
+     * @param uuid
+     * @return user
+     */
     public static User getInstance(UUID uuid) {
         if (users.containsKey(uuid)) {
             return users.get(uuid);
@@ -67,7 +56,57 @@ public class User {
         // Return player, or null if they are not online
         return new User(uuid);
     }
+    /**
+     * Removes this player from the User cache
+     * @param player
+     */
+    public static void removePlayer(Player player) {
+        users.remove(player.getUniqueId());
+    }
+
+    private final Player player;
+
+    private final UUID playerUUID;
     
+    private final BSkyBlock plugin = BSkyBlock.getPlugin();
+
+    private final CommandSender sender;
+
+    private User(CommandSender sender) {
+        this.player = null;
+        this.playerUUID = null;
+        this.sender = sender;
+    }
+
+    private User(Player player) {
+        this.player = player;
+        this.sender = player;
+        this.playerUUID = player.getUniqueId();
+        users.put(player.getUniqueId(), this);
+    }
+    
+    private User(UUID playerUUID) {
+        this.player = Bukkit.getPlayer(playerUUID);
+        this.playerUUID = playerUUID;
+        this.sender = null;
+    }
+
+    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
+        return player.getEffectivePermissions();
+    }
+
+    public PlayerInventory getInventory() {
+        return player.getInventory();
+    }
+
+    public Location getLocation() {
+        return player.getLocation();
+    }
+
+    public String getName() {
+        return player.getName();
+    }
+
     /**
      * @return the player
      */
@@ -79,8 +118,20 @@ public class User {
         return sender;
     }
 
-    public static void removePlayer(Player player) {
-        users.remove(player.getUniqueId());
+    public UUID getUniqueId() {
+        return playerUUID;
+    }
+
+    public boolean hasPermission(String string) {
+        return player.hasPermission(string);
+    }
+
+    public boolean isOnline() {
+        return player == null ? false : player.isOnline();
+    }
+
+    public boolean isOp() {
+        return player.isOp();
     }
 
     /**
@@ -105,49 +156,13 @@ public class User {
         }
     }
 
-    public UUID getUniqueId() {
-        return playerUUID;
-    }
-
-    public boolean hasPermission(String string) {
-        return player.hasPermission(string);
-    }
-
-    public Location getLocation() {
-        return player.getLocation();
-    }
-
     public void setGameMode(GameMode mode) {
         player.setGameMode(mode);
         
-    }
-
-    public PlayerInventory getInventory() {
-        return player.getInventory();
     }
 
     public void teleport(Location location) {
         player.teleport(location);
         
     }
-
-    public String getName() {
-        return player.getName();
-    }
-
-    public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return player.getEffectivePermissions();
-    }
-
-    public boolean isOp() {
-        return player.isOp();
-    }
-
-    public boolean isOnline() {
-        return player == null ? false : player.isOnline();
-    }
-
-
-
-
 }
