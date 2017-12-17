@@ -8,6 +8,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -46,7 +47,7 @@ public class IslandInviteAcceptCommand extends AbstractIslandTeamCommandArgument
         if (DEBUG)
             plugin.getLogger().info("DEBUG: Invite is valid");
         // Fire event so add-ons can run commands, etc.
-        TeamEvent event = TeamEvent.builder()
+        IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
                 .getIsland(prospectiveTeamLeaderUUID))
                 .reason(TeamReason.JOIN)

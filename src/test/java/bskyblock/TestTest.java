@@ -13,6 +13,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 
@@ -39,12 +40,12 @@ public class TestTest {
     public void createAndSave() {
 
 
-        TeamEvent event = TeamEvent.builder()
+        IslandBaseEvent event = TeamEvent.builder()
                 //.island(getIslands().getIsland(playerUUID))
                 .reason(TeamReason.INFO)
                 .involvedPlayer(playerUUID)
                 .build();
-        assertEquals(playerUUID, event.getPlayer());
+        assertEquals(playerUUID, event.getPlayerUUID());
 
     }
 

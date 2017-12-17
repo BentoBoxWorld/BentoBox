@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.bukkit.ChatColor;
 
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 
@@ -23,7 +24,7 @@ public class IslandInviteRejectCommand extends AbstractIslandTeamCommandArgument
         // Reject /island reject
         if (inviteList.containsKey(playerUUID)) {
             // Fire event so add-ons can run commands, etc.
-            TeamEvent event = TeamEvent.builder()
+            IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
                     .getIsland(inviteList.get(playerUUID)))
                     .reason(TeamReason.REJECT)

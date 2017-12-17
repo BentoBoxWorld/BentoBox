@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -29,7 +30,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
         // Fire event so add-ons can run commands, etc.
-        TeamEvent event = TeamEvent.builder()
+        IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
                 .getIsland(playerUUID))
                 .reason(TeamReason.INFO)

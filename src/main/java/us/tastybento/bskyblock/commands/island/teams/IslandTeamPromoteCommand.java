@@ -9,6 +9,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -54,7 +55,12 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
             return true;
         }
         // Fire event so add-ons can run commands, etc.
-        TeamEvent event = TeamEvent.builder().island(getIslands().getIsland(playerUUID)).reason(TeamReason.MAKELEADER).involvedPlayer(targetUUID).build();
+        IslandBaseEvent event = TeamEvent.builder()
+                .island(getIslands()
+                .getIsland(playerUUID))
+                .reason(TeamReason.MAKELEADER)
+                .involvedPlayer(targetUUID)
+                .build();
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return true;
 

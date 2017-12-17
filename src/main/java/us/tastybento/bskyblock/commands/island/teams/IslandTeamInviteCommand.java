@@ -5,12 +5,12 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -106,7 +106,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommandArgument {
                     user.sendMessage(ChatColor.RED + "invite.removingInvite");
                 }
                 // Fire event so add-ons can run commands, etc.
-                TeamEvent event = TeamEvent.builder()
+                IslandBaseEvent event = TeamEvent.builder()
                         .island(getIslands().getIsland(playerUUID))
                         .reason(TeamReason.INVITE)
                         .involvedPlayer(invitedPlayerUUID)
