@@ -92,7 +92,7 @@ public class User {
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
-        return player.getEffectivePermissions();
+        return sender.getEffectivePermissions();
     }
 
     public PlayerInventory getInventory() {
@@ -114,6 +114,10 @@ public class User {
         return player;
     }
 
+    public boolean isPlayer() {
+        return player != null;
+    }
+
     public CommandSender getSender() {
         return sender;
     }
@@ -123,23 +127,23 @@ public class User {
     }
 
     public boolean hasPermission(String string) {
-        return player.hasPermission(string);
+        return sender.hasPermission(string);
     }
 
     public boolean isOnline() {
-        return player == null ? false : player.isOnline();
+        return player != null && player.isOnline();
     }
 
     public boolean isOp() {
-        return player.isOp();
+        return sender.isOp();
     }
 
     /**
-     * Send a message to sender if message is not empty. Does not include color codes or spaces
-     * @param reference - language file reference. May be preceded with color codes.
+     * Send a message to sender if message is not empty. Does not include color codes or spaces.
+     * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      */
-    public void sendMessage(String reference, String... variables ) {
+    public void sendMessage(String reference, String... variables) {
         String message = ChatColor.getLastColors(reference) + plugin.getLocale(sender).get(ChatColor.stripColor(reference));
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i+=2) {
@@ -156,13 +160,20 @@ public class User {
         }
     }
 
+    /**
+     * Sends a message to sender without any modification (colors, multi-lines, placeholders).
+     * Should only be used for debug purposes.
+     * @param message - the message to send
+     */
+    public void sendLegacyMessage(String message) {
+        sender.sendMessage(message);
+    }
+
     public void setGameMode(GameMode mode) {
         player.setGameMode(mode);
-        
     }
 
     public void teleport(Location location) {
         player.teleport(location);
-        
     }
 }

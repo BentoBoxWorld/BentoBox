@@ -45,11 +45,11 @@ public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument
             User invitee = User.getInstance(inviteList.inverse().get(playerUUID));
             if (invitee != null) {
                 inviteList.inverse().remove(playerUUID);
-                invitee.sendMessage(ChatColor.RED + getLocale(invitee.getUniqueId()).get("invite.nameHasUninvitedYou").replace("[name]", user.getName()));
-                user.sendMessage(ChatColor.GREEN + "general.success");
+                invitee.sendMessage("invite.nameHasUninvitedYou", "[name]", user.getName());
+                user.sendMessage("general.success");
             }
         } else {
-            user.sendMessage(ChatColor.YELLOW + "help.island.invite");
+            user.sendMessage("help.island.invite");
         }
         return false;
     }

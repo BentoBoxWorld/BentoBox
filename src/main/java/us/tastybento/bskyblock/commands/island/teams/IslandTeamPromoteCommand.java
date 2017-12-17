@@ -71,7 +71,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
 
         } else {
             // Online
-            plugin.getServer().getPlayer(targetUUID).sendMessage(ChatColor.GREEN + getLocale(targetUUID).get("makeleader.youAreNowTheOwner"));
+            target.sendMessage("makeleader.youAreNowTheOwner");
             // Check if new leader has a lower range permission than the island size
             boolean hasARangePerm = false;
             int range = Settings.islandProtectionRange;

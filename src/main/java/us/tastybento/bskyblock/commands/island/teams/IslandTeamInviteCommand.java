@@ -118,13 +118,13 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommandArgument {
                 inviteList.put(invitedPlayerUUID, playerUUID);
                 user.sendMessage("invite.inviteSentTo", "[name]", args[0]);
                 // Send message to online player
-                invitedPlayer.sendMessage(ChatColor.GOLD + "invite.nameHasInvitedYou", "[name]", user.getName());
-                invitedPlayer.sendMessage(ChatColor.GOLD + "invite.toAcceptOrReject", "[label]", getLabel());
+                invitedPlayer.sendMessage("invite.nameHasInvitedYou", "[name]", user.getName());
+                invitedPlayer.sendMessage("invite.toAcceptOrReject", "[label]", getLabel());
                 if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
-                    Bukkit.getPlayer(invitedPlayerUUID).sendMessage(ChatColor.RED + getLocale(invitedPlayerUUID).get("invite.warningYouWillLoseIsland"));
+                    invitedPlayer.sendMessage("invite.warningYouWillLoseIsland");
                 }
             } else {
-                user.sendMessage(ChatColor.RED + "invite.error.YourIslandIsFull");
+                user.sendMessage("invite.error.YourIslandIsFull");
             }
         }
         return false;

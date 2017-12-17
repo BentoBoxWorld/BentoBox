@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.commands;
 import org.bukkit.command.CommandSender;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
 import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
 import us.tastybento.bskyblock.commands.island.IslandGoCommand;
@@ -32,8 +33,8 @@ public class IslandCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
-        sender.sendMessage("You successfully did /is !");
+    public boolean execute(User user, String[] args) {
+        user.sendLegacyMessage("You successfully did /is !");
         return true;
     }
 }

@@ -21,6 +21,8 @@ public abstract class CommandArgument {
     public BSkyBlock plugin = BSkyBlock.getPlugin();
     private String label;
     private List<String> aliases;
+    private String permission;
+    private boolean onlyPlayer;
     private Map<String, CommandArgument> subCommands;
 
     public CommandArgument(String label, String... aliases) {
@@ -69,7 +71,23 @@ public abstract class CommandArgument {
     public void replaceSubCommand(CommandArgument subCommand) {
         subCommands.put(subCommand.getLabel(), subCommand);
     }
-    
+
+    public String getPermission() {
+        return permission;
+    }
+
+    public void setPermission(String permission) {
+        this.permission = permission;
+    }
+
+    public boolean isOnlyPlayer() {
+        return onlyPlayer;
+    }
+
+    public void setOnlyPlayer(boolean onlyPlayer) {
+        this.onlyPlayer = onlyPlayer;
+    }
+
     // These methods below just neaten up the code in the commands so "plugin." isn't always used
     
     /**
@@ -115,19 +133,5 @@ public abstract class CommandArgument {
      */
     protected IslandsManager getIslands() {
         return plugin.getIslands();
-    }
-    /**
-     * @param sender
-     * @return Locale for sender
-     */
-    protected BSBLocale getLocale(CommandSender sender) {
-        return plugin.getLocale(sender);
-    }
-    /**
-     * @param uuid
-     * @return Locale for UUID
-     */
-    protected BSBLocale getLocale(UUID uuid) {
-        return plugin.getLocale(uuid);
     }
 }
