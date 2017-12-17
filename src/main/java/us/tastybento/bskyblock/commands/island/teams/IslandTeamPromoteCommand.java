@@ -6,10 +6,9 @@ import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -22,9 +21,10 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
     }
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
+    public boolean execute(User user, String[] args) {
         // Check team perm and get variables set
         if (!checkTeamPerm()) return true;
+        UUID playerUUID = user.getUniqueId();
         // Can use if in a team
         boolean inTeam = plugin.getPlayers().inTeam(playerUUID);
         UUID teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
@@ -34,23 +34,23 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
         plugin.getLogger().info("DEBUG: arg[0] = " + args[0]);
         UUID targetUUID = getPlayers().getUUID(args[0]);
         if (targetUUID == null) {
-            player.sendMessage(ChatColor.RED + getLocale(playerUUID).get("general.errors.unknown-player"));
+            user.sendMessage(ChatColor.RED + "general.errors.unknown-player");
             return true;
         }
         if (!getPlayers().inTeam(playerUUID)) {
-            player.sendMessage(ChatColor.RED + getLocale(playerUUID).get("makeleader.errorYouMustBeInTeam"));
+            user.sendMessage(ChatColor.RED + "makeleader.errorYouMustBeInTeam");
             return true;
         }
         if (!teamLeaderUUID.equals(playerUUID)) {
-            player.sendMessage(ChatColor.RED + getLocale(playerUUID).get("makeleader.errorNotYourIsland"));
+            user.sendMessage(ChatColor.RED + "makeleader.errorNotYourIsland");
             return true;
         }
         if (targetUUID.equals(playerUUID)) {
-            player.sendMessage(ChatColor.RED + getLocale(playerUUID).get("makeleader.errorGeneralError"));
+            user.sendMessage(ChatColor.RED + "makeleader.errorGeneralError");
             return true;
         }
         if (!plugin.getIslands().getMembers(playerUUID).contains(targetUUID)) {
-            player.sendMessage(ChatColor.RED + getLocale(playerUUID).get("makeleader.errorThatPlayerIsNotInTeam"));
+            user.sendMessage(ChatColor.RED + "makeleader.errorThatPlayerIsNotInTeam");
             return true;
         }
         // Fire event so add-ons can run commands, etc.
@@ -60,14 +60,14 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
 
         // target is the new leader
         getIslands().getIsland(playerUUID).setOwner(targetUUID);
-        player.sendMessage(ChatColor.GREEN
-                + getLocale(playerUUID).get("makeleader.nameIsNowTheOwner").replace("[name]", getPlayers().getName(targetUUID)));
+        user.sendMessage(ChatColor.GREEN
+                + "makeleader.nameIsNowTheOwner", "[name]", getPlayers().getName(targetUUID));
 
         // Check if online
-        Player target = plugin.getServer().getPlayer(targetUUID);
+        User target = User.getInstance(targetUUID);
         if (target == null) {
             // TODO offline messaging
-            //plugin.getMessages().setMessage(targetPlayer, getLocale(playerUUID).get("makeleader.youAreNowTheOwner"));
+            //plugin.getMessages().setMessage(targetPlayer, "makeleader.youAreNowTheOwner"));
 
         } else {
             // Online
@@ -78,7 +78,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
             // Check for zero protection range
             Island islandByOwner = getIslands().getIsland(targetUUID);
             if (islandByOwner.getProtectionRange() == 0) {
-                plugin.getLogger().warning("Player " + player.getName() + "'s island had a protection range of 0. Setting to default " + range);
+                plugin.getLogger().warning("Player " + user.getName() + "'s island had a protection range of 0. Setting to default " + range);
                 islandByOwner.setProtectionRange(range);
             }
             for (PermissionAttachmentInfo perms : target.getEffectivePermissions()) {
@@ -90,7 +90,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
-                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                plugin.getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
 
                             } else {
                                 hasARangePerm = true;
@@ -110,11 +110,11 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
 
                 // Range can go up or down
                 if (range != islandByOwner.getProtectionRange()) {
-                    player.sendMessage(getLocale(targetUUID).get("admin.SetRangeUpdated").replace("[number]", String.valueOf(range)));
-                    target.sendMessage(getLocale(targetUUID).get("admin.SetRangeUpdated").replace("[number]", String.valueOf(range)));
+                    user.sendMessage("admin.SetRangeUpdated", "[number]", String.valueOf(range));
+                    target.sendMessage("admin.SetRangeUpdated", "[number]", String.valueOf(range));
                     plugin.getLogger().info(
                             "Makeleader: Island protection range changed from " + islandByOwner.getProtectionRange() + " to "
-                                    + range + " for " + player.getName() + " due to permission.");
+                                    + range + " for " + user.getName() + " due to permission.");
                 }
                 islandByOwner.setProtectionRange(range);
             }
@@ -124,9 +124,9 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
         Set<String> result = new HashSet<>();
-        for (UUID member : plugin.getIslands().getMembers(playerUUID)) {
+        for (UUID member : plugin.getIslands().getMembers(user.getUniqueId())) {
             result.add(plugin.getServer().getOfflinePlayer(member).getName());
         }
         return result;

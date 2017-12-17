@@ -5,9 +5,9 @@ import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
@@ -22,10 +22,10 @@ public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
+    public boolean execute(User user, String[] args) {
         // Check team perm and get variables set
         if (!checkTeamPerm()) return true;
-
+        UUID playerUUID = user.getUniqueId();
         if (DEBUG)
             plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
         // Fire event so add-ons can run commands, etc.
@@ -37,11 +37,11 @@ public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
                 .build();
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return true;
-        UUID teamLeaderUUID = getTeamLeader(player);
-        Set<UUID> teamMembers = getMembers(player);
+        UUID teamLeaderUUID = getTeamLeader(user);
+        Set<UUID> teamMembers = getMembers(user);
         if (teamLeaderUUID.equals(playerUUID)) {
             int maxSize = Settings.maxTeamSize;
-            for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+            for (PermissionAttachmentInfo perms : user.getEffectivePermissions()) {
                 if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
                     if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
                         maxSize = Settings.maxTeamSize;
@@ -51,7 +51,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
-                                plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                plugin.getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
                             } else {
                                 maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
                             }
@@ -63,27 +63,27 @@ public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
             }
             
             if (teamMembers.size() < maxSize) {
-                sender.sendMessage(getLocale(sender).get("invite.youCanInvite").replace("[number]", String.valueOf(maxSize - teamMembers.size())));
+                user.sendMessage("invite.youCanInvite", "[number]", String.valueOf(maxSize - teamMembers.size()));
             } else {
-                sender.sendMessage(ChatColor.RED + getLocale(sender).get("invite.error.YourIslandIsFull"));
+                user.sendMessage(ChatColor.RED + "invite.error.YourIslandIsFull");
             }
         }
-        sender.sendMessage(getLocale(sender).get("team.listingMembers"));
+        user.sendMessage("team.listingMembers");
         // Display members in the list
         for (UUID m : teamMembers) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: member " + m);
             if (teamLeaderUUID.equals(m)) {
-                sender.sendMessage(getLocale(sender).get("team.leader-color") + getPlayers().getName(m) + getLocale(sender).get("team.leader"));
+                user.sendMessage("team.leader", "[name]", getPlayers().getName(m));
             } else {
-                sender.sendMessage(getLocale(sender).get("team.color") + getPlayers().getName(m));
+                user.sendMessage("team.member", "[name]", getPlayers().getName(m));
             }
         }
         return true;
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
         return null;
     }
 }

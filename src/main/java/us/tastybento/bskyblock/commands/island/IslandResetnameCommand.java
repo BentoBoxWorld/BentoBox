@@ -7,10 +7,10 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
 /**
@@ -27,26 +27,26 @@ public class IslandResetnameCommand extends CommandArgument {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
-        if (!isPlayer(sender)) {
-            sender.sendMessage(getLocale(sender).get("general.errors.use-in-game"));
+    public boolean execute(User user, String[] args) {
+        if (!isPlayer(user)) {
+            user.sendMessage("general.errors.use-in-game");
             return true;
         }
-        Player player = (Player)sender;
+        Player player = (Player)user;
         UUID playerUUID = player.getUniqueId();
 
         if (!player.hasPermission(Settings.PERMPREFIX + "island.name")) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
+            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
             return true;
         }
 
         if (!getIslands().hasIsland(playerUUID)) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-island"));
+            user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return true;
         }
 
         if (!getIslands().isOwner(playerUUID)) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.not-leader"));
+            user.sendMessage(ChatColor.RED + "general.errors.not-leader");
             return true;
         }
         // Explain command
@@ -61,11 +61,11 @@ public class IslandResetnameCommand extends CommandArgument {
 
         // Check if the name isn't too short or too long
         if (name.length() < Settings.nameMinLength) {
-            sender.sendMessage(getLocale(sender).get("general.errors.too-short").replace("[length]", String.valueOf(Settings.nameMinLength)));
+            user.sendMessage("general.errors.too-short", "[length]",  String.valueOf(Settings.nameMinLength));
             return true;
         }
         if (name.length() > Settings.nameMaxLength) {
-            sender.sendMessage(getLocale(sender).get("general.errors.too-long").replace("[length]", String.valueOf(Settings.nameMaxLength)));
+            user.sendMessage("general.errors.too-long", "[length]", String.valueOf(Settings.nameMaxLength));
             return true;
         }
 
@@ -74,7 +74,7 @@ public class IslandResetnameCommand extends CommandArgument {
             getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
         else getIslands().getIsland(playerUUID).setName(name);
 
-        sender.sendMessage(getLocale(sender).get("general.success"));
+        user.sendMessage("general.success");
         return true;
     }
 
@@ -82,7 +82,7 @@ public class IslandResetnameCommand extends CommandArgument {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#tabComplete(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
         // TODO Auto-generated method stub
         return null;
     }

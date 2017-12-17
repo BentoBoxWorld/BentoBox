@@ -27,6 +27,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
@@ -277,15 +278,15 @@ public class Util {
 
     /**
      * Return a list of online players this player can see, i.e. are not invisible
-     * @param player - if null, all player names on the server are shown
+     * @param user - if null, all player names on the server are shown
      * @return
      */
-    public static List<String> getOnlinePlayerList(Player player) {
+    public static List<String> getOnlinePlayerList(User user) {
         final List<String> returned = new ArrayList<>();
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            if (player == null) {
+            if (user == null) {
                 returned.add(p.getName());
-            } else if (player.canSee(p)) {
+            } else if (user.getPlayer().canSee(p)) {
                 returned.add(p.getName());
             }
         }

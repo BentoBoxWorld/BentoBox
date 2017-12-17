@@ -31,8 +31,8 @@ public abstract class CommandArgument {
 
     public CommandArgument() {}
 
-    public abstract boolean execute(CommandSender sender, String[] args);
-    public abstract Set<String> tabComplete(CommandSender sender, String[] args);
+    public abstract boolean execute(User user, String[] args);
+    public abstract Set<String> tabComplete(User user, String[] args);
 
     public String getLabel() {
         return label;
@@ -73,11 +73,11 @@ public abstract class CommandArgument {
     // These methods below just neaten up the code in the commands so "plugin." isn't always used
     
     /**
-     * @param sender
+     * @param user
      * @return true if sender is a player
      */
-    protected boolean isPlayer(CommandSender sender) {
-        return (sender instanceof Player);
+    protected boolean isPlayer(User user) {
+        return (user.getPlayer() instanceof Player);
     }
     
     /**
@@ -89,19 +89,19 @@ public abstract class CommandArgument {
     }
     
     /**
-     * @param player
+     * @param user
      * @return UUID of player's team leader
      */
-    protected UUID getTeamLeader(Player player) {
-        return plugin.getIslands().getTeamLeader(player.getUniqueId());
+    protected UUID getTeamLeader(User user) {
+        return plugin.getIslands().getTeamLeader(user.getUniqueId());
     }
     
     /**
-     * @param player
+     * @param user
      * @return set of UUIDs of all team members
      */
-    protected Set<UUID> getMembers(Player player) {
-        return plugin.getIslands().getMembers(player.getUniqueId());
+    protected Set<UUID> getMembers(User user) {
+        return plugin.getIslands().getMembers(user.getUniqueId());
     }
     
     /**
