@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.api.events;
 
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
@@ -18,12 +19,30 @@ public class IslandBaseEvent extends Event implements Cancellable{
     private boolean cancelled;
 
     private final Island island;
+    private final UUID playerUUID;
+    private final boolean admin;
+    private final Location location;
 
+    public IslandBaseEvent(Island island) {
+        super();
+        this.island = island;
+        this.playerUUID = island == null ? null : island.getOwner();
+        this.admin = false;
+        this.location = island == null ? null : island.getCenter(); 
+    }
+    
     /**
      * @param island
+     * @param playerUUID
+     * @param admin
+     * @param location
      */
-    public IslandBaseEvent(Island island){
+    public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
+        super();
         this.island = island;
+        this.playerUUID = playerUUID;
+        this.admin = admin;
+        this.location = location;
     }
 
     /**
@@ -38,6 +57,27 @@ public class IslandBaseEvent extends Event implements Cancellable{
      */
     public UUID getOwner() {
         return this.getOwner();
+    }
+
+    /**
+     * @return the playerUUID
+     */
+    public UUID getPlayerUUID() {
+        return playerUUID;
+    }
+
+    /**
+     * @return the admin
+     */
+    public boolean isAdmin() {
+        return admin;
+    }
+
+    /**
+     * @return the location
+     */
+    public Location getLocation() {
+        return location;
     }
 
     @Override

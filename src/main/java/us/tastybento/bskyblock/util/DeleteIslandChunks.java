@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.util;
 import org.bukkit.World;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
@@ -27,7 +28,7 @@ public class DeleteIslandChunks {
     public DeleteIslandChunks(final BSkyBlock plugin, final Island island) {
         //plugin.getLogger().info("DEBUG: deleting the island");
         // Fire event
-        IslandEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
+        IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
         plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
@@ -51,7 +52,7 @@ public class DeleteIslandChunks {
             }
         }
         // Fire event
-        IslandEvent event1 = IslandEvent.builder().island(island).reason(Reason.DELETED).build();
+        IslandBaseEvent event1 = IslandEvent.builder().island(island).reason(Reason.DELETED).build();
         plugin.getServer().getPluginManager().callEvent(event1);
 
     }
