@@ -2,24 +2,25 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.Set;
 
-import org.bukkit.command.CommandSender;
+import us.tastybento.bskyblock.api.commands.User;
 
 public class IslandLeaveCommand extends AbstractIslandTeamCommandArgument {
 
-    public IslandLeaveCommand(String label, String[] aliases) {
-        super(label, aliases);
-        // TODO Auto-generated constructor stub
+    public IslandLeaveCommand() {
+        super("leave");
     }
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
+    public boolean execute(User user, String[] args) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
         // TODO Auto-generated method stub
         return null;
     }
+
+
 }

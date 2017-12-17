@@ -7,10 +7,10 @@ import java.util.Set;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -28,18 +28,18 @@ public class IslandGoCommand extends CommandArgument {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
-        if (!isPlayer(sender)) {
-            sender.sendMessage(getLocale(sender).get("general.errors.use-in-game"));
+    public boolean execute(User user, String[] args) {
+        if (!isPlayer(user)) {
+            user.sendMessage("general.errors.use-in-game");
             return true;
         }
-        Player player = (Player)sender;
+        Player player = (Player)user;
         if (!player.hasPermission(Settings.PERMPREFIX + "island.home")) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
+            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
             return true;
         }
         if (!getIslands().hasIsland(player.getUniqueId())) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-island"));
+            user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return true;
         }
         if (args.length == 1 && NumberUtils.isDigits(args[0])) {
@@ -60,7 +60,7 @@ public class IslandGoCommand extends CommandArgument {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#tabComplete(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
         // TODO Auto-generated method stub
         return null;
     }

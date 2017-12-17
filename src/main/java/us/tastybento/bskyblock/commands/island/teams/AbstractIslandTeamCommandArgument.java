@@ -7,13 +7,13 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
 public abstract class AbstractIslandTeamCommandArgument extends CommandArgument {
@@ -26,23 +26,19 @@ public abstract class AbstractIslandTeamCommandArgument extends CommandArgument 
     protected Set<UUID> kickingPlayers = new HashSet<>();
     
     // TODO: It would be good if these could be auto-provided
-    protected CommandSender sender;
-    protected Player player;
-    protected UUID playerUUID;
+    protected User user;
     
     public AbstractIslandTeamCommandArgument(String label, String... aliases) {
         super(label,aliases);
     }
 
     protected boolean checkTeamPerm() {
-        if (!isPlayer(sender)) {
-            sender.sendMessage(getLocale(sender).get("general.errors.use-in-game"));
+        if (!isPlayer(user)) {
+            user.sendMessage("general.errors.use-in-game");
             return false;
         }
-        player = (Player)sender;
-        playerUUID = player.getUniqueId();
-        if (!player.hasPermission(Settings.PERMPREFIX + "team")) {
-            sender.sendMessage(ChatColor.RED + getLocale(sender).get("general.errors.no-permission"));
+        if (!user.hasPermission(Settings.PERMPREFIX + "team")) {
+            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
             return false;
         }
         return true;

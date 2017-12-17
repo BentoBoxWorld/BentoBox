@@ -74,6 +74,7 @@ import org.bukkit.util.BlockIterator;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
@@ -381,7 +382,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire entry event
-            final IslandEvent event = IslandEvent.builder()
+            final IslandBaseEvent event = IslandEvent.builder()
                     .island(islandTo)
                     .reason(Reason.ENTER)
                     .involvedPlayer(e.getPlayer().getUniqueId())
@@ -401,7 +402,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire exit event
-            final IslandEvent event = IslandEvent.builder()
+            final IslandBaseEvent event = IslandEvent.builder()
                     .island(islandTo)
                     .reason(Reason.EXIT)
                     .involvedPlayer(e.getPlayer().getUniqueId())
@@ -430,7 +431,7 @@ public class IslandGuard implements Listener {
                 }
             }
             // Fire exit event
-            final IslandEvent event = IslandEvent.builder()
+            final IslandBaseEvent event = IslandEvent.builder()
                     .island(islandTo)
                     .reason(Reason.EXIT)
                     .involvedPlayer(e.getPlayer().getUniqueId())
@@ -438,7 +439,7 @@ public class IslandGuard implements Listener {
                     .build();
             plugin.getServer().getPluginManager().callEvent(event);
             // Fire entry event
-            final IslandEvent event2 = IslandEvent.builder()
+            final IslandBaseEvent event2 = IslandEvent.builder()
                     .island(islandTo)
                     .reason(Reason.ENTER)
                     .involvedPlayer(e.getPlayer().getUniqueId())

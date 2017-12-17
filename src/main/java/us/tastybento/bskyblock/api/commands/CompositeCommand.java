@@ -76,7 +76,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
                 if (subCommand != null) { // check if this subcommand exists
                     if (!subCommand.hasSubCommmands()) { // if it has not any subcommands
-                        subCommand.execute(sender, args); //TODO: "cut" the args to only send the needed ones
+                        subCommand.execute(User.getInstance(sender), args); //TODO: "cut" the args to only send the needed ones
                     }
                     // else continue the loop
                     // TODO: adapt this part to make it works with arguments that are not subcommands

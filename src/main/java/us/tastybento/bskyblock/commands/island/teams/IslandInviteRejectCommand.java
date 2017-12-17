@@ -1,11 +1,11 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.Set;
+import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.command.CommandSender;
 
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 
@@ -16,9 +16,10 @@ public class IslandInviteRejectCommand extends AbstractIslandTeamCommandArgument
     }
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
+    public boolean execute(User user, String[] args) {
         // Check team perm and get variables set
         if (!checkTeamPerm()) return true;
+        UUID playerUUID = user.getUniqueId();
         // Reject /island reject
         if (inviteList.containsKey(playerUUID)) {
             // Fire event so add-ons can run commands, etc.
@@ -32,24 +33,25 @@ public class IslandInviteRejectCommand extends AbstractIslandTeamCommandArgument
             if (event.isCancelled()) return true;
 
             // Remove this player from the global invite list
-            inviteList.remove(player.getUniqueId());
-            player.sendMessage(ChatColor.GREEN + getLocale(playerUUID).get("reject.youHaveRejectedInvitation"));
+            inviteList.remove(user.getUniqueId());
+            user.sendMessage(ChatColor.GREEN + "reject.youHaveRejectedInvitation");
             // If the leader is online tell them directly
             // about the rejection
-            if (Bukkit.getPlayer(inviteList.get(playerUUID)) != null) {
-                Bukkit.getPlayer(inviteList.get(playerUUID)).sendMessage(
-                        ChatColor.RED + getLocale(playerUUID).get("reject.nameHasRejectedInvite").replace("[name]", player.getName()));
+            User inviter = User.getInstance(inviteList.get(playerUUID));
+            if (inviter != null) {
+                inviter.sendMessage(
+                        ChatColor.RED + "reject.nameHasRejectedInvite", "[name]", user.getName());
             }
 
         } else {
             // Someone typed /island reject and had not been invited
-            player.sendMessage(ChatColor.RED + getLocale(playerUUID).get("reject.youHaveNotBeenInvited"));
+            user.sendMessage(ChatColor.RED + "reject.youHaveNotBeenInvited");
         }
         return true;
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
         return null;
     }
 }

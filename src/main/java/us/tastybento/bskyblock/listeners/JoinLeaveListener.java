@@ -10,6 +10,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -38,6 +39,7 @@ public class JoinLeaveListener implements Listener {
         if (playerUUID == null) {
             return;
         }
+        User.getInstance(player);
         if (plugin.getPlayers().isKnown(playerUUID)) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: known player");
@@ -87,5 +89,6 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
         players.removeOnlinePlayer(event.getPlayer().getUniqueId());
+        User.removePlayer(event.getPlayer());
     }
 }

@@ -2,11 +2,8 @@ package us.tastybento.bskyblock.commands.admin;
 
 import java.util.Set;
 
-import org.bukkit.Bukkit;
-import org.bukkit.command.CommandSender;
-
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.User;
 
 public class AdminVersionCommand extends CommandArgument {
 
@@ -15,14 +12,13 @@ public class AdminVersionCommand extends CommandArgument {
     }
 
     @Override
-    public boolean execute(CommandSender sender, String[] args) {
-        sender.sendMessage(Bukkit.getBukkitVersion());
-        sender.sendMessage("BSB " + BSkyBlock.getPlugin().getDescription().getVersion());
-        return true;
+    public boolean execute(User user, String[] args) {
+        return false;
     }
 
     @Override
-    public Set<String> tabComplete(CommandSender sender, String[] args) {
+    public Set<String> tabComplete(User user, String[] args) {
+        // TODO Auto-generated method stub
         return null;
     }
 }

@@ -13,7 +13,10 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
+import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
@@ -657,7 +660,7 @@ public class Island extends DataObject {
     public void setLocked(boolean locked){
         if(locked){
             // Lock the island
-            IslandEvent event = IslandEvent.builder().island(this).reason(Reason.LOCK).build();
+            IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.LOCK).build();
             Bukkit.getServer().getPluginManager().callEvent(event);
 
             if(!event.isCancelled()){
@@ -665,7 +668,7 @@ public class Island extends DataObject {
             }
         } else {
             // Unlock the island
-            IslandEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build(); 
+            IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build(); 
             Bukkit.getServer().getPluginManager().callEvent(event);
 
             if(!event.isCancelled()){

@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.config.Settings;
@@ -121,7 +122,7 @@ public class NewIsland {
         plugin.getPlayers().setHomeLocation(playerUUID, next, 1);
 
         // Fire event
-        IslandEvent event = IslandEvent.builder()
+        IslandBaseEvent event = IslandEvent.builder()
                 .involvedPlayer(player.getUniqueId())
                 .reason(reason)
                 .island(island)
