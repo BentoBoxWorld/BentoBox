@@ -1,9 +1,6 @@
 package us.tastybento.bskyblock;
 
-import java.util.UUID;
-
 import org.bukkit.Material;
-import org.bukkit.command.CommandSender;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -11,8 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.tastybento.bskyblock.api.BSModule;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
-import us.tastybento.bskyblock.config.BSBLocale;
-import us.tastybento.bskyblock.config.LocaleManager;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
@@ -21,11 +16,8 @@ import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.PanelListener;
-import us.tastybento.bskyblock.listeners.protection.IslandGuard;
-import us.tastybento.bskyblock.listeners.protection.IslandGuard1_8;
-import us.tastybento.bskyblock.listeners.protection.IslandGuard1_9;
-import us.tastybento.bskyblock.listeners.protection.NetherEvents;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 
@@ -47,8 +39,7 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
 
     // Managers
     private CommandsManager commandsManager;
-
-    protected LocaleManager localeManager;
+    private LocalesManager localesManager;
 
     @Override
     public void onEnable(){
@@ -102,7 +93,8 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
                             };
 
                             Settings.defaultLanguage = "en-US";
-                            localeManager = new LocaleManager(plugin);
+                            localesManager = new LocalesManager(plugin);
+                            localesManager.registerLocales(plugin);
 
                             // Register Listeners
                             registerListeners();
@@ -138,11 +130,7 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
         PluginManager manager = getServer().getPluginManager();
         // Player join events
         manager.registerEvents(new JoinLeaveListener(this), this);
-        manager.registerEvents(new NetherEvents(this), this);
         manager.registerEvents(new NetherPortals(this), this);
-        manager.registerEvents(new IslandGuard(this), this);
-        manager.registerEvents(new IslandGuard1_8(this), this);
-        manager.registerEvents(new IslandGuard1_9(this), this);
         manager.registerEvents(new PanelListener(this), this);
     }
 
@@ -209,22 +197,6 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
         return plugin;
     }
 
-    /**
-     * @param sender
-     * @return Locale object for sender
-     */
-    public BSBLocale getLocale(CommandSender sender) {
-        return localeManager.getLocale(sender);
-    }
-
-    /**
-     * @param uuid
-     * @return Locale object for UUID
-     */
-    public BSBLocale getLocale(UUID uuid) {
-        return localeManager.getLocale(uuid);
-    }
-
     public NMSAbstraction getNMSHandler() {
         NMSAbstraction nmsHandler = null;
         try {
@@ -237,6 +209,10 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
 
     public CommandsManager getCommandsManager() {
         return commandsManager;
+    }
+
+    public LocalesManager getLocalesManager() {
+        return localesManager;
     }
 
     @Override

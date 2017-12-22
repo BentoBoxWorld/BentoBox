@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.api.addons;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.BSModule;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.LocalesManager;
 
 public abstract class BSAddon implements BSModule {
 
@@ -25,6 +26,10 @@ public abstract class BSAddon implements BSModule {
 
     public CommandsManager getCommandsManager() {
         return BSkyBlock.getPlugin().getCommandsManager();
+    }
+
+    public LocalesManager getLocalesManager() {
+        return BSkyBlock.getPlugin().getLocalesManager();
     }
 
     @Override

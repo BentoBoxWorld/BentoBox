@@ -623,10 +623,11 @@ public class IslandsManager {
         //home.getChunk().load();
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
+        User user = User.getInstance(player);
         if (number == 1) {
-            player.sendMessage(plugin.getLocale(player.getUniqueId()).get("island.teleport").replace("[label]", Settings.ISLANDCOMMAND));
+            user.sendMessage("island.teleport", "[label]", Settings.ISLANDCOMMAND);
         } else {
-            player.sendMessage(plugin.getLocale(player.getUniqueId()).get("island.teleported").replace("[number]", String.valueOf(number)));
+            user.sendMessage("island.teleported", "[number]", String.valueOf(number));
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {

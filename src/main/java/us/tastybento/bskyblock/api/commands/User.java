@@ -153,7 +153,7 @@ public class User {
      * @param variables - CharSequence target, replacement pairs
      */
     public void sendMessage(String reference, String... variables) {
-        String message = ChatColor.getLastColors(reference) + plugin.getLocale(sender).get(ChatColor.stripColor(reference));
+        String message = plugin.getLocalesManager().get(sender, reference);
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i+=2) {
                 message.replace(variables[i], variables[i+1]);

@@ -33,30 +33,30 @@ public class IslandCreateCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String[] args) {
         if (getIslands().hasIsland(user.getUniqueId())) {
-            user.sendMessage(ChatColor.RED + "general.errors.already-have-island");
+            user.sendMessage("general.errors.already-have-island");
         }
         if (getPlayers().inTeam(user.getUniqueId())) {
             return false; 
         }
-        createIsland(user.getPlayer());
+        createIsland(user);
         return true;
     }
 
     /**
      * Creates an island for player
      *
-     * @param player
+     * @param user
      */
-    protected void createIsland(Player player) {
+    protected void createIsland(User user) {
         //TODO: Add panels, make a selection.
         try {
             NewIsland.builder()
-            .player(player)
+            .player(user.getPlayer())
             .reason(Reason.CREATE)
             .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");
-            player.sendMessage(ChatColor.RED + plugin.getLocale(player).get("general.errors.general"));
+            user.sendMessage("general.errors.general");
             e.printStackTrace();
         }
     }
