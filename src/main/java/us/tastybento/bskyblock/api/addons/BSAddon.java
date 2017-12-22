@@ -5,8 +5,11 @@ import us.tastybento.bskyblock.api.BSModule;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
+import java.io.File;
+
 public abstract class BSAddon implements BSModule {
 
+    private File folder;
     private AddonDescription description;
     private AddonState state;
 
@@ -40,5 +43,13 @@ public abstract class BSAddon implements BSModule {
     @Override
     public boolean isAddon() {
         return true;
+    }
+
+    @Override
+    public File getFolder() {
+        if (folder == null) {
+            folder = new File(BSkyBlock.getPlugin().getFolder() + "/addons/" + getIdentifier());
+        }
+        return folder;
     }
 }

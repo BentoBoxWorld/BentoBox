@@ -20,6 +20,8 @@ import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 
+import java.io.File;
+
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
  * @author Tastybento
@@ -221,5 +223,10 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
     @Override
     public boolean isAddon() {
         return false;
+    }
+
+    @Override
+    public File getFolder() {
+        return getDataFolder();
     }
 }
