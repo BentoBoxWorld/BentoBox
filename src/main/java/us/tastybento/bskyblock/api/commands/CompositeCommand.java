@@ -18,6 +18,11 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 
+/**
+ * BSB composite command
+ * @author ben, poslovich
+ *
+ */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, TabCompleter {
 
     private String helpReference;

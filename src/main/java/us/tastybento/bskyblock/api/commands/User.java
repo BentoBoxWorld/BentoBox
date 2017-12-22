@@ -16,6 +16,11 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
 
+/**
+ * BSB's user object. Wraps Player.
+ * @author ben
+ *
+ */
 public class User {
 
     private static Map<UUID, User> users = new HashMap<>();

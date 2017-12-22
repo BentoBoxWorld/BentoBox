@@ -8,7 +8,7 @@ import us.tastybento.bskyblock.config.Settings;
 public class AdminCommand extends CompositeCommand {
 
     public AdminCommand() {
-        super(Settings.ADMINCOMMAND, "Admin commands", "bsb");
+        super(Settings.ADMINCOMMAND, "bsb");
         this.setPermission(Settings.PERMPREFIX + "admin.*");
         this.setOnlyPlayer(false);
     }

@@ -21,7 +21,7 @@ import us.tastybento.bskyblock.config.Settings;
 public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
-        super(Settings.ISLANDCOMMAND, "Main player command", "is");
+        super(Settings.ISLANDCOMMAND, "is");
         this.setOnlyPlayer(true);
     }
 

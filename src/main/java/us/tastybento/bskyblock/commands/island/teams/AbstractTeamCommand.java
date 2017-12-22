@@ -15,6 +15,11 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
+/**
+ * A safe common space for team commands to share data
+ * @author ben
+ *
+ */
 public abstract class AbstractTeamCommand extends CompositeCommand {
     
     protected final static boolean DEBUG = false;
