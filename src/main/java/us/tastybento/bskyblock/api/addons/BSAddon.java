@@ -36,17 +36,17 @@ public abstract class BSAddon implements BSModule {
     }
 
     @Override
-    public String getIdentifier() {
+    public final String getIdentifier() {
         return getDescription().getName();
     }
 
     @Override
-    public boolean isAddon() {
+    public final boolean isAddon() {
         return true;
     }
 
     @Override
-    public File getFolder() {
+    public final File getFolder() {
         if (folder == null) {
             folder = new File(BSkyBlock.getPlugin().getFolder() + "/addons/" + getIdentifier());
         }

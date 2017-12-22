@@ -216,17 +216,17 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
     }
 
     @Override
-    public String getIdentifier() {
+    public final String getIdentifier() {
         return getDescription().getName();
     }
 
     @Override
-    public boolean isAddon() {
+    public final boolean isAddon() {
         return false;
     }
 
     @Override
-    public File getFolder() {
+    public final File getFolder() {
         return getDataFolder();
     }
 }
