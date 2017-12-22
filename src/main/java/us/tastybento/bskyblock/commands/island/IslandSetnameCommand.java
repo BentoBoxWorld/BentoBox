@@ -3,13 +3,12 @@
  */
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
@@ -17,10 +16,13 @@ import us.tastybento.bskyblock.config.Settings;
  * @author ben
  *
  */
-public class IslandSetnameCommand extends CommandArgument {
+public class IslandSetnameCommand extends CompositeCommand {
 
-    public IslandSetnameCommand() {
-        super("resetname");
+    public IslandSetnameCommand(CompositeCommand command) {
+        super(command, "resetname");
+        this.setPermission(Settings.PERMPREFIX + "island.name");
+        this.setOnlyPlayer(true);
+
     }
 
     /* (non-Javadoc)
@@ -28,17 +30,8 @@ public class IslandSetnameCommand extends CommandArgument {
      */
     @Override
     public boolean execute(User user, String[] args) {
-        if (!isPlayer(user)) {
-            user.sendMessage("general.errors.use-in-game");
-            return true;
-        }
-        Player player = (Player)user;
+        Player player = user.getPlayer();
         UUID playerUUID = player.getUniqueId();
-
-        if (!player.hasPermission(Settings.PERMPREFIX + "island.name")) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
-            return true;
-        }
 
         if (!getIslands().hasIsland(playerUUID)) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
@@ -56,13 +49,10 @@ public class IslandSetnameCommand extends CommandArgument {
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.api.commands.CommandArgument#tabComplete(org.bukkit.command.CommandSender, java.lang.String[])
-     */
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
+    public void setup() {
         // TODO Auto-generated method stub
-        return null;
+        
     }
 
 }

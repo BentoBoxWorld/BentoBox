@@ -1,13 +1,15 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.ChatColor;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
@@ -15,16 +17,16 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
-public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument {
+public class IslandTeamPromoteCommand extends AbstractTeamCommand {
 
-    public IslandTeamPromoteCommand() {
-        super("promote", "makeleader");
+    public IslandTeamPromoteCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "promote", "makeleader");
+        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setOnlyPlayer(true);
     }
 
     @Override
     public boolean execute(User user, String[] args) {
-        // Check team perm and get variables set
-        if (!checkTeamPerm()) return true;
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
         boolean inTeam = plugin.getPlayers().inTeam(playerUUID);
@@ -35,23 +37,23 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
         plugin.getLogger().info("DEBUG: arg[0] = " + args[0]);
         UUID targetUUID = getPlayers().getUUID(args[0]);
         if (targetUUID == null) {
-            user.sendMessage(ChatColor.RED + "general.errors.unknown-player");
+            user.sendMessage("general.errors.unknown-player");
             return true;
         }
         if (!getPlayers().inTeam(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "makeleader.errorYouMustBeInTeam");
+            user.sendMessage("makeleader.errorYouMustBeInTeam");
             return true;
         }
         if (!teamLeaderUUID.equals(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "makeleader.errorNotYourIsland");
+            user.sendMessage("makeleader.errorNotYourIsland");
             return true;
         }
         if (targetUUID.equals(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "makeleader.errorGeneralError");
+            user.sendMessage("makeleader.errorGeneralError");
             return true;
         }
         if (!plugin.getIslands().getMembers(playerUUID).contains(targetUUID)) {
-            user.sendMessage(ChatColor.RED + "makeleader.errorThatPlayerIsNotInTeam");
+            user.sendMessage("makeleader.errorThatPlayerIsNotInTeam");
             return true;
         }
         // Fire event so add-ons can run commands, etc.
@@ -66,8 +68,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
 
         // target is the new leader
         getIslands().getIsland(playerUUID).setOwner(targetUUID);
-        user.sendMessage(ChatColor.GREEN
-                + "makeleader.nameIsNowTheOwner", "[name]", getPlayers().getName(targetUUID));
+        user.sendMessage("makeleader.nameIsNowTheOwner", "[name]", getPlayers().getName(targetUUID));
 
         // Check if online
         User target = User.getInstance(targetUUID);
@@ -130,11 +131,18 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommandArgument 
     }
 
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
-        Set<String> result = new HashSet<>();
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        User user = User.getInstance(sender);
+        List<String> result = new ArrayList<>();
         for (UUID member : plugin.getIslands().getMembers(user.getUniqueId())) {
             result.add(plugin.getServer().getOfflinePlayer(member).getName());
         }
         return result;
+    }
+
+    @Override
+    public void setup() {
+        // TODO Auto-generated method stub
+        
     }
 }

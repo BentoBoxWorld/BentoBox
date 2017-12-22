@@ -127,7 +127,7 @@ public class User {
     }
 
     public boolean hasPermission(String string) {
-        return sender.hasPermission(string);
+        return string == null ? false : sender.hasPermission(string);
     }
 
     public boolean isOnline() {

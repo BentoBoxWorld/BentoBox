@@ -1,33 +1,27 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
 
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 
-public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument {
+public class IslandTeamUninviteCommand extends AbstractTeamCommand {
     
-    public IslandTeamUninviteCommand() {
-        super("uninvite");
+    public IslandTeamUninviteCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "uninvite");
+        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setOnlyPlayer(true);
     }
 
     @Override
     public boolean execute(User user, String[] args) {
-        if (!isPlayer(user)) {
-            user.sendMessage("general.errors.use-in-game");
-            return true;
-        }
         UUID playerUUID = user.getUniqueId();
-        if (!user.hasPermission(Settings.PERMPREFIX + "team")) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
-            return true;
-        }
         // Can only use if you have an invite out there
         if(!inviteList.inverse().containsKey(playerUUID)) {
             return true;
@@ -55,8 +49,9 @@ public class IslandTeamUninviteCommand extends AbstractIslandTeamCommandArgument
         return false;
     }
 
-    @Override
-    public Set<String> tabComplete(User user, String[] args) {
-        return null;
+   @Override
+    public void setup() {
+        // TODO Auto-generated method stub
+        
     }
 }

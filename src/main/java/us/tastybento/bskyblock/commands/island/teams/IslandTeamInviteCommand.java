@@ -1,14 +1,18 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
@@ -16,16 +20,16 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
-public class IslandTeamInviteCommand extends AbstractIslandTeamCommandArgument {
+public class IslandTeamInviteCommand extends AbstractTeamCommand {
 
-    public IslandTeamInviteCommand() {
-        super("invite");
+    public IslandTeamInviteCommand(CompositeCommand islandTeamCommand) {
+        super(islandTeamCommand, "invite");
+        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setOnlyPlayer(true);
     }
 
     @Override
     public boolean execute(User user, String[] args) {
-        // Check team perm and get variables set
-        if (!checkTeamPerm()) return true;
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
         if (!getPlayers().hasIsland(playerUUID)) {
@@ -131,11 +135,18 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommandArgument {
     }
 
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
+    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+        User user = User.getInstance(sender);
         if (args.length == 0 || !isPlayer(user)) {
             // Don't show every player on the server. Require at least the first letter
             return null;
         }
-        return new HashSet<>(Util.getOnlinePlayerList(user));
+        return new ArrayList<>(Util.getOnlinePlayerList(user));
+    }
+
+    @Override
+    public void setup() {
+        // TODO Auto-generated method stub
+        
     }
 }

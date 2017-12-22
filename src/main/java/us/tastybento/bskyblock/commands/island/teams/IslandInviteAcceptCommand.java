@@ -1,12 +1,11 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
@@ -14,33 +13,33 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
-public class IslandInviteAcceptCommand extends AbstractIslandTeamCommandArgument {
+public class IslandInviteAcceptCommand extends AbstractTeamCommand {
 
-    public IslandInviteAcceptCommand() {
-        super("accept");
+    public IslandInviteAcceptCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "accept");
+        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setOnlyPlayer(true);
     }
 
     @Override
     public boolean execute(User user, String[] args) {
-        // Check team perm and get variables set
-        if (!checkTeamPerm()) return true;
         UUID playerUUID = user.getUniqueId();
         if(!inviteList.containsKey(playerUUID))
                 return true;
         // Check if player has been invited
         if (!inviteList.containsKey(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "invite.error.NoOneInvitedYou");
+            user.sendMessage("invite.error.NoOneInvitedYou");
             return true;
         }
         // Check if player is already in a team
         if (getPlayers().inTeam(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "invite.error.YouAreAlreadyOnATeam");
+            user.sendMessage("invite.error.YouAreAlreadyOnATeam");
             return true;
         }
         // Get the team leader
         UUID prospectiveTeamLeaderUUID = inviteList.get(playerUUID);
         if (!getIslands().hasIsland(prospectiveTeamLeaderUUID)) {
-            user.sendMessage(ChatColor.RED + "invite.error.InvalidInvite");
+            user.sendMessage("invite.error.InvalidInvite");
             inviteList.remove(playerUUID);
             return true;
         }
@@ -87,10 +86,10 @@ public class IslandInviteAcceptCommand extends AbstractIslandTeamCommandArgument
         // Put player back into normal mode
         user.setGameMode(GameMode.SURVIVAL);
 
-        user.sendMessage(ChatColor.GREEN + "invite.youHaveJoinedAnIsland", "[label]", Settings.ISLANDCOMMAND);
+        user.sendMessage("invite.youHaveJoinedAnIsland", "[label]", Settings.ISLANDCOMMAND);
         User inviter = User.getInstance(inviteList.get(playerUUID));
         if (inviter != null) {
-            inviter.sendMessage(ChatColor.GREEN + "invite.hasJoinedYourIsland", "[name]", user.getName());
+            inviter.sendMessage("invite.hasJoinedYourIsland", "[name]", user.getName());
         }
         getIslands().save(false);
         if (DEBUG)
@@ -98,9 +97,9 @@ public class IslandInviteAcceptCommand extends AbstractIslandTeamCommandArgument
         return true;
     }
 
-
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
-        return null;
+    public void setup() {
+        // TODO Auto-generated method stub
+        
     }
 }

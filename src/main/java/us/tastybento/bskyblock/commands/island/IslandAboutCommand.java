@@ -1,15 +1,17 @@
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.Set;
-
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 
-public class IslandAboutCommand extends CommandArgument {
+public class IslandAboutCommand extends CompositeCommand {
 
-    public IslandAboutCommand() {
-        super("about", "ab");
+    /**
+     * About
+     * @param islandCommand
+     */
+    public IslandAboutCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "about", "ab");
     }
 
     @Override
@@ -47,7 +49,8 @@ public class IslandAboutCommand extends CommandArgument {
     }
 
     @Override
-    public Set<String> tabComplete(User sender, String[] args) {
-        return null;
+    public void setup() {
+        // TODO Auto-generated method stub
+        
     }
 }

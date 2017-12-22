@@ -7,25 +7,26 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 
-public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
+public class IslandTeamCommand extends AbstractTeamCommand {
 
     private static final boolean DEBUG = false;
 
-    public IslandTeamCommand() {
-        super("team");
-        this.addSubCommand(new IslandTeamInviteCommand());
+    public IslandTeamCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "team");
+        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setOnlyPlayer(true);
+
     }
 
     @Override
     public boolean execute(User user, String[] args) {
-        // Check team perm and get variables set
-        if (!checkTeamPerm()) return true;
         UUID playerUUID = user.getUniqueId();
         if (DEBUG)
             plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
@@ -84,7 +85,6 @@ public class IslandTeamCommand extends AbstractIslandTeamCommandArgument {
     }
 
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
-        return null;
+    public void setup() {        
     }
 }

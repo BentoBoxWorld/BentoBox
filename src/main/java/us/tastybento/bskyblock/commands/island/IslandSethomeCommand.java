@@ -1,45 +1,36 @@
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
-public class IslandSethomeCommand extends CommandArgument {
+public class IslandSethomeCommand extends CompositeCommand {
 
-    public IslandSethomeCommand() {
-        super("sethome");
+    public IslandSethomeCommand(CompositeCommand command) {
+        super(command, "sethome");
+        this.setPermission(Settings.PERMPREFIX + "island.sethome");
+        this.setOnlyPlayer(true);
     }
 
     @Override
     public boolean execute(User user, String[] args) {
-        if (!isPlayer(user)) {
-            user.sendMessage(ChatColor.RED + "general.errors.use-in-game");
-            return true;
-        }
         UUID playerUUID = user.getUniqueId();
-        if (!user.hasPermission(Settings.PERMPREFIX + "island.sethome")) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
-            return true;
-        }
         // Check island
         if (plugin.getIslands().getIsland(user.getUniqueId()) == null) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-island");
+            user.sendMessage("general.errors.no-island");
             return true;
         }
         if (!plugin.getIslands().playerIsOnIsland(user.getPlayer())) {
-            user.sendMessage(ChatColor.RED + "sethome.error.NotOnIsland");
+            user.sendMessage("sethome.error.NotOnIsland");
             return true; 
         }
         if (args.length == 0) {
             // island sethome
             plugin.getPlayers().setHomeLocation(playerUUID, user.getLocation());
-            user.sendMessage(ChatColor.GREEN + "sethome.homeSet");
+            user.sendMessage("sethome.homeSet");
         } else if (args.length == 1) {
             // Dynamic home sizes with permissions
             int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
@@ -52,21 +43,21 @@ public class IslandSethomeCommand extends CommandArgument {
                         user.sendMessage("sethome.error.NumHomes", "[max]", String.valueOf(maxHomes));
                     } else {
                         plugin.getPlayers().setHomeLocation(playerUUID, user.getLocation(), number);
-                        user.sendMessage(ChatColor.GREEN + "sethome.homeSet");
+                        user.sendMessage("sethome.homeSet");
                     }
                 } catch (Exception e) {
-                    user.sendMessage(ChatColor.RED + "sethome.error.NumHomes", "[max]", String.valueOf(maxHomes));
+                    user.sendMessage("sethome.error.NumHomes", "[max]", String.valueOf(maxHomes));
                 }
             } else {
-                user.sendMessage(ChatColor.RED + "general.errors.no-permission");
+                user.sendMessage("general.errors.no-permission");
             }
         }
         return true;
     }
 
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
+    public void setup() {
         // TODO Auto-generated method stub
-        return null;
+        
     }
 }

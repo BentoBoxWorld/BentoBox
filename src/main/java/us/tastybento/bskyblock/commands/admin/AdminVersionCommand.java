@@ -1,14 +1,12 @@
 package us.tastybento.bskyblock.commands.admin;
 
-import java.util.Set;
-
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 
-public class AdminVersionCommand extends CommandArgument {
+public class AdminVersionCommand extends CompositeCommand {
 
-    public AdminVersionCommand() {
-        super("version");
+    public AdminVersionCommand(CompositeCommand adminCommand) {
+        super(adminCommand, "version");
     }
 
     @Override
@@ -17,8 +15,8 @@ public class AdminVersionCommand extends CommandArgument {
     }
 
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
+    public void setup() {
         // TODO Auto-generated method stub
-        return null;
+        
     }
 }

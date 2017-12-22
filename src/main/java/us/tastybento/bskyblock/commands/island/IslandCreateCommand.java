@@ -4,14 +4,14 @@
 package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
-import java.util.Set;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
+import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 
@@ -19,10 +19,12 @@ import us.tastybento.bskyblock.database.managers.island.NewIsland;
  * @author ben
  *
  */
-public class IslandCreateCommand extends CommandArgument {
+public class IslandCreateCommand extends CompositeCommand {
 
-    public IslandCreateCommand() {
-        super("create", "auto");
+    public IslandCreateCommand(IslandCommand islandCommand) {
+        super(islandCommand, "create", "auto");
+        this.setPermission(Settings.PERMPREFIX + "island.create");
+        this.setOnlyPlayer(true);
     }
 
     /* (non-Javadoc)
@@ -30,34 +32,16 @@ public class IslandCreateCommand extends CommandArgument {
      */
     @Override
     public boolean execute(User user, String[] args) {
-        if (!isPlayer(user)) {
-            user.sendMessage("general.errors.use-in-game");
-            return true;
-        }
-        Player player = (Player)user;
-
-        if (!player.hasPermission(Settings.PERMPREFIX + "island.create")) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
-        }
-        if (getIslands().hasIsland(player.getUniqueId())) {
+        if (getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage(ChatColor.RED + "general.errors.already-have-island");
         }
-        if (inTeam(player)) {
+        if (getPlayers().inTeam(user.getUniqueId())) {
             return false; 
         }
-        createIsland(player);
+        createIsland(user.getPlayer());
         return true;
     }
 
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.api.commands.CommandArgument#tabComplete(org.bukkit.command.CommandSender, java.lang.String[])
-     */
-    @Override
-    public Set<String> tabComplete(User user, String[] args) {
-        // TODO Auto-generated method stub
-        return null;
-    }
-    
     /**
      * Creates an island for player
      *
@@ -75,6 +59,12 @@ public class IslandCreateCommand extends CommandArgument {
             player.sendMessage(ChatColor.RED + plugin.getLocale(player).get("general.errors.general"));
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public void setup() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

@@ -6,17 +6,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
-public abstract class AbstractIslandTeamCommandArgument extends CommandArgument {
+public abstract class AbstractTeamCommand extends CompositeCommand {
     
     protected final static boolean DEBUG = false;
     protected BiMap<UUID, UUID> inviteList = HashBiMap.create(); 
@@ -28,22 +27,10 @@ public abstract class AbstractIslandTeamCommandArgument extends CommandArgument 
     // TODO: It would be good if these could be auto-provided
     protected User user;
     
-    public AbstractIslandTeamCommandArgument(String label, String... aliases) {
-        super(label,aliases);
+    public AbstractTeamCommand(CompositeCommand command, String label, String... aliases) {
+        super(command, label,aliases);
     }
-
-    protected boolean checkTeamPerm() {
-        if (!isPlayer(user)) {
-            user.sendMessage("general.errors.use-in-game");
-            return false;
-        }
-        if (!user.hasPermission(Settings.PERMPREFIX + "team")) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
-            return false;
-        }
-        return true;
-    }
-    
+   
     /**
      * Sets a timeout for player into the Hashmap resetWaitTime
      *

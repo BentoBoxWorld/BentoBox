@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.commands;
 
-import org.bukkit.command.CommandSender;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
@@ -11,11 +9,13 @@ public class AdminCommand extends CompositeCommand {
 
     public AdminCommand() {
         super(Settings.ADMINCOMMAND, "Admin commands", "bsb");
+        this.setPermission(Settings.PERMPREFIX + "admin.*");
+        this.setOnlyPlayer(false);
     }
 
     @Override
     public void setup() {
-        this.addSubCommand(new AdminVersionCommand());
+        new AdminVersionCommand(this);
     }
 
     @Override

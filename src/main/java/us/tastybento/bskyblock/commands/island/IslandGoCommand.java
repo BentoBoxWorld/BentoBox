@@ -3,14 +3,12 @@
  */
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.Set;
-
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.api.commands.CommandArgument;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -18,10 +16,12 @@ import us.tastybento.bskyblock.util.Util;
  * @author ben
  *
  */
-public class IslandGoCommand extends CommandArgument {
+public class IslandGoCommand extends CompositeCommand {
 
-    public IslandGoCommand() {
-        super("go", "home", "h");
+    public IslandGoCommand(IslandCommand islandCommand) {
+        super(islandCommand, "go", "home", "h");
+        this.setPermission(Settings.PERMPREFIX + "island.home");
+        this.setOnlyPlayer(true);
     }
 
     /* (non-Javadoc)
@@ -29,40 +29,24 @@ public class IslandGoCommand extends CommandArgument {
      */
     @Override
     public boolean execute(User user, String[] args) {
-        if (!isPlayer(user)) {
-            user.sendMessage("general.errors.use-in-game");
-            return true;
-        }
-        Player player = (Player)user;
-        if (!player.hasPermission(Settings.PERMPREFIX + "island.home")) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-permission");
-            return true;
-        }
-        if (!getIslands().hasIsland(player.getUniqueId())) {
+        if (!getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return true;
         }
         if (args.length == 1 && NumberUtils.isDigits(args[0])) {
             int homeValue = Integer.valueOf(args[0]);
-            int maxHomes = Util.getPermValue(player, Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
+            int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
             if (homeValue > 1  && homeValue <= maxHomes) {
-                getIslands().homeTeleport(player, homeValue);
+                getIslands().homeTeleport(user.getPlayer(), homeValue);
                 return true;
             }
         }
-        getIslands().homeTeleport(player);
+        getIslands().homeTeleport(user.getPlayer());
         return true;
     }
 
-
-
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.api.commands.CommandArgument#tabComplete(org.bukkit.command.CommandSender, java.lang.String[])
-     */
     @Override
-    public Set<String> tabComplete(User user, String[] args) {
-        // TODO Auto-generated method stub
-        return null;
+    public void setup() {        
     }
 
 }
