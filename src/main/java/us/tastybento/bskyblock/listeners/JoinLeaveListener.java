@@ -39,7 +39,7 @@ public class JoinLeaveListener implements Listener {
         if (playerUUID == null) {
             return;
         }
-        User.getInstance(player);
+        User user = User.getInstance(player);
         if (plugin.getPlayers().isKnown(playerUUID)) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: known player");
@@ -76,7 +76,7 @@ public class JoinLeaveListener implements Listener {
                 if (!currentIsland.getMembers().contains(playerUUID) && !player.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: No bypass - teleporting");
-                    player.sendMessage(plugin.getLocale(player).get("locked.islandlocked"));
+                    user.sendMessage("locked.islandlocked");
                     plugin.getIslands().homeTeleport(player);
                 }
             }

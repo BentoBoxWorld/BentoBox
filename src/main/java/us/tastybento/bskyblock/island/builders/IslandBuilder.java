@@ -17,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.config.Settings.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -478,8 +479,9 @@ public class IslandBuilder {
         blockToChange.setType(Material.SIGN_POST);
         if (this.playerUUID != null) {
             Sign sign = (Sign) blockToChange.getState();
+            User user = User.getInstance(playerUUID);
             for (int i=0; i<4; i++) {
-                sign.setLine(i, BSkyBlock.getPlugin().getLocale(playerUUID).get("island.sign.line" + i).replace("[player]", playerName));
+                sign.setLine(i, user.getTranslation("island.sign.line" + i, "[player]", playerName));
             }         
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();

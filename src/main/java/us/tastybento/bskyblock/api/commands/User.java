@@ -147,18 +147,23 @@ public class User {
         return sender.isOp();
     }
 
+    public String getTranslation(String reference, String... variables) {
+        String translation = plugin.getLocalesManager().get(sender, reference);
+        if (variables.length > 1) {
+            for (int i = 0; i < variables.length; i+=2) {
+                translation.replace(variables[i], variables[i+1]);
+            }
+        }
+        return translation;
+    }
+    
     /**
      * Send a message to sender if message is not empty. Does not include color codes or spaces.
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      */
     public void sendMessage(String reference, String... variables) {
-        String message = plugin.getLocalesManager().get(sender, reference);
-        if (variables.length > 1) {
-            for (int i = 0; i < variables.length; i+=2) {
-                message.replace(variables[i], variables[i+1]);
-            }
-        }
+        String message = getTranslation(reference, variables);
         if (!ChatColor.stripColor(message).trim().isEmpty()) {
             if (sender != null) {
                 sender.sendMessage(message);

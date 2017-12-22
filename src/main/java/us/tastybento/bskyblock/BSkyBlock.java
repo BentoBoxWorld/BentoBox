@@ -14,7 +14,6 @@ import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
-import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.PanelListener;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
@@ -130,7 +129,6 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
         PluginManager manager = getServer().getPluginManager();
         // Player join events
         manager.registerEvents(new JoinLeaveListener(this), this);
-        manager.registerEvents(new NetherPortals(this), this);
         manager.registerEvents(new PanelListener(this), this);
     }
 
