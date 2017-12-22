@@ -17,7 +17,7 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
-public class IslandTeamPromoteCommand extends AbstractTeamCommand {
+public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
     public IslandTeamPromoteCommand(CompositeCommand islandCommand) {
         super(islandCommand, "promote", "makeleader");

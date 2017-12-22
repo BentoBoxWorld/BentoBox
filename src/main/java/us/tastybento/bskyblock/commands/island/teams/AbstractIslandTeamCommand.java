@@ -20,7 +20,7 @@ import us.tastybento.bskyblock.config.Settings;
  * @author ben
  *
  */
-public abstract class AbstractTeamCommand extends CompositeCommand {
+public abstract class AbstractIslandTeamCommand extends CompositeCommand {
     
     protected final static boolean DEBUG = false;
     protected BiMap<UUID, UUID> inviteList = HashBiMap.create(); 
@@ -32,7 +32,7 @@ public abstract class AbstractTeamCommand extends CompositeCommand {
     // TODO: It would be good if these could be auto-provided
     protected User user;
     
-    public AbstractTeamCommand(CompositeCommand command, String label, String... aliases) {
+    public AbstractIslandTeamCommand(CompositeCommand command, String label, String... aliases) {
         super(command, label,aliases);
     }
    

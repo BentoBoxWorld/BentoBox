@@ -13,7 +13,7 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
-public class IslandInviteAcceptCommand extends AbstractTeamCommand {
+public class IslandInviteAcceptCommand extends AbstractIslandTeamCommand {
 
     public IslandInviteAcceptCommand(CompositeCommand islandCommand) {
         super(islandCommand, "accept");

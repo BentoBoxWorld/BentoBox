@@ -14,7 +14,7 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 
-public class IslandTeamCommand extends AbstractTeamCommand {
+public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
     private static final boolean DEBUG = false;
 

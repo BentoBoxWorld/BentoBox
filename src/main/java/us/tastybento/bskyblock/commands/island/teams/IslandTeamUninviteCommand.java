@@ -9,7 +9,7 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 
-public class IslandTeamUninviteCommand extends AbstractTeamCommand {
+public class IslandTeamUninviteCommand extends AbstractIslandTeamCommand {
     
     public IslandTeamUninviteCommand(CompositeCommand islandCommand) {
         super(islandCommand, "uninvite");

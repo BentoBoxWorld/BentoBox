@@ -4,7 +4,7 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
-public class IslandLeaveCommand extends AbstractTeamCommand {
+public class IslandLeaveCommand extends AbstractIslandTeamCommand {
 
     public IslandLeaveCommand(CompositeCommand islandCommand) {
         super(islandCommand, "leave");
