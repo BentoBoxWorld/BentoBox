@@ -2,8 +2,6 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;

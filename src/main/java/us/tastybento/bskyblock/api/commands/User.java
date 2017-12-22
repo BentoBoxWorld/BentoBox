@@ -126,8 +126,12 @@ public class User {
         return playerUUID;
     }
 
-    public boolean hasPermission(String string) {
-        return string == null ? false : sender.hasPermission(string);
+    /**
+     * @param permission
+     * @return true if permission is empty or if the player has that permission
+     */
+    public boolean hasPermission(String permission) {
+        return permission.isEmpty() ? true : sender.hasPermission(permission);
     }
 
     public boolean isOnline() {
