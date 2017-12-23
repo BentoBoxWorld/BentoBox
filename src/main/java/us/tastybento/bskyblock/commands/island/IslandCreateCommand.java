@@ -5,9 +5,6 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
 
-import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
@@ -38,6 +35,7 @@ public class IslandCreateCommand extends CompositeCommand {
         if (getPlayers().inTeam(user.getUniqueId())) {
             return false; 
         }
+        user.sendLegacyMessage("Creating island...");
         createIsland(user);
         return true;
     }

@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock;
 
+import java.io.File;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -8,6 +10,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.tastybento.bskyblock.api.BSModule;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
+import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
@@ -19,8 +22,6 @@ import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.nms.NMSAbstraction;
-
-import java.io.File;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
@@ -47,7 +48,7 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
         plugin = this;
 
         // Load configuration and locales. If there are no errors, load the plugin.
-        //if(PluginConfig.loadPluginConfig(this)){
+        if(PluginConfig.loadPluginConfig(this)){
             
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
@@ -124,7 +125,7 @@ public class BSkyBlock extends JavaPlugin implements BSModule {
                     });
                 } 
             });
-        //}
+        }
     }
 
     private void registerListeners() {

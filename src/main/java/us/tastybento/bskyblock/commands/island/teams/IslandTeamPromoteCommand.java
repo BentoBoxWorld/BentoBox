@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -131,7 +130,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+    public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
         User user = User.getInstance(sender);
         List<String> result = new ArrayList<>();
         for (UUID member : plugin.getIslands().getMembers(user.getUniqueId())) {

@@ -180,7 +180,12 @@ public class User {
      * @param message - the message to send
      */
     public void sendLegacyMessage(String message) {
-        sender.sendMessage(message);
+        if (sender != null) {
+            sender.sendMessage(message);
+        } else {
+            // TODO: Offline message
+            // Save this message so the player can see it later
+        }
     }
 
     public void setGameMode(GameMode mode) {

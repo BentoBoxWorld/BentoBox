@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
@@ -135,7 +134,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
+    public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
         User user = User.getInstance(sender);
         if (args.length == 0 || !isPlayer(user)) {
             // Don't show every player on the server. Require at least the first letter

@@ -30,6 +30,7 @@ public class IslandCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
+        // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);
         new IslandGoCommand(this);
@@ -37,6 +38,7 @@ public class IslandCommand extends CompositeCommand {
         new IslandResetnameCommand(this);
         new IslandSethomeCommand(this);
         new IslandSetnameCommand(this);
+        // Team commands
         new IslandTeamCommand(this);
         new IslandTeamInviteCommand(this);
         new IslandInviteAcceptCommand(this);

@@ -22,6 +22,7 @@ public class TestTest {
 
     @Before
     public void setUp() {
+        /*
         World world = mock(World.class);
 
 
@@ -33,9 +34,10 @@ public class TestTest {
         Mockito.when(server.getVersion()).thenReturn("TestTestMocking");
         Mockito.when(server.getVersion()).thenReturn("TestTestMocking");
         Bukkit.setServer(server);
+        */
     }
 
-
+/*
     @Test
     public void createAndSave() {
 
@@ -47,6 +49,5 @@ public class TestTest {
                 .build();
         assertEquals(playerUUID, event.getPlayerUUID());
 
-    }
-
+    }*/
 }

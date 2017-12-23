@@ -8,29 +8,29 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * BSB composite command
  * @author ben, poslovich
  *
  */
-public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, TabCompleter {
+public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand {
 
-    private String helpReference;
-
+    private static final boolean DEBUG = true;
     private boolean onlyPlayer = false;
     private final CompositeCommand parent;
     private String permission = "";
-    protected BSkyBlock plugin = BSkyBlock.getPlugin();
+    public BSkyBlock plugin = BSkyBlock.getPlugin();
 
     private Map<String, CompositeCommand> subCommands;
 
@@ -46,10 +46,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Add this sub-command to the parent
         parent.getSubCommands().put(label, this);
         this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
-
         this.subCommands = new LinkedHashMap<>();
 
         this.setup();
+        if (DEBUG)
+            Bukkit.getLogger().info("DEBUG: registering command " + label);
     }
 
 
@@ -74,42 +75,70 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
+        if (DEBUG)
+            Bukkit.getLogger().info("DEBUG: executing command " + label);
         // Get the User instance for this sender
         User user = User.getInstance(sender);
         // Check permissions
         if (user.hasPermission(permission)) {
+            if (DEBUG)
+                Bukkit.getLogger().info("DEBUG: sender has permission");
             // Do the player part
             if (onlyPlayer && user.isPlayer()) {
+                if (DEBUG)
+                    Bukkit.getLogger().info("DEBUG: sender is a player and command requires players");
                 // Find the subCommand
                 CompositeCommand subCommand = this;
                 // Run through any arguments
-                for (int i = 0; i < args.length; i++) {
-                    // get the subcommand corresponding to the arg
-                    if (subCommand.hasSubCommmands()) {
-                        if (subCommand.hasSubCommand(args[i])) {
-                            // Step down one
-                            subCommand = subCommand.getSubCommand(args[i]);
-                        } else {
-                            // Unknown command
-                            user.sendMessage("general.errors.unknown-command");
-                            return true;
-                        }
-                    } else {
-                        // We are at the end of the walk
-                        // Check permission
-                        if (user.hasPermission(subCommand.getPermission())) {
-                            if (onlyPlayer && user.isPlayer()) {
-                                // Execute the subcommand with trimmed args
-                                subCommand.execute(user, Arrays.copyOfRange(args, i, args.length));
+                if (DEBUG)
+                    Bukkit.getLogger().info("DEBUG: Running through args: " + args.toString());
+                if (args.length > 0) {
+                    for (int i = 0; i <= args.length; i++) {
+                        if (DEBUG)
+                            Bukkit.getLogger().info("DEBUG: Argument " + i);
+                        // get the subcommand corresponding to the arg
+                        if (subCommand.hasSubCommmands()) {
+                            if (DEBUG)
+                                Bukkit.getLogger().info("DEBUG: This command has subcommands");
+                            if (subCommand.hasSubCommand(args[i])) {
+                                // Step down one
+                                subCommand = subCommand.getSubCommand(args[i]);
+                                if (DEBUG)
+                                    Bukkit.getLogger().info("DEBUG: Moved to " + subCommand.getLabel());
                             } else {
-                                user.sendMessage("general.errors.use-in-game");
+                                if (DEBUG)
+                                    Bukkit.getLogger().info("DEBUG: Unknown command");
+                                // Unknown command
+                                user.sendMessage("general.errors.unknown-command");
+                                return true;
                             }
                         } else {
-                            user.sendMessage("general.errors.no-permission");
+                            // We are at the end of the walk
+                            if (DEBUG)
+                                Bukkit.getLogger().info("DEBUG: End of traversal, checking perms");
+                            // Check permission
+                            if (user.hasPermission(subCommand.getPermission())) {
+                                if (DEBUG)
+                                    Bukkit.getLogger().info("DEBUG: player has perm");
+                                if (onlyPlayer && user.isPlayer()) {
+                                    if (DEBUG)
+                                        Bukkit.getLogger().info("DEBUG: subcommand is for player's only - executing with args " + Arrays.copyOfRange(args, i, args.length));
+                                    // Execute the subcommand with trimmed args
+                                    subCommand.execute(user, Arrays.copyOfRange(args, i, args.length));
+                                } else {
+                                    user.sendMessage("general.errors.use-in-game");
+                                }
+                            } else {
+                                user.sendMessage("general.errors.no-permission");
+                            }
                         }
+                        // else continue the loop
                     }
-                    // else continue the loop
-                 }
+                } else {
+                    if (DEBUG)
+                        Bukkit.getLogger().info("DEBUG: no args, just execute");
+                    execute(user, args);
+                }
             } else {
                 user.sendMessage("general.errors.use-in-game");
             }
@@ -119,7 +148,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
         return true;
     }
-    
+
     /**
      * What will be executed when this command is run
      * @param user
@@ -191,9 +220,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private List<String> getSubCommandHelp(String helpRef) {
         CompositeCommand subCommand = this;
         List<String> result = new ArrayList<>();
-        result.add(helpRef + " " + helpReference);
+        result.add(helpRef + " " + getDescription());
         while (subCommand.hasSubCommmands()) {
-            result.addAll(subCommand.getSubCommandList(helpReference));
+            result.addAll(subCommand.getSubCommandList(getDescription()));
         }
         return result;
     }
@@ -204,7 +233,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public List<String> getSubCommandList() {
         return getSubCommandList("");
     }
-    
+
     private List<String> getSubCommandList(String label) {
         CompositeCommand subCommand = this;
         List<String> result = new ArrayList<>();
@@ -253,11 +282,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     protected boolean inTeam(Player player) {
         return plugin.getPlayers().inTeam(player.getUniqueId());
     }
-    
+
     public boolean isOnlyPlayer() {
         return onlyPlayer;
     }
-    
+
     /**
      * @param user
      * @return true if sender is a player
@@ -265,29 +294,25 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     protected boolean isPlayer(User user) {
         return (user.getPlayer() instanceof Player);
     }
+
     
     @Override
-    public List<String> onTabComplete(final CommandSender sender, final Command command, final String label, final String[] args) {
-        return new ArrayList<>(subCommands.keySet());
+    public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
+        plugin.getLogger().info("DEBUG: tab complete " + subCommands.keySet().toString());
+        final List<String> options = new ArrayList<>(subCommands.keySet());
+        String lastArg = (args.length != 0 ? args[args.length - 1] : "");
+        return Util.tabLimit(options, lastArg);
     }
-    
-    /**
-     * Set the locale string that gives help for this command
-     * @param helpReference
-     */
-    public void setHelp(String helpReference) {
-        this.helpReference = helpReference;
-    }
-    
+
     public void setOnlyPlayer(boolean onlyPlayer) {
         this.onlyPlayer = onlyPlayer;
     }
-    
+
     @Override
     public void setPermission(String permission) {
         this.permission = permission;
     }
-    
+
     /**
      * Anything that needs to be set up for this command.
      * This is where you register subcommands.
