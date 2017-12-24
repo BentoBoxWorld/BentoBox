@@ -1,16 +1,17 @@
 package us.tastybento.bskyblock.managers;
 
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.BSModule;
-import us.tastybento.bskyblock.api.localization.BSLocale;
-import us.tastybento.bskyblock.config.Settings;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
+
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.BSModule;
+import us.tastybento.bskyblock.api.localization.BSLocale;
+import us.tastybento.bskyblock.config.Settings;
 
 /**
  * @author Poslovitch

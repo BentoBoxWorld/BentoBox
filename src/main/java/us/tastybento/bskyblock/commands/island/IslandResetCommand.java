@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
+import java.util.List;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -24,7 +25,7 @@ public class IslandResetCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         if (!getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return true;
@@ -63,9 +64,4 @@ public class IslandResetCommand extends CompositeCommand {
         return true;
     }
 
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
 }

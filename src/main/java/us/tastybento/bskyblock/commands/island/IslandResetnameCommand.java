@@ -3,7 +3,9 @@
  */
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -30,7 +32,7 @@ public class IslandResetnameCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         Player player = user.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
@@ -44,14 +46,13 @@ public class IslandResetnameCommand extends CompositeCommand {
             return true;
         }
         // Explain command
-        if (args.length == 1) {
-            //TODO Util.sendMessage(player, getHelpMessage(player, label, args[0], usage(sender, label)));
+        if (args.isEmpty()) {
+            user.sendMessage(getUsage());
             return true;
         }
 
-        // Naming the island
-        String name = args[1];
-        for (int i = 2; i < args.length; i++) name += " " + args[i];
+        // Naming the island - join all the arguments with spaces.
+        String name = args.stream().collect(Collectors.joining( " " ));
 
         // Check if the name isn't too short or too long
         if (name.length() < Settings.nameMinLength) {
@@ -70,12 +71,6 @@ public class IslandResetnameCommand extends CompositeCommand {
 
         user.sendMessage("general.success");
         return true;
-    }
-
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
     }
 
 }

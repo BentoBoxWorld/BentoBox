@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.commands;
 
+import java.util.List;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
@@ -22,7 +24,6 @@ public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
         super(Settings.ISLANDCOMMAND, "is");
-        this.setOnlyPlayer(true);
     }
 
     /* (non-Javadoc)
@@ -30,6 +31,8 @@ public class IslandCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
+        // Permission
+        this.setPermission(Settings.PERMPREFIX + "island");
         // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);
@@ -50,9 +53,13 @@ public class IslandCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         user.sendLegacyMessage("You successfully did /is !");
-        return true;
+        if (!plugin.getIslands().hasIsland(user.getUniqueId())) {
+            return this.getSubCommand("create").execute(user, args);
+        }
+        // Currently, just go home
+        return this.getSubCommand("go").execute(user, args);
     }
 
 }

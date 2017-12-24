@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.List;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -16,7 +17,7 @@ public class IslandSethomeCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Check island
         if (plugin.getIslands().getIsland(user.getUniqueId()) == null) {
@@ -27,18 +28,18 @@ public class IslandSethomeCommand extends CompositeCommand {
             user.sendMessage("sethome.error.NotOnIsland");
             return true; 
         }
-        if (args.length == 0) {
+        if (args.isEmpty()) {
             // island sethome
             plugin.getPlayers().setHomeLocation(playerUUID, user.getLocation());
             user.sendMessage("sethome.homeSet");
-        } else if (args.length == 1) {
+        } else {
             // Dynamic home sizes with permissions
             int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
             if (maxHomes > 1) {
                 // Check the number given is a number
                 int number = 0;
                 try {
-                    number = Integer.valueOf(args[0]);
+                    number = Integer.valueOf(args.get(0));
                     if (number < 1 || number > maxHomes) {
                         user.sendMessage("sethome.error.NumHomes", "[max]", String.valueOf(maxHomes));
                     } else {
@@ -55,9 +56,4 @@ public class IslandSethomeCommand extends CompositeCommand {
         return true;
     }
 
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
 }

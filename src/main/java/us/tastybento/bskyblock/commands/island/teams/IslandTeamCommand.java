@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -26,7 +27,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         if (DEBUG)
             plugin.getLogger().info("DEBUG: executing team command for " + playerUUID);
@@ -84,7 +85,4 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
         return true;
     }
 
-    @Override
-    public void setup() {        
-    }
 }

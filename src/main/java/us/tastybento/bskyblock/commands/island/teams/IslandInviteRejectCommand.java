@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
+import java.util.List;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.api.commands.User;
@@ -11,7 +12,6 @@ import us.tastybento.bskyblock.config.Settings;
 
 public class IslandInviteRejectCommand extends AbstractIslandTeamCommand {
 
-
     public IslandInviteRejectCommand(IslandCommand islandCommand) {
         super(islandCommand, "reject");
         this.setPermission(Settings.PERMPREFIX + "island.team");
@@ -19,7 +19,7 @@ public class IslandInviteRejectCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Reject /island reject
         if (inviteList.containsKey(playerUUID)) {
@@ -50,9 +50,4 @@ public class IslandInviteRejectCommand extends AbstractIslandTeamCommand {
         return true;
     }
 
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
 }

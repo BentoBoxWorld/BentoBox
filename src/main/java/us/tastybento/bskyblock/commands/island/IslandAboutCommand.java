@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.List;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
@@ -15,7 +17,7 @@ public class IslandAboutCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         user.sendLegacyMessage("About " + BSkyBlock.getPlugin().getDescription().getName() + " v" + BSkyBlock.getPlugin().getDescription().getVersion() + ":");
         user.sendLegacyMessage("Copyright (c) 2017 - 2018 tastybento, Poslovitch");
         user.sendLegacyMessage("All rights reserved.");
@@ -48,9 +50,4 @@ public class IslandAboutCommand extends CompositeCommand {
         return false;
     }
 
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
 }

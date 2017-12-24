@@ -1,14 +1,14 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.command.CommandSender;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -28,53 +28,52 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
         if (!getPlayers().hasIsland(playerUUID)) {
             // If the player is in a team, they are not the leader
             if (getPlayers().inTeam(playerUUID)) {
-                user.sendMessage(ChatColor.RED + "general.errors.not-leader");
+                user.sendMessage("general.errors.not-leader");
             }
-            user.sendMessage(ChatColor.RED + "invite.error.YouMustHaveIslandToInvite");
+            user.sendMessage("invite.error.YouMustHaveIslandToInvite");
         }
-        if (args.length == 0 || args.length > 1) {
+        if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
                 OfflinePlayer inviter = plugin.getServer().getOfflinePlayer(inviteList.get(playerUUID));
-                user.sendMessage(ChatColor.GOLD + "invite.nameHasInvitedYou", "[name]", inviter.getName());
+                user.sendMessage("invite.nameHasInvitedYou", "[name]", inviter.getName());
             } else {
-                user.sendMessage(ChatColor.GOLD + "help.island.invite");
+                user.sendMessage("help.island.invite");
             }
             return true;
-        }
-        if (args.length == 1) {
+        } else  {
             // Only online players can be invited
-            UUID invitedPlayerUUID = getPlayers().getUUID(args[0]);
+            UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
             if (invitedPlayerUUID == null) {
-                user.sendMessage(ChatColor.RED + "general.errors.offline-player");
+                user.sendMessage("general.errors.offline-player");
                 return true;
             }
             User invitedPlayer = User.getInstance(invitedPlayerUUID);
             if (!invitedPlayer.isOnline()) {
-                user.sendMessage(ChatColor.RED + "general.errors.offline-player");
+                user.sendMessage("general.errors.offline-player");
                 return true;
             }
             // Player cannot invite themselves
             if (playerUUID.equals(invitedPlayerUUID)) {
-                user.sendMessage(ChatColor.RED + "invite.error.YouCannotInviteYourself");
+                user.sendMessage("invite.error.YouCannotInviteYourself");
                 return true;
             }
             // Check if this player can be invited to this island, or
             // whether they are still on cooldown
             long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(playerUUID));
             if (time > 0 && !user.isOp()) {
-                user.sendMessage(ChatColor.RED + "invite.error.CoolDown", "[time]", String.valueOf(time));
+                user.sendMessage("invite.error.CoolDown", "[time]", String.valueOf(time));
                 return true;
             }
             // Player cannot invite someone already on a team
             if (getPlayers().inTeam(invitedPlayerUUID)) {
-                user.sendMessage(ChatColor.RED + "invite.error.ThatPlayerIsAlreadyInATeam");
+                user.sendMessage("invite.error.ThatPlayerIsAlreadyInATeam");
                 return true;
             }
             Set<UUID> teamMembers = getMembers(user);
@@ -106,7 +105,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 // Players can only have one invite one at a time - interesting
                 if (inviteList.containsValue(playerUUID)) {
                     inviteList.inverse().remove(playerUUID);
-                    user.sendMessage(ChatColor.RED + "invite.removingInvite");
+                    user.sendMessage("invite.removingInvite");
                 }
                 // Fire event so add-ons can run commands, etc.
                 IslandBaseEvent event = TeamEvent.builder()
@@ -119,7 +118,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
                 inviteList.put(invitedPlayerUUID, playerUUID);
-                user.sendMessage("invite.inviteSentTo", "[name]", args[0]);
+                user.sendMessage("invite.inviteSentTo", "[name]", args.get(0));
                 // Send message to online player
                 invitedPlayer.sendMessage("invite.nameHasInvitedYou", "[name]", user.getName());
                 invitedPlayer.sendMessage("invite.toAcceptOrReject", "[label]", getLabel());
@@ -134,18 +133,15 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
-        User user = User.getInstance(sender);
-        if (args.length == 0 || !isPlayer(user)) {
+    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
+        List<String> options = new ArrayList<>();
+        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
-            return null;
+            return Optional.empty();
         }
-        return new ArrayList<>(Util.getOnlinePlayerList(user));
+        options.addAll(Util.getOnlinePlayerList(user));
+        return Optional.of(Util.tabLimit(options, lastArg));
     }
 
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
 }

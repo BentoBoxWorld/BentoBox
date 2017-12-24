@@ -3,10 +3,10 @@
  */
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
@@ -29,9 +29,8 @@ public class IslandSetnameCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, String[] args) {
-        Player player = user.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+    public boolean execute(User user, List<String> args) {
+        UUID playerUUID = user.getUniqueId();
 
         if (!getIslands().hasIsland(playerUUID)) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
@@ -47,12 +46,6 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         user.sendMessage("general.success");
         return true;
-    }
-
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
     }
 
 }

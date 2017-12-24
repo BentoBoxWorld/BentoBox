@@ -97,10 +97,11 @@ public class NewIsland {
             plugin.getLogger().info("DEBUG: new island");
         //long time = System.nanoTime();
         final UUID playerUUID = player.getUniqueId();
+        /*
         boolean firstTime = false;
         if (!plugin.getPlayers().hasIsland(playerUUID)) {
             firstTime = true;
-        }
+        }*/
         if (DEBUG)
             plugin.getLogger().info("DEBUG: finding island location");
         Location next = getNextIsland(player.getUniqueId());
@@ -149,8 +150,10 @@ public class NewIsland {
                 .setChestItems(Settings.chestItems)
                 .setType(IslandType.END)
                 .build();
-            }
+            }            
         }
+        // Teleport player to their island
+        plugin.getIslands().homeTeleport(player);
         // Fire exit event
         Reason reasonDone = Reason.CREATED;
         switch (reason) {

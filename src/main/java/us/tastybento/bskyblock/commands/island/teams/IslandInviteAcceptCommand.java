@@ -1,7 +1,9 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
+import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
@@ -22,7 +24,10 @@ public class IslandInviteAcceptCommand extends AbstractIslandTeamCommand {
     }
 
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
+        
+        Bukkit.getLogger().info("DEBUG: accept - " + inviteList.toString());
+        
         UUID playerUUID = user.getUniqueId();
         if(!inviteList.containsKey(playerUUID))
                 return true;
@@ -97,9 +102,4 @@ public class IslandInviteAcceptCommand extends AbstractIslandTeamCommand {
         return true;
     }
 
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
 }

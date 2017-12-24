@@ -1,21 +1,8 @@
 package bskyblock;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.mock;
-
 import java.util.UUID;
-import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.World;
 import org.junit.Before;
-import org.junit.Test;
-import org.mockito.Mockito;
-
-import us.tastybento.bskyblock.api.events.IslandBaseEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 
 public class TestTest {
     private final UUID playerUUID = UUID.randomUUID();

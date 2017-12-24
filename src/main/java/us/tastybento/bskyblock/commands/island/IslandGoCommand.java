@@ -3,6 +3,8 @@
  */
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.List;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 
@@ -28,13 +30,13 @@ public class IslandGoCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         if (!getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return true;
         }
-        if (args.length == 1 && NumberUtils.isDigits(args[0])) {
-            int homeValue = Integer.valueOf(args[0]);
+        if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
+            int homeValue = Integer.valueOf(args.get(0));
             int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
             if (homeValue > 1  && homeValue <= maxHomes) {
                 getIslands().homeTeleport(user.getPlayer(), homeValue);
@@ -43,10 +45,6 @@ public class IslandGoCommand extends CompositeCommand {
         }
         getIslands().homeTeleport(user.getPlayer());
         return true;
-    }
-
-    @Override
-    public void setup() {        
     }
 
 }

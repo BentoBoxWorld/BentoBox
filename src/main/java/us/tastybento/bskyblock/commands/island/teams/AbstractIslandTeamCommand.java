@@ -23,11 +23,11 @@ import us.tastybento.bskyblock.config.Settings;
 public abstract class AbstractIslandTeamCommand extends CompositeCommand {
     
     protected final static boolean DEBUG = false;
-    protected BiMap<UUID, UUID> inviteList = HashBiMap.create(); 
+    protected static BiMap<UUID, UUID> inviteList = HashBiMap.create(); 
     // The time a player has to wait until they can reset their island again
-    protected HashMap<UUID, Long> resetWaitTime = new HashMap<>();
-    protected Set<UUID> leavingPlayers = new HashSet<>();
-    protected Set<UUID> kickingPlayers = new HashSet<>();
+    protected static HashMap<UUID, Long> resetWaitTime = new HashMap<>();
+    protected static Set<UUID> leavingPlayers = new HashSet<>();
+    protected static Set<UUID> kickingPlayers = new HashSet<>();
     
     // TODO: It would be good if these could be auto-provided
     protected User user;

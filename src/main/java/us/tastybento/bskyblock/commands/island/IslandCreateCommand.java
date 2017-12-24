@@ -4,6 +4,7 @@
 package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
+import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
@@ -28,7 +29,7 @@ public class IslandCreateCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, String[] args) {
+    public boolean execute(User user, List<String> args) {
         if (getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
         }
@@ -58,11 +59,4 @@ public class IslandCreateCommand extends CompositeCommand {
             e.printStackTrace();
         }
     }
-
-    @Override
-    public void setup() {
-        // TODO Auto-generated method stub
-        
-    }
-
 }
