@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.api;
 
 import java.io.File;
 
-public interface BSModule {
+public interface BSBModule {
 
     String getIdentifier();
     boolean isAddon();

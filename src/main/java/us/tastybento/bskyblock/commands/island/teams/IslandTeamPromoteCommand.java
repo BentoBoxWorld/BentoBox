@@ -1,8 +1,6 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Optional;
 
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
@@ -19,11 +17,6 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         return true;
-    }
-
-    @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
-        return null;
     }
 
 }

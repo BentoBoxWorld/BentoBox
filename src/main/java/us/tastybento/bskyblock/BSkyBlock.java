@@ -7,7 +7,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.tastybento.bskyblock.api.BSModule;
+import us.tastybento.bskyblock.api.BSBModule;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.PluginConfig;
@@ -28,7 +28,7 @@ import us.tastybento.bskyblock.util.nms.NMSAbstraction;
  * @author Tastybento
  * @author Poslovitch
  */
-public class BSkyBlock extends JavaPlugin implements BSModule {
+public class BSkyBlock extends JavaPlugin implements BSBModule {
 
     private static BSkyBlock plugin;
 

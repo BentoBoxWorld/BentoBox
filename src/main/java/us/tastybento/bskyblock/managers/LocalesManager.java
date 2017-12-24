@@ -9,8 +9,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.BSModule;
-import us.tastybento.bskyblock.api.localization.BSLocale;
+import us.tastybento.bskyblock.api.BSBModule;
+import us.tastybento.bskyblock.api.localization.BSBLocale;
 import us.tastybento.bskyblock.config.Settings;
 
 /**
@@ -19,7 +19,7 @@ import us.tastybento.bskyblock.config.Settings;
 public final class LocalesManager {
 
     private BSkyBlock plugin;
-    private Map<BSModule, List<BSLocale>> locales;
+    private Map<BSBModule, List<BSBLocale>> locales;
 
     public LocalesManager(BSkyBlock plugin) {
         this.plugin = plugin;
@@ -39,10 +39,10 @@ public final class LocalesManager {
 
         if (reference.contains(":")) { // if reference addresses directly the module like "bskyblock:general.errors.use-in-game"
             String[] path = reference.split(":", 1);
-            for (BSModule module : locales.keySet()) {
+            for (BSBModule module : locales.keySet()) {
                 if (module.getIdentifier().toLowerCase().equals(path[0].toLowerCase())) {
                     // CommandSender doesnt have any data stored, so we have to get the default language
-                    BSLocale locale = getLocale(module, Settings.defaultLanguage);
+                    BSBLocale locale = getLocale(module, Settings.defaultLanguage);
                     String translation = path[1];
 
                     if (locale != null) translation = locale.get(path[1]);
@@ -58,9 +58,9 @@ public final class LocalesManager {
             }
         } else {
             // Run through each module's locales to try find the reference
-            for (BSModule module : locales.keySet()) {
+            for (BSBModule module : locales.keySet()) {
                 // CommandSender doesnt have any data stored, so we have to get the default language
-                BSLocale locale = getLocale(module, Settings.defaultLanguage);
+                BSBLocale locale = getLocale(module, Settings.defaultLanguage);
                 String translation = reference;
 
                 if (locale != null) translation = locale.get(reference);
@@ -87,10 +87,10 @@ public final class LocalesManager {
     public String get(UUID uuid, String reference) {
         if (reference.contains(":")) { // if reference addresses directly the module like "bskyblock:general.errors.use-in-game"
             String[] path = reference.split(":", 1);
-            for (BSModule module : locales.keySet()) {
+            for (BSBModule module : locales.keySet()) {
                 if (module.getIdentifier().toLowerCase().equals(path[0].toLowerCase())) {
                     // Firstly try to find the translation in player's locale
-                    BSLocale locale = getLocale(module, plugin.getPlayers().getLocale(uuid));
+                    BSBLocale locale = getLocale(module, plugin.getPlayers().getLocale(uuid));
                     String translation = path[1];
 
                     if (locale != null) translation = locale.get(path[1]);
@@ -113,9 +113,9 @@ public final class LocalesManager {
             }
         } else {
             // Run through each module's locales to try find the reference
-            for (BSModule module : locales.keySet()) {
+            for (BSBModule module : locales.keySet()) {
                 // Firstly try to find the translation in player's locale
-                BSLocale locale = getLocale(module, plugin.getPlayers().getLocale(uuid));
+                BSBLocale locale = getLocale(module, plugin.getPlayers().getLocale(uuid));
                 String translation = reference;
 
                 if (locale != null) translation = locale.get(reference);
@@ -140,33 +140,33 @@ public final class LocalesManager {
         return reference; // Return reference to tell the user that no translation has been found
     }
 
-    public Map<BSModule, List<BSLocale>> getLocales() {
+    public Map<BSBModule, List<BSBLocale>> getLocales() {
         return locales;
     }
 
-    public List<BSLocale> getLocales(BSModule module) {
+    public List<BSBLocale> getLocales(BSBModule module) {
         return locales.get(module);
     }
 
-    public BSLocale getLocale(BSModule module, String languageTag) {
-        for (BSLocale locale : locales.get(module)) {
+    public BSBLocale getLocale(BSBModule module, String languageTag) {
+        for (BSBLocale locale : locales.get(module)) {
             if (locale.toLanguageTag().equals(languageTag)) return locale;
         }
         return null;
     }
 
-    public void registerLocales(BSModule module) {
+    public void registerLocales(BSBModule module) {
         // Check if the folder exists and contains the locales
 
         // for each languageTag found, do registerLocale(module, languageTag)
         //TODO
     }
 
-    public void registerLocale(BSModule module, String languageTag) {
+    public void registerLocale(BSBModule module, String languageTag) {
         //TODO
     }
 
-    public void registerExternalLocale(BSModule originModule, BSModule targetModule, String languageTag) {
+    public void registerExternalLocale(BSBModule originModule, BSBModule targetModule, String languageTag) {
         //TODO
     }
 }

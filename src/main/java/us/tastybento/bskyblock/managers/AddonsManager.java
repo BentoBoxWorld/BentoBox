@@ -3,13 +3,13 @@ package us.tastybento.bskyblock.managers;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.tastybento.bskyblock.api.addons.BSAddon;
+import us.tastybento.bskyblock.api.addons.BSBAddon;
 
 public final class AddonsManager {
 
-    private final List<BSAddon> addons = new ArrayList<>();
+    private final List<BSBAddon> addons = new ArrayList<>();
 
-    public List<BSAddon> getAddons() {
+    public List<BSBAddon> getAddons() {
         return addons;
     }
 }

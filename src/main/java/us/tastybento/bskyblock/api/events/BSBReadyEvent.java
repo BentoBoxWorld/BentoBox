@@ -9,7 +9,7 @@ import org.bukkit.event.HandlerList;
  * @author tastybento
  * @since 1.0
  */
-public class BSkyBlockReadyEvent extends Event {
+public class BSBReadyEvent extends Event {
     private static final HandlerList handlers = new HandlerList();
 
     @Override

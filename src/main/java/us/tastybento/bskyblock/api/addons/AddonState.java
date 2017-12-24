@@ -1,7 +1,7 @@
 package us.tastybento.bskyblock.api.addons;
 
 /**
- * Represents the current run-time state of a {@link BSAddon}.
+ * Represents the current run-time state of a {@link BSBAddon}.
  *
  * @author Poslovitch
  * @since 1.0

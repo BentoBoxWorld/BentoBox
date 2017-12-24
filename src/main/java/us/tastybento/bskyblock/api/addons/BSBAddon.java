@@ -3,11 +3,11 @@ package us.tastybento.bskyblock.api.addons;
 import java.io.File;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.BSModule;
+import us.tastybento.bskyblock.api.BSBModule;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
-public abstract class BSAddon implements BSModule {
+public abstract class BSBAddon implements BSBModule {
 
     private File folder;
     private AddonDescription description;

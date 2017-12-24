@@ -9,7 +9,7 @@ import java.util.Optional;
  * @author ben
  *
  */
-public interface BSCommand {
+public interface BSBCommand {
 
     /**
      * Anything that needs to be set up for this command.

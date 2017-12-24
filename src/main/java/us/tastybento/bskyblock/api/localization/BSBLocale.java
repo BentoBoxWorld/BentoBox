@@ -11,13 +11,13 @@ import org.bukkit.configuration.file.YamlConfiguration;
 /**
  * @author Poslovitch, Tastybento
  */
-public class BSLocale {
+public class BSBLocale {
 
     private Locale locale;
     private YamlConfiguration config;
     private Map<String, String> cache;
 
-    public BSLocale(String languageTag, File file) {
+    public BSBLocale(String languageTag, File file) {
         this.locale = Locale.forLanguageTag(languageTag);
         this.config = YamlConfiguration.loadConfiguration(file);
         this.cache = new HashMap<>();

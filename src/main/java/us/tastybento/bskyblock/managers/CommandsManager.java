@@ -8,13 +8,13 @@ import java.util.Map;
 import org.bukkit.command.Command;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.BSModule;
+import us.tastybento.bskyblock.api.BSBModule;
 
 public final class CommandsManager {
 
-    private Map<BSModule, List<Command>> commands = new LinkedHashMap<>();
+    private Map<BSBModule, List<Command>> commands = new LinkedHashMap<>();
 
-    public void registerCommand(BSModule module, Command command) {
+    public void registerCommand(BSBModule module, Command command) {
         List<Command> cmds = new ArrayList<>();
         if (commands.containsKey(module)) {
             cmds = commands.get(module);
@@ -29,7 +29,7 @@ public final class CommandsManager {
 
     }
 
-    public List<Command> getCommands(BSModule module) {
+    public List<Command> getCommands(BSBModule module) {
         return commands.get(module);
     }
 
