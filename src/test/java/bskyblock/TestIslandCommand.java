@@ -85,7 +85,7 @@ public class TestIslandCommand {
         assertEquals(2, testCommand.getAliases().size());
         assertEquals("t", testCommand.getAliases().get(0));
         assertTrue(testCommand.isOnlyPlayer());
-        assertNull(testCommand.getParent());
+        assertEquals(testCommand.getParent(), Optional.empty());
         assertEquals(Settings.PERMPREFIX + "default.permission", testCommand.getPermission());
         // Check commands and aliases match to correct class
         for (Entry<String, CompositeCommand> command : testCommand.getSubCommands().entrySet()) {

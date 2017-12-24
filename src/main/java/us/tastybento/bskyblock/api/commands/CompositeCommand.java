@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -38,9 +39,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     private boolean onlyPlayer = false;
     /**
-     * The parent command to this one. If this is a top-level command it will be null.
+     * The parent command to this one. If this is a top-level command it will be empty.
      */
-    private final CompositeCommand parent;
+    private final Optional<CompositeCommand> parent;
     /**
      * The permission required to execute this command
      */
@@ -64,7 +65,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
         super(label);
-        this.parent = parent;
+        this.parent = Optional.of(parent);
         this.subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
         parent.getSubCommands().put(label, this);
@@ -82,12 +83,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * This is the top-level command constructor for commands that have no parent.
      * @param label - string for this command
-     * @param aliases - aliases for this command
+     * @param string - aliases for this command
      */
-    public CompositeCommand(String label, String... aliases) {
+    public CompositeCommand(String label, String... string) {
         super(label);
-        this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
-        this.parent = null;
+        this.setAliases(new ArrayList<>(Arrays.asList(string)));
+        this.parent = Optional.empty();
         setUsage("");
         this.subCommandLevel = 0; // Top level
         this.subCommands = new LinkedHashMap<>();
@@ -201,7 +202,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * @return the parent command object
      */
-    public CompositeCommand getParent() {
+    public Optional<CompositeCommand> getParent() {
         return parent;
     }
 
@@ -261,11 +262,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @Override
     public Command setUsage(String usage) {
         // Go up the chain
-        CompositeCommand parent = this.getParent();
+        Optional<CompositeCommand> parent = this.getParent();
         this.usage = this.getLabel() + " " + usage;
-        while (parent != null) {
-            this.usage = parent.getLabel() + " " + this.usage;
-            parent = parent.getParent();
+        while (parent.isPresent()) {
+            this.usage = parent.get().getLabel() + " " + this.usage;
+            parent = parent.get().getParent();
         }
         this.usage = "/" + this.usage;
         this.usage = this.usage.trim();
