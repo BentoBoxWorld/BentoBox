@@ -1,11 +1,11 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+
+import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.config.Settings;
 
 public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 

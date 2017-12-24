@@ -1,7 +1,14 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
@@ -9,8 +16,6 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
-
-import java.util.*;
 
 public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
 

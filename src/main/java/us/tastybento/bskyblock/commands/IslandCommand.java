@@ -8,15 +8,10 @@ import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
 import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
 import us.tastybento.bskyblock.commands.island.IslandGoCommand;
 import us.tastybento.bskyblock.commands.island.IslandResetCommand;
-import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
-import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
 import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteAcceptCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteRejectCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand;
+import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
+import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamPromoteCommand;
 import us.tastybento.bskyblock.config.Settings;
 
 public class IslandCommand extends CompositeCommand {

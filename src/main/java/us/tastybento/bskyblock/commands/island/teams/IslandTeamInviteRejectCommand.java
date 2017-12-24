@@ -7,7 +7,6 @@ import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
-import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.Settings;
 
 public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {

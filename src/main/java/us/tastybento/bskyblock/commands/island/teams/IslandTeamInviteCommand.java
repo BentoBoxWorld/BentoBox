@@ -11,7 +11,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
-import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
