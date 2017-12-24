@@ -20,7 +20,7 @@ public interface BSBCommand {
     /**
      * What will be executed when this command is run
      * @param user
-     * @param list
+     * @param args
      * @return true or false - true if the command executed successfully
      */
     public abstract boolean execute(User user, List<String> args);
