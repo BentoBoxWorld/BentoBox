@@ -30,12 +30,12 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
-        boolean inTeam = plugin.getPlayers().inTeam(playerUUID);
-        UUID teamLeaderUUID = plugin.getIslands().getTeamLeader(playerUUID);
+        boolean inTeam = bsb.getPlayers().inTeam(playerUUID);
+        UUID teamLeaderUUID = bsb.getIslands().getTeamLeader(playerUUID);
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
             return true;
         }
-        plugin.getLogger().info("DEBUG: arg[0] = " + args.get(0));
+        bsb.getLogger().info("DEBUG: arg[0] = " + args.get(0));
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player");
@@ -53,7 +53,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return true;
         }
-        if (!plugin.getIslands().getMembers(playerUUID).contains(targetUUID)) {
+        if (!bsb.getIslands().getMembers(playerUUID).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return true;
         }
@@ -64,7 +64,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
                 .reason(TeamReason.MAKELEADER)
                 .involvedPlayer(targetUUID)
                 .build();
-        plugin.getServer().getPluginManager().callEvent(event);
+        bsb.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return true;
 
         // target is the new leader
@@ -81,7 +81,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             // Check for zero protection range
             Island islandByOwner = getIslands().getIsland(targetUUID);
             if (islandByOwner.getProtectionRange() == 0) {
-                plugin.getLogger().warning("Player " + user.getName() + "'s island had a protection range of 0. Setting to default " + range);
+                bsb.getLogger().warning("Player " + user.getName() + "'s island had a protection range of 0. Setting to default " + range);
                 islandByOwner.setProtectionRange(range);
             }
             for (PermissionAttachmentInfo perms : target.getEffectivePermissions()) {
@@ -93,7 +93,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
-                                plugin.getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                bsb.getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
 
                             } else {
                                 hasARangePerm = true;
@@ -115,7 +115,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
                 if (range != islandByOwner.getProtectionRange()) {
                     user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
                     target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                    plugin.getLogger().info(
+                    bsb.getLogger().info(
                             "Makeleader: Island protection range changed from " + islandByOwner.getProtectionRange() + " to "
                                     + range + " for " + user.getName() + " due to permission.");
                 }
@@ -130,8 +130,8 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
         List<String> options = new ArrayList<>();
         String lastArg = (!args.isEmpty() ? args.getLast() : "");
-        for (UUID member : plugin.getIslands().getMembers(user.getUniqueId())) {
-            options.add(plugin.getServer().getOfflinePlayer(member).getName());
+        for (UUID member : bsb.getIslands().getMembers(user.getUniqueId())) {
+            options.add(bsb.getServer().getOfflinePlayer(member).getName());
         }
         return Optional.of(Util.tabLimit(options, lastArg));
     }

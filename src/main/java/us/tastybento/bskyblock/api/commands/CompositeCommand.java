@@ -46,7 +46,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The permission required to execute this command
      */
     private String permission = "";
-    public BSkyBlock plugin = BSkyBlock.getPlugin();
+    public BSkyBlock bsb = BSkyBlock.getPlugin();
 
     /**
      * Map of sub commands
@@ -179,7 +179,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return IslandsManager
      */
     protected IslandsManager getIslands() {
-        return plugin.getIslands();
+        return bsb.getIslands();
     }
 
     /**
@@ -196,7 +196,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return set of UUIDs of all team members
      */
     protected Set<UUID> getMembers(User user) {
-        return plugin.getIslands().getMembers(user.getUniqueId());
+        return bsb.getIslands().getMembers(user.getUniqueId());
     }
 
     /**
@@ -216,12 +216,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return PlayersManager
      */
     protected PlayersManager getPlayers() {
-        return plugin.getPlayers();
+        return bsb.getPlayers();
     }
 
     @Override
     public BSkyBlock getPlugin() {
-        return plugin;
+        return bsb;
     }
     
     /**
@@ -251,7 +251,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return UUID of player's team leader
      */
     protected UUID getTeamLeader(User user) {
-        return plugin.getIslands().getTeamLeader(user.getUniqueId());
+        return bsb.getIslands().getTeamLeader(user.getUniqueId());
     }
 
     @Override
@@ -306,7 +306,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if player is in a team
      */
     protected boolean inTeam(User user) {
-        return plugin.getPlayers().inTeam(user.getUniqueId());
+        return bsb.getPlayers().inTeam(user.getUniqueId());
     }
 
     /**

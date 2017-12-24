@@ -34,7 +34,7 @@ public class IslandResetCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-leader");
             return false; 
         }
-        if (plugin.getPlayers().inTeam(user.getUniqueId())) {
+        if (bsb.getPlayers().inTeam(user.getUniqueId())) {
             user.sendMessage("commands.island.reset.must-remove-members");
             return true;
         }
@@ -43,14 +43,14 @@ public class IslandResetCommand extends CompositeCommand {
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(player.getUniqueId());
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: old island is at " + oldIsland.getCenter().getBlockX() + "," + oldIsland.getCenter().getBlockZ());
+            bsb.getLogger().info("DEBUG: old island is at " + oldIsland.getCenter().getBlockX() + "," + oldIsland.getCenter().getBlockZ());
         // Remove them from this island (it still exists and will be deleted later)
         getIslands().removePlayer(player.getUniqueId());
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: old island's owner is " + oldIsland.getOwner());
+            bsb.getLogger().info("DEBUG: old island's owner is " + oldIsland.getOwner());
         // Create new island and then delete the old one
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: making new island ");
+            bsb.getLogger().info("DEBUG: making new island ");
         try {
             NewIsland.builder()
             .player(player)
@@ -58,7 +58,7 @@ public class IslandResetCommand extends CompositeCommand {
             .oldIsland(oldIsland)
             .build();
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not create island for player.");
+            bsb.getLogger().severe("Could not create island for player.");
             user.sendMessage("commands.island.create.unable-create-island");
             e.printStackTrace();
         }
