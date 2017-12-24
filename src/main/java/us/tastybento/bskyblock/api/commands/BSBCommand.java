@@ -23,7 +23,7 @@ public interface BSBCommand {
      * @param list
      * @return true or false - true if the command executed successfully
      */
-    public abstract boolean execute(User user, List<String> list);
+    public abstract boolean execute(User user, List<String> args);
 
     /**
      * Tab Completer for CompositeCommands. Note that any registered sub-commands will be automatically
