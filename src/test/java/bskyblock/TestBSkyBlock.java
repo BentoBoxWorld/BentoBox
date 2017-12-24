@@ -20,7 +20,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
@@ -32,13 +32,13 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
-public class TestIslandCommand {
+public class TestBSkyBlock {
     private final UUID playerUUID = UUID.randomUUID();
-    private CommandSender sender;
-    private Player player;
+    private static CommandSender sender;
+    private static Player player;
 
-    @Before
-    public void setUp() {
+    @BeforeClass
+    public static void setUp() {
 
         //Plugin plugin = mock(Plugin.class);
         //Mockito.doReturn(plugin).when(BSkyBlock.getPlugin());
@@ -63,7 +63,7 @@ public class TestIslandCommand {
     }
 
     @Test
-    public void test() {
+    public void testIslandEvent() {
 
         // Test island events
         IslandBaseEvent event = TeamEvent.builder()
@@ -72,7 +72,10 @@ public class TestIslandCommand {
                 .involvedPlayer(playerUUID)
                 .build();
         assertEquals(playerUUID, event.getPlayerUUID());
-
+    }
+    
+    @Test
+    public void testCommandAPI() {
         // Test command
         User user = User.getInstance(playerUUID);
         CompositeCommand testCommand = new TestCommand();
@@ -115,7 +118,7 @@ public class TestIslandCommand {
         // Test for partial word
         assertEquals(Arrays.asList(new String[] {"Ben", "Bill"}), 
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", "b"}));
-        
+
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
