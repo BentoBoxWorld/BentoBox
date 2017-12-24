@@ -20,11 +20,11 @@ import us.tastybento.bskyblock.config.Settings;
  */
 public class IslandSetnameCommand extends CompositeCommand {
 
-    public IslandSetnameCommand(CompositeCommand command) {
-        super(command, "setname");
+    public IslandSetnameCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "setname");
         this.setPermission(Settings.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
-        this.setUsage("island.setname.usage");
+        this.setUsage("commands.island.setname.usage");
 
     }
 
@@ -56,11 +56,11 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Check if the name isn't too short or too long
         if (name.length() < Settings.nameMinLength) {
-            user.sendMessage("general.errors.too-short", "[length]",  String.valueOf(Settings.nameMinLength));
+            user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(Settings.nameMinLength));
             return true;
         }
         if (name.length() > Settings.nameMaxLength) {
-            user.sendMessage("general.errors.too-long", "[length]", String.valueOf(Settings.nameMaxLength));
+            user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(Settings.nameMaxLength));
             return true;
         }
 

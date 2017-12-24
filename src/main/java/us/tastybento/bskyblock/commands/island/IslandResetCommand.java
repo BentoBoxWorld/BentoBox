@@ -17,11 +17,11 @@ public class IslandResetCommand extends CompositeCommand {
 
     private static final boolean DEBUG = false;
 
-    public IslandResetCommand(CompositeCommand command) {
-        super(command, "reset", "restart");
+    public IslandResetCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "reset", "restart");
         this.setPermission(Settings.PERMPREFIX + "island.create");
         this.setOnlyPlayer(true);
-        this.setUsage("island.reset.usage");
+        this.setUsage("commands.island.reset.usage");
     }
 
     @Override
@@ -31,10 +31,11 @@ public class IslandResetCommand extends CompositeCommand {
             return true;
         }
         if (!getIslands().isOwner(user.getUniqueId())) {
+            user.sendMessage("general.errors.not-leader");
             return false; 
         }
         if (plugin.getPlayers().inTeam(user.getUniqueId())) {
-            user.sendMessage("island.reset.MustRemovePlayers");
+            user.sendMessage("commands.island.reset.must-remove-members");
             return true;
         }
         Player player = user.getPlayer();
@@ -58,7 +59,7 @@ public class IslandResetCommand extends CompositeCommand {
             .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");
-            user.sendMessage("general.errors.general");
+            user.sendMessage("commands.island.create.unable-create-island");
             e.printStackTrace();
         }
         return true;

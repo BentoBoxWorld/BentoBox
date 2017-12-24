@@ -23,7 +23,7 @@ public class IslandCreateCommand extends CompositeCommand {
         super(islandCommand, "create", "auto");
         this.setPermission(Settings.PERMPREFIX + "island.create");
         this.setOnlyPlayer(true);
-        this.setUsage("island.create.usage");
+        this.setUsage("commands.island.create.usage");
     }
 
     /* (non-Javadoc)
@@ -56,7 +56,7 @@ public class IslandCreateCommand extends CompositeCommand {
             .build();
         } catch (IOException e) {
             plugin.getLogger().severe("Could not create island for player.");
-            user.sendMessage("general.errors.general");
+            user.sendMessage("commands.island.create.unable-create-island");
             e.printStackTrace();
         }
     }

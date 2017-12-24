@@ -5,7 +5,6 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.ChatColor;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -23,8 +22,15 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
         super(islandCommand, "team");
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setUsage("island.team.usage");
+        this.setUsage("commands.island.team.usage");
+    }
 
+    @Override
+    public void setup() {
+        new IslandTeamInviteCommand(this);
+        new IslandTeamLeaveCommand(this);
+        new IslandTeamPromoteCommand(this);
+        new IslandTeamSetownerCommand(this);
     }
 
     @Override
@@ -67,20 +73,9 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
             }
             
             if (teamMembers.size() < maxSize) {
-                user.sendMessage("invite.youCanInvite", "[number]", String.valueOf(maxSize - teamMembers.size()));
+                user.sendMessage("commands.island.team.invite.you-can-invite", "[number]", String.valueOf(maxSize - teamMembers.size()));
             } else {
-                user.sendMessage(ChatColor.RED + "invite.error.YourIslandIsFull");
-            }
-        }
-        user.sendMessage("team.listingMembers");
-        // Display members in the list
-        for (UUID m : teamMembers) {
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: member " + m);
-            if (teamLeaderUUID.equals(m)) {
-                user.sendMessage("team.leader", "[name]", getPlayers().getName(m));
-            } else {
-                user.sendMessage("team.member", "[name]", getPlayers().getName(m));
+                user.sendMessage("commands.island.team.invite.errors.island-is-full");
             }
         }
         return true;

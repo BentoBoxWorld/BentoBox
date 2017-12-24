@@ -10,11 +10,11 @@ import us.tastybento.bskyblock.util.Util;
 
 public class IslandSethomeCommand extends CompositeCommand {
 
-    public IslandSethomeCommand(CompositeCommand command) {
-        super(command, "sethome");
+    public IslandSethomeCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "sethome");
         this.setPermission(Settings.PERMPREFIX + "island.sethome");
         this.setOnlyPlayer(true);
-        this.setUsage("island.sethome.usage");
+        this.setUsage("commands.island.sethome.usage");
     }
 
     @Override
@@ -26,13 +26,13 @@ public class IslandSethomeCommand extends CompositeCommand {
             return true;
         }
         if (!plugin.getIslands().playerIsOnIsland(user.getPlayer())) {
-            user.sendMessage("sethome.error.NotOnIsland");
+            user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return true; 
         }
         if (args.isEmpty()) {
             // island sethome
             plugin.getPlayers().setHomeLocation(playerUUID, user.getLocation());
-            user.sendMessage("sethome.homeSet");
+            user.sendMessage("commands.island.sethome.home-set");
         } else {
             // Dynamic home sizes with permissions
             int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
@@ -42,13 +42,13 @@ public class IslandSethomeCommand extends CompositeCommand {
                 try {
                     number = Integer.valueOf(args.get(0));
                     if (number < 1 || number > maxHomes) {
-                        user.sendMessage("sethome.error.NumHomes", "[max]", String.valueOf(maxHomes));
+                        user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
                     } else {
                         plugin.getPlayers().setHomeLocation(playerUUID, user.getLocation(), number);
-                        user.sendMessage("sethome.homeSet");
+                        user.sendMessage("commands.island.sethome.home-set");
                     }
                 } catch (Exception e) {
-                    user.sendMessage("sethome.error.NumHomes", "[max]", String.valueOf(maxHomes));
+                    user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
                 }
             } else {
                 user.sendMessage("general.errors.no-permission");

@@ -23,7 +23,6 @@ general:
     not-leader: "You are not the leader of your island!"
     offline-player: "That player is offline or doesn't exist."
     unknown-player: "Unknown player!"
-    unable-create-island: "Your island could not be generated, please contact an administrator."
     general: "That command is not ready yet - contact admin"
 
 commands:
@@ -34,34 +33,83 @@ commands:
     end: "&7================================="
     about: "display this help page"
   admin:
-    version: "display %bsb_plugin_name% and addons versions"
+    version:
+      usage: "display %bsb_plugin_name% and addons versions"
+    setrange:
+      range-updated: "Island range updated to [number]"
   island:
-    about: "display info about %bsb_plugin_name%"
-    go: "teleport you to your island"
-    go-homes: "teleport you to the specified home"
-    spawn: "teleport you to the spawn"
-    create: "create an island"
-    info: "display info about your island"
-    reset: "restart your island and remove the old one"
-    sethome: "set your teleport point for /island"
-    name: "set a name for your island"
-    resetname: "reset your island name"
+    about:
+      usage: "display info about %bsb_plugin_name%"
+    go:
+      usage: "teleport you to your island"
+    spawn:
+      usage: "teleport you to the spawn"
+    create:
+      usage: "create an island"
+      unable-create-island: "Your island could not be generated, please contact an administrator."
+    info:
+      usage: "display info about your island"
+    reset:
+      usage: "restart your island and remove the old one"
+      must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
+    sethome:
+      usage: "set your teleport point for /island"
+      must-be-on-your-island: "You must be on your island to set home!"
+      num-homes: "Homes can be 1 to [max]."
+      home-set: "Your island home has been set to your current location."
+    setname:
+      usage: "set a name for your island"
+      name-too-short: "Too short. Minimum size is [length] characters."
+      name-too-long: "Too long. Maximum size is [length] characters."
+    resetname:
+      usage: "reset your island name"
     team:
-      info: "display detailed info about your team"
-      invite: "invite a player to join your island"
-      uninvite: "cancel the pending invite to join your island"
-      leave: "leave your island"
-      kick: "remove a member from your island"
-      accept: "accept an invitation"
-      reject: "reject an invitation"
-      promote: "promote a player on your island to another rank"
-    expel: "expel a visitor from your island"
-    ban: "ban a player from your island"
-    unban: "unban a player from your island"
-    banlist: "list banned players"
-    lock: "lock/unlock your island so visitors cannot enter it"
-    settings: "display island settings"
-    language: "select language"
+      usage: "manage your team"
+      info:
+        usage: "display detailed info about your team"
+      invite:
+        usage: "invite a player to join your island"
+        errors:
+          island-is-full: "Your island is full, you can't invite anyone else."
+          none-invited-you: "No one invited you :c."
+          you-already-are-in-team: "You are already on a team!"
+          invalid-invite: "That invite is no longer valid, sorry."
+        you-can-invite: "You can invite [number] more players."
+        accept:
+          usage: "accept an invitation"
+          you-joined-island: "You have joined an island! Use /[label] team info to see the other members."
+          name-joined-your-island: "[name] has joined your island!"
+        reject:
+          usage: "reject an invitation"
+          you-rejected-invite: "You have rejected the invitation to join an island."
+          name-rejected-your-invite: "[name] has rejected your island invite!"
+        cancel:
+          usage: "cancel the pending invite to join your island"
+      leave:
+        usage: "leave your island"
+      kick:
+        usage: "remove a member from your island"
+      promote:
+        usage: "promote a player on your island to another rank"
+      setowner:
+        usage: "transfer your island ownership to a member"
+        errors:
+          cant-transfer-to-yourself: "You can't transfer ownership to yourself! Well, in facts, you could have been able to do so... But we don't want you to do so. 'Cause it's bad."
+          target-is-not-member: "That player is not part of your island team!"
+        name-is-the-owner: "[name] is now the island owner!"
+        you-are-the-owner: "You are now the island owner!"
+    ban:
+      usage: "ban a player from your island"
+    unban:
+      usage: "unban a player from your island"
+    banlist:
+      usage: "list banned players"
+    lock:
+      usage: "lock/unlock your island so visitors cannot enter it"
+    settings:
+      usage: "display island settings"
+    language:
+      usage: "select language"
 
 protection:
   flags:

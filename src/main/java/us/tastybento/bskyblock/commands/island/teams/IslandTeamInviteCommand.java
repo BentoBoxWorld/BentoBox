@@ -21,11 +21,17 @@ import us.tastybento.bskyblock.util.Util;
 
 public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
 
-    public IslandTeamInviteCommand(CompositeCommand islandTeamCommand) {
+    public IslandTeamInviteCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "invite");
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setUsage("island.team.invite");
+        this.setUsage("commands.island.team.invite.usage");
+    }
+
+    @Override
+    public void setup() {
+        new IslandTeamInviteAcceptCommand(this);
+        new IslandTeamInviteRejectCommand(this);
     }
 
     @Override
@@ -37,7 +43,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             if (getPlayers().inTeam(playerUUID)) {
                 user.sendMessage("general.errors.not-leader");
             }
-            user.sendMessage("invite.error.YouMustHaveIslandToInvite");
+            user.sendMessage("general.errors.no-island");
         }
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far

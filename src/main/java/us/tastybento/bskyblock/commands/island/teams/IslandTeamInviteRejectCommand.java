@@ -10,13 +10,13 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.Settings;
 
-public class IslandInviteRejectCommand extends AbstractIslandTeamCommand {
+public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
 
-    public IslandInviteRejectCommand(IslandCommand islandCommand) {
-        super(islandCommand, "reject");
+    public IslandTeamInviteRejectCommand(IslandTeamInviteCommand islandTeamInviteCommand) {
+        super(islandTeamInviteCommand, "reject");
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setUsage("island.invite.reject.usage");
+        this.setUsage("commands.island.team.invite.reject.usage");
     }
 
     @Override
@@ -36,17 +36,13 @@ public class IslandInviteRejectCommand extends AbstractIslandTeamCommand {
 
             // Remove this player from the global invite list
             inviteList.remove(user.getUniqueId());
-            user.sendMessage("reject.youHaveRejectedInvitation");
-            // If the leader is online tell them directly
-            // about the rejection
-            User inviter = User.getInstance(inviteList.get(playerUUID));
-            if (inviter != null) {
-                inviter.sendMessage("reject.nameHasRejectedInvite", "[name]", user.getName());
-            }
+            user.sendMessage("commands.island.team.invite.reject.you-rejected-invite");
 
+            User inviter = User.getInstance(inviteList.get(playerUUID));
+            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", "[name]", user.getName());
         } else {
             // Someone typed /island reject and had not been invited
-            user.sendMessage("reject.youHaveNotBeenInvited");
+            user.sendMessage("commands.island.team.invite.errors.none-invited-you");
         }
         return true;
     }

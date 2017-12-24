@@ -18,11 +18,11 @@ import us.tastybento.bskyblock.config.Settings;
  */
 public class IslandResetnameCommand extends CompositeCommand {
 
-    public IslandResetnameCommand(CompositeCommand command) {
-        super(command, "resetname");
+    public IslandResetnameCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "resetname");
         this.setPermission(Settings.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
-        this.setUsage("island.invite.accept.usage");
+        this.setUsage("commands.island.resetname.usage");
 
     }
 
@@ -34,12 +34,12 @@ public class IslandResetnameCommand extends CompositeCommand {
         UUID playerUUID = user.getUniqueId();
 
         if (!getIslands().hasIsland(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-island");
+            user.sendMessage("general.errors.no-island");
             return true;
         }
 
         if (!getIslands().isOwner(playerUUID)) {
-            user.sendMessage(ChatColor.RED + "general.errors.not-leader");
+            user.sendMessage("general.errors.not-leader");
             return true;
         }
         // Resets the island name

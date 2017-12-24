@@ -11,13 +11,12 @@ import us.tastybento.bskyblock.commands.island.IslandResetCommand;
 import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
 import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandInviteAcceptCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandInviteRejectCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandLeaveCommand;
+import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteAcceptCommand;
+import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteRejectCommand;
+import us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamPromoteCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamUninviteCommand;
 import us.tastybento.bskyblock.config.Settings;
 
 public class IslandCommand extends CompositeCommand {
@@ -45,13 +44,6 @@ public class IslandCommand extends CompositeCommand {
         new IslandResetnameCommand(this);
         // Team commands
         new IslandTeamCommand(this);
-        new IslandTeamInviteCommand(this);
-        new IslandInviteAcceptCommand(this);
-        new IslandInviteRejectCommand(this);
-        new IslandLeaveCommand(this);
-        new IslandTeamPromoteCommand(this);
-        new IslandTeamUninviteCommand(this);
-        
     }
 
     @Override

@@ -9,7 +9,7 @@ import java.util.Optional;
  * @author ben
  *
  */
-public interface BSBCommand {
+public interface BSCommand {
 
     /**
      * Anything that needs to be set up for this command.
@@ -28,7 +28,7 @@ public interface BSBCommand {
     /**
      * Tab Completer for CompositeCommands. Note that any registered sub-commands will be automatically
      * added to the list must not be manually added. Use this to add tab-complete for things like names.
-     * @param sender
+     * @param user
      * @param alias
      * @param args
      * @return List of strings that could be used to complete this command.

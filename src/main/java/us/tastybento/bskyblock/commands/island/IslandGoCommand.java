@@ -24,7 +24,7 @@ public class IslandGoCommand extends CompositeCommand {
         super(islandCommand, "go", "home", "h");
         this.setPermission(Settings.PERMPREFIX + "island.home");
         this.setOnlyPlayer(true);
-        this.setUsage("island.go.usage");
+        this.setUsage("commands.island.go.usage");
     }
 
     /* (non-Javadoc)
