@@ -24,6 +24,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
         super(islandCommand, "promote", "makeleader");
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
+        this.setUsage("island.team.promote.usage");
     }
 
     @Override

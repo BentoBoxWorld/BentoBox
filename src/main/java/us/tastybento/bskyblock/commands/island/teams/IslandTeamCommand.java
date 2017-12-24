@@ -23,6 +23,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
         super(islandCommand, "team");
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
+        this.setUsage("island.team.usage");
 
     }
 

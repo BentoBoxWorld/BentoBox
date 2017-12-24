@@ -8,9 +8,9 @@ import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
 import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
 import us.tastybento.bskyblock.commands.island.IslandGoCommand;
 import us.tastybento.bskyblock.commands.island.IslandResetCommand;
-import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
-import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
 import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
+import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandInviteAcceptCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandInviteRejectCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandLeaveCommand;
@@ -24,6 +24,8 @@ public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
         super(Settings.ISLANDCOMMAND, "is");
+        this.setUsage("island.usage");
+        this.setOnlyPlayer(true);
     }
 
     /* (non-Javadoc)
@@ -38,9 +40,9 @@ public class IslandCommand extends CompositeCommand {
         new IslandCreateCommand(this);
         new IslandGoCommand(this);
         new IslandResetCommand(this);
-        new IslandResetnameCommand(this);
-        new IslandSethomeCommand(this);
         new IslandSetnameCommand(this);
+        new IslandSethomeCommand(this);
+        new IslandResetnameCommand(this);
         // Team commands
         new IslandTeamCommand(this);
         new IslandTeamInviteCommand(this);

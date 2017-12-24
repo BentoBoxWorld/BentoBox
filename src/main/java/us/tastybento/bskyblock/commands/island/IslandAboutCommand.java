@@ -14,6 +14,7 @@ public class IslandAboutCommand extends CompositeCommand {
      */
     public IslandAboutCommand(CompositeCommand islandCommand) {
         super(islandCommand, "about", "ab");
+        this.setUsage("island.about.usage");
     }
 
     @Override

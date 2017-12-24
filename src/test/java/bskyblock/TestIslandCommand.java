@@ -52,8 +52,7 @@ public class TestIslandCommand {
         Server server = mock(Server.class);
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
-        Mockito.when(server.getVersion()).thenReturn("TestTestMocking");
-        Mockito.when(server.getVersion()).thenReturn("TestTestMocking");
+        Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
         Bukkit.setServer(server);
         Mockito.when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         sender = mock(CommandSender.class);
@@ -97,22 +96,22 @@ public class TestIslandCommand {
             }            
         }
         String[] args = {""};
-        assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
-        assertNotSame(Arrays.asList("sub1","sub2"), testCommand.tabComplete(sender, "test", args));
+        assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
         assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "d";
-        assertNotSame(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "sub1";
         assertEquals(Arrays.asList(), testCommand.tabComplete(player, "test", args));
         String[] args2 = {"sub2",""};
-        assertEquals(Arrays.asList("subsub"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Arrays.asList("help", "subsub"), testCommand.tabComplete(player, "test", args2));
         args2[1] = "s";
         assertEquals(Arrays.asList("subsub"), testCommand.tabComplete(player, "test", args2));
         String[] args3 = {"sub2","subsub", ""};
-        assertEquals(Arrays.asList("subsubsub"), testCommand.tabComplete(player, "test", args3));
+        assertEquals(Arrays.asList("help", "subsubsub"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
-        assertEquals(Arrays.asList(new String[] {"Florian", "Ben", "Bill", "Ted"}),
+        assertEquals(Arrays.asList(new String[] {"Florian", "Ben", "Bill", "Ted", "help"}),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
         // Test for partial word
         assertEquals(Arrays.asList(new String[] {"Ben", "Bill"}), 
@@ -128,12 +127,22 @@ public class TestIslandCommand {
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100"}));
         assertTrue(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
         
+        // Usage tests
+        assertEquals("/test test.usage", testCommand.getUsage());
+        assertEquals("/test test.usage", testCommand.getUsage("sdfsd"));
+        assertEquals("/test sub1 sub.usage", testCommand.getUsage("sub1"));
+        // If the usage has not been defined, then it just shows the command
+        assertEquals("/test sub2 subsub", testCommand.getUsage("sub2", "subsub"));
+        
+        // Test help
+        //assertTrue(testCommand.execute(player,  "test", new String[] {"help"}));
     }
 
     private class TestCommand extends CompositeCommand {
 
         public TestCommand() {
             super("test", "t", "tt");
+            this.setUsage("test.usage");
         }
 
         @Override
@@ -154,7 +163,7 @@ public class TestIslandCommand {
 
         public TestSubCommand(CompositeCommand parent) {
             super(parent, "sub1", "subone");
-
+            this.setUsage("sub.usage");
         }
 
         @Override

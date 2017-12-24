@@ -20,6 +20,7 @@ public class IslandTeamUninviteCommand extends AbstractIslandTeamCommand {
         super(islandCommand, "uninvite");
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
+        this.setUsage("island.team.uninvite.usage");
     }
 
     @Override
