@@ -49,7 +49,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             return true;
         }
         if (DEBUG)
-            bsb.getLogger().info("DEBUG: Invite is valid");
+            getPlugin().getLogger().info("DEBUG: Invite is valid");
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
@@ -57,11 +57,11 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
                 .reason(TeamReason.JOIN)
                 .involvedPlayer(playerUUID)
                 .build();
-        bsb.getServer().getPluginManager().callEvent(event);
+        getPlugin().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return true;
         // Remove the invite
         if (DEBUG)
-            bsb.getLogger().info("DEBUG: Removing player from invite list");
+            getPlugin().getLogger().info("DEBUG: Removing player from invite list");
         inviteList.remove(playerUUID);
         // Put player into Spectator mode
         user.setGameMode(GameMode.SPECTATOR);
@@ -98,7 +98,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         }
         getIslands().save(false);
         if (DEBUG)
-            bsb.getLogger().info("DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMembers().toString());
+            getPlugin().getLogger().info("DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMembers().toString());
         return true;
     }
 

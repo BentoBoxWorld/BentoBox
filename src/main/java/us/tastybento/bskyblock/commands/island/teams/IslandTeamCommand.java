@@ -37,7 +37,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         if (DEBUG)
-            bsb.getLogger().info("DEBUG: executing team command for " + playerUUID);
+            getPlugin().getLogger().info("DEBUG: executing team command for " + playerUUID);
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
@@ -45,7 +45,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
                 .reason(TeamReason.INFO)
                 .involvedPlayer(playerUUID)
                 .build();
-        bsb.getServer().getPluginManager().callEvent(event);
+        getPlugin().getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) return true;
         UUID teamLeaderUUID = getTeamLeader(user);
         Set<UUID> teamMembers = getMembers(user);
@@ -61,7 +61,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
-                                bsb.getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
                             } else {
                                 maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
                             }

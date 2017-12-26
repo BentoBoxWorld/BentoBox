@@ -46,8 +46,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The permission required to execute this command
      */
     private String permission = "";
-    public BSkyBlock bsb = BSkyBlock.getPlugin();
-
     /**
      * Map of sub commands
      */
@@ -56,6 +54,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The usage string for this command. It is the commands followed by a locale reference.
      */
     private String usage;
+    private BSkyBlock bsb;
 
     /**
      * Sub-command constructor
@@ -221,7 +220,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public BSkyBlock getPlugin() {
-        return bsb;
+        this.bsb = BSkyBlock.getPlugin();
+        return this.bsb;
     }
     
     /**

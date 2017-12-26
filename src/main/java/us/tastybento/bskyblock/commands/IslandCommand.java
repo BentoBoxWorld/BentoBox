@@ -44,7 +44,7 @@ public class IslandCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         user.sendLegacyMessage("You successfully did /is !");
-        if (!bsb.getIslands().hasIsland(user.getUniqueId())) {
+        if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
             return this.getSubCommand("create").execute(user, args);
         }
         // Currently, just go home

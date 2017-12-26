@@ -30,7 +30,7 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
                     .reason(TeamReason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
-            bsb.getServer().getPluginManager().callEvent(event);
+            getPlugin().getServer().getPluginManager().callEvent(event);
             if (event.isCancelled()) return true;
 
             // Remove this player from the global invite list

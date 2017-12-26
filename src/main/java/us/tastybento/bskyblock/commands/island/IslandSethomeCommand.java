@@ -21,17 +21,17 @@ public class IslandSethomeCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Check island
-        if (bsb.getIslands().getIsland(user.getUniqueId()) == null) {
+        if (getPlugin().getIslands().getIsland(user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
             return true;
         }
-        if (!bsb.getIslands().playerIsOnIsland(user.getPlayer())) {
+        if (!getPlugin().getIslands().playerIsOnIsland(user.getPlayer())) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return true; 
         }
         if (args.isEmpty()) {
             // island sethome
-            bsb.getPlayers().setHomeLocation(playerUUID, user.getLocation());
+            getPlugin().getPlayers().setHomeLocation(playerUUID, user.getLocation());
             user.sendMessage("commands.island.sethome.home-set");
         } else {
             // Dynamic home sizes with permissions
@@ -44,7 +44,7 @@ public class IslandSethomeCommand extends CompositeCommand {
                     if (number < 1 || number > maxHomes) {
                         user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
                     } else {
-                        bsb.getPlayers().setHomeLocation(playerUUID, user.getLocation(), number);
+                        getPlugin().getPlayers().setHomeLocation(playerUUID, user.getLocation(), number);
                         user.sendMessage("commands.island.sethome.home-set");
                     }
                 } catch (Exception e) {

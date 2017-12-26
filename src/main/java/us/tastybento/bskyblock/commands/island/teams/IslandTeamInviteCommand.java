@@ -47,7 +47,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
-                OfflinePlayer inviter = bsb.getServer().getOfflinePlayer(inviteList.get(playerUUID));
+                OfflinePlayer inviter = getPlugin().getServer().getOfflinePlayer(inviteList.get(playerUUID));
                 user.sendMessage("invite.nameHasInvitedYou", "[name]", inviter.getName());
             } else {
                 user.sendMessage("help.island.invite");
@@ -96,7 +96,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                         String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
-                                bsb.getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                                getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
                             } else {
                                 maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
                             }
@@ -119,7 +119,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                         .reason(TeamReason.INVITE)
                         .involvedPlayer(invitedPlayerUUID)
                         .build();
-                bsb.getServer().getPluginManager().callEvent(event);
+                getPlugin().getServer().getPluginManager().callEvent(event);
                 if (event.isCancelled()) return true;
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!

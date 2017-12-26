@@ -359,4 +359,21 @@ public class IslandCache {
     public int size() {
         return islandsByLocation.size();
     }
+
+    /**
+     * Get if the cache contains this island
+     * @param island or uuid of owner
+     * @return true if it is in the cache
+     */
+    public boolean contains(Object o) {
+        if (o instanceof UUID) {
+            return islandsByUUID.containsKey(o);
+        }
+        if (o instanceof Island) {
+            Island is = (Island)o;
+            if (is.getOwner() != null &&  islandsByUUID.containsKey(is.getOwner()));
+                    return true;
+        }
+        return false;
+    }
 }
