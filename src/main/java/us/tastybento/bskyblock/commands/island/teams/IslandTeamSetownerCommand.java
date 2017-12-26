@@ -24,6 +24,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setUsage("commands.island.team.setowner.usage");
+        this.setDescription("commands.island.team.setowner.description");
     }
 
     @Override

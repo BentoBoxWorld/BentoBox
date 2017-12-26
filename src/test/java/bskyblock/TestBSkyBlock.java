@@ -91,10 +91,10 @@ public class TestBSkyBlock {
         assertEquals(Settings.PERMPREFIX + "default.permission", testCommand.getPermission());
         // Check commands and aliases match to correct class
         for (Entry<String, CompositeCommand> command : testCommand.getSubCommands().entrySet()) {
-            assertEquals(testCommand.getSubCommand(command.getKey()), command.getValue());
+            assertEquals(testCommand.getSubCommand(command.getKey()), Optional.of(command.getValue()));
             // Check aliases
             for (String alias : command.getValue().getAliases()) {
-                assertEquals(testCommand.getSubCommand(alias), command.getValue());
+                assertEquals(testCommand.getSubCommand(alias), Optional.of(command.getValue()));
             }            
         }
         String[] args = {""};
@@ -107,11 +107,11 @@ public class TestBSkyBlock {
         args[0] = "sub1";
         assertEquals(Arrays.asList(), testCommand.tabComplete(player, "test", args));
         String[] args2 = {"sub2",""};
-        assertEquals(Arrays.asList("help", "subsub"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Arrays.asList("subsub", "help"), testCommand.tabComplete(player, "test", args2));
         args2[1] = "s";
         assertEquals(Arrays.asList("subsub"), testCommand.tabComplete(player, "test", args2));
         String[] args3 = {"sub2","subsub", ""};
-        assertEquals(Arrays.asList("help", "subsubsub"), testCommand.tabComplete(player, "test", args3));
+        assertEquals(Arrays.asList("subsubsub", "help"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
         assertEquals(Arrays.asList(new String[] {"Florian", "Ben", "Bill", "Ted", "help"}),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));

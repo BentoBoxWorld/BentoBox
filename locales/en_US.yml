@@ -34,82 +34,92 @@ commands:
     about: "display this help page"
   admin:
     version:
-      usage: "display %bsb_plugin_name% and addons versions"
+      description: "display %bsb_plugin_name% and addons versions"
     setrange:
       range-updated: "Island range updated to [number]"
   island:
     about:
-      usage: "display info about %bsb_plugin_name%"
+      description: "display info about %bsb_plugin_name%"
     go:
-      usage: "teleport you to your island"
+      usage: "<home number>"
+      description: "teleport you to your island"
     spawn:
-      usage: "teleport you to the spawn"
+      description: "teleport you to the spawn"
     create:
-      usage: "create an island"
+      description: "create an island"
       unable-create-island: "Your island could not be generated, please contact an administrator."
     info:
-      usage: "display info about your island"
+      description: "display info about your island"
     reset:
-      usage: "restart your island and remove the old one"
+      description: "restart your island and remove the old one"
       must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
     sethome:
-      usage: "set your teleport point for /island"
+      description: "set your teleport point for /island"
       must-be-on-your-island: "You must be on your island to set home!"
       num-homes: "Homes can be 1 to [max]."
       home-set: "Your island home has been set to your current location."
+      usage: "<home number>"
     setname:
-      usage: "set a name for your island"
+      description: "set a name for your island"
       name-too-short: "Too short. Minimum size is [length] characters."
       name-too-long: "Too long. Maximum size is [length] characters."
+      usage: "<name>"
     resetname:
-      usage: "reset your island name"
+      description: "reset your island name"
     team:
-      usage: "manage your team"
+      description: "manage your team"
       info:
-        usage: "display detailed info about your team"
+        description: "display detailed info about your team"
       invite:
-        usage: "invite a player to join your island"
+        description: "invite a player to join your island"
         errors:
           island-is-full: "Your island is full, you can't invite anyone else."
           none-invited-you: "No one invited you :c."
           you-already-are-in-team: "You are already on a team!"
           invalid-invite: "That invite is no longer valid, sorry."
+        usage: "<player>"
         you-can-invite: "You can invite [number] more players."
         accept:
-          usage: "accept an invitation"
+          description: "accept an invitation"
           you-joined-island: "You have joined an island! Use /[label] team info to see the other members."
           name-joined-your-island: "[name] has joined your island!"
         reject:
-          usage: "reject an invitation"
+          description: "reject an invitation"
           you-rejected-invite: "You have rejected the invitation to join an island."
           name-rejected-your-invite: "[name] has rejected your island invite!"
         cancel:
-          usage: "cancel the pending invite to join your island"
+          description: "cancel the pending invite to join your island"
       leave:
-        usage: "leave your island"
+        description: "leave your island"
       kick:
-        usage: "remove a member from your island"
+        description: "remove a member from your island"
+        usage: "<player>"
       promote:
-        usage: "promote a player on your island to another rank"
+        description: "promote a player on your island to another rank"
+        usage: "<player>"
       setowner:
-        usage: "transfer your island ownership to a member"
+        description: "transfer your island ownership to a member"
         errors:
           cant-transfer-to-yourself: "You can't transfer ownership to yourself! Well, in facts, you could have been able to do so... But we don't want you to do so. 'Cause it's bad."
           target-is-not-member: "That player is not part of your island team!"
         name-is-the-owner: "[name] is now the island owner!"
+        usage: "<player>"
         you-are-the-owner: "You are now the island owner!"
     ban:
-      usage: "ban a player from your island"
+      description: "ban a player from your island"
+      usage: "<player>"
     unban:
-      usage: "unban a player from your island"
+      description: "unban a player from your island"
+      usage: "<player>"
     banlist:
-      usage: "list banned players"
+      description: "list banned players"
     lock:
-      usage: "lock/unlock your island so visitors cannot enter it"
+      description: "lock/unlock your island so visitors cannot enter it"
     settings:
-      usage: "display island settings"
+      description: "display island settings"
     language:
-      usage: "select language"
+      description: "select language"
+      usage: "<language>"
 
 protection:
   flags:

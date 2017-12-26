@@ -25,7 +25,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         this.setPermission(Settings.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
         this.setUsage("commands.island.setname.usage");
-
+        this.setDescription("commands.island.setname.description");
     }
 
     /* (non-Javadoc)

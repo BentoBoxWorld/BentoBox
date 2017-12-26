@@ -71,9 +71,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
         this.subCommands = new LinkedHashMap<>();
         setUsage("");
-        if (!label.equals("help"))
-            new DefaultHelpCommand(this);
+        setDescription("");
         this.setup();
+        // If this command does not define its own help class, then use the default help command
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+            new DefaultHelpCommand(this);
+
         if (DEBUG)
             Bukkit.getLogger().info("DEBUG: registering command " + label);
     }
@@ -155,7 +158,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                         Bukkit.getLogger().info("DEBUG: This command has subcommands");
                     if (subCommand.hasSubCommand(args[i])) {
                         // Step down one
-                        subCommand = subCommand.getSubCommand(args[i]);
+                        subCommand = subCommand.getSubCommand(args[i]).get();
                         if (DEBUG)
                             Bukkit.getLogger().info("DEBUG: Moved to " + subCommand.getLabel());
                     } else {
@@ -229,12 +232,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param label - command label or alias
      * @return CompositeCommand or null if none found
      */
-    public CompositeCommand getSubCommand(String label) {
+    public Optional<CompositeCommand> getSubCommand(String label) {
         for (Map.Entry<String, CompositeCommand> entry : subCommands.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase(label)) return subCommands.get(label);
-            else if (entry.getValue().getAliases().contains(label)) return subCommands.get(entry.getValue().getLabel());
+            if (entry.getKey().equalsIgnoreCase(label)) return Optional.of(subCommands.get(label));
+            else if (entry.getValue().getAliases().contains(label)) return Optional.of(subCommands.get(entry.getValue().getLabel()));
         }
-        return null;
+        return Optional.empty();
     }
 
     /**

@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.api.commands;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -19,29 +20,35 @@ public class DefaultHelpCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+
         if (args.isEmpty()) { 
             // Show the top level help
             if (user.isPlayer()) {
                 // Player. Check perms
-                if (user.hasPermission(parent.getPermission()) && user.hasPermission(parent.getPermission())) {
-                    user.sendMessage(parent.getUsage());
+                if (user.hasPermission(parent.getPermission())) {
+                    user.sendMessage((parent.getUsage().isEmpty() ? "" : parent.getUsage() + " ") + parent.getDescription());
+                } else {
+                    user.sendMessage("errors.no-permission");
+                    return true;
                 }
-            } else if (!parent.isOnlyPlayer() && !parent.isOnlyPlayer()) {
+
+            } else if (!parent.isOnlyPlayer()) {
                 // Console. Only show if it is a console command
-                user.sendMessage(parent.getUsage()); 
+                user.sendMessage((parent.getUsage().isEmpty() ? "" : parent.getUsage() + " ") + parent.getDescription());
             }
             // Run through any subcommands
             for (CompositeCommand subCommand : parent.getSubCommands().values()) {
                 // Ignore the help command
                 if (!subCommand.getLabel().equals("help")) {
+                    String usage = subCommand.getUsage();
+                    String desc = subCommand.getDescription();
                     if (user.isPlayer()) {
                         // Player. Check perms
                         if (user.hasPermission(parent.getPermission()) && user.hasPermission(subCommand.getPermission())) {
-                            user.sendMessage(subCommand.getUsage());
+                            user.sendMessage((usage.isEmpty() ? "" : usage + " ") + desc);
                         }
                     } else if (!subCommand.isOnlyPlayer()) {
-                        // Console
-                        user.sendMessage(subCommand.getUsage()); 
+                        user.sendMessage((usage.isEmpty() ? "" : usage + " ") + desc);
                     }
                 }
             }

@@ -22,7 +22,7 @@ public class AdminCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        return false;
+        return true;
     }
 
 }

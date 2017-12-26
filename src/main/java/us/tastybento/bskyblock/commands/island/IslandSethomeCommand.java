@@ -15,6 +15,12 @@ public class IslandSethomeCommand extends CompositeCommand {
         this.setPermission(Settings.PERMPREFIX + "island.sethome");
         this.setOnlyPlayer(true);
         this.setUsage("commands.island.sethome.usage");
+        this.setDescription("commands.island.sethome.description");
+    }
+
+    @Override
+    public void setup() {
+        new IslandMultiHomeHelp(this);
     }
 
     @Override

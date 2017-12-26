@@ -21,6 +21,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setUsage("commands.island.team.invite.accept.usage");
+        this.setDescription("commands.island.team.invite.accept.description");
     }
 
     @Override

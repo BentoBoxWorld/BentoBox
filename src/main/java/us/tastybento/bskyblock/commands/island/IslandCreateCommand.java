@@ -23,7 +23,7 @@ public class IslandCreateCommand extends CompositeCommand {
         super(islandCommand, "create", "auto");
         this.setPermission(Settings.PERMPREFIX + "island.create");
         this.setOnlyPlayer(true);
-        this.setUsage("commands.island.create.usage");
+        this.setDescription("commands.island.create.description");
     }
 
     /* (non-Javadoc)
