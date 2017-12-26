@@ -15,16 +15,6 @@ public class NMSHandler implements NMSAbstraction {
     }
 
     @Override
-    public void sendTitle(Player player, String message) {
-
-    }
-
-    @Override
-    public void sendSubtitle(Player player, String message) {
-
-    }
-
-    @Override
     public CommandMap getServerCommandMap() {
         return ((CraftServer) Bukkit.getServer()).getCommandMap();
     }

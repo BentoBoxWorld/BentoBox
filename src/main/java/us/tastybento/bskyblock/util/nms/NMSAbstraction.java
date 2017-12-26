@@ -13,20 +13,6 @@ public interface NMSAbstraction {
     void sendActionBar(Player player, String message);
 
     /**
-     * Send a title to a player
-     * @param player
-     * @param message
-     */
-    void sendTitle(Player player, String message);
-
-    /**
-     * Send a subtitle to a player
-     * @param player
-     * @param message
-     */
-    void sendSubtitle(Player player, String message);
-
-    /**
      * Returns the active {@link org.bukkit.command.CommandMap} of the Server.
      * It is used by the {@link us.tastybento.bskyblock.api.commands.CompositeCommand} to register itself.
      * @return the active CommandMap of the server

@@ -13,16 +13,6 @@ public class NMSHandler implements NMSAbstraction {
     }
 
     @Override
-    public void sendTitle(Player player, String message) {
-        //TODO use /title command
-    }
-
-    @Override
-    public void sendSubtitle(Player player, String message) {
-        //TODO use /title command
-    }
-
-    @Override
     public CommandMap getServerCommandMap() {
         return null;
     }
