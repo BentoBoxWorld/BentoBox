@@ -8,7 +8,7 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**
- * This is a customer help for the /island go and /island sethome commands. It overrides the default help sub command.
+ * This is a custom help for the /island go and /island sethome commands. It overrides the default help sub command.
  * The number of homes can change depending on the player's permissions and config.yml settings.
  * @author ben
  *
@@ -22,6 +22,7 @@ public class IslandMultiHomeHelp extends CompositeCommand {
     @Override
     public void setup() {
         this.setOnlyPlayer(true);
+        // Inherit parameters from the respective parent class - in this case, only /island go and /island sethome
         this.setParameters(parent.getParameters());
         this.setDescription(parent.getDescription());
         this.setPermission(parent.getPermission());
@@ -29,6 +30,7 @@ public class IslandMultiHomeHelp extends CompositeCommand {
         
     @Override
     public boolean execute(User user, List<String> args) {
+        // This will only be shown if it is for a player
         if (user.isPlayer()) {
             // Get elements
             String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters()) + " ";
