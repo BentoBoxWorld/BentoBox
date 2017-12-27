@@ -20,13 +20,14 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
     public IslandTeamCommand(CompositeCommand islandCommand) {
         super(islandCommand, "team");
-        this.setPermission(Settings.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.team.description");
     }
 
     @Override
     public void setup() {
+        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setOnlyPlayer(true);
+        this.setDescription("commands.island.team.description");
+
         new IslandTeamInviteCommand(this);
         new IslandTeamLeaveCommand(this);
         new IslandTeamPromoteCommand(this);

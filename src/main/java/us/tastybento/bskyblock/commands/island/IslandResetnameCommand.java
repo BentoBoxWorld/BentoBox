@@ -18,9 +18,12 @@ public class IslandResetnameCommand extends CompositeCommand {
 
     public IslandResetnameCommand(CompositeCommand islandCommand) {
         super(islandCommand, "resetname");
+    }
+    
+    @Override
+    public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
-        this.setUsage("commands.island.resetname.usage");
         this.setDescription("commands.island.resetname.description");
 
     }

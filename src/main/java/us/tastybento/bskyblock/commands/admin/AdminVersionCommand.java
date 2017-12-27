@@ -10,6 +10,10 @@ public class AdminVersionCommand extends CompositeCommand {
 
     public AdminVersionCommand(CompositeCommand adminCommand) {
         super(adminCommand, "version");
+    }
+
+    @Override
+    public void setup() {
         // Permission
         this.setPermission(Settings.PERMPREFIX + "admin.version");
     }

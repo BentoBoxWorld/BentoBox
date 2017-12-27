@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.api.commands;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -11,45 +10,47 @@ import java.util.List;
  */
 public class DefaultHelpCommand extends CompositeCommand {
 
-    private CompositeCommand parent;
-
     public DefaultHelpCommand(CompositeCommand parent) {
         super(parent, "help");
-        this.parent = parent;
+    }
+
+    @Override
+    public void setup() {
+        // Set the usage to what the parent's command is
+        this.setParameters(parent.getParameters());
+        this.setDescription(parent.getDescription());        
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
-
-        if (args.isEmpty()) { 
-            // Show the top level help
-            if (user.isPlayer()) {
-                // Player. Check perms
-                if (user.hasPermission(parent.getPermission())) {
-                    user.sendMessage((parent.getUsage().isEmpty() ? "" : parent.getUsage() + " ") + parent.getDescription());
-                } else {
-                    user.sendMessage("errors.no-permission");
-                    return true;
+        if (args.isEmpty()) {
+            if (!parent.getLabel().equals("help")) {
+                // Get elements
+                String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters()) + " ";
+                String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
+                // Show the help
+                if (user.isPlayer()) {
+                    // Player. Check perms
+                    if (user.hasPermission(parent.getPermission())) {
+                        user.sendLegacyMessage(parent.getUsage() + " " + params + desc);
+                    } else {
+                        // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
+                        return true;
+                    }
+                } else if (!parent.isOnlyPlayer()) {
+                    // Console. Only show if it is a console command
+                    user.sendLegacyMessage(parent.getUsage() + " " + params + desc);
                 }
-
-            } else if (!parent.isOnlyPlayer()) {
-                // Console. Only show if it is a console command
-                user.sendMessage((parent.getUsage().isEmpty() ? "" : parent.getUsage() + " ") + parent.getDescription());
             }
-            // Run through any subcommands
+            // Run through any subcommands and get their help
             for (CompositeCommand subCommand : parent.getSubCommands().values()) {
                 // Ignore the help command
                 if (!subCommand.getLabel().equals("help")) {
-                    String usage = subCommand.getUsage();
-                    String desc = subCommand.getDescription();
-                    if (user.isPlayer()) {
-                        // Player. Check perms
-                        if (user.hasPermission(parent.getPermission()) && user.hasPermission(subCommand.getPermission())) {
-                            user.sendMessage((usage.isEmpty() ? "" : usage + " ") + desc);
-                        }
-                    } else if (!subCommand.isOnlyPlayer()) {
-                        user.sendMessage((usage.isEmpty() ? "" : usage + " ") + desc);
-                    }
+                    // Every command should have help because every command has a default help
+                    if (subCommand.getSubCommand("help").isPresent()) {
+                        // This sub-sub command has a help, so use it
+                        subCommand.getSubCommand("help").get().execute(user, args);
+                    } 
                 }
             }
         }

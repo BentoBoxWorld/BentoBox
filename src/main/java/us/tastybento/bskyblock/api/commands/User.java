@@ -147,6 +147,12 @@ public class User {
         return sender.isOp();
     }
 
+    /**
+     * Gets a translation for this user
+     * @param reference
+     * @param variables
+     * @return
+     */
     public String getTranslation(String reference, String... variables) {
         String translation = plugin.getLocalesManager().get(sender, reference);
         if (variables.length > 1) {

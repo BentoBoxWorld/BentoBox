@@ -21,9 +21,13 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
 
     public IslandTeamSetownerCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "setleader");
+    }
+     
+    @Override
+    public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setUsage("commands.island.team.setowner.usage");
+        this.setParameters("commands.island.team.setowner.parameters");
         this.setDescription("commands.island.team.setowner.description");
     }
 

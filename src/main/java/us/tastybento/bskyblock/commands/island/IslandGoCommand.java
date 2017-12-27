@@ -22,14 +22,13 @@ public class IslandGoCommand extends CompositeCommand {
 
     public IslandGoCommand(IslandCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
-        this.setPermission(Settings.PERMPREFIX + "island.home");
-        this.setOnlyPlayer(true);
-        this.setUsage("commands.island.go.usage");
-        this.setDescription("commands.island.go.description");
     }
 
     @Override
     public void setup() {
+        this.setPermission(Settings.PERMPREFIX + "island.home");
+        this.setOnlyPlayer(true);
+        this.setDescription("commands.island.go.description");
         new IslandMultiHomeHelp(this);
     }
 

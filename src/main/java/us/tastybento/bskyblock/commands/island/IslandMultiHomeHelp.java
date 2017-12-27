@@ -15,29 +15,35 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class IslandMultiHomeHelp extends CompositeCommand {
 
-    private CompositeCommand parent;
-
     public IslandMultiHomeHelp(CompositeCommand parent) {
-        super(parent, "help");
-        this.parent = parent;
-        this.setOnlyPlayer(true);
+        super(parent, "help");        
     }
-
+    
+    @Override
+    public void setup() {
+        this.setOnlyPlayer(true);
+        this.setParameters(parent.getParameters());
+        this.setDescription(parent.getDescription());
+        this.setPermission(parent.getPermission());
+    }
+        
     @Override
     public boolean execute(User user, List<String> args) {
         if (user.isPlayer()) {
-            user.sendLegacyMessage("DEBUG: Custom help");
+            // Get elements
+            String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters()) + " ";
+            String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
             // Player. Check perms
-            if (user.hasPermission(parent.getPermission())) {
+            if (user.hasPermission(getPermission())) {
                 int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
                 if (maxHomes > 1) {
-                    user.sendMessage((parent.getUsage().isEmpty() ? "" : parent.getUsage() + " ") + parent.getDescription());
+                    user.sendLegacyMessage(parent.getUsage() + " " + params + desc);
                 } else {
-                    user.sendMessage(parent.getDescription());
+                    // No params
+                    user.sendLegacyMessage(parent.getUsage() + " " + desc);
                 }
                 return true;
             } else {
-                user.sendMessage("errors.no-permission");
                 return true;
             }
 

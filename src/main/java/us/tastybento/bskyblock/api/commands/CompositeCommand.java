@@ -41,7 +41,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * The parent command to this one. If this is a top-level command it will be empty.
      */
-    private final Optional<CompositeCommand> parent;
+    protected final CompositeCommand parent;
     /**
      * The permission required to execute this command
      */
@@ -51,9 +51,16 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     private Map<String, CompositeCommand> subCommands;
     /**
-     * The usage string for this command. It is the commands followed by a locale reference.
+     * The parameters string for this command. It is the commands followed by a locale reference.
+     */
+    private String parameters = "";
+    /**
+     * The command chain from the very top, e.g., /island team promote
      */
     private String usage;
+    /**
+     * BSkyBlock plugin
+     */
     private BSkyBlock bsb;
 
     /**
@@ -64,14 +71,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
         super(label);
-        this.parent = Optional.of(parent);
+        this.parent = parent;
         this.subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
         parent.getSubCommands().put(label, this);
         this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
         this.subCommands = new LinkedHashMap<>();
         setUsage("");
-        setDescription("");
         this.setup();
         // If this command does not define its own help class, then use the default help command
         if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
@@ -90,13 +96,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public CompositeCommand(String label, String... string) {
         super(label);
         this.setAliases(new ArrayList<>(Arrays.asList(string)));
-        this.parent = Optional.empty();
+        this.parent = null;
         setUsage("");
         this.subCommandLevel = 0; // Top level
         this.subCommands = new LinkedHashMap<>();
-        if (!label.equals("help"))
-            new DefaultHelpCommand(this);
         this.setup();
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+            new DefaultHelpCommand(this);
+
     }
 
 
@@ -204,7 +211,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * @return the parent command object
      */
-    public Optional<CompositeCommand> getParent() {
+    public CompositeCommand getParent() {
         return parent;
     }
 
@@ -256,34 +263,41 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     protected UUID getTeamLeader(User user) {
         return bsb.getIslands().getTeamLeader(user.getUniqueId());
     }
+    
+
+    public void setparameters(String parameters) {
+        this.setParameters(parameters);
+    }
 
     @Override
     public String getUsage() {
         return usage;
     }
     
+    /**
+     * This creates the full linking chain of commands
+     */
     @Override
     public Command setUsage(String usage) {
         // Go up the chain
-        Optional<CompositeCommand> parent = this.getParent();
+        CompositeCommand parent = this.getParent();
         this.usage = this.getLabel() + " " + usage;
-        while (parent.isPresent()) {
-            this.usage = parent.get().getLabel() + " " + this.usage;
-            parent = parent.get().getParent();
+        while (parent != null) {
+            this.usage = parent.getLabel() + " " + this.usage;
+            parent = parent.getParent();
         }
         this.usage = "/" + this.usage;
         this.usage = this.usage.trim();
         return this;
     }
     
-    /**
-     * Get usage for sub commands
-     * @param subCommands
-     * @return
-     */
-    public String getUsage(String... subCommands) {
-        CompositeCommand subCommand = this.getCommandFromArgs(subCommands);
-        return subCommand.getUsage();
+    public String getParameters() {
+        return parameters;
+    }
+
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
     }
 
     /**

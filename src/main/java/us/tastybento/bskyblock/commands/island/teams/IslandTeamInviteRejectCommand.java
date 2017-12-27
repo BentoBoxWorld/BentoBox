@@ -13,9 +13,12 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
 
     public IslandTeamInviteRejectCommand(IslandTeamInviteCommand islandTeamInviteCommand) {
         super(islandTeamInviteCommand, "reject");
+    }
+    
+    @Override
+    public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setUsage("commands.island.team.invite.reject.usage");
         this.setDescription("commands.island.team.invite.reject.description");
     }
 

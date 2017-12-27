@@ -3,6 +3,7 @@ package bskyblock;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 
@@ -87,7 +88,7 @@ public class TestBSkyBlock {
         assertEquals(2, testCommand.getAliases().size());
         assertEquals("t", testCommand.getAliases().get(0));
         assertTrue(testCommand.isOnlyPlayer());
-        assertEquals(testCommand.getParent(), Optional.empty());
+        assertNull(testCommand.getParent());
         assertEquals(Settings.PERMPREFIX + "default.permission", testCommand.getPermission());
         // Check commands and aliases match to correct class
         for (Entry<String, CompositeCommand> command : testCommand.getSubCommands().entrySet()) {
@@ -98,8 +99,8 @@ public class TestBSkyBlock {
             }            
         }
         String[] args = {""};
-        assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
-        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
+        assertEquals(Arrays.asList("sub1","sub2", "help"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("sub1","sub2", "help"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
         assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "d";
@@ -130,11 +131,8 @@ public class TestBSkyBlock {
         assertTrue(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
         
         // Usage tests
-        assertEquals("/test test.usage", testCommand.getUsage());
-        assertEquals("/test test.usage", testCommand.getUsage("sdfsd"));
-        assertEquals("/test sub1 sub.usage", testCommand.getUsage("sub1"));
-        // If the usage has not been defined, then it just shows the command
-        assertEquals("/test sub2 subsub", testCommand.getUsage("sub2", "subsub"));
+        assertEquals("/test", testCommand.getUsage());
+        assertEquals("test.params", testCommand.getParameters());
         
         // Test help
         //assertTrue(testCommand.execute(player,  "test", new String[] {"help"}));
@@ -144,7 +142,7 @@ public class TestBSkyBlock {
 
         public TestCommand() {
             super("test", "t", "tt");
-            this.setUsage("test.usage");
+            this.setParameters("test.params");
         }
 
         @Override
@@ -165,7 +163,11 @@ public class TestBSkyBlock {
 
         public TestSubCommand(CompositeCommand parent) {
             super(parent, "sub1", "subone");
-            this.setUsage("sub.usage");
+        }
+        
+        @Override
+        public void setup() {
+            this.setParameters("sub.params");
         }
 
         @Override
@@ -218,8 +220,10 @@ public class TestBSkyBlock {
 
         public TestSubSubSubCommand(CompositeCommand parent) {
             super(parent, "subsubsub", "level3", "subsubsubby");
-
         }
+        
+        @Override
+        public void setup() {}
 
         @Override
         public boolean execute(User user, List<String> args) {
@@ -242,6 +246,9 @@ public class TestBSkyBlock {
         public Test3ArgsCommand() {
             super("args", "");
         }
+        
+        @Override
+        public void setup() {}
 
         @Override
         public boolean execute(User user, List<String> args) {

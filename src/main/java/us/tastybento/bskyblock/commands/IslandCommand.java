@@ -18,8 +18,6 @@ public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
         super(Settings.ISLANDCOMMAND, "is");
-        this.setUsage("island.usage");
-        this.setOnlyPlayer(true);
     }
 
     /* (non-Javadoc)
@@ -27,6 +25,8 @@ public class IslandCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
+        this.setDescription("island.help.description");
+        this.setOnlyPlayer(true);
         // Permission
         this.setPermission(Settings.PERMPREFIX + "island");
         // Set up subcommands

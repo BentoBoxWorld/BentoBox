@@ -22,9 +22,13 @@ public class IslandSetnameCommand extends CompositeCommand {
 
     public IslandSetnameCommand(CompositeCommand islandCommand) {
         super(islandCommand, "setname");
+    }
+    
+    @Override
+    public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
-        this.setUsage("commands.island.setname.usage");
+        this.setParameters("commands.island.setname.parameters");
         this.setDescription("commands.island.setname.description");
     }
 

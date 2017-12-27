@@ -19,6 +19,10 @@ public class IslandResetCommand extends CompositeCommand {
 
     public IslandResetCommand(CompositeCommand islandCommand) {
         super(islandCommand, "reset", "restart");
+    }
+    
+    @Override
+    public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.create");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.reset.description");

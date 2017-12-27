@@ -13,9 +13,9 @@ public interface BSBCommand {
 
     /**
      * Anything that needs to be set up for this command.
-     * This is where you register subcommands. This will be run if it exists.
+     * This is where you register subcommands and other settings
      */
-    default void setup() {};
+    public void setup();
 
     /**
      * What will be executed when this command is run
