@@ -58,10 +58,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The command chain from the very top, e.g., /island team promote
      */
     private String usage;
-    /**
-     * BSkyBlock plugin
-     */
-    private BSkyBlock bsb;
 
     /**
      * Sub-command constructor
@@ -188,7 +184,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return IslandsManager
      */
     protected IslandsManager getIslands() {
-        return bsb.getIslands();
+        return getPlugin().getIslands();
     }
 
     /**
@@ -205,7 +201,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return set of UUIDs of all team members
      */
     protected Set<UUID> getMembers(User user) {
-        return bsb.getIslands().getMembers(user.getUniqueId());
+        return getPlugin().getIslands().getMembers(user.getUniqueId());
     }
 
     /**
@@ -225,13 +221,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return PlayersManager
      */
     protected PlayersManager getPlayers() {
-        return bsb.getPlayers();
+        return getPlugin().getPlayers();
     }
 
     @Override
     public BSkyBlock getPlugin() {
-        this.bsb = BSkyBlock.getPlugin();
-        return this.bsb;
+        return BSkyBlock.getPlugin();
     }
     
     /**
@@ -261,7 +256,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return UUID of player's team leader
      */
     protected UUID getTeamLeader(User user) {
-        return bsb.getIslands().getTeamLeader(user.getUniqueId());
+        return getPlugin().getIslands().getTeamLeader(user.getUniqueId());
     }
     
 
@@ -323,7 +318,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if player is in a team
      */
     protected boolean inTeam(User user) {
-        return bsb.getPlayers().inTeam(user.getUniqueId());
+        return getPlugin().getPlayers().inTeam(user.getUniqueId());
     }
 
     /**
