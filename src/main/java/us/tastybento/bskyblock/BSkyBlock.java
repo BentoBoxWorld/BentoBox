@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -8,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.api.BSBModule;
+import us.tastybento.bskyblock.api.addons.event.AddOnDisableEvent;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.PluginConfig;
@@ -18,6 +20,7 @@ import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.PanelListener;
+import us.tastybento.bskyblock.managers.AddOnManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.util.Util;
@@ -42,6 +45,7 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
     // Managers
     private CommandsManager commandsManager;
     private LocalesManager localesManager;
+    private AddOnManager addonsManager;
 
     @Override
     public void onEnable(){
@@ -100,6 +104,12 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
 
                             // Register Listeners
                             registerListeners();
+                            
+                            // Load addons
+                            addonsManager = new AddOnManager();
+                            addonsManager.loadAddons();
+                            
+                            
                             /*
                              *DEBUG CODE
                             Island loadedIsland = islandsManager.getIsland(owner);
@@ -137,6 +147,20 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
 
     @Override
     public void onDisable(){
+        // Unload addons
+        addonsManager.getAddons().forEach(addon -> {
+            addon.onDisable();
+            getServer().getPluginManager().callEvent(new AddOnDisableEvent(addon));
+            System.out.println("Disabling " + addon.getDescription().getName() + "...");
+        });
+
+        addonsManager.getLoader().forEach(loader -> {
+            try {
+                loader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
         // Save data
         playersManager.shutdown();
         islandsManager.shutdown();
@@ -194,7 +218,7 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
         return islandsManager;
     }
 
-    public static BSkyBlock getPlugin() {
+    public static BSkyBlock getInstance() {
         return plugin;
     }
 

@@ -73,7 +73,7 @@ public class User {
 
     private final UUID playerUUID;
     
-    private final BSkyBlock plugin = BSkyBlock.getPlugin();
+    private final BSkyBlock plugin = BSkyBlock.getInstance();
 
     private final CommandSender sender;
 

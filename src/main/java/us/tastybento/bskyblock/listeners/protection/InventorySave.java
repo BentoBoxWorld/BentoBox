@@ -14,7 +14,7 @@ import us.tastybento.bskyblock.BSkyBlock;
  *
  */
 public class InventorySave {
-    private static InventorySave instance = new InventorySave(BSkyBlock.getPlugin());
+    private static InventorySave instance = new InventorySave(BSkyBlock.getInstance());
     private HashMap<UUID, InventoryStore> inventories;
 
     /**

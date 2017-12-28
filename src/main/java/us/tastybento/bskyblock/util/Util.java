@@ -39,7 +39,7 @@ import us.tastybento.bskyblock.util.nms.NMSAbstraction;
  * @author Poslovitch
  */
 public class Util {
-    private static BSkyBlock plugin = BSkyBlock.getPlugin();
+    private static BSkyBlock plugin = BSkyBlock.getInstance();
 
     private static String serverVersion = null;
     private static NMSAbstraction nmsHandler = null;

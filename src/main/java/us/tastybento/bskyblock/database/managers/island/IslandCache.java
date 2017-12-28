@@ -24,7 +24,7 @@ import us.tastybento.bskyblock.util.Util;
 public class IslandCache {
     private static final boolean DEBUG2 = false;
     private static final boolean DEBUG = false;
-    private BSkyBlock plugin = BSkyBlock.getPlugin();
+    private BSkyBlock plugin = BSkyBlock.getInstance();
     private BiMap<Location, Island> islandsByLocation;
     /**
      * Every player who is associated with an island is in this map.

@@ -226,7 +226,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public BSkyBlock getPlugin() {
-        return BSkyBlock.getPlugin();
+        return BSkyBlock.getInstance();
     }
     
     /**

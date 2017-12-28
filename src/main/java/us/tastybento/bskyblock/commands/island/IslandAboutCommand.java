@@ -24,7 +24,7 @@ public class IslandAboutCommand extends CompositeCommand {
     
     @Override
     public boolean execute(User user, List<String> args) {
-        user.sendLegacyMessage("About " + BSkyBlock.getPlugin().getDescription().getName() + " v" + BSkyBlock.getPlugin().getDescription().getVersion() + ":");
+        user.sendLegacyMessage("About " + BSkyBlock.getInstance().getDescription().getName() + " v" + BSkyBlock.getInstance().getDescription().getVersion() + ":");
         user.sendLegacyMessage("Copyright (c) 2017 - 2018 tastybento, Poslovitch");
         user.sendLegacyMessage("All rights reserved.");
         user.sendLegacyMessage("");

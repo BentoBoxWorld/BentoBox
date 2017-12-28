@@ -22,7 +22,7 @@ public final class CommandsManager {
 
         cmds.add(command);
         commands.put(module, cmds);
-        BSkyBlock.getPlugin().getNMSHandler().getServerCommandMap().register(command.getLabel(), command);
+        BSkyBlock.getInstance().getNMSHandler().getServerCommandMap().register(command.getLabel(), command);
     }
 
     public void unregisterCommand(Command command) {
