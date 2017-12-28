@@ -135,13 +135,23 @@ public abstract class Addon implements AddonInterface {
         saveResource(ADDON_CONFIG_FILENAME, false);
         config = loadYamlFile(ADDON_CONFIG_FILENAME);
     }
-
+   
     /**
-     * Saves a resource contained in this add-on's jar file.
-     * @param resourcePath
-     * @param replace
+     * Saves a resource contained in this add-on's jar file to the addon's data folder.
+     * @param resourcePath in jar file
+     * @param replace - if true, will overwrite previous file
      */
     public void saveResource(String resourcePath, boolean replace) {
+        saveResource(resourcePath, dataFolder, replace);
+    }
+    
+    /**
+     * Saves a resource contained in this add-on's jar file to the destination folder.
+     * @param resourcePath in jar file
+     * @param destinationFolder on file system
+     * @param replace - if true, will overwrite previous file
+     */
+    public void saveResource(String resourcePath, File destinationFolder, boolean replace) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -158,9 +168,9 @@ public abstract class Addon implements AddonInterface {
                 jar.close();
                 throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + jar.getName());
             }
-            File outFile = new File(dataFolder, resourcePath);
+            File outFile = new File(destinationFolder, resourcePath);
             int lastIndex = resourcePath.lastIndexOf('/');
-            File outDir = new File(dataFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
+            File outDir = new File(destinationFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
 
             if (!outDir.exists()) {
                 outDir.mkdirs();
