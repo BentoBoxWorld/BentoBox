@@ -4,8 +4,6 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
 
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -14,8 +12,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  * @author Poslovitch
  * @version 1.0
  */
-public class IslandBaseEvent extends Event implements Cancellable{
-    private static final HandlerList handlers = new HandlerList();
+public class IslandBaseEvent extends PremadeEvent implements Cancellable {
     private boolean cancelled;
 
     private final Island island;
@@ -78,15 +75,6 @@ public class IslandBaseEvent extends Event implements Cancellable{
      */
     public Location getLocation() {
         return location;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 
     @Override

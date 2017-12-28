@@ -6,7 +6,6 @@ import java.util.UUID;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 
 public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
@@ -31,7 +30,7 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
                     .getIsland(inviteList.get(playerUUID)))
-                    .reason(TeamReason.REJECT)
+                    .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
             getPlugin().getServer().getPluginManager().callEvent(event);

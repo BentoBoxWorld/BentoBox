@@ -4,8 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import us.tastybento.bskyblock.api.events.PremadeEvent;
 
 /**
  * This event is fired when islands to remove have been chosen and before starting to remove them.
@@ -15,8 +14,7 @@ import org.bukkit.event.HandlerList;
  * @author Poslovitch
  * @since 1.0
  */
-public class PurgeStartEvent extends Event implements Cancellable {
-    private static final HandlerList handlers = new HandlerList();
+public class PurgeStartEvent extends PremadeEvent implements Cancellable {
     private boolean cancelled;
 
     private final UUID user;
@@ -78,14 +76,5 @@ public class PurgeStartEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean cancel) {
         this.cancelled = cancel;
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 }

@@ -29,7 +29,6 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -69,7 +68,7 @@ public class TestBSkyBlock {
         // Test island events
         IslandBaseEvent event = TeamEvent.builder()
                 //.island(getIslands().getIsland(playerUUID))
-                .reason(TeamReason.INFO)
+                .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(playerUUID)
                 .build();
         assertEquals(playerUUID, event.getPlayerUUID());

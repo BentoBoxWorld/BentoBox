@@ -3,8 +3,7 @@ package us.tastybento.bskyblock.api.events.command;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
-import org.bukkit.event.Event;
-import org.bukkit.event.HandlerList;
+import us.tastybento.bskyblock.api.events.PremadeEvent;
 
 /**
  * Fired when a team event happens.
@@ -12,9 +11,8 @@ import org.bukkit.event.HandlerList;
  * @author tastybento
  * @since 1.0
  */
-public class CommandEvent extends Event implements Cancellable {
-    
-    private static final HandlerList handlers = new HandlerList();
+public class CommandEvent extends PremadeEvent implements Cancellable {
+
     private boolean cancelled;
 
     private final CommandSender sender;
@@ -91,14 +89,5 @@ public class CommandEvent extends Event implements Cancellable {
     @Override
     public void setCancelled(boolean arg0) {
         cancelled = arg0;        
-    }
-
-    @Override
-    public HandlerList getHandlers() {
-        return handlers;
-    }
-
-    public static HandlerList getHandlerList() {
-        return handlers;
     }
 }

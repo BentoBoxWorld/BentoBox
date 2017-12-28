@@ -12,7 +12,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -66,7 +65,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
                         .getIsland(playerUUID))
-                .reason(TeamReason.MAKELEADER)
+                .reason(TeamEvent.Reason.MAKELEADER)
                 .involvedPlayer(targetUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);

@@ -15,7 +15,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  */
 public class TeamEvent {
 
-    public enum TeamReason {
+    public enum Reason {
         INVITE,
         JOIN,
         REJECT,
@@ -94,10 +94,9 @@ public class TeamEvent {
     }
 
     public static class TeamEventBuilder {
-        // Here field are NOT final. They are just used for the building.
         private Island island;
         private UUID player;
-        private TeamReason reason = TeamReason.UNKNOWN;
+        private Reason reason = Reason.UNKNOWN;
         private boolean admin;
         private Location location;
 
@@ -120,7 +119,7 @@ public class TeamEvent {
          * @param reason for the event
          * @return
          */
-        public TeamEventBuilder reason(TeamReason reason) {
+        public TeamEventBuilder reason(Reason reason) {
             this.reason = reason;
             return this;
         }
@@ -161,7 +160,6 @@ public class TeamEvent {
                 return new TeamUninviteEvent(island, player, admin, location);
             default:
                 return new TeamGeneralEvent(island, player, admin, location);
-
             }
         }
     }

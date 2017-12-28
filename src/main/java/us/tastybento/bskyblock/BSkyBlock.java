@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -9,7 +8,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.api.BSBModule;
-import us.tastybento.bskyblock.api.addons.event.AddonDisableEvent;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.PluginConfig;
@@ -107,7 +105,7 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
                             
                             // Load addons
                             addonsManager = new AddonsManager();
-                            addonsManager.loadAddons();
+                            addonsManager.enableAddons();
                             
                             /*
                              *DEBUG CODE
@@ -145,21 +143,8 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
     }
 
     @Override
-    public void onDisable(){
-        // Unload addons
-        addonsManager.getAddons().forEach(addon -> {
-            addon.onDisable();
-            getServer().getPluginManager().callEvent(new AddonDisableEvent(addon));
-            System.out.println("Disabling " + addon.getDescription().getName() + "...");
-        });
-
-        addonsManager.getLoader().forEach(loader -> {
-            try {
-                loader.close();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        });
+    public void onDisable() {
+        addonsManager.disableAddons();
         // Save data
         playersManager.shutdown();
         islandsManager.shutdown();

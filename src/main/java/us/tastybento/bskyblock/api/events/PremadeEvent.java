@@ -1,9 +1,9 @@
-package us.tastybento.bskyblock.api.addons.event;
+package us.tastybento.bskyblock.api.events;
 
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
-public abstract class PremadeEvent extends Event{
+public abstract class PremadeEvent extends Event {
 
 	public static final HandlerList handlers = new HandlerList();
 	

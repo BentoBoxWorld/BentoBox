@@ -16,10 +16,9 @@ import org.bukkit.Bukkit;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.addons.AddonClassLoader;
-import us.tastybento.bskyblock.api.addons.event.AddonEnableEvent;
-import us.tastybento.bskyblock.api.addons.event.AddonLoadEvent;
 import us.tastybento.bskyblock.api.addons.exception.InvalidAddonFormatException;
 import us.tastybento.bskyblock.api.addons.exception.InvalidAddonInheritException;
+import us.tastybento.bskyblock.api.events.addon.AddonEvent;
 
 /**
  * @author Tastybento, ComminQ
@@ -38,7 +37,7 @@ public final class AddonsManager {
     /**
      * Loads all the addons from the addons folder
      */
-    public void loadAddons() {
+    public void enableAddons() {
         File f = new File(BSkyBlock.getInstance().getDataFolder(), "addons");
         if (f.exists()) {
             if (f.isDirectory()) {
@@ -67,7 +66,7 @@ public final class AddonsManager {
 
         this.addons.stream().forEach(addon -> {
             addon.onEnable();
-            BSkyBlock.getInstance().getServer().getPluginManager().callEvent(new AddonEnableEvent(addon));
+            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
             BSkyBlock.getInstance().getLogger().info("Enabling " + addon.getDescription().getName() + "...");
         });
@@ -111,7 +110,7 @@ public final class AddonsManager {
             addon = loader.addon;
             addon.setDataFolder(new File(f.getParent(), f.getName().replace(".jar", "")));
             addon.setFile(f);
-            Bukkit.getPluginManager().callEvent(new AddonLoadEvent(addon));
+            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
             this.addons.add(addon);
             addon.onLoad();
             BSkyBlock.getInstance().getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
@@ -135,6 +134,26 @@ public final class AddonsManager {
             }
         });
         return map;
+    }
+
+    /**
+     * Disable all the enabled addons
+     */
+    public void disableAddons() {
+        // Unload addons
+        addons.forEach(addon -> {
+            addon.onDisable();
+            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
+            System.out.println("Disabling " + addon.getDescription().getName() + "...");
+        });
+
+        loader.forEach(loader -> {
+            try {
+                loader.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     public List<Addon> getAddons() {

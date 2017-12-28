@@ -14,7 +14,6 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -117,7 +116,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 // Fire event so add-ons can run commands, etc.
                 IslandBaseEvent event = TeamEvent.builder()
                         .island(getIslands().getIsland(playerUUID))
-                        .reason(TeamReason.INVITE)
+                        .reason(TeamEvent.Reason.INVITE)
                         .involvedPlayer(invitedPlayerUUID)
                         .build();
                 getPlugin().getServer().getPluginManager().callEvent(event);

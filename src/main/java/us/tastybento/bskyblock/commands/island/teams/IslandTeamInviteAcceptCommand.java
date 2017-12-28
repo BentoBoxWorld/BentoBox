@@ -10,7 +10,6 @@ import org.bukkit.Location;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -58,7 +57,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
                 .getIsland(prospectiveTeamLeaderUUID))
-                .reason(TeamReason.JOIN)
+                .reason(TeamEvent.Reason.JOIN)
                 .involvedPlayer(playerUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);

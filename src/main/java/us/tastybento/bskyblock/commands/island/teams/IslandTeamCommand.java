@@ -11,7 +11,6 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent.TeamReason;
 import us.tastybento.bskyblock.config.Settings;
 
 public class IslandTeamCommand extends AbstractIslandTeamCommand {
@@ -43,7 +42,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
                 .getIsland(playerUUID))
-                .reason(TeamReason.INFO)
+                .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(playerUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
