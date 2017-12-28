@@ -21,7 +21,7 @@ import us.tastybento.bskyblock.BSkyBlock;
  * Add-on class for BSkyBlock. Extend this to create an add-on.
  * The operation and methods are very similar to Bukkit's JavaPlugin.
  *
- * @author Tastybento, ComminQ
+ * @author tastybento, ComminQ_Q
  */
 public abstract class Addon implements AddonInterface {
 
@@ -40,15 +40,24 @@ public abstract class Addon implements AddonInterface {
         return BSkyBlock.getInstance();
     }
 
+    /**
+     * @return the addon's default config file
+     */
     public FileConfiguration getConfig() {
         config = loadYamlFile(ADDON_CONFIG_FILENAME);
         return config;
     }
 
+    /**
+     * @return Addon's data folder
+     */
     public File getDataFolder() {
         return dataFolder;
     }
 
+    /**
+     * @return Addon's description
+     */
     public AddonDescription getDescription() {
         return description;
     }
@@ -60,10 +69,17 @@ public abstract class Addon implements AddonInterface {
         return file;
     }
 
+    /**
+     * @return Logger
+     */
     public Logger getLogger() {
         return getBSkyBlock().getLogger();
     }
 
+    /**
+     * Convenience method to obtain the server
+     * @return the server object
+     */
     public Server getServer() {
         return getBSkyBlock().getServer();
     }
@@ -72,6 +88,11 @@ public abstract class Addon implements AddonInterface {
         return enabled;
     }
 
+    /**
+     * Load a YAML file
+     * @param file
+     * @return Yaml File configuration
+     */
     private FileConfiguration loadYamlFile(String file) {
         File yamlFile = new File(dataFolder, file);
 
@@ -87,12 +108,31 @@ public abstract class Addon implements AddonInterface {
         return config;
     }
 
+    /**
+     * Register a listener for this addon
+     * @param listener
+     */
     public void registerListener(Listener listener){
         BSkyBlock.getInstance().getServer().getPluginManager().registerEvents(listener, BSkyBlock.getInstance());
     }
 
+    /**
+     * Saves the default config file
+     */
+    public void saveConfig() {
+        try {
+            this.config.save(new File(dataFolder, ADDON_CONFIG_FILENAME));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Saves the addon's config.yml file to the addon's data folder and loads it.
+     * If the file exists already, it will not be replaced.
+     */
     public void saveDefaultConfig() {
-        saveResource(ADDON_CONFIG_FILENAME, true);
+        saveResource(ADDON_CONFIG_FILENAME, false);
         config = loadYamlFile(ADDON_CONFIG_FILENAME);
     }
 
@@ -145,23 +185,35 @@ public abstract class Addon implements AddonInterface {
         }
     }
 
+    /**
+     * Set the file that contains this addon
+     * @param f the file to set
+     */
+    public void setAddonFile(File f) {
+        this.file = f;
+    }
+
+    /**
+     * Set this addon's data folder
+     * @param file
+     */
     public void setDataFolder(File file) {
         this.dataFolder = file;    
     }
 
+    /**
+     * Set this addons description
+     * @param desc
+     */
     public void setDescription(AddonDescription desc){
         this.description = desc;
     }
-
+    
+    /**
+     * Set whether this addon is enabled or not
+     * @param enabled
+     */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-
-    /**
-     * @param f the file to set
-     */
-    public void setFile(File f) {
-        this.file = f;
-    }
-    
 }

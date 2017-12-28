@@ -109,7 +109,7 @@ public final class AddonsManager {
             this.loader.add(loader);
             addon = loader.addon;
             addon.setDataFolder(new File(f.getParent(), f.getName().replace(".jar", "")));
-            addon.setFile(f);
+            addon.setAddonFile(f);
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
             this.addons.add(addon);
             addon.onLoad();
