@@ -76,13 +76,6 @@
 			<version>1.12.2-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		<dependency>
-			<groupId>spigotmc.org</groupId>
-			<artifactId>library-1.12</artifactId>
-			<scope>system</scope>
-			<systemPath>${server.jars}/library-1.12.jar</systemPath>
-			<version>1.12</version>
-		</dependency>
 	</dependencies>
 	<repositories>
 		<repository>
