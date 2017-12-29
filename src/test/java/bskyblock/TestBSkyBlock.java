@@ -25,6 +25,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
@@ -36,11 +37,10 @@ public class TestBSkyBlock {
     private final UUID playerUUID = UUID.randomUUID();
     private static CommandSender sender;
     private static Player player;
+    private static BSkyBlock plugin;
 
     @BeforeClass
     public static void setUp() {
-
-        //Plugin plugin = mock(Plugin.class);
         //Mockito.doReturn(plugin).when(BSkyBlock.getPlugin());
         //Mockito.when().thenReturn(plugin);
         World world = mock(World.class);
@@ -58,8 +58,9 @@ public class TestBSkyBlock {
         player = mock(Player.class);
         Mockito.when(player.hasPermission(Settings.PERMPREFIX + "default.permission")).thenReturn(true);
 
+        plugin = mock(BSkyBlock.class);
+        //Mockito.when(plugin.getServer()).thenReturn(server);
 
-        //Mockito.doReturn(Logger.getAnonymousLogger()).when(plugin.getLogger());        
     }
 
     @Test
@@ -140,7 +141,7 @@ public class TestBSkyBlock {
     private class TestCommand extends CompositeCommand {
 
         public TestCommand() {
-            super("test", "t", "tt");
+            super(plugin, "test", "t", "tt");
             this.setParameters("test.params");
         }
 
@@ -243,7 +244,7 @@ public class TestBSkyBlock {
     private class Test3ArgsCommand extends CompositeCommand {
 
         public Test3ArgsCommand() {
-            super("args", "");
+            super(plugin, "args", "");
         }
         
         @Override

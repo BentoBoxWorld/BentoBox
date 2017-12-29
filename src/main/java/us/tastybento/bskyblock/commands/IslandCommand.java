@@ -43,7 +43,6 @@ public class IslandCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        user.sendLegacyMessage("You successfully did /is !");
         if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
             return this.getSubCommand("create").get().execute(user, args);
         }

@@ -91,6 +91,28 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(String label, String... string) {
         super(label);
+        if (DEBUG)
+            Bukkit.getLogger().info("DEBUG: top level command registering..." + label);
+        this.setAliases(new ArrayList<>(Arrays.asList(string)));
+        this.parent = null;
+        setUsage("");
+        this.subCommandLevel = 0; // Top level
+        this.subCommands = new LinkedHashMap<>();
+        // Register command if it is not already registered
+        if (getPlugin().getCommand(label) == null) {
+            getPlugin().getCommandsManager().registerCommand(getPlugin(), this);
+        }
+        this.setup();
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+            new DefaultHelpCommand(this);
+
+    }
+
+    /**
+     * Used only for testing....
+     */
+    public CompositeCommand(BSkyBlock plugin, String label, String... string) {
+        super(label);
         this.setAliases(new ArrayList<>(Arrays.asList(string)));
         this.parent = null;
         setUsage("");

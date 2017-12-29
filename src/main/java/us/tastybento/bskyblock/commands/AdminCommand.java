@@ -11,18 +11,19 @@ public class AdminCommand extends CompositeCommand {
 
     public AdminCommand() {
         super(Settings.ADMINCOMMAND, "bsb");
-        this.setPermission(Settings.PERMPREFIX + "admin.*");
-        this.setOnlyPlayer(false);
     }
 
     @Override
     public void setup() {
+        this.setPermission(Settings.PERMPREFIX + "admin.*");
+        this.setOnlyPlayer(false);
+        this.setDescription("admin.help.description");
         new AdminVersionCommand(this);
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
-        return true;
+        return this.getSubCommand("help").get().execute(user, args);
     }
 
 }

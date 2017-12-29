@@ -21,8 +21,6 @@ import us.tastybento.bskyblock.listeners.PanelListener;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
-import us.tastybento.bskyblock.util.Util;
-import us.tastybento.bskyblock.util.nms.NMSAbstraction;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
@@ -66,8 +64,8 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
 
             // Set up commands
             commandsManager = new CommandsManager();
-            commandsManager.registerCommand(this, new IslandCommand());
-            commandsManager.registerCommand(this, new AdminCommand());
+            new IslandCommand();
+            new AdminCommand();
 
             // These items have to be loaded when the server has done 1 tick.
             // Note Worlds are not loaded this early, so any Locations or World reference will be null
@@ -204,16 +202,6 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
 
     public static BSkyBlock getInstance() {
         return plugin;
-    }
-
-    public NMSAbstraction getNMSHandler() {
-        NMSAbstraction nmsHandler = null;
-        try {
-            nmsHandler = Util.getNMSHandler();
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        return nmsHandler;
     }
 
     public CommandsManager getCommandsManager() {
