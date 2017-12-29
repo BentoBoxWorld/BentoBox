@@ -7,6 +7,9 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.Map;
 
+import org.bukkit.plugin.InvalidDescriptionException;
+
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.addons.AddonDescription.AddonDescriptionBuilder;
 import us.tastybento.bskyblock.api.addons.exception.InvalidAddonFormatException;
 import us.tastybento.bskyblock.api.addons.exception.InvalidAddonInheritException;
@@ -18,7 +21,7 @@ public class AddonClassLoader extends URLClassLoader {
 
 	public Addon addon;
 	
-	public AddonClassLoader(Map<String, String>data, File path, BufferedReader reader, ClassLoader loaders) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonFormatException {
+	public AddonClassLoader(Map<String, String>data, File path, BufferedReader reader, ClassLoader loaders) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonFormatException, InvalidDescriptionException {
 		super(new URL[]{path.toURI().toURL()}, loaders);
 		
 		Addon addon = null;
@@ -35,7 +38,8 @@ public class AddonClassLoader extends URLClassLoader {
 				throw new InvalidAddonFormatException("Packages declaration cannot start with 'us.tastybento'");
 			}
 		} catch (ClassNotFoundException e) {
-			e.printStackTrace();
+			BSkyBlock.getInstance().getLogger().severe("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "'");
+			throw new InvalidDescriptionException("Invalid addon.yml");
 		}
 		
 		Class<? extends Addon> addonClass;

@@ -12,6 +12,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.plugin.InvalidDescriptionException;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.addons.Addon;
@@ -36,6 +37,7 @@ public final class AddonsManager {
 
     /**
      * Loads all the addons from the addons folder
+     * @throws InvalidDescriptionException 
      */
     public void enableAddons() {
         File f = new File(BSkyBlock.getInstance().getDataFolder(), "addons");
@@ -48,6 +50,8 @@ public final class AddonsManager {
                         } catch (InvalidAddonFormatException e) {
                             e.printStackTrace();
                         } catch (InvalidAddonInheritException e) {
+                            e.printStackTrace();
+                        } catch (InvalidDescriptionException e) {
                             e.printStackTrace();
                         }
                     }
@@ -83,7 +87,7 @@ public final class AddonsManager {
         return null;
     }
 
-    private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException {
+    private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException, InvalidDescriptionException {
         try {
             Addon addon = null;
 

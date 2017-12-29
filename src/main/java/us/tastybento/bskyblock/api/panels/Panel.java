@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.listeners.PanelListener;
 
 public class Panel {
@@ -43,6 +44,17 @@ public class Panel {
         for (Player player : players) {
             player.openInventory(inventory);
             PanelListener.openPanels.put(player.getUniqueId(), this);
+        }
+    }
+
+    /**
+     * Open the inventory panel
+     * @param users
+     */
+    public void open(User... users) {
+        for (User user : users) {
+            user.getPlayer().openInventory(inventory);
+            PanelListener.openPanels.put(user.getUniqueId(), this);
         }
     }
 }

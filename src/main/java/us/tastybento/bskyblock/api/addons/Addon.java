@@ -186,8 +186,6 @@ public abstract class Addon implements AddonInterface {
                 }
                 out.close();
                 in.close();
-            } else {
-                getLogger().warning("Could not save " + outFile.getName() + " to " + outFile + " because " + outFile.getName() + " already exists.");
             }
             jar.close();
         } catch (IOException ex) {
