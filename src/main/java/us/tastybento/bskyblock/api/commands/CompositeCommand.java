@@ -122,7 +122,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             user.sendMessage("general.errors.use-in-game");
             return true;
         }
-        if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
+        // Check perms, but only if this isn't the console
+        if ((sender instanceof Player) && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
             user.sendMessage("general.errors.no-permission");
             return true;
         }
