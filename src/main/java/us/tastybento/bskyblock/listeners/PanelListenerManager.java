@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.listeners;
 import java.util.HashMap;
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -12,39 +11,46 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
-import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.panels.ClickType;
 import us.tastybento.bskyblock.api.panels.Panel;
 
-public class PanelListener implements Listener {
+public class PanelListenerManager implements Listener {
 
-    private static final boolean DEBUG = false;
-    private BSkyBlock plugin;
+    //private static final boolean DEBUG = false;
 
     public static HashMap<UUID, Panel> openPanels = new HashMap<>();
 
-    public PanelListener(BSkyBlock plugin) {
-        this.plugin = plugin;
-    }
-
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        Player player = (Player) event.getWhoClicked(); // The player that
+        User player = User.getInstance(event.getWhoClicked()); // The player that
         // clicked the item
         //UUID playerUUID = player.getUniqueId();
         Inventory inventory = event.getInventory(); // The inventory that was
-
+        // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(player.getUniqueId())) {
+            // Check the name of the panel
             if (inventory.getName().equals(openPanels.get(player.getUniqueId()).getInventory().getName())) {
+                // Get the panel itself
                 Panel panel = openPanels.get(player.getUniqueId());
-
+                // Check that they clicked on a specific item
                 for (int slot : panel.getItems().keySet()) {
                     if (slot == event.getRawSlot()) {
-                        if(!panel.getItems().get(slot).getClickHandler().onClick(player, ClickType.LEFT)) {
+                        // Check that they left clicked on it
+                        // TODO: in the future, we may want to support right clicking
+                        if(!panel.getItems().get(slot).getClickHandler().onClick(player.getPlayer(), ClickType.LEFT)) {
                             event.setCancelled(true);
+                        } else {
+                            // If there is a listener, then run it.
+                            if (panel.getListener().isPresent()) {
+                                panel.getListener().get().onInventoryClick(player, inventory, event.getCurrentItem());
+                            }
                         }
                     }
                 }
+            } else {
+                // Wrong name - delete this panel
+                openPanels.remove(player.getUniqueId());
             }
         }
     }

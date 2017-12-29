@@ -1,26 +1,31 @@
 package us.tastybento.bskyblock.api.panels;
 
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.listeners.PanelListener;
+import us.tastybento.bskyblock.listeners.PanelListenerManager;
 
 public class Panel {
 
     private Inventory inventory;
     private Map<Integer, PanelItem> items;
+    private Optional<PanelListener> listener;
+    private Optional<User> user;
 
-    public Panel(String name, Map<Integer, PanelItem> items) {
+    public Panel(String name, Map<Integer, PanelItem> items, int size, Optional<User> user, Optional<PanelListener> listener) {
         this.items = items;
-
+        if (size != 0) {
+            size = items.keySet().size();
+        }
         // Create panel
         if (items.keySet().size() > 0) {
             // Make sure size is a multiple of 9
-            int size = items.keySet().size() + 8;
+            size = size + 8;
             size -= (size % 9);
             inventory = Bukkit.createInventory(null, size, name);
             // Fill the inventory and return
@@ -29,6 +34,16 @@ public class Panel {
             }
         } else {
             inventory = Bukkit.createInventory(null, 9, name);
+        }
+        this.listener = listener;
+        // If the listener is defined, then run setup
+        if (listener.isPresent()) {
+            listener.get().setup();
+        }
+        // If the user is defined, then open panel immediately
+        this.user = user;
+        if (user.isPresent()) {
+            user.get().getPlayer().openInventory(inventory);
         }
     }
 
@@ -40,10 +55,21 @@ public class Panel {
         return items;
     }
 
+    /**
+     * @return the listener
+     */
+    public Optional<PanelListener> getListener() {
+        return listener;
+    }
+
+    public Optional<User> getUser() {
+        return user;
+    }
+
     public void open(Player... players) {
         for (Player player : players) {
             player.openInventory(inventory);
-            PanelListener.openPanels.put(player.getUniqueId(), this);
+            PanelListenerManager.openPanels.put(player.getUniqueId(), this);
         }
     }
 
@@ -54,7 +80,35 @@ public class Panel {
     public void open(User... users) {
         for (User user : users) {
             user.getPlayer().openInventory(inventory);
-            PanelListener.openPanels.put(user.getUniqueId(), this);
+            PanelListenerManager.openPanels.put(user.getUniqueId(), this);
         }
+    }
+
+    /**
+     * @param inventory the inventory to set
+     */
+    public void setInventory(Inventory inventory) {
+        this.inventory = inventory;
+    }
+
+    /**
+     * @param items the items to set
+     */
+    public void setItems(Map<Integer, PanelItem> items) {
+        this.items = items;
+    }
+
+    /**
+     * @param listener the listener to set
+     */
+    public void setListener(Optional<PanelListener> listener) {
+        this.listener = listener;
+    }
+
+    /**
+     * @param user the user to set
+     */
+    public void setUser(Optional<User> user) {
+        this.user = user;
     }
 }
