@@ -36,7 +36,7 @@ public abstract class Addon implements AddonInterface {
         this.enabled = false;
     }
 
-    public JavaPlugin getBSkyBlock(){
+    public BSkyBlock getBSkyBlock(){
         return BSkyBlock.getInstance();
     }
 
