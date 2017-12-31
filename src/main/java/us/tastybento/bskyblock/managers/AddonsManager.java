@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -77,14 +78,18 @@ public final class AddonsManager {
 
     }
 
+    /**
+     * Gets the addon by name
+     * @param name
+     * @return
+     */
+    public Optional<Addon> getAddonByName(String name){
+        if(name.equals("")) return Optional.empty();
 
-    public Addon getAddonByName(String name){
-        if(name.equals("")) return null;
-
-        for(Addon m  : this.addons){
-            if(m.getDescription().getName().contains(name)) return m;
+        for(Addon addon  : this.addons){
+            if(addon.getDescription().getName().contains(name)) return Optional.of(addon);
         }
-        return null;
+        return Optional.empty();
     }
 
     private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException, InvalidDescriptionException {

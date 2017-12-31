@@ -226,4 +226,11 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
     public final File getFolder() {
         return getDataFolder();
     }
+
+    /**
+     * @return the addonsManager
+     */
+    public AddonsManager getAddonsManager() {
+        return addonsManager;
+    }
 }
