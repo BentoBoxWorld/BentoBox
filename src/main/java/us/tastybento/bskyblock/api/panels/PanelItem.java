@@ -49,7 +49,6 @@ public class PanelItem {
 
     public void setDescription(List<String> description) {
         this.description = description;
-        ItemMeta meta = icon.getItemMeta();
         meta.setLore(description);
         icon.setItemMeta(meta);
     }
@@ -62,7 +61,6 @@ public class PanelItem {
         this.name = name;
         meta.setDisplayName(name);
         icon.setItemMeta(meta);
-
     }
 
     public Optional<ClickHandler> getClickHandler() {

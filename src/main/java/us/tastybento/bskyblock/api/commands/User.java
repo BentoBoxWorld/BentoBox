@@ -218,4 +218,11 @@ public class User {
     public World getWorld() {
         return player.getWorld();
     }
+    
+    /**
+     * Closes the user's inventory
+     */
+    public void closeInventory() {
+        player.closeInventory();
+    }
 }
