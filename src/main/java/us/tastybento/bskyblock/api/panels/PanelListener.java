@@ -10,7 +10,7 @@ public interface PanelListener {
     /**
      * This is called when the panel is first setup
      */
-    public void setup();
+    void setup();
     
     /**
      * Called when the panel is clicked
@@ -18,5 +18,5 @@ public interface PanelListener {
      * @param inventory
      * @param clicked
      */
-    public void onInventoryClick(User user, Inventory inventory, ItemStack clicked);
+    void onInventoryClick(User user, Inventory inventory, ItemStack clicked);
 }

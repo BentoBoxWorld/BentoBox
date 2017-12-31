@@ -90,6 +90,6 @@ public class PanelItem {
          * @param click
          * @return false if the event should be cancelled
          */
-        public boolean onClick(User user, ClickType click);
+        boolean onClick(User user, ClickType click);
     }
 }
