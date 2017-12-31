@@ -669,10 +669,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // once we get the value from the database
                 Method method = propertyDescriptor.getWriteMethod();
                 // If the type is a Collection, then we need to deal with set and map tables 
-                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                        propertyDescriptor.getPropertyType().equals(Map.class) ||
-                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
-                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Collection
                     //plugin.getLogger().info("DEBUG: Collection");
                     // TODO Get the values from the subsidiary tables.
@@ -692,7 +689,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     ResultSet collectionResultSet = collStatement.executeQuery();
                     //plugin.getLogger().info("DEBUG: collectionResultSet = " + collectionResultSet.toString());
                     // Do single dimension types (set and list)
-                    if (propertyDescriptor.getPropertyType().equals(Set.class)) {
+                    if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: adding a set");
                         // Loop through the collection resultset 
@@ -708,7 +705,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         while (collectionResultSet.next()) {
                             ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
                         }
-                    } else if (propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: Adding a list ");
                         // Loop through the collection resultset 
@@ -723,8 +720,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
                             ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
                         }
-                    } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
-                            propertyDescriptor.getPropertyType().equals(HashMap.class)) {
+                    } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: Adding a map ");
                         // Loop through the collection resultset 
@@ -806,7 +802,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             value = plugin.getServer().getWorld((String)value);
         }
         // Enums
-        if (clazz.getSuperclass() != null && clazz.getSuperclass().equals(Enum.class)) {
+        if (Enum.class.isAssignableFrom(clazz)) {
             //Custom enums are a child of the Enum class.
             // Find out the value
             try {

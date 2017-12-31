@@ -140,17 +140,16 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: " + field.getName() + ": " + propertyDescriptor.getPropertyType().getTypeName());
             if (config.contains(field.getName())) {
-                if (propertyDescriptor.getPropertyType().equals(HashMap.class)) {
-
+                if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Note that we have no idea what type this is
                     List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
                     // collectionTypes should be 2 long
                     Type keyType = collectionTypes.get(0);
                     Type valueType = collectionTypes.get(1);
                     if (DEBUG)
-                        plugin.getLogger().info("DEBUG: is HashMap<" + keyType.getTypeName() + ", " + valueType.getTypeName() + ">");
+                        plugin.getLogger().info("DEBUG: is Map or HashMap<" + keyType.getTypeName() + ", " + valueType.getTypeName() + ">");
                     // TODO: this may not work with all keys. Further serialization may be required.
-                    HashMap<Object,Object> value = new HashMap<Object, Object>();
+                    Map<Object,Object> value = new HashMap<Object, Object>();
                     for (String key : config.getConfigurationSection(field.getName()).getKeys(false)) {
                         Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
                         Object mapValue = deserialize(config.get(field.getName() + "." + key), Class.forName(valueType.getTypeName()));
@@ -161,7 +160,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         value.put(mapKey, mapValue);
                     }
                     method.invoke(instance, value);
-                } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
+                } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     if (DEBUG) {
                         plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
                         plugin.getLogger().info("DEBUG: adding a set");
@@ -186,7 +185,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // TODO: this may not work with all keys. Further serialization may be required.
                     //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
                     method.invoke(instance, value);
-                } else if (propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     //plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: adding a set");
@@ -362,7 +361,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             value = plugin.getServer().getWorld((String)value);
         }
         // Enums
-        if (clazz.getSuperclass() != null && clazz.getSuperclass().equals(Enum.class)) {
+        if (Enum.class.isAssignableFrom(clazz)) {
             //Custom enums are a child of the Enum class.
             // Find out the value
             try {
