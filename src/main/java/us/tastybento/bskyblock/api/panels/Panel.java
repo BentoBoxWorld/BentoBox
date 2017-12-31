@@ -19,11 +19,12 @@ public class Panel {
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, Optional<User> user, Optional<PanelListener> listener) {
         this.items = items;
-        if (size != 0) {
+        // If size is undefined (0) then use the number of items
+        if (size == 0) {
             size = items.keySet().size();
-        }
+        } 
         // Create panel
-        if (items.keySet().size() > 0) {
+        if (size > 0) {
             // Make sure size is a multiple of 9
             size = size + 8;
             size -= (size % 9);
@@ -43,6 +44,8 @@ public class Panel {
         // If the user is defined, then open panel immediately
         this.user = user;
         if (user.isPresent()) {
+            // Register panel.
+            PanelListenerManager.openPanels.put(user.get().getUniqueId(), this);
             user.get().getPlayer().openInventory(inventory);
         }
     }

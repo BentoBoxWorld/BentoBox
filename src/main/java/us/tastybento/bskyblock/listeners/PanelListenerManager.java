@@ -23,28 +23,28 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        User player = User.getInstance(event.getWhoClicked()); // The player that
+        User user = User.getInstance(event.getWhoClicked()); // The player that
         // clicked the item
         //UUID playerUUID = player.getUniqueId();
         Inventory inventory = event.getInventory(); // The inventory that was
         // Open the inventory panel that this player has open (they can only ever have one)
-        if (openPanels.containsKey(player.getUniqueId())) {
+        if (openPanels.containsKey(user.getUniqueId())) {
             // Check the name of the panel
-            if (inventory.getName().equals(openPanels.get(player.getUniqueId()).getInventory().getName())) {
+            if (inventory.getName().equals(openPanels.get(user.getUniqueId()).getInventory().getName())) {
                 // Get the panel itself
-                Panel panel = openPanels.get(player.getUniqueId());
+                Panel panel = openPanels.get(user.getUniqueId());
                 // Check that they clicked on a specific item
                 for (int slot : panel.getItems().keySet()) {
                     if (slot == event.getRawSlot()) {
                         // Check that they left clicked on it
                         // TODO: in the future, we may want to support right clicking
                         if (panel.getItems().get(slot).getClickHandler().isPresent()) {
-                            if(!panel.getItems().get(slot).getClickHandler().get().onClick(player.getPlayer(), ClickType.LEFT)) {
+                            if(!panel.getItems().get(slot).getClickHandler().get().onClick(user, ClickType.LEFT)) {
                                 event.setCancelled(true);
                             } else {
                                 // If there is a listener, then run it.
                                 if (panel.getListener().isPresent()) {
-                                    panel.getListener().get().onInventoryClick(player, inventory, event.getCurrentItem());
+                                    panel.getListener().get().onInventoryClick(user, inventory, event.getCurrentItem());
                                 }
                             }
                         }
@@ -52,7 +52,7 @@ public class PanelListenerManager implements Listener {
                 }
             } else {
                 // Wrong name - delete this panel
-                openPanels.remove(player.getUniqueId());
+                openPanels.remove(user.getUniqueId());
             }
         }
     }
@@ -66,4 +66,5 @@ public class PanelListenerManager implements Listener {
     public void onLogOut(PlayerQuitEvent event) {
         if (openPanels.containsKey(event.getPlayer().getUniqueId())) openPanels.remove(event.getPlayer().getUniqueId());
     }
+    
 }

@@ -12,8 +12,8 @@ public class PanelBuilder {
     private String name;
     private TreeMap<Integer, PanelItem> items = new TreeMap<>();
     private int size;
-    private Optional<User> user;
-    private Optional<PanelListener> listener;
+    private Optional<User> user = Optional.empty();
+    private Optional<PanelListener> listener = Optional.empty();
 
     public PanelBuilder setName(String name) {
         this.name = name;

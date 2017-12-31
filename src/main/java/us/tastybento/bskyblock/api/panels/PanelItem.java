@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+
+import us.tastybento.bskyblock.api.commands.User;
 
 public class PanelItem {
 
@@ -77,7 +78,7 @@ public class PanelItem {
         if (glow)
             meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
         else
-            meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
+            meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, false);
     }
 
     /**
@@ -87,10 +88,10 @@ public class PanelItem {
     public interface ClickHandler {
         /**
          * This is executed when the icon is clicked
-         * @param player
+         * @param user
          * @param click
          * @return false if the event should be cancelled
          */
-        public boolean onClick(Player player, ClickType click);
+        public boolean onClick(User user, ClickType click);
     }
 }
