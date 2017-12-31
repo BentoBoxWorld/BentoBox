@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
@@ -194,11 +195,27 @@ public class User {
         }
     }
 
+    /**
+     * Sets the user's game mode
+     * @param mode
+     */
     public void setGameMode(GameMode mode) {
         player.setGameMode(mode);
     }
 
+    /**
+     * Teleports user to this location. If the user is in a vehicle, they will exit first.
+     * @param location
+     */
     public void teleport(Location location) {
         player.teleport(location);
+    }
+    
+    /**
+     * Gets the current world this entity resides in
+     * @return World
+     */
+    public World getWorld() {
+        return player.getWorld();
     }
 }

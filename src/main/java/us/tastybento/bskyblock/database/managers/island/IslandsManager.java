@@ -685,19 +685,19 @@ public class IslandsManager {
 
     /**
      * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
-     * @param player
+     * @param uuid
      * @param coop
      * @param loc
-     * @return true if the location is within home boundaries
+     * @return
      */
-    public boolean locationIsAtHome(final Player player, boolean coop, Location loc) {
+    public boolean locationIsAtHome(UUID uuid, boolean coop, Location loc) {
         // Make a list of test locations and test them
         Set<Location> islandTestLocations = new HashSet<Location>();
-        if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
-            islandTestLocations.add(plugin.getIslands().getIslandLocation(player.getUniqueId()));
+        if (plugin.getPlayers().hasIsland(uuid) || plugin.getPlayers().inTeam(uuid)) {
+            islandTestLocations.add(plugin.getIslands().getIslandLocation(uuid));
             // If new Nether
             if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
-                islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(player.getUniqueId())));
+                islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(uuid)));
             }
         }
         // TODO: Check coop locations
@@ -817,21 +817,21 @@ public class IslandsManager {
      * @param player
      * @return true if on valid island, false if not
      */
-    public boolean playerIsOnIsland(final Player player) {
-        return playerIsOnIsland(player, true);
+    public boolean playerIsOnIsland(User user) {
+        return playerIsOnIsland(user, true);
     }
 
     /**
      * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
-     * @param player
+     * @param user
      * @param coop - if true, coop islands are included
      * @return true if on valid island, false if not
      */
-    public boolean playerIsOnIsland(final Player player, boolean coop) {
-        return locationIsAtHome(player, coop, player.getLocation());
+    public boolean playerIsOnIsland(User user, boolean coop) {
+        return locationIsAtHome(user.getUniqueId(), coop, user.getLocation());
     }
-
+    
     /**
      * @param location
      */
@@ -968,6 +968,5 @@ public class IslandsManager {
         save(false);
         islandCache.clear();
     }
-
 
 }
