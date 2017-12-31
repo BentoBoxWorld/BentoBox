@@ -88,7 +88,7 @@ public class PanelItem {
          * This is executed when the icon is clicked
          * @param user
          * @param click
-         * @return false if the event should be cancelled
+         * @return true if the click event should be cancelled
          */
         boolean onClick(User user, ClickType click);
     }

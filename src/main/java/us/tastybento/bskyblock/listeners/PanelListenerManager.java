@@ -39,13 +39,11 @@ public class PanelListenerManager implements Listener {
                         // Check that they left clicked on it
                         // TODO: in the future, we may want to support right clicking
                         if (panel.getItems().get(slot).getClickHandler().isPresent()) {
-                            if(!panel.getItems().get(slot).getClickHandler().get().onClick(user, ClickType.LEFT)) {
-                                event.setCancelled(true);
-                            } else {
-                                // If there is a listener, then run it.
-                                if (panel.getListener().isPresent()) {
-                                    panel.getListener().get().onInventoryClick(user, inventory, event.getCurrentItem());
-                                }
+                            // Cancel the event if true was returned by the ClickHandler
+                            event.setCancelled(panel.getItems().get(slot).getClickHandler().get().onClick(user, ClickType.LEFT));
+                            // If there is a listener, then run it.
+                            if (panel.getListener().isPresent()) {
+                                panel.getListener().get().onInventoryClick(user, inventory, event.getCurrentItem());
                             }
                         }
                     }
