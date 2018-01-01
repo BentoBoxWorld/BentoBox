@@ -3,32 +3,32 @@ package us.tastybento.bskyblock.api.events.island;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 
 /**
- * This event is fired when a player changes a setting on his island
+ * This event is fired when a player changes a flag on his island
  * <p>
  * Canceling this event will result in canceling the change.
  *
  * @author Poslovitch
  * @since 1.0
  */
-public class SettingChangeEvent extends IslandBaseEvent {
+public class FlagChangeEvent extends IslandBaseEvent {
     private final UUID player;
-    private final SettingsFlag editedSetting;
+    private final Flag editedFlag;
     private final boolean setTo;
 
     /**
      * @param island
      * @param player
-     * @param editedSetting
+     * @param editedFlag
      * @param setTo
      */
-    public SettingChangeEvent(Island island, UUID player, SettingsFlag editedSetting, boolean setTo) {
+    public FlagChangeEvent(Island island, UUID player, Flag editedFlag, boolean setTo) {
         super(island);
         this.player = player;
-        this.editedSetting = editedSetting;
+        this.editedFlag = editedFlag;
         this.setTo = setTo;
     }
 
@@ -40,10 +40,10 @@ public class SettingChangeEvent extends IslandBaseEvent {
     }
 
     /**
-     * @return the edited setting
+     * @return the edited flag
      */
-    public SettingsFlag getSetting() {
-        return this.editedSetting;
+    public Flag getFlag() {
+        return this.editedFlag;
     }
 
     /**
