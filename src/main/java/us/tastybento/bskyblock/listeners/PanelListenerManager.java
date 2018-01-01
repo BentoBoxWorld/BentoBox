@@ -42,9 +42,7 @@ public class PanelListenerManager implements Listener {
                             // Cancel the event if true was returned by the ClickHandler
                             event.setCancelled(panel.getItems().get(slot).getClickHandler().get().onClick(user, ClickType.LEFT));
                             // If there is a listener, then run it.
-                            if (panel.getListener().isPresent()) {
-                                panel.getListener().get().onInventoryClick(user, inventory, event.getCurrentItem());
-                            }
+                            panel.getListener().ifPresent(l -> l.onInventoryClick(user, inventory, event.getCurrentItem()));
                         }
                     }
                 }
