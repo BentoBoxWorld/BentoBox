@@ -13,6 +13,8 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.serialization.ConfigurationSerializable;
+import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.InvalidDescriptionException;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -30,6 +32,9 @@ public final class AddonsManager {
     private static final boolean DEBUG = false;
     private List<Addon> addons;
     private List<AddonClassLoader> loader;
+    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+
+
 
     public AddonsManager() {
         this.addons = new ArrayList<>();
@@ -114,7 +119,7 @@ public final class AddonsManager {
 
             AddonClassLoader loader = null;
 
-            loader = new AddonClassLoader(data, f, reader, this.getClass().getClassLoader());
+            loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
             this.loader.add(loader);
             addon = loader.addon;
             addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
@@ -175,6 +180,49 @@ public final class AddonsManager {
 
     public void setLoader(List<AddonClassLoader> loader) {
         this.loader = loader;
+    }
+
+    
+    /**
+     * Finds a class by name that has been loaded by this loader
+     * Code copied from Bukkit JavaPluginLoader
+     * @param name
+     * @return Class
+     */
+    public Class<?> getClassByName(final String name) {
+        Class<?> cachedClass = classes.get(name);
+
+        if (cachedClass != null) {
+            return cachedClass;
+        } else {
+            for (AddonClassLoader loader : loader) {
+                try {
+                    cachedClass = loader.findClass(name, false);
+                } catch (ClassNotFoundException cnfe) {}
+                if (cachedClass != null) {
+                    return cachedClass;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Sets a class that this loader should know about
+     * Code copied from Bukkit JavaPluginLoader
+     * 
+     * @param name
+     * @param clazz
+     */
+    public void setClass(final String name, final Class<?> clazz) {
+        if (!classes.containsKey(name)) {
+            classes.put(name, clazz);
+
+            if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
+                Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
+                ConfigurationSerialization.registerClass(serializable);
+            }
+        }
     }
 
 }
