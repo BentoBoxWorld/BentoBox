@@ -100,34 +100,48 @@ public final class AddonsManager {
     private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException, InvalidDescriptionException {
         try {
             Addon addon = null;
-
-            if (!f.getName().contains(".jar")) {
+            // Check that this is a jar
+            if (!f.getName().endsWith(".jar")) {
                 return;
             }
             JarFile jar = new JarFile(f);
+            
+            // Obtain the addon.yml file
             JarEntry entry = jar.getJarEntry("addon.yml");
-
             if (entry == null) {
                 jar.close();
                 throw new InvalidAddonFormatException("Addon doesn't contains description file");
 
             }
-
+            // Open a reader to the jar
             BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
-
+            // Grab the description in the addon.yml file
             Map<String, String> data = this.data(reader);
 
-            AddonClassLoader loader = null;
-
-            loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
+            // Load the addon
+            AddonClassLoader loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
+            // Add to the list of loaders
             this.loader.add(loader);
+            
+            // Get the addon itseld
             addon = loader.addon;
+            // Initialize some settings
             addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
             addon.setAddonFile(f);
+            
+            // Fire the load event
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+            
+            // Add it to the list of addons
             this.addons.add(addon);
+            
+            // Run the onLoad() method
             addon.onLoad();
+            
+            // Inform the console
             BSkyBlock.getInstance().getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
+            
+            // Close the jar
             jar.close();
         } catch (IOException e) {
             if (DEBUG) {
