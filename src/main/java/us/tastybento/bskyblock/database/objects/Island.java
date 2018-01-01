@@ -18,6 +18,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
@@ -45,218 +46,6 @@ public class Island extends DataObject {
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
-    }
-
-    /**
-     * Island Guard Settings flags
-     * Covers island, spawn and system settings
-     *
-     * @author Tastybento
-     */
-    public enum SettingsFlag{
-
-        ACID_DAMAGE,
-
-        // Can use Anvil
-        ANVIL,
-
-        // Can interact with Armor Stand
-        ARMOR_STAND,
-
-        // Can interact with Beacon
-        BEACON,
-
-        // Can use bed
-        BED,
-
-        // Can break blocks
-        BREAK_BLOCKS,
-
-        // Can breed animals
-        BREEDING,
-
-        // Can use brewing stand
-        BREWING,
-
-        // Can use buttons
-        BUTTON,
-
-        // Can empty or fill buckets
-        BUCKET,
-
-        // Can collect lava (override BUCKET)
-        COLLECT_LAVA,
-
-        // Can collect water (override BUCKET)
-        COLLECT_WATER,
-
-        // Can eat and teleport with Chorus Fruit
-        CHORUS_FRUIT,
-
-        // Can use the workbench
-        CRAFTING,
-
-        // Allow creepers to hurt entities (but not to destroy blocks)
-        CREEPER_HURT,
-
-        // Allow monsters, e.g. creepers, ghasts, withers to destroy blocks, including item frames
-        MONSTER_GRIEFING,
-
-        // Allow monsters to blow up any inventory block, e.g. chests, dispenser, shulker box
-        MONSTER_BLOW_UP_CHEST,
-
-        // Can trample crops
-        CROP_TRAMPLE,
-
-        // Can open doors
-        DOOR,
-
-        // Can open trapdoors, iron or wood
-        TRAPDOOR,
-
-        // Can dye sheep
-        DYEING,
-
-        // Can use Elytra
-        ELYTRA,
-
-        // Can use the enchanting table
-        ENCHANTING,
-
-        // Allow Enderman griefing
-        ENDERMAN_GRIEFING,
-
-        // Display enter/exit island messages
-        ENTER_EXIT_MESSAGES,
-
-        // Fire use/placement in general
-        FIRE,
-
-        // Can extinguish fires by punching them
-        FIRE_EXTINGUISH,
-
-        // Allow fire spread
-        FIRE_SPREAD,
-
-        // Can use fishing rod
-        FISHING_ROD,
-
-        // Can use furnaces
-        FURNACE,
-
-        // Can open gates
-        GATE,
-
-        // Can hurt animals (e.g. cows) - Villagers excluded
-        HURT_ANIMALS,
-
-        // Can hurt monsters
-        HURT_MONSTERS,
-
-        // Can hurt villagers
-        HURT_VILLAGERS,
-
-        // Can ignite creepers using flint and steel
-        IGNITE_CREEPER,
-
-        // Can ignite TNTs using flint and steel
-        IGNITE_TNT,
-
-        // Can interact with tamed animals
-        INTERACT_TAMED,
-
-        // Can drop items
-        ITEM_DROP,
-
-        // Can pickup items
-        ITEM_PICKUP,
-
-        // Keep inventory on death
-        KEEP_INVENTORY,
-
-        // Can leash or unleash animals
-        LEASH,
-
-        // Can use levers
-        LEVER,
-
-        // Can milk cows
-        MILKING,
-
-        // Animals can spawn
-        ANIMAL_SPAWN,
-
-        // Monsters can spawn
-        MONSTER_SPAWN,
-
-        // Can open horse or other animal inventories (llama)
-        MOUNT_INVENTORY,
-
-        // Can ride an animal
-        MOUNT_RIDING,
-
-        // Can operate jukeboxes, noteblocks
-        MUSIC,
-
-        // Can open chests or other inventory blocks, e.g., dispensers, droppers, hoppers, etc.
-        OPEN_CHESTS,
-
-        // Can place blocks
-        PLACE_BLOCKS,
-
-        // Can go through portals
-        PORTAL,
-
-        // Can activate pressure plates
-        PRESSURE_PLATE,
-
-        // Can do PvP in the overworld
-        PVP_OVERWORLD,
-
-        // Can do PvP in the nether
-        PVP_NETHER,
-
-        // Can do PvP in the end
-        PVP_END,
-
-        // Can interact with redstone items (repeaters, comparators)
-        REDSTONE,
-
-        // Can use spawn eggs
-        SPAWN_EGGS,
-
-        // Can shear sheep
-        SHEARING,
-
-        // Can throw chicken eggs
-        THROW_EGGS,
-
-        // Can throw fireworks
-        THROW_FIREWORKS,
-
-        // Can throw enderpearls
-        THROW_ENDERPEARLS,
-
-        // Can throw snowballs
-        THROW_SNOWBALLS,
-
-        // Can throw splash potions
-        THROW_SPLASH_POTIONS,
-
-        // Can throw lingering potions
-        THROW_LINGERING_POTIONS,
-
-        // Allow TNT to hurt entities (but not to destroy blocks)
-        TNT_HURT,
-
-        // Allow TNT to destroy blocks
-        TNT_GRIEFING,
-
-        // Allow TNTs to blow up any chest or inventory block (only if TNT_griefing is enabled)
-        TNT_BLOW_UP_CHEST,
-
-        // Can trade with villagers
-        VILLAGER_TRADING
     }
 
     //// Island ////    
@@ -308,7 +97,7 @@ public class Island extends DataObject {
     private boolean spawn = false;
     private boolean purgeProtected = false;
     //// Protection ////
-    private HashMap<SettingsFlag, Boolean> flags = new HashMap<>();
+    private HashMap<Flag, Boolean> flags = new HashMap<>();
 
     private int levelHandicap;
 
@@ -394,14 +183,10 @@ public class Island extends DataObject {
      * @param flag
      * @return true or false, or false if flag is not in the list
      */
-    public boolean getFlag(SettingsFlag flag){
+    public boolean getFlag(Flag flag){
         if(flags.containsKey(flag)) {
             return flags.get(flag);
         } else {
-            if (flag.equals(SettingsFlag.ANIMAL_SPAWN) || flag.equals(SettingsFlag.MONSTER_SPAWN)) {
-                flags.put(flag, true);
-                return true;
-            }
             flags.put(flag, false);
             return false;
         }
@@ -410,7 +195,7 @@ public class Island extends DataObject {
     /**
      * @return the flags
      */
-    public HashMap<SettingsFlag, Boolean> getFlags() {
+    public HashMap<Flag, Boolean> getFlags() {
         return flags;
     }
 
@@ -632,14 +417,14 @@ public class Island extends DataObject {
      * @param flag
      * @param value
      */
-    public void setFlag(SettingsFlag flag, boolean value){
+    public void setFlag(Flag flag, boolean value){
         flags.put(flag, value);
     }
 
     /**
      * @param flags the flags to set
      */
-    public void setFlags(HashMap<SettingsFlag, Boolean> flags) {
+    public void setFlags(HashMap<Flag, Boolean> flags) {
         this.flags = flags;
     }
 
@@ -792,9 +577,9 @@ public class Island extends DataObject {
      * Toggles the Island Guard flag status if it is in the list
      * @param flag
      */
-    public void toggleFlag(SettingsFlag flag){
+    public void toggleFlag(Flag flag){
         if(flags.containsKey(flag)) {
-            flags.put(flag, (flags.get(flag)));
+            flags.put(flag, !flags.get(flag));
         }
     }
 

@@ -20,6 +20,7 @@ import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.PanelListenerManager;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
 /**
@@ -42,6 +43,7 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
     private CommandsManager commandsManager;
     private LocalesManager localesManager;
     private AddonsManager addonsManager;
+    private FlagsManager flagsManager;
 
     @Override
     public void onEnable(){
@@ -100,11 +102,14 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
 
                             // Register Listeners
                             registerListeners();
-                            
+
+                            // Load Flags
+                            flagsManager = new FlagsManager();
+
                             // Load addons
                             addonsManager = new AddonsManager();
                             addonsManager.enableAddons();
-                            
+
                             /*
                              *DEBUG CODE
                             Island loadedIsland = islandsManager.getIsland(owner);
@@ -204,12 +209,32 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
         return plugin;
     }
 
+    /**
+     * @return the Commands manager
+     */
     public CommandsManager getCommandsManager() {
         return commandsManager;
     }
 
+    /**
+     * @return the Locales manager
+     */
     public LocalesManager getLocalesManager() {
         return localesManager;
+    }
+
+    /**
+     * @return the Addons manager
+     */
+    public AddonsManager getAddonsManager() {
+        return addonsManager;
+    }
+
+    /**
+     * @return the Flags manager
+     */
+    public FlagsManager getFlagsManager() {
+        return flagsManager;
     }
 
     @Override
@@ -225,12 +250,5 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
     @Override
     public final File getFolder() {
         return getDataFolder();
-    }
-
-    /**
-     * @return the addonsManager
-     */
-    public AddonsManager getAddonsManager() {
-        return addonsManager;
     }
 }
