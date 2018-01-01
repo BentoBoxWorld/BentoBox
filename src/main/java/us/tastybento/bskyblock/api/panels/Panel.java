@@ -38,16 +38,14 @@ public class Panel {
         }
         this.listener = listener;
         // If the listener is defined, then run setup
+        listener.ifPresent(l -> l.setup());
+        /*
         if (listener.isPresent()) {
             listener.get().setup();
-        }
+        }*/
         // If the user is defined, then open panel immediately
         this.user = user;
-        if (user.isPresent()) {
-            // Register panel.
-            PanelListenerManager.openPanels.put(user.get().getUniqueId(), this);
-            user.get().getPlayer().openInventory(inventory);
-        }
+        user.ifPresent(this::open);
     }
 
     public Inventory getInventory() {
