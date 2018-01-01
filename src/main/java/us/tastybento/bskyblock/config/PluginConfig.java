@@ -5,7 +5,6 @@ import java.util.HashMap;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.config.NotSetup.ConfigError;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
-import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 
 /**
  * Loads the plugin configuration and the locales.
@@ -116,11 +115,6 @@ public class PluginConfig {
         Settings.endIslands = false;
         Settings.limitedBlocks = new HashMap<>();
         Settings.defaultWorldSettings = new HashMap<>();
-        for (SettingsFlag flag: SettingsFlag.values()) {
-            Settings.defaultWorldSettings.put(flag, false);
-        }
-        Settings.defaultWorldSettings.put(SettingsFlag.ANIMAL_SPAWN, true);
-        Settings.defaultWorldSettings.put(SettingsFlag.MONSTER_SPAWN, true);
 
         // Team
         Settings.maxTeamSize = plugin.getConfig().getInt("island.max-team-size", 4);

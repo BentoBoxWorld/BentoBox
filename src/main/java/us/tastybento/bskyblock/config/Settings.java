@@ -8,8 +8,8 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
-import us.tastybento.bskyblock.database.objects.Island.SettingsFlag;
 
 /**
  * All the plugin settings are here
@@ -166,7 +166,7 @@ public class Settings {
 
     public static boolean endIslands;
 
-    public static HashMap<SettingsFlag, Boolean> defaultWorldSettings;
+    public static HashMap<Flag, Boolean> defaultWorldSettings;
     public static boolean allowEndermanGriefing;
     public static boolean endermanDeathDrop;
     public static boolean allowTNTDamage;
