@@ -1,13 +1,10 @@
 package us.tastybento.bskyblock;
 
-import java.io.File;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.tastybento.bskyblock.api.BSBModule;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.PluginConfig;
@@ -28,7 +25,7 @@ import us.tastybento.bskyblock.managers.LocalesManager;
  * @author Tastybento
  * @author Poslovitch
  */
-public class BSkyBlock extends JavaPlugin implements BSBModule {
+public class BSkyBlock extends JavaPlugin {
 
     private static BSkyBlock plugin;
 
@@ -98,7 +95,7 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
 
                             Settings.defaultLanguage = "en-US";
                             localesManager = new LocalesManager(plugin);
-                            localesManager.registerLocales(plugin);
+                            //TODO localesManager.registerLocales(plugin);
 
                             // Register Listeners
                             registerListeners();
@@ -107,7 +104,7 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
                             flagsManager = new FlagsManager();
 
                             // Load addons
-                            addonsManager = new AddonsManager();
+                            addonsManager = new AddonsManager(plugin);
                             addonsManager.enableAddons();
 
                             /*
@@ -237,18 +234,4 @@ public class BSkyBlock extends JavaPlugin implements BSBModule {
         return flagsManager;
     }
 
-    @Override
-    public final String getIdentifier() {
-        return getDescription().getName();
-    }
-
-    @Override
-    public final boolean isAddon() {
-        return false;
-    }
-
-    @Override
-    public final File getFolder() {
-        return getDataFolder();
-    }
 }

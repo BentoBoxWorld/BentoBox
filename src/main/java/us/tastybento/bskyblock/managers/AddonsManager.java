@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -33,10 +34,12 @@ public final class AddonsManager {
     private List<Addon> addons;
     private List<AddonClassLoader> loader;
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+    private BSkyBlock plugin;
 
 
 
-    public AddonsManager() {
+    public AddonsManager(BSkyBlock plugin) {
+        this.plugin = plugin;
         this.addons = new ArrayList<>();
         this.loader = new ArrayList<>();
     }
@@ -46,7 +49,7 @@ public final class AddonsManager {
      * @throws InvalidDescriptionException 
      */
     public void enableAddons() {
-        File f = new File(BSkyBlock.getInstance().getDataFolder(), "addons");
+        File f = new File(plugin.getDataFolder(), "addons");
         if (f.exists()) {
             if (f.isDirectory()) {
                 for (File file : f.listFiles()) {
@@ -78,7 +81,7 @@ public final class AddonsManager {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
-            BSkyBlock.getInstance().getLogger().info("Enabling " + addon.getDescription().getName() + "...");
+            plugin.getLogger().info("Enabling " + addon.getDescription().getName() + "...");
         });
 
     }
@@ -123,11 +126,18 @@ public final class AddonsManager {
             // Add to the list of loaders
             this.loader.add(loader);
             
-            // Get the addon itseld
+            // Get the addon itself
             addon = loader.addon;
             // Initialize some settings
             addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
             addon.setAddonFile(f);
+            
+            // Obtain any locale files and save them
+            for (String localeFile : listJarYamlFiles(jar, "locales")) {
+                //plugin.getLogger().info("DEBUG: saving " + localeFile + " from jar");
+                addon.saveResource(localeFile, plugin.getDataFolder(), false, true);
+            }
+            plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
             
             // Fire the load event
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
@@ -139,13 +149,13 @@ public final class AddonsManager {
             addon.onLoad();
             
             // Inform the console
-            BSkyBlock.getInstance().getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
+            plugin.getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
             
             // Close the jar
             jar.close();
         } catch (IOException e) {
             if (DEBUG) {
-                BSkyBlock.getInstance().getLogger().info(f.getName() + "is not a jarfile, ignoring...");
+                plugin.getLogger().info(f.getName() + "is not a jarfile, ignoring...");
             }
         }
 
@@ -239,4 +249,37 @@ public final class AddonsManager {
         }
     }
 
+    /**
+     * Lists all the yml files found in the jar in the folder
+     * @param jar
+     * @param folderPath
+     * @return List<String>
+     * @throws IOException
+     */
+    public List<String> listJarYamlFiles(JarFile jar, String folderPath) throws IOException {
+        List<String> result = new ArrayList<>();
+
+        /**
+         * Loop through all the entries.
+         */
+        Enumeration<JarEntry> entries = jar.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String path = entry.getName();
+
+            /**
+             * Not in the folder.
+             */
+            if (!path.startsWith(folderPath)) {
+                continue;
+            }
+
+            //plugin.getLogger().info("DEBUG: jar filename = " + entry.getName());
+            if (entry.getName().endsWith(".yml")) {
+                result.add(entry.getName());
+            }
+
+        }
+        return result;
+    }
 }

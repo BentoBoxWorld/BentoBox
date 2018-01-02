@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.api.commands;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.config.Settings;
 
 /**
  * BSB's user object. Wraps Player.
@@ -73,7 +75,7 @@ public class User {
     private final Player player;
 
     private final UUID playerUUID;
-    
+
     private final BSkyBlock plugin = BSkyBlock.getInstance();
 
     private final CommandSender sender;
@@ -90,7 +92,7 @@ public class User {
         this.playerUUID = player.getUniqueId();
         users.put(player.getUniqueId(), this);
     }
-    
+
     private User(UUID playerUUID) {
         this.player = Bukkit.getPlayer(playerUUID);
         this.playerUUID = playerUUID;
@@ -155,7 +157,7 @@ public class User {
      * @return
      */
     public String getTranslation(String reference, String... variables) {
-        String translation = plugin.getLocalesManager().get(sender, reference);
+        String translation = plugin.getLocalesManager().get(this, reference);
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i+=2) {
                 translation.replace(variables[i], variables[i+1]);
@@ -163,7 +165,7 @@ public class User {
         }
         return translation;
     }
-    
+
     /**
      * Send a message to sender if message is not empty. Does not include color codes or spaces.
      * @param reference - language file reference
@@ -210,7 +212,7 @@ public class User {
     public void teleport(Location location) {
         player.teleport(location);
     }
-    
+
     /**
      * Gets the current world this entity resides in
      * @return World
@@ -218,11 +220,24 @@ public class User {
     public World getWorld() {
         return player.getWorld();
     }
-    
+
     /**
      * Closes the user's inventory
      */
     public void closeInventory() {
         player.closeInventory();
+    }
+    
+    /**
+     * Get the user's locale
+     * @return Locale
+     */
+    public Locale getLocale() {
+        if (sender instanceof Player) {
+            if (!plugin.getPlayers().getLocale(this.playerUUID).isEmpty())
+                return Locale.forLanguageTag(plugin.getPlayers().getLocale(this.playerUUID));
+        } 
+        return Locale.forLanguageTag(Settings.defaultLanguage);
+
     }
 }

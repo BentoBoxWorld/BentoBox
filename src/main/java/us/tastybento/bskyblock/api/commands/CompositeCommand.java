@@ -100,7 +100,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.subCommands = new LinkedHashMap<>();
         // Register command if it is not already registered
         if (getPlugin().getCommand(label) == null) {
-            getPlugin().getCommandsManager().registerCommand(getPlugin(), this);
+            getPlugin().getCommandsManager().registerCommand(this);
         }
         this.setup();
         if (!this.getSubCommand("help").isPresent() && !label.equals("help"))

@@ -134,23 +134,24 @@ public abstract class Addon implements AddonInterface {
         saveResource(ADDON_CONFIG_FILENAME, false);
         config = loadYamlFile(ADDON_CONFIG_FILENAME);
     }
-   
+
     /**
      * Saves a resource contained in this add-on's jar file to the addon's data folder.
      * @param resourcePath in jar file
      * @param replace - if true, will overwrite previous file
      */
     public void saveResource(String resourcePath, boolean replace) {
-        saveResource(resourcePath, dataFolder, replace);
+        saveResource(resourcePath, dataFolder, replace, false);
     }
-    
+
     /**
      * Saves a resource contained in this add-on's jar file to the destination folder.
      * @param resourcePath in jar file
      * @param destinationFolder on file system
      * @param replace - if true, will overwrite previous file
+     * @param prefix - if true, filename will be prefixed with the name of this addon
      */
-    public void saveResource(String resourcePath, File destinationFolder, boolean replace) {
+    public void saveResource(String resourcePath, File destinationFolder, boolean replace, boolean prefix) {
         if (resourcePath == null || resourcePath.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
@@ -168,9 +169,15 @@ public abstract class Addon implements AddonInterface {
                 throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + jar.getName());
             }
             File outFile = new File(destinationFolder, resourcePath);
+            //Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
+            //Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
+            if (prefix) {
+                // Rename with addon prefix
+                outFile = new File(outFile.getParent(), getDescription().getName() + "-" + outFile.getName());
+            }
             int lastIndex = resourcePath.lastIndexOf('/');
             File outDir = new File(destinationFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
-
+            //Bukkit.getLogger().info("DEBUG: outDir = " + outDir.getAbsolutePath());
             if (!outDir.exists()) {
                 outDir.mkdirs();
             }
@@ -215,7 +222,7 @@ public abstract class Addon implements AddonInterface {
     public void setDescription(AddonDescription desc){
         this.description = desc;
     }
-    
+
     /**
      * Set whether this addon is enabled or not
      * @param enabled

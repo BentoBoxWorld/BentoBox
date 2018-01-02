@@ -17,8 +17,8 @@ public class BSBLocale {
     private YamlConfiguration config;
     private Map<String, String> cache;
 
-    public BSBLocale(String languageTag, File file) {
-        this.locale = Locale.forLanguageTag(languageTag);
+    public BSBLocale(Locale locale, File file) {
+        this.locale = locale;
         this.config = YamlConfiguration.loadConfiguration(file);
         this.cache = new HashMap<>();
     }
@@ -68,6 +68,24 @@ public class BSBLocale {
      */
     public String toLanguageTag(){
         return this.locale.toLanguageTag();
+    }
+
+    /**
+     * Adds language YAML file to this locale
+     * @param language
+     */
+    public void add(File language) {
+        YamlConfiguration toBeMerged = YamlConfiguration.loadConfiguration(language);
+        for (String key : toBeMerged.getKeys(true)) {
+            if (!config.contains(key)) {
+                //Bukkit.getLogger().info("Merging in key " + key );
+                config.set(key, toBeMerged.get(key));
+            }
+        }
+    }
+
+    public boolean contains(String reference) {
+        return config.contains(reference);
     }
 
 }
