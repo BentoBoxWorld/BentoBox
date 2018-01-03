@@ -25,7 +25,7 @@ public class IslandCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        this.setDescription("island.help.description");
+        this.setDescription("commands.island.help.description");
         this.setOnlyPlayer(true);
         // Permission
         this.setPermission(Settings.PERMPREFIX + "island");
