@@ -11,7 +11,11 @@ import us.tastybento.bskyblock.api.localization.BSBLocale;
 import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.FileLister;
 
-public class LocalesManager {
+/**
+ * @author Tastybento, Poslovitch
+ */
+public final class LocalesManager {
+
     private BSkyBlock plugin;
     private HashMap<Locale, BSBLocale> languages = new HashMap<>();
     final static String LOCALE_FOLDER = "locales";
