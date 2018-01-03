@@ -160,7 +160,7 @@ public class User {
         String translation = plugin.getLocalesManager().get(this, reference);
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i+=2) {
-                translation.replace(variables[i], variables[i+1]);
+                translation = translation.replace(variables[i], variables[i+1]);
             }
         }
         
