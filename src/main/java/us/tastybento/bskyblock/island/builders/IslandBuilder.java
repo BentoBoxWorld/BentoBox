@@ -468,8 +468,7 @@ public class IslandBuilder {
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
         // Place the chest - no need to use the safe spawn function
-        // because we
-        // know what this island looks like
+        // because we know what this island looks like
         placeChest(x, islandHeight + 5, z + 1);
     }
 
@@ -479,7 +478,7 @@ public class IslandBuilder {
         if (this.playerUUID != null) {
             Sign sign = (Sign) blockToChange.getState();
             User user = User.getInstance(playerUUID);
-            for (int i=0; i<4; i++) {
+            for (int i = 0; i < 4; i++) {
                 sign.setLine(i, user.getTranslation("island.sign.line" + i, "[player]", playerName));
             }         
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);

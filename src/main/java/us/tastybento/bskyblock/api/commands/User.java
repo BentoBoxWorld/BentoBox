@@ -72,12 +72,12 @@ public class User {
         users.remove(player.getUniqueId());
     }
 
-    private final Player player;
-
-    private final UUID playerUUID;
+    // ----------------------------------------------------
 
     private final BSkyBlock plugin = BSkyBlock.getInstance();
 
+    private final Player player;
+    private final UUID playerUUID;
     private final CommandSender sender;
 
     private User(CommandSender sender) {
@@ -139,7 +139,7 @@ public class User {
      * @return true if permission is empty or if the player has that permission
      */
     public boolean hasPermission(String permission) {
-        return permission.isEmpty() ? true : sender.hasPermission(permission);
+        return permission.isEmpty() || sender.hasPermission(permission);
     }
 
     public boolean isOnline() {
@@ -159,7 +159,7 @@ public class User {
     public String getTranslation(String reference, String... variables) {
         String translation = plugin.getLocalesManager().get(this, reference);
         if (variables.length > 1) {
-            for (int i = 0; i < variables.length; i+=2) {
+            for (int i = 0; i < variables.length; i += 2) {
                 translation = translation.replace(variables[i], variables[i+1]);
             }
         }
