@@ -15,12 +15,10 @@ public class BSBLocale {
 
     private Locale locale;
     private YamlConfiguration config;
-    private Map<String, String> cache;
 
     public BSBLocale(Locale locale, File file) {
         this.locale = locale;
         this.config = YamlConfiguration.loadConfiguration(file);
-        this.cache = new HashMap<>();
     }
 
     /**
@@ -29,17 +27,10 @@ public class BSBLocale {
      * @return Text for this locale reference or the reference if nothing has been found
      */
     public String get(String reference) {
-        if (cache.containsKey(reference)) {
-            return cache.get(reference);
-        } else if (config.contains(reference)) {
-            cache.put(reference, ChatColor.translateAlternateColorCodes('&', config.getString(reference)));
-            return cache.get(reference);
+        if (config.contains(reference)) {
+            return config.getString(reference);
         }
         return reference; // return reference in case nothing has been found
-    }
-
-    public void clearCache() {
-        this.cache.clear();
     }
 
     /**
