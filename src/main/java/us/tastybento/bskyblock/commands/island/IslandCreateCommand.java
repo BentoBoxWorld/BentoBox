@@ -14,8 +14,9 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 
 /**
- * @author tastybento
+ * /island create - Create an island.
  *
+ * @author Tastybento
  */
 public class IslandCreateCommand extends CompositeCommand {
 
@@ -37,6 +38,7 @@ public class IslandCreateCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         if (getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
+            return false;
         }
         if (getPlayers().inTeam(user.getUniqueId())) {
             return false; 
@@ -52,7 +54,6 @@ public class IslandCreateCommand extends CompositeCommand {
      * @param user
      */
     protected void createIsland(User user) {
-        //TODO: Add panels, make a selection.
         try {
             NewIsland.builder()
             .player(user.getPlayer())
