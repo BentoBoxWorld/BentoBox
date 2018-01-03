@@ -55,7 +55,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     private String parameters = "";
     /**
-     * The command chain from the very top, e.g., /island team promote
+     * The command chain from the very top, e.g., island team promote
      */
     private String usage;
 
@@ -304,7 +304,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             this.usage = parent.getLabel() + " " + this.usage;
             parent = parent.getParent();
         }
-        this.usage = "/" + this.usage;
+        this.usage = this.usage;
         this.usage = this.usage.trim();
         return this;
     }

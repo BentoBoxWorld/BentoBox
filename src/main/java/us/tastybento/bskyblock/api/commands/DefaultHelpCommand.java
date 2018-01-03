@@ -28,21 +28,21 @@ public class DefaultHelpCommand extends CompositeCommand {
         if (args.isEmpty()) {
             if (!parent.getLabel().equals("help")) {
                 // Get elements
-                String usage = parent.getUsage().isEmpty() ? "" : user.getTranslationOrNothing("commands.help.color.usage") + user.getTranslation(parent.getUsage());
-                String params = getParameters().isEmpty() ? "" : ChatColor.RESET + " " + user.getTranslationOrNothing("commands.help.color.parameters") + user.getTranslation(getParameters());
-                String desc = getDescription().isEmpty() ? "" : ChatColor.RESET + user.getTranslationOrNothing("commands.help.color.description") + " " + user.getTranslation(getDescription());
+                String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
+                String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
+                String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
                 // Show the help
                 if (user.isPlayer()) {
                     // Player. Check perms
                     if (user.hasPermission(parent.getPermission())) {
-                        user.sendRawMessage(usage + params + desc);
+                        user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
                     } else {
                         // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
                         return true;
                     }
                 } else if (!parent.isOnlyPlayer()) {
                     // Console. Only show if it is a console command
-                    user.sendRawMessage(usage + params + desc);
+                    user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
                 }
             }
             // Run through any subcommands and get their help

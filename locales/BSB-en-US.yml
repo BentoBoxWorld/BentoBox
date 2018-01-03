@@ -27,15 +27,9 @@ general:
 
 commands:
   help:
-    color:
-      usage: "&E"
-      parameters: "&B"
-      description: "&2"
     header: "&7=========== &c%bsb_plugin_name% &7==========="
-    syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
-    syntax-alias-separator: "/"
+    syntax: "&7/&b[usage] &a[parameters] &7: &e[description]"
     end: "&7================================="
-    about: "display this help page"
   admin:
     help:
       description: "Admin command"
