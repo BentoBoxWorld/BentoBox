@@ -154,7 +154,7 @@ public class User {
      * Gets a translation for this user
      * @param reference
      * @param variables
-     * @return
+     * @return Translated string with colors converted
      */
     public String getTranslation(String reference, String... variables) {
         String translation = plugin.getLocalesManager().get(this, reference);
@@ -163,9 +163,21 @@ public class User {
                 translation.replace(variables[i], variables[i+1]);
             }
         }
-        return translation;
+        
+        return translation == null ? reference : ChatColor.translateAlternateColorCodes('&', translation);
     }
 
+    /**
+     * Returns blank string if reference is not available
+     * @param reference
+     * @param variables
+     * @return 
+     */
+    public String getTranslationOrNothing(String reference, String... variables) {
+        String translation = getTranslation(reference, variables);
+        return translation == null ? "" : translation;
+    }
+    
     /**
      * Send a message to sender if message is not empty. Does not include color codes or spaces.
      * @param reference - language file reference
@@ -182,13 +194,13 @@ public class User {
             }
         }
     }
-
+    
     /**
      * Sends a message to sender without any modification (colors, multi-lines, placeholders).
      * Should only be used for debug purposes.
      * @param message - the message to send
      */
-    public void sendLegacyMessage(String message) {
+    public void sendRawMessage(String message) {
         if (sender != null) {
             sender.sendMessage(message);
         } else {

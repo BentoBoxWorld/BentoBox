@@ -22,6 +22,12 @@ public class LocalesManager {
         this.loadLocales("BSB"); // Default
     }
 
+    /**
+     * Gets the reference from the locale file for this user
+     * @param user
+     * @param reference
+     * @return translated string, or if the translation does not exist, the default language version, or if that does not exist null
+     */
     public String get(User user, String reference) {
         BSBLocale locale = languages.get(user.getLocale());
         if (locale != null && locale.contains(reference))
@@ -30,7 +36,7 @@ public class LocalesManager {
         if (languages.get(Locale.forLanguageTag(Settings.defaultLanguage)).contains(reference)) {
             return languages.get(Locale.forLanguageTag(Settings.defaultLanguage)).get(reference);
         }
-        return reference;
+        return null;
     }
 
     /**

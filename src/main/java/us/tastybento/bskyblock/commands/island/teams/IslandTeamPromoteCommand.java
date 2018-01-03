@@ -15,7 +15,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
     public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setParameters("island.team.promote.parameters");
+        this.setParameters("commands.island.team.promote.parameters");
         this.setDescription("commands.island.team.promote.description");
     }
 

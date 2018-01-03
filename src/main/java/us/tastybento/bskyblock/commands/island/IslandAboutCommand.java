@@ -24,35 +24,35 @@ public class IslandAboutCommand extends CompositeCommand {
     
     @Override
     public boolean execute(User user, List<String> args) {
-        user.sendLegacyMessage("About " + BSkyBlock.getInstance().getDescription().getName() + " v" + BSkyBlock.getInstance().getDescription().getVersion() + ":");
-        user.sendLegacyMessage("Copyright (c) 2017 - 2018 tastybento, Poslovitch");
-        user.sendLegacyMessage("All rights reserved.");
-        user.sendLegacyMessage("");
-        user.sendLegacyMessage("Redistribution and use in source and binary forms, with or without");
-        user.sendLegacyMessage("modification, are permitted provided that the following conditions are met:");
+        user.sendRawMessage("About " + BSkyBlock.getInstance().getDescription().getName() + " v" + BSkyBlock.getInstance().getDescription().getVersion() + ":");
+        user.sendRawMessage("Copyright (c) 2017 - 2018 tastybento, Poslovitch");
+        user.sendRawMessage("All rights reserved.");
+        user.sendRawMessage("");
+        user.sendRawMessage("Redistribution and use in source and binary forms, with or without");
+        user.sendRawMessage("modification, are permitted provided that the following conditions are met:");
 
-        user.sendLegacyMessage("    * Redistributions of source code must retain the above copyright notice,");
-        user.sendLegacyMessage("      this list of conditions and the following disclaimer.");
+        user.sendRawMessage("    * Redistributions of source code must retain the above copyright notice,");
+        user.sendRawMessage("      this list of conditions and the following disclaimer.");
 
-        user.sendLegacyMessage("    * Redistributions in binary form must reproduce the above copyright");
-        user.sendLegacyMessage("      notice, this list of conditions and the following disclaimer in the");
-        user.sendLegacyMessage("      documentation and/or other materials provided with the distribution.");
+        user.sendRawMessage("    * Redistributions in binary form must reproduce the above copyright");
+        user.sendRawMessage("      notice, this list of conditions and the following disclaimer in the");
+        user.sendRawMessage("      documentation and/or other materials provided with the distribution.");
 
-        user.sendLegacyMessage("    * Neither the name of the BSkyBlock team nor the names of its");
-        user.sendLegacyMessage("      contributors may be used to endorse or promote products derived from");
-        user.sendLegacyMessage("      this software without specific prior written permission.");
+        user.sendRawMessage("    * Neither the name of the BSkyBlock team nor the names of its");
+        user.sendRawMessage("      contributors may be used to endorse or promote products derived from");
+        user.sendRawMessage("      this software without specific prior written permission.");
 
-        user.sendLegacyMessage("THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"");
-        user.sendLegacyMessage("AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE");
-        user.sendLegacyMessage("IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE");
-        user.sendLegacyMessage("ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE");
-        user.sendLegacyMessage("LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR");
-        user.sendLegacyMessage("CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF");
-        user.sendLegacyMessage("SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS");
-        user.sendLegacyMessage("INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN");
-        user.sendLegacyMessage("CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)");
-        user.sendLegacyMessage("ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE");
-        user.sendLegacyMessage("POSSIBILITY OF SUCH DAMAGE. ");
+        user.sendRawMessage("THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS \"AS IS\"");
+        user.sendRawMessage("AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE");
+        user.sendRawMessage("IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE");
+        user.sendRawMessage("ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE");
+        user.sendRawMessage("LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR");
+        user.sendRawMessage("CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF");
+        user.sendRawMessage("SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS");
+        user.sendRawMessage("INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN");
+        user.sendRawMessage("CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)");
+        user.sendRawMessage("ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE");
+        user.sendRawMessage("POSSIBILITY OF SUCH DAMAGE. ");
         return false;
     }
 

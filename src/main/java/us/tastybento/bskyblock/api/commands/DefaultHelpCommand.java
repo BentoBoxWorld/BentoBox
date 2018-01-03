@@ -2,6 +2,8 @@ package us.tastybento.bskyblock.api.commands;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
+
 /**
  * Adds a default help to every command that will show the usage of the command
  * and the usage of any subcommands that the command has.
@@ -26,20 +28,21 @@ public class DefaultHelpCommand extends CompositeCommand {
         if (args.isEmpty()) {
             if (!parent.getLabel().equals("help")) {
                 // Get elements
-                String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters()) + " ";
-                String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
+                String usage = parent.getUsage().isEmpty() ? "" : user.getTranslationOrNothing("commands.help.color.usage") + user.getTranslation(parent.getUsage());
+                String params = getParameters().isEmpty() ? "" : ChatColor.RESET + " " + user.getTranslationOrNothing("commands.help.color.parameters") + user.getTranslation(getParameters());
+                String desc = getDescription().isEmpty() ? "" : ChatColor.RESET + user.getTranslationOrNothing("commands.help.color.description") + " " + user.getTranslation(getDescription());
                 // Show the help
                 if (user.isPlayer()) {
                     // Player. Check perms
                     if (user.hasPermission(parent.getPermission())) {
-                        user.sendLegacyMessage(parent.getUsage() + " " + params + desc);
+                        user.sendRawMessage(usage + params + desc);
                     } else {
                         // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
                         return true;
                     }
                 } else if (!parent.isOnlyPlayer()) {
                     // Console. Only show if it is a console command
-                    user.sendLegacyMessage(parent.getUsage() + " " + params + desc);
+                    user.sendRawMessage(usage + params + desc);
                 }
             }
             // Run through any subcommands and get their help

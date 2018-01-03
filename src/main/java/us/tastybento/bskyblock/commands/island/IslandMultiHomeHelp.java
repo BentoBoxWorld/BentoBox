@@ -2,6 +2,8 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
 
+import org.bukkit.ChatColor;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
@@ -33,16 +35,17 @@ public class IslandMultiHomeHelp extends CompositeCommand {
         // This will only be shown if it is for a player
         if (user.isPlayer()) {
             // Get elements
-            String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters()) + " ";
-            String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
+            String usage = parent.getUsage().isEmpty() ? "" : user.getTranslationOrNothing("commands.help.color.usage") + user.getTranslation(parent.getUsage());
+            String params = getParameters().isEmpty() ? "" : ChatColor.RESET + " " + user.getTranslationOrNothing("commands.help.color.parameters") + user.getTranslation(getParameters());
+            String desc = getDescription().isEmpty() ? "" : ChatColor.RESET + user.getTranslationOrNothing("commands.help.color.description") + " " + user.getTranslation(getDescription());
             // Player. Check perms
             if (user.hasPermission(getPermission())) {
                 int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
                 if (maxHomes > 1) {
-                    user.sendLegacyMessage(parent.getUsage() + " " + params + desc);
+                    user.sendRawMessage(usage + params + desc);
                 } else {
                     // No params
-                    user.sendLegacyMessage(parent.getUsage() + " " + desc);
+                    user.sendRawMessage(usage + desc);
                 }
                 return true;
             } else {

@@ -12,21 +12,25 @@
 general:
   deaths: "Deaths"
   unlimited: "Unlimited"
-  success: "Success!"
+  success: "&aSuccess!"
   errors:
-    no-permission: "You don't have permission to execute this command."
-    use-in-game: "This command is only available in game."
-    no-team: "You do not have a team!"
-    no-island: "You do not have an island!"
-    already-have-island: "You already have an island!"
-    no-safe-location: "No safe location found on island!"
-    not-leader: "You are not the leader of your island!"
-    offline-player: "That player is offline or doesn't exist."
-    unknown-player: "Unknown player!"
-    general: "That command is not ready yet - contact admin"
+    no-permission: "&cYou don't have permission to execute this command."
+    use-in-game: "&cThis command is only available in game."
+    no-team: "&cYou do not have a team!"
+    no-island: "&cYou do not have an island!"
+    already-have-island: "&cYou already have an island!"
+    no-safe-location: "&cNo safe location found on island!"
+    not-leader: "&cYou are not the leader of your island!"
+    offline-player: "&cThat player is offline or doesn't exist."
+    unknown-player: "&cUnknown player!"
+    general: "&cThat command is not ready yet - contact admin"
 
 commands:
   help:
+    color:
+      usage: "&E"
+      parameters: "&B"
+      description: "&2"
     header: "&7=========== &c%bsb_plugin_name% &7==========="
     syntax: "  &7/&b[label] &c[command] &a[args] &7: &e[info]"
     syntax-alias-separator: "/"
@@ -65,8 +69,8 @@ commands:
       parameters: "<home number>"
     setname:
       description: "set a name for your island"
-      name-too-short: "Too short. Minimum size is [length] characters."
-      name-too-long: "Too long. Maximum size is [length] characters."
+      name-too-short: "&cToo short. Minimum size is [length] characters."
+      name-too-long: "&cToo long. Maximum size is [length] characters."
       parameters: "<name>"
     resetname:
       description: "reset your island name"
@@ -77,20 +81,20 @@ commands:
       invite:
         description: "invite a player to join your island"
         errors:
-          island-is-full: "Your island is full, you can't invite anyone else."
-          none-invited-you: "No one invited you :c."
-          you-already-are-in-team: "You are already on a team!"
-          invalid-invite: "That invite is no longer valid, sorry."
+          island-is-full: "&cYour island is full, you can't invite anyone else."
+          none-invited-you: "&cNo one invited you :c."
+          you-already-are-in-team: "&cYou are already on a team!"
+          invalid-invite: "&cThat invite is no longer valid, sorry."
         parameters: "<player>"
         you-can-invite: "You can invite [number] more players."
         accept:
           description: "accept an invitation"
-          you-joined-island: "You have joined an island! Use /[label] team info to see the other members."
-          name-joined-your-island: "[name] has joined your island!"
+          you-joined-island: "&aYou joined an island! Use /[label] team info to see the other members."
+          name-joined-your-island: "&a[name] joined your island!"
         reject:
           description: "reject an invitation"
-          you-rejected-invite: "You have rejected the invitation to join an island."
-          name-rejected-your-invite: "[name] has rejected your island invite!"
+          you-rejected-invite: "&aYou rejected the invitation to join an island."
+          name-rejected-your-invite: "&c[name] rejected your island invite!"
         cancel:
           description: "cancel the pending invite to join your island"
       leave:
@@ -104,11 +108,11 @@ commands:
       setowner:
         description: "transfer your island ownership to a member"
         errors:
-          cant-transfer-to-yourself: "You can't transfer ownership to yourself! Well, in facts, you could have been able to do so... But we don't want you to do so. 'Cause it's bad."
-          target-is-not-member: "That player is not part of your island team!"
-        name-is-the-owner: "[name] is now the island owner!"
+          cant-transfer-to-yourself: "&cYou can't transfer ownership to yourself! Well, infact, you could... But we don't want you to. 'Cause it's bad."
+          target-is-not-member: "&cThat player is not part of your island team!"
+        name-is-the-owner: "&a[name] is now the island owner!"
         parameters: "<player>"
-        you-are-the-owner: "You are now the island owner!"
+        you-are-the-owner: "&aYou are now the island owner!"
     ban:
       description: "ban a player from your island"
       parameters: "<player>"
@@ -196,11 +200,11 @@ protection:
     TNT_BLOW_UP_CHESTS: "TNT_BLOW_UP_CHESTS"
     VILLAGER_TRADING: "VILLAGER_TRADING"
   state:
-    allowed: "allowed"
-    disallowed: "disallowed"
+    allowed: "&aallowed"
+    disallowed: "&cdisallowed"
 
   island:
-    locked: "This island is locked!"
+    locked: "&cThis island is locked!"
 
 new-island:
   sign:

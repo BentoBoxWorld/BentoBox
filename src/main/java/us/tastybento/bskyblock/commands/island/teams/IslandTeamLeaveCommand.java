@@ -15,7 +15,6 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
     public void setup() {
         this.setPermission(Settings.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
-        this.setParameters("command.island.team.leave.parameters");
         this.setDescription("commands.island.team.leave.description");
 
     }
