@@ -50,6 +50,7 @@ commands:
     create:
       description: "create an island"
       unable-create-island: "Your island could not be generated, please contact an administrator."
+      creating-island: "Creating your island..."
     info:
       description: "display info about your island"
     reset:
