@@ -24,7 +24,7 @@ import us.tastybento.bskyblock.util.Util;
 
 /**
  * BSB composite command
- * @author ben, poslovich
+ * @author tastybento, poslovich
  *
  */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BSBCommand {

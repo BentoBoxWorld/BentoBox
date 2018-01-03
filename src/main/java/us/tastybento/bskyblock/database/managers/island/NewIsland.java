@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
 
 /**
  * Create and paste a new island
- * @author ben
+ * @author tastybento
  *
  */
 public class NewIsland {
@@ -56,7 +56,7 @@ public class NewIsland {
 
     /**
      * Build a new island for a player using a schematic
-     * @author ben
+     * @author tastybento
      *
      */
     public static class Builder {

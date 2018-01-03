@@ -15,7 +15,7 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**
- * @author ben
+ * @author tastybento
  *
  */
 public class IslandGoCommand extends CompositeCommand {
@@ -29,7 +29,7 @@ public class IslandGoCommand extends CompositeCommand {
         this.setPermission(Settings.PERMPREFIX + "island.home");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.go.description");
-        new IslandMultiHomeHelp(this);
+        new CustomIslandMultiHomeHelp(this);
     }
 
     /* (non-Javadoc)

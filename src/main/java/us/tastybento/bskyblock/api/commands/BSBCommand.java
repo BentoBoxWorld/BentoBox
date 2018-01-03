@@ -6,7 +6,7 @@ import java.util.Optional;
 
 /**
  * Interface for BSkyBlock Commands
- * @author ben
+ * @author tastybento
  *
  */
 public interface BSBCommand {

@@ -21,7 +21,7 @@ import us.tastybento.bskyblock.config.Settings;
 
 /**
  * BSB's user object. Wraps Player.
- * @author ben
+ * @author tastybento
  *
  */
 public class User {

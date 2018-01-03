@@ -15,7 +15,7 @@ import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
 
 /**
- * @author ben
+ * @author tastybento
  *
  */
 public class IslandSetnameCommand extends CompositeCommand {

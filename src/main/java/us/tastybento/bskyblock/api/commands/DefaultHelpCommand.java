@@ -2,12 +2,10 @@ package us.tastybento.bskyblock.api.commands;
 
 import java.util.List;
 
-import org.bukkit.ChatColor;
-
 /**
  * Adds a default help to every command that will show the usage of the command
  * and the usage of any subcommands that the command has.
- * @author ben
+ * @author tastybento
  *
  */
 public class DefaultHelpCommand extends CompositeCommand {

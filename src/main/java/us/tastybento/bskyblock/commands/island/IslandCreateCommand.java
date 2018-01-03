@@ -14,7 +14,7 @@ import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 
 /**
- * @author ben
+ * @author tastybento
  *
  */
 public class IslandCreateCommand extends CompositeCommand {

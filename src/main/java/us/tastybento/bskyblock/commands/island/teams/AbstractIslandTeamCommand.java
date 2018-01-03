@@ -17,7 +17,7 @@ import us.tastybento.bskyblock.config.Settings;
 
 /**
  * A safe common space for team commands to share data
- * @author ben
+ * @author tastybento
  *
  */
 public abstract class AbstractIslandTeamCommand extends CompositeCommand {

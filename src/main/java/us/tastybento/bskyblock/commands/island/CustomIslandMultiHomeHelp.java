@@ -2,8 +2,6 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
 
-import org.bukkit.ChatColor;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.config.Settings;
@@ -12,12 +10,14 @@ import us.tastybento.bskyblock.util.Util;
 /**
  * This is a custom help for the /island go and /island sethome commands. It overrides the default help sub command.
  * The number of homes can change depending on the player's permissions and config.yml settings.
- * @author ben
+ * This is an example of a custom help as much as anything.
+ * 
+ * @author tastybento
  *
  */
-public class IslandMultiHomeHelp extends CompositeCommand {
+public class CustomIslandMultiHomeHelp extends CompositeCommand {
 
-    public IslandMultiHomeHelp(CompositeCommand parent) {
+    public CustomIslandMultiHomeHelp(CompositeCommand parent) {
         super(parent, "help");        
     }
     
@@ -35,17 +35,18 @@ public class IslandMultiHomeHelp extends CompositeCommand {
         // This will only be shown if it is for a player
         if (user.isPlayer()) {
             // Get elements
-            String usage = parent.getUsage().isEmpty() ? "" : user.getTranslationOrNothing("commands.help.color.usage") + user.getTranslation(parent.getUsage());
-            String params = getParameters().isEmpty() ? "" : ChatColor.RESET + " " + user.getTranslationOrNothing("commands.help.color.parameters") + user.getTranslation(getParameters());
-            String desc = getDescription().isEmpty() ? "" : ChatColor.RESET + user.getTranslationOrNothing("commands.help.color.description") + " " + user.getTranslation(getDescription());
+            String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
+            String params = "";
+            String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
             // Player. Check perms
             if (user.hasPermission(getPermission())) {
                 int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
                 if (maxHomes > 1) {
-                    user.sendRawMessage(usage + params + desc);
+                    params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
+                    user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
                 } else {
                     // No params
-                    user.sendRawMessage(usage + desc);
+                    user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
                 }
                 return true;
             } else {
