@@ -35,8 +35,8 @@ public class IslandCommand extends CompositeCommand {
         new IslandGoCommand(this);
         new IslandResetCommand(this);
         new IslandSetnameCommand(this);
-        new IslandSethomeCommand(this);
         new IslandResetnameCommand(this);
+        new IslandSethomeCommand(this);
         // Team commands
         new IslandTeamCommand(this);
     }
