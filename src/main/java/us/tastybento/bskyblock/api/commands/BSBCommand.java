@@ -15,7 +15,7 @@ public interface BSBCommand {
      * Anything that needs to be set up for this command.
      * This is where you register subcommands and other settings
      */
-    public void setup();
+    void setup();
 
     /**
      * What will be executed when this command is run
@@ -23,7 +23,7 @@ public interface BSBCommand {
      * @param args
      * @return true or false - true if the command executed successfully
      */
-    public abstract boolean execute(User user, List<String> args);
+    boolean execute(User user, List<String> args);
 
     /**
      * Tab Completer for CompositeCommands. Note that any registered sub-commands will be automatically
@@ -33,7 +33,7 @@ public interface BSBCommand {
      * @param args
      * @return List of strings that could be used to complete this command.
      */
-     default Optional<List<String>> tabComplete(User user, String alias, LinkedList<String> args) {
+    default Optional<List<String>> tabComplete(User user, String alias, LinkedList<String> args) {
         return Optional.empty();
     }
 
