@@ -304,7 +304,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             this.usage = parent.getLabel() + " " + this.usage;
             parent = parent.getParent();
         }
-        this.usage = this.usage;
         this.usage = this.usage.trim();
         return this;
     }
@@ -358,9 +357,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if sender is a player
      */
     protected boolean isPlayer(User user) {
-        return (user.getPlayer() instanceof Player);
+        return user.getPlayer() != null;
     }
-
 
     /**
      * Set whether this command is only for players
