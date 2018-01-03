@@ -151,31 +151,37 @@ public class User {
     }
 
     /**
-     * Gets a translation for this user
+     * Gets a translation of this reference for this user.
      * @param reference
      * @param variables
-     * @return Translated string with colors converted
+     * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
+        // Get translation
         String translation = plugin.getLocalesManager().get(this, reference);
+
+        // If no translation has been found, return the reference for debug purposes.
+        if (translation == null) return reference;
+
+        // Then replace variables
         if (variables.length > 1) {
             for (int i = 0; i < variables.length; i += 2) {
                 translation = translation.replace(variables[i], variables[i+1]);
             }
         }
         
-        return translation == null ? reference : ChatColor.translateAlternateColorCodes('&', translation);
+        return ChatColor.translateAlternateColorCodes('&', translation);
     }
 
     /**
-     * Returns blank string if reference is not available
+     * Gets a translation of this reference for this user.
      * @param reference
      * @param variables
-     * @return 
+     * @return Translated string with colors converted, or a blank String if nothing has been found
      */
     public String getTranslationOrNothing(String reference, String... variables) {
         String translation = getTranslation(reference, variables);
-        return translation == null ? "" : translation;
+        return translation.equals(reference) ? "" : translation;
     }
     
     /**
