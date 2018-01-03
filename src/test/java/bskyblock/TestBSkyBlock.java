@@ -131,7 +131,7 @@ public class TestBSkyBlock {
         assertTrue(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
         
         // Usage tests
-        assertEquals("test", testCommand.getUsage());
+        assertEquals("/test", testCommand.getUsage());
         assertEquals("test.params", testCommand.getParameters());
         
         // Test help
