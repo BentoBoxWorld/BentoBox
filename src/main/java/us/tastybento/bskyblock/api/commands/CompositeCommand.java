@@ -289,7 +289,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public String getUsage() {
-        return usage;
+        return "/" + usage;
     }
     
     /**

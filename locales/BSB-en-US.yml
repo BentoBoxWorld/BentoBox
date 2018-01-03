@@ -28,7 +28,7 @@ general:
 commands:
   help:
     header: "&7=========== &c%bsb_plugin_name% &7==========="
-    syntax: "&7/&b[usage] &a[parameters] &7: &e[description]"
+    syntax: "&b[usage] &a[parameters] &7: &e[description]"
     end: "&7================================="
   admin:
     help:

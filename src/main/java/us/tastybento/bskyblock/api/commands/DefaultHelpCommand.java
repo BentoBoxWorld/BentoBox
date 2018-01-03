@@ -23,6 +23,9 @@ public class DefaultHelpCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+        if (parent.getLevel() == 0) {
+            user.sendMessage("commands.help.header");
+        }
         if (args.isEmpty()) {
             if (!parent.getLabel().equals("help")) {
                 // Get elements
@@ -54,6 +57,9 @@ public class DefaultHelpCommand extends CompositeCommand {
                     } 
                 }
             }
+        }
+        if (parent.getLevel() == 0) {
+            user.sendMessage("commands.help.end");
         }
         return true;
     }
