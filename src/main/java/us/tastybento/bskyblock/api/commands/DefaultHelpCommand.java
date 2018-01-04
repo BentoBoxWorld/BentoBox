@@ -1,6 +1,10 @@
 package us.tastybento.bskyblock.api.commands;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+
+import org.apache.commons.lang.math.NumberUtils;
 
 /**
  * Adds a default help to every command that will show the usage of the command
@@ -9,6 +13,9 @@ import java.util.List;
  *
  */
 public class DefaultHelpCommand extends CompositeCommand {
+
+    // TODO: make this a setting
+    private static final int MAX_DEPTH = 2;
 
     public DefaultHelpCommand(CompositeCommand parent) {
         super(parent, "help");
@@ -23,10 +30,24 @@ public class DefaultHelpCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (parent.getLevel() == 0) {
+        int depth = 0;
+        if (args.size() == 1) {
+            if (NumberUtils.isDigits(args.get(0))) {
+                // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
+                depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
+            } else {
+                String usage = user.getTranslation(parent.getUsage());
+                String params = user.getTranslation("commands.help.parameters");
+                String desc = user.getTranslation("commands.help.description");
+                user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
+                return true;
+            }
+        }
+        if (depth == 0) {
             user.sendMessage("commands.help.header");
         }
-        if (args.isEmpty()) {
+        //if (args.isEmpty()) {
+        if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals("help")) {
                 // Get elements
                 String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
@@ -46,6 +67,8 @@ public class DefaultHelpCommand extends CompositeCommand {
                     user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
                 }
             }
+            // Increment the depth
+            int newDepth = depth + 1;
             // Run through any subcommands and get their help
             for (CompositeCommand subCommand : parent.getSubCommands().values()) {
                 // Ignore the help command
@@ -53,12 +76,13 @@ public class DefaultHelpCommand extends CompositeCommand {
                     // Every command should have help because every command has a default help
                     if (subCommand.getSubCommand("help").isPresent()) {
                         // This sub-sub command has a help, so use it
-                        subCommand.getSubCommand("help").get().execute(user, args);
+                        subCommand.getSubCommand("help").get().execute(user, Arrays.asList(String.valueOf(newDepth)));
                     } 
                 }
             }
         }
-        if (parent.getLevel() == 0) {
+        
+        if (depth == 0) {
             user.sendMessage("commands.help.end");
         }
         return true;
