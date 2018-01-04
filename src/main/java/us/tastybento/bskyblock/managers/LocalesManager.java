@@ -65,8 +65,9 @@ public final class LocalesManager {
                 return false;
             }
         };
+
         // Run through the files and store the locales
-        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);
+        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + "/" + parent);
         // If the folder does not exist, then make it and fill with the locale files from the jar
         // If it does exist, then new files will NOT be written!
         if (!localeDir.exists()) {
@@ -80,6 +81,7 @@ public final class LocalesManager {
                 e.printStackTrace();
             }
         }
+
         // Store all the locales available
         for (File language : localeDir.listFiles(ymlFilter)) {
             if (DEBUG) 
@@ -89,7 +91,7 @@ public final class LocalesManager {
                 plugin.getLogger().info("DEBUG: locale country found = " + localeObject.getCountry());
             if (languages.containsKey(localeObject)) {
                 // Merge into current language
-                languages.get(localeObject).add(language);
+                languages.get(localeObject).merge(language);
             } else {
                 // New language
                 languages.put(localeObject, new BSBLocale(localeObject, language));
