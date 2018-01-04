@@ -43,6 +43,8 @@ commands:
     go:
       parameters: "<home number>"
       description: "teleport you to your island"
+      teleport: "&aTeleporting you to your island. &b/[label] help &afor help."
+      teleported: "&aTeleported you to home &e#[number]."
     help:
       description: "The main island command"
     spawn:
