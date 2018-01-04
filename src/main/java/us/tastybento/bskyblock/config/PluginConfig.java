@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.config;
 import java.util.HashMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.config.NotSetup.ConfigError;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 
@@ -31,7 +32,6 @@ public class PluginConfig {
         // The order in this file should match the order in config.yml so that it's easy to check that everything is covered
         
         // ********************* General *********************
-        Settings.metrics = plugin.getConfig().getBoolean("general.metrics", true);
         Settings.checkUpdates = plugin.getConfig().getBoolean("general.check-updates", true);
         
         //loadLocales(plugin);
@@ -39,12 +39,9 @@ public class PluginConfig {
         //if(!plugin.getLocales().containsKey(Settings.defaultLanguage)) errors.put(ConfigError.UNKNOWN_LANGUAGE, Settings.defaultLanguage);
         
         Settings.useEconomy = plugin.getConfig().getBoolean("general.use-economy", true);
-        Settings.startingMoney = plugin.getConfig().getDouble("general.starting-money", 10.0);
         //Settings.useControlPanel = plugin.getConfig().getBoolean("general.use-control-panel", true);
         
         // Purge
-        Settings.purgeMaxIslandLevel = plugin.getConfig().getInt("general.purge.max-island-level", 50);
-        if(Settings.purgeMaxIslandLevel < 0) errors.put(ConfigError.PURGE_ISLAND_LEVEL_TOO_LOW, Settings.purgeMaxIslandLevel);
         Settings.purgeRemoveUserData = plugin.getConfig().getBoolean("general.purge.remove-user-data", false);
         
         // Database
@@ -67,9 +64,6 @@ public class PluginConfig {
         Settings.dbUsername = plugin.getConfig().getString("general.database.username");
         Settings.dbPassword = plugin.getConfig().getString("general.database.password");
 
-        
-        Settings.recoverSuperFlat = plugin.getConfig().getBoolean("general.recover-super-flat", false);
-        Settings.muteDeathMessages = plugin.getConfig().getBoolean("general.mute-death-messages", false);
         //Settings.ftbAutoActivator = plugin.getConfig().getBoolean("general.FTB-auto-activator", false);
         Settings.allowObsidianScooping = plugin.getConfig().getBoolean("general.allow-obsidian-scooping", true);
         
@@ -114,7 +108,7 @@ public class PluginConfig {
         Settings.endGenerate = true;
         Settings.endIslands = false;
         Settings.limitedBlocks = new HashMap<>();
-        Settings.defaultWorldSettings = new HashMap<>();
+        Settings.defaultFlags = new HashMap<>();
 
         // Team
         Settings.maxTeamSize = plugin.getConfig().getInt("island.max-team-size", 4);

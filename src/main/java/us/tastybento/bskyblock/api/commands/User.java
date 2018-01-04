@@ -17,7 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 
 /**
  * BSB's user object. Wraps Player.

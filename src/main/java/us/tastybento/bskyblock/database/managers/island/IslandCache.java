@@ -17,7 +17,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 

@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.config.PluginConfig;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
@@ -52,14 +51,9 @@ public class BSkyBlock extends JavaPlugin {
             playersManager = new PlayersManager(this);
             islandsManager = new IslandsManager(this);
 
-            // Only load metrics if set to true in config
-
-            if(Settings.metrics) {
-                metrics = new Metrics(plugin);
-
-                registerCustomCharts();
-
-            }
+            // Load metrics
+            metrics = new Metrics(plugin);
+            registerCustomCharts();
 
             // Set up commands
             commandsManager = new CommandsManager();

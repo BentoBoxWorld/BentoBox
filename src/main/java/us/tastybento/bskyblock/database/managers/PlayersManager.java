@@ -15,7 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;

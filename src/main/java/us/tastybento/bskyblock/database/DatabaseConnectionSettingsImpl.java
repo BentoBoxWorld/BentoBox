@@ -1,6 +1,6 @@
 package us.tastybento.bskyblock.database;
 
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 
 public class DatabaseConnectionSettingsImpl {
     private String host;

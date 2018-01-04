@@ -11,7 +11,7 @@ import org.bukkit.ChatColor;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**

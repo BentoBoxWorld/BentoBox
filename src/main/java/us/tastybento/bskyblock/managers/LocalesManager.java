@@ -8,7 +8,7 @@ import java.util.Locale;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.localization.BSBLocale;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.util.FileLister;
 
 /**

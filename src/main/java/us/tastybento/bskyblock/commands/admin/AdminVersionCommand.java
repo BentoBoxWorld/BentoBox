@@ -4,7 +4,7 @@ import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 
 public class AdminVersionCommand extends CompositeCommand {
 

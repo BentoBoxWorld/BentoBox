@@ -6,7 +6,7 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 
 public class IslandWorld {
 

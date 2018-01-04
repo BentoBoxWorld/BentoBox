@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.database;
 
 import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.mysql.MySQLDatabase;

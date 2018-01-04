@@ -27,7 +27,7 @@ import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.generators.IslandWorld;
 
 /**

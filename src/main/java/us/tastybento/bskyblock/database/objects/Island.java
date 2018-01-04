@@ -19,7 +19,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.config.Settings;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**
