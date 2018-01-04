@@ -30,6 +30,8 @@ commands:
     header: "&7=========== &c%bsb_plugin_name% &7==========="
     syntax: "&b[usage] &a[parameters] &7: &e[description]"
     end: "&7================================="
+    parameters: "[command]"
+    description: "help command"
   admin:
     help:
       description: "Admin command"
@@ -43,6 +45,8 @@ commands:
     go:
       parameters: "<home number>"
       description: "teleport you to your island"
+      teleport: "&aTeleporting you to your island. &b/[label] help &afor help."
+      teleported: "&aTeleported you to home &e#[number]."
     help:
       description: "The main island command"
     spawn:

@@ -62,10 +62,10 @@ public class BSBLocale {
     }
 
     /**
-     * Adds language YAML file to this locale
+     * Merges a language YAML file to this locale
      * @param language
      */
-    public void add(File language) {
+    public void merge(File language) {
         YamlConfiguration toBeMerged = YamlConfiguration.loadConfiguration(language);
         for (String key : toBeMerged.getKeys(true)) {
             if (!config.contains(key)) {

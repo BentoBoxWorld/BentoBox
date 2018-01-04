@@ -625,9 +625,9 @@ public class IslandsManager {
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
         User user = User.getInstance(player);
         if (number == 1) {
-            user.sendMessage("island.teleport", "[label]", Settings.ISLANDCOMMAND);
+            user.sendMessage("commands.island.go.teleport", "[label]", Settings.ISLANDCOMMAND);
         } else {
-            user.sendMessage("island.teleported", "[number]", String.valueOf(number));
+            user.sendMessage("commands.island.go.island.go.teleported", "[number]", String.valueOf(number));
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
