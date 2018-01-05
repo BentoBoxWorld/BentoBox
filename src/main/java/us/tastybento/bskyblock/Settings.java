@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.entity.EntityType;
-import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
@@ -24,7 +23,7 @@ public class Settings implements ISettings {
 
     // Game Type BSKYBLOCK or ACIDISLAND
     public enum GameType {
-        BSKYBLOCK, ACIDISLAND
+        BSKYBLOCK, ACIDISLAND, BOTH
     }
     /*
     public final static GameType GAMETYPE = GameType.ACIDISLAND;
@@ -65,29 +64,29 @@ public class Settings implements ISettings {
     public static boolean useEconomy = true;
 
     // Purge
-    @ConfigEntry(path = "general.purge.max-islands")
-    public static int purgeMaxIslands = 50;
+    @ConfigEntry(path = "general.purge.max-island-level")
+    public static int purgeMaxIslandLevel = 50;
 
     @ConfigEntry(path = "general.purge.remove-user-data")
     public static boolean purgeRemoveUserData = false;
 
     // Database
-    @ConfigEntry(path = "general.database.type")
+    @ConfigEntry(path = "general.database.type", adapter = EnumAdapter.class)
     public static DatabaseType databaseType = DatabaseType.FLATFILE;
 
-    @ConfigEntry(path = "general.database.settings.host")
+    @ConfigEntry(path = "general.database.host")
     public static String dbHost = "localhost";
 
-    @ConfigEntry(path = "general.database.settings.port")
+    @ConfigEntry(path = "general.database.port")
     public static int dbPort = 3306;
 
-    @ConfigEntry(path = "general.database.settings.name")
+    @ConfigEntry(path = "general.database.name")
     public static String dbName = "BSkyBlock";
 
-    @ConfigEntry(path = "general.database.settings.username")
+    @ConfigEntry(path = "general.database.username")
     public static String dbUsername = "username";
 
-    @ConfigEntry(path = "general.database.settings.password")
+    @ConfigEntry(path = "general.database.password")
     public static String dbPassword = "password";
 
     @ConfigEntry(path = "general.database.backup-period")
@@ -121,7 +120,7 @@ public class Settings implements ISettings {
     public static int islandXOffset;
     public static int islandZOffset;
 
-    @ConfigEntry(path = "world.sea-height", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "world.sea-height", specificTo = GameType.ACIDISLAND)
     public static int seaHeight = 100;
 
     @ConfigEntry(path = "world.island-height")
@@ -220,23 +219,23 @@ public class Settings implements ISettings {
      * This settings category only exists if the GameType is ACIDISLAND.
      */
 
-    @ConfigEntry(path = "acid.options.damage-op", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "acid.damage-op", specificTo = GameType.ACIDISLAND)
     public static boolean acidDamageOp = false;
 
-    @ConfigEntry(path = "acid.options.damage-chickens", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "acid.damage-chickens", specificTo = GameType.ACIDISLAND)
     public static boolean acidDamageChickens = false;
 
-    @ConfigEntry(path = "acid.options.item-destroy-time", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "acid.options.item-destroy-time", specificTo = GameType.ACIDISLAND)
     public static int acidDestroyItemTime = 0;
 
     // Damage
-    @ConfigEntry(path = "acid.damage", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "acid.damage.acid.player", specificTo = GameType.ACIDISLAND)
     public static int acidDamage = 10;
 
-    @ConfigEntry(path = "acid.rain-damage", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "acid.damage.rain", specificTo = GameType.ACIDISLAND)
     public static int acidRainDamage = 1;
 
-    @ConfigEntry(path = "acid.effects", specificTo = ConfigEntry.GameType.ACIDISLAND)
+    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND)
     public static List<PotionEffectType> acidEffects = new ArrayList<>(Arrays.asList(PotionEffectType.CONFUSION, PotionEffectType.SLOW));
 
     /*      SCHEMATICS      */

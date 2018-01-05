@@ -70,7 +70,7 @@ general:
   mute-death-messages: false
 
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
-  FTB-auto-activator: false
+  allow-FTB-auto-activator: false
   
   # Allow obsidian to be scooped up with an empty bucket back into lava
   # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
@@ -102,7 +102,7 @@ world:
   # Will be rounded up to the nearest 16 blocks.
   # It is the same for every dimension : Overworld, Nether and End.
   # This value cannot be changed mid-game and the plugin will not start if it is different.
-  distance: 64
+  distance-between-islands: 64
 
   # Default protection range radius in blocks. Cannot be larger than distance.
   # Admins can change protection sizes for players individually using /bsadmin setrange
@@ -157,7 +157,11 @@ world:
     # Minimum is 0 (not recommended), maximum is 100. Default is 25.
     # Only applies to vanilla nether
     spawn-radius: 25
-
+  
+  end:
+    generate: true
+    islands: true
+    
   ### Entities-related Settings ###
   entities:
     # Sets the limit for number of entities that can spawn in a chunk in this world.
@@ -404,7 +408,7 @@ protection:
   # Restrict Wither and other flying mobs.
   # Any flying mobs that exit the island space where they were spawned will be removed.
   # Includes blaze and ghast. 
-  restrict-wither: true
+  restrict-flying-mobs: true
   
   # Invincible visitors - Prevent players from killing them (intentionally or by accident)
   # If they fall to the void, they get TP'd to their island.

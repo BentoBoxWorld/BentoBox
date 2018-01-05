@@ -1,16 +1,16 @@
 package us.tastybento.bskyblock.api.configuration;
 
-import us.tastybento.bskyblock.Settings;
-
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import us.tastybento.bskyblock.Settings.GameType;
+
 /**
  *
  *
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.FIELD)
@@ -22,10 +22,7 @@ public @interface ConfigEntry {
     boolean experimental() default false;
     boolean needsReset() default false;
     GameType specificTo() default GameType.BOTH;
-
-    enum GameType {
-        BSKYBLOCK,
-        ACIDISLAND,
-        BOTH
-    }
+    Class<?> adapter() default NoAdapter.class;
+    
+    public class NoAdapter {}
 }

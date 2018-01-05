@@ -2,10 +2,11 @@ package us.tastybento.bskyblock.commands;
 
 import java.util.List;
 
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.commands.admin.AdminReloadCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
-import us.tastybento.bskyblock.Settings;
 
 public class AdminCommand extends CompositeCommand {
 
@@ -19,6 +20,7 @@ public class AdminCommand extends CompositeCommand {
         this.setOnlyPlayer(false);
         this.setDescription("admin.help.description");
         new AdminVersionCommand(this);
+        new AdminReloadCommand(this);
     }
 
     @Override
