@@ -5,8 +5,6 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import us.tastybento.bskyblock.Settings.GameType;
-
 /**
  *
  *
@@ -25,4 +23,9 @@ public @interface ConfigEntry {
     Class<?> adapter() default NoAdapter.class;
     
     public class NoAdapter {}
+    
+    // Game Type BSKYBLOCK or ACIDISLAND
+    public enum GameType {
+        BSKYBLOCK, ACIDISLAND, BOTH
+    }
 }

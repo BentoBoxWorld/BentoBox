@@ -45,6 +45,16 @@ public class BSkyBlock extends JavaPlugin {
     public void onEnable(){
         plugin = this;
 
+        // Load config - EXPERIMENTAL        
+        Settings2 config = new Settings2();
+        try {
+            //config.saveConfig(); // works, but will wipe out comments
+            config = config.loadConfig();
+            getLogger().info("DEBUG: island distance = " + config.getIslandDistance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        
         // Load configuration and locales. If there are no errors, load the plugin.
         if(PluginConfig.loadPluginConfig(this)){
             

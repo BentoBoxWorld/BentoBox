@@ -19,10 +19,10 @@ import us.tastybento.bskyblock.database.DatabaseConnecter;
 public abstract class AbstractDatabaseHandler<T> {
 
     /**
-     * The type of the objects that should be created and filled with values
+     * The data object that should be created and filled with values
      * from the database or inserted into the database
      */
-    protected Class<T>     type;
+    protected Class<T>     dataObject;
 
     /**
      * Contains the settings to create a connection to the database like
@@ -52,7 +52,7 @@ public abstract class AbstractDatabaseHandler<T> {
     protected AbstractDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
-        this.type = type;
+        this.dataObject = type;
         this.selectQuery = createSelectQuery();
         this.insertQuery = createInsertQuery();
         this.deleteQuery = createDeleteQuery();

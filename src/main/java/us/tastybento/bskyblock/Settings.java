@@ -10,6 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
 import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
@@ -21,10 +22,6 @@ import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 public class Settings implements ISettings {
     // ----------------- Constants -----------------
 
-    // Game Type BSKYBLOCK or ACIDISLAND
-    public enum GameType {
-        BSKYBLOCK, ACIDISLAND, BOTH
-    }
     /*
     public final static GameType GAMETYPE = GameType.ACIDISLAND;
     // The spawn command (Essentials spawn for example)

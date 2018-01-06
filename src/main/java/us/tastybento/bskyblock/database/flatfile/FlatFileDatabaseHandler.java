@@ -17,12 +17,18 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry.NoAdapter;
+import us.tastybento.bskyblock.config.StoreAt;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
@@ -39,6 +45,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
     private static final boolean DEBUG = false;
+
     public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
     }
@@ -70,13 +77,20 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public T loadObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException  {
-        YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName(), key);
+        String path = dataObject.getSimpleName();
+        String fileName = key;
+        StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
+        if (storeAt != null) {
+            path = storeAt.path();
+            fileName = storeAt.filename();
+        }
+        YamlConfiguration config = databaseConnecter.loadYamlFile(path, fileName);
         return createObject(config);
     }
 
     @Override
     public boolean objectExits(String key) {
-        return databaseConnecter.uniqueIdExists(type.getSimpleName(), key);
+        return databaseConnecter.uniqueIdExists(dataObject.getSimpleName(), key);
     }
 
     /**
@@ -103,14 +117,23 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             }
         };
+        String path = dataObject.getSimpleName();
+        StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
+        if (storeAt != null) {
+            path = storeAt.path();
+        }
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-        File tableFolder = new File(dataFolder, type.getSimpleName());
+        File tableFolder = new File(dataFolder, path);
         if (!tableFolder.exists()) {
             // Nothing there...
             tableFolder.mkdirs();
         }
         for (File file: tableFolder.listFiles(ymlFilter)) {
-            YamlConfiguration config = databaseConnecter.loadYamlFile(type.getSimpleName(), file.getName());
+            String fileName = file.getName();
+            if (storeAt != null) {
+                fileName = storeAt.filename();
+            }
+            YamlConfiguration config = databaseConnecter.loadYamlFile(dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -131,15 +154,33 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws ClassNotFoundException
      */
     private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
-        T instance = type.newInstance();
+        T instance = dataObject.newInstance();
 
-        for (Field field : type.getDeclaredFields()) {
-
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+        // Run through all the fields in the object
+        for (Field field : dataObject.getDeclaredFields()) {
+            // Gets the getter and setters for this field
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
+            // Get the write method
             Method method = propertyDescriptor.getWriteMethod();
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: " + field.getName() + ": " + propertyDescriptor.getPropertyType().getTypeName());
-            if (config.contains(field.getName())) {
+            String storageLocation = field.getName();
+            // Check if there is an annotation on the field
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+            // If there is a config annotation then do something
+            if (configEntry != null) { 
+                if (!configEntry.path().isEmpty()) {
+                    storageLocation = configEntry.path();
+                }
+                if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Settings.GAMETYPE)) {
+                    Bukkit.getLogger().info(field.getName() + " not applicable to this game type");
+                    continue;
+                }
+            }
+
+            // Look in the YAML Config to see if this field exists (it should)
+            if (config.contains(storageLocation)) { 
+                // Handle storage of maps. Check if this type is a Map
                 if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Note that we have no idea what type this is
                     List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
@@ -150,9 +191,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         plugin.getLogger().info("DEBUG: is Map or HashMap<" + keyType.getTypeName() + ", " + valueType.getTypeName() + ">");
                     // TODO: this may not work with all keys. Further serialization may be required.
                     Map<Object,Object> value = new HashMap<Object, Object>();
-                    for (String key : config.getConfigurationSection(field.getName()).getKeys(false)) {
+                    for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
                         Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
-                        Object mapValue = deserialize(config.get(field.getName() + "." + key), Class.forName(valueType.getTypeName()));
+                        Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
                         if (DEBUG) {
                             plugin.getLogger().info("DEBUG: mapKey = " + mapKey + " (" + mapKey.getClass().getCanonicalName() + ")");
                             plugin.getLogger().info("DEBUG: mapValue = " + mapValue + " (" + mapValue.getClass().getCanonicalName() + ")");
@@ -177,13 +218,13 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
                         plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
                     }
-                    for (Object listValue: config.getList(field.getName())) {
+                    for (Object listValue: config.getList(storageLocation)) {
                         //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
                         ((Set<Object>) value).add(deserialize(listValue,Class.forName(setType.getTypeName())));
                     }
 
                     // TODO: this may not work with all keys. Further serialization may be required.
-                    //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
+                    //Set<Object> value = new HashSet((List<Object>) config.getList(storageLocation));                    
                     method.invoke(instance, value);
                 } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     //plugin.getLogger().info("DEBUG: is Set " + propertyDescriptor.getReadMethod().getGenericReturnType().getTypeName());
@@ -197,18 +238,18 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     List<Object> value = new ArrayList<Object>();
                     //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
                     //plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
-                    for (Object listValue: config.getList(field.getName())) {
+                    for (Object listValue: config.getList(storageLocation)) {
                         //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
                         ((List<Object>) value).add(deserialize(listValue,Class.forName(setType.getTypeName())));
                     }
                     // TODO: this may not work with all keys. Further serialization may be required.
-                    //Set<Object> value = new HashSet((List<Object>) config.getList(field.getName()));                    
+                    //Set<Object> value = new HashSet((List<Object>) config.getList(storageLocation));                    
                     method.invoke(instance, value);
                 } else {
                     // Not a collection
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: not a collection");
-                    Object value = config.get(field.getName());
+                    Object value = config.get(storageLocation);
                     if (DEBUG) {
                         plugin.getLogger().info("DEBUG: value = " + value);
                         plugin.getLogger().info("DEBUG: property type = " + propertyDescriptor.getPropertyType());
@@ -238,17 +279,33 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
+
         // The file name of the Yaml file.
         String filename = "";
+        String path = dataObject.getSimpleName();
+        StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
+        if (storeAt != null) {
+            path = storeAt.path();
+            filename = storeAt.filename();
+        }
+
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
-        for (Field field : type.getDeclaredFields()) {
+        for (Field field : dataObject.getDeclaredFields()) {
+
+            String storageLocation = field.getName();
+            // Check if there is an annotation on the field
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+            // If there is a config path annotation then do something
+            if (configEntry != null && !configEntry.path().isEmpty()) {
+                storageLocation = configEntry.path();
+            }            
             // Get the property descriptor for this field
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method, i.e., getXXXX();
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
-            //plugin.getLogger().info("DEBUG: writing " + field.getName());
+
             //plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
             // Depending on the vale type, it'll need serializing differenty
             // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
@@ -257,17 +314,18 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 //plugin.getLogger().info("DEBUG: uniqueId = " + value);
                 String id = (String)value;
                 if (id.isEmpty()) {
-                    id = databaseConnecter.getUniqueId(type.getSimpleName());
+                    id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
                     // Set it in the class so that it will be used next time
                     propertyDescriptor.getWriteMethod().invoke(instance, id);
                 }
                 // Save the name for when the file is saved
-                filename = id;
+                if (filename.isEmpty())
+                    filename = id;
             }
             // Collections need special serialization
-            if (propertyDescriptor.getPropertyType().equals(HashMap.class) || propertyDescriptor.getPropertyType().equals(Map.class)) {
+            if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                 // Maps need to have keys serialized
-                //plugin.getLogger().info("DEBUG: Map for " + field.getName());
+                //plugin.getLogger().info("DEBUG: Map for " + storageLocation);
                 if (value != null) {
                     Map<Object, Object> result = new HashMap<Object, Object>();
                     for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
@@ -276,31 +334,29 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         result.put(serialize(object.getKey()), object.getValue());
                     }
                     // Save the list in the config file
-                    config.set(field.getName(), result);
+                    config.set(storageLocation, result);
                 }
-            } else if (propertyDescriptor.getPropertyType().equals(Set.class)) {
+            } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                 // Sets need to be serialized as string lists
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Set for " + field.getName());
+                    plugin.getLogger().info("DEBUG: Set for " + storageLocation);
                 if (value != null) {
                     List<Object> list = new ArrayList<Object>();
                     for (Object object : (Set<Object>)value) {
                         list.add(serialize(object));
                     }
                     // Save the list in the config file
-                    config.set(field.getName(), list);
+                    config.set(storageLocation, list);
                 }
             } else {
                 // For all other data that doesn't need special serialization
-                config.set(field.getName(), serialize(value));
+                config.set(storageLocation, serialize(value));
             }
         }
         if (filename.isEmpty()) {
             throw new IllegalArgumentException("No uniqueId in class");
         }
-        // Save the file in the right folder
-        databaseConnecter.saveYamlFile(config, type.getSimpleName(), filename);
-
+        databaseConnecter.saveYamlFile(config, path, filename);        
     }
 
     /**
@@ -379,14 +435,14 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
         // The file name of the Yaml file.
-        PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", type);
+        PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();
         String fileName = (String) method.invoke(instance);
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
         }
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-        File tableFolder = new File(dataFolder, type.getSimpleName());
+        File tableFolder = new File(dataFolder, dataObject.getSimpleName());
         if (tableFolder.exists()) {
             File file = new File(tableFolder, fileName);
             file.delete();

@@ -16,9 +16,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
-import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.Settings;
-import us.tastybento.bskyblock.Settings.GameType;
+import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
 

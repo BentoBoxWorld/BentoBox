@@ -77,11 +77,11 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
     /**
      * Saves a YAML file
      * 
-     * @param yamlFile
+     * @param yamlConfig
      * @param fileName
      */
     @Override
-    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName) {
+    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName) {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
         }
@@ -91,7 +91,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
             tableFolder.mkdirs();
         }
         try {
-            yamlFile.save(file);
+            yamlConfig.save(file);
         } catch (Exception e) {
             e.printStackTrace();
         }

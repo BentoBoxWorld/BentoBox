@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
-import us.tastybento.bskyblock.Settings.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry.NoAdapter;
 
 public class ConfigLoader {
