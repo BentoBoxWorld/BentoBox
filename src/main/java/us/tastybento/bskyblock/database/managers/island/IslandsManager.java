@@ -20,12 +20,11 @@ import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.DeleteIslandChunks;
 import us.tastybento.bskyblock.util.SafeSpotTeleport;
 import us.tastybento.bskyblock.util.Util;
@@ -50,7 +49,7 @@ public class IslandsManager {
      *            - Location to be checked
      * @return true if safe, otherwise false
      */
-    public static boolean isSafeLocation(final Location l) {
+    public boolean isSafeLocation(final Location l) {
         if (l == null) {
             return false;
         }
@@ -76,7 +75,7 @@ public class IslandsManager {
         // In BSkyBlock, liquid may be unsafe
         if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
             // Check if acid has no damage
-            if (Settings.acidDamage > 0D) {
+            if (plugin.getSettings().getAcidDamage() > 0D) {
                 // Bukkit.getLogger().info("DEBUG: acid");
                 return false;
             } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
@@ -141,7 +140,7 @@ public class IslandsManager {
     @SuppressWarnings("unchecked")
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = BSBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase(plugin);
         // Set up the database handler to store and retrieve Island classes
         handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
         islandCache = new IslandCache();
@@ -248,7 +247,7 @@ public class IslandsManager {
     public Island createIsland(Location location, UUID owner){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: adding island for " + owner + " at " + location);
-        return islandCache.createIsland(new Island(location, owner, Settings.islandProtectionRange));
+        return islandCache.createIsland(new Island(plugin, location, owner, plugin.getSettings().getIslandProtectionRange()));
     }
 
     /**
@@ -625,7 +624,7 @@ public class IslandsManager {
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
         User user = User.getInstance(player);
         if (number == 1) {
-            user.sendMessage("commands.island.go.teleport", "[label]", Settings.ISLANDCOMMAND);
+            user.sendMessage("commands.island.go.teleport", "[label]", Constants.ISLANDCOMMAND);
         } else {
             user.sendMessage("commands.island.go.island.go.teleported", "[number]", String.valueOf(number));
         }
@@ -696,7 +695,7 @@ public class IslandsManager {
         if (plugin.getPlayers().hasIsland(uuid) || plugin.getPlayers().inTeam(uuid)) {
             islandTestLocations.add(plugin.getIslands().getIslandLocation(uuid));
             // If new Nether
-            if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
+            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIslandWorldManager().getNetherWorld() != null) {
                 islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(uuid)));
             }
         }
@@ -713,7 +712,7 @@ public class IslandsManager {
             // Must be in the same world as the locations being checked
             // Note that getWorld can return null if a world has been deleted on the server
             if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
-                int protectionRange = Settings.islandProtectionRange;
+                int protectionRange = plugin.getSettings().getIslandProtectionRange();
                 if (getIslandAt(islandTestLocation) != null) {
                     // Get the protection range for this location if possible
                     Island island = getProtectedIslandAt(islandTestLocation);
@@ -781,10 +780,10 @@ public class IslandsManager {
         // Run through all the locations
         for (Location islandTestLocation : islandTestLocations) {
             if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-                if (loc.getX() >= islandTestLocation.getX() - Settings.islandProtectionRange
-                        && loc.getX() < islandTestLocation.getX() + Settings.islandProtectionRange
-                        && loc.getZ() >= islandTestLocation.getZ() - Settings.islandProtectionRange
-                        && loc.getZ() < islandTestLocation.getZ() + Settings.islandProtectionRange) {
+                if (loc.getX() >= islandTestLocation.getX() - plugin.getSettings().getIslandProtectionRange()
+                        && loc.getX() < islandTestLocation.getX() + plugin.getSettings().getIslandProtectionRange()
+                        && loc.getZ() >= islandTestLocation.getZ() - plugin.getSettings().getIslandProtectionRange()
+                        && loc.getZ() < islandTestLocation.getZ() + plugin.getSettings().getIslandProtectionRange()) {
                     return true;
                 }
             }
@@ -807,7 +806,7 @@ public class IslandsManager {
      */
     private Location netherIsland(Location islandLocation) {
         //plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
-        return islandLocation.toVector().toLocation(IslandWorld.getNetherWorld());
+        return islandLocation.toVector().toLocation(plugin.getIslandWorldManager().getNetherWorld());
     }
 
     /**
@@ -870,10 +869,10 @@ public class IslandsManager {
                     Island spawn = getSpawn();
                     if (spawn != null) {
                         // go to island spawn
-                        player.teleport(IslandWorld.getIslandWorld().getSpawnLocation());
+                        player.teleport(plugin.getIslandWorldManager().getIslandWorld().getSpawnLocation());
                         //plugin.getLogger().warning("During island deletion player " + player.getName() + " sent to spawn.");
                     } else {
-                        if (!player.performCommand(Settings.SPAWNCOMMAND)) {
+                        if (!player.performCommand(Constants.SPAWNCOMMAND)) {
                             plugin.getLogger().warning(
                                     "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
                         }

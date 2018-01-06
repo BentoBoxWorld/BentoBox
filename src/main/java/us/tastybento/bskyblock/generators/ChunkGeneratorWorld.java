@@ -11,16 +11,25 @@ import org.bukkit.generator.BlockPopulator;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.util.noise.PerlinOctaveGenerator;
 
-import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * @author tastybento
  *         Creates the world
  */
 public class ChunkGeneratorWorld extends ChunkGenerator {
+
+    BSkyBlock plugin;
     Random rand = new Random();
     PerlinOctaveGenerator gen;
-    //BSkyBlock plugin = BSkyBlock.getPlugin();
+    
+    /**
+     * @param plugin
+     */
+    public ChunkGeneratorWorld(BSkyBlock plugin) {
+        super();
+        this.plugin = plugin;
+    }
 
     @Override
     public ChunkData generateChunkData(World world, Random random, int chunkX, int chunkZ, ChunkGenerator.BiomeGrid biomeGrid) {
@@ -28,10 +37,10 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
             return generateNetherChunks(world, random, chunkX, chunkZ, biomeGrid);
         }
         ChunkData result = createChunkData(world);
-        if (Settings.seaHeight != 0) {
+        if (plugin.getSettings().getSeaHeight() != 0) {
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {
-                    for (int y = 0; y < Settings.seaHeight; y++) {
+                    for (int y = 0; y < plugin.getSettings().getSeaHeight(); y++) {
                         result.setBlock(x, y, z, Material.STATIONARY_WATER);
                     }
                 }
@@ -64,7 +73,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
         if (!world.getEnvironment().equals(Environment.NETHER)) {
             return result;
         }
-        if (Settings.netherRoof) {
+        if (plugin.getSettings().isNetherRoof()) {
             // Make the roof - common across the world
             for (int x = 0; x < 16; x++) {
                 for (int z = 0; z < 16; z++) {

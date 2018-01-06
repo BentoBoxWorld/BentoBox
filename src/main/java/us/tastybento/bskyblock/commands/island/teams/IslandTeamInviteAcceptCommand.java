@@ -7,10 +7,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 
 public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
@@ -21,7 +21,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setPermission(Constants.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.team.invite.accept.description");
     }
@@ -88,13 +88,13 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         // Set the cooldown
         setResetWaitTime(user.getPlayer());
         // Reset deaths
-        if (Settings.teamJoinDeathReset) {
+        if (getSettings().isTeamJoinDeathReset()) {
             getPlayers().setDeaths(playerUUID, 0);
         }
         // Put player back into normal mode
         user.setGameMode(GameMode.SURVIVAL);
 
-        user.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", Settings.ISLANDCOMMAND);
+        user.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", Constants.ISLANDCOMMAND);
         User inviter = User.getInstance(inviteList.get(playerUUID));
         if (inviter != null) {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", user.getName());

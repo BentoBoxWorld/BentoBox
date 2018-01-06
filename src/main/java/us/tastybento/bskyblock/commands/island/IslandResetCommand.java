@@ -6,10 +6,10 @@ import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
-import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -23,7 +23,7 @@ public class IslandResetCommand extends CompositeCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.create");
+        this.setPermission(Constants.PERMPREFIX + "island.create");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.reset.description");
     }
@@ -56,7 +56,7 @@ public class IslandResetCommand extends CompositeCommand {
         if (DEBUG)
             getPlugin().getLogger().info("DEBUG: making new island ");
         try {
-            NewIsland.builder()
+            NewIsland.builder(getPlugin())
             .player(player)
             .reason(Reason.RESET)
             .oldIsland(oldIsland)

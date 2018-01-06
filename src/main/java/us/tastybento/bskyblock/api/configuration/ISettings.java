@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Settings2;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 
@@ -19,7 +19,7 @@ public interface ISettings<T> {
     
     // ----------------Saver-------------------
     @SuppressWarnings("unchecked")
-    public default void saveConfig(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveConfig(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Get the handler
         AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(BSkyBlock.getInstance(), instance.getClass());
         // Load every field in the config class
@@ -27,9 +27,9 @@ public interface ISettings<T> {
     }
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
-    public default Settings2 loadConfig() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException {
+    default Settings loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException {
         // Get the handler
-        AbstractDatabaseHandler<Settings2> configHandler = (AbstractDatabaseHandler<Settings2>) new FlatFileDatabase().getHandler(BSkyBlock.getInstance(), Settings2.class);
+        AbstractDatabaseHandler<Settings> configHandler = (AbstractDatabaseHandler<Settings>) new FlatFileDatabase().getHandler(BSkyBlock.getInstance(), Settings.class);
         // Load every field in the config class
         return configHandler.loadObject("config");
     }

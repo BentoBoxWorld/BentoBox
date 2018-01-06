@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.database;
 
-import us.tastybento.bskyblock.Settings;
-
 public class DatabaseConnectionSettingsImpl {
     private String host;
     private int port;
@@ -23,14 +21,6 @@ public class DatabaseConnectionSettingsImpl {
         this.databaseName = databaseName;
         this.username = username;
         this.password = password;
-    }
-
-    public DatabaseConnectionSettingsImpl() {
-        this.host = Settings.dbHost;
-        this.port = Settings.dbPort;
-        this.databaseName = Settings.dbName;
-        this.username = Settings.dbUsername;
-        this.password = Settings.dbPassword;
     }
 
     /**

@@ -27,8 +27,6 @@ import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.Settings;
-import us.tastybento.bskyblock.generators.IslandWorld;
 
 /**
  * A set of utility methods
@@ -37,7 +35,6 @@ import us.tastybento.bskyblock.generators.IslandWorld;
  * @author Poslovitch
  */
 public class Util {
-    private static BSkyBlock plugin = BSkyBlock.getInstance();
 
     private static String serverVersion = null;
 
@@ -47,7 +44,7 @@ public class Util {
      */
     public static String getServerVersion() {
         if (serverVersion == null) {
-            String serverPackageName = plugin.getServer().getClass().getPackage().getName();
+            String serverPackageName = getPlugin().getServer().getClass().getPackage().getName();
             serverVersion = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
         }
         return serverVersion;
@@ -135,8 +132,8 @@ public class Util {
     @SuppressWarnings("deprecation")
     public static List<ItemStack> getPlayerInHandItems(Player player) {
         List<ItemStack> result = new ArrayList<ItemStack>(2);
-        if (plugin.getServer().getVersion().contains("(MC: 1.7")
-                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+        if (getPlugin().getServer().getVersion().contains("(MC: 1.7")
+                || getPlugin().getServer().getVersion().contains("(MC: 1.8")) {
             if (player.getItemInHand() != null)
                 result.add(player.getItemInHand());
             return result;
@@ -185,8 +182,8 @@ public class Util {
      */
     @SuppressWarnings("deprecation")
     public static boolean playerIsHolding(Player player, Material type) {
-        if (plugin.getServer().getVersion().contains("(MC: 1.7")
-                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
+        if (getPlugin().getServer().getVersion().contains("(MC: 1.7")
+                || getPlugin().getServer().getVersion().contains("(MC: 1.8")) {
             if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
                 return true;
             }
@@ -209,13 +206,13 @@ public class Util {
      */
     public static boolean inWorld(Location loc) {
         if (loc != null) {
-            if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
+            if (loc.getWorld().equals(getPlugin().getIslandWorldManager().getIslandWorld())) {
                 return true;
             }
-            if (Settings.netherIslands && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
+            if (getPlugin().getSettings().isNetherIslands() && loc.getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
                 return true;
             }
-            if (Settings.endIslands && loc.getWorld().equals(IslandWorld.getEndWorld())) {
+            if (getPlugin().getSettings().isEndIslands() && loc.getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
                 return true;
             }
         }
@@ -320,7 +317,7 @@ public class Util {
     }
 
     public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+        getPlugin().getServer().getScheduler().runTask(getPlugin(), new Runnable() {
 
             @Override
             public void run() {
@@ -364,7 +361,7 @@ public class Util {
         // In ASkyBlock, liquid may be unsafe
         if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
             // Check if acid has no damage
-            if (Settings.acidDamage > 0D) {
+            if (getPlugin().getSettings().getAcidDamage() > 0D) {
                 // Bukkit.getLogger().info("DEBUG: acid");
                 return false;
             } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
@@ -427,7 +424,7 @@ public class Util {
                     String[] spl = perms.getPermission().split(perm + ".");
                     if (spl.length > 1) {
                         if (!NumberUtils.isDigits(spl[1])) {
-                            plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                            getPlugin().getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
 
                         } else {
                             permValue = Math.max(permValue, Integer.valueOf(spl[1]));
@@ -442,5 +439,13 @@ public class Util {
         }
         return permValue;
     }
+
+    /**
+     * @return the plugin
+     */
+    public static BSkyBlock getPlugin() {
+        return BSkyBlock.getInstance();
+    }
+
 
 }

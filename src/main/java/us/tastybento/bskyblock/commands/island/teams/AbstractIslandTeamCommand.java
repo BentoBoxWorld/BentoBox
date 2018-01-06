@@ -13,7 +13,6 @@ import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.Settings;
 
 /**
  * A safe common space for team commands to share data
@@ -42,6 +41,6 @@ public abstract class AbstractIslandTeamCommand extends CompositeCommand {
      * @param player
      */
     protected void setResetWaitTime(final Player player) {
-        resetWaitTime.put(player.getUniqueId(), Calendar.getInstance().getTimeInMillis() + Settings.resetWait * 1000);
+        resetWaitTime.put(player.getUniqueId(), Calendar.getInstance().getTimeInMillis() + getSettings().getResetWait() * 1000);
     }
 }

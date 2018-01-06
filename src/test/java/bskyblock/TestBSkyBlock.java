@@ -26,11 +26,11 @@ import org.junit.Test;
 import org.mockito.Mockito;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 public class TestBSkyBlock {
@@ -56,7 +56,7 @@ public class TestBSkyBlock {
         Mockito.when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         sender = mock(CommandSender.class);
         player = mock(Player.class);
-        Mockito.when(player.hasPermission(Settings.PERMPREFIX + "default.permission")).thenReturn(true);
+        Mockito.when(player.hasPermission(Constants.PERMPREFIX + "default.permission")).thenReturn(true);
 
         plugin = mock(BSkyBlock.class);
         //Mockito.when(plugin.getServer()).thenReturn(server);
@@ -81,7 +81,7 @@ public class TestBSkyBlock {
         User user = User.getInstance(playerUUID);
         CompositeCommand testCommand = new TestCommand();
         testCommand.setOnlyPlayer(true);
-        testCommand.setPermission(Settings.PERMPREFIX + "default.permission");
+        testCommand.setPermission(Constants.PERMPREFIX + "default.permission");
         // Test basic execution
         assertTrue(testCommand.execute(user, new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
@@ -89,7 +89,7 @@ public class TestBSkyBlock {
         assertEquals("t", testCommand.getAliases().get(0));
         assertTrue(testCommand.isOnlyPlayer());
         assertNull(testCommand.getParent());
-        assertEquals(Settings.PERMPREFIX + "default.permission", testCommand.getPermission());
+        assertEquals(Constants.PERMPREFIX + "default.permission", testCommand.getPermission());
         // Check commands and aliases match to correct class
         for (Entry<String, CompositeCommand> command : testCommand.getSubCommands().entrySet()) {
             assertEquals(testCommand.getSubCommand(command.getKey()), Optional.of(command.getValue()));
@@ -123,7 +123,7 @@ public class TestBSkyBlock {
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
-        argCmd.setPermission(Settings.PERMPREFIX + "default.permission");
+        argCmd.setPermission(Constants.PERMPREFIX + "default.permission");
         assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));        
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));

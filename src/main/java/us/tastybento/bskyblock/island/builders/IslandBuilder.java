@@ -16,11 +16,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
-import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 
 /**
  * Fired when a team event happens.
@@ -44,9 +44,11 @@ public class IslandBuilder {
     //private List<Entity> companions = new ArrayList<>();
     private UUID playerUUID;
     private String playerName;
+    private BSkyBlock plugin;
 
-    public IslandBuilder(Island island) {
+    public IslandBuilder(BSkyBlock plugin, Island island) {
         super();
+        this.plugin = plugin;
         this.island = island;
         this.world = island.getWorld();
     }
@@ -59,13 +61,13 @@ public class IslandBuilder {
         this.type = type;
         switch(type) {
         case END:
-            this.world = IslandWorld.getEndWorld();
+            this.world = plugin.getIslandWorldManager().getEndWorld();
             break;
         case ISLAND:
-            this.world = IslandWorld.getIslandWorld();
+            this.world = plugin.getIslandWorldManager().getIslandWorld();
             break;
         case NETHER:
-            this.world = IslandWorld.getNetherWorld();
+            this.world = plugin.getIslandWorldManager().getNetherWorld();
             break;
         default:
             this.world = island.getWorld();
@@ -98,7 +100,7 @@ public class IslandBuilder {
     public void build() {
         // Switch on island type
         if (type == IslandType.ISLAND) {
-            if (Settings.GAMETYPE == GameType.ACIDISLAND) {
+            if (Constants.GAMETYPE == GameType.ACIDISLAND) {
                 generateAcidIslandBlocks();
             } else {
                 generateIslandBlocks();

@@ -17,6 +17,7 @@ import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
@@ -60,6 +61,23 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private String usage;
 
     /**
+     * Used only for testing....
+     */
+    public CompositeCommand(BSkyBlock plugin, String label, String... string) {
+        super(label);
+        this.setAliases(new ArrayList<>(Arrays.asList(string)));
+        this.parent = null;
+        setUsage("");
+        this.subCommandLevel = 0; // Top level
+        this.subCommands = new LinkedHashMap<>();
+        this.setup();
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+            new DefaultHelpCommand(this);
+
+    }
+
+
+    /**
      * Sub-command constructor
      * @param parent - the parent composite command
      * @param label - string label for this subcommand
@@ -83,7 +101,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             Bukkit.getLogger().info("DEBUG: registering command " + label);
     }
 
-
     /**
      * This is the top-level command constructor for commands that have no parent.
      * @param label - string for this command
@@ -102,22 +119,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (getPlugin().getCommand(label) == null) {
             getPlugin().getCommandsManager().registerCommand(this);
         }
-        this.setup();
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
-            new DefaultHelpCommand(this);
-
-    }
-
-    /**
-     * Used only for testing....
-     */
-    public CompositeCommand(BSkyBlock plugin, String label, String... string) {
-        super(label);
-        this.setAliases(new ArrayList<>(Arrays.asList(string)));
-        this.parent = null;
-        setUsage("");
-        this.subCommandLevel = 0; // Top level
-        this.subCommands = new LinkedHashMap<>();
         this.setup();
         if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
             new DefaultHelpCommand(this);
@@ -227,6 +228,10 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return getPlugin().getIslands().getMembers(user.getUniqueId());
     }
 
+    public String getParameters() {
+        return parameters;
+    }
+
     /**
      * @return the parent command object
      */
@@ -246,12 +251,20 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     protected PlayersManager getPlayers() {
         return getPlugin().getPlayers();
     }
-
+    
     @Override
     public BSkyBlock getPlugin() {
         return BSkyBlock.getInstance();
     }
-    
+
+    /**
+     * @return Settings object
+     */
+    public Settings getSettings() {
+        return getPlugin().getSettings();
+    }
+
+
     /**
      * Returns the CompositeCommand object refering to this command label
      * @param label - command label or alias
@@ -264,6 +277,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         return Optional.empty();
     }
+    
 
     /**
      * @return Map of sub commands for this command
@@ -271,7 +285,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public Map<String, CompositeCommand> getSubCommands() {
         return subCommands;
     }
-
 
     /**
      * Convenience method to obtain the user's team leader
@@ -282,41 +295,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return getPlugin().getIslands().getTeamLeader(user.getUniqueId());
     }
     
-
-    public void setparameters(String parameters) {
-        this.setParameters(parameters);
-    }
-
     @Override
     public String getUsage() {
         return "/" + usage;
     }
     
-    /**
-     * This creates the full linking chain of commands
-     */
-    @Override
-    public Command setUsage(String usage) {
-        // Go up the chain
-        CompositeCommand parent = this.getParent();
-        this.usage = this.getLabel() + " " + usage;
-        while (parent != null) {
-            this.usage = parent.getLabel() + " " + this.usage;
-            parent = parent.getParent();
-        }
-        this.usage = this.usage.trim();
-        return this;
-    }
-    
-    public String getParameters() {
-        return parameters;
-    }
-
-
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
     /**
      * Check if this command has a specific sub command
      * @param subCommand
@@ -325,6 +308,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private boolean hasSubCommand(String subCommand) {
         return subCommands.containsKey(subCommand);
     }
+
 
     /**
      * Check if this command has any sub commands
@@ -368,9 +352,33 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.onlyPlayer = onlyPlayer;
     }
 
+    public void setparameters(String parameters) {
+        this.setParameters(parameters);
+    }
+
+    public void setParameters(String parameters) {
+        this.parameters = parameters;
+    }
+
     @Override
     public void setPermission(String permission) {
         this.permission = permission;
+    }
+    
+    /**
+     * This creates the full linking chain of commands
+     */
+    @Override
+    public Command setUsage(String usage) {
+        // Go up the chain
+        CompositeCommand parent = this.getParent();
+        this.usage = this.getLabel() + " " + usage;
+        while (parent != null) {
+            this.usage = parent.getLabel() + " " + this.usage;
+            parent = parent.getParent();
+        }
+        this.usage = this.usage.trim();
+        return this;
     }
     
     @Override

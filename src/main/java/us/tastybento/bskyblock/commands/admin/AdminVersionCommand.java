@@ -2,9 +2,9 @@ package us.tastybento.bskyblock.commands.admin;
 
 import java.util.List;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.Settings;
 
 public class AdminVersionCommand extends CompositeCommand {
 
@@ -15,7 +15,7 @@ public class AdminVersionCommand extends CompositeCommand {
     @Override
     public void setup() {
         // Permission
-        this.setPermission(Settings.PERMPREFIX + "admin.version");
+        this.setPermission(Constants.PERMPREFIX + "admin.version");
     }
 
     @Override

@@ -3,10 +3,10 @@ package us.tastybento.bskyblock.commands.island.teams;
 import java.util.List;
 import java.util.UUID;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.Settings;
 
 public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
 
@@ -16,7 +16,7 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setPermission(Constants.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.team.invite.reject.description");
     }

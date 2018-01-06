@@ -9,14 +9,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * Tracks the following info on the player
  *
  * @author tastybento
  */
-public class Players extends DataObject {
+public class Players implements DataObject {
     private HashMap<Integer, Location> homeLocations;
     private String uniqueId;
     private String playerName;
@@ -31,15 +31,16 @@ public class Players extends DataObject {
     public Players() {}
 
     /**
+     * @param plugin 
      * @param uniqueId
      *            Constructor - initializes the state variables
      *
      */
-    public Players(final UUID uniqueId) {
+    public Players(BSkyBlock plugin, final UUID uniqueId) {
         this.uniqueId = uniqueId.toString();
         this.homeLocations = new HashMap<>();
         this.playerName = "";
-        this.resetsLeft = Settings.resetLimit;
+        this.resetsLeft = plugin.getSettings().getResetLimit();
         this.locale = "";
         this.kickedList = new HashMap<>();
         this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
@@ -200,8 +201,8 @@ public class Players extends DataObject {
      */
     public void setDeaths(int deaths) {
         this.deaths = deaths;
-        if (this.deaths > Settings.deathsMax) {
-            this.deaths = Settings.deathsMax;
+        if (this.deaths > getPlugin().getSettings().getDeathsMax()) {
+            this.deaths = getPlugin().getSettings().getDeathsMax();
         }
     }
 
@@ -210,8 +211,8 @@ public class Players extends DataObject {
      */
     public void addDeath() {
         this.deaths++;
-        if (this.deaths > Settings.deathsMax) {
-            this.deaths = Settings.deathsMax;
+        if (this.deaths > getPlugin().getSettings().getDeathsMax()) {
+            this.deaths = getPlugin().getSettings().getDeathsMax();
         }
     }
 
@@ -233,7 +234,7 @@ public class Players extends DataObject {
             Calendar coolDownTime = Calendar.getInstance();
             coolDownTime.setTime(kickedDate);
             // coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
-            coolDownTime.add(Calendar.MINUTE, Settings.inviteWait);
+            coolDownTime.add(Calendar.MINUTE, getPlugin().getSettings().getInviteWait());
             // Add the invite cooldown period
             Calendar timeNow = Calendar.getInstance();
             // plugin.getLogger().info("DEBUG: date now = " + timeNow);

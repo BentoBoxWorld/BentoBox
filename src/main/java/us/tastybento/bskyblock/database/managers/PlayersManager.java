@@ -15,7 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
@@ -40,7 +40,7 @@ public class PlayersManager{
     @SuppressWarnings("unchecked")
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = BSBDatabase.getDatabase();
+        database = BSBDatabase.getDatabase(plugin);
         // Set up the database handler to store and retrieve Players classes
         handler = (AbstractDatabaseHandler<Players>) database.getHandler(plugin, Players.class);
         playerCache = new HashMap<>();
@@ -138,7 +138,7 @@ public class PlayersManager{
             } else {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: new player");
-                player = new Players(playerUUID);
+                player = new Players(plugin, playerUUID);
             }
             playerCache.put(playerUUID, player);
             return player;
@@ -506,7 +506,7 @@ public class PlayersManager{
         addPlayer(targetUUID);
         // Check if the target player has a permission bypass (admin.noban)
         Player target = plugin.getServer().getPlayer(targetUUID);
-        if (target != null && target.hasPermission(Settings.PERMPREFIX + "admin.noban")) {
+        if (target != null && target.hasPermission(Constants.PERMPREFIX + "admin.noban")) {
             return false;
         }
         Island island = plugin.getIslands().getIsland(playerUUID);

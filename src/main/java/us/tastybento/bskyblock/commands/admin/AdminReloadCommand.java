@@ -7,7 +7,6 @@ import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.ConfigLoader;
 
 /**
  * @author ben
@@ -38,7 +37,6 @@ public class AdminReloadCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        new ConfigLoader();
         return true;
     }
 

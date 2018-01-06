@@ -6,11 +6,10 @@ import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Settings;
 
 public class IslandWorld {
 
-    //private BSkyBlock plugin;
+    private BSkyBlock plugin;
     private static World islandWorld;
     private static World netherWorld;
     private static World endWorld;
@@ -19,37 +18,38 @@ public class IslandWorld {
      * Generates the Skyblock worlds.
      */
     public IslandWorld(BSkyBlock plugin) {
-        if (Settings.useOwnGenerator) {
+        this.plugin = plugin;
+        if (plugin.getSettings().isUseOwnGenerator()) {
             // Do nothing
             return;
         }
-        if (plugin.getServer().getWorld(Settings.worldName) == null) {
+        if (plugin.getServer().getWorld(plugin.getSettings().getWorldName()) == null) {
             Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Island World...");
         }
         // Create the world if it does not exist
-        islandWorld = WorldCreator.name(Settings.worldName).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld())
+        islandWorld = WorldCreator.name(plugin.getSettings().getWorldName()).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld(plugin))
                 .createWorld();
         // Make the nether if it does not exist
-        if (Settings.netherGenerate) {
-            if (plugin.getServer().getWorld(Settings.worldName + "_nether") == null) {
+        if (plugin.getSettings().isNetherGenerate()) {
+            if (plugin.getServer().getWorld(plugin.getSettings().getWorldName() + "_nether") == null) {
                 Bukkit.getLogger().info("Creating " + plugin.getName() + "'s Nether...");
             }
-            if (!Settings.netherIslands) {
-                netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
+            if (!plugin.getSettings().isNetherIslands()) {
+                netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + "_nether").type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
             } else {
-                netherWorld = WorldCreator.name(Settings.worldName + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
+                netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + "_nether").type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
                         .environment(World.Environment.NETHER).createWorld();
             }
         }
         // Make the end if it does not exist
-        if (Settings.endGenerate) {
-            if (plugin.getServer().getWorld(Settings.worldName + "_the_end") == null) {
+        if (plugin.getSettings().isEndGenerate()) {
+            if (plugin.getServer().getWorld(plugin.getSettings().getWorldName() + "_the_end") == null) {
                 Bukkit.getLogger().info("Creating " + plugin.getName() + "'s End World...");
             }
-            if (!Settings.endIslands) {
-                endWorld = WorldCreator.name(Settings.worldName + "_the_end").type(WorldType.NORMAL).environment(World.Environment.THE_END).createWorld();
+            if (!plugin.getSettings().isEndIslands()) {
+                endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + "_the_end").type(WorldType.NORMAL).environment(World.Environment.THE_END).createWorld();
             } else {
-                endWorld = WorldCreator.name(Settings.worldName + "_the_end").type(WorldType.FLAT).generator(new ChunkGeneratorWorld())
+                endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + "_the_end").type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
                         .environment(World.Environment.THE_END).createWorld();
             }
         }
@@ -62,22 +62,22 @@ public class IslandWorld {
             Bukkit.getLogger().info("Trying to register generator with Multiverse ");
             try {
                 Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                        "mv import " + Settings.worldName + " normal -g " + plugin.getName());
+                        "mv import " + plugin.getSettings().getWorldName() + " normal -g " + plugin.getName());
                 if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                        "mv modify set generator " + plugin.getName() + " " + Settings.worldName)) {
+                        "mv modify set generator " + plugin.getName() + " " + plugin.getSettings().getWorldName())) {
                     Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
                 }
-                if (netherWorld != null && Settings.netherGenerate && Settings.netherIslands) {
+                if (netherWorld != null && plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            "mv import " + Settings.worldName + "_nether nether -g " + plugin.getName());
+                            "mv import " + plugin.getSettings().getWorldName() + "_nether nether -g " + plugin.getName());
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_nether");
+                            "mv modify set generator " + plugin.getName() + " " + plugin.getSettings().getWorldName() + "_nether");
                 }
-                if (endWorld != null && Settings.endGenerate && Settings.endIslands) {
+                if (endWorld != null && plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            "mv import " + Settings.worldName + "_the_end end -g " + plugin.getName());
+                            "mv import " + plugin.getSettings().getWorldName() + "_the_end end -g " + plugin.getName());
                     Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            "mv modify set generator " + plugin.getName() + " " + Settings.worldName + "_the_end");
+                            "mv modify set generator " + plugin.getName() + " " + plugin.getSettings().getWorldName() + "_the_end");
                 }
             } catch (Exception e) {
                 Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
@@ -92,9 +92,9 @@ public class IslandWorld {
     /**
      * @return the islandWorld
      */
-    public static World getIslandWorld() {
-        if (Settings.useOwnGenerator) {
-            return Bukkit.getServer().getWorld(Settings.worldName);
+    public World getIslandWorld() {
+        if (plugin.getSettings().isUseOwnGenerator()) {
+            return Bukkit.getServer().getWorld(plugin.getSettings().getWorldName());
         }
         return islandWorld;
     }
@@ -102,9 +102,9 @@ public class IslandWorld {
     /**
      * @return the netherWorld
      */
-    public static World getNetherWorld() {
-        if (Settings.useOwnGenerator) {
-            return Bukkit.getServer().getWorld(Settings.worldName + "_nether");
+    public World getNetherWorld() {
+        if (plugin.getSettings().isUseOwnGenerator()) {
+            return Bukkit.getServer().getWorld(plugin.getSettings().getWorldName() + "_nether");
         }
         return netherWorld;
     }
@@ -112,9 +112,9 @@ public class IslandWorld {
     /**
      * @return the endWorld
      */
-    public static World getEndWorld() {
-        if (Settings.useOwnGenerator) {
-            return Bukkit.getServer().getWorld(Settings.worldName + "_the_end");
+    public World getEndWorld() {
+        if (plugin.getSettings().isUseOwnGenerator()) {
+            return Bukkit.getServer().getWorld(plugin.getSettings().getWorldName() + "_the_end");
         }
         return endWorld;
     }

@@ -7,7 +7,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
-import us.tastybento.bskyblock.config.PluginConfig;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
@@ -40,79 +39,82 @@ public class BSkyBlock extends JavaPlugin {
     private LocalesManager localesManager;
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
+    private IslandWorld islandWorldManager;
+
+    // Settings
+    Settings settings;
+
 
     @Override
     public void onEnable(){
         plugin = this;
 
         // Load config - EXPERIMENTAL        
-        Settings2 config = new Settings2();
+        settings = new Settings();
         try {
             //config.saveConfig(); // works, but will wipe out comments
-            config = config.loadConfig();
-            getLogger().info("DEBUG: island distance = " + config.getIslandDistance());
+            settings = settings.loadSettings();
+            getLogger().info("DEBUG: island distance = " + settings.getIslandDistance());
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-        // Load configuration and locales. If there are no errors, load the plugin.
-        if(PluginConfig.loadPluginConfig(this)){
-            
-            playersManager = new PlayersManager(this);
-            islandsManager = new IslandsManager(this);
 
-            // Load metrics
-            metrics = new Metrics(plugin);
-            registerCustomCharts();
+        playersManager = new PlayersManager(this);
+        islandsManager = new IslandsManager(this);
 
-            // Set up commands
-            commandsManager = new CommandsManager();
-            new IslandCommand();
-            new AdminCommand();
+        // Load metrics
+        metrics = new Metrics(plugin);
+        registerCustomCharts();
 
-            // These items have to be loaded when the server has done 1 tick.
-            // Note Worlds are not loaded this early, so any Locations or World reference will be null
-            // at this point. Therefore, the 1 tick scheduler is required.
-            getServer().getScheduler().runTask(this, new Runnable() {
+        // Set up commands
+        commandsManager = new CommandsManager();
+        new IslandCommand();
+        new AdminCommand();
 
-                @Override
-                public void run() {
-                    // Create the world if it does not exist
-                    new IslandWorld(plugin);
-                    
-                    getServer().getScheduler().runTask(plugin, new Runnable() {
+        // These items have to be loaded when the server has done 1 tick.
+        // Note Worlds are not loaded this early, so any Locations or World reference will be null
+        // at this point. Therefore, the 1 tick scheduler is required.
+        getServer().getScheduler().runTask(this, new Runnable() {
 
-                        @Override
-                        public void run() {
-                            // Load islands from database
-                            islandsManager.load();
+            @Override
+            public void run() {
+                // Create the world if it does not exist
+                islandWorldManager = new IslandWorld(plugin);
 
-                            // TODO: load these from config.yml
-                            Settings.chestItems = new ItemStack[] {
-                                    new ItemStack(Material.LAVA_BUCKET,1),
-                                    new ItemStack(Material.ICE,2),
-                                    new ItemStack(Material.MELON_SEEDS,1),
-                                    new ItemStack(Material.BONE,2),
-                                    new ItemStack(Material.COBBLESTONE,5),
-                                    new ItemStack(Material.SAPLING,2)
-                            };
+                getServer().getScheduler().runTask(plugin, new Runnable() {
 
-                            Settings.defaultLanguage = "en-US";
-                            localesManager = new LocalesManager(plugin);
-                            //TODO localesManager.registerLocales(plugin);
+                    @Override
+                    public void run() {
+                        // Load islands from database
+                        islandsManager.load();
 
-                            // Register Listeners
-                            registerListeners();
+                        // TODO: load these from config.yml
+                        getSettings().setChestItems(new ItemStack[] {
+                                new ItemStack(Material.LAVA_BUCKET,1),
+                                new ItemStack(Material.ICE,2),
+                                new ItemStack(Material.MELON_SEEDS,1),
+                                new ItemStack(Material.BONE,2),
+                                new ItemStack(Material.COBBLESTONE,5),
+                                new ItemStack(Material.SAPLING,2)
+                        });
 
-                            // Load Flags
-                            flagsManager = new FlagsManager();
+                        //getSettings().setDefaultLanguage("en-US");
+                        plugin.getLogger().info("DEBUG: ************************** Loading Locales **************************");
+                        localesManager = new LocalesManager(plugin);
+                        //TODO localesManager.registerLocales(plugin);
 
-                            // Load addons
-                            addonsManager = new AddonsManager(plugin);
-                            addonsManager.enableAddons();
+                        // Register Listeners
+                        registerListeners();
 
-                            /*
-                             *DEBUG CODE
+                        // Load Flags
+                        flagsManager = new FlagsManager();
+
+                        // Load addons
+                        addonsManager = new AddonsManager(plugin);
+                        addonsManager.enableAddons();
+
+                        /*
+                         *DEBUG CODE
                             Island loadedIsland = islandsManager.getIsland(owner);
                             getLogger().info("Island name = " + loadedIsland.getName());
                             getLogger().info("Island locked = " + loadedIsland.getLocked());
@@ -121,23 +123,24 @@ public class BSkyBlock extends JavaPlugin {
                             for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
                                 getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
                             }
-                             */
-                            // Save islands & players data asynchronously every X minutes
-                            Settings.databaseBackupPeriod = 10 * 60 * 20;
-                            plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+                         */
+                        // Save islands & players data asynchronously every X minutes
+                        getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
+                        plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
 
-                                @Override
-                                public void run() {
-                                    playersManager.save(true);
-                                    islandsManager.save(true);
-                                }
-                            }, Settings.databaseBackupPeriod, Settings.databaseBackupPeriod);
-                        }
-                    });
-                } 
-            });
-        }
+                            @Override
+                            public void run() {
+                                playersManager.save(true);
+                                islandsManager.save(true);
+                            }
+                        }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
+                    }
+                });
+            } 
+        });
     }
+
+
 
     private void registerListeners() {
         PluginManager manager = getServer().getPluginManager();
@@ -177,7 +180,7 @@ public class BSkyBlock extends JavaPlugin {
 
             @Override
             public String getValue() {
-                return Settings.defaultLanguage;
+                return getSettings().getDefaultLanguage();
             }
         });
 
@@ -185,7 +188,7 @@ public class BSkyBlock extends JavaPlugin {
 
             @Override
             public String getValue() {
-                return BSBDatabase.getDatabase().toString();
+                return BSBDatabase.getDatabase(plugin).toString();
             }
         });
     }
@@ -236,6 +239,21 @@ public class BSkyBlock extends JavaPlugin {
      */
     public FlagsManager getFlagsManager() {
         return flagsManager;
+    }
+
+    /**
+     * @return the settings
+     */
+    public Settings getSettings() {
+        return settings;
+    }
+
+
+    /**
+     * @return the Island World Manager
+     */
+    public IslandWorld getIslandWorldManager() {
+        return islandWorldManager;
     }
 
 }

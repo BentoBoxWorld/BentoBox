@@ -10,8 +10,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -46,8 +46,8 @@ public class JoinLeaveListener implements Listener {
             // Load player
             players.addPlayer(playerUUID);
             // Reset resets if the admin changes it to or from unlimited
-            if (Settings.resetLimit < players.getResetsLeft(playerUUID)  || (Settings.resetLimit >= 0 && players.getResetsLeft(playerUUID) < 0)) {
-                players.setResetsLeft(playerUUID, Settings.resetLimit);
+            if (plugin.getSettings().getResetLimit() < players.getResetsLeft(playerUUID)  || (plugin.getSettings().getResetLimit() >= 0 && players.getResetsLeft(playerUUID) < 0)) {
+                players.setResetsLeft(playerUUID, plugin.getSettings().getResetLimit());
             }
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Setting player's name");
@@ -62,7 +62,7 @@ public class JoinLeaveListener implements Listener {
             } else {
                 plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
             }
-            if (Settings.removeMobsOnLogin) {
+            if (plugin.getSettings().isRemoveMobsOnLogin()) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Removing mobs");
                 plugin.getIslands().removeMobs(player.getLocation());
@@ -73,7 +73,7 @@ public class JoinLeaveListener implements Listener {
             if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Current island is locked, or player is banned");
-                if (!currentIsland.getMembers().contains(playerUUID) && !player.hasPermission(Settings.PERMPREFIX + "mod.bypassprotect")) {
+                if (!currentIsland.getMembers().contains(playerUUID) && !player.hasPermission(Constants.PERMPREFIX + "mod.bypassprotect")) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: No bypass - teleporting");
                     user.sendMessage("locked.islandlocked");

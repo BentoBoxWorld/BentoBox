@@ -24,10 +24,9 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
-import us.tastybento.bskyblock.api.configuration.ConfigEntry.NoAdapter;
 import us.tastybento.bskyblock.config.StoreAt;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
@@ -172,7 +171,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 if (!configEntry.path().isEmpty()) {
                     storageLocation = configEntry.path();
                 }
-                if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Settings.GAMETYPE)) {
+                if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Constants.GAMETYPE)) {
                     Bukkit.getLogger().info(field.getName() + " not applicable to this game type");
                     continue;
                 }

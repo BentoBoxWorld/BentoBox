@@ -1,8 +1,6 @@
 package us.tastybento.bskyblock.database;
 
-import org.bukkit.plugin.Plugin;
-
-import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.mysql.MySQLDatabase;
@@ -14,9 +12,9 @@ public abstract class BSBDatabase {
      * FLATFILE and MYSQL. Default is FLATFILE
      * @return Database type
      */
-    public static BSBDatabase getDatabase(){
+    public static BSBDatabase getDatabase(BSkyBlock plugin){
         for(DatabaseType type : DatabaseType.values()){
-            if(type == Settings.databaseType) return type.database;
+            if(type == plugin.getSettings().getDatabaseType()) return type.database;
         }
         return DatabaseType.FLATFILE.database;
     }
@@ -38,6 +36,6 @@ public abstract class BSBDatabase {
      * @param dataObjectClass
      * @return database handler
      */
-    public abstract AbstractDatabaseHandler<?> getHandler(Plugin plugin, Class<?> dataObjectClass);
+    public abstract AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> dataObjectClass);
 
 }
