@@ -36,6 +36,6 @@ public abstract class BSBDatabase {
      * @param dataObjectClass
      * @return database handler
      */
-    public abstract AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> dataObjectClass);
+    public abstract AbstractDatabaseHandler<?> getHandler(Class<?> dataObjectClass);
 
 }

@@ -6,7 +6,7 @@ import java.sql.SQLException;
 
 import org.bukkit.Bukkit;
 
-import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 
@@ -20,22 +20,47 @@ public interface ISettings<T> {
         
     // ----------------Saver-------------------
     @SuppressWarnings("unchecked")
-    default void saveConfig() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveSettings() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Get the handler
-        AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(BSkyBlock.getInstance(), getInstance().getClass());
+        AbstractDatabaseHandler<T> settingsHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         // Load every field in the config class
-        Bukkit.getLogger().info("DEBUG: configHandler = " + configHandler);
+        Bukkit.getLogger().info("DEBUG: settingsHandler = " + settingsHandler);
         Bukkit.getLogger().info("DEBUG: instance = " + getInstance());
-        configHandler.saveObject(getInstance()); // The string parameter can be anything
+        settingsHandler.saveSettings(getInstance());
+        // Save backup in real database
+        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getInstance().getClass());
+        dbhandler.saveObject(getInstance());
     }
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
     default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException {
+        // See if this settings object already exists in the database
+        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(this.getClass());
+        T dbConfig = null;
+        if (dbhandler.objectExits(this.getUniqueId())) {
+            // Load it
+            dbConfig = dbhandler.loadObject(getUniqueId());
+        }
+        
         // Get the handler
-        AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(BSkyBlock.getInstance(), getInstance().getClass());
+        AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         // Load every field in the config class
-        return configHandler.loadObject("config");
+        return configHandler.loadSettings(getUniqueId(), dbConfig);
     }
     
+    /**
+     * @return instance of the implementing class, i.e., return this.
+     */
     T getInstance();
+    
+    /**
+     * @return the uniqueId
+     */
+    String getUniqueId();
+
+    /**
+     * @param uniqueId the uniqueId to set
+     */
+    void setUniqueId(String uniqueId);
+    
 }

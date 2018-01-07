@@ -142,7 +142,7 @@ public class IslandsManager {
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Island classes
-        handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
+        handler = (AbstractDatabaseHandler<Island>) database.getHandler(Island.class);
         islandCache = new IslandCache();
         spawn = null;
     }

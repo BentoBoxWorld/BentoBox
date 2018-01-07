@@ -7,8 +7,8 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 public class FlatFileDatabase extends BSBDatabase{
 
     @Override
-    public AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> type) {
-        return new FlatFileDatabaseHandler<>(plugin, type, new FlatFileDatabaseConnecter(plugin, null));
+    public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
+        return new FlatFileDatabaseHandler<>(BSkyBlock.getInstance(), type, new FlatFileDatabaseConnecter(BSkyBlock.getInstance(), null));
     }
 
 }

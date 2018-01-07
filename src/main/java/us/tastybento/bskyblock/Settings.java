@@ -214,7 +214,7 @@ public class Settings implements ISettings<Settings> {
 
     /*      SCHEMATICS      */
     private List<String> companionNames = new ArrayList<>();
-    private ItemStack[] chestItems = {};
+    private List<ItemStack> chestItems = new ArrayList<>();
     private EntityType companionType = EntityType.COW;
 
     private boolean useOwnGenerator;
@@ -222,7 +222,7 @@ public class Settings implements ISettings<Settings> {
     private HashMap<String,Integer> limitedBlocks;
     private boolean teamJoinDeathReset;
     
-    private String uniqueId = "";
+    private String uniqueId = "config";
 
     /**
      * @return the uniqueId
@@ -1055,13 +1055,13 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the chestItems
      */
-    public ItemStack[] getChestItems() {
+    public List<ItemStack> getChestItems() {
         return chestItems;
     }
     /**
      * @param chestItems the chestItems to set
      */
-    public void setChestItems(ItemStack[] chestItems) {
+    public void setChestItems(List<ItemStack> chestItems) {
         this.chestItems = chestItems;
     }
     /**

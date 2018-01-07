@@ -8,7 +8,8 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 public class MySQLDatabase extends BSBDatabase{
 
     @Override
-    public AbstractDatabaseHandler<?> getHandler(BSkyBlock plugin, Class<?> type) {
+    public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
+        BSkyBlock plugin = BSkyBlock.getInstance();
         return new MySQLDatabaseHandler<>(plugin, type, new MySQLDatabaseConnecter(new DatabaseConnectionSettingsImpl(
                 plugin.getSettings().getDbHost(),
                 plugin.getSettings().getDbPort(),

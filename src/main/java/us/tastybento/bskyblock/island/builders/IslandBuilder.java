@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.island.builders;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -40,7 +41,7 @@ public class IslandBuilder {
     private World world;
     private IslandType type = IslandType.ISLAND;
     //private List<String> companionNames = new ArrayList<>();
-    private ItemStack[] chestItems;
+    private List<ItemStack> chestItems;
     //private List<Entity> companions = new ArrayList<>();
     private UUID playerUUID;
     private String playerName;
@@ -89,10 +90,10 @@ public class IslandBuilder {
 
 
     /**
-     * @param chestItems the default chestItems to set
+     * @param list the default chestItems to set
      */
-    public IslandBuilder setChestItems(ItemStack[] chestItems) {
-        this.chestItems = chestItems;
+    public IslandBuilder setChestItems(List<ItemStack> list) {
+        this.chestItems = list;
         return this;
     }
 
@@ -496,7 +497,7 @@ public class IslandBuilder {
         Chest chest = new Chest(BlockFace.SOUTH);
         state.setData(chest);
         state.update();
-        if (chestItems.length > 0) {
+        if (!chestItems.isEmpty()) {
             InventoryHolder chestBlock = (InventoryHolder) state;
             for (ItemStack item: chestItems) {
                 chestBlock.getInventory().addItem(item);

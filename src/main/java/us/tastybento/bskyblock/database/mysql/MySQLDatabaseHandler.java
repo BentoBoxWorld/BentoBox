@@ -910,4 +910,18 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return false;
     }
 
+    @Override
+    public void saveSettings(T instance)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+        plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
+        
+    }
+
+    @Override
+    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+        plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
+        return null;
+    }
+
 }

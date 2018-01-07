@@ -42,7 +42,7 @@ public class PlayersManager{
         this.plugin = plugin;
         database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Players classes
-        handler = (AbstractDatabaseHandler<Players>) database.getHandler(plugin, Players.class);
+        handler = (AbstractDatabaseHandler<Players>) database.getHandler(Players.class);
         playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }

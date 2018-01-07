@@ -132,4 +132,28 @@ public abstract class AbstractDatabaseHandler<T> {
      */
     public abstract boolean objectExits(String key);
 
+    /**
+     * Saves a file as settings
+     * @param instance
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     * @throws IntrospectionException
+     */
+    public abstract void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
+
+    /**
+     * Loads a file as settings
+     * @param uniqueId
+     * @param dbConfig - the database mirror of this object. It will be checked against what is loaded to see if any significant changes have been made
+     * @return
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     * @throws ClassNotFoundException
+     * @throws IntrospectionException
+     */
+    public abstract T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
+
 }

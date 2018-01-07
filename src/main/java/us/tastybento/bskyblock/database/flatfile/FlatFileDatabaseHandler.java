@@ -45,6 +45,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
     private static final boolean DEBUG = false;
+    private boolean configFlag;
 
     public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
@@ -273,9 +274,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         plugin.getLogger().info("DEBUG: not a collection");
                     Object value = config.get(storageLocation);
                     if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: name = " + field.getName());
                         plugin.getLogger().info("DEBUG: value = " + value);
                         plugin.getLogger().info("DEBUG: property type = " + propertyDescriptor.getPropertyType());
-                        plugin.getLogger().info("DEBUG: " + value.getClass());
+                        plugin.getLogger().info("DEBUG: value class " + value.getClass());
                     }
                     if (value != null && !value.getClass().equals(MemorySection.class)) {
                         method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
@@ -285,6 +287,14 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
 
         return instance;
+    }
+
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#saveConfig(java.lang.Object)
+     */
+    public void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+        configFlag = true;
+        saveObject(instance);
     }
 
     /**
@@ -305,12 +315,16 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // The file name of the Yaml file.
         String filename = "";
         String path = dataObject.getSimpleName();
-        StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
-        if (storeAt != null) {
-            path = storeAt.path();
-            filename = storeAt.filename();
-        }
 
+        // Only allow storing in an arbitrary place if it is a config object. Otherwise it is in the database
+        if (configFlag) {
+            StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
+            if (storeAt != null) {
+                path = storeAt.path();
+                filename = storeAt.filename();
+            }
+        }
+        
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
 
@@ -482,6 +496,18 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             File file = new File(tableFolder, fileName);
             file.delete();
         }
+    }
+
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadSettings(java.lang.String, java.lang.Object)
+     */
+    @Override
+    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+        if (dbConfig == null) return loadObject(uniqueId);
+        
+        // TODO: compare the loaded with the database copy
+        
+        return loadObject(uniqueId);
     }
 
 }

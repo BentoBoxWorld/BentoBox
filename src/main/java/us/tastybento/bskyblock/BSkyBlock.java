@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock;
 
+import java.util.Arrays;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
@@ -51,7 +53,7 @@ public class BSkyBlock extends JavaPlugin {
         settings = new Settings();
         // Load config - EXPERIMENTAL        
         try {
-            //settings.saveConfig(); -- doesn't work completely yet
+            settings.saveSettings(); //doesn't work completely yet
             settings = settings.loadSettings();
             getLogger().info("DEBUG: island distance = " + settings.getIslandDistance());
         } catch (Exception e) {
@@ -88,14 +90,14 @@ public class BSkyBlock extends JavaPlugin {
                         islandsManager.load();
 
                         // TODO: load these from config.yml
-                        getSettings().setChestItems(new ItemStack[] {
+                        getSettings().setChestItems(Arrays.asList(
                                 new ItemStack(Material.LAVA_BUCKET,1),
                                 new ItemStack(Material.ICE,2),
                                 new ItemStack(Material.MELON_SEEDS,1),
                                 new ItemStack(Material.BONE,2),
                                 new ItemStack(Material.COBBLESTONE,5),
                                 new ItemStack(Material.SAPLING,2)
-                        });
+                        ));
 
                         //getSettings().setDefaultLanguage("en-US");
                         plugin.getLogger().info("DEBUG: ************************** Loading Locales **************************");
