@@ -214,7 +214,10 @@ public class Settings implements ISettings<Settings> {
 
     /*      SCHEMATICS      */
     private List<String> companionNames = new ArrayList<>();
+    
+    @ConfigEntry(path = "island.chest-items")
     private List<ItemStack> chestItems = new ArrayList<>();
+    
     private EntityType companionType = EntityType.COW;
 
     private boolean useOwnGenerator;

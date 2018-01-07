@@ -17,7 +17,7 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
  * @param <T>
  */
 public interface ISettings<T> {
-        
+
     // ----------------Saver-------------------
     @SuppressWarnings("unchecked")
     default void saveSettings() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
@@ -27,10 +27,15 @@ public interface ISettings<T> {
         Bukkit.getLogger().info("DEBUG: settingsHandler = " + settingsHandler);
         Bukkit.getLogger().info("DEBUG: instance = " + getInstance());
         settingsHandler.saveSettings(getInstance());
+    }
+
+    default void saveBackup() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Save backup in real database
+        @SuppressWarnings("unchecked")
         AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getInstance().getClass());
         dbhandler.saveObject(getInstance());
     }
+
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
     default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException {
@@ -41,18 +46,17 @@ public interface ISettings<T> {
             // Load it
             dbConfig = dbhandler.loadObject(getUniqueId());
         }
-        
         // Get the handler
         AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         // Load every field in the config class
         return configHandler.loadSettings(getUniqueId(), dbConfig);
     }
-    
+
     /**
      * @return instance of the implementing class, i.e., return this.
      */
     T getInstance();
-    
+
     /**
      * @return the uniqueId
      */
@@ -62,5 +66,5 @@ public interface ISettings<T> {
      * @param uniqueId the uniqueId to set
      */
     void setUniqueId(String uniqueId);
-    
+
 }

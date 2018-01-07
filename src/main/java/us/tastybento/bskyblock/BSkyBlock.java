@@ -1,9 +1,5 @@
 package us.tastybento.bskyblock;
 
-import java.util.Arrays;
-
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -49,13 +45,22 @@ public class BSkyBlock extends JavaPlugin {
 
     @Override
     public void onEnable(){
+        // Save the default config from config.yml
+        saveDefaultConfig();
         plugin = this;
+
         settings = new Settings();
-        // Load config - EXPERIMENTAL        
+        // Load settings from config.yml. This will check if there are any issues with it too.        
         try {
-            settings.saveSettings(); //doesn't work completely yet
+            //settings.saveSettings();
             settings = settings.loadSettings();
-            getLogger().info("DEBUG: island distance = " + settings.getIslandDistance());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // Save a backup of settings to the database so it can be checked next time
+        try {
+            settings.saveBackup();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -89,18 +94,6 @@ public class BSkyBlock extends JavaPlugin {
                         // Load islands from database
                         islandsManager.load();
 
-                        // TODO: load these from config.yml
-                        getSettings().setChestItems(Arrays.asList(
-                                new ItemStack(Material.LAVA_BUCKET,1),
-                                new ItemStack(Material.ICE,2),
-                                new ItemStack(Material.MELON_SEEDS,1),
-                                new ItemStack(Material.BONE,2),
-                                new ItemStack(Material.COBBLESTONE,5),
-                                new ItemStack(Material.SAPLING,2)
-                        ));
-
-                        //getSettings().setDefaultLanguage("en-US");
-                        plugin.getLogger().info("DEBUG: ************************** Loading Locales **************************");
                         localesManager = new LocalesManager(plugin);
                         //TODO localesManager.registerLocales(plugin);
 

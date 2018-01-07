@@ -78,7 +78,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public T loadObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException  {
-        String path = dataObject.getSimpleName();
+        String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         String fileName = key;
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
         if (storeAt != null) {
@@ -134,7 +134,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = databaseConnecter.loadYamlFile(dataObject.getSimpleName(), fileName);
+            YamlConfiguration config = databaseConnecter.loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -314,7 +314,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // The file name of the Yaml file.
         String filename = "";
-        String path = dataObject.getSimpleName();
+        String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
 
         // Only allow storing in an arbitrary place if it is a config object. Otherwise it is in the database
         if (configFlag) {

@@ -249,6 +249,25 @@ world:
 
 ### Island Settings ###
 island:
+  # Default chest items
+  chest-items:
+  - ==: org.bukkit.inventory.ItemStack
+    type: LAVA_BUCKET
+  - ==: org.bukkit.inventory.ItemStack
+    type: ICE
+    amount: 2
+  - ==: org.bukkit.inventory.ItemStack
+    type: MELON_SEEDS
+  - ==: org.bukkit.inventory.ItemStack
+    type: BONE
+    amount: 2
+  - ==: org.bukkit.inventory.ItemStack
+    type: COBBLESTONE
+    amount: 5
+  - ==: org.bukkit.inventory.ItemStack
+    type: SAPLING
+    amount: 2
+
   # Default max team size
   # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
   # Permission size cannot be less than the default below. 
