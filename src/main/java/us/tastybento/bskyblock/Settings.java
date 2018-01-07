@@ -9,12 +9,12 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
+import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
-import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
 import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.configuration.PotionEffectListAdpater;
+import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.config.StoreAt;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 
 /**
@@ -148,7 +148,7 @@ public class Settings implements ISettings<Settings> {
     // Remove mobs
     private boolean removeMobsOnLogin;
     private boolean removeMobsOnIsland;
-    private List<String> removeMobsWhitelist;
+    private List<String> removeMobsWhitelist = new ArrayList<>();
 
     private boolean makeIslandIfNone;
     private boolean immediateTeleportOnIsland;
@@ -213,16 +213,16 @@ public class Settings implements ISettings<Settings> {
     private List<PotionEffectType> acidEffects = new ArrayList<>(Arrays.asList(PotionEffectType.CONFUSION, PotionEffectType.SLOW));
 
     /*      SCHEMATICS      */
-    private List<String> companionNames;
-    private ItemStack[] chestItems;
-    private EntityType companionType;
+    private List<String> companionNames = new ArrayList<>();
+    private ItemStack[] chestItems = {};
+    private EntityType companionType = EntityType.COW;
 
     private boolean useOwnGenerator;
 
     private HashMap<String,Integer> limitedBlocks;
     private boolean teamJoinDeathReset;
     
-    private String uniqueId;
+    private String uniqueId = "";
 
     /**
      * @return the uniqueId
@@ -1111,6 +1111,12 @@ public class Settings implements ISettings<Settings> {
      */
     public void setTeamJoinDeathReset(boolean teamJoinDeathReset) {
         this.teamJoinDeathReset = teamJoinDeathReset;
+    }
+    
+    @Override
+    public Settings getInstance() {
+        // TODO Auto-generated method stub
+        return this;
     }
 
 }

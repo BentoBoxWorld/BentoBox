@@ -40,7 +40,7 @@ public class PlayersManager{
     @SuppressWarnings("unchecked")
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = BSBDatabase.getDatabase(plugin);
+        database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Players classes
         handler = (AbstractDatabaseHandler<Players>) database.getHandler(plugin, Players.class);
         playerCache = new HashMap<>();

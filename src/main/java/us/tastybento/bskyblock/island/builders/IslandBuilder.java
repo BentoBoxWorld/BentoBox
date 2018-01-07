@@ -18,8 +18,8 @@ import org.bukkit.material.Chest;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**

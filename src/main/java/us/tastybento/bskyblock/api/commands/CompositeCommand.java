@@ -352,10 +352,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.onlyPlayer = onlyPlayer;
     }
 
-    public void setparameters(String parameters) {
-        this.setParameters(parameters);
-    }
-
     public void setParameters(String parameters) {
         this.parameters = parameters;
     }

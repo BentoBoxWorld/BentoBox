@@ -48,11 +48,10 @@ public class BSkyBlock extends JavaPlugin {
     @Override
     public void onEnable(){
         plugin = this;
-
-        // Load config - EXPERIMENTAL        
         settings = new Settings();
+        // Load config - EXPERIMENTAL        
         try {
-            //config.saveConfig(); // works, but will wipe out comments
+            //settings.saveConfig(); -- doesn't work completely yet
             settings = settings.loadSettings();
             getLogger().info("DEBUG: island distance = " + settings.getIslandDistance());
         } catch (Exception e) {
@@ -188,7 +187,7 @@ public class BSkyBlock extends JavaPlugin {
 
             @Override
             public String getValue() {
-                return BSBDatabase.getDatabase(plugin).toString();
+                return BSBDatabase.getDatabase().toString();
             }
         });
     }

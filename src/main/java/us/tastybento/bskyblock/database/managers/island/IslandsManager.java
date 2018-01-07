@@ -140,7 +140,7 @@ public class IslandsManager {
     @SuppressWarnings("unchecked")
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = BSBDatabase.getDatabase(plugin);
+        database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Island classes
         handler = (AbstractDatabaseHandler<Island>) database.getHandler(plugin, Island.class);
         islandCache = new IslandCache();
@@ -247,7 +247,7 @@ public class IslandsManager {
     public Island createIsland(Location location, UUID owner){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: adding island for " + owner + " at " + location);
-        return islandCache.createIsland(new Island(plugin, location, owner, plugin.getSettings().getIslandProtectionRange()));
+        return islandCache.createIsland(new Island(location, owner, plugin.getSettings().getIslandProtectionRange()));
     }
 
     /**

@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.config;
+package us.tastybento.bskyblock.api.configuration;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;

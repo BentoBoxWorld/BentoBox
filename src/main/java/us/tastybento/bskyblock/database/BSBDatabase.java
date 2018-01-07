@@ -12,9 +12,9 @@ public abstract class BSBDatabase {
      * FLATFILE and MYSQL. Default is FLATFILE
      * @return Database type
      */
-    public static BSBDatabase getDatabase(BSkyBlock plugin){
+    public static BSBDatabase getDatabase(){
         for(DatabaseType type : DatabaseType.values()){
-            if(type == plugin.getSettings().getDatabaseType()) return type.database;
+            if(type == BSkyBlock.getInstance().getSettings().getDatabaseType()) return type.database;
         }
         return DatabaseType.FLATFILE.database;
     }

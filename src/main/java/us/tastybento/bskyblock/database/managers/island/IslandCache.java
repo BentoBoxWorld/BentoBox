@@ -135,7 +135,7 @@ public class IslandCache {
     public Island createIsland(Location location, UUID owner){
         if (DEBUG)
             plugin.getLogger().info("DEBUG: adding island for " + owner + " at " + location);
-        Island island = new Island(plugin, location, owner, plugin.getSettings().getIslandProtectionRange());
+        Island island = new Island(location, owner, plugin.getSettings().getIslandProtectionRange());
         islandsByLocation.put(location, island);
         if (owner != null)
             islandsByUUID.put(owner, island);

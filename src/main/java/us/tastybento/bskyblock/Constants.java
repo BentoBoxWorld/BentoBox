@@ -1,14 +1,15 @@
 package us.tastybento.bskyblock;
 
-import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
-
 /**
  * All the plugin settings are here
  * @author Tastybento
  */
 public class Constants {
     // ----------------- Constants -----------------
-
+    // Game Type BSKYBLOCK or ACIDISLAND
+    public enum GameType {
+        BSKYBLOCK, ACIDISLAND, BOTH
+    }
     /*
     public final static GameType GAMETYPE = GameType.ACIDISLAND;
     // The spawn command (Essentials spawn for example)

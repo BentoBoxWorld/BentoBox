@@ -16,11 +16,11 @@ public interface DataObject {
     /**
      * @return the uniqueId
      */
-    abstract String getUniqueId();
+    String getUniqueId();
 
     /**
      * @param uniqueId the uniqueId to set
      */
-    abstract void setUniqueId(String uniqueId);
+    void setUniqueId(String uniqueId);
     
 }

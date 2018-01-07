@@ -103,14 +103,14 @@ public class Island implements DataObject {
 
     public Island() {}
     
-    public Island(BSkyBlock plugin, Location location, UUID owner, int protectionRange) {
+    public Island(Location location, UUID owner, int protectionRange) {
         this.members.add(owner);
         this.owner = owner;
         this.createdDate = System.currentTimeMillis();
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
         this.center = location;
-        this.range = plugin.getSettings().getIslandProtectionRange();
+        this.range = BSkyBlock.getInstance().getSettings().getIslandProtectionRange();
         this.minX = center.getBlockX() - range;
         this.minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;

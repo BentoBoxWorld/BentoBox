@@ -31,6 +31,7 @@ import us.tastybento.bskyblock.api.events.addon.AddonEvent;
 public final class AddonsManager {
 
     private static final boolean DEBUG = false;
+    private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
     private List<AddonClassLoader> loader;
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
@@ -132,10 +133,11 @@ public final class AddonsManager {
             addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
             addon.setAddonFile(f);
             
+            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
             // Obtain any locale files and save them
             for (String localeFile : listJarYamlFiles(jar, "locales")) {
                 //plugin.getLogger().info("DEBUG: saving " + localeFile + " from jar");
-                addon.saveResource(localeFile, plugin.getDataFolder(), false, true);
+                addon.saveResource(localeFile, localeDir, false, true);
             }
             plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
             

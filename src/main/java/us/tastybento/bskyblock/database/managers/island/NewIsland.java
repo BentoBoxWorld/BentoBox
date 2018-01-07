@@ -26,9 +26,9 @@ public class NewIsland {
     private final Player player;
     private final Reason reason;
 
-    private NewIsland(BSkyBlock plugin, Island oldIsland, Player player, Reason reason) {
+    private NewIsland(Island oldIsland, Player player, Reason reason) {
         super();
-        this.plugin = plugin;
+        this.plugin = BSkyBlock.getInstance();
         this.player = player;
         this.reason = reason;
         newIsland();
@@ -51,7 +51,7 @@ public class NewIsland {
      * @return New island builder object
      */
     public static Builder builder(BSkyBlock plugin) {
-        return new Builder(plugin);
+        return new Builder();
     }
 
     /**
@@ -63,12 +63,6 @@ public class NewIsland {
         private Island oldIsland;
         private Player player;
         private Reason reason;
-        private BSkyBlock plugin;
-
-        public Builder(BSkyBlock plugin) {
-            this.plugin = plugin;
-        }
-
 
         public Builder oldIsland(Island oldIsland) {
             this.oldIsland = oldIsland;
@@ -88,7 +82,7 @@ public class NewIsland {
 
         public Island build() throws IOException {
             if (player != null) {
-                NewIsland newIsland = new NewIsland(plugin, oldIsland, player, reason);
+                NewIsland newIsland = new NewIsland(oldIsland, player, reason);
                 return newIsland.getIsland();
             }
             throw new IOException("Insufficient parameters. Must have a schematic and a player");

@@ -25,9 +25,10 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.Constants.GameType;
+import us.tastybento.bskyblock.api.configuration.Adapter;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
-import us.tastybento.bskyblock.api.configuration.ConfigEntry.GameType;
-import us.tastybento.bskyblock.config.StoreAt;
+import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
@@ -172,13 +173,35 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     storageLocation = configEntry.path();
                 }
                 if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Constants.GAMETYPE)) {
-                    Bukkit.getLogger().info(field.getName() + " not applicable to this game type");
+                    if (DEBUG)
+                        Bukkit.getLogger().info(field.getName() + " not applicable to this game type");
+                    continue;
+                }
+                // TODO: Add handling of other ConfigEntry elements
+                if (!configEntry.adapter().equals(Adapter.class)) {
+                    // A conversion adapter has been defined            
+                    Object value = config.get(storageLocation);
+                    method.invoke(instance, ((Adapter<?,?>)configEntry.adapter().newInstance()).convertFrom(value));
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: value = " + value);
+                        plugin.getLogger().info("DEBUG: property type = " + propertyDescriptor.getPropertyType());
+                        plugin.getLogger().info("DEBUG: " + value.getClass());
+                    }
+                    if (value != null && !value.getClass().equals(MemorySection.class)) {
+                        method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
+                    }
+                    // We are done here
                     continue;
                 }
             }
 
             // Look in the YAML Config to see if this field exists (it should)
-            if (config.contains(storageLocation)) { 
+            if (config.contains(storageLocation)) {
+                // Check for null values
+                if (config.get(storageLocation) == null) {
+                    method.invoke(instance, (Object)null);
+                    continue;
+                }
                 // Handle storage of maps. Check if this type is a Map
                 if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Note that we have no idea what type this is
@@ -291,13 +314,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
 
-            String storageLocation = field.getName();
-            // Check if there is an annotation on the field
-            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
-            // If there is a config path annotation then do something
-            if (configEntry != null && !configEntry.path().isEmpty()) {
-                storageLocation = configEntry.path();
-            }            
             // Get the property descriptor for this field
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method, i.e., getXXXX();
@@ -305,14 +321,34 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
 
+            String storageLocation = field.getName();
+            // Check if there is an annotation on the field
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+            // If there is a config path annotation then do something
+            if (configEntry != null) {
+                if (!configEntry.path().isEmpty()) {
+                    storageLocation = configEntry.path();
+                }         
+                // TODO: add in game-specific saving
+                if (!configEntry.adapter().equals(Adapter.class)) {
+                    // A conversion adapter has been defined              
+                    try {
+                        config.set(storageLocation, ((Adapter<?,?>)configEntry.adapter().newInstance()).convertTo(value));
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                    // We are done here
+                    continue;
+                }
+            }
             //plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
             // Depending on the vale type, it'll need serializing differenty
             // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
             if (method.getName().equals("getUniqueId")) {
-                // If the object does not have a unique name assigned to it already, one is created at random
+                // If the object does not have a unique name assigned to it already, one is created at random          
                 //plugin.getLogger().info("DEBUG: uniqueId = " + value);
                 String id = (String)value;
-                if (id.isEmpty()) {
+                if (value == null || id.isEmpty()) {
                     id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
                     // Set it in the class so that it will be used next time
                     propertyDescriptor.getWriteMethod().invoke(instance, id);
