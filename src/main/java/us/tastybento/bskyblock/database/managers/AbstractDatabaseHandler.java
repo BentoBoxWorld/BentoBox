@@ -19,10 +19,10 @@ import us.tastybento.bskyblock.database.DatabaseConnecter;
 public abstract class AbstractDatabaseHandler<T> {
 
     /**
-     * The type of the objects that should be created and filled with values
+     * The data object that should be created and filled with values
      * from the database or inserted into the database
      */
-    protected Class<T>     type;
+    protected Class<T>     dataObject;
 
     /**
      * Contains the settings to create a connection to the database like
@@ -52,7 +52,7 @@ public abstract class AbstractDatabaseHandler<T> {
     protected AbstractDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
-        this.type = type;
+        this.dataObject = type;
         this.selectQuery = createSelectQuery();
         this.insertQuery = createInsertQuery();
         this.deleteQuery = createDeleteQuery();
@@ -131,5 +131,29 @@ public abstract class AbstractDatabaseHandler<T> {
      * @return true if this key exists
      */
     public abstract boolean objectExits(String key);
+
+    /**
+     * Saves a file as settings
+     * @param instance
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     * @throws IntrospectionException
+     */
+    public abstract void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
+
+    /**
+     * Loads a file as settings
+     * @param uniqueId
+     * @param dbConfig - the database mirror of this object. It will be checked against what is loaded to see if any significant changes have been made
+     * @return
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IllegalArgumentException
+     * @throws InvocationTargetException
+     * @throws ClassNotFoundException
+     * @throws IntrospectionException
+     */
+    public abstract T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
 }

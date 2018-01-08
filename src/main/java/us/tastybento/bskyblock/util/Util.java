@@ -27,8 +27,6 @@ import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.generators.IslandWorld;
 
 /**
  * A set of utility methods
@@ -37,9 +35,9 @@ import us.tastybento.bskyblock.generators.IslandWorld;
  * @author Poslovitch
  */
 public class Util {
-    private static BSkyBlock plugin = BSkyBlock.getInstance();
 
     private static String serverVersion = null;
+    private static BSkyBlock plugin = BSkyBlock.getInstance();
 
     /**
      * Returns the server version
@@ -209,13 +207,13 @@ public class Util {
      */
     public static boolean inWorld(Location loc) {
         if (loc != null) {
-            if (loc.getWorld().equals(IslandWorld.getIslandWorld())) {
+            if (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())) {
                 return true;
             }
-            if (Settings.netherIslands && loc.getWorld().equals(IslandWorld.getNetherWorld())) {
+            if (plugin.getSettings().isNetherIslands() && loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())) {
                 return true;
             }
-            if (Settings.endIslands && loc.getWorld().equals(IslandWorld.getEndWorld())) {
+            if (plugin.getSettings().isEndIslands() && loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld())) {
                 return true;
             }
         }
@@ -364,7 +362,7 @@ public class Util {
         // In ASkyBlock, liquid may be unsafe
         if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
             // Check if acid has no damage
-            if (Settings.acidDamage > 0D) {
+            if (plugin.getSettings().getAcidDamage() > 0D) {
                 // Bukkit.getLogger().info("DEBUG: acid");
                 return false;
             } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)

@@ -9,10 +9,10 @@ import java.util.UUID;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
@@ -24,7 +24,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
      
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setPermission(Constants.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setParameters("commands.island.team.setowner.parameters");
         this.setDescription("commands.island.team.setowner.description");
@@ -81,7 +81,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         if (target.isOnline()) {
             // Check if new leader has a lower range permission than the island size
             boolean hasARangePerm = false;
-            int range = Settings.islandProtectionRange;
+            int range = getSettings().getIslandProtectionRange();
             // Check for zero protection range
             Island islandByOwner = getIslands().getIsland(targetUUID);
             if (islandByOwner.getProtectionRange() == 0) {
@@ -89,12 +89,12 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
                 islandByOwner.setProtectionRange(range);
             }
             for (PermissionAttachmentInfo perms : target.getEffectivePermissions()) {
-                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "island.range.")) {
-                    if (perms.getPermission().contains(Settings.PERMPREFIX + "island.range.*")) {
+                if (perms.getPermission().startsWith(Constants.PERMPREFIX + "island.range.")) {
+                    if (perms.getPermission().contains(Constants.PERMPREFIX + "island.range.*")) {
                         // Ignore
                         break;
                     } else {
-                        String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "island.range.");
+                        String[] spl = perms.getPermission().split(Constants.PERMPREFIX + "island.range.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
                                 getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");

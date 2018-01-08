@@ -2,9 +2,9 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -40,7 +40,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
             String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
             // Player. Check perms
             if (user.hasPermission(getPermission())) {
-                int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
+                int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
                 if (maxHomes > 1) {
                     params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
                     user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);

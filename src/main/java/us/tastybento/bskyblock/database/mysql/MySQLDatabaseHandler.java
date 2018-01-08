@@ -125,11 +125,11 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private void createSchema() throws IntrospectionException, SQLException {
         PreparedStatement pstmt = null;
         try {
-            String sql = "CREATE TABLE IF NOT EXISTS `" + type.getCanonicalName() + "` (";
+            String sql = "CREATE TABLE IF NOT EXISTS `" + dataObject.getCanonicalName() + "` (";
             // Run through the fields of the class using introspection
-            for (Field field : type.getDeclaredFields()) {
+            for (Field field : dataObject.getDeclaredFields()) {
                 // Get the description of the field
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
                 //plugin.getLogger().info("DEBUG: Field = " + field.getName() + "(" + propertyDescriptor.getPropertyType().getTypeName() + ")");
                 // Get default SQL mappings
                 // Get the write method for this field. This method will take an argument of the type of this field.
@@ -152,7 +152,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             propertyDescriptor.getPropertyType().equals(HashMap.class) ||
                             propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                         // The ID in this table relates to the parent table and is unique
-                        String setSql = "CREATE TABLE IF NOT EXISTS `" + type.getCanonicalName() + "." + field.getName() + "` ("
+                        String setSql = "CREATE TABLE IF NOT EXISTS `" + dataObject.getCanonicalName() + "." + field.getName() + "` ("
                                 + "uniqueId VARCHAR(36) NOT NULL, ";
                         // Get columns separated by commas
                         setSql += getCollectionColumnString(writeMethod,false,true);
@@ -207,7 +207,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         boolean first = true;
         /* Iterate the column-names */
-        for (Field f : type.getDeclaredFields()) {
+        for (Field f : dataObject.getDeclaredFields()) {
             if (first)
                 first = false;
             else
@@ -321,7 +321,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         sb.append(getColumns(false));
         sb.append(" FROM ");
         sb.append("`");
-        sb.append(type.getCanonicalName());
+        sb.append(dataObject.getCanonicalName());
         sb.append("`");
 
         return sb.toString();
@@ -339,7 +339,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         sb.append("REPLACE INTO ");
         sb.append("`");
         // The table name is the canonical name, so that add-ons can be sure of a unique table in the database
-        sb.append(type.getCanonicalName());
+        sb.append(dataObject.getCanonicalName());
         sb.append("`");
         sb.append("(");
         sb.append(getColumns(false));
@@ -388,7 +388,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // insertQuery is created in super from the createInsertQuery() method
             preparedStatement = connection.prepareStatement(insertQuery);
             // Get the uniqueId. As each class extends DataObject, it must have this method in it.
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", type);
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
             Method getUniqueId = propertyDescriptor.getReadMethod();
             final String uniqueId = (String) getUniqueId.invoke(instance);
             if (DEBUG) {
@@ -402,9 +402,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: insert Query " + insertQuery);
             // Run through the fields in the class using introspection
-            for (Field field : type.getDeclaredFields()) {
+            for (Field field : dataObject.getDeclaredFields()) {
                 // Get the field's property descriptor
-                propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
                 // Get the read method for this field
                 Method method = propertyDescriptor.getReadMethod();
                 if (DEBUG)
@@ -421,14 +421,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                     // Collection
                     // The table is cleared for this uniqueId every time the data is stored
-                    String clearTableSql = "DELETE FROM  `" + type.getCanonicalName() + "." + field.getName() + "` WHERE uniqueId = ?";
+                    String clearTableSql = "DELETE FROM  `" + dataObject.getCanonicalName() + "." + field.getName() + "` WHERE uniqueId = ?";
                     PreparedStatement collStatement = connection.prepareStatement(clearTableSql);
                     collStatement.setString(1, uniqueId);
                     collStatement.execute();
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: collStatement " + collStatement.toString());
                     // Insert into the table
-                    String setSql = "INSERT INTO `" + type.getCanonicalName() + "." + field.getName() + "` (uniqueId, ";
+                    String setSql = "INSERT INTO `" + dataObject.getCanonicalName() + "." + field.getName() + "` (uniqueId, ";
                     // Get the columns we are going to insert, just the names of them
                     setSql += getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false) + ") ";
                     // Get all the ?'s for the columns
@@ -602,7 +602,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.getLogger().info("DEBUG: loading object for " + uniqueId);
         try {
             connection = databaseConnecter.createConnection();
-            String query = "SELECT " + getColumns(false) + " FROM `" + type.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
+            String query = "SELECT " + getColumns(false) + " FROM `" + dataObject.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
             PreparedStatement preparedStatement = connection.prepareStatement(query);
             preparedStatement.setString(1, uniqueId);
             if (DEBUG)
@@ -653,18 +653,18 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Run through them one by one
         while (resultSet.next()) {
             // Create a new instance of this type
-            T instance = type.newInstance();
+            T instance = dataObject.newInstance();
             // Get the unique ID from the results
             String uniqueId = resultSet.getString("uniqueId");
             if (uniqueId == null) {
                 throw new SQLException("No unique ID in the results!");
             }
             // Use introspection to run through all the fields in this type class
-            for (Field field : type.getDeclaredFields()) {
+            for (Field field : dataObject.getDeclaredFields()) {
                 /* We assume the table-column-names exactly match the variable-names of T */
                 Object value = resultSet.getObject(field.getName());
                 // Get the property descriptor of this type
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
                 // Get the write method for this field, because we are going to use it to write the value
                 // once we get the value from the database
                 Method method = propertyDescriptor.getWriteMethod();
@@ -677,7 +677,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     String setSql = "SELECT ";
                     // Get the columns, just the names of them, no ?'s or types
                     setSql += getCollectionColumnString(method, false, false) + " ";
-                    setSql += "FROM `" + type.getCanonicalName() + "." + field.getName() + "` ";
+                    setSql += "FROM `" + dataObject.getCanonicalName() + "." + field.getName() + "` ";
                     // We will need to fill in the ? later with the unique id of the class from the database
                     setSql += "WHERE uniqueId = ?";
                     // Prepare the statement
@@ -832,7 +832,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Try to connect to the database
             connection = databaseConnecter.createConnection();
             // Get the uniqueId. As each class extends DataObject, it must have this method in it.
-            Method getUniqueId = type.getMethod("getUniqueId");
+            Method getUniqueId = dataObject.getMethod("getUniqueId");
             String uniqueId = (String) getUniqueId.invoke(instance);
             //plugin.getLogger().info("DEBUG: Unique Id = " + uniqueId);
             if (uniqueId.isEmpty()) {
@@ -841,7 +841,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Delete from the main table
             // First substitution is the table name
             // deleteQuery is created in super from the createInsertQuery() method
-            preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + type.getCanonicalName() + "`"));
+            preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "`"));
             // Second is the unique ID
             preparedStatement.setString(1, uniqueId);
             preparedStatement.addBatch();
@@ -850,16 +850,16 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             preparedStatement.executeBatch();
             // Delete from any sub tables created from the object
             // Run through the fields in the class using introspection
-            for (Field field : type.getDeclaredFields()) {
+            for (Field field : dataObject.getDeclaredFields()) {
                 // Get the field's property descriptor
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), type);
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
                 // Delete Collection tables
                 if (propertyDescriptor.getPropertyType().equals(Set.class) ||
                         propertyDescriptor.getPropertyType().equals(Map.class) ||
                         propertyDescriptor.getPropertyType().equals(HashMap.class) ||
                         propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                     // First substitution is the table name
-                    preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + type.getCanonicalName() + "." + field.getName() + "`"));
+                    preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"));
                     // Second is the unique ID
                     preparedStatement.setString(1, uniqueId);
                     preparedStatement.addBatch();
@@ -886,7 +886,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Connection connection = null;
         PreparedStatement preparedStatement = null;
         ResultSet resultSet = null;
-        String query = "SELECT  IF ( EXISTS( SELECT * FROM `" + type.getCanonicalName() + "` WHERE `uniqueId` = ?), 1, 0)";
+        String query = "SELECT  IF ( EXISTS( SELECT * FROM `" + dataObject.getCanonicalName() + "` WHERE `uniqueId` = ?), 1, 0)";
         //String query = "SELECT * FROM `" + type.getCanonicalName() + "` WHERE uniqueId = ?";
         try {
             connection = databaseConnecter.createConnection();
@@ -908,6 +908,20 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             MySQLDatabaseResourceCloser.close(connection);
         }
         return false;
+    }
+
+    @Override
+    public void saveSettings(T instance)
+            throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+        plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
+        
+    }
+
+    @Override
+    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException,
+            IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+        plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
+        return null;
     }
 
 }

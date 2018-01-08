@@ -6,11 +6,11 @@ package us.tastybento.bskyblock.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.commands.IslandCommand;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.managers.island.NewIsland;
 
 /**
@@ -26,7 +26,7 @@ public class IslandCreateCommand extends CompositeCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.create");
+        this.setPermission(Constants.PERMPREFIX + "island.create");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.create.description");
     }
@@ -55,7 +55,7 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     protected void createIsland(User user) {
         try {
-            NewIsland.builder()
+            NewIsland.builder(getPlugin())
             .player(user.getPlayer())
             .reason(Reason.CREATE)
             .build();

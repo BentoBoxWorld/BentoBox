@@ -1,12 +1,13 @@
 package us.tastybento.bskyblock.managers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.PanelItem;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public final class FlagsManager {
 

@@ -7,11 +7,11 @@ import java.util.UUID;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.config.Settings;
 
 public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
@@ -23,7 +23,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setPermission(Constants.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.team.description");
 
@@ -50,15 +50,15 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
         UUID teamLeaderUUID = getTeamLeader(user);
         Set<UUID> teamMembers = getMembers(user);
         if (teamLeaderUUID.equals(playerUUID)) {
-            int maxSize = Settings.maxTeamSize;
+            int maxSize = getSettings().getMaxTeamSize();
             for (PermissionAttachmentInfo perms : user.getEffectivePermissions()) {
-                if (perms.getPermission().startsWith(Settings.PERMPREFIX + "team.maxsize.")) {
-                    if (perms.getPermission().contains(Settings.PERMPREFIX + "team.maxsize.*")) {
-                        maxSize = Settings.maxTeamSize;
+                if (perms.getPermission().startsWith(Constants.PERMPREFIX + "team.maxsize.")) {
+                    if (perms.getPermission().contains(Constants.PERMPREFIX + "team.maxsize.*")) {
+                        maxSize = getSettings().getMaxTeamSize();
                         break;
                     } else {
                         // Get the max value should there be more than one
-                        String[] spl = perms.getPermission().split(Settings.PERMPREFIX + "team.maxsize.");
+                        String[] spl = perms.getPermission().split(Constants.PERMPREFIX + "team.maxsize.");
                         if (spl.length > 1) {
                             if (!NumberUtils.isDigits(spl[1])) {
                                 getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");

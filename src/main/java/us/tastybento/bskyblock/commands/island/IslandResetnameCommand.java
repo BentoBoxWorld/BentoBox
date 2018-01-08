@@ -6,9 +6,9 @@ package us.tastybento.bskyblock.commands.island;
 import java.util.List;
 import java.util.UUID;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
 
 /**
  * @author tastybento
@@ -22,7 +22,7 @@ public class IslandResetnameCommand extends CompositeCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.name");
+        this.setPermission(Constants.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.resetname.description");
 

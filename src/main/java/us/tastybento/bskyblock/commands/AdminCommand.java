@@ -2,23 +2,25 @@ package us.tastybento.bskyblock.commands;
 
 import java.util.List;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.commands.admin.AdminReloadCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
-import us.tastybento.bskyblock.config.Settings;
 
 public class AdminCommand extends CompositeCommand {
 
     public AdminCommand() {
-        super(Settings.ADMINCOMMAND, "bsb");
+        super(Constants.ADMINCOMMAND, "bsb");
     }
 
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "admin.*");
+        this.setPermission(Constants.PERMPREFIX + "admin.*");
         this.setOnlyPlayer(false);
         this.setDescription("admin.help.description");
         new AdminVersionCommand(this);
+        new AdminReloadCommand(this);
     }
 
     @Override

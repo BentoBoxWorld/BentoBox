@@ -1,14 +1,13 @@
 package us.tastybento.bskyblock.api.addons;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -25,6 +24,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 public abstract class Addon implements AddonInterface {
 
     private static final String ADDON_CONFIG_FILENAME = "config.yml";
+    private static final boolean DEBUG = false;
     private boolean enabled;
     private AddonDescription description;
     private FileConfiguration config;
@@ -146,53 +146,44 @@ public abstract class Addon implements AddonInterface {
 
     /**
      * Saves a resource contained in this add-on's jar file to the destination folder.
-     * @param resourcePath in jar file
+     * @param jarResource in jar file
      * @param destinationFolder on file system
      * @param replace - if true, will overwrite previous file
-     * @param prefix - if true, filename will be prefixed with the name of this addon
+     * @param noPath - if true, the resource's path will be ignored when saving
      */
-    public void saveResource(String resourcePath, File destinationFolder, boolean replace, boolean prefix) {
-        if (resourcePath == null || resourcePath.equals("")) {
+    public void saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
+        if (jarResource == null || jarResource.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 
-        resourcePath = resourcePath.replace('\\', '/');
+        jarResource = jarResource.replace('\\', '/');
         InputStream in = null; 
         try {
             JarFile jar = new JarFile(file);
-            JarEntry config = jar.getJarEntry(resourcePath);
+            JarEntry config = jar.getJarEntry(jarResource);
             if (config != null) {
                 in = jar.getInputStream(config);
             }
             if (in == null) {
                 jar.close();
-                throw new IllegalArgumentException("The embedded resource '" + resourcePath + "' cannot be found in " + jar.getName());
+                throw new IllegalArgumentException("The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
             }
-            File outFile = new File(destinationFolder, resourcePath);
-            //Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
-            //Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
-            if (prefix) {
-                // Rename with addon prefix
-                outFile = new File(outFile.getParent(), getDescription().getName() + "-" + outFile.getName());
+            
+            // There are two options, use the path of the resource or not
+            File outFile = new File(destinationFolder, jarResource);
+            if (noPath) {
+                outFile = new File(destinationFolder, outFile.getName());
             }
-            int lastIndex = resourcePath.lastIndexOf('/');
-            File outDir = new File(destinationFolder, resourcePath.substring(0, lastIndex >= 0 ? lastIndex : 0));
-            //Bukkit.getLogger().info("DEBUG: outDir = " + outDir.getAbsolutePath());
-            if (!outDir.exists()) {
-                outDir.mkdirs();
+            // Make any dirs that need to be made
+            outFile.getParentFile().mkdirs();
+            if (DEBUG) {
+                Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
+                Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
             }
-
-
             if (!outFile.exists() || replace) {
-                OutputStream out = new FileOutputStream(outFile);
-                byte[] buf = new byte[1024];
-                int len;
-                while ((len = in.read(buf)) > 0) {
-                    out.write(buf, 0, len);
-                }
-                out.close();
-                in.close();
+                java.nio.file.Files.copy(in, outFile.toPath());
             }
+            in.close();
             jar.close();
         } catch (IOException ex) {
             ex.printStackTrace();

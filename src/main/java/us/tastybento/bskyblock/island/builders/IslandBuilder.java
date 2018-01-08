@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.island.builders;
 
+import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -16,11 +17,11 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
-import us.tastybento.bskyblock.config.Settings.GameType;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 
 /**
  * Fired when a team event happens.
@@ -40,13 +41,15 @@ public class IslandBuilder {
     private World world;
     private IslandType type = IslandType.ISLAND;
     //private List<String> companionNames = new ArrayList<>();
-    private ItemStack[] chestItems;
+    private List<ItemStack> chestItems;
     //private List<Entity> companions = new ArrayList<>();
     private UUID playerUUID;
     private String playerName;
+    private BSkyBlock plugin;
 
-    public IslandBuilder(Island island) {
+    public IslandBuilder(BSkyBlock plugin, Island island) {
         super();
+        this.plugin = plugin;
         this.island = island;
         this.world = island.getWorld();
     }
@@ -59,13 +62,13 @@ public class IslandBuilder {
         this.type = type;
         switch(type) {
         case END:
-            this.world = IslandWorld.getEndWorld();
+            this.world = plugin.getIslandWorldManager().getEndWorld();
             break;
         case ISLAND:
-            this.world = IslandWorld.getIslandWorld();
+            this.world = plugin.getIslandWorldManager().getIslandWorld();
             break;
         case NETHER:
-            this.world = IslandWorld.getNetherWorld();
+            this.world = plugin.getIslandWorldManager().getNetherWorld();
             break;
         default:
             this.world = island.getWorld();
@@ -87,10 +90,10 @@ public class IslandBuilder {
 
 
     /**
-     * @param chestItems the default chestItems to set
+     * @param list the default chestItems to set
      */
-    public IslandBuilder setChestItems(ItemStack[] chestItems) {
-        this.chestItems = chestItems;
+    public IslandBuilder setChestItems(List<ItemStack> list) {
+        this.chestItems = list;
         return this;
     }
 
@@ -98,7 +101,7 @@ public class IslandBuilder {
     public void build() {
         // Switch on island type
         if (type == IslandType.ISLAND) {
-            if (Settings.GAMETYPE == GameType.ACIDISLAND) {
+            if (Constants.GAMETYPE == GameType.ACIDISLAND) {
                 generateAcidIslandBlocks();
             } else {
                 generateIslandBlocks();
@@ -494,7 +497,7 @@ public class IslandBuilder {
         Chest chest = new Chest(BlockFace.SOUTH);
         state.setData(chest);
         state.update();
-        if (chestItems.length > 0) {
+        if (!chestItems.isEmpty()) {
             InventoryHolder chestBlock = (InventoryHolder) state;
             for (ItemStack item: chestItems) {
                 chestBlock.getInventory().addItem(item);

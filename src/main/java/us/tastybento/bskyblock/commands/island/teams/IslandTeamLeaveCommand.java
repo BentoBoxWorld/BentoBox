@@ -2,8 +2,8 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.List;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
 
 public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
@@ -13,7 +13,7 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.team");
+        this.setPermission(Constants.PERMPREFIX + "island.team");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.team.leave.description");
 

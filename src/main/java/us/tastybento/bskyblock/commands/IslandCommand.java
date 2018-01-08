@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.commands;
 
 import java.util.List;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
@@ -12,12 +13,11 @@ import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
 import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
 import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
-import us.tastybento.bskyblock.config.Settings;
 
 public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
-        super(Settings.ISLANDCOMMAND, "is");
+        super(Constants.ISLANDCOMMAND, "is");
     }
 
     /* (non-Javadoc)
@@ -28,7 +28,7 @@ public class IslandCommand extends CompositeCommand {
         this.setDescription("commands.island.help.description");
         this.setOnlyPlayer(true);
         // Permission
-        this.setPermission(Settings.PERMPREFIX + "island");
+        this.setPermission(Constants.PERMPREFIX + "island");
         // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);

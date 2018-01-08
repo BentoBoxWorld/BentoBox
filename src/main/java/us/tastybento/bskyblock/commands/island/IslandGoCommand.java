@@ -8,10 +8,10 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -26,7 +26,7 @@ public class IslandGoCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.home");
+        this.setPermission(Constants.PERMPREFIX + "island.home");
         this.setOnlyPlayer(true);
         this.setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
@@ -43,7 +43,7 @@ public class IslandGoCommand extends CompositeCommand {
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.valueOf(args.get(0));
-            int maxHomes = Util.getPermValue(user.getPlayer(), Settings.PERMPREFIX + "island.maxhomes", Settings.maxHomes);
+            int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
             if (homeValue > 1  && homeValue <= maxHomes) {
                 getIslands().homeTeleport(user.getPlayer(), homeValue);
                 return true;

@@ -1,9 +1,10 @@
 package us.tastybento.bskyblock.api.flags;
 
-import org.bukkit.event.Listener;
-import us.tastybento.bskyblock.api.panels.PanelItem;
-
 import java.util.Optional;
+
+import org.bukkit.event.Listener;
+
+import us.tastybento.bskyblock.api.panels.PanelItem;
 
 public class Flag {
 

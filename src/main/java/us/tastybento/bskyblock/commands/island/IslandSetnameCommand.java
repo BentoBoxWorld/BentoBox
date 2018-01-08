@@ -10,9 +10,9 @@ import java.util.stream.Collectors;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
+import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.config.Settings;
 
 /**
  * @author tastybento
@@ -26,7 +26,7 @@ public class IslandSetnameCommand extends CompositeCommand {
     
     @Override
     public void setup() {
-        this.setPermission(Settings.PERMPREFIX + "island.name");
+        this.setPermission(Constants.PERMPREFIX + "island.name");
         this.setOnlyPlayer(true);
         this.setParameters("commands.island.setname.parameters");
         this.setDescription("commands.island.setname.description");
@@ -59,17 +59,17 @@ public class IslandSetnameCommand extends CompositeCommand {
         String name = args.stream().collect(Collectors.joining( " " ));
 
         // Check if the name isn't too short or too long
-        if (name.length() < Settings.nameMinLength) {
-            user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(Settings.nameMinLength));
+        if (name.length() < getSettings().getNameMinLength()) {
+            user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(getSettings().getNameMinLength()));
             return true;
         }
-        if (name.length() > Settings.nameMaxLength) {
-            user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(Settings.nameMaxLength));
+        if (name.length() > getSettings().getNameMaxLength()) {
+            user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(getSettings().getNameMaxLength()));
             return true;
         }
 
         // Set the name
-        if (!player.hasPermission(Settings.PERMPREFIX + "island.name.format"))
+        if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format"))
             getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
         else getIslands().getIsland(playerUUID).setName(name);
 

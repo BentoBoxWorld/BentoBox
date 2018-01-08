@@ -13,13 +13,13 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -30,11 +30,10 @@ import us.tastybento.bskyblock.util.Util;
  * @author Tastybento
  * @author Poslovitch
  */
-public class Island extends DataObject {
+public class Island implements DataObject {
 
     private String uniqueId = "";
 
-    @Override
     public String getUniqueId() {
         // Island's have UUID's that are randomly assigned if they do not exist
         if (uniqueId.isEmpty()) {
@@ -43,7 +42,6 @@ public class Island extends DataObject {
         return uniqueId;
     }
 
-    @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
@@ -53,7 +51,7 @@ public class Island extends DataObject {
     private Location center;
 
     // Island range
-    private int range = Settings.islandDistance;
+    private int range;
 
     // Coordinates of the island area
     private int minX;
@@ -104,7 +102,7 @@ public class Island extends DataObject {
     private Location spawnPoint;
 
     public Island() {}
-
+    
     public Island(Location location, UUID owner, int protectionRange) {
         this.members.add(owner);
         this.owner = owner;
@@ -112,7 +110,7 @@ public class Island extends DataObject {
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
         this.center = location;
-        this.range = Settings.islandDistance;
+        this.range = BSkyBlock.getInstance().getSettings().getIslandProtectionRange();
         this.minX = center.getBlockX() - range;
         this.minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;

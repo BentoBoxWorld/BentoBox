@@ -10,9 +10,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.island.builders.IslandBuilder;
 import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
 
@@ -23,13 +21,14 @@ import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
  */
 public class NewIsland {
     private static final boolean DEBUG = false;
-    private final BSkyBlock plugin = BSkyBlock.getInstance();
+    private BSkyBlock plugin;
     private Island island;
     private final Player player;
     private final Reason reason;
 
     private NewIsland(Island oldIsland, Player player, Reason reason) {
         super();
+        this.plugin = BSkyBlock.getInstance();
         this.player = player;
         this.reason = reason;
         newIsland();
@@ -48,9 +47,10 @@ public class NewIsland {
 
     /**
      * Start building a new island
+     * @param plugin 
      * @return New island builder object
      */
-    public static Builder builder() {
+    public static Builder builder(BSkyBlock plugin) {
         return new Builder();
     }
 
@@ -132,22 +132,22 @@ public class NewIsland {
         plugin.getServer().getPluginManager().callEvent(event);
         if (!event.isCancelled()) {
             // Create island
-            new IslandBuilder(island)
+            new IslandBuilder(plugin, island)
             .setPlayer(player)
-            .setChestItems(Settings.chestItems)
+            .setChestItems(plugin.getSettings().getChestItems())
             .setType(IslandType.ISLAND)
             .build();
-            if (Settings.netherGenerate && Settings.netherIslands && IslandWorld.getNetherWorld() != null) {
-                new IslandBuilder(island)
+            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIslandWorldManager().getNetherWorld() != null) {
+                new IslandBuilder(plugin,island)
                 .setPlayer(player)
-                .setChestItems(Settings.chestItems)
+                .setChestItems(plugin.getSettings().getChestItems())
                 .setType(IslandType.NETHER)
                 .build();
             }
-            if (Settings.endGenerate && Settings.endIslands && IslandWorld.getEndWorld() != null) {
-                new IslandBuilder(island)
+            if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIslandWorldManager().getEndWorld() != null) {
+                new IslandBuilder(plugin,island)
                 .setPlayer(player)
-                .setChestItems(Settings.chestItems)
+                .setChestItems(plugin.getSettings().getChestItems())
                 .setType(IslandType.END)
                 .build();
             }            
@@ -188,7 +188,8 @@ public class NewIsland {
         // Find the next free spot
 
         if (last == null) {
-            last = new Location(IslandWorld.getIslandWorld(), Settings.islandXOffset + Settings.islandStartX, Settings.islandHeight, Settings.islandZOffset + Settings.islandStartZ);
+            last = new Location(plugin.getIslandWorldManager().getIslandWorld(), plugin.getSettings().getIslandXOffset() + plugin.getSettings().getIslandStartX(),
+                    plugin.getSettings().getIslandHeight(), plugin.getSettings().getIslandZOffset() + plugin.getSettings().getIslandStartZ());
         }
         Location next = last.clone();
         if (DEBUG)
@@ -218,25 +219,25 @@ public class NewIsland {
         Location nextPos = lastIsland;
         if (x < z) {
             if (-1 * x < z) {
-                nextPos.setX(nextPos.getX() + Settings.islandDistance*2);
+                nextPos.setX(nextPos.getX() + plugin.getSettings().getIslandDistance()*2);
                 return nextPos;
             }
-            nextPos.setZ(nextPos.getZ() + Settings.islandDistance*2);
+            nextPos.setZ(nextPos.getZ() + plugin.getSettings().getIslandDistance()*2);
             return nextPos;
         }
         if (x > z) {
             if (-1 * x >= z) {
-                nextPos.setX(nextPos.getX() - Settings.islandDistance*2);
+                nextPos.setX(nextPos.getX() - plugin.getSettings().getIslandDistance()*2);
                 return nextPos;
             }
-            nextPos.setZ(nextPos.getZ() - Settings.islandDistance*2);
+            nextPos.setZ(nextPos.getZ() - plugin.getSettings().getIslandDistance()*2);
             return nextPos;
         }
         if (x <= 0) {
-            nextPos.setZ(nextPos.getZ() + Settings.islandDistance*2);
+            nextPos.setZ(nextPos.getZ() + plugin.getSettings().getIslandDistance()*2);
             return nextPos;
         }
-        nextPos.setZ(nextPos.getZ() - Settings.islandDistance*2);
+        nextPos.setZ(nextPos.getZ() - plugin.getSettings().getIslandDistance()*2);
         return nextPos;
     }
 }

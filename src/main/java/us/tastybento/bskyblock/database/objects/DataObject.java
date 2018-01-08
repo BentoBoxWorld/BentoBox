@@ -1,20 +1,26 @@
 package us.tastybento.bskyblock.database.objects;
 
+import us.tastybento.bskyblock.BSkyBlock;
+
 /**
  * Contains fields that must be in any data object
  * @author tastybento
  *
  */
-public abstract class DataObject {
+public interface DataObject {
+        
+    default BSkyBlock getPlugin() {
+        return BSkyBlock.getInstance();
+    }
 	
     /**
      * @return the uniqueId
      */
-    public abstract String getUniqueId();
+    String getUniqueId();
 
     /**
      * @param uniqueId the uniqueId to set
      */
-    public abstract void setUniqueId(String uniqueId);
+    void setUniqueId(String uniqueId);
     
 }

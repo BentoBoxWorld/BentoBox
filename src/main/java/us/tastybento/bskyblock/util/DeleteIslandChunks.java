@@ -6,9 +6,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
-import us.tastybento.bskyblock.config.Settings;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 
 //import com.wasteofplastic.askyblock.nms.NMSAbstraction;
 
@@ -42,12 +40,12 @@ public class DeleteIslandChunks {
         for (int x = minXChunk; x <= maxXChunk; x++) {
             for (int z = minZChunk; z<=maxZChunk; z++) {
                 world.regenerateChunk(x, z);
-                if (Settings.netherIslands && Settings.netherGenerate) {
-                    IslandWorld.getNetherWorld().regenerateChunk(x, z);
+                if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
+                    plugin.getIslandWorldManager().getNetherWorld().regenerateChunk(x, z);
 
                 }
-                if (Settings.endIslands && Settings.endGenerate) {
-                    IslandWorld.getEndWorld().regenerateChunk(x, z);
+                if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
+                    plugin.getIslandWorldManager().getEndWorld().regenerateChunk(x, z);
                 }
             }
         }

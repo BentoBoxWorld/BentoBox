@@ -44,7 +44,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
         }
-        File yamlFile = new File(dataFolder, tableName + File.separator + fileName);
+        File yamlFile = new File(plugin.getDataFolder(), tableName + File.separator + fileName);
 
         YamlConfiguration config = null;
         if (yamlFile.exists()) {
@@ -77,21 +77,21 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
     /**
      * Saves a YAML file
      * 
-     * @param yamlFile
+     * @param yamlConfig
      * @param fileName
      */
     @Override
-    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName) {
+    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName) {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
         }
-        File tableFolder = new File(dataFolder, tableName);
+        File tableFolder = new File(plugin.getDataFolder(), tableName);
         File file = new File(tableFolder, fileName);
         if (!tableFolder.exists()) {
             tableFolder.mkdirs();
         }
         try {
-            yamlFile.save(file);
+            yamlConfig.save(file);
         } catch (Exception e) {
             e.printStackTrace();
         }
