@@ -648,10 +648,58 @@ public class IslandsManager {
         return spawn.onIsland(playerLoc);
     }
 
+    /**
+     * Checks if there is an island or blocks at this location
+     * @param location
+     * @return
+     */
     public boolean isIsland(Location location){
-        return islandCache.get(location) != null;
+        if (location == null)
+            return true;
+        location = getClosestIsland(location);
+        if (islandCache.contains(location))
+            return true;
+        
+        if (!plugin.getSettings().isUseOwnGenerator()) {
+            // Block check
+            if (!location.getBlock().isEmpty() && !location.getBlock().isLiquid()) {
+                plugin.getLogger().info("Found solid block at island height - adding");
+                createIsland(location);
+                return true;
+            }
+            // Look around
+
+            for (int x = -5; x <= 5; x++) {
+                for (int y = 10; y <= 255; y++) {
+                    for (int z = -5; z <= 5; z++) {
+                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty() 
+                                && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isLiquid()) {
+                            plugin.getLogger().info("Solid block found during long search - adding ");
+                            createIsland(location);
+                            return true;
+                        }
+                    }
+                }
+            }
+        }
+        return false;
     }
 
+    /**
+     * This returns the coordinate of where an island should be on the grid.
+     * 
+     * @param location location to query
+     * @return Location of closest island
+     */
+    public Location getClosestIsland(Location location) {
+        long x = Math.round((double) location.getBlockX() / plugin.getSettings().getIslandDistance()) 
+                * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandXOffset();
+        long z = Math.round((double) location.getBlockZ() / plugin.getSettings().getIslandDistance()) 
+                * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandZOffset();
+        long y = plugin.getSettings().getIslandHeight();
+        return new Location(location.getWorld(), x, y, z);
+    }
+    
     /**
      * @param uniqueId
      * @return true if the player is the owner of their island, i.e., owner or team leader
