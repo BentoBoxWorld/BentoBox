@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.listeners;
 
 import java.util.UUID;
 
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -31,15 +30,14 @@ public class JoinLeaveListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerJoin(final PlayerJoinEvent event) {
-        Player player = event.getPlayer();
-        if (player == null) {
+        if (event.getPlayer() == null) {
             return;
         }
-        UUID playerUUID = player.getUniqueId();
-        if (playerUUID == null) {
+        User user = User.getInstance(event.getPlayer());
+        if (user.getUniqueId() == null) {
             return;
         }
-        User user = User.getInstance(player);
+        UUID playerUUID = user.getUniqueId();
         if (plugin.getPlayers().isKnown(playerUUID)) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: known player");
@@ -52,10 +50,10 @@ public class JoinLeaveListener implements Listener {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: Setting player's name");
             // Set the player's name (it may have changed), but only if it isn't empty
-            if (!player.getName().isEmpty()) {
+            if (!user.getName().isEmpty()) {
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Player name is " + player.getName());
-                players.setPlayerName(playerUUID, player.getName());
+                    plugin.getLogger().info("DEBUG: Player name is " + user.getName());
+                players.setPlayerName(user);
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Saving player");
                 players.save(playerUUID);
@@ -65,19 +63,19 @@ public class JoinLeaveListener implements Listener {
             if (plugin.getSettings().isRemoveMobsOnLogin()) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Removing mobs");
-                plugin.getIslands().removeMobs(player.getLocation());
+                plugin.getIslands().removeMobs(user.getLocation());
             }
 
             // Check if they logged in to a locked island and expel them or if they are banned
-            Island currentIsland = plugin.getIslands().getIslandAt(player.getLocation());
-            if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),player.getUniqueId()))) {
+            Island currentIsland = plugin.getIslands().getIslandAt(user.getLocation());
+            if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),user.getUniqueId()))) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Current island is locked, or player is banned");
-                if (!currentIsland.getMembers().contains(playerUUID) && !player.hasPermission(Constants.PERMPREFIX + "mod.bypassprotect")) {
+                if (!currentIsland.getMembers().contains(playerUUID) && !user.hasPermission(Constants.PERMPREFIX + "mod.bypassprotect")) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: No bypass - teleporting");
                     user.sendMessage("locked.islandlocked");
-                    plugin.getIslands().homeTeleport(player);
+                    plugin.getIslands().homeTeleport(user.getPlayer());
                 }
             }
         } else {

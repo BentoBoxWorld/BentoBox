@@ -16,6 +16,7 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
@@ -29,6 +30,7 @@ public class PlayersManager{
 
     private HashMap<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
+    private HashMap<String, UUID> nameCache;
 
     /**
      * Provides a memory cache of online player information
@@ -46,6 +48,7 @@ public class PlayersManager{
         playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }
+
 
     /**
      * Load all players - not normally used as to load all players into memory will be wasteful
@@ -317,27 +320,19 @@ public class PlayersManager{
     }
 
     /**
-     * Attempts to return a UUID for a given player's name. Only uses online or cached information.
+     * Attempts to return a UUID for a given player's name.
      * @param string
-     * @return UUID of player or null if unknown
-     */
-    public UUID getUUID(String string) {
-        return getUUID(string, false);
-    }
-
-    /**
-     * Attempts to return a UUID for a given player's name
-     * @param string
-     * @param adminCheck - if made via an admin call, this will go out to the 'net and grab - may cause lag
      * @return UUID of player or null if unknown
      */
     @SuppressWarnings("deprecation")
-    public UUID getUUID(String string, boolean adminCheck) {
-        // Look in the database if it ready
-        // TODO: finish this!
+    public UUID getUUID(String string) {
+        // See if this is a UUID
+        try {
+            UUID uuid = UUID.fromString(string);
+            return uuid;
+        } catch (Exception e) {}
+        // Look in the name cache
         return Bukkit.getOfflinePlayer(string).getUniqueId();
-
-        //return database.getUUID(string, adminCheck);
     }
 
     /**
@@ -345,12 +340,11 @@ public class PlayersManager{
      * @param uniqueId
      * @param name
      */
-    public void setPlayerName(UUID uniqueId, String name) {
+    public void setPlayerName(User user) {
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: Setting player name to " + name + " for " + uniqueId);
-        addPlayer(uniqueId);
-        playerCache.get(uniqueId).setPlayerName(name);
-        //database.savePlayerName(name, uniqueId);
+            plugin.getLogger().info("DEBUG: Setting player name to " + user.getName() + " for " + user.getUniqueId());
+        addPlayer(user.getUniqueId());
+        playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
     }
 
     /**
@@ -600,7 +594,7 @@ public class PlayersManager{
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: saving player by uuid " + player.getPlayerName() + " " + playerUUID + " saved");
                 handler.saveObject(player);
-                
+
             } catch (IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | SecurityException
                     | InstantiationException | NoSuchMethodException
@@ -611,6 +605,12 @@ public class PlayersManager{
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: " + playerUUID + " is not in the cache to save");
         }
+    }
+
+    public boolean isKnown(String string) {
+        UUID uuid = this.getUUID(string);
+        if (uuid == null) return false;
+        return false;
     }
 
 
