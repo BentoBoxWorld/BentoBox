@@ -14,6 +14,7 @@ general:
   unlimited: "Unlimited"
   success: "&aSuccess!"
   errors:
+    command-cancelled: "&cCommand cancelled"
     no-permission: "&cYou don't have permission to execute this command."
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
@@ -21,6 +22,7 @@ general:
     already-have-island: "&cYou already have an island!"
     no-safe-location: "&cNo safe location found on island!"
     not-leader: "&cYou are not the leader of your island!"
+    not-in-team: "&cThat player is not in your team!"
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&cUnknown player!"
     general: "&cThat command is not ready yet - contact admin"
@@ -98,9 +100,13 @@ commands:
           description: "cancel the pending invite to join your island"
       leave:
         description: "leave your island"
+        type-again: "&cEnter the leave command again to confirm"
+        left-your-island: "&c[player] left your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
+        type-again: "&cEnter the kick command again to confirm"
+        leader-kicked: "&cThe leader kicked you from the island!"
       promote:
         description: "promote a player on your island to another rank"
         parameters: "<player>"

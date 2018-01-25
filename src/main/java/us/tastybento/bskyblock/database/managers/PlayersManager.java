@@ -236,7 +236,7 @@ public class PlayersManager{
      * @param playerUUID
      * @return true if player in a team
      */
-    public boolean inTeam(final UUID playerUUID) {
+    public boolean inTeam(UUID playerUUID) {
         addPlayer(playerUUID);
         return plugin.getIslands().getMembers(playerUUID).size() > 1;
     }

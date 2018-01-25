@@ -39,7 +39,12 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
             return true;
         }
-        getPlugin().getLogger().info("DEBUG: arg[0] = " + args.get(0));
+        // If args are not right, show help
+        if (args.size() != 1) {
+            this.getSubCommand("help").get().execute(user, new ArrayList<>());
+            return true;
+        }
+        //getPlugin().getLogger().info("DEBUG: arg[0] = " + args.get(0));
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player");
