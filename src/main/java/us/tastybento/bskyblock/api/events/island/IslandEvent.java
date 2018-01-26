@@ -2,8 +2,10 @@ package us.tastybento.bskyblock.api.events.island;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -149,29 +151,51 @@ public class IslandEvent {
         public IslandBaseEvent build() {
             switch (reason) {
             case CREATE:
-                return new IslandCreateEvent(island, player, admin, location);
+                IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(create);
+                return create;
             case CREATED:
-                return new IslandCreatedEvent(island, player, admin, location);
+                IslandCreatedEvent created = new IslandCreatedEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(created);
+                return created;
             case DELETE:
-                return new IslandDeleteEvent(island, player, admin, location);
+                IslandDeleteEvent delete = new IslandDeleteEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(delete);
+                return delete;
             case DELETED:
-                return new IslandDeletedEvent(island, player, admin, location);
+                IslandDeletedEvent deleted = new IslandDeletedEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(deleted);
+                return deleted;
             case ENTER:
-                return new IslandEnterEvent(island, player, admin, location);
+                IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(enter);
+                return enter;
             case EXIT:
-                return new IslandExitEvent(island, player, admin, location);
+                IslandExitEvent exit = new IslandExitEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(exit);
+                return exit;
             case LOCK:
-                return new IslandLockEvent(island, player, admin, location);
+                IslandLockEvent lock = new IslandLockEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(lock);
+                return lock;
             case RESET:
-                return new IslandResetEvent(island, player, admin, location);
+                IslandResetEvent reset = new IslandResetEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(reset);
+                return reset;
             case RESETTED:
-                return new IslandResettedEvent(island, player, admin, location);
+                IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(resetted);
+                return resetted;
             case UNLOCK:
-                return new IslandUnlockEvent(island, player, admin, location);
+                IslandUnlockEvent unlock = new IslandUnlockEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(unlock);
+                return unlock;
             default:
-                return new IslandGeneralEvent(island, player, admin, location);
-
+                IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
+                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(general);
+                return general;
             }
+            
         }
     }
 }

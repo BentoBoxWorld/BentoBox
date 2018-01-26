@@ -444,16 +444,12 @@ public class Island implements DataObject {
         if(locked){
             // Lock the island
             IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.LOCK).build();
-            Bukkit.getServer().getPluginManager().callEvent(event);
-
             if(!event.isCancelled()){
                 this.locked = locked;
             }
         } else {
             // Unlock the island
             IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build(); 
-            Bukkit.getServer().getPluginManager().callEvent(event);
-
             if(!event.isCancelled()){
                 this.locked = locked;
             }

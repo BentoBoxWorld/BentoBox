@@ -5,15 +5,14 @@ import org.bukkit.event.HandlerList;
 
 public abstract class PremadeEvent extends Event {
 
-	public static final HandlerList handlers = new HandlerList();
+    private static final HandlerList handlers = new HandlerList();
 	
-	@Override
-	public HandlerList getHandlers() {
-		return handlers;
-	}
-	
-	public static HandlerList getHandleList(){
-		return handlers;
-	}
-	
+    @Override
+    public HandlerList getHandlers() {
+        return handlers;
+    }
+
+    public static HandlerList getHandlerList() {
+        return handlers;
+    }
 }

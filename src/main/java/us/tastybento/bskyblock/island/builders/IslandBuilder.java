@@ -481,8 +481,8 @@ public class IslandBuilder {
         if (this.playerUUID != null) {
             Sign sign = (Sign) blockToChange.getState();
             User user = User.getInstance(playerUUID);
-            for (int i = 1; i < 5; i++) {
-                sign.setLine(i, user.getTranslation("new-island.sign.line" + i, "[player]", playerName));
+            for (int i = 0; i < 4; i++) {
+                sign.setLine(i, user.getTranslation("new-island.sign.line" + (i+1), "[player]", playerName));
             }         
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();

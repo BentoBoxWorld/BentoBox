@@ -20,7 +20,7 @@ import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
  *
  */
 public class NewIsland {
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private BSkyBlock plugin;
     private Island island;
     private final Player player;
@@ -123,13 +123,16 @@ public class NewIsland {
         plugin.getPlayers().setHomeLocation(playerUUID, next, 1);
 
         // Fire event
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: firing event");
         IslandBaseEvent event = IslandEvent.builder()
                 .involvedPlayer(player.getUniqueId())
                 .reason(reason)
                 .island(island)
                 .location(island.getCenter())
                 .build();
-        plugin.getServer().getPluginManager().callEvent(event);
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: event cancelled status = " + event.isCancelled());
         if (!event.isCancelled()) {
             // Create island
             new IslandBuilder(plugin, island)
@@ -151,28 +154,27 @@ public class NewIsland {
                 .setType(IslandType.END)
                 .build();
             }            
+            // Teleport player to their island
+            plugin.getIslands().homeTeleport(player);
+            // Fire exit event
+            Reason reasonDone = Reason.CREATED;
+            switch (reason) {
+            case CREATE:
+                reasonDone = Reason.CREATED;
+                break;
+            case RESET:
+                reasonDone = Reason.RESETTED;
+                break;
+            default:
+                break;
+            }
+            event = IslandEvent.builder()
+                    .involvedPlayer(player.getUniqueId())
+                    .reason(reasonDone)
+                    .island(island)
+                    .location(island.getCenter())
+                    .build();
         }
-        // Teleport player to their island
-        plugin.getIslands().homeTeleport(player);
-        // Fire exit event
-        Reason reasonDone = Reason.CREATED;
-        switch (reason) {
-        case CREATE:
-            reasonDone = Reason.CREATED;
-            break;
-        case RESET:
-            reasonDone = Reason.RESETTED;
-            break;
-        default:
-            break;
-        }
-        event = IslandEvent.builder()
-                .involvedPlayer(player.getUniqueId())
-                .reason(reasonDone)
-                .island(island)
-                .location(island.getCenter())
-                .build();
-        plugin.getServer().getPluginManager().callEvent(event);
     }
 
     /**

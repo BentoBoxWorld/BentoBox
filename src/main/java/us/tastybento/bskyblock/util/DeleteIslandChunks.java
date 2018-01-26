@@ -27,7 +27,6 @@ public class DeleteIslandChunks {
         //plugin.getLogger().info("DEBUG: deleting the island");
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
-        plugin.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled())
             return;
         final World world = island.getCenter().getWorld();
@@ -50,8 +49,7 @@ public class DeleteIslandChunks {
             }
         }
         // Fire event
-        IslandBaseEvent event1 = IslandEvent.builder().island(island).reason(Reason.DELETED).build();
-        plugin.getServer().getPluginManager().callEvent(event1);
+        IslandEvent.builder().island(island).reason(Reason.DELETED).build();
 
     }
 
