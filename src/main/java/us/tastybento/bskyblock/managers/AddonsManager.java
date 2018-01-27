@@ -37,8 +37,6 @@ public final class AddonsManager {
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
     private BSkyBlock plugin;
 
-
-
     public AddonsManager(BSkyBlock plugin) {
         this.plugin = plugin;
         this.addons = new ArrayList<>();
@@ -47,7 +45,6 @@ public final class AddonsManager {
 
     /**
      * Loads all the addons from the addons folder
-     * @throws InvalidDescriptionException 
      */
     public void enableAddons() {
         File f = new File(plugin.getDataFolder(), "addons");
@@ -57,11 +54,7 @@ public final class AddonsManager {
                     if (!file.isDirectory()) {
                         try {
                             this.loadAddon(file);
-                        } catch (InvalidAddonFormatException e) {
-                            e.printStackTrace();
-                        } catch (InvalidAddonInheritException e) {
-                            e.printStackTrace();
-                        } catch (InvalidDescriptionException e) {
+                        } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
                             e.printStackTrace();
                         }
                     }
@@ -78,7 +71,7 @@ public final class AddonsManager {
             }
         }
 
-        this.addons.stream().forEach(addon -> {
+        this.addons.forEach(addon -> {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);

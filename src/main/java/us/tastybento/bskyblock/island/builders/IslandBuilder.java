@@ -35,7 +35,7 @@ public class IslandBuilder {
         ISLAND,
         NETHER,
         END
-    };
+    }
 
     private Island island;
     private World world;
@@ -48,7 +48,6 @@ public class IslandBuilder {
     private BSkyBlock plugin;
 
     public IslandBuilder(BSkyBlock plugin, Island island) {
-        super();
         this.plugin = plugin;
         this.island = island;
         this.world = island.getWorld();
@@ -482,7 +481,7 @@ public class IslandBuilder {
             Sign sign = (Sign) blockToChange.getState();
             User user = User.getInstance(playerUUID);
             for (int i = 0; i < 4; i++) {
-                sign.setLine(i, user.getTranslation("new-island.sign.line" + (i+1), "[player]", playerName));
+                sign.setLine(i, user.getTranslation("new-island.sign.line" + i, "[player]", playerName));
             }         
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();
