@@ -213,7 +213,7 @@ protection:
 
 new-island:
   sign:
-    line1: "&1%bsb_plugin_name%"
-    line2: "[player]"
-    line3: "Don't fall!"
-    line4: "Have fun! &c<3"
+    line0: "&1%bsb_plugin_name%"
+    line1: "[player]"
+    line2: "Don't fall!"
+    line3: "Have fun! &c<3"
