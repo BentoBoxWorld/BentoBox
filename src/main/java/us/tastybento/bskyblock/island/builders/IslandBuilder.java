@@ -35,7 +35,7 @@ public class IslandBuilder {
         ISLAND,
         NETHER,
         END
-    };
+    }
 
     private Island island;
     private World world;
@@ -48,7 +48,6 @@ public class IslandBuilder {
     private BSkyBlock plugin;
 
     public IslandBuilder(BSkyBlock plugin, Island island) {
-        super();
         this.plugin = plugin;
         this.island = island;
         this.world = island.getWorld();

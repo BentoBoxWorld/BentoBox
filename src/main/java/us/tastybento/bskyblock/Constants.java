@@ -1,7 +1,7 @@
 package us.tastybento.bskyblock;
 
 /**
- * All the plugin settings are here
+ * All the plugin constants are here
  * @author Tastybento
  */
 public class Constants {
@@ -18,8 +18,6 @@ public class Constants {
     public final static String PERMPREFIX = "acidisland.";
     // The island command
     public final static String ISLANDCOMMAND = "ai";
-    // The challenge command
-    public static final String CHALLENGECOMMAND = "aic";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
     */
@@ -28,8 +26,6 @@ public class Constants {
     public final static String PERMPREFIX = "bskyblock.";
     // The island command
     public final static String ISLANDCOMMAND = "island";
-    // The challenge command
-    public static final String CHALLENGECOMMAND = "bsc";
     // The spawn command (Essentials spawn for example)
     public final static String SPAWNCOMMAND = "spawn";
     // Admin command

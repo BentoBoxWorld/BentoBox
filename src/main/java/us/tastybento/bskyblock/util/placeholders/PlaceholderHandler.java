@@ -11,8 +11,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 /**
  * Handles hooks with other Placeholder APIs.
  * 
- * @author Poslovitch
- * @author Tastybento
+ * @author Poslovitch, Tastybento
  */
 public class PlaceholderHandler {
     private static final String PACKAGE = "us.tastybento.bskyblock.util.placeholders.hooks.";
