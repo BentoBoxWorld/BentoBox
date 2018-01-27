@@ -20,7 +20,7 @@ import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
  *
  */
 public class NewIsland {
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private Island island;
     private final Player player;

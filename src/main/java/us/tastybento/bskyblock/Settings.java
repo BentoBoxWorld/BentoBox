@@ -94,8 +94,8 @@ public class Settings implements ISettings<Settings> {
     private int islandXOffset;
     private int islandZOffset;
 
-    @ConfigEntry(path = "world.sea-height", specificTo = GameType.ACIDISLAND)
-    private int seaHeight = 100;
+    @ConfigEntry(path = "world.sea-height")
+    private int seaHeight = 0;
 
     @ConfigEntry(path = "world.island-height")
     private int islandHeight = 100;
