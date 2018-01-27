@@ -15,27 +15,27 @@ public class PanelItemBuilder {
     private boolean glow;
     private Optional<PanelItem.ClickHandler> clickHandler = Optional.empty();
 
-    public PanelItemBuilder setIcon(ItemStack icon) {
+    public PanelItemBuilder icon(ItemStack icon) {
         this.icon = icon;
         return this;
     }
 
-    public PanelItemBuilder setName(String name) {
+    public PanelItemBuilder name(String name) {
          this.name = name;
          return this;
     }
 
-    public PanelItemBuilder setDescription(List<String> list) {
+    public PanelItemBuilder description(List<String> list) {
         this.description = list;
         return this;
     }
 
-    public PanelItemBuilder setGlow(boolean glow) {
+    public PanelItemBuilder glow(boolean glow) {
         this.glow = glow;
         return this;
     }
 
-    public PanelItemBuilder setClickHandler(ClickHandler clickHandler) {
+    public PanelItemBuilder clickHandler(ClickHandler clickHandler) {
         this.clickHandler = Optional.of(clickHandler);
         return this;
     }
