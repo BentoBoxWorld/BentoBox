@@ -30,6 +30,11 @@ public class PanelItemBuilder {
         return this;
     }
 
+    public PanelItemBuilder description(String description2) {
+        this.description.add(description2);
+        return this;
+    }
+    
     public PanelItemBuilder glow(boolean glow) {
         this.glow = glow;
         return this;
