@@ -85,7 +85,8 @@ public class Island implements DataObject {
 
     //// Team ////
     private UUID owner;
-    private HashMap<UUID, Integer> ranks = new HashMap<>();
+    private HashMap<UUID, Integer> members = new HashMap<>();
+    
     //// State ////
     private boolean locked = false;
     private boolean spawn = false;
@@ -101,7 +102,7 @@ public class Island implements DataObject {
     
     public Island(Location location, UUID owner, int protectionRange) {
         this.owner = owner;
-        this.ranks.put(owner, OWNER_RANK);
+        this.members.put(owner, OWNER_RANK);
         this.createdDate = System.currentTimeMillis();
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
@@ -119,7 +120,7 @@ public class Island implements DataObject {
      * @param playerUUID
      */
     public void addMember(UUID playerUUID) {
-        ranks.put(playerUUID, MEMBER_RANK);
+        members.put(playerUUID, MEMBER_RANK);
     }
 
     /**
@@ -130,7 +131,7 @@ public class Island implements DataObject {
      */
     public boolean addToBanList(UUID targetUUID) {
         // TODO fire ban event
-        ranks.put(targetUUID, BANNED_RANK);
+        members.put(targetUUID, BANNED_RANK);
         return true;
     }
 
@@ -139,7 +140,7 @@ public class Island implements DataObject {
      */
     public Set<UUID> getBanned() {
         Set<UUID> result = new HashSet<>();
-        for (Entry<UUID, Integer> member: ranks.entrySet()) {
+        for (Entry<UUID, Integer> member: members.entrySet()) {
             if (member.getValue() <= BANNED_RANK) {
                 result.add(member.getKey());
             }
@@ -187,7 +188,7 @@ public class Island implements DataObject {
      */
     public Set<UUID> getMembers(){
         Set<UUID> result = new HashSet<>();
-        for (Entry<UUID, Integer> member: ranks.entrySet()) {
+        for (Entry<UUID, Integer> member: members.entrySet()) {
             if (member.getValue() >= MEMBER_RANK) {
                 result.add(member.getKey());
             }
@@ -311,7 +312,7 @@ public class Island implements DataObject {
      * @return Returns true if target is banned on this island
      */
     public boolean isBanned(UUID targetUUID) {
-        return ranks.containsKey(targetUUID) && ranks.get(targetUUID) == BANNED_RANK ? true : false;
+        return members.containsKey(targetUUID) && members.get(targetUUID) == BANNED_RANK ? true : false;
     }
 
     /**
@@ -359,7 +360,7 @@ public class Island implements DataObject {
      */
     public boolean removeFromBanList(UUID targetUUID) {
         // TODO fire unban event
-        ranks.remove(targetUUID);
+        members.remove(targetUUID);
         return true;
     }
 
@@ -465,7 +466,7 @@ public class Island implements DataObject {
      */
     public void setOwner(UUID owner){
         this.owner = owner;
-        this.ranks.put(owner, OWNER_RANK);
+        this.members.put(owner, OWNER_RANK);
     }
 
     /**
@@ -618,7 +619,7 @@ public class Island implements DataObject {
     }
 
     public void removeMember(UUID playerUUID) {
-        ranks.remove(playerUUID);
+        members.remove(playerUUID);
     }
 
     /**
@@ -627,20 +628,29 @@ public class Island implements DataObject {
      * @return rank integer
      */
     public int getRank(User user) {
-        return ranks.containsKey(user.getUniqueId()) ? ranks.get(user.getUniqueId()) : VISITOR_RANK;
+        return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : VISITOR_RANK;
+    }
+    
+    /**
+     * Set user's rank to an arbitrary rank value
+     * @param user
+     * @param rank
+     */
+    public void setRank(User user, int rank) {
+        members.put(user.getUniqueId(), rank);
     }
 
     /**
      * @return the ranks
      */
     public HashMap<UUID, Integer> getRanks() {
-        return ranks;
+        return members;
     }
 
     /**
      * @param ranks the ranks to set
      */
     public void setRanks(HashMap<UUID, Integer> ranks) {
-        this.ranks = ranks;
+        this.members = ranks;
     }
 }

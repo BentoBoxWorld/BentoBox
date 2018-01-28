@@ -15,6 +15,7 @@ import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.managers.RanksManager;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
@@ -38,6 +39,7 @@ public class BSkyBlock extends JavaPlugin {
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
     private IslandWorld islandWorldManager;
+    private RanksManager ranksManager;
 
     // Settings
     Settings settings;
@@ -67,6 +69,7 @@ public class BSkyBlock extends JavaPlugin {
 
         playersManager = new PlayersManager(this);
         islandsManager = new IslandsManager(this);
+        ranksManager = new RanksManager(this);
 
         // Load metrics
         metrics = new Metrics(plugin);
@@ -248,6 +251,15 @@ public class BSkyBlock extends JavaPlugin {
      */
     public IslandWorld getIslandWorldManager() {
         return islandWorldManager;
+    }
+
+
+
+    /**
+     * @return the ranksManager
+     */
+    public RanksManager getRanksManager() {
+        return ranksManager;
     }
 
 }

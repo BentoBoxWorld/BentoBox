@@ -165,6 +165,10 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "island.deaths.sum-team")
     private boolean deathsSumTeam = false;
+    
+    // Ranks
+    @ConfigEntry(path = "island.customranks")
+    private HashMap<String, Integer> customRanks = new HashMap<>();
 
     // ---------------------------------------------
 
@@ -287,6 +291,12 @@ public class Settings implements ISettings<Settings> {
      */
     public EntityType getCompanionType() {
         return companionType;
+    }
+    /**
+     * @return the customRanks
+     */
+    public HashMap<String, Integer> getCustomRanks() {
+        return customRanks;
     }
     /**
      * @return the databaseBackupPeriod
@@ -840,6 +850,12 @@ public class Settings implements ISettings<Settings> {
         this.companionType = companionType;
     }
     /**
+     * @param customRanks the customRanks to set
+     */
+    public void setCustomRanks(HashMap<String, Integer> customRanks) {
+        this.customRanks = customRanks;
+    }
+    /**
      * @param databaseBackupPeriod the databaseBackupPeriod to set
      */
     public void setDatabaseBackupPeriod(int databaseBackupPeriod) {
@@ -1109,6 +1125,7 @@ public class Settings implements ISettings<Settings> {
     public void setRemoveMobsOnIsland(boolean removeMobsOnIsland) {
         this.removeMobsOnIsland = removeMobsOnIsland;
     }
+    
     /**
      * @param removeMobsOnLogin the removeMobsOnLogin to set
      */
@@ -1121,7 +1138,6 @@ public class Settings implements ISettings<Settings> {
     public void setRemoveMobsWhitelist(List<String> removeMobsWhitelist) {
         this.removeMobsWhitelist = removeMobsWhitelist;
     }
-    
     /**
      * @param resetConfirmation the resetConfirmation to set
      */
