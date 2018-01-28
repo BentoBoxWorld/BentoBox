@@ -1,19 +1,27 @@
 package us.tastybento.bskyblock.api.panels.builders;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.PanelItem.ClickHandler;
 
 public class PanelItemBuilder {
-    private ItemStack icon;
-    private String name;
-    private List<String> description;
-    private boolean glow;
+    private ItemStack icon = new ItemStack(Material.AIR);
+    private String name = "";
+    private List<String> description = new ArrayList<>();
+    private boolean glow = false;
     private Optional<PanelItem.ClickHandler> clickHandler = Optional.empty();
+
+    public PanelItemBuilder icon(Material icon) {
+        this.icon = new ItemStack(icon);
+        return this;
+    }
 
     public PanelItemBuilder icon(ItemStack icon) {
         this.icon = icon;
@@ -25,13 +33,18 @@ public class PanelItemBuilder {
          return this;
     }
 
-    public PanelItemBuilder description(List<String> list) {
-        this.description = list;
+    public PanelItemBuilder description(List<String> description) {
+        this.description = description;
         return this;
     }
 
-    public PanelItemBuilder description(String description2) {
-        this.description.add(description2);
+    public PanelItemBuilder description(String... description) {
+        Collections.addAll(this.description, description);
+        return this;
+    }
+
+    public PanelItemBuilder description(String description) {
+        this.description.add(description);
         return this;
     }
     

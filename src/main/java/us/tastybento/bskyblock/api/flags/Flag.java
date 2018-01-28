@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.bukkit.event.Listener;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 
 public class Flag {
@@ -16,6 +17,7 @@ public class Flag {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
+        BSkyBlock.getInstance().getFlagsManager().registerFlag(this);
     }
 
     public String getID() {

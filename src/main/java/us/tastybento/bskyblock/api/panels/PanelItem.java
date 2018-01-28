@@ -3,14 +3,20 @@ package us.tastybento.bskyblock.api.panels;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
 public class PanelItem {
+
+    public static PanelItem empty() {
+        return new PanelItemBuilder().build();
+    }
 
     private ItemStack icon;
     private Optional<ClickHandler> clickHandler;

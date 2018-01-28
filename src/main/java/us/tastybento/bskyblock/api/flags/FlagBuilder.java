@@ -11,8 +11,8 @@ import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
 public class FlagBuilder {
 
-    private String id;
-    private PanelItem icon;
+    private String id = "";
+    private PanelItem icon = PanelItem.empty();
     private Optional<Listener> listener = Optional.empty();
 
     public FlagBuilder id(String id) {
