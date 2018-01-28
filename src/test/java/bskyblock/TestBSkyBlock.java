@@ -2,6 +2,7 @@ package bskyblock;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -13,10 +14,12 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -31,12 +34,14 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
 public class TestBSkyBlock {
     private final UUID playerUUID = UUID.randomUUID();
     private static CommandSender sender;
     private static Player player;
+    private static Location location;
     private static BSkyBlock plugin;
 
     @BeforeClass
@@ -61,6 +66,12 @@ public class TestBSkyBlock {
         plugin = mock(BSkyBlock.class);
         //Mockito.when(plugin.getServer()).thenReturn(server);
 
+        location = mock(Location.class);
+        Mockito.when(location.getWorld()).thenReturn(world);
+        Mockito.when(location.getBlockX()).thenReturn(0);
+        Mockito.when(location.getBlockY()).thenReturn(0);
+        Mockito.when(location.getBlockZ()).thenReturn(0);
+        
     }
 
     @Test
@@ -258,4 +269,117 @@ public class TestBSkyBlock {
         }
 
    }
+    
+    // Protection tests
+    @Test
+    public void TestProtection() {
+        User owner = User.getInstance(playerUUID);
+        Island island = new Island();
+        island.setOwner(playerUUID);
+        island.setCenter(location);
+        island.setProtectionRange(100);
+        
+        assertNotNull(island);
+        
+        User visitor = User.getInstance(UUID.randomUUID());
+        assertEquals(1000, island.getRank(owner));
+        assertEquals(0, island.getRank(visitor));
+        
+        // Make members
+        UUID member1 = UUID.randomUUID();
+        UUID member2 = UUID.randomUUID();
+        UUID member3 = UUID.randomUUID();
+        
+        // Add members
+        island.addMember(member1);
+        island.addMember(member2);
+        island.addMember(member3);
+        
+        Set<UUID> members = island.getMembers();
+        assertTrue(members.contains(playerUUID));
+        assertTrue(members.contains(member1));
+        assertTrue(members.contains(member2));
+        assertTrue(members.contains(member3));
+        
+        // Remove members
+        island.removeMember(member3);
+        members = island.getMembers();
+        assertTrue(members.contains(playerUUID));
+        assertTrue(members.contains(member1));
+        assertTrue(members.contains(member2));
+        assertFalse(members.contains(member3));
+        
+        // Ban member
+        island.addToBanList(member1);
+        members = island.getMembers();
+        assertTrue(members.contains(playerUUID));
+        assertFalse(members.contains(member1));
+        assertTrue(members.contains(member2));
+        assertFalse(members.contains(member3));
+        
+        Set<UUID> banned = island.getBanned();
+        assertTrue(banned.contains(member1));
+        
+        // Unban
+        island.removeFromBanList(member1);
+        assertFalse(island.getBanned().contains(member1));
+        
+        
+        //island.isAllowed(visitor, Flags.BREAK_BLOCKS);
+        /*
+         * 
+         * Score approach:
+         * 
+         * Rank definitions are global and apply to all islands
+         * 
+         * There are 4 hard-coded ranks:
+         * 
+         * Owner is the highest rank = 1000
+         * 
+         * Member ranks are >= 900
+         * 
+         * Visitors = 0
+         * 
+         * Banned = -1
+         * 
+         * Owners have full admin capability over the island. Members are required to give up their own island to be a member.
+         * Visitors are everyone else.
+         * 
+         * After those 3, it's possible to have custom ranks, e.g.
+         * 
+         * Trustees = 750 
+         * Coops = 500
+         * etc.
+         *
+         * 
+         * Each flag has a bypass score.
+         * If the user's rank is higher or equal to the bypass score, they will bypass the protection.
+         * Owners can disable/enable the flags.
+         * 
+         * Each island will track the rank score for each player on the island.
+         * Unknown players have a rank of 0.
+         * 
+         * 
+         * Admins will be able to define groups and their rank value. 
+         * During the game, the players will never see the rank value. They will only see the ranks.
+         * 
+         * It will be possible to island owners to promote or demote players up and down the ranks.
+         * 
+         * This will replace the team system completely.
+         * 
+         * Pros:
+         * Very flexible
+         * 
+         * Cons:
+         * Too complicated. Are there really ever going to be more than just a few ranks?
+         * To have generic, unlimited ranks, we lose the concept of hard-coded teams, coops, etc.
+         * The problem is that team members must lose their islands and so we have special code around that. 
+         * i.e., there's a lot more going on than just ranks.
+         * 
+         * 
+         * Permissions-based
+         * 
+         * 
+         */
+    }
 }

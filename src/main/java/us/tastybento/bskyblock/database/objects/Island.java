@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.database.objects;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -14,6 +15,7 @@ import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
@@ -31,6 +33,11 @@ import us.tastybento.bskyblock.util.Util;
  * @author Poslovitch
  */
 public class Island implements DataObject {
+
+    private static final Integer OWNER_RANK = 1000;
+    private static final Integer MEMBER_RANK = 900;
+    private static final Integer VISITOR_RANK = 0;
+    private static final Integer BANNED_RANK = -1;
 
     private String uniqueId = "";
 
@@ -77,19 +84,8 @@ public class Island implements DataObject {
     private long updatedDate;
 
     //// Team ////
-    // Owner (Team Leader)
     private UUID owner;
-
-    // Members (use set because each value must be unique)
-    private Set<UUID> members = new HashSet<>();
-
-    // Trustees
-    private Set<UUID> trustees = new HashSet<>();
-    // Coops
-    private Set<UUID> coops = new HashSet<>();
-
-    // Banned players
-    private Set<UUID> banned = new HashSet<>();
+    private HashMap<UUID, Integer> ranks = new HashMap<>();
     //// State ////
     private boolean locked = false;
     private boolean spawn = false;
@@ -104,13 +100,13 @@ public class Island implements DataObject {
     public Island() {}
     
     public Island(Location location, UUID owner, int protectionRange) {
-        this.members.add(owner);
         this.owner = owner;
+        this.ranks.put(owner, OWNER_RANK);
         this.createdDate = System.currentTimeMillis();
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
         this.center = location;
-        this.range = BSkyBlock.getInstance().getSettings().getIslandProtectionRange();
+        this.range = BSkyBlock.getInstance().getSettings().getIslandDistance();
         this.minX = center.getBlockX() - range;
         this.minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;
@@ -123,8 +119,7 @@ public class Island implements DataObject {
      * @param playerUUID
      */
     public void addMember(UUID playerUUID) {
-        members.add(playerUUID);
-        banned.remove(playerUUID);
+        ranks.put(playerUUID, MEMBER_RANK);
     }
 
     /**
@@ -135,16 +130,7 @@ public class Island implements DataObject {
      */
     public boolean addToBanList(UUID targetUUID) {
         // TODO fire ban event
-        if (members.contains(targetUUID)) {
-            members.remove(targetUUID);
-        }
-        if (coops.contains(targetUUID)) {
-            coops.remove(targetUUID);
-        }
-        if (trustees.contains(targetUUID)) {
-            trustees.remove(targetUUID);
-        }
-        banned.add(targetUUID);
+        ranks.put(targetUUID, BANNED_RANK);
         return true;
     }
 
@@ -152,7 +138,13 @@ public class Island implements DataObject {
      * @return the banned
      */
     public Set<UUID> getBanned() {
-        return banned;
+        Set<UUID> result = new HashSet<>();
+        for (Entry<UUID, Integer> member: ranks.entrySet()) {
+            if (member.getValue() <= BANNED_RANK) {
+                result.add(member.getKey());
+            }
+        }
+        return result;
     }
 
     /**
@@ -160,13 +152,6 @@ public class Island implements DataObject {
      */
     public Location getCenter(){
         return center;
-    }
-
-    /**
-     * @return the coop players of the island
-     */
-    public Set<UUID> getCoops(){
-        return coops;
     }
 
     /**
@@ -201,10 +186,13 @@ public class Island implements DataObject {
      * @return the members of the island (owner included)
      */
     public Set<UUID> getMembers(){
-        if (members == null) {
-            members = new HashSet<>();
+        Set<UUID> result = new HashSet<>();
+        for (Entry<UUID, Integer> member: ranks.entrySet()) {
+            if (member.getValue() >= MEMBER_RANK) {
+                result.add(member.getKey());
+            }
         }
-        return members;
+        return result;
     }
 
     /**
@@ -272,13 +260,6 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return the trustees players of the island
-     */
-    public Set<UUID> getTrustees(){
-        return trustees;
-    }
-
-    /**
      * @return the date when the island was updated (team member connection, etc...)
      */
     public long getUpdatedDate(){
@@ -330,7 +311,7 @@ public class Island implements DataObject {
      * @return Returns true if target is banned on this island
      */
     public boolean isBanned(UUID targetUUID) {
-        return banned.contains(targetUUID);
+        return ranks.containsKey(targetUUID) && ranks.get(targetUUID) == BANNED_RANK ? true : false;
     }
 
     /**
@@ -378,15 +359,8 @@ public class Island implements DataObject {
      */
     public boolean removeFromBanList(UUID targetUUID) {
         // TODO fire unban event
-        banned.remove(targetUUID);
+        ranks.remove(targetUUID);
         return true;
-    }
-
-    /**
-     * @param banned the banned to set
-     */
-    public void setBanned(Set<UUID> banned) {
-        this.banned = banned;
     }
 
     /**
@@ -394,13 +368,6 @@ public class Island implements DataObject {
      */
     public void setCenter(Location center) {
         this.center = center;
-    }
-
-    /**
-     * @param coops - the coops to set
-     */
-    public void setCoops(Set<UUID> coops){
-        this.coops = coops;
     }
 
     /**
@@ -457,14 +424,6 @@ public class Island implements DataObject {
     }
 
     /**
-     * @param members - the members to set
-     */
-    public void setMembers(Set<UUID> members){
-        //Bukkit.getLogger().info("DEBUG: members size = " + members.size());
-        this.members = members;
-    }
-
-    /**
      * @param minProtectedX the minProtectedX to set
      */
     public void setMinProtectedX(int minProtectedX) {
@@ -501,12 +460,12 @@ public class Island implements DataObject {
     }
 
     /**
-     * Sets the owner of the island. If the owner was previous banned, they are unbanned
+     * Sets the owner of the island.
      * @param owner - the owner/team leader to set
      */
     public void setOwner(UUID owner){
         this.owner = owner;
-        this.banned.remove(owner);
+        this.ranks.put(owner, OWNER_RANK);
     }
 
     /**
@@ -544,13 +503,6 @@ public class Island implements DataObject {
         /*for(SettingsFlag flag : SettingsFlag.values()){
             this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
         }*/ //TODO default flags
-    }
-
-    /**
-     * @param trustees - the trustees to set
-     */
-    public void setTrustees(Set<UUID> trustees){
-        this.trustees = trustees;
     }
 
     /**
@@ -666,6 +618,29 @@ public class Island implements DataObject {
     }
 
     public void removeMember(UUID playerUUID) {
-        this.members.remove(playerUUID);
+        ranks.remove(playerUUID);
+    }
+
+    /**
+     * Get the rank of user for this island
+     * @param user
+     * @return rank integer
+     */
+    public int getRank(User user) {
+        return ranks.containsKey(user.getUniqueId()) ? ranks.get(user.getUniqueId()) : VISITOR_RANK;
+    }
+
+    /**
+     * @return the ranks
+     */
+    public HashMap<UUID, Integer> getRanks() {
+        return ranks;
+    }
+
+    /**
+     * @param ranks the ranks to set
+     */
+    public void setRanks(HashMap<UUID, Integer> ranks) {
+        this.ranks = ranks;
     }
 }
