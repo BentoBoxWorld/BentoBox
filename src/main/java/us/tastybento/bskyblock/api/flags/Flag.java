@@ -11,9 +11,9 @@ public class Flag {
 
     private String id;
     private PanelItem icon;
-    private Optional<Listener> listener;
+    private Listener listener;
 
-    public Flag(String id, PanelItem icon, Optional<Listener> listener) {
+    public Flag(String id, PanelItem icon, Listener listener) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
@@ -29,6 +29,6 @@ public class Flag {
     }
 
     public Optional<Listener> getListener() {
-        return listener;
+        return Optional.of(listener);
     }
 }

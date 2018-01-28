@@ -1,11 +1,9 @@
 package us.tastybento.bskyblock.api.flags;
 
-import java.util.Optional;
-
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
-
 import org.bukkit.inventory.ItemStack;
+
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
@@ -13,7 +11,7 @@ public class FlagBuilder {
 
     private String id = "";
     private PanelItem icon = PanelItem.empty();
-    private Optional<Listener> listener = Optional.empty();
+    private Listener listener;
 
     public FlagBuilder id(String id) {
         this.id = id;
@@ -34,7 +32,7 @@ public class FlagBuilder {
     }
 
     public FlagBuilder listener(Listener listener) {
-        this.listener = Optional.of(listener);
+        this.listener = listener;
         return this;
     }
 
