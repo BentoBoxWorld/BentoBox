@@ -10,14 +10,14 @@ import us.tastybento.bskyblock.BSkyBlock;
 public class RanksManager {
 
     // Constants that define the hard coded rank values
-    private static final String OWNER_RANK_REF = "ranks.owner";
-    private static final String MEMBER_RANK_REF = "ranks.member";
-    private static final String VISITOR_RANK_REF = "ranks.visitor";
-    private static final String BANNED_RANK_REF = "ranks.banned";
-    private static final Integer OWNER_RANK = 1000;
-    private static final Integer MEMBER_RANK = 900;
-    private static final Integer VISITOR_RANK = 0;
-    private static final Integer BANNED_RANK = -1;
+    public static final String OWNER_RANK_REF = "ranks.owner";
+    public static final String MEMBER_RANK_REF = "ranks.member";
+    public static final String VISITOR_RANK_REF = "ranks.visitor";
+    public static final String BANNED_RANK_REF = "ranks.banned";
+    public static final int OWNER_RANK = 1000;
+    public static final int MEMBER_RANK = 900;
+    public static final int VISITOR_RANK = 0;
+    public static final int BANNED_RANK = -1;
 
     private BSkyBlock plugin;
 
@@ -106,60 +106,5 @@ public class RanksManager {
         return new LinkedHashMap<>(ranks);
     }
 
-    /**
-     * @return the ownerRankRef
-     */
-    public static String getOwnerRankRef() {
-        return OWNER_RANK_REF;
-    }
-
-    /**
-     * @return the memberRankRef
-     */
-    public static String getMemberRankRef() {
-        return MEMBER_RANK_REF;
-    }
-
-    /**
-     * @return the visitorRankRef
-     */
-    public static String getVisitorRankRef() {
-        return VISITOR_RANK_REF;
-    }
-
-    /**
-     * @return the bannedRankRef
-     */
-    public static String getBannedRankRef() {
-        return BANNED_RANK_REF;
-    }
-
-    /**
-     * @return the ownerRank
-     */
-    public static Integer getOwnerRank() {
-        return OWNER_RANK;
-    }
-
-    /**
-     * @return the memberRank
-     */
-    public static Integer getMemberRank() {
-        return MEMBER_RANK;
-    }
-
-    /**
-     * @return the visitorRank
-     */
-    public static Integer getVisitorRank() {
-        return VISITOR_RANK;
-    }
-
-    /**
-     * @return the bannedRank
-     */
-    public static Integer getBannedRank() {
-        return BANNED_RANK;
-    }
 
 }

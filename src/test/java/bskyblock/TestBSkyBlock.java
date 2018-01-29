@@ -35,6 +35,7 @@ import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 public class TestBSkyBlock {
@@ -282,8 +283,8 @@ public class TestBSkyBlock {
         assertNotNull(island);
         
         User visitor = User.getInstance(UUID.randomUUID());
-        assertEquals(1000, island.getRank(owner));
-        assertEquals(0, island.getRank(visitor));
+        assertEquals(RanksManager.OWNER_RANK, island.getRank(owner));
+        assertEquals(RanksManager.VISITOR_RANK, island.getRank(visitor));
         
         // Make members
         UUID member1 = UUID.randomUUID();

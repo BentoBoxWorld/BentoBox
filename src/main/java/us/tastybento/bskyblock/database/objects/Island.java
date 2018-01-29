@@ -22,6 +22,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -33,11 +34,6 @@ import us.tastybento.bskyblock.util.Util;
  * @author Poslovitch
  */
 public class Island implements DataObject {
-
-    private static final Integer OWNER_RANK = 1000;
-    private static final Integer MEMBER_RANK = 900;
-    private static final Integer VISITOR_RANK = 0;
-    private static final Integer BANNED_RANK = -1;
 
     private String uniqueId = "";
 
@@ -102,7 +98,7 @@ public class Island implements DataObject {
     
     public Island(Location location, UUID owner, int protectionRange) {
         this.owner = owner;
-        this.members.put(owner, OWNER_RANK);
+        this.members.put(owner, RanksManager.OWNER_RANK);
         this.createdDate = System.currentTimeMillis();
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
@@ -120,7 +116,7 @@ public class Island implements DataObject {
      * @param playerUUID
      */
     public void addMember(UUID playerUUID) {
-        members.put(playerUUID, MEMBER_RANK);
+        members.put(playerUUID, RanksManager.MEMBER_RANK);
     }
 
     /**
@@ -131,7 +127,7 @@ public class Island implements DataObject {
      */
     public boolean addToBanList(UUID targetUUID) {
         // TODO fire ban event
-        members.put(targetUUID, BANNED_RANK);
+        members.put(targetUUID, RanksManager.BANNED_RANK);
         return true;
     }
 
@@ -141,7 +137,7 @@ public class Island implements DataObject {
     public Set<UUID> getBanned() {
         Set<UUID> result = new HashSet<>();
         for (Entry<UUID, Integer> member: members.entrySet()) {
-            if (member.getValue() <= BANNED_RANK) {
+            if (member.getValue() <= RanksManager.BANNED_RANK) {
                 result.add(member.getKey());
             }
         }
@@ -189,7 +185,7 @@ public class Island implements DataObject {
     public Set<UUID> getMembers(){
         Set<UUID> result = new HashSet<>();
         for (Entry<UUID, Integer> member: members.entrySet()) {
-            if (member.getValue() >= MEMBER_RANK) {
+            if (member.getValue() >= RanksManager.MEMBER_RANK) {
                 result.add(member.getKey());
             }
         }
@@ -312,7 +308,7 @@ public class Island implements DataObject {
      * @return Returns true if target is banned on this island
      */
     public boolean isBanned(UUID targetUUID) {
-        return members.containsKey(targetUUID) && members.get(targetUUID) == BANNED_RANK ? true : false;
+        return members.containsKey(targetUUID) && members.get(targetUUID) == RanksManager.BANNED_RANK ? true : false;
     }
 
     /**
@@ -466,7 +462,7 @@ public class Island implements DataObject {
      */
     public void setOwner(UUID owner){
         this.owner = owner;
-        this.members.put(owner, OWNER_RANK);
+        this.members.put(owner, RanksManager.OWNER_RANK);
     }
 
     /**
@@ -628,7 +624,7 @@ public class Island implements DataObject {
      * @return rank integer
      */
     public int getRank(User user) {
-        return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : VISITOR_RANK;
+        return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : RanksManager.VISITOR_RANK;
     }
     
     /**
