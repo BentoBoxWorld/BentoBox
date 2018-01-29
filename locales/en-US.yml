@@ -134,6 +134,13 @@ commands:
       description: "select language"
       parameters: "<language>"
 
+ranks:
+  owner: "Owner"
+  member: "Member"
+  coop: "Coop"
+  visitor: "Visitor"
+  banned: "Banned"
+  
 protection:
   flags:
     ACID_DAMAGE: "Acid damage"

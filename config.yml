@@ -273,6 +273,13 @@ island:
   # Permission size cannot be less than the default below. 
   max-team-size: 4
   
+  # Ranks for players
+  # Pre-defined ranks are:
+  # Owner (1000), Member (700), Visitor (0)  and Banned (-1)
+  # Rank names should be references to locale settings and must be in quotes
+  # like "ranks.coop".
+  "ranks.coop": 100
+  
   # Default maximum number of homes a player can have. Min = 1
   # Accessed via sethome <number> or go <number>
   # Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>  
