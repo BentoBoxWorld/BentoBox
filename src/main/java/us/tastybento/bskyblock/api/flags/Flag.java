@@ -6,6 +6,7 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
+import us.tastybento.bskyblock.managers.FlagsManager;
 
 public class Flag {
 

@@ -1,33 +1,22 @@
 package bskyblock;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map.Entry;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.logging.Logger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.ItemFactory;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.core.classloader.annotations.SuppressStaticInitializationFor;
+import org.powermock.modules.junit4.PowerMockRunner;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -35,15 +24,30 @@ import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
+import java.util.*;
+import java.util.Map.Entry;
+import java.util.logging.Logger;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
+
+//@RunWith(PowerMockRunner.class)
+//@SuppressStaticInitializationFor("us.tastybento.BSkyBlock")
+//@PrepareForTest( { BSkyBlock.class })
 public class TestBSkyBlock {
     private final UUID playerUUID = UUID.randomUUID();
     private static CommandSender sender;
     private static Player player;
     private static Location location;
     private static BSkyBlock plugin;
+    private static FlagsManager flagsManager;
 
     @BeforeClass
     public static void setUp() {
@@ -72,7 +76,19 @@ public class TestBSkyBlock {
         Mockito.when(location.getBlockX()).thenReturn(0);
         Mockito.when(location.getBlockY()).thenReturn(0);
         Mockito.when(location.getBlockZ()).thenReturn(0);
-        
+
+        // This doesn't work!
+        /*
+        mockStatic(Bukkit.class);
+        ItemFactory itemFactory = PowerMockito.mock(ItemFactory.class);
+        PowerMockito.when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        PowerMockito.when(itemFactory.getItemMeta(any())).thenReturn(PowerMockito.mock(ItemMeta.class));
+
+        mockStatic(BSkyBlock.class);
+        flagsManager = mock(FlagsManager.class);
+        PowerMockito.when(BSkyBlock.getInstance()).thenReturn(plugin);
+        Mockito.when(plugin.getFlagsManager()).thenReturn(flagsManager);
+        */
     }
 
     @Test
@@ -265,8 +281,7 @@ public class TestBSkyBlock {
         @Override
         public boolean execute(User user, List<String> args) {
             Bukkit.getLogger().info("args are " + args.toString());
-            if (args.size() == 3) return true;
-            return false;
+            return args.size() == 3 ? true : false;
         }
 
    }
@@ -325,8 +340,37 @@ public class TestBSkyBlock {
         island.removeFromBanList(member1);
         assertFalse(island.getBanned().contains(member1));
         
-        
-        //island.isAllowed(visitor, Flags.BREAK_BLOCKS);
+        // Protection
+        // Set up protection settings - members can break blocks, visitors and place blocks
+        // These tests do not work because of static method calls in the code and Bukkit.
+        /*
+        island.setFlag(Flags.BREAK_BLOCKS, RanksManager.MEMBER_RANK);
+        island.setFlag(Flags.PLACE_BLOCKS, RanksManager.VISITOR_RANK);
+
+        // Owner should be able to do anything
+        assertTrue(island.isAllowed(owner, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(owner, Flags.BREAK_BLOCKS));
+
+        // Visitor can only place blocks
+        assertTrue(island.isAllowed(visitor, Flags.PLACE_BLOCKS));
+        assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
+
+        // Check if the members have capability
+        User mem1 = User.getInstance(member1);
+        User mem2 = User.getInstance(member2);
+        User mem3 = User.getInstance(member3);
+
+        assertTrue(island.isAllowed(mem1, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(mem1, Flags.BREAK_BLOCKS));
+
+        assertTrue(island.isAllowed(mem2, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(mem2, Flags.BREAK_BLOCKS));
+
+        // Member 3 is no longer a member and is a visitor
+        assertTrue(island.isAllowed(mem3, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(mem3, Flags.BREAK_BLOCKS));
+
+*/
         /*
          * 
          * Score approach:

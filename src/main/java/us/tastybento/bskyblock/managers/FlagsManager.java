@@ -9,7 +9,13 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 
-public final class FlagsManager {
+public class FlagsManager {
+
+    private BSkyBlock plugin;
+
+    public FlagsManager(BSkyBlock plugin) {
+        this.plugin = plugin;
+    }
 
     private List<Flag> flags = new ArrayList<>();
 
@@ -17,7 +23,7 @@ public final class FlagsManager {
         //TODO all the security checks
         flags.add(flag);
         // If there is a listener, register it into Bukkit.
-        flag.getListener().ifPresent(l -> Bukkit.getPluginManager().registerEvents(l, BSkyBlock.getInstance()));
+        flag.getListener().ifPresent(l -> plugin.getServer().getPluginManager().registerEvents(l, plugin));
     }
 
     public List<Flag> getFlags() {

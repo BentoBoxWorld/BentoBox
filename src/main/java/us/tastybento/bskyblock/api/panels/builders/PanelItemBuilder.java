@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -16,7 +17,7 @@ public class PanelItemBuilder {
     private String name = "";
     private List<String> description = new ArrayList<>();
     private boolean glow = false;
-    private Optional<PanelItem.ClickHandler> clickHandler = Optional.empty();
+    private PanelItem.ClickHandler clickHandler;
 
     public PanelItemBuilder icon(Material icon) {
         this.icon = new ItemStack(icon);
@@ -54,11 +55,13 @@ public class PanelItemBuilder {
     }
 
     public PanelItemBuilder clickHandler(ClickHandler clickHandler) {
-        this.clickHandler = Optional.of(clickHandler);
+        this.clickHandler = clickHandler;
         return this;
     }
 
     public PanelItem build() {
+        if (icon == null)
+            Bukkit.getLogger().info("DEBUG: icon is null");
         return new PanelItem(icon, name, description, glow, clickHandler);
     }
 

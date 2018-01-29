@@ -88,7 +88,7 @@ public class Island implements DataObject {
     private boolean spawn = false;
     private boolean purgeProtected = false;
     //// Protection ////
-    private HashMap<Flag, Boolean> flags = new HashMap<>();
+    private HashMap<Flag, Integer> flags = new HashMap<>();
 
     private int levelHandicap;
 
@@ -159,23 +159,23 @@ public class Island implements DataObject {
     }
 
     /**
-     * Get the Island Guard flag status
+     * Get the Island Guard flag ranking
      * @param flag
-     * @return true or false, or false if flag is not in the list
+     * @return flag rank. Players must have at least this rank to bypass this flag
      */
-    public boolean getFlag(Flag flag){
+    public int getFlag(Flag flag){
         if(flags.containsKey(flag)) {
             return flags.get(flag);
         } else {
-            flags.put(flag, false);
-            return false;
+            flags.put(flag, RanksManager.MEMBER_RANK);
+            return RanksManager.MEMBER_RANK;
         }
     }
 
     /**
      * @return the flags
      */
-    public HashMap<Flag, Boolean> getFlags() {
+    public HashMap<Flag, Integer> getFlags() {
         return flags;
     }
 
@@ -375,18 +375,18 @@ public class Island implements DataObject {
     }
 
     /**
-     * Set the Island Guard flag status
+     * Set the Island Guard flag rank
      * @param flag
      * @param value
      */
-    public void setFlag(Flag flag, boolean value){
+    public void setFlag(Flag flag, int value){
         flags.put(flag, value);
     }
 
     /**
      * @param flags the flags to set
      */
-    public void setFlags(HashMap<Flag, Boolean> flags) {
+    public void setFlags(HashMap<Flag, Integer> flags) {
         this.flags = flags;
     }
 
@@ -462,6 +462,12 @@ public class Island implements DataObject {
      */
     public void setOwner(UUID owner){
         this.owner = owner;
+        // Defensive code: demote any previous owner
+        for (Entry<UUID, Integer> en : members.entrySet()) {
+            if (en.getValue().equals(RanksManager.OWNER_RANK)) {
+                en.setValue(RanksManager.MEMBER_RANK);
+            }
+        }
         this.members.put(owner, RanksManager.OWNER_RANK);
     }
 
@@ -514,16 +520,6 @@ public class Island implements DataObject {
      */
     public void setWorld(World world) {
         this.world = world;
-    }
-
-    /**
-     * Toggles the Island Guard flag status if it is in the list
-     * @param flag
-     */
-    public void toggleFlag(Flag flag){
-        if(flags.containsKey(flag)) {
-            flags.put(flag, !flags.get(flag));
-        }
     }
 
     /**
@@ -648,5 +644,15 @@ public class Island implements DataObject {
      */
     public void setRanks(HashMap<UUID, Integer> ranks) {
         this.members = ranks;
+    }
+
+    /**
+     * Check if a user is allowed to bypass the flag or not
+     * @param user - user
+     * @param flag - flag
+     * @return true if allowed, false if not
+     */
+    public boolean isAllowed(User user, Flag flag) {
+        return (this.getRank(user) >= this.getFlag(flag)) ? true : false;
     }
 }

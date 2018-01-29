@@ -19,13 +19,13 @@ public class PanelItem {
     }
 
     private ItemStack icon;
-    private Optional<ClickHandler> clickHandler;
+    private ClickHandler clickHandler;
     private List<String> description;
     private String name;
     private boolean glow;
     private ItemMeta meta;
 
-    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, Optional<ClickHandler> clickHandler) {
+    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, ClickHandler clickHandler) {
         this.icon = icon;
         // Get the meta
         meta = icon.getItemMeta();
@@ -70,7 +70,7 @@ public class PanelItem {
     }
 
     public Optional<ClickHandler> getClickHandler() {
-        return clickHandler;
+        return Optional.of(clickHandler);
     }
 
     public boolean isGlow() {
