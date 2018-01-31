@@ -16,7 +16,7 @@ public class PlaceBlocksListener extends FlagListener {
     }
     
     /**
-     * Prevents blocks from being broken
+     * Prevents blocks from being placed
      *
      * @param e
      */
