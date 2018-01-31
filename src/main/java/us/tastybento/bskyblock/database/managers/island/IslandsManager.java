@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.database.managers.island;
 
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -160,11 +161,12 @@ public class IslandsManager {
             height = i;
             depth = i;
         } else {
-            Island island = getIslandAt(l);
-            if (island == null) {
+            
+            Optional<Island> island = getIslandAt(l);
+            if (!island.isPresent()) {
                 return null;
             }
-            i = island.getProtectionRange();
+            i = island.get().getProtectionRange();
             height = l.getWorld().getMaxHeight() - l.getBlockY();
             depth = l.getBlockY();
         }
@@ -344,28 +346,28 @@ public class IslandsManager {
     }
 
     /**
-     * Returns the island at the location or null if there is none.
+     * Returns the island at the location or Optional empty if there is none.
      * This includes the full island space, not just the protected area
      *
      * @param location
      * @return Island object
      */
-    public Island getIslandAt(Location location) {
+    public Optional<Island> getIslandAt(Location location) {
         if (location == null) {
             //plugin.getLogger().info("DEBUG: location is null");
-            return null;
+            return Optional.empty();
         }
         // World check
         if (!Util.inWorld(location)) {
             //plugin.getLogger().info("DEBUG: not in right world");
-            return null;
+            return Optional.empty();
         }
         // Check if it is spawn
         if (spawn != null && spawn.onIsland(location)) {
             //plugin.getLogger().info("DEBUG: spawn");
-            return spawn;
+            return Optional.of(spawn);
         }
-        return getIslandAt(location.getBlockX(), location.getBlockZ());
+        return Optional.ofNullable(getIslandAt(location.getBlockX(), location.getBlockZ()));
     }
 
     /**
@@ -405,31 +407,20 @@ public class IslandsManager {
     }
 
     /**
-     * Returns the island being public at the location or null if there is none
+     * Returns the island being public at the location or Optional Empty if there is none
      *
      * @param location
-     * @return Island object
+     * @return Optional Island object
      */
-    public Island getProtectedIslandAt(Location location) {
+
+    public Optional<Island> getProtectedIslandAt(Location location) {
         //plugin.getLogger().info("DEBUG: getProtectedIslandAt " + location);
         // Try spawn
         if (spawn != null && spawn.onIsland(location)) {
-            return spawn;
+            return Optional.of(spawn);
         }
-        Island island = getIslandAt(location);
-        if (island == null) {
-            if (DEBUG2)
-                plugin.getLogger().info("DEBUG: no island at this location");
-            return null;
-        }
-        if (island.onIsland(location)) {
-            if (DEBUG2)
-                plugin.getLogger().info("DEBUG: on island");
-            return island;
-        }
-        if (DEBUG2)
-            plugin.getLogger().info("DEBUG: not in island protection zone");
-        return null;
+        Optional<Island> island = getIslandAt(location);
+        return island.map(x->x.onIsland(location) ? island.get() : null);
     }
 
     /**
@@ -760,15 +751,8 @@ public class IslandsManager {
             // Must be in the same world as the locations being checked
             // Note that getWorld can return null if a world has been deleted on the server
             if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
-                int protectionRange = plugin.getSettings().getIslandProtectionRange();
-                if (getIslandAt(islandTestLocation) != null) {
-                    // Get the protection range for this location if possible
-                    Island island = getProtectedIslandAt(islandTestLocation);
-                    if (island != null) {
-                        // We are in a protected island area.
-                        protectionRange = island.getProtectionRange();
-                    }
-                }
+                int protectionRange = getIslandAt(islandTestLocation).map(x->x.getProtectionRange())
+                        .orElse(plugin.getSettings().getIslandProtectionRange());
                 if (loc.getX() > islandTestLocation.getX() - protectionRange
                         && loc.getX() < islandTestLocation.getX() + protectionRange
                         && loc.getZ() > islandTestLocation.getZ() - protectionRange
@@ -793,15 +777,15 @@ public class IslandsManager {
             return false;
         }
         // Get the player's island from the grid if it exists
-        Island island = getIslandAt(loc);
-        if (island != null) {
+        Optional<Island> island = getIslandAt(loc);
+        if (island.isPresent()) {
             //plugin.getLogger().info("DEBUG: island here is " + island.getCenter());
             // On an island in the grid
             //plugin.getLogger().info("DEBUG: onIsland = " + island.onIsland(loc));
             //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
             //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
 
-            if (island.onIsland(loc) && island.getMembers().contains(player.getUniqueId())) {
+            if (island.get().onIsland(loc) && island.get().getMembers().contains(player.getUniqueId())) {
                 //plugin.getLogger().info("DEBUG: allowed");
                 // In a protected zone but is on the list of acceptable players
                 return true;

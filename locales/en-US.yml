@@ -142,6 +142,7 @@ ranks:
   banned: "Banned"
   
 protection:
+  protected: "&cIsland protected!"
   flags:
     ACID_DAMAGE: "Acid damage"
     ANVIL: "Use anvil"

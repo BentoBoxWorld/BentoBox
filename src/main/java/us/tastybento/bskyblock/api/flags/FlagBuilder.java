@@ -12,6 +12,7 @@ public class FlagBuilder {
     private String id = "";
     private PanelItem icon;
     private Listener listener;
+    private boolean defaultSetting;
 
     public FlagBuilder id(String id) {
         this.id = id;
@@ -37,6 +38,16 @@ public class FlagBuilder {
     }
 
     public Flag build() {
-        return new Flag(id, icon, listener);
+        return new Flag(id, icon, listener, defaultSetting);
+    }
+    
+    /**
+     * Sets the default setting for this flag in the world
+     * @param setting
+     * @return
+     */
+    public FlagBuilder allowedByDefault(boolean setting) {
+        this.defaultSetting = setting;
+        return this;
     }
 }

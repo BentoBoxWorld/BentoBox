@@ -67,7 +67,7 @@ public class SafeSpotTeleport {
         //this.plugin = plugin;
         //plugin.getLogger().info("DEBUG: running safe spot");
         // Get island
-        Island island = plugin.getIslands().getIslandAt(islandLoc);
+        Island island = plugin.getIslands().getIslandAt(islandLoc).orElse(null);
         if (island != null) {
             final World world = islandLoc.getWorld();
             // Get the chunks

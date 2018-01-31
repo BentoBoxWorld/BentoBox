@@ -6,15 +6,15 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.managers.FlagsManager;
 
 public class Flag {
 
     private String id;
     private PanelItem icon;
     private Listener listener;
+    private boolean defaultSetting;
 
-    public Flag(String id, PanelItem icon, Listener listener) {
+    public Flag(String id, PanelItem icon, Listener listener, boolean defaultSetting) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
@@ -31,5 +31,13 @@ public class Flag {
 
     public Optional<Listener> getListener() {
         return Optional.of(listener);
+    }
+
+    public boolean isAllowed() {
+        return defaultSetting;
+    }
+
+    public void setDefaultSetting(boolean defaultSetting) {
+        this.defaultSetting = defaultSetting;
     }
 }

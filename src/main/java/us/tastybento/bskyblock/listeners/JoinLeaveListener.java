@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.listeners;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.event.EventHandler;
@@ -67,7 +68,7 @@ public class JoinLeaveListener implements Listener {
             }
 
             // Check if they logged in to a locked island and expel them or if they are banned
-            Island currentIsland = plugin.getIslands().getIslandAt(user.getLocation());
+            Island currentIsland = plugin.getIslands().getIslandAt(user.getLocation()).orElse(null);
             if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),user.getUniqueId()))) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Current island is locked, or player is banned");

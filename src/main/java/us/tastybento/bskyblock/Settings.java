@@ -3,7 +3,9 @@ package us.tastybento.bskyblock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -66,9 +68,8 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
-    //TODO change allowAutoActivator to the fakePlayers introduced in ASB 3.0.8
-    @ConfigEntry(path = "general.allow-FTB-auto-activators")
-    private boolean allowAutoActivator = false;
+    @ConfigEntry(path = "general.fakeplayers")
+    private Set<String> fakePlayers = new HashSet<>();
 
     @ConfigEntry(path = "general.allow-obsidian-scooping")
     private boolean allowObsidianScooping = true;
@@ -538,12 +539,6 @@ public class Settings implements ISettings<Settings> {
         return acidDamageOp;
     }
     /**
-     * @return the allowAutoActivator
-     */
-    public boolean isAllowAutoActivator() {
-        return allowAutoActivator;
-    }
-    /**
      * @return the allowChestDamage
      */
     public boolean isAllowChestDamage() {
@@ -770,12 +765,6 @@ public class Settings implements ISettings<Settings> {
      */
     public void setAcidRainDamage(int acidRainDamage) {
         this.acidRainDamage = acidRainDamage;
-    }
-    /**
-     * @param allowAutoActivator the allowAutoActivator to set
-     */
-    public void setAllowAutoActivator(boolean allowAutoActivator) {
-        this.allowAutoActivator = allowAutoActivator;
     }
     /**
      * @param allowChestDamage the allowChestDamage to set
@@ -1215,6 +1204,18 @@ public class Settings implements ISettings<Settings> {
      */
     public void setWorldName(String worldName) {
         this.worldName = worldName;
+    }
+    /**
+     * @return the fakePlayers
+     */
+    public Set<String> getFakePlayers() {
+        return fakePlayers;
+    }
+    /**
+     * @param fakePlayers the fakePlayers to set
+     */
+    public void setFakePlayers(Set<String> fakePlayers) {
+        this.fakePlayers = fakePlayers;
     }
     
 

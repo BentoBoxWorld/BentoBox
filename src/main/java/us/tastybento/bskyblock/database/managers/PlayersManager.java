@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -376,11 +377,8 @@ public class PlayersManager{
         if (loc == null)
             return null;
         // Look in the grid
-        Island island = plugin.getIslands().getIslandAt(loc);
-        if (island != null) {
-            return island.getOwner();
-        }
-        return null;
+        Optional<Island> island = plugin.getIslands().getIslandAt(loc);
+        return island.map(x->x.getOwner()).orElse(null);
     }
 
     /**

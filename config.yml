@@ -70,7 +70,9 @@ general:
   mute-death-messages: false
 
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
-  allow-FTB-auto-activator: false
+  # Add other fake player names here if required
+  fakeplayers:
+  - "[CoFH]"
   
   # Allow obsidian to be scooped up with an empty bucket back into lava
   # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
