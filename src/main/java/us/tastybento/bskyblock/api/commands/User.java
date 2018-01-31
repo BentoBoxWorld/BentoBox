@@ -257,4 +257,10 @@ public class User {
         return Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage());
 
     }
+    
+    @SuppressWarnings("deprecation")
+    public void updateInventory() {
+        player.updateInventory();
+        
+    }
 }
