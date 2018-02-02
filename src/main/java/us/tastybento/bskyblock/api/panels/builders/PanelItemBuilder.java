@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.api.panels.builders;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;

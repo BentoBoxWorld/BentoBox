@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.api.events.island;
 
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import us.tastybento.bskyblock.BSkyBlock;

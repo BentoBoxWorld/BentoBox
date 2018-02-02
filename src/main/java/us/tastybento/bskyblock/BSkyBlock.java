@@ -19,7 +19,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
- * @author Tastybento
+ * @author tastybento
  * @author Poslovitch
  */
 public class BSkyBlock extends JavaPlugin {
@@ -83,57 +83,34 @@ public class BSkyBlock extends JavaPlugin {
         // These items have to be loaded when the server has done 1 tick.
         // Note Worlds are not loaded this early, so any Locations or World reference will be null
         // at this point. Therefore, the 1 tick scheduler is required.
-        getServer().getScheduler().runTask(this, new Runnable() {
+        getServer().getScheduler().runTask(this, () -> {
+            // Create the world if it does not exist
+            islandWorldManager = new IslandWorld(plugin);
 
-            @Override
-            public void run() {
-                // Create the world if it does not exist
-                islandWorldManager = new IslandWorld(plugin);
+            getServer().getScheduler().runTask(plugin, () -> {
+                // Load islands from database
+                islandsManager.load();
 
-                getServer().getScheduler().runTask(plugin, new Runnable() {
+                localesManager = new LocalesManager(plugin);
+                //TODO localesManager.registerLocales(plugin);
 
-                    @Override
-                    public void run() {
-                        // Load islands from database
-                        islandsManager.load();
+                // Register Listeners
+                registerListeners();
 
-                        localesManager = new LocalesManager(plugin);
-                        //TODO localesManager.registerLocales(plugin);
+                // Load Flags
+                flagsManager = new FlagsManager(plugin);
 
-                        // Register Listeners
-                        registerListeners();
+                // Load addons
+                addonsManager = new AddonsManager(plugin);
+                addonsManager.enableAddons();
 
-                        // Load Flags
-                        flagsManager = new FlagsManager(plugin);
-
-                        // Load addons
-                        addonsManager = new AddonsManager(plugin);
-                        addonsManager.enableAddons();
-
-                        /*
-                         *DEBUG CODE
-                            Island loadedIsland = islandsManager.getIsland(owner);
-                            getLogger().info("Island name = " + loadedIsland.getName());
-                            getLogger().info("Island locked = " + loadedIsland.getLocked());
-                            //getLogger().info("Random set = " + randomSet);
-                            getLogger().info("Island coops = " + loadedIsland.getCoops());
-                            for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
-                                getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
-                            }
-                         */
-                        // Save islands & players data asynchronously every X minutes
-                        getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
-                        plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                playersManager.save(true);
-                                islandsManager.save(true);
-                            }
-                        }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
-                    }
-                });
-            } 
+                // Save islands & players data asynchronously every X minutes
+                getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
+                plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+                    playersManager.save(true);
+                    islandsManager.save(true);
+                }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
+            });
         });
     }
 

@@ -10,16 +10,9 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.listeners.FlagListener;
 import us.tastybento.bskyblock.lists.Flags;
 
-public class PlaceBlocksListener extends FlagListener {
-
-    public PlaceBlocksListener() {
-        super(BSkyBlock.getInstance());
-    }
-
+public class PlaceBlocksListener extends AbstractFlagListener {
 
     /**
      * Check blocks being placed in general
@@ -73,7 +66,7 @@ public class PlaceBlocksListener extends FlagListener {
                 if (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST
                         || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR
                         || (e.getMaterial().name().contains("BOAT") && !e.getClickedBlock().isLiquid())) {
-                    checkIsland(e, getUser().getLocation(), Flags.PLACE_BLOCKS);
+                    checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
                 }
             }
         }
@@ -87,7 +80,7 @@ public class PlaceBlocksListener extends FlagListener {
     public void onBlockForm(EntityBlockFormEvent e) {
         if (e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             // Silently check
-            checkIsland(e, getUser().getLocation(), Flags.PLACE_BLOCKS, true); 
+            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS, true); 
         }
     }
 

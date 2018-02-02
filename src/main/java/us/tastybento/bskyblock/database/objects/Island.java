@@ -377,7 +377,7 @@ public class Island implements DataObject {
     /**
      * Set the Island Guard flag rank
      * @param flag
-     * @param value
+     * @param value - rank value. If the flag applies to the island, a positive number = true, negative = false
      */
     public void setFlag(Flag flag, int value){
         flags.put(flag, value);
@@ -654,5 +654,15 @@ public class Island implements DataObject {
      */
     public boolean isAllowed(User user, Flag flag) {
         return (this.getRank(user) >= this.getFlag(flag)) ? true : false;
+    }
+
+    /**
+     * Check if the flag is allowed or not
+     * For flags that are for the island in general and not related to rank
+     * @param flag
+     * @return true if allowed, false if not
+     */
+    public boolean isAllowed(Flag flag) {
+        return this.getFlag(flag) >= 0 ? true : false;
     }
 }

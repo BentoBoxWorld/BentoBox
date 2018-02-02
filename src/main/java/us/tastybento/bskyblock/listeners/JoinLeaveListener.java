@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.listeners;
 
-import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.event.EventHandler;

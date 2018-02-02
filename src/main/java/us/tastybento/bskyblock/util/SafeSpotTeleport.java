@@ -98,203 +98,174 @@ public class SafeSpotTeleport {
             }
             final int worldHeight = maxHeight;
             //plugin.getLogger().info("DEBUG:world height = " + worldHeight);
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, new Runnable() {
-
-                @Override
-                public void run() {
-                    // Find a safe spot, defined as a solid block, with 2 air spaces above it
-                    //long time = System.nanoTime();
-                    int x = 0;
-                    int y = 0;
-                    int z = 0;
-                    ChunkSnapshot safeChunk = null;
-                    ChunkSnapshot portalChunk = null;
-                    boolean safeSpotFound = false;
-                    Vector safeSpotInChunk = null;
-                    Vector portalPart = null;
-                    double distance = 0D;
-                    double safeDistance = 0D;
-                    for (ChunkSnapshot chunk: finalChunk) {
-                        for (x = 0; x< 16; x++) {
-                            for (z = 0; z < 16; z++) {
-                                // Work down from the entry point up
-                                for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
-                                    //System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
-                                    // Check for portal - only if this is not a safe home search
-                                    if (!setHome && chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
-                                        if (portalPart == null || (distance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
-                                            // First one found or a closer one, save the chunk the position and the distance
-                                            portalChunk = chunk;
-                                            portalPart = new Vector(x,y,z);
-                                            distance = portalPart.distanceSquared(islandLoc.toVector());
-                                        }
-                                    }
-                                    // Check for safe spot, but only if it is closer than one we have found already
-                                    if (!safeSpotFound || (safeDistance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
-                                        // No safe spot yet, or closer distance
-                                        if (checkBlock(chunk,x,y,z, worldHeight)) {
-                                            safeChunk = chunk;
-                                            safeSpotFound = true;
-                                            safeSpotInChunk = new Vector(x,y,z);
-                                            safeDistance = islandLoc.toVector().distanceSquared(safeSpotInChunk);
-                                        }
+            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                // Find a safe spot, defined as a solid block, with 2 air spaces above it
+                //long time = System.nanoTime();
+                int x = 0;
+                int y = 0;
+                int z = 0;
+                ChunkSnapshot safeChunk = null;
+                ChunkSnapshot portalChunk = null;
+                boolean safeSpotFound = false;
+                Vector safeSpotInChunk = null;
+                Vector portalPart = null;
+                double distance = 0D;
+                double safeDistance = 0D;
+                for (ChunkSnapshot chunk: finalChunk) {
+                    for (x = 0; x< 16; x++) {
+                        for (z = 0; z < 16; z++) {
+                            // Work down from the entry point up
+                            for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
+                                //System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
+                                // Check for portal - only if this is not a safe home search
+                                if (!setHome && chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
+                                    if (portalPart == null || (distance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
+                                        // First one found or a closer one, save the chunk the position and the distance
+                                        portalChunk = chunk;
+                                        portalPart = new Vector(x,y,z);
+                                        distance = portalPart.distanceSquared(islandLoc.toVector());
                                     }
                                 }
-                            } //end z
-                        } // end x
-                        //if (safeSpotFound) {
-                        //System.out.print("DEBUG: safe spot found " + safeSpotInChunk.toString());
-                        //break search;
-                        //}
-                    }
-                    // End search
-                    // Check if the portal is safe (it should be)
-                    if (portalPart != null) {
-                        //System.out.print("DEBUG: Portal found");
-                        // There is a portal available, but is it safe?
-                        // Get the lowest portal spot
-                        x = portalPart.getBlockX();
-                        y = portalPart.getBlockY();
-                        z = portalPart.getBlockZ();
-                        while (portalChunk.getBlockType(x,y,z).equals(Material.PORTAL)) {
-                            y--;
-                        }
-                        //System.out.print("DEBUG: Portal teleport loc = " + (16 * portalChunk.getX() + x) + "," + (y) + "," + (16 * portalChunk.getZ() + z));
-                        // Now check if this is a safe location
-                        if (checkBlock(portalChunk,x,y,z, worldHeight)) {
-                            // Yes, so use this instead of the highest location
-                            //System.out.print("DEBUG: Portal is safe");
-                            safeSpotFound = true;
-                            safeSpotInChunk = new Vector(x,y,z);
-                            safeChunk = portalChunk;
-                            // TODO: Add safe portal spot to island
-                        }
-                    }
-                    //System.out.print("Seconds = " + ((System.nanoTime() - time) * 0.000000001));
-                    if (safeChunk != null && safeSpotFound) {
-                        //final Vector spot = new Vector((16 *currentChunk.getX()) + x + 0.5D, y +1, (16 * currentChunk.getZ()) + z + 0.5D)
-                        final Vector spot = new Vector((16 *safeChunk.getX()) + 0.5D, 1, (16 * safeChunk.getZ()) + 0.5D).add(safeSpotInChunk);
-                        // Return to main thread and teleport the player
-                        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                Location destination = spot.toLocation(islandLoc.getWorld());
-                                //plugin.getLogger().info("DEBUG: safe spot found = " + destination);
-
-                                // Create a portal
-                                // TODO Add if statement here
-                                //Block b = player.getLocation().getBlock();
-                                //if (b.getType() != Material.PORTAL) {
-                                /*
-				if (world.equals(BSkyBlock.getNetherWorld())) {
-				    for (int x = -1; x < 3; x++) {
-					for (int y = -1; y< 4; y++) {
-					    Location l = new Location(islandLoc.getWorld(), destination.getBlockX() + x, destination.getBlockY() + y, destination.getBlockZ() -1);
-					    if (x == -1 || x == 2 || y == -1 || y == 3) {
-						//nms.setBlockSuperFast(l.getBlock(), Material.OBSIDIAN.getId(), (byte)0, false);
-						//l.getBlock().setType(Material.OBSIDIAN);
-						//plugin.getLogger().info("DEBUG: obsidian at "+ l);
-					    } else {
-						//plugin.getLogger().info("DEBUG: Portal at "+ l);
-						nms.setBlockSuperFast(l.getBlock(), Material.PORTAL.getId(), (byte)0, false);
-						//l.getBlock().setType(Material.PORTAL);
-					    }
-					}
-				    }
-				}*/
-                                if (setHome && entity instanceof Player) {
-                                    plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
-                                }
-                                Vector velocity = entity.getVelocity();
-                                entity.teleport(destination);
-                                entity.setVelocity(velocity);
-                                // Exit spectator mode if in it
-                                if (entity instanceof Player) {
-                                    Player player = (Player)entity;
-                                    if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                                        player.setGameMode(GameMode.SURVIVAL);
+                                // Check for safe spot, but only if it is closer than one we have found already
+                                if (!safeSpotFound || (safeDistance > islandLoc.toVector().distanceSquared(new Vector(x,y,z)))) {
+                                    // No safe spot yet, or closer distance
+                                    if (checkBlock(chunk,x,y,z, worldHeight)) {
+                                        safeChunk = chunk;
+                                        safeSpotFound = true;
+                                        safeSpotInChunk = new Vector(x,y,z);
+                                        safeDistance = islandLoc.toVector().distanceSquared(safeSpotInChunk);
                                     }
-                                }
-                            }});
-                    } else {
-                        // We did not find a spot
-                        plugin.getServer().getScheduler().runTask(plugin, () -> {
-                            //plugin.getLogger().info("DEBUG: safe spot not found");
-                            if (entity instanceof Player) {
-                                if (!failureMessage.isEmpty()) {
-                                    entity.sendMessage(failureMessage);
-                                } else {
-                                    entity.sendMessage("Warp not safe");
                                 }
                             }
-                        });
+                        } //end z
+                    } // end x
+                    //if (safeSpotFound) {
+                    //System.out.print("DEBUG: safe spot found " + safeSpotInChunk.toString());
+                    //break search;
+                    //}
+                }
+                // End search
+                // Check if the portal is safe (it should be)
+                if (portalPart != null) {
+                    //System.out.print("DEBUG: Portal found");
+                    // There is a portal available, but is it safe?
+                    // Get the lowest portal spot
+                    x = portalPart.getBlockX();
+                    y = portalPart.getBlockY();
+                    z = portalPart.getBlockZ();
+                    while (portalChunk.getBlockType(x,y,z).equals(Material.PORTAL)) {
+                        y--;
+                    }
+                    //System.out.print("DEBUG: Portal teleport loc = " + (16 * portalChunk.getX() + x) + "," + (y) + "," + (16 * portalChunk.getZ() + z));
+                    // Now check if this is a safe location
+                    if (checkBlock(portalChunk,x,y,z, worldHeight)) {
+                        // Yes, so use this instead of the highest location
+                        //System.out.print("DEBUG: Portal is safe");
+                        safeSpotFound = true;
+                        safeSpotInChunk = new Vector(x,y,z);
+                        safeChunk = portalChunk;
+                        // TODO: Add safe portal spot to island
                     }
                 }
-
-                /**
-                 * Returns true if the location is a safe one.
-                 * @param chunk
-                 * @param x
-                 * @param y
-                 * @param z
-                 * @param worldHeight
-                 * @return
-                 */
-                @SuppressWarnings("deprecation")
-                private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
-                    int type = chunk.getBlockTypeId(x, y, z);
-                    if (type != 0) { // AIR
-                        int space1 = chunk.getBlockTypeId(x, Math.min(y + 1, worldHeight), z);
-                        int space2 = chunk.getBlockTypeId(x, Math.min(y + 2, worldHeight), z);
-                        if ((space1 == 0 && space2 == 0) || (space1 == Material.PORTAL.getId() || space2 == Material.PORTAL.getId())) {
-                            // Now there is a chance that this is a safe spot
-                            // Check for safe ground
-                            Material mat = Material.getMaterial(type);
-                            if (!mat.toString().contains("FENCE")
-                                    && !mat.toString().contains("DOOR")
-                                    && !mat.toString().contains("GATE")
-                                    && !mat.toString().contains("PLATE")) {
-                                switch (mat) {
-                                    // Unsafe
-                                    case ANVIL:
-                                    case BARRIER:
-                                    case BOAT:
-                                    case CACTUS:
-                                    case DOUBLE_PLANT:
-                                    case ENDER_PORTAL:
-                                    case FIRE:
-                                    case FLOWER_POT:
-                                    case LADDER:
-                                    case LAVA:
-                                    case LEVER:
-                                    case LONG_GRASS:
-                                    case PISTON_EXTENSION:
-                                    case PISTON_MOVING_PIECE:
-                                    case PORTAL:
-                                    case SIGN_POST:
-                                    case SKULL:
-                                    case STANDING_BANNER:
-                                    case STATIONARY_LAVA:
-                                    case STATIONARY_WATER:
-                                    case STONE_BUTTON:
-                                    case TORCH:
-                                    case TRIPWIRE:
-                                    case WATER:
-                                    case WEB:
-                                    case WOOD_BUTTON:
-                                        //System.out.println("Block is dangerous " + mat.toString());
-                                        break;
-                                    default:
-                                        // Safe
-                                        // System.out.println("Block is safe " + mat.toString());
-                                        return true;
-                                }
+                //System.out.print("Seconds = " + ((System.nanoTime() - time) * 0.000000001));
+                if (safeChunk != null && safeSpotFound) {
+                    //final Vector spot = new Vector((16 *currentChunk.getX()) + x + 0.5D, y +1, (16 * currentChunk.getZ()) + z + 0.5D)
+                    final Vector spot = new Vector((16 *safeChunk.getX()) + 0.5D, 1, (16 * safeChunk.getZ()) + 0.5D).add(safeSpotInChunk);
+                    // Return to main thread and teleport the player
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        Location destination = spot.toLocation(islandLoc.getWorld());
+                        if (setHome && entity instanceof Player) {
+                            plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
+                        }
+                        Vector velocity = entity.getVelocity();
+                        entity.teleport(destination);
+                        entity.setVelocity(velocity);
+                        // Exit spectator mode if in it
+                        if (entity instanceof Player) {
+                            Player player = (Player)entity;
+                            if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                                player.setGameMode(GameMode.SURVIVAL);
                             }
                         }
-                    }
-                    return false;
-                }});
+                    });
+                } else {
+                    // We did not find a spot
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        //plugin.getLogger().info("DEBUG: safe spot not found");
+                        if (entity instanceof Player) {
+                            if (!failureMessage.isEmpty()) {
+                                entity.sendMessage(failureMessage);
+                            } else {
+                                entity.sendMessage("Warp not safe");
+                            }
+                        }
+                    });
+                }
+            });
         }
+    }
+
+    /**
+     * Returns true if the location is a safe one.
+     * @param chunk
+     * @param x
+     * @param y
+     * @param z
+     * @param worldHeight
+     * @return
+     */
+    @SuppressWarnings("deprecation")
+    private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
+        int type = chunk.getBlockTypeId(x, y, z);
+        if (type != 0) { // AIR
+            int space1 = chunk.getBlockTypeId(x, Math.min(y + 1, worldHeight), z);
+            int space2 = chunk.getBlockTypeId(x, Math.min(y + 2, worldHeight), z);
+            if ((space1 == 0 && space2 == 0) || (space1 == Material.PORTAL.getId() || space2 == Material.PORTAL.getId())) {
+                // Now there is a chance that this is a safe spot
+                // Check for safe ground
+                Material mat = Material.getMaterial(type);
+                if (!mat.toString().contains("FENCE")
+                        && !mat.toString().contains("DOOR")
+                        && !mat.toString().contains("GATE")
+                        && !mat.toString().contains("PLATE")) {
+                    switch (mat) {
+                    // Unsafe
+                    case ANVIL:
+                    case BARRIER:
+                    case BOAT:
+                    case CACTUS:
+                    case DOUBLE_PLANT:
+                    case ENDER_PORTAL:
+                    case FIRE:
+                    case FLOWER_POT:
+                    case LADDER:
+                    case LAVA:
+                    case LEVER:
+                    case LONG_GRASS:
+                    case PISTON_EXTENSION:
+                    case PISTON_MOVING_PIECE:
+                    case PORTAL:
+                    case SIGN_POST:
+                    case SKULL:
+                    case STANDING_BANNER:
+                    case STATIONARY_LAVA:
+                    case STATIONARY_WATER:
+                    case STONE_BUTTON:
+                    case TORCH:
+                    case TRIPWIRE:
+                    case WATER:
+                    case WEB:
+                    case WOOD_BUTTON:
+                        //System.out.println("Block is dangerous " + mat.toString());
+                        break;
+                    default:
+                        // Safe
+                        // System.out.println("Block is safe " + mat.toString());
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 }

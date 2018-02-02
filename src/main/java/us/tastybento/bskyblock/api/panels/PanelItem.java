@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.api.panels;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;

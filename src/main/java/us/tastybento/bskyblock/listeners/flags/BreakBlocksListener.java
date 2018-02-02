@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.listeners.flags;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -16,16 +17,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.listeners.FlagListener;
 import us.tastybento.bskyblock.lists.Flags;
 
-public class BreakBlocksListener extends FlagListener {
-
-    public BreakBlocksListener() {
-        super(BSkyBlock.getInstance());
-    }
+public class BreakBlocksListener extends AbstractFlagListener {
 
     /**
      * Prevents blocks from being broken
@@ -36,7 +31,7 @@ public class BreakBlocksListener extends FlagListener {
     public void onBlockBreak(final BlockBreakEvent e) {
         checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
     }
-    
+
     /**
      * Prevents the breakage of hanging items
      *
@@ -59,7 +54,7 @@ public class BreakBlocksListener extends FlagListener {
     public void onPlayerInteract(final PlayerInteractEvent e) {
         // Only handle hitting things
         if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
-        
+
         // Look along player's sight line to see if any blocks are skulls
         try {
             BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
@@ -72,7 +67,7 @@ public class BreakBlocksListener extends FlagListener {
                 }
             }
         } catch (Exception ex) {}
- 
+
         switch (e.getClickedBlock().getType()) {
         case CAKE_BLOCK:
         case DRAGON_EGG:
@@ -100,7 +95,7 @@ public class BreakBlocksListener extends FlagListener {
             User user = User.getInstance((Player) e.getAttacker());
             // Get the island and if present, check the flag, react if required and return
             plugin.getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> { 
-                if (!x.isAllowed(getUser(), Flags.BREAK_BLOCKS)) {
+                if (!x.isAllowed(user, Flags.BREAK_BLOCKS)) {
                     e.setCancelled(true);
                     user.sendMessage("protection.protected");
                 }
@@ -121,8 +116,8 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
-        // Only handle item frames
-        if (!(e.getEntity() instanceof ItemFrame) && !e.getEntityType().toString().endsWith("STAND")) return;
+        // Only handle item frames and armor stands
+        if (!(e.getEntity() instanceof ItemFrame) && !(e.getEntity() instanceof ArmorStand)) return;
 
         // Get the attacker
         if (e.getDamager() instanceof Player) {
@@ -140,6 +135,5 @@ public class BreakBlocksListener extends FlagListener {
             }
         }
     }
-
 
 }

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package us.tastybento.bskyblock.listeners;
+package us.tastybento.bskyblock.listeners.flags;
 
 import java.util.Optional;
 
@@ -18,18 +18,18 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
- * Abstract class for flag listeners to inherit. Provides some common code.
- * @author ben
+ * Abstract class for flag listeners. Provides common code.
+ * @author tastybento
  *
  */
-public abstract class FlagListener implements Listener {
+public abstract class AbstractFlagListener implements Listener {
 
-    protected BSkyBlock plugin;
+    public BSkyBlock plugin;
     private User user = null;
 
-    public FlagListener(BSkyBlock plugin) {
+    public AbstractFlagListener() {
         super();
-        this.plugin = plugin;
+        this.plugin = BSkyBlock.getInstance();
     }
 
     /**
@@ -38,7 +38,7 @@ public abstract class FlagListener implements Listener {
      * @param e - the event
      * @return user or empty
      */
-    protected Optional<User> getEventUser(Event e) {
+    private Optional<User> createEventUser(Event e) {
         // Set the user
         if (e instanceof PlayerEvent) {
             user = User.getInstance(((PlayerEvent)e).getPlayer());
@@ -52,16 +52,8 @@ public abstract class FlagListener implements Listener {
      * Explicitly set the user
      * @param user
      */
-    protected void setUser(User user) {
+    public void setUser(User user) {
         this.user = user;
-    }
-
-    /**
-     * Get the user associated with this event
-     * @return User or null
-     */
-    protected User getUser() {
-        return user;
     }
 
     /*
@@ -69,24 +61,24 @@ public abstract class FlagListener implements Listener {
      */
 
     /**
-     * Cancels the event and sends the island protected message to user
+     * Cancels the event and sends the island public message to user
      * @param e Event
      */
-    protected void noGo(Event e) {
+    public void noGo(Event e) {
         noGo(e, false);
     }
 
     /**
-     * Cancels the event and sends the island protected message to user unless silent is true
+     * Cancels the event and sends the island public message to user unless silent is true
      * @param e Event
      * @param silent - if true, message is not sent
      */
-    protected void noGo(Event e, boolean silent) {
+    public void noGo(Event e, boolean silent) {
         if (e instanceof Cancellable)       
             ((Cancellable)e).setCancelled(true);
         if (user != null) {
             if (!silent)
-                user.sendMessage("protection.protected");
+                user.sendMessage("protection.public");
             user.updateInventory();
         }
     }
@@ -96,7 +88,7 @@ public abstract class FlagListener implements Listener {
      * @param loc
      * @return true if the location is in the island worlds
      */
-    protected boolean inWorld(Location loc) {
+    public boolean inWorld(Location loc) {
         return (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())
                 || loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())
                 || loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld())) ? true : false;
@@ -107,7 +99,7 @@ public abstract class FlagListener implements Listener {
      * @param entity - the entity
      * @return true if in world
      */
-    protected boolean inWorld(Entity entity) {
+    public boolean inWorld(Entity entity) {
         return inWorld(entity.getLocation());
     }
 
@@ -116,7 +108,7 @@ public abstract class FlagListener implements Listener {
      * @param user - a user
      * @return true if in world
      */
-    protected boolean inWorld(User user) {
+    public boolean inWorld(User user) {
         return inWorld(user.getLocation());
     }
 
@@ -126,7 +118,7 @@ public abstract class FlagListener implements Listener {
      * @param loc
      * @return true if the check is okay, false if it was disallowed
      */
-    protected boolean checkIsland(Event e, Location loc, Flag flag) { 
+    public boolean checkIsland(Event e, Location loc, Flag flag) { 
         return checkIsland(e, loc, flag, false);
     }
 
@@ -139,20 +131,20 @@ public abstract class FlagListener implements Listener {
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    protected boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
+    public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If the user is not set, try to get it from the event
-        if (getUser() == null) {
+        if (user == null) {
             // Set the user associated with this event
-            if (!getEventUser(e).isPresent()) return true;
+            if (!createEventUser(e).isPresent()) return true;
         }
         // If this is not an Island World, skip
-        if (!inWorld(getUser())) return true;
+        if (!inWorld(user)) return true;
 
         // Get the island and if present, check the flag, react if required and return
         Optional<Island> island = plugin.getIslands().getIslandAt(loc);
         
         if (island.isPresent()) {
-            if (!island.get().isAllowed(getUser(), flag)) {
+            if (!island.get().isAllowed(user, flag)) {
                 noGo(e, silent);
                 return false;
             } else {
