@@ -44,8 +44,8 @@ public class Flags {
     public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.FENCE_GATE).build();
     public static final Flag MUSIC = new FlagBuilder().id("MUSIC").icon(Material.JUKEBOX).build();
     public static final Flag LEVER_BUTTON = new FlagBuilder().id("LEVER_BUTTON").icon(Material.LEVER).build();
-    public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).listener(new PlaceBlocksListener()).build();
-    public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.MONSTER_EGG).listener(new PlaceBlocksListener()).build();
+    public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).build();
+    public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.MONSTER_EGG).build();
 
     // Entity interactions
     public static final Flag ARMOR_STAND = new FlagBuilder().id("ARMOR_STAND").icon(Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
@@ -108,14 +108,14 @@ public class Flags {
     public static final Flag SHEARING = new FlagBuilder().id("SHEARING").icon(Material.SHEARS).listener(new ShearingListener()).build();
     
     // Visitor item pickup or drop
-    public static final Flag VISITOR_ITEM_DROP = new FlagBuilder().id("VISITOR_ITEM_DROP").icon(Material.DIRT).listener(new PlaceBlocksListener()).build();
-    public static final Flag VISITOR_ITEM_PICKUP = new FlagBuilder().id("VISITOR_ITEM_PICKUP").icon(Material.DIRT).listener(new PlaceBlocksListener()).build();
+    public static final Flag VISITOR_ITEM_DROP = new FlagBuilder().id("VISITOR_ITEM_DROP").icon(Material.DIRT).build();
+    public static final Flag VISITOR_ITEM_PICKUP = new FlagBuilder().id("VISITOR_ITEM_PICKUP").icon(Material.DIRT).build();
     
     /*
      * Non-protection flags
      */
-    public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).listener(new PlaceBlocksListener()).build();
-    public static final Flag MOB_SPAWN = new FlagBuilder().id("MOB_SPAWN").icon(Material.APPLE).allowedByDefault(true).listener(new PlaceBlocksListener()).build();
-    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).listener(new PlaceBlocksListener()).build();
+    public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).build();
+    public static final Flag MOB_SPAWN = new FlagBuilder().id("MOB_SPAWN").icon(Material.APPLE).allowedByDefault(true).build();
+    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).build();
 
 }
