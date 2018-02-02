@@ -312,7 +312,7 @@ public class TestBSkyBlock {
         island.addMember(member2);
         island.addMember(member3);
         
-        Set<UUID> members = island.getMembers();
+        Set<UUID> members = island.getMemberSet();
         assertTrue(members.contains(playerUUID));
         assertTrue(members.contains(member1));
         assertTrue(members.contains(member2));
@@ -320,7 +320,7 @@ public class TestBSkyBlock {
         
         // Remove members
         island.removeMember(member3);
-        members = island.getMembers();
+        members = island.getMemberSet();
         assertTrue(members.contains(playerUUID));
         assertTrue(members.contains(member1));
         assertTrue(members.contains(member2));
@@ -328,7 +328,7 @@ public class TestBSkyBlock {
         
         // Ban member
         island.addToBanList(member1);
-        members = island.getMembers();
+        members = island.getMemberSet();
         assertTrue(members.contains(playerUUID));
         assertFalse(members.contains(member1));
         assertTrue(members.contains(member2));

@@ -30,7 +30,7 @@ public class Flag {
     }
 
     public Optional<Listener> getListener() {
-        return Optional.of(listener);
+        return Optional.ofNullable(listener);
     }
 
     public boolean isAllowed() {

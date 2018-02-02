@@ -11,6 +11,7 @@ import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.PanelListenerManager;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
@@ -99,6 +100,7 @@ public class BSkyBlock extends JavaPlugin {
 
                 // Load Flags
                 flagsManager = new FlagsManager(plugin);
+                new Flags();
 
                 // Load addons
                 addonsManager = new AddonsManager(plugin);

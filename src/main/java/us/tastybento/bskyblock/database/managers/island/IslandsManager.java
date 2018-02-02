@@ -785,7 +785,7 @@ public class IslandsManager {
             //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
             //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
 
-            if (island.get().onIsland(loc) && island.get().getMembers().contains(player.getUniqueId())) {
+            if (island.get().onIsland(loc) && island.get().getMemberSet().contains(player.getUniqueId())) {
                 //plugin.getLogger().info("DEBUG: allowed");
                 // In a protected zone but is on the list of acceptable players
                 return true;
@@ -972,7 +972,7 @@ public class IslandsManager {
         islandCache.addPlayer(playerUUID, teamIsland);
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: new team member list:");
-            plugin.getLogger().info(teamIsland.getMembers().toString());
+            plugin.getLogger().info(teamIsland.getMemberSet().toString());
         }
         // Save the database
         save(false);

@@ -37,18 +37,6 @@ public class Island implements DataObject {
 
     private String uniqueId = "";
 
-    public String getUniqueId() {
-        // Island's have UUID's that are randomly assigned if they do not exist
-        if (uniqueId.isEmpty()) {
-            uniqueId = UUID.randomUUID().toString();
-        }
-        return uniqueId;
-    }
-
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
-    }
-
     //// Island ////    
     // The center of the island itself
     private Location center;
@@ -77,25 +65,25 @@ public class Island implements DataObject {
 
     // Time parameters
     private long createdDate;
+
     private long updatedDate;
 
     //// Team ////
     private UUID owner;
     private HashMap<UUID, Integer> members = new HashMap<>();
-    
+
     //// State ////
     private boolean locked = false;
     private boolean spawn = false;
+    
     private boolean purgeProtected = false;
     //// Protection ////
     private HashMap<Flag, Integer> flags = new HashMap<>();
-
     private int levelHandicap;
-
     private Location spawnPoint;
 
     public Island() {}
-    
+
     public Island(Location location, UUID owner, int protectionRange) {
         this.owner = owner;
         this.members.put(owner, RanksManager.OWNER_RANK);
@@ -118,7 +106,7 @@ public class Island implements DataObject {
     public void addMember(UUID playerUUID) {
         members.put(playerUUID, RanksManager.MEMBER_RANK);
     }
-
+    
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
@@ -180,9 +168,30 @@ public class Island implements DataObject {
     }
 
     /**
+     * @return the levelHandicap
+     */
+    public int getLevelHandicap() {
+        return levelHandicap;
+    }
+
+    /**
+     * @return true if the island is locked, otherwise false
+     */
+    public boolean getLocked(){
+        return locked;
+    }
+
+    /**
+     * @return the members
+     */
+    public HashMap<UUID, Integer> getMembers() {
+        return members;
+    }
+
+    /**
      * @return the members of the island (owner included)
      */
-    public Set<UUID> getMembers(){
+    public Set<UUID> getMemberSet(){
         Set<UUID> result = new HashSet<>();
         for (Entry<UUID, Integer> member: members.entrySet()) {
             if (member.getValue() >= RanksManager.MEMBER_RANK) {
@@ -250,10 +259,96 @@ public class Island implements DataObject {
     }
 
     /**
+     * @return true if the island is protected from the Purge, otherwise false
+     */
+    public boolean getPurgeProtected(){
+        return purgeProtected;
+    }
+
+    /**
      * @return the island range
      */
     public int getRange(){
         return range;
+    }
+
+    /**
+     * Get the rank of user for this island
+     * @param user
+     * @return rank integer
+     */
+    public int getRank(User user) {
+        return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : RanksManager.VISITOR_RANK;
+    }
+
+    /**
+     * @return the ranks
+     */
+    public HashMap<UUID, Integer> getRanks() {
+        return members;
+    }
+
+    /**
+     * @return true if the island is the spawn otherwise false
+     */
+    public boolean getSpawn(){
+        return spawn;
+    }
+
+    public Location getSpawnPoint() {
+        return spawnPoint;
+    }
+
+    /**
+     * @param material
+     * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
+     * a tile entity.
+     */
+    public int getTileEntityCount(Material material, World world) {
+        int result = 0;
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
+                for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
+                    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
+                    if (onIsland(holder.getLocation())) {
+                        if (holder.getType() == material) {
+                            result++;
+                        } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
+                            if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
+                                result++;
+                            }
+                        } else if (material.equals(Material.FURNACE)) {
+                            if (holder.getType().equals(Material.BURNING_FURNACE)) {
+                                result++;
+                            }
+                        } else if (material.toString().endsWith("BANNER")) {
+                            if (holder.getType().toString().endsWith("BANNER")) {
+                                result++;
+                            }
+                        } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
+                            if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
+                                result++;
+                            }
+                        }
+                    }
+                }
+                for (Entity holder : world.getChunkAt(x, z).getEntities()) {
+                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
+                    if (holder.getType().toString().equals(material.toString()) && onIsland(holder.getLocation())) {
+                        result++;
+                    }
+                }
+            }
+        }
+        return result;
+    }
+
+    public String getUniqueId() {
+        // Island's have UUID's that are randomly assigned if they do not exist
+        if (uniqueId.isEmpty()) {
+            uniqueId = UUID.randomUUID().toString();
+        }
+        return uniqueId;
     }
 
     /**
@@ -302,6 +397,33 @@ public class Island implements DataObject {
         return (x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2) ? true: false;
     }
 
+    public boolean inIslandSpace(Location location) {
+        if (Util.inWorld(location)) {
+            return inIslandSpace(location.getBlockX(), location.getBlockZ());
+        }
+        return false;
+    }
+
+    /**
+     * Check if the flag is allowed or not
+     * For flags that are for the island in general and not related to rank
+     * @param flag
+     * @return true if allowed, false if not
+     */
+    public boolean isAllowed(Flag flag) {
+        return this.getFlag(flag) >= 0 ? true : false;
+    }
+
+    /**
+     * Check if a user is allowed to bypass the flag or not
+     * @param user - user
+     * @param flag - flag
+     * @return true if allowed, false if not
+     */
+    public boolean isAllowed(User user, Flag flag) {
+        return (this.getRank(user) >= this.getFlag(flag)) ? true : false;
+    }
+
     /**
      * Check if banned
      * @param targetUUID
@@ -312,23 +434,16 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return true if the island is locked, otherwise false
+     * @return true if island is locked, false if not
      */
-    public boolean getLocked(){
+    public boolean isLocked() {
         return locked;
     }
 
     /**
-     * @return true if the island is protected from the Purge, otherwise false
+     * @return spawn
      */
-    public boolean getPurgeProtected(){
-        return purgeProtected;
-    }
-
-    /**
-     * @return true if the island is the spawn otherwise false
-     */
-    public boolean getSpawn(){
+    public boolean isSpawn() {
         return spawn;
     }
 
@@ -358,6 +473,10 @@ public class Island implements DataObject {
         // TODO fire unban event
         members.remove(targetUUID);
         return true;
+    }
+
+    public void removeMember(UUID playerUUID) {
+        members.remove(playerUUID);
     }
 
     /**
@@ -400,6 +519,13 @@ public class Island implements DataObject {
     }
 
     /**
+     * @param levelHandicap the levelHandicap to set
+     */
+    public void setLevelHandicap(int levelHandicap) {
+        this.levelHandicap = levelHandicap;
+    }
+
+    /**
      * Locks/Unlocks the island. May be cancelled by
      * {@link IslandLockEvent} or {@link IslandUnlockEvent}.
      * @param locked - the lock state to set
@@ -418,6 +544,13 @@ public class Island implements DataObject {
                 this.locked = locked;
             }
         }
+    }
+
+    /**
+     * @param members the members to set
+     */
+    public void setMembers(HashMap<UUID, Integer> members) {
+        this.members = members;
     }
 
     /**
@@ -493,12 +626,28 @@ public class Island implements DataObject {
     }
 
     /**
+     * Set user's rank to an arbitrary rank value
+     * @param user
+     * @param rank
+     */
+    public void setRank(User user, int rank) {
+        members.put(user.getUniqueId(), rank);
+    }
+
+    /**
+     * @param ranks the ranks to set
+     */
+    public void setRanks(HashMap<UUID, Integer> ranks) {
+        this.members = ranks;
+    }
+
+    /**
      * @param isSpawn - if the island is the spawn
      */
     public void setSpawn(boolean isSpawn){
         this.spawn = isSpawn;
     }
-
+    
     /**
      * Resets the flags to their default as set in config.yml for the spawn
      */
@@ -506,6 +655,15 @@ public class Island implements DataObject {
         /*for(SettingsFlag flag : SettingsFlag.values()){
             this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
         }*/ //TODO default flags
+    }
+
+    public void setSpawnPoint(Location location) {
+        spawnPoint = location;
+
+    }
+
+    public void setUniqueId(String uniqueId) {
+        this.uniqueId = uniqueId;
     }
 
     /**
@@ -520,149 +678,5 @@ public class Island implements DataObject {
      */
     public void setWorld(World world) {
         this.world = world;
-    }
-
-    /**
-     * @return the levelHandicap
-     */
-    public int getLevelHandicap() {
-        return levelHandicap;
-    }
-
-    /**
-     * @param levelHandicap the levelHandicap to set
-     */
-    public void setLevelHandicap(int levelHandicap) {
-        this.levelHandicap = levelHandicap;
-    }
-
-    /**
-     * @return true if island is locked, false if not
-     */
-    public boolean isLocked() {
-        return locked;
-    }
-
-    /**
-     * @return spawn
-     */
-    public boolean isSpawn() {
-        return spawn;
-    }
-
-    /**
-     * @param material
-     * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
-     * a tile entity.
-     */
-    public int getTileEntityCount(Material material, World world) {
-        int result = 0;
-        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
-            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
-                for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-                    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
-                    if (onIsland(holder.getLocation())) {
-                        if (holder.getType() == material) {
-                            result++;
-                        } else if (material.equals(Material.REDSTONE_COMPARATOR_OFF)) {
-                            if (holder.getType().equals(Material.REDSTONE_COMPARATOR_ON)) {
-                                result++;
-                            }
-                        } else if (material.equals(Material.FURNACE)) {
-                            if (holder.getType().equals(Material.BURNING_FURNACE)) {
-                                result++;
-                            }
-                        } else if (material.toString().endsWith("BANNER")) {
-                            if (holder.getType().toString().endsWith("BANNER")) {
-                                result++;
-                            }
-                        } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
-                            if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
-                                result++;
-                            }
-                        }
-                    }
-                }
-                for (Entity holder : world.getChunkAt(x, z).getEntities()) {
-                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
-                    if (holder.getType().toString().equals(material.toString()) && onIsland(holder.getLocation())) {
-                        result++;
-                    }
-                }
-            }
-        }
-        return result;
-    }
-
-    public boolean inIslandSpace(Location location) {
-        if (Util.inWorld(location)) {
-            return inIslandSpace(location.getBlockX(), location.getBlockZ());
-        }
-        return false;
-    }
-
-    public void setSpawnPoint(Location location) {
-        spawnPoint = location;
-
-    }
-
-    public Location getSpawnPoint() {
-        return spawnPoint;
-    }
-
-    public void removeMember(UUID playerUUID) {
-        members.remove(playerUUID);
-    }
-
-    /**
-     * Get the rank of user for this island
-     * @param user
-     * @return rank integer
-     */
-    public int getRank(User user) {
-        return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : RanksManager.VISITOR_RANK;
-    }
-    
-    /**
-     * Set user's rank to an arbitrary rank value
-     * @param user
-     * @param rank
-     */
-    public void setRank(User user, int rank) {
-        members.put(user.getUniqueId(), rank);
-    }
-
-    /**
-     * @return the ranks
-     */
-    public HashMap<UUID, Integer> getRanks() {
-        return members;
-    }
-
-    /**
-     * @param ranks the ranks to set
-     */
-    public void setRanks(HashMap<UUID, Integer> ranks) {
-        this.members = ranks;
-    }
-
-    /**
-     * Check if a user is allowed to bypass the flag or not
-     * @param user - user
-     * @param flag - flag
-     * @return true if allowed, false if not
-     */
-    public boolean isAllowed(User user, Flag flag) {
-        return (this.getRank(user) >= this.getFlag(flag)) ? true : false;
-    }
-
-    /**
-     * Check if the flag is allowed or not
-     * For flags that are for the island in general and not related to rank
-     * @param flag
-     * @return true if allowed, false if not
-     */
-    public boolean isAllowed(Flag flag) {
-        return this.getFlag(flag) >= 0 ? true : false;
     }
 }

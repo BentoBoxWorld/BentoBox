@@ -43,8 +43,8 @@ public class IslandCache {
             plugin.getLogger().info("DEBUG: owner = " + island.getOwner());
         islandsByUUID.put(island.getOwner(), island);
         if (DEBUG)
-            plugin.getLogger().info("DEBUG: island has " + island.getMembers().size() + " members");
-        for (UUID member: island.getMembers()) {
+            plugin.getLogger().info("DEBUG: island has " + island.getMemberSet().size() + " members");
+        for (UUID member: island.getMemberSet()) {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: " + member);
             islandsByUUID.put(member, island);
@@ -288,7 +288,7 @@ public class IslandCache {
     public Set<UUID> getMembers(UUID playerUUID) {
         Island island = islandsByUUID.get(playerUUID);
         if (island != null)
-            return new HashSet<UUID>(island.getMembers());
+            return new HashSet<UUID>(island.getMemberSet());
         return new HashSet<UUID>(0);
     }
 
@@ -336,10 +336,10 @@ public class IslandCache {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: player is the owner of this island");
                 // Clear ownership and members
-                island.getMembers().clear();
+                island.getMemberSet().clear();
                 island.setOwner(null);
             }
-            island.getMembers().remove(playerUUID);
+            island.getMemberSet().remove(playerUUID);
         }
         if (DEBUG)
             plugin.getLogger().info("DEBUG: removing reference to island by UUID");

@@ -22,7 +22,6 @@ import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 
 public class Flags {
-
     /*
      * Protection Flags
      */

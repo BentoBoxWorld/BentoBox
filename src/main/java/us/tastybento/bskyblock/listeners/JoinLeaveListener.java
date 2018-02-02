@@ -71,7 +71,7 @@ public class JoinLeaveListener implements Listener {
             if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),user.getUniqueId()))) {
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: Current island is locked, or player is banned");
-                if (!currentIsland.getMembers().contains(playerUUID) && !user.hasPermission(Constants.PERMPREFIX + "mod.bypassprotect")) {
+                if (!currentIsland.getMemberSet().contains(playerUUID) && !user.hasPermission(Constants.PERMPREFIX + "mod.bypassprotect")) {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: No bypass - teleporting");
                     user.sendMessage("locked.islandlocked");
