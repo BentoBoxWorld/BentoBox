@@ -23,7 +23,7 @@ public class ItemDropPickUpListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVisitorDrop(PlayerDropItemEvent e) {
-        checkIsland(e, e.getItemDrop().getLocation(), Flags.VISITOR_ITEM_DROP);
+        checkIsland(e, e.getItemDrop().getLocation(), Flags.ITEM_DROP);
     }
 
     /*
@@ -33,7 +33,7 @@ public class ItemDropPickUpListener extends AbstractFlagListener {
     public void onVisitorDrop(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof Player) {
             setUser(User.getInstance(e.getEntity()));
-            checkIsland(e, e.getItem().getLocation(), Flags.VISITOR_ITEM_PICKUP);
+            checkIsland(e, e.getItem().getLocation(), Flags.ITEM_PICKUP);
         }
     }
 }
