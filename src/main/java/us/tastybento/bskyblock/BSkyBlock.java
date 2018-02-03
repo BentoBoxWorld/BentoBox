@@ -100,7 +100,7 @@ public class BSkyBlock extends JavaPlugin {
 
                 // Load Flags
                 flagsManager = new FlagsManager(plugin);
-                new Flags();
+                new Flags(plugin);
 
                 // Load addons
                 addonsManager = new AddonsManager(plugin);

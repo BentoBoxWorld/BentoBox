@@ -27,9 +27,9 @@ public abstract class AbstractFlagListener implements Listener {
     public BSkyBlock plugin;
     private User user = null;
 
-    public AbstractFlagListener() {
+    public AbstractFlagListener(BSkyBlock plugin) {
         super();
-        this.plugin = BSkyBlock.getInstance();
+        this.plugin = plugin;
     }
 
     /**
@@ -116,6 +116,7 @@ public abstract class AbstractFlagListener implements Listener {
      * Generic place blocks checker
      * @param e
      * @param loc
+     * @param flag
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(Event e, Location loc, Flag flag) { 

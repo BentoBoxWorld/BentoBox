@@ -8,15 +8,19 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
- * Handles interaction with entities like armor stands
- * Note - armor stand protection from breaking or placing is done elsewhere.
+ * Handles teleporting due to enderpearl or chorus fruit.
  * @author tastybento
  *
  */
 public class TeleportationListener extends AbstractFlagListener {
+
+    public TeleportationListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     /**
      * Ender pearl and chorus fruit teleport checks

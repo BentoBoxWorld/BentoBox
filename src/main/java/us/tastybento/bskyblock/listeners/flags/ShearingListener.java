@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -15,6 +16,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class ShearingListener extends AbstractFlagListener {
+
+    public ShearingListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)

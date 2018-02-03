@@ -17,10 +17,15 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 public class BreakBlocksListener extends AbstractFlagListener {
+
+    public BreakBlocksListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     /**
      * Prevents blocks from being broken

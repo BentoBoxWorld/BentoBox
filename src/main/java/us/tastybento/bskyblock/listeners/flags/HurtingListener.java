@@ -30,6 +30,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.lists.Flags;
@@ -40,6 +41,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class HurtingListener extends AbstractFlagListener {
+
+    public HurtingListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
 

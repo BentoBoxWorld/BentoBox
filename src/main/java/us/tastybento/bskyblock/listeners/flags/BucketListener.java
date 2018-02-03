@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -19,6 +20,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class BucketListener extends AbstractFlagListener {
+
+    public BucketListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     /**
      * Prevents emptying of buckets

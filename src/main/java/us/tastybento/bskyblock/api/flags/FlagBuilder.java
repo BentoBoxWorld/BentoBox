@@ -4,6 +4,7 @@ import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
@@ -37,8 +38,8 @@ public class FlagBuilder {
         return this;
     }
 
-    public Flag build() {
-        return new Flag(id, icon, listener, defaultSetting);
+    public Flag build(BSkyBlock plugin) {
+        return new Flag(plugin, id, icon, listener, defaultSetting);
     }
     
     /**

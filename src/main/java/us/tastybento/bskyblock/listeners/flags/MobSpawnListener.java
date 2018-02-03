@@ -13,6 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
 
@@ -22,6 +23,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class MobSpawnListener extends AbstractFlagListener {
+
+    public MobSpawnListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     /**
      * Prevents mobs spawning naturally

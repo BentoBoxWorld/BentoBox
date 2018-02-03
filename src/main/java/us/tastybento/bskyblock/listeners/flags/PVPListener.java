@@ -20,6 +20,7 @@ import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.potion.PotionEffect;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.lists.Flags;
@@ -30,6 +31,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class PVPListener extends AbstractFlagListener {
+
+    public PVPListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
 

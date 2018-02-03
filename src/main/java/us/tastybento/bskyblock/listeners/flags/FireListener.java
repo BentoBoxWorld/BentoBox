@@ -19,6 +19,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
@@ -29,6 +30,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class FireListener extends AbstractFlagListener {
+
+    public FireListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     /**
      * Prevents fire spread

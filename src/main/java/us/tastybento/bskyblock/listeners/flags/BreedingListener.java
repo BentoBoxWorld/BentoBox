@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -23,6 +24,11 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class BreedingListener extends AbstractFlagListener {
+
+    public BreedingListener(BSkyBlock plugin) {
+        super(plugin);
+    }
+
 
     /**
      * A list of items that cause breeding if a player has them in their hand and they click an animal

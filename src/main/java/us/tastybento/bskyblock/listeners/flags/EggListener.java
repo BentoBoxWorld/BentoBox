@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -15,6 +16,10 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class EggListener extends AbstractFlagListener {
+
+    public EggListener(BSkyBlock plugin) {
+        super(plugin);
+    }
 
     /**
      * Handle visitor chicken egg throwing
