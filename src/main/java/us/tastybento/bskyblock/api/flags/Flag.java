@@ -13,11 +13,15 @@ public class Flag {
     private PanelItem icon;
     private Listener listener;
     private boolean defaultSetting;
+    
+    public Flag() {}
 
     public Flag(BSkyBlock plugin, String id, PanelItem icon, Listener listener, boolean defaultSetting) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
+        //System.out.println("DEBUG: " + plugin);
+        //System.out.println("DEBUG: " + plugin.getFlagsManager());
         plugin.getFlagsManager().registerFlag(this);
     }
 

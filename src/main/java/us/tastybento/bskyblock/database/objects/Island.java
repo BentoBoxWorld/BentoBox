@@ -151,7 +151,7 @@ public class Island implements DataObject {
      * @param flag
      * @return flag rank. Players must have at least this rank to bypass this flag
      */
-    public int getFlag(Flag flag){
+    public int getFlagReq(Flag flag){
         if(flags.containsKey(flag)) {
             return flags.get(flag);
         } else {
@@ -411,7 +411,7 @@ public class Island implements DataObject {
      * @return true if allowed, false if not
      */
     public boolean isAllowed(Flag flag) {
-        return this.getFlag(flag) >= 0 ? true : false;
+        return this.getFlagReq(flag) >= 0 ? true : false;
     }
 
     /**
@@ -421,7 +421,8 @@ public class Island implements DataObject {
      * @return true if allowed, false if not
      */
     public boolean isAllowed(User user, Flag flag) {
-        return (this.getRank(user) >= this.getFlag(flag)) ? true : false;
+        Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
+        return (this.getRank(user) >= this.getFlagReq(flag)) ? true : false;
     }
 
     /**
