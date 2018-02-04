@@ -89,8 +89,7 @@ public class Island implements DataObject {
     public Island() {}
 
     public Island(Location location, UUID owner, int protectionRange) {
-        this.owner = owner;
-        this.members.put(owner, RanksManager.OWNER_RANK);
+        setOwner(owner);
         this.createdDate = System.currentTimeMillis();
         this.updatedDate = System.currentTimeMillis();
         this.world = location.getWorld();
@@ -108,7 +107,8 @@ public class Island implements DataObject {
      * @param playerUUID
      */
     public void addMember(UUID playerUUID) {
-        members.put(playerUUID, RanksManager.MEMBER_RANK);
+        if (playerUUID != null)
+            members.put(playerUUID, RanksManager.MEMBER_RANK);
     }
     
     /**
@@ -119,7 +119,8 @@ public class Island implements DataObject {
      */
     public boolean addToBanList(UUID targetUUID) {
         // TODO fire ban event
-        members.put(targetUUID, RanksManager.BANNED_RANK);
+        if (targetUUID != null)
+            members.put(targetUUID, RanksManager.BANNED_RANK);
         return true;
     }
 
@@ -282,7 +283,7 @@ public class Island implements DataObject {
      * @return rank integer
      */
     public int getRank(User user) {
-        Bukkit.getLogger().info("DEBUG: user UUID = " + user.getUniqueId());
+        //Bukkit.getLogger().info("DEBUG: user UUID = " + user.getUniqueId());
         return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : RanksManager.VISITOR_RANK;
     }
 
@@ -426,7 +427,7 @@ public class Island implements DataObject {
      * @return true if allowed, false if not
      */
     public boolean isAllowed(User user, Flag flag) {
-        Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
+        //Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
         return (this.getRank(user) >= this.getFlagReq(flag)) ? true : false;
     }
 
@@ -601,6 +602,7 @@ public class Island implements DataObject {
      */
     public void setOwner(UUID owner){
         this.owner = owner;
+        if (owner == null) return;
         // Defensive code: demote any previous owner
         for (Entry<UUID, Integer> en : members.entrySet()) {
             if (en.getValue().equals(RanksManager.OWNER_RANK)) {
@@ -637,7 +639,7 @@ public class Island implements DataObject {
      * @param rank
      */
     public void setRank(User user, int rank) {
-        members.put(user.getUniqueId(), rank);
+        if (user.getUniqueId() != null) members.put(user.getUniqueId(), rank);
     }
 
     /**

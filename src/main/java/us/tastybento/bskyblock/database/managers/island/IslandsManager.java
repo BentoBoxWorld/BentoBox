@@ -40,7 +40,6 @@ import us.tastybento.bskyblock.util.Util;
 public class IslandsManager {
 
     private static final boolean DEBUG = false;
-    private static final boolean DEBUG2 = false;
     /**
      * Checks if this location is safe for a player to teleport to. Used by
      * warps and boat exits Unsafe is any liquid or air and also if there's no
@@ -713,12 +712,14 @@ public class IslandsManager {
                 plugin.getLogger().info("DEBUG: loading grid");
             for (Island island : handler.loadObjects()) {
                 if (DEBUG)
-                    plugin.getLogger().info("DEBUG: addin island at "+ island.getCenter());
+                    plugin.getLogger().info("DEBUG: adding island at "+ island.getCenter());
                 islandCache.addIsland(island);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
+        if (DEBUG)
+            plugin.getLogger().info("DEBUG: islands loaded");
     }
 
     /**

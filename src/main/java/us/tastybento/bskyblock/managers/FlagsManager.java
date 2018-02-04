@@ -19,7 +19,7 @@ public class FlagsManager {
 
     public void registerFlag(Flag flag) {
         //TODO all the security checks
-        plugin.getLogger().info("DEBUG: registering flag " + flag.getID());
+        //plugin.getLogger().info("DEBUG: registering flag " + flag.getID());
         flags.add(flag);
         // If there is a listener, register it into Bukkit.
         flag.getListener().ifPresent(l -> plugin.getServer().getPluginManager().registerEvents(l, plugin));

@@ -37,6 +37,10 @@ public class IslandCache {
         islandsByUUID = new HashMap<>();
     }
     
+    /**
+     * Adds an island to the grid
+     * @param island
+     */
     public void addIsland(Island island) {
         islandsByLocation.put(island.getCenter(), island);
         if (DEBUG)

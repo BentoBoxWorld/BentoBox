@@ -32,6 +32,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
+import us.tastybento.bskyblock.api.configuration.Adapter;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.util.Util;
@@ -271,7 +273,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (DEBUG)
                 plugin.getLogger().info("DEBUG: collection columns = " + col);
         }
-        
+
         return columns;
     }
 
@@ -414,6 +416,22 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 Object value = method.invoke(instance);
                 if (DEBUG)
                     plugin.getLogger().info("DEBUG: value = " + value);
+                // Adapter
+                // Check if there is an annotation on the field
+                ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+                // If there is a config annotation then do something
+                if (configEntry != null) { 
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: there is a configEntry");
+                    if (!configEntry.adapter().equals(Adapter.class)) {
+                        if (DEBUG) 
+                            plugin.getLogger().info("DEBUG: there is an adapter");
+                        // A conversion adapter has been defined            
+                        value = ((Adapter<?,?>)configEntry.adapter().newInstance()).deserialize(value);
+                        if (DEBUG) 
+                            plugin.getLogger().info("DEBUG: value now after deserialization = " + value);
+                    }
+                }
                 // Create set and map table inserts if this is a Collection
                 if (propertyDescriptor.getPropertyType().equals(Set.class) ||
                         propertyDescriptor.getPropertyType().equals(Map.class) ||
@@ -465,6 +483,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         Iterator<?> it = collection.entrySet().iterator();
                         while (it.hasNext()) {
                             Entry<?,?> en = (Entry<?, ?>) it.next();
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: entry ket = " + en.getKey());
+                            
                             // Get the key and serialize it
                             Object key = serialize(en.getKey(), en.getKey().getClass());
                             if (DEBUG)
@@ -668,10 +689,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Get the write method for this field, because we are going to use it to write the value
                 // once we get the value from the database
                 Method method = propertyDescriptor.getWriteMethod();
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: propertyDescriptor.getPropertyType() = " + propertyDescriptor.getPropertyType());
                 // If the type is a Collection, then we need to deal with set and map tables 
-                if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())
+                        || Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Collection
-                    //plugin.getLogger().info("DEBUG: Collection");
+                    if (DEBUG)
+                        plugin.getLogger().info("DEBUG: Collection or Map");
                     // TODO Get the values from the subsidiary tables.
                     // value is just of type boolean right now
                     String setSql = "SELECT ";
@@ -720,7 +745,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
                             ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
                         }
-                    } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                    } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) ||
+                            HashMap.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: Adding a map ");
                         // Loop through the collection resultset 
@@ -755,6 +781,22 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     if (DEBUG)
                         plugin.getLogger().info("DEBUG: regular type");
                     value = deserialize(value, propertyDescriptor.getPropertyType());
+                }
+                // Adapter
+                // Check if there is an annotation on the field
+                ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+                // If there is a config annotation then do something
+                if (configEntry != null) { 
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: there is a configEntry");
+                    if (!configEntry.adapter().equals(Adapter.class)) {
+                        if (DEBUG) 
+                            plugin.getLogger().info("DEBUG: there is an adapter");
+                        // A conversion adapter has been defined            
+                        value = ((Adapter<?,?>)configEntry.adapter().newInstance()).serialize(value);
+                        if (DEBUG) 
+                            plugin.getLogger().info("DEBUG: value now after serialization = " + value);
+                    }
                 }
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: invoking method " + method.getName());
@@ -914,12 +956,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public void saveSettings(T instance)
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
         plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
-        
+
     }
 
     @Override
     public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
         plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
         return null;
     }

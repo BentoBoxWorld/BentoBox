@@ -20,21 +20,32 @@ import us.tastybento.bskyblock.api.flags.Flag;
 public class FlagSerializer implements Adapter<HashMap<Flag, Integer>, HashMap<String, Integer>> {
 
     @Override
-    public HashMap<Flag, Integer> convertFrom(Object from) {
+    public HashMap<Flag, Integer> serialize(Object object) {
         HashMap<Flag, Integer> result = new HashMap<>();
-        MemorySection section = (MemorySection) from;
-        for (String key : section.getKeys(false)) {
-            Bukkit.getLogger().info("DEBUG: " + key + " = " + section.getInt(key));
-            
-            result.put(BSkyBlock.getInstance().getFlagsManager().getFlagByID(key), section.getInt(key));
+        if (object == null)
+            return result;
+        // For YAML
+        if (object instanceof MemorySection) {
+            MemorySection section = (MemorySection) object;
+            for (String key : section.getKeys(false)) {
+                Bukkit.getLogger().info("DEBUG: " + key + " = " + section.getInt(key));
+
+                result.put(BSkyBlock.getInstance().getFlagsManager().getFlagByID(key), section.getInt(key));
+            }
+        } else {
+            for (Entry<String, Integer> en : ((HashMap<String, Integer>)object).entrySet()) {
+                result.put(BSkyBlock.getInstance().getFlagsManager().getFlagByID(en.getKey()), en.getValue());
+            }
         }
         return result;
     }
 
     @Override
-    public HashMap<String, Integer> convertTo(Object to) {
+    public HashMap<String, Integer> deserialize(Object object) {
         HashMap<String, Integer> result = new HashMap<>();
-        HashMap<Flag, Integer> flags = (HashMap<Flag, Integer>)to;
+        if (object == null)
+            return result;
+        HashMap<Flag, Integer> flags = (HashMap<Flag, Integer>)object;
         for (Entry<Flag, Integer> en: flags.entrySet()) {
             result.put(en.getKey().getID(), en.getValue());
         }

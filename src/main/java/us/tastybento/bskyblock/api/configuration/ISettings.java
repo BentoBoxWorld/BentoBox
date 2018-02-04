@@ -14,6 +14,7 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
  * Simple interface for tagging all classes containing ConfigEntries.
  *
  * @author Poslovitch
+ * @author tastybento
  * @param <T>
  */
 public interface ISettings<T> {
@@ -30,10 +31,10 @@ public interface ISettings<T> {
     }
 
     default void saveBackup() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
-        // Save backup in real database
+        // Save backup 
         @SuppressWarnings("unchecked")
-        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getInstance().getClass());
-        dbhandler.saveObject(getInstance());
+        AbstractDatabaseHandler<T> backupHandler =  (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
+        backupHandler.saveObject(getInstance());
     }
 
     // --------------- Loader ------------------

@@ -367,7 +367,6 @@ public class Settings implements ISettings<Settings> {
     }
     @Override
     public Settings getInstance() {
-        // TODO Auto-generated method stub
         return this;
     }
     /**

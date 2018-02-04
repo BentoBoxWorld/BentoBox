@@ -11,10 +11,16 @@ package us.tastybento.bskyblock.api.configuration;
 public interface Adapter<S,V> {
 
     /**
-     * Convert from to something
-     * @param from
+     * Serialize object
+     * @param object - object
+     * @return serialized object
      */
-     S convertFrom(Object from);
+    S serialize(Object object);
      
-     V convertTo(Object to);
+     /**
+      * Deserialize object
+     * @param object
+     * @return deserialized object
+     */
+    V deserialize(Object object);
 }

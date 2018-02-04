@@ -98,7 +98,6 @@ public class BSkyBlock extends JavaPlugin {
                 islandsManager.load();
 
                 localesManager = new LocalesManager(plugin);
-                //TODO localesManager.registerLocales(plugin);
 
                 // Register Listeners
                 registerListeners();

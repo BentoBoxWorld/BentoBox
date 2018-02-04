@@ -182,7 +182,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 if (!configEntry.adapter().equals(Adapter.class)) {
                     // A conversion adapter has been defined            
                     Object value = config.get(storageLocation);
-                    method.invoke(instance, ((Adapter<?,?>)configEntry.adapter().newInstance()).convertFrom(value));
+                    method.invoke(instance, ((Adapter<?,?>)configEntry.adapter().newInstance()).serialize(value));
                     if (DEBUG) {
                         plugin.getLogger().info("DEBUG: value = " + value);
                         plugin.getLogger().info("DEBUG: property type = " + propertyDescriptor.getPropertyType());
@@ -355,7 +355,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     if (!configEntry.adapter().equals(Adapter.class)) {
                         // A conversion adapter has been defined              
                         try {
-                            config.set(storageLocation, ((Adapter<?,?>)configEntry.adapter().newInstance()).convertTo(value));
+                            config.set(storageLocation, ((Adapter<?,?>)configEntry.adapter().newInstance()).deserialize(value));
                         } catch (InstantiationException e) {
                             e.printStackTrace();
                         }
