@@ -43,14 +43,13 @@ public abstract class AbstractFlagListener implements Listener {
     private boolean createEventUser(Event e) {
         try {
             // Use reflection to get the getPlayer method if it exists
+
             Method getPlayer = e.getClass().getMethod("getPlayer");
             if (getPlayer != null) {
                 setUser(User.getInstance((Player)getPlayer.invoke(e)));
                 return true;
             }
-        } catch (Exception e1) {
-            e1.printStackTrace();
-        }
+        } catch (Exception e1) { e1.printStackTrace();}
         return false;
     }
 
@@ -76,7 +75,7 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Cancels the event and sends the island public message to user unless silent is true
+     * Cancels the event and sends the island protected message to user unless silent is true
      * @param e Event
      * @param silent - if true, message is not sent
      */
@@ -85,7 +84,7 @@ public abstract class AbstractFlagListener implements Listener {
             ((Cancellable)e).setCancelled(true);
         if (user != null) {
             if (!silent)
-                user.sendMessage("protection.public");
+                user.sendMessage("protection.protected");
             user.updateInventory();
         }
     }
@@ -147,7 +146,7 @@ public abstract class AbstractFlagListener implements Listener {
             if (!createEventUser(e)) {
                 // The user is not set, and the event does not hold a getPlayer, so return false
                 // TODO: is this the correct handling here?
-                Bukkit.getLogger().severe("Check island had no associated user!");
+                Bukkit.getLogger().severe("Check island had no associated user! " + e.getEventName());
                 return false;
             }
         }

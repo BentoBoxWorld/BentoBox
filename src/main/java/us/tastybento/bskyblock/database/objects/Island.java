@@ -16,6 +16,7 @@ import org.bukkit.entity.Entity;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
@@ -77,8 +78,11 @@ public class Island implements DataObject {
     private boolean spawn = false;
     
     private boolean purgeProtected = false;
-    //// Protection ////
+    
+    //// Protection flags ////
+    @ConfigEntry(adapter = FlagSerializer.class)
     private HashMap<Flag, Integer> flags = new HashMap<>();
+    
     private int levelHandicap;
     private Location spawnPoint;
 

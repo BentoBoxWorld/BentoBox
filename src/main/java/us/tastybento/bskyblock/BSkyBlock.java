@@ -89,6 +89,11 @@ public class BSkyBlock extends JavaPlugin {
             islandWorldManager = new IslandWorld(plugin);
 
             getServer().getScheduler().runTask(plugin, () -> {
+                
+                // Load Flags
+                flagsManager = new FlagsManager(plugin);
+                new Flags(plugin);
+
                 // Load islands from database
                 islandsManager.load();
 
@@ -98,9 +103,6 @@ public class BSkyBlock extends JavaPlugin {
                 // Register Listeners
                 registerListeners();
 
-                // Load Flags
-                flagsManager = new FlagsManager(plugin);
-                new Flags(plugin);
 
                 // Load addons
                 addonsManager = new AddonsManager(plugin);

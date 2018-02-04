@@ -35,10 +35,10 @@ public class ItemDropPickUpListener extends AbstractFlagListener {
      * Handle item pickup by visitors
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVisitorDrop(EntityPickupItemEvent e) {
+    public void onVisitorPickup(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof Player) {
             // Disallow, but don't tell the player an error
-            setUser(User.getInstance(e.getEntity())).checkIsland(e, e.getItem().getLocation(), Flags.ITEM_PICKUP, false);
+            setUser(User.getInstance(e.getEntity())).checkIsland(e, e.getItem().getLocation(), Flags.ITEM_PICKUP, true);
         }
     }
 }

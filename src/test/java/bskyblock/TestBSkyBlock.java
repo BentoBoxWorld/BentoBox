@@ -512,7 +512,6 @@ public class TestBSkyBlock {
         Event e = new BlockBreakEvent(block, ownerOfIsland);
         Assert.assertTrue(fl.checkIsland(e, location, Flags.BREAK_BLOCKS, true));
         
-        // Set up an event with a random player
         Bukkit.getLogger().info("DEBUG: checking events - member");
 
         Event e2 = new BlockBreakEvent(block, player);

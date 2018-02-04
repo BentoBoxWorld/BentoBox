@@ -17,6 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -32,31 +33,31 @@ public class InventoryListener extends AbstractFlagListener {
 
     /**
      * Prevents visitors picking items from inventories
-     * @param event
+     * @param e
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onMountInventoryClick(InventoryClickEvent event) {
-        if (event.getInventory().getHolder() == null) {
+    public void onMountInventoryClick(InventoryClickEvent e) {
+        if (e.getInventory().getHolder() == null) {
             return;
+        }        
+        if (e.getInventory().getHolder() instanceof Animals) {
+            checkIsland(e, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
         }
-        if (event.getInventory().getHolder() instanceof Animals) {
-            checkIsland(event, event.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
+        else if (e.getInventory().getHolder() instanceof Chest 
+                || e.getInventory().getHolder() instanceof Dispenser
+                || e.getInventory().getHolder() instanceof Hopper
+                || e.getInventory().getHolder() instanceof Dropper
+                || e.getInventory().getHolder() instanceof ShulkerBox) {
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.CHEST);
         }
-        else if (event.getInventory().getHolder() instanceof Chest 
-                || event.getInventory().getHolder() instanceof Dispenser
-                || event.getInventory().getHolder() instanceof Hopper
-                || event.getInventory().getHolder() instanceof Dropper
-                || event.getInventory().getHolder() instanceof ShulkerBox) {
-            checkIsland(event, event.getInventory().getLocation(), Flags.CHEST);
+        else if (e.getInventory().getHolder() instanceof Furnace) {
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.FURNACE);
         }
-        else if (event.getInventory().getHolder() instanceof Furnace) {
-            checkIsland(event, event.getInventory().getLocation(), Flags.FURNACE);
+        else if (e.getInventory().getHolder() instanceof BrewingStand) {
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.BREWING);
         }
-        else if (event.getInventory().getHolder() instanceof BrewingStand) {
-            checkIsland(event, event.getInventory().getLocation(), Flags.BREWING);
-        }
-        else if (event.getInventory().getHolder() instanceof Beacon) {
-            checkIsland(event, event.getInventory().getLocation(), Flags.BEACON);
+        else if (e.getInventory().getHolder() instanceof Beacon) {
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.BEACON);
         }
     }
 

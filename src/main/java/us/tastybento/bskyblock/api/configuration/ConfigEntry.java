@@ -16,7 +16,7 @@ import us.tastybento.bskyblock.Constants.GameType;
 @Target(ElementType.FIELD)
 public @interface ConfigEntry {
 
-    String path();
+    String path() default "";
     String since() default "1.0";
     boolean overrideOnChange() default false;
     boolean experimental() default false;

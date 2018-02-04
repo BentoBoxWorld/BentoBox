@@ -26,6 +26,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
+ * TODO: PVP is different to other flags - it's either allowed for everyone or not allowed for everyone. Currently owners can hit visitors.
  * Handles PVP
  * @author tastybento
  *
