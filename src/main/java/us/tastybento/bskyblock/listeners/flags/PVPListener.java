@@ -58,14 +58,13 @@ public class PVPListener extends AbstractFlagListener {
     private void respond(Event event, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager));
-            checkIsland(event, damager.getLocation(), flag);
+            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), flag);
         } else if (damager instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                setUser(User.getInstance((Player)p.getShooter()));
-                if (!checkIsland(event, damager.getLocation(), flag)) {
+                ;
+                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     damager.remove();
                 }
@@ -102,7 +101,6 @@ public class PVPListener extends AbstractFlagListener {
         Projectile projectile = (Projectile) e.getEntity();
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
-            setUser(User.getInstance(attacker));
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
                 // Self damage
@@ -111,7 +109,7 @@ public class PVPListener extends AbstractFlagListener {
                 }
                 // PVP?
                 if (entity instanceof Player) {
-                    if (!checkIsland(e, entity.getLocation(), flag)) {
+                    if (!setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), flag)) {
                         for (PotionEffect effect : e.getPotion().getEffects()) {
                             entity.removePotionEffect(effect.getType());
                         }

@@ -157,8 +157,7 @@ public class FireListener extends AbstractFlagListener {
             if (projectile.getShooter() instanceof Player) {
                 if (projectile.getFireTicks() > 0) {
                     Player shooter = (Player)projectile.getShooter();
-                    setUser(User.getInstance(shooter));
-                    if (checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+                    if (setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
                         // Remove the arrow
                         projectile.remove();
                     }

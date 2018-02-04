@@ -278,6 +278,7 @@ public class Island implements DataObject {
      * @return rank integer
      */
     public int getRank(User user) {
+        Bukkit.getLogger().info("DEBUG: user UUID = " + user.getUniqueId());
         return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : RanksManager.VISITOR_RANK;
     }
 

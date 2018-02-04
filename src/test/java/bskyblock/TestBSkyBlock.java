@@ -10,6 +10,8 @@ import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
@@ -22,10 +24,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,11 +42,15 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.listeners.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
@@ -51,19 +61,26 @@ import us.tastybento.bskyblock.util.Util;
 //@PrepareForTest( { Bukkit.class })
 @PrepareForTest( { Flags.class })
 public class TestBSkyBlock {
+    private static final UUID MEMBER_UUID = UUID.randomUUID();
+    private static final UUID OWNER_UUID = UUID.randomUUID();
+    private static final UUID VISITOR_UUID = UUID.randomUUID();
     private final UUID playerUUID = UUID.randomUUID();
     private static CommandSender sender;
     private static Player player;
     private static Location location;
     private static BSkyBlock plugin;
     private static FlagsManager flagsManager;
+    private static Block block;
+    private static World world;
+    private static Player ownerOfIsland;
+    private static Player visitorToIsland;
 
     @BeforeClass
     public static void setUp() {
         //PowerMockito.mockStatic(Bukkit.class);
         //Mockito.doReturn(plugin).when(BSkyBlock.getPlugin());
         //Mockito.when().thenReturn(plugin);
-        World world = mock(World.class);
+        world = mock(World.class);
 
 
         //Mockito.when(world.getWorldFolder()).thenReturn(worldFile);
@@ -76,6 +93,8 @@ public class TestBSkyBlock {
         Mockito.when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         sender = mock(CommandSender.class);
         player = mock(Player.class);
+        ownerOfIsland = mock(Player.class);
+        visitorToIsland = mock(Player.class);
         Mockito.when(player.hasPermission(Constants.PERMPREFIX + "default.permission")).thenReturn(true);
 
         
@@ -86,6 +105,14 @@ public class TestBSkyBlock {
         Mockito.when(location.getBlockX()).thenReturn(0);
         Mockito.when(location.getBlockY()).thenReturn(0);
         Mockito.when(location.getBlockZ()).thenReturn(0);
+        
+        Mockito.when(player.getLocation()).thenReturn(location);
+        Mockito.when(ownerOfIsland.getLocation()).thenReturn(location);
+        Mockito.when(visitorToIsland.getLocation()).thenReturn(location);
+        
+        Mockito.when(player.getUniqueId()).thenReturn(MEMBER_UUID);
+        Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(OWNER_UUID);
+        Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
         // Mock itemFactory for ItemStack        
         ItemFactory itemFactory = PowerMockito.mock(ItemFactory.class);
@@ -98,6 +125,40 @@ public class TestBSkyBlock {
         plugin = Mockito.mock(BSkyBlock.class);
         flagsManager = Mockito.mock(FlagsManager.class);
         Mockito.when(plugin.getFlagsManager()).thenReturn(flagsManager);
+        
+        block = Mockito.mock(Block.class);
+        
+        // Worlds
+        IslandWorld iwm = mock(IslandWorld.class);
+        Mockito.when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        Mockito.when(iwm.getIslandWorld()).thenReturn(world);
+        Mockito.when(iwm.getNetherWorld()).thenReturn(world);
+        Mockito.when(iwm.getEndWorld()).thenReturn(world);
+        
+        // User
+        //User user = Mockito.mock(User.class);
+        //Mockito.when(user.getName()).thenReturn("tastybento");
+        
+        // Islands
+        IslandsManager im = mock(IslandsManager.class);
+        Mockito.when(plugin.getIslands()).thenReturn(im);
+
+        Island island = new Island();
+        island.setOwner(OWNER_UUID);
+        island.setCenter(location);
+        island.setProtectionRange(100);
+        HashMap<UUID, Integer> members = new HashMap<>();
+        members.put(OWNER_UUID, RanksManager.OWNER_RANK);
+        members.put(MEMBER_UUID, RanksManager.MEMBER_RANK);
+        island.setMembers(members);
+        Bukkit.getLogger().info("SETUP: owner UUID = " + OWNER_UUID);
+        Bukkit.getLogger().info("SETUP: member UUID = " + MEMBER_UUID);
+        Bukkit.getLogger().info("SETUP: visitor UUID = " + VISITOR_UUID);
+        Mockito.when(im.getIslandAt(Mockito.any())).thenReturn(Optional.of(island));
+
+        Settings settings = mock(Settings.class);
+        Mockito.when(plugin.getSettings()).thenReturn(settings);
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
     }
 
     @Test
@@ -381,16 +442,21 @@ public class TestBSkyBlock {
         island.addToBanList(member3);
         User mem3 = User.getInstance(member3); // Banned
 
+        // Member 1 is a visitor
         assertTrue(island.isAllowed(mem1, Flags.PLACE_BLOCKS));
         assertFalse(island.isAllowed(mem1, Flags.BREAK_BLOCKS));
 
+        // Member 2 is a team member
         assertTrue(island.isAllowed(mem2, Flags.PLACE_BLOCKS));
         assertTrue(island.isAllowed(mem2, Flags.BREAK_BLOCKS));
 
-        // Member 3 is no longer a member and is a visitor
+        // Member 3 is no longer a member and is banned
         assertFalse(island.isAllowed(mem3, Flags.PLACE_BLOCKS));
         assertFalse(island.isAllowed(mem3, Flags.BREAK_BLOCKS));
-
+    }
+    
+    @Test
+    public void TestEventProtection() {
 
         /*
          * 
@@ -430,22 +496,36 @@ public class TestBSkyBlock {
          * During the game, the players will never see the rank value. They will only see the ranks.
          * 
          * It will be possible to island owners to promote or demote players up and down the ranks.
-         * 
-         * This will replace the team system completely.
-         * 
-         * Pros:
-         * Very flexible
-         * 
-         * Cons:
-         * Too complicated. Are there really ever going to be more than just a few ranks?
-         * To have generic, unlimited ranks, we lose the concept of hard-coded teams, coops, etc.
-         * The problem is that team members must lose their islands and so we have special code around that. 
-         * i.e., there's a lot more going on than just ranks.
-         * 
-         * 
-         * Permissions-based
-         * 
-         * 
          */
+        
+        // Now test events
+        FlagListener fl = new FlagListener(plugin);
+        Bukkit.getLogger().info("SETUP: owner UUID = " + ownerOfIsland.getUniqueId());
+        Bukkit.getLogger().info("SETUP: member UUID = " + player.getUniqueId());
+        Bukkit.getLogger().info("SETUP: visitor UUID = " + visitorToIsland.getUniqueId());
+        
+        Bukkit.getLogger().info("DEBUG: checking events - vistor");
+        Event e3 = new BlockBreakEvent(block, visitorToIsland);
+        Assert.assertFalse(fl.checkIsland(e3, location, Flags.BREAK_BLOCKS, true));
+
+        Bukkit.getLogger().info("DEBUG: checking events - owner");
+        Event e = new BlockBreakEvent(block, ownerOfIsland);
+        Assert.assertTrue(fl.checkIsland(e, location, Flags.BREAK_BLOCKS, true));
+        
+        // Set up an event with a random player
+        Bukkit.getLogger().info("DEBUG: checking events - member");
+
+        Event e2 = new BlockBreakEvent(block, player);
+        Assert.assertTrue(fl.checkIsland(e2, location, Flags.BREAK_BLOCKS, true));
+        
     }
+    
+    private class FlagListener extends AbstractFlagListener {
+    
+        public FlagListener(BSkyBlock plugin) {
+            super(plugin);
+            
+        }
+    }
+
 }

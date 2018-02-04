@@ -3,14 +3,16 @@
  */
 package us.tastybento.bskyblock.listeners.flags;
 
+import java.lang.reflect.Method;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-import org.bukkit.event.player.PlayerEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
@@ -36,24 +38,29 @@ public abstract class AbstractFlagListener implements Listener {
      * Sets the player associated with this event.
      * If the user is a fake player, they are not counted.
      * @param e - the event
-     * @return user or empty
+     * @return true if found, otherwise false
      */
-    private Optional<User> createEventUser(Event e) {
-        // Set the user
-        if (e instanceof PlayerEvent) {
-            user = User.getInstance(((PlayerEvent)e).getPlayer());
-            // Handle fake players
-            if (plugin.getSettings().getFakePlayers().contains(user.getName())) user = null;
-        }       
-        return Optional.ofNullable(user);
+    private boolean createEventUser(Event e) {
+        try {
+            // Use reflection to get the getPlayer method if it exists
+            Method getPlayer = e.getClass().getMethod("getPlayer");
+            if (getPlayer != null) {
+                setUser(User.getInstance((Player)getPlayer.invoke(e)));
+                return true;
+            }
+        } catch (Exception e1) {
+            e1.printStackTrace();
+        }
+        return false;
     }
 
     /**
-     * Explicitly set the user
+     * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
      * @param user
      */
-    public void setUser(User user) {
-        this.user = user;
+    public AbstractFlagListener setUser(User user) {
+        if (!plugin.getSettings().getFakePlayers().contains(user.getName())) this.user = user;
+        return this;
     }
 
     /*
@@ -133,22 +140,31 @@ public abstract class AbstractFlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
-        // If the user is not set, try to get it from the event
+        
+        // If the user is not set already, try to get it from the event
         if (user == null) {
             // Set the user associated with this event
-            if (!createEventUser(e).isPresent()) return true;
+            if (!createEventUser(e)) {
+                // The user is not set, and the event does not hold a getPlayer, so return false
+                // TODO: is this the correct handling here?
+                Bukkit.getLogger().severe("Check island had no associated user!");
+                return false;
+            }
         }
         // If this is not an Island World, skip
         if (!inWorld(user)) return true;
-
+        
         // Get the island and if present, check the flag, react if required and return
         Optional<Island> island = plugin.getIslands().getIslandAt(loc);
         
         if (island.isPresent()) {
             if (!island.get().isAllowed(user, flag)) {
                 noGo(e, silent);
+                // Clear the user for the next time
+                user = null;
                 return false;
             } else {
+                user = null;
                 return true;
             }
         }
@@ -156,11 +172,12 @@ public abstract class AbstractFlagListener implements Listener {
         // The player is in the world, but not on an island, so general world settings apply
         if (!flag.isAllowed()) {
             noGo(e, silent);
+            user = null;
             return false;
         } else {
+            user = null;
             return true;
         }
-        
     }
 
 }
