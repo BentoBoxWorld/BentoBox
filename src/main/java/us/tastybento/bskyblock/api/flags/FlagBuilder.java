@@ -7,16 +7,16 @@ import org.bukkit.inventory.ItemStack;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
-import us.tastybento.bskyblock.lists.Flaggs;
+import us.tastybento.bskyblock.lists.Flags;
 
 public class FlagBuilder {
 
-    private Flaggs id;
+    private Flags id;
     private PanelItem icon;
     private Listener listener;
     private boolean defaultSetting;
 
-    public FlagBuilder id(Flaggs flag) {
+    public FlagBuilder id(Flags flag) {
         this.id = flag;
         return this;
     }

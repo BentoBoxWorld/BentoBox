@@ -411,7 +411,7 @@ public class TestBSkyBlock {
         assertFalse(island.getBanned().contains(member1));
         
         // Protection
-        new Flags(plugin);
+        new FlagsManager(plugin);
         // Check default settings
         // Owner should be able to do anything
         assertTrue(island.isAllowed(owner, Flags.PLACE_BLOCKS));

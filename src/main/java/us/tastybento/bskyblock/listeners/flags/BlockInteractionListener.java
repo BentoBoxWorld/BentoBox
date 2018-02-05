@@ -9,7 +9,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.lists.Flaggs;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -33,7 +32,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
         }
         switch (e.getClickedBlock().getType()) {
         case ANVIL:
-            checkIsland(e, e.getClickedBlock().getLocation(), plugin.getFlagsManager().getFlagByID(Flaggs.ANVIL));
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ANVIL);
             break;
         case BEACON:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.BEACON);

@@ -32,7 +32,6 @@ import org.bukkit.potion.PotionEffect;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -71,7 +70,7 @@ public class HurtingListener extends AbstractFlagListener {
      * @param damager
      * @param flag
      */
-    private void respond(Event event, Entity damager, Flag flag) {
+    private void respond(Event event, Entity damager, Flags flag) {
         // Get the attacker
         if (damager instanceof Player) {
             setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), flag);

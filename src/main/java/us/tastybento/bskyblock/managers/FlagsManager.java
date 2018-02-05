@@ -25,7 +25,7 @@ import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
-import us.tastybento.bskyblock.lists.Flaggs;
+import us.tastybento.bskyblock.lists.Flags;
 
 public class FlagsManager {
 
@@ -38,7 +38,7 @@ public class FlagsManager {
         registerFlags();
     }
 
-    private HashMap<Flaggs, Flag> flags = new HashMap<>();
+    private HashMap<Flags, Flag> flags = new HashMap<>();
 
     public void registerFlag(Flag flag) {
         //TODO all the security checks
@@ -48,11 +48,11 @@ public class FlagsManager {
         flag.getListener().ifPresent(l -> p.getServer().getPluginManager().registerEvents(l, p));
     }
 
-    public HashMap<Flaggs, Flag> getFlags() {
+    public HashMap<Flags, Flag> getFlags() {
         return flags;
     }
 
-    public Flag getFlagByID(Flaggs id) {
+    public Flag getFlagByID(Flags id) {
         return flags.get(id);
     }
 
@@ -66,49 +66,49 @@ public class FlagsManager {
     private void registerFlags() {
 
         // Break and place blocks
-        new FlagBuilder().id(Flaggs.BREAK_BLOCKS).icon(Material.STONE).listener(new BreakBlocksListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.PLACE_BLOCKS).icon(Material.DIRT).listener(new PlaceBlocksListener(p)).build(p);
+        new FlagBuilder().id(Flags.BREAK_BLOCKS).icon(Material.STONE).listener(new BreakBlocksListener(p)).build(p);
+        new FlagBuilder().id(Flags.PLACE_BLOCKS).icon(Material.DIRT).listener(new PlaceBlocksListener(p)).build(p);
 
         // Block interactions - all use BlockInteractionListener()
-        new FlagBuilder().id(Flaggs.ANVIL).icon(Material.ANVIL).listener(new BlockInteractionListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.BEACON).icon(Material.BEACON).build(p);
-        new FlagBuilder().id(Flaggs.BED).icon(Material.BED).build(p);
-        new FlagBuilder().id(Flaggs.BREWING).icon(Material.BREWING_STAND_ITEM).build(p);
-        new FlagBuilder().id(Flaggs.CHEST).icon(Material.CHEST).build(p);
-        new FlagBuilder().id(Flaggs.DOOR).allowedByDefault(true).icon(Material.WOODEN_DOOR).build(p);
-        new FlagBuilder().id(Flaggs.CRAFTING).allowedByDefault(true).icon(Material.WORKBENCH).build(p);
-        new FlagBuilder().id(Flaggs.ENCHANTING).allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build(p);
-        new FlagBuilder().id(Flaggs.FURNACE).icon(Material.FURNACE).build(p);
-        new FlagBuilder().id(Flaggs.GATE).allowedByDefault(true).icon(Material.FENCE_GATE).build(p);
-        new FlagBuilder().id(Flaggs.MUSIC).icon(Material.JUKEBOX).build(p);
-        new FlagBuilder().id(Flaggs.LEVER_BUTTON).icon(Material.LEVER).build(p);
-        new FlagBuilder().id(Flaggs.REDSTONE).icon(Material.REDSTONE).build(p);
-        new FlagBuilder().id(Flaggs.SPAWN_EGGS).icon(Material.MONSTER_EGG).build(p);
+        new FlagBuilder().id(Flags.ANVIL).icon(Material.ANVIL).listener(new BlockInteractionListener(p)).build(p);
+        new FlagBuilder().id(Flags.BEACON).icon(Material.BEACON).build(p);
+        new FlagBuilder().id(Flags.BED).icon(Material.BED).build(p);
+        new FlagBuilder().id(Flags.BREWING).icon(Material.BREWING_STAND_ITEM).build(p);
+        new FlagBuilder().id(Flags.CHEST).icon(Material.CHEST).build(p);
+        new FlagBuilder().id(Flags.DOOR).allowedByDefault(true).icon(Material.WOODEN_DOOR).build(p);
+        new FlagBuilder().id(Flags.CRAFTING).allowedByDefault(true).icon(Material.WORKBENCH).build(p);
+        new FlagBuilder().id(Flags.ENCHANTING).allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build(p);
+        new FlagBuilder().id(Flags.FURNACE).icon(Material.FURNACE).build(p);
+        new FlagBuilder().id(Flags.GATE).allowedByDefault(true).icon(Material.FENCE_GATE).build(p);
+        new FlagBuilder().id(Flags.MUSIC).icon(Material.JUKEBOX).build(p);
+        new FlagBuilder().id(Flags.LEVER_BUTTON).icon(Material.LEVER).build(p);
+        new FlagBuilder().id(Flags.REDSTONE).icon(Material.REDSTONE).build(p);
+        new FlagBuilder().id(Flags.SPAWN_EGGS).icon(Material.MONSTER_EGG).build(p);
 
         // Entity interactions
-        new FlagBuilder().id(Flaggs.ARMOR_STAND).icon(Material.ARMOR_STAND).listener(new EntityInteractListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.RIDING).icon(Material.GOLD_BARDING).build(p);
-        new FlagBuilder().id(Flaggs.TRADING).allowedByDefault(true).icon(Material.EMERALD).build(p);
+        new FlagBuilder().id(Flags.ARMOR_STAND).icon(Material.ARMOR_STAND).listener(new EntityInteractListener(p)).build(p);
+        new FlagBuilder().id(Flags.RIDING).icon(Material.GOLD_BARDING).build(p);
+        new FlagBuilder().id(Flags.TRADING).allowedByDefault(true).icon(Material.EMERALD).build(p);
 
         // Breeding
-        new FlagBuilder().id(Flaggs.BREEDING).icon(Material.CARROT).listener(new BreedingListener(p)).build(p);
+        new FlagBuilder().id(Flags.BREEDING).icon(Material.CARROT).listener(new BreedingListener(p)).build(p);
 
         // Buckets. All bucket use is covered by one listener
-        new FlagBuilder().id(Flaggs.BUCKET).icon(Material.BUCKET).listener(new BucketListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.COLLECT_LAVA).icon(Material.LAVA_BUCKET).build(p);
-        new FlagBuilder().id(Flaggs.COLLECT_WATER).icon(Material.WATER_BUCKET).build(p);
-        new FlagBuilder().id(Flaggs.MILKING).icon(Material.MILK_BUCKET).build(p);    
+        new FlagBuilder().id(Flags.BUCKET).icon(Material.BUCKET).listener(new BucketListener(p)).build(p);
+        new FlagBuilder().id(Flags.COLLECT_LAVA).icon(Material.LAVA_BUCKET).build(p);
+        new FlagBuilder().id(Flags.COLLECT_WATER).icon(Material.WATER_BUCKET).build(p);
+        new FlagBuilder().id(Flags.MILKING).icon(Material.MILK_BUCKET).build(p);    
 
         // Chorus Fruit and Enderpearls
-        new FlagBuilder().id(Flaggs.CHORUS_FRUIT).icon(Material.CHORUS_FRUIT).listener(new TeleportationListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.ENDER_PEARL).icon(Material.ENDER_PEARL).build(p);
+        new FlagBuilder().id(Flags.CHORUS_FRUIT).icon(Material.CHORUS_FRUIT).listener(new TeleportationListener(p)).build(p);
+        new FlagBuilder().id(Flags.ENDER_PEARL).icon(Material.ENDER_PEARL).build(p);
 
         // Physical interactions
-        new FlagBuilder().id(Flaggs.CROP_TRAMPLE).icon(Material.WHEAT).listener(new PhysicalInteractionListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.PRESSURE_PLATE).icon(Material.GOLD_PLATE).build(p);
+        new FlagBuilder().id(Flags.CROP_TRAMPLE).icon(Material.WHEAT).listener(new PhysicalInteractionListener(p)).build(p);
+        new FlagBuilder().id(Flags.PRESSURE_PLATE).icon(Material.GOLD_PLATE).build(p);
 
         // Egg throwing
-        new FlagBuilder().id(Flaggs.EGGS).icon(Material.EGG).listener(new EggListener(p)).build(p);
+        new FlagBuilder().id(Flags.EGGS).icon(Material.EGG).listener(new EggListener(p)).build(p);
 
         /*
          * Fire
@@ -120,40 +120,40 @@ public class FlagsManager {
          * I'll take you to burn
          * - The Crazy World of Arthur Brown
          */
-        new FlagBuilder().id(Flaggs.FIRE).icon(Material.FLINT_AND_STEEL).listener(new FireListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.FIRE_EXTINGUISH).icon(Material.POTION).build(p);
-        new FlagBuilder().id(Flaggs.FIRE_SPREAD).icon(Material.FIREWORK_CHARGE).build(p);
+        new FlagBuilder().id(Flags.FIRE).icon(Material.FLINT_AND_STEEL).listener(new FireListener(p)).build(p);
+        new FlagBuilder().id(Flags.FIRE_EXTINGUISH).icon(Material.POTION).build(p);
+        new FlagBuilder().id(Flags.FIRE_SPREAD).icon(Material.FIREWORK_CHARGE).build(p);
 
         // Inventories
-        new FlagBuilder().id(Flaggs.MOUNT_INVENTORY).icon(Material.IRON_BARDING).listener(new InventoryListener(p)).build(p);
+        new FlagBuilder().id(Flags.MOUNT_INVENTORY).icon(Material.IRON_BARDING).listener(new InventoryListener(p)).build(p);
 
         // Hurting things
-        new FlagBuilder().id(Flaggs.HURT_MOBS).icon(Material.STONE_SWORD).listener(new HurtingListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.HURT_MONSTERS).icon(Material.WOOD_SWORD).build(p);
+        new FlagBuilder().id(Flags.HURT_MOBS).icon(Material.STONE_SWORD).listener(new HurtingListener(p)).build(p);
+        new FlagBuilder().id(Flags.HURT_MONSTERS).icon(Material.WOOD_SWORD).build(p);
 
         // Leashes
-        new FlagBuilder().id(Flaggs.LEASH).icon(Material.LEASH).listener(new LeashListener(p)).build(p);
+        new FlagBuilder().id(Flags.LEASH).icon(Material.LEASH).listener(new LeashListener(p)).build(p);
 
         // Portal use protection
-        new FlagBuilder().id(Flaggs.PORTAL).icon(Material.OBSIDIAN).listener(new PortalListener(p)).build(p);
+        new FlagBuilder().id(Flags.PORTAL).icon(Material.OBSIDIAN).listener(new PortalListener(p)).build(p);
 
         // Shearing
-        new FlagBuilder().id(Flaggs.SHEARING).icon(Material.SHEARS).listener(new ShearingListener(p)).build(p);
+        new FlagBuilder().id(Flags.SHEARING).icon(Material.SHEARS).listener(new ShearingListener(p)).build(p);
 
         // Item pickup or drop
-        new FlagBuilder().id(Flaggs.ITEM_DROP).icon(Material.DIRT).allowedByDefault(true).listener(new ItemDropPickUpListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.ITEM_PICKUP).icon(Material.DIRT).build(p);
+        new FlagBuilder().id(Flags.ITEM_DROP).icon(Material.DIRT).allowedByDefault(true).listener(new ItemDropPickUpListener(p)).build(p);
+        new FlagBuilder().id(Flags.ITEM_PICKUP).icon(Material.DIRT).build(p);
 
         /*
          * Non-protection flags
          */
         // PVP
-        new FlagBuilder().id(Flaggs.PVP_OVERWORLD).icon(Material.ARROW).listener(new PVPListener(p)).build(p);
-        new FlagBuilder().id(Flaggs.PVP_NETHER).icon(Material.IRON_AXE).build(p);
-        new FlagBuilder().id(Flaggs.PVP_END).icon(Material.END_CRYSTAL).build(p);
-        new FlagBuilder().id(Flaggs.ENTER_EXIT_MESSAGES).icon(Material.DIRT).allowedByDefault(true).build(p);
-        new FlagBuilder().id(Flaggs.MOB_SPAWN).icon(Material.APPLE).allowedByDefault(true).build(p);
-        new FlagBuilder().id(Flaggs.MONSTER_SPAWN).icon(Material.MOB_SPAWNER).allowedByDefault(true).build(p);
+        new FlagBuilder().id(Flags.PVP_OVERWORLD).icon(Material.ARROW).listener(new PVPListener(p)).build(p);
+        new FlagBuilder().id(Flags.PVP_NETHER).icon(Material.IRON_AXE).build(p);
+        new FlagBuilder().id(Flags.PVP_END).icon(Material.END_CRYSTAL).build(p);
+        new FlagBuilder().id(Flags.ENTER_EXIT_MESSAGES).icon(Material.DIRT).allowedByDefault(true).build(p);
+        new FlagBuilder().id(Flags.MOB_SPAWN).icon(Material.APPLE).allowedByDefault(true).build(p);
+        new FlagBuilder().id(Flags.MONSTER_SPAWN).icon(Material.MOB_SPAWNER).allowedByDefault(true).build(p);
 
     }
 
@@ -163,10 +163,15 @@ public class FlagsManager {
      * @return Flag or null if not known
      */
     public Flag getFlagByID(String key) {
-        for (Flaggs flag: Flaggs.values()) {
+        for (Flags flag: Flags.values()) {
             if (flag.name().equalsIgnoreCase(key)) return this.getFlagByID(flag);
         }
         return null;
+    }
+
+    public boolean isAllowed(Flags flag) {
+        if (flags.containsKey(flag)) return flags.get(flag).isAllowed();
+        return false;
     }
 
 }

@@ -18,6 +18,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Abstract class for flag listeners. Provides common code.
@@ -122,23 +123,23 @@ public abstract class AbstractFlagListener implements Listener {
      * Generic place blocks checker
      * @param e
      * @param loc
-     * @param flag
+     * @param redstone
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flag flag) { 
-        return checkIsland(e, loc, flag, false);
+    public boolean checkIsland(Event e, Location loc, Flags redstone) { 
+        return checkIsland(e, loc, redstone, false);
     }
 
 
 
     /**
-     * Generic place blocks checker
+     * Check if flag is allowed
      * @param e
      * @param loc
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
+    public boolean checkIsland(Event e, Location loc, Flags flag, boolean silent) {
         
         // If the user is not set already, try to get it from the event
         if (user == null) {
@@ -169,7 +170,7 @@ public abstract class AbstractFlagListener implements Listener {
         }
 
         // The player is in the world, but not on an island, so general world settings apply
-        if (!flag.isAllowed()) {
+        if (!isAllowed(flag)) {
             noGo(e, silent);
             user = null;
             return false;
@@ -179,4 +180,16 @@ public abstract class AbstractFlagListener implements Listener {
         }
     }
 
+    /**
+     * Get the flag for this ID
+     * @param flag
+     * @return Flag denoted by the id
+     */
+    protected Flag id(Flags flag) {
+        return plugin.getFlagsManager().getFlagByID(flag);
+    }
+    
+    protected boolean isAllowed(Flags flag) {
+       return plugin.getFlagsManager().isAllowed(flag); 
+    }
 }
