@@ -134,30 +134,48 @@ public class Settings implements ISettings<Settings> {
     // ---------------------------------------------
 
     /*      ISLAND      */
-    private int maxTeamSize;
-    private int maxHomes;
+    @ConfigEntry(path = "island.max-team-size")
+    private int maxTeamSize = 4;
+    @ConfigEntry(path = "island.max-homes")
+    private int maxHomes = 5;
+    @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength;
+    @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength;
-    private int inviteWait;
+    @ConfigEntry(path = "island.invite-wait")
+    private int inviteWait = 60;
 
     // Reset
-    private int resetLimit;
+    @ConfigEntry(path = "island.reset.reset-limit")
+    private int resetLimit = -1;
+    
     @ConfigEntry(path = "island.require-confirmation.reset")
     private boolean resetConfirmation;
 
-    @ConfigEntry(path = "island.require-confirmation.reset-wait")
-    private long resetWait;
+    @ConfigEntry(path = "island.reset-wait")
+    private long resetWait = 300;
 
+    @ConfigEntry(path = "island.reset.leavers-lose-reset")
     private boolean leaversLoseReset;
+    
+    @ConfigEntry(path = "island.reset.kicked-keep-inventory")
     private boolean kickedKeepInventory;
 
     // Remove mobs
+    @ConfigEntry(path = "island.remove-mobs.on-login")
     private boolean removeMobsOnLogin;
+    @ConfigEntry(path = "island.remove-mobs.on-island")
     private boolean removeMobsOnIsland;
+    
+    @ConfigEntry(path = "island.remove-mobs.whitelist")
     private List<String> removeMobsWhitelist = new ArrayList<>();
 
+    @ConfigEntry(path = "island.make-island-if-none")
     private boolean makeIslandIfNone;
+    
+    @ConfigEntry(path = "island.immediate-teleport-on-island")
     private boolean immediateTeleportOnIsland;
+    
     private boolean respawnOnIsland;
 
     // Deaths
