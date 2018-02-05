@@ -16,12 +16,11 @@ import us.tastybento.bskyblock.Constants.GameType;
 @Target(ElementType.FIELD)
 public @interface ConfigEntry {
 
-    String path() default "";
+    String path();
     String since() default "1.0";
     boolean overrideOnChange() default false;
     boolean experimental() default false;
     boolean needsReset() default false;
     GameType specificTo() default GameType.BOTH;
-    Class<?> adapter() default Adapter.class;
     
 }

@@ -14,10 +14,11 @@ import org.bukkit.potion.PotionEffectType;
 import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ISettings;
-import us.tastybento.bskyblock.api.configuration.PotionEffectListAdpater;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter;
 
 /**
  * All the plugin settings are here
@@ -237,7 +238,8 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "acid.damage.rain", specificTo = GameType.ACIDISLAND)
     private int acidRainDamage = 1;
 
-    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND, adapter = PotionEffectListAdpater.class)
+    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND)
+    @Adapter(PotionEffectListAdapter.class)
     private List<PotionEffectType> acidEffects = new ArrayList<>(Arrays.asList(PotionEffectType.CONFUSION, PotionEffectType.SLOW));
 
     /*      SCHEMATICS      */

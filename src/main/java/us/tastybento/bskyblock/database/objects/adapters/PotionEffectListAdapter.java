@@ -1,11 +1,11 @@
-package us.tastybento.bskyblock.api.configuration;
+package us.tastybento.bskyblock.database.objects.adapters;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.potion.PotionEffectType;
 
-public class PotionEffectListAdpater implements Adapter<List<PotionEffectType>, List<String>> {
+public class PotionEffectListAdapter implements AdapterInterface<List<PotionEffectType>, List<String>> {
 
     @SuppressWarnings("unchecked")
     @Override

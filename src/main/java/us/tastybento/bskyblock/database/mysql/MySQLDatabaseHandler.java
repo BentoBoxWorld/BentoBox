@@ -32,10 +32,11 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.plugin.Plugin;
 
-import us.tastybento.bskyblock.api.configuration.Adapter;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.AdapterInterface;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -423,14 +424,15 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 if (configEntry != null) { 
                     if (DEBUG) 
                         plugin.getLogger().info("DEBUG: there is a configEntry");
-                    if (!configEntry.adapter().equals(Adapter.class)) {
-                        if (DEBUG) 
-                            plugin.getLogger().info("DEBUG: there is an adapter");
-                        // A conversion adapter has been defined            
-                        value = ((Adapter<?,?>)configEntry.adapter().newInstance()).deserialize(value);
-                        if (DEBUG) 
-                            plugin.getLogger().info("DEBUG: value now after deserialization = " + value);
-                    }
+                }
+                Adapter adapterNotation = field.getAnnotation(Adapter.class);
+                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: there is an adapter");
+                    // A conversion adapter has been defined            
+                    value = ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value);
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: value now after deserialization = " + value);
                 }
                 // Create set and map table inserts if this is a Collection
                 if (propertyDescriptor.getPropertyType().equals(Set.class) ||
@@ -485,7 +487,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                             Entry<?,?> en = (Entry<?, ?>) it.next();
                             if (DEBUG)
                                 plugin.getLogger().info("DEBUG: entry ket = " + en.getKey());
-                            
+
                             // Get the key and serialize it
                             Object key = serialize(en.getKey(), en.getKey().getClass());
                             if (DEBUG)
@@ -789,14 +791,16 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 if (configEntry != null) { 
                     if (DEBUG) 
                         plugin.getLogger().info("DEBUG: there is a configEntry");
-                    if (!configEntry.adapter().equals(Adapter.class)) {
-                        if (DEBUG) 
-                            plugin.getLogger().info("DEBUG: there is an adapter");
-                        // A conversion adapter has been defined            
-                        value = ((Adapter<?,?>)configEntry.adapter().newInstance()).serialize(value);
-                        if (DEBUG) 
-                            plugin.getLogger().info("DEBUG: value now after serialization = " + value);
-                    }
+                    // TODO: add config entry handling
+                }
+                Adapter adapterNotation = field.getAnnotation(Adapter.class);
+                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: there is an adapter");
+                    // A conversion adapter has been defined            
+                    value = ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value);
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: value now after deserialization = " + value);
                 }
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: invoking method " + method.getName());

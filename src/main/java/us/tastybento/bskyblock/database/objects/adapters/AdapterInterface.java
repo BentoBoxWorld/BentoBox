@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.api.configuration;
+package us.tastybento.bskyblock.database.objects.adapters;
 
 
 /**
@@ -8,7 +8,7 @@ package us.tastybento.bskyblock.api.configuration;
  * @param <S>
  * @param <V>
  */
-public interface Adapter<S,V> {
+public interface AdapterInterface<S,V> {
 
     /**
      * Serialize object

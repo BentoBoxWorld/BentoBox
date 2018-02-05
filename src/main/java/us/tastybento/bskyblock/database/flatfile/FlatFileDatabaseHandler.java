@@ -26,11 +26,12 @@ import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Constants.GameType;
-import us.tastybento.bskyblock.api.configuration.Adapter;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.AdapterInterface;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -179,21 +180,24 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     continue;
                 }
                 // TODO: Add handling of other ConfigEntry elements
-                if (!configEntry.adapter().equals(Adapter.class)) {
-                    // A conversion adapter has been defined            
-                    Object value = config.get(storageLocation);
-                    method.invoke(instance, ((Adapter<?,?>)configEntry.adapter().newInstance()).serialize(value));
-                    if (DEBUG) {
-                        plugin.getLogger().info("DEBUG: value = " + value);
-                        plugin.getLogger().info("DEBUG: property type = " + propertyDescriptor.getPropertyType());
-                        plugin.getLogger().info("DEBUG: " + value.getClass());
-                    }
-                    if (value != null && !value.getClass().equals(MemorySection.class)) {
-                        method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
-                    }
-                    // We are done here
-                    continue;
+            }
+            Adapter adapterNotation = field.getAnnotation(Adapter.class);
+            if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                if (DEBUG) 
+                    plugin.getLogger().info("DEBUG: there is an adapter");
+                // A conversion adapter has been defined
+                Object value = config.get(storageLocation);
+                method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value));
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: value = " + value);
+                    plugin.getLogger().info("DEBUG: property type = " + propertyDescriptor.getPropertyType());
+                    plugin.getLogger().info("DEBUG: " + value.getClass());
                 }
+                if (value != null && !value.getClass().equals(MemorySection.class)) {
+                    method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
+                }
+                // We are done here
+                continue;  
             }
 
             // Look in the YAML Config to see if this field exists (it should)
@@ -352,18 +356,24 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         storageLocation = configEntry.path();
                     }         
                     // TODO: add in game-specific saving
-                    if (!configEntry.adapter().equals(Adapter.class)) {
-                        // A conversion adapter has been defined              
-                        try {
-                            config.set(storageLocation, ((Adapter<?,?>)configEntry.adapter().newInstance()).deserialize(value));
-                        } catch (InstantiationException e) {
-                            e.printStackTrace();
-                        }
-                        // We are done here
-                        continue fields;
-                    }
-
+                    
                 }
+                
+                Adapter adapterNotation = field.getAnnotation(Adapter.class);
+                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                    if (DEBUG) 
+                        plugin.getLogger().info("DEBUG: there is an adapter");
+                    // A conversion adapter has been defined
+                 // A conversion adapter has been defined              
+                    try {
+                        config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
+                    } catch (InstantiationException e) {
+                        e.printStackTrace();
+                    }
+                    // We are done here
+                    continue fields;
+                }
+                
                 //plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
                 // Depending on the vale type, it'll need serializing differenty
                 // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class

@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.objects;
+package us.tastybento.bskyblock.database.objects.adapters;
 
 import java.util.HashMap;
 import java.util.Map.Entry;
@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.configuration.Adapter;
 import us.tastybento.bskyblock.api.flags.Flag;
 
 /**
@@ -17,7 +16,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
  * @author tastybento
  *
  */
-public class FlagSerializer implements Adapter<HashMap<Flag, Integer>, HashMap<String, Integer>> {
+public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, HashMap<String, Integer>> {
 
     @Override
     public HashMap<Flag, Integer> serialize(Object object) {

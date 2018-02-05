@@ -23,6 +23,8 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
@@ -80,7 +82,7 @@ public class Island implements DataObject {
     private boolean purgeProtected = false;
     
     //// Protection flags ////
-    @ConfigEntry(adapter = FlagSerializer.class)
+    @Adapter(FlagSerializer.class)
     private HashMap<Flag, Integer> flags = new HashMap<>();
     
     private int levelHandicap;
