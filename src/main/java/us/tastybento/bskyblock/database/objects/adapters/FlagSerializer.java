@@ -46,7 +46,7 @@ public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, 
             return result;
         HashMap<Flag, Integer> flags = (HashMap<Flag, Integer>)object;
         for (Entry<Flag, Integer> en: flags.entrySet()) {
-            result.put(en.getKey().getID(), en.getValue());
+            result.put(en.getKey().getID().name(), en.getValue());
         }
         return result;
     }

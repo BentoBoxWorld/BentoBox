@@ -6,18 +6,17 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
+import us.tastybento.bskyblock.lists.Flaggs;
 
-public class Flag {
+public class Flag  implements Comparable<Flag> {
 
-    private String id;
-    private PanelItem icon;
-    private Listener listener;
+    private final Flaggs id;
+    private final PanelItem icon;
+    private final Listener listener;
     private boolean defaultSetting;
     
-    public Flag() {}
-
-    public Flag(BSkyBlock plugin, String id, PanelItem icon, Listener listener, boolean defaultSetting) {
-        this.id = id;
+    public Flag(BSkyBlock plugin, Flaggs id2, PanelItem icon, Listener listener, boolean defaultSetting) {
+        this.id = id2;
         this.icon = icon;
         this.listener = listener;
         //System.out.println("DEBUG: " + plugin);
@@ -25,7 +24,7 @@ public class Flag {
         plugin.getFlagsManager().registerFlag(this);
     }
 
-    public String getID() {
+    public Flaggs getID() {
         return id;
     }
 
@@ -43,5 +42,10 @@ public class Flag {
 
     public void setDefaultSetting(boolean defaultSetting) {
         this.defaultSetting = defaultSetting;
+    }
+
+    @Override
+    public int compareTo(Flag o) {
+        return id.compareTo(o.getID());
     }
 }
