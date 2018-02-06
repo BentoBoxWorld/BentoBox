@@ -86,7 +86,7 @@ public class FlyingMobEvents implements Listener {
             plugin.getLogger().info("Flying mobs " + e.getEventName());
         }
         // Store where this mob originated
-        plugin.getIslands().getIslandAt(e.getLocation()).map(island->mobSpawnInfo.put(e.getEntity(),island));
+        plugin.getIslands().getIslandAt(e.getLocation()).ifPresent(island->mobSpawnInfo.put(e.getEntity(),island));
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
