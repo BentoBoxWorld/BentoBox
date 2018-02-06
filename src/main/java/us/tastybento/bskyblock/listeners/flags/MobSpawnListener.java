@@ -40,7 +40,6 @@ public class MobSpawnListener extends AbstractFlagListener {
                 || e.getSpawnReason().equals(SpawnReason.CHUNK_GEN)
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)
-                || e.getSpawnReason().equals(SpawnReason.JOCKEY)
                 || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
             Optional<Island> island = plugin.getIslands().getIslandAt(e.getLocation());
             if (island.isPresent()) {
