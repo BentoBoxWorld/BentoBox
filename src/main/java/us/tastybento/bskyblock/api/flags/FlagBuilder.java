@@ -7,18 +7,17 @@ import org.bukkit.inventory.ItemStack;
 import us.tastybento.bskyblock.api.flags.Flag.FlagType;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
-import us.tastybento.bskyblock.lists.Flags;
 
 public class FlagBuilder {
 
-    private Flags id;
+    private String id;
     private PanelItem icon;
     private Listener listener;
     private boolean defaultSetting;
     private FlagType type = FlagType.PROTECTION;
 
-    public FlagBuilder id(Flags flag) {
-        this.id = flag;
+    public FlagBuilder id(String string) {
+        this.id = string;
         return this;
     }
 
@@ -61,6 +60,16 @@ public class FlagBuilder {
      */
     public FlagBuilder type(FlagType type) {
         this.type = type;
+        return this;
+    }
+
+    /**
+     * Set the id of this flag to the name of this enum value
+     * @param flag
+     * @return
+     */
+    public FlagBuilder id(Enum<?> flag) {
+        this.id = flag.name();
         return this;
     }
 }

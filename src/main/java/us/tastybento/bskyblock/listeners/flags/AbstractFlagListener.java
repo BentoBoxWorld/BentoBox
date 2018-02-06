@@ -19,7 +19,6 @@ import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.FlagType;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Abstract class for flag listeners. Provides common code.
@@ -28,14 +27,17 @@ import us.tastybento.bskyblock.lists.Flags;
  */
 public abstract class AbstractFlagListener implements Listener {
 
-    public BSkyBlock plugin;
+    public BSkyBlock plugin = BSkyBlock.getInstance();
     private User user = null;
-
-    public AbstractFlagListener(BSkyBlock plugin) {
-        super();
+    
+    /**
+     * Used for unit testing only to set the plugin
+     * @param plugin
+     */
+    public void setPlugin(BSkyBlock plugin) {
         this.plugin = plugin;
     }
-
+    
     /**
      * Sets the player associated with this event.
      * If the user is a fake player, they are not counted.
@@ -124,11 +126,11 @@ public abstract class AbstractFlagListener implements Listener {
      * Generic place blocks checker
      * @param e
      * @param loc
-     * @param redstone
+     * @param breakBlocks
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flags redstone) { 
-        return checkIsland(e, loc, redstone, false);
+    public boolean checkIsland(Event e, Location loc, Flag breakBlocks) { 
+        return checkIsland(e, loc, breakBlocks, false);
     }
 
 
@@ -140,7 +142,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flags flag, boolean silent) {
+    public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If this is not an Island World, skip
         if (!inWorld(loc)) return true;
 
@@ -148,11 +150,9 @@ public abstract class AbstractFlagListener implements Listener {
         Optional<Island> island = plugin.getIslands().getIslandAt(loc);
 
         // Handle Settings Flag
-        id(flag);
-        id(flag).getType();
-        if (id(flag).getType().equals(FlagType.SETTING)) {
+        if (flag.getType().equals(FlagType.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
-            return island.map(x -> x.isAllowed(flag)).orElse(isDefaultAllowed(flag));
+            return island.map(x -> x.isAllowed(flag)).orElse(flag.isDefaultSetting());
         } 
         
         // Protection flag
@@ -182,7 +182,7 @@ public abstract class AbstractFlagListener implements Listener {
         }
 
         // The player is in the world, but not on an island, so general world settings apply
-        if (!isDefaultAllowed(flag)) {
+        if (!flag.isDefaultSetting()) {
             noGo(e, silent);
             user = null;
             return false;
@@ -194,19 +194,11 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Get the flag for this ID
-     * @param flag
+     * @param id
      * @return Flag denoted by the id
      */
-    protected Flag id(Flags flag) {
-        return plugin.getFlagsManager().getFlagByID(flag);
+    protected Flag id(String id) {
+        return plugin.getFlagsManager().getFlagByID(id);
     }
 
-    /**
-     * Return the default setting for this flag
-     * @param flag
-     * @return
-     */
-    protected boolean isDefaultAllowed(Flags flag) {
-        return plugin.getFlagsManager().isDefaultAllowed(flag); 
-    }
 }

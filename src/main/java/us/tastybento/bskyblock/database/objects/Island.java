@@ -21,9 +21,9 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
-import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
@@ -82,7 +82,7 @@ public class Island implements DataObject {
     
     //// Protection flags ////
     @Adapter(FlagSerializer.class)
-    private HashMap<Flags, Integer> flags = new HashMap<>();
+    private HashMap<Flag, Integer> flags = new HashMap<>();
     
     private int levelHandicap;
     private Location spawnPoint;
@@ -154,14 +154,14 @@ public class Island implements DataObject {
 
     /**
      * Get the Island Guard flag ranking
-     * @param flag
+     * @param breakBlocks
      * @return flag rank. Players must have at least this rank to bypass this flag
      */
-    public int getFlagReq(Flags flag){
-        if(flags.containsKey(flag)) {
-            return flags.get(flag);
+    public int getFlagReq(Flag breakBlocks){
+        if(flags.containsKey(breakBlocks)) {
+            return flags.get(breakBlocks);
         } else {
-            flags.put(flag, RanksManager.MEMBER_RANK);
+            flags.put(breakBlocks, RanksManager.MEMBER_RANK);
             return RanksManager.MEMBER_RANK;
         }
     }
@@ -169,7 +169,7 @@ public class Island implements DataObject {
     /**
      * @return the flags
      */
-    public HashMap<Flags, Integer> getFlags() {
+    public HashMap<Flag, Integer> getFlags() {
         return flags;
     }
 
@@ -414,11 +414,11 @@ public class Island implements DataObject {
     /**
      * Check if the flag is allowed or not
      * For flags that are for the island in general and not related to rank
-     * @param flag
+     * @param breakBlocks
      * @return true if allowed, false if not
      */
-    public boolean isAllowed(Flags flag) {
-        return this.getFlagReq(flag) >= 0 ? true : false;
+    public boolean isAllowed(Flag breakBlocks) {
+        return this.getFlagReq(breakBlocks) >= 0 ? true : false;
     }
 
     /**
@@ -427,7 +427,7 @@ public class Island implements DataObject {
      * @param flag - flag
      * @return true if allowed, false if not
      */
-    public boolean isAllowed(User user, Flags flag) {
+    public boolean isAllowed(User user, Flag flag) {
         //Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
         return (this.getRank(user) >= this.getFlagReq(flag)) ? true : false;
     }
@@ -506,14 +506,14 @@ public class Island implements DataObject {
      * @param flag
      * @param value - rank value. If the flag applies to the island, a positive number = true, negative = false
      */
-    public void setFlag(Flags flag, int value){
+    public void setFlag(Flag flag, int value){
         flags.put(flag, value);
     }
 
     /**
      * @param flags the flags to set
      */
-    public void setFlags(HashMap<Flags, Integer> flags) {
+    public void setFlags(HashMap<Flag, Integer> flags) {
         this.flags = flags;
     }
 

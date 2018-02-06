@@ -13,7 +13,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
 
@@ -23,10 +22,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class MobSpawnListener extends AbstractFlagListener {
-
-    public MobSpawnListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Prevents mobs spawning naturally
@@ -65,13 +60,13 @@ public class MobSpawnListener extends AbstractFlagListener {
             } else {
                 // Outside of the island
                 if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {             
-                    if (!isDefaultAllowed(Flags.MOB_SPAWN)) {
+                    if (!Flags.MOB_SPAWN.isDefaultSetting()) {
                         // Mobs not allowed to spawn
                         e.setCancelled(true);
                         return;
                     }
                 } else if (e.getEntity() instanceof Animals) {
-                    if (!isDefaultAllowed(Flags.MONSTER_SPAWN)) {
+                    if (!Flags.MONSTER_SPAWN.isDefaultSetting()) {
                         // Mobs not allowed to spawn
                         e.setCancelled(true);
                         return;

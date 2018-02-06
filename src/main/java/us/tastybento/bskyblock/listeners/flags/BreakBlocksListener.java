@@ -17,15 +17,10 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 public class BreakBlocksListener extends AbstractFlagListener {
-
-    public BreakBlocksListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Prevents blocks from being broken
@@ -107,7 +102,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             });
 
             // The player is in the world, but not on an island, so general world settings apply
-            if (!isDefaultAllowed(Flags.BREAK_BLOCKS)) {
+            if (!Flags.BREAK_BLOCKS.isDefaultSetting()) {
                 e.setCancelled(true);
                 user.sendMessage("protection.protected");
             }

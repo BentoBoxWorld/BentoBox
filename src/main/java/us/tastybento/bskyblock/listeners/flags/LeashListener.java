@@ -10,7 +10,6 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -18,11 +17,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class LeashListener extends AbstractFlagListener {
-
-    public LeashListener(BSkyBlock plugin) {
-        super(plugin);
-    }
-
 
     /**
      * Prevents leashing

@@ -10,14 +10,9 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 public class PlaceBlocksListener extends AbstractFlagListener {
-
-    public PlaceBlocksListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Check blocks being placed in general

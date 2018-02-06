@@ -12,7 +12,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -23,10 +22,6 @@ import us.tastybento.bskyblock.lists.Flags;
  */
 public class EntityInteractListener extends AbstractFlagListener {
     
-    public EntityInteractListener(BSkyBlock plugin) {
-        super(plugin);
-    }
-
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked() instanceof ArmorStand) {

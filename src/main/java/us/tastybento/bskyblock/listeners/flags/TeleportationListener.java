@@ -8,7 +8,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -17,10 +16,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class TeleportationListener extends AbstractFlagListener {
-
-    public TeleportationListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Ender pearl and chorus fruit teleport checks

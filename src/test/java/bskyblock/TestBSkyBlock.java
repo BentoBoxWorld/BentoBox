@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -22,6 +23,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -48,6 +50,8 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
@@ -462,48 +466,7 @@ public class TestBSkyBlock {
     
     @Test
     public void TestEventProtection() {
-
-        /*
-         * 
-         * Score approach:
-         * 
-         * Rank definitions are global and apply to all islands
-         * 
-         * There are 4 hard-coded ranks:
-         * 
-         * Owner is the highest rank = 1000
-         * 
-         * Member ranks are >= 900
-         * 
-         * Visitors = 0
-         * 
-         * Banned = -1
-         * 
-         * Owners have full admin capability over the island. Members are required to give up their own island to be a member.
-         * Visitors are everyone else.
-         * 
-         * After those 3, it's possible to have custom ranks, e.g.
-         * 
-         * Trustees = 750 
-         * Coops = 500
-         * etc.
-         *
-         * 
-         * Each flag has a bypass score.
-         * If the user's rank is higher or equal to the bypass score, they will bypass the protection.
-         * Owners can disable/enable the flags.
-         * 
-         * Each island will track the rank score for each player on the island.
-         * Unknown players have a rank of 0.
-         * 
-         * 
-         * Admins will be able to define groups and their rank value. 
-         * During the game, the players will never see the rank value. They will only see the ranks.
-         * 
-         * It will be possible to island owners to promote or demote players up and down the ranks.
-         */
-        
-        // Now test events
+        // Test events
         
         FlagListener fl = new FlagListener(plugin);
         Bukkit.getLogger().info("SETUP: owner UUID = " + ownerOfIsland.getUniqueId());
@@ -525,11 +488,42 @@ public class TestBSkyBlock {
         
     }
     
-    private class FlagListener extends AbstractFlagListener {
+    @Test
+    public void TestDefaultFlags() {
+        // Check all the default flags
+        FlagsManager fm = new FlagsManager(plugin);
+        Collection<Flag> defaultFlags = Flags.values();
+        Collection<Flag> f = fm.getFlags().values();
+        for (Flag flag : defaultFlags) {
+            assertTrue(flag.getID(), f.contains(flag));
+        }
+        for (Flag flag : f) {
+            assertTrue(flag.getID(), defaultFlags.contains(flag));
+        }
+    }
     
-        public FlagListener(BSkyBlock plugin) {
-            super(plugin);
-            
+    @Test
+    public void TestCustomFlags() {
+        // Custom
+        FlagListener fl = new FlagListener(plugin);
+        Flag customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
+        assertEquals("CUSTOM_FLAG", customFlag.getID());
+        assertEquals(Material.DIAMOND, customFlag.getIcon().getItem().getType());
+        assertEquals(fl, customFlag.getListener().get());
+        // Add it to the Flag Manager        
+        flagsManager.registerFlag(customFlag);
+        assertEquals(customFlag, flagsManager.getFlagByID("CUSTOM_FLAG"));
+        assertEquals(customFlag, flagsManager.getFlagByIcon(customFlag.getIcon()));
+    }
+    
+    /**
+     * Dummy flag listener
+     *
+     */
+    private class FlagListener extends AbstractFlagListener {
+        FlagListener(BSkyBlock plugin) {
+            // Set the plugin explicitly
+            setPlugin(plugin);
         }
     }
 

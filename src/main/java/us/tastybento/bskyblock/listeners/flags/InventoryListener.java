@@ -16,7 +16,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.lists.Flags;
 
@@ -26,10 +25,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class InventoryListener extends AbstractFlagListener {
-
-    public InventoryListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Prevents visitors picking items from inventories

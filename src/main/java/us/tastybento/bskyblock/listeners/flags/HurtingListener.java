@@ -30,8 +30,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -40,10 +40,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class HurtingListener extends AbstractFlagListener {
-
-    public HurtingListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
 
@@ -68,17 +64,17 @@ public class HurtingListener extends AbstractFlagListener {
      * Finds the true attacker, even if the attack was via a projectile
      * @param event
      * @param damager
-     * @param flag
+     * @param hurtMobs
      */
-    private void respond(Event event, Entity damager, Flags flag) {
+    private void respond(Event event, Entity damager, Flag hurtMobs) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), flag);
+            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), hurtMobs);
         } else if (damager instanceof Projectile) {
             // Find out who fired the projectile
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), flag)) {
+                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), hurtMobs)) {
                     damager.setFireTicks(0);
                     damager.remove();
                 }

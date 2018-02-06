@@ -8,7 +8,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -16,10 +15,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class PhysicalInteractionListener extends AbstractFlagListener {
-
-    public PhysicalInteractionListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Handle physical interaction with blocks

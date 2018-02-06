@@ -19,7 +19,6 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
@@ -30,10 +29,6 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class FireListener extends AbstractFlagListener {
-
-    public FireListener(BSkyBlock plugin) {
-        super(plugin);
-    }
 
     /**
      * Prevents fire spread
@@ -50,7 +45,7 @@ public class FireListener extends AbstractFlagListener {
             if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
+        if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) e.setCancelled(true);
     }
 
     /**
@@ -69,7 +64,7 @@ public class FireListener extends AbstractFlagListener {
                 if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
             });
             // If not on an island, check the default setting
-            if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
+            if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) e.setCancelled(true);
         }
     }
 
@@ -92,7 +87,7 @@ public class FireListener extends AbstractFlagListener {
             if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE)) e.setCancelled(true);
+        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) e.setCancelled(true);
 
     }
 
@@ -145,7 +140,7 @@ public class FireListener extends AbstractFlagListener {
             if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE)) e.setCancelled(true);
+        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) e.setCancelled(true);
 
         // If either of these canceled the event, return
         if (e.isCancelled()) return;

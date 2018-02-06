@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.lists.Flags;
 
 public class Flag  implements Comparable<Flag> {
 
@@ -14,20 +13,20 @@ public class Flag  implements Comparable<Flag> {
         SETTING
     }
     
-    private final Flags id;
+    private final String id;
     private final PanelItem icon;
     private final Listener listener;
     private final FlagType type;
     private boolean defaultSetting;
     
-    public Flag(Flags id2, PanelItem icon, Listener listener, boolean defaultSetting, FlagType type) {
+    public Flag(String id2, PanelItem icon, Listener listener, boolean defaultSetting, FlagType type) {
         this.id = id2;
         this.icon = icon;
         this.listener = listener;
         this.type = type;
     }
 
-    public Flags getID() {
+    public String getID() {
         return id;
     }
 
