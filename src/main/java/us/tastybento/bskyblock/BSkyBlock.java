@@ -57,14 +57,14 @@ public class BSkyBlock extends JavaPlugin {
             //settings.saveSettings();
             settings = settings.loadSettings();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().severe("Settings could not be loaded" + e.getMessage());
         }
 
         // Save a backup of settings to the database so it can be checked next time
         try {
             settings.saveBackup();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().severe("Settings backup could not be saved" + e.getMessage());
         }
 
         playersManager = new PlayersManager(this);

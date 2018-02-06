@@ -39,7 +39,7 @@ public interface ISettings<T> {
 
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
-    default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException {
+    default T loadSettings() throws Exception {
         // See if this settings object already exists in the database
         AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(this.getClass());
         T dbConfig = null;
