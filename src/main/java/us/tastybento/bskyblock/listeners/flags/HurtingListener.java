@@ -98,7 +98,8 @@ public class HurtingListener extends AbstractFlagListener {
                 e.getHook().remove();
                 return;
             }
-        } else if (e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) {
+        }
+        if (e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) {
             if (checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
                 e.getHook().remove();
                 return;
@@ -195,7 +196,7 @@ public class HurtingListener extends AbstractFlagListener {
                 checkIsland(e, entity.getLocation(), Flags.HURT_MONSTERS);
             }
             // Mobs being hurt
-            else if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
+            if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
                     || entity instanceof Villager) {
                 checkIsland(e, entity.getLocation(), Flags.HURT_MONSTERS);
             }
