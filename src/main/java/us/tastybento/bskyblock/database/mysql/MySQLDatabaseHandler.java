@@ -164,10 +164,11 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
                         //plugin.getLogger().info(setSql);
                         // Execute the statement
-                        PreparedStatement collections = connection.prepareStatement(setSql);
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: collections prepared statement = " + collections.toString());
-                        collections.executeUpdate();
+                        try (PreparedStatement collections = connection.prepareStatement(setSql)) {
+                            if (DEBUG)
+                                plugin.getLogger().info("DEBUG: collections prepared statement = " + collections.toString());
+                            collections.executeUpdate();
+                        }
                     }
                 } else {
                     // The Java type is not in the hashmap, so we'll just guess that it can be stored in a string
@@ -190,7 +191,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             e.printStackTrace();
         } finally {
             // Close the database properly
-            MySQLDatabaseResourceCloser.close(pstmt);
             MySQLDatabaseResourceCloser.close(pstmt);
         }
     }
@@ -525,7 +525,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         } finally {
             // Close properly
-            MySQLDatabaseResourceCloser.close(preparedStatement);
+            MySQLDatabaseResourceCloser.close(connection);
             MySQLDatabaseResourceCloser.close(preparedStatement);
         }
     }
@@ -626,18 +626,18 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         try {
             connection = databaseConnecter.createConnection();
             String query = "SELECT " + getColumns(false) + " FROM `" + dataObject.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
-            preparedStatement.setString(1, uniqueId);
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: load Object query = " + preparedStatement.toString());
-            resultSet = preparedStatement.executeQuery();
+            try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+                preparedStatement.setString(1, uniqueId);
+                if (DEBUG)
+                    plugin.getLogger().info("DEBUG: load Object query = " + preparedStatement.toString());
+                resultSet = preparedStatement.executeQuery();
 
-            List<T> result = createObjects(resultSet);
-            if (!result.isEmpty()) {
-                return result.get(0);
+                List<T> result = createObjects(resultSet);
+                if (!result.isEmpty()) {
+                    return result.get(0);
+                }
             }
             return null;
-
         } finally {
             MySQLDatabaseResourceCloser.close(resultSet);
             MySQLDatabaseResourceCloser.close(statement);
@@ -708,76 +708,79 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // We will need to fill in the ? later with the unique id of the class from the database
                     setSql += "WHERE uniqueId = ?";
                     // Prepare the statement
-                    PreparedStatement collStatement = connection.prepareStatement(setSql);
-                    // Set the unique ID
-                    collStatement.setObject(1, uniqueId);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collStatement = " + collStatement.toString());
-                    ResultSet collectionResultSet = collStatement.executeQuery();
-                    //plugin.getLogger().info("DEBUG: collectionResultSet = " + collectionResultSet.toString());
-                    // Do single dimension types (set and list)
-                    if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                    try (PreparedStatement collStatement = connection.prepareStatement(setSql)) {
+                        // Set the unique ID
+                        collStatement.setObject(1, uniqueId);
                         if (DEBUG)
-                            plugin.getLogger().info("DEBUG: adding a set");
-                        // Loop through the collection resultset 
-                        // Note that we have no idea what type this is
-                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                        // collectionTypes should be only 1 long
-                        Type setType = collectionTypes.get(0);
-                        value = new HashSet<Object>();
-                        if (DEBUG) {
-                            plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                            plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
+                            plugin.getLogger().info("DEBUG: collStatement = " + collStatement.toString());
+                        try (ResultSet collectionResultSet = collStatement.executeQuery()) {
+
+                            //plugin.getLogger().info("DEBUG: collectionResultSet = " + collectionResultSet.toString());
+                            // Do single dimension types (set and list)
+                            if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: adding a set");
+                                // Loop through the collection resultset 
+                                // Note that we have no idea what type this is
+                                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                                // collectionTypes should be only 1 long
+                                Type setType = collectionTypes.get(0);
+                                value = new HashSet<Object>();
+                                if (DEBUG) {
+                                    plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                                    plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
+                                }
+                                while (collectionResultSet.next()) {
+                                    ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
+                                }
+                            } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: Adding a list ");
+                                // Loop through the collection resultset 
+                                // Note that we have no idea what type this is
+                                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                                // collectionTypes should be only 1 long
+                                Type setType = collectionTypes.get(0);
+                                value = new ArrayList<Object>();
+                                //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                                while (collectionResultSet.next()) {
+                                    //plugin.getLogger().info("DEBUG: adding to the list");
+                                    //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
+                                    ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
+                                }
+                            } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) ||
+                                    HashMap.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: Adding a map ");
+                                // Loop through the collection resultset 
+                                // Note that we have no idea what type this is
+                                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                                // collectionTypes should be 2 long
+                                Type keyType = collectionTypes.get(0);
+                                Type valueType = collectionTypes.get(1);
+                                value = new HashMap<Object, Object>();
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                                while (collectionResultSet.next()) {
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: adding to the map");
+                                    //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
+                                    // Work through the columns
+                                    // Key
+                                    Object key = deserialize(collectionResultSet.getObject(1),Class.forName(keyType.getTypeName()));
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: key = " + key);
+                                    Object mapValue = deserialize(collectionResultSet.getObject(2),Class.forName(valueType.getTypeName()));
+                                    if (DEBUG)
+                                        plugin.getLogger().info("DEBUG: value = " + mapValue);
+                                    ((Map<Object,Object>) value).put(key,mapValue);
+                                }
+                            } else {
+                                // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
+                                // additional table.
+                                value = true;
+                            }
                         }
-                        while (collectionResultSet.next()) {
-                            ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
-                        }
-                    } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: Adding a list ");
-                        // Loop through the collection resultset 
-                        // Note that we have no idea what type this is
-                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                        // collectionTypes should be only 1 long
-                        Type setType = collectionTypes.get(0);
-                        value = new ArrayList<Object>();
-                        //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                        while (collectionResultSet.next()) {
-                            //plugin.getLogger().info("DEBUG: adding to the list");
-                            //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                            ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
-                        }
-                    } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) ||
-                            HashMap.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: Adding a map ");
-                        // Loop through the collection resultset 
-                        // Note that we have no idea what type this is
-                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                        // collectionTypes should be 2 long
-                        Type keyType = collectionTypes.get(0);
-                        Type valueType = collectionTypes.get(1);
-                        value = new HashMap<Object, Object>();
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                        while (collectionResultSet.next()) {
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: adding to the map");
-                            //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                            // Work through the columns
-                            // Key
-                            Object key = deserialize(collectionResultSet.getObject(1),Class.forName(keyType.getTypeName()));
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: key = " + key);
-                            Object mapValue = deserialize(collectionResultSet.getObject(2),Class.forName(valueType.getTypeName()));
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: value = " + mapValue);
-                            ((Map<Object,Object>) value).put(key,mapValue);
-                        }
-                    } else {
-                        // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
-                        // additional table.
-                        value = true;
                     }
                 } else {
                     if (DEBUG)
@@ -905,19 +908,21 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         propertyDescriptor.getPropertyType().equals(HashMap.class) ||
                         propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                     // First substitution is the table name
-                    preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"));
-                    // Second is the unique ID
-                    preparedStatement.setString(1, uniqueId);
-                    preparedStatement.addBatch();
-                    // Execute
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: " + preparedStatement.toString());
-                    preparedStatement.executeBatch();
+                    try (PreparedStatement preparedStatement2 = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"))) {
+                        // Second is the unique ID
+                        preparedStatement2.setString(1, uniqueId);
+                        preparedStatement2.addBatch();
+                        // Execute
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: " + preparedStatement2.toString());
+                        preparedStatement2.executeBatch();
+                    }
                 }
             }
         } finally {
             // Close properly
             MySQLDatabaseResourceCloser.close(preparedStatement);
+            MySQLDatabaseResourceCloser.close(connection);
         }
 
     }
