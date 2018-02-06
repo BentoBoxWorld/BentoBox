@@ -50,7 +50,7 @@ public class FireListener extends AbstractFlagListener {
             if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
+        if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
     }
 
     /**
@@ -69,7 +69,7 @@ public class FireListener extends AbstractFlagListener {
                 if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
             });
             // If not on an island, check the default setting
-            if (!island.isPresent() && !isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
+            if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
         }
     }
 
@@ -92,7 +92,7 @@ public class FireListener extends AbstractFlagListener {
             if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !isAllowed(Flags.FIRE)) e.setCancelled(true);
+        if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE)) e.setCancelled(true);
 
     }
 
@@ -145,7 +145,7 @@ public class FireListener extends AbstractFlagListener {
             if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !isAllowed(Flags.FIRE)) e.setCancelled(true);
+        if (!island.isPresent() && !isDefaultAllowed(Flags.FIRE)) e.setCancelled(true);
 
         // If either of these canceled the event, return
         if (e.isCancelled()) return;

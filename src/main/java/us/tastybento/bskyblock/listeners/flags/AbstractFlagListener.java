@@ -17,6 +17,7 @@ import org.bukkit.event.Listener;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.Flag.FlagType;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
 
@@ -140,6 +141,21 @@ public abstract class AbstractFlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(Event e, Location loc, Flags flag, boolean silent) {
+        // If this is not an Island World, skip
+        if (!inWorld(loc)) return true;
+
+        // Get the island and if present
+        Optional<Island> island = plugin.getIslands().getIslandAt(loc);
+
+        // Handle Settings Flag
+        id(flag);
+        id(flag).getType();
+        if (id(flag).getType().equals(FlagType.SETTING)) {
+            // If the island exists, return the setting, otherwise return the default setting for this flag
+            return island.map(x -> x.isAllowed(flag)).orElse(isDefaultAllowed(flag));
+        } 
+        
+        // Protection flag
         
         // If the user is not set already, try to get it from the event
         if (user == null) {
@@ -151,12 +167,8 @@ public abstract class AbstractFlagListener implements Listener {
                 return false;
             }
         }
-        // If this is not an Island World, skip
-        if (!inWorld(user)) return true;
-        
-        // Get the island and if present, check the flag, react if required and return
-        Optional<Island> island = plugin.getIslands().getIslandAt(loc);
-        
+
+
         if (island.isPresent()) {
             if (!island.get().isAllowed(user, flag)) {
                 noGo(e, silent);
@@ -170,7 +182,7 @@ public abstract class AbstractFlagListener implements Listener {
         }
 
         // The player is in the world, but not on an island, so general world settings apply
-        if (!isAllowed(flag)) {
+        if (!isDefaultAllowed(flag)) {
             noGo(e, silent);
             user = null;
             return false;
@@ -188,8 +200,13 @@ public abstract class AbstractFlagListener implements Listener {
     protected Flag id(Flags flag) {
         return plugin.getFlagsManager().getFlagByID(flag);
     }
-    
-    protected boolean isAllowed(Flags flag) {
-       return plugin.getFlagsManager().isAllowed(flag); 
+
+    /**
+     * Return the default setting for this flag
+     * @param flag
+     * @return
+     */
+    protected boolean isDefaultAllowed(Flags flag) {
+        return plugin.getFlagsManager().isDefaultAllowed(flag); 
     }
 }

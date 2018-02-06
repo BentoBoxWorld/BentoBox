@@ -65,13 +65,13 @@ public class MobSpawnListener extends AbstractFlagListener {
             } else {
                 // Outside of the island
                 if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {             
-                    if (!isAllowed(Flags.MOB_SPAWN)) {
+                    if (!isDefaultAllowed(Flags.MOB_SPAWN)) {
                         // Mobs not allowed to spawn
                         e.setCancelled(true);
                         return;
                     }
                 } else if (e.getEntity() instanceof Animals) {
-                    if (!isAllowed(Flags.MONSTER_SPAWN)) {
+                    if (!isDefaultAllowed(Flags.MONSTER_SPAWN)) {
                         // Mobs not allowed to spawn
                         e.setCancelled(true);
                         return;

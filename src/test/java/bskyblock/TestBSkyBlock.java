@@ -31,6 +31,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.plugin.PluginManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -91,6 +92,9 @@ public class TestBSkyBlock {
         Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
         Bukkit.setServer(server);
         Mockito.when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        PluginManager pluginManager = mock(PluginManager.class);
+        Mockito.when(server.getPluginManager()).thenReturn(pluginManager);
+        
         sender = mock(CommandSender.class);
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
@@ -123,7 +127,7 @@ public class TestBSkyBlock {
         PowerMockito.mockStatic(Flags.class);
         
         plugin = Mockito.mock(BSkyBlock.class);
-        flagsManager = Mockito.mock(FlagsManager.class);
+        flagsManager = new FlagsManager(plugin);
         Mockito.when(plugin.getFlagsManager()).thenReturn(flagsManager);
         
         block = Mockito.mock(Block.class);
@@ -159,6 +163,7 @@ public class TestBSkyBlock {
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
+        
     }
 
     @Test
@@ -411,7 +416,7 @@ public class TestBSkyBlock {
         assertFalse(island.getBanned().contains(member1));
         
         // Protection
-        new FlagsManager(plugin);
+        
         // Check default settings
         // Owner should be able to do anything
         assertTrue(island.isAllowed(owner, Flags.PLACE_BLOCKS));
@@ -499,6 +504,7 @@ public class TestBSkyBlock {
          */
         
         // Now test events
+        
         FlagListener fl = new FlagListener(plugin);
         Bukkit.getLogger().info("SETUP: owner UUID = " + ownerOfIsland.getUniqueId());
         Bukkit.getLogger().info("SETUP: member UUID = " + player.getUniqueId());

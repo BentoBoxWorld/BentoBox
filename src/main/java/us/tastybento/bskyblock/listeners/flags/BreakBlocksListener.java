@@ -107,7 +107,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             });
 
             // The player is in the world, but not on an island, so general world settings apply
-            if (!isAllowed(Flags.BREAK_BLOCKS)) {
+            if (!isDefaultAllowed(Flags.BREAK_BLOCKS)) {
                 e.setCancelled(true);
                 user.sendMessage("protection.protected");
             }
