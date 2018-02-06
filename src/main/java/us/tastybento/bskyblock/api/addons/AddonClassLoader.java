@@ -25,13 +25,17 @@ public class AddonClassLoader extends URLClassLoader {
 	public Addon addon;
     private AddonsManager loader;
 	
-	public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, BufferedReader reader, ClassLoader parent) throws InvalidAddonInheritException, MalformedURLException, InvalidAddonFormatException, InvalidDescriptionException {
+	public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, BufferedReader reader, ClassLoader parent) 
+	        throws InvalidAddonInheritException, 
+	        MalformedURLException, 
+	        InvalidAddonFormatException, 
+	        InvalidDescriptionException, 
+	        InstantiationException, 
+	        IllegalAccessException {
 		super(new URL[]{path.toURI().toURL()}, parent);
 		
 		this.loader = addonsManager;
-		
-		Addon addon = null;
-		
+				
 		Class<?> javaClass = null;
 		try {
 		    //Bukkit.getLogger().info("data " + data.get("main"));
@@ -51,15 +55,11 @@ public class AddonClassLoader extends URLClassLoader {
 		Class<? extends Addon> addonClass;
 		try{
 			addonClass = javaClass.asSubclass(Addon.class);
-		}catch(ClassCastException e){
+		} catch(ClassCastException e){
 			throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
 		}
 		
-		try {
-			addon = addonClass.newInstance();
-		} catch (InstantiationException | IllegalAccessException e) {
-			e.printStackTrace();
-		}
+		Addon addon = addonClass.newInstance();
 
 		addon.setDescription(this.asDescription(data));
 		

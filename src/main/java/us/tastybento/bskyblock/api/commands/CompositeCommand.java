@@ -195,8 +195,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 // get the subcommand corresponding to the arg
                 if (subCommand.hasSubCommmands()) {
                     if (DEBUG)
-                        Bukkit.getLogger().info("DEBUG: This command has subcommands");
-                    if (subCommand.hasSubCommand(args[i])) {
+                        Bukkit.getLogger().info("DEBUG: This command has subcommands");                   
+                    if (subCommand.getSubCommand(args[i]).isPresent()) {
                         // Step down one
                         subCommand = subCommand.getSubCommand(args[i]).get();
                         if (DEBUG)
@@ -337,7 +337,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param subCommand
      * @return true if this command has this sub command
      */
-    private boolean hasSubCommand(String subCommand) {
+    protected boolean hasSubCommand(String subCommand) {
         return subCommands.containsKey(subCommand) || subCommandAliases.containsKey(subCommand);
     }
 

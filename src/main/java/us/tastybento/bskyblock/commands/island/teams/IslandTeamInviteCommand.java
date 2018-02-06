@@ -49,10 +49,10 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             if (inviteList.containsKey(playerUUID)) {
                 OfflinePlayer inviter = getPlugin().getServer().getOfflinePlayer(inviteList.get(playerUUID));
                 user.sendMessage("commands.island.team.invite.name-has-invited-you", "[name]", inviter.getName());
-            } else {
-                this.getSubCommand("help").get().execute(user, args);
+                return true;
             }
-            return true;
+            // Show help
+            return this.getSubCommand("help").map(command -> execute(user, args)).orElse(false);
         } else  {
             // Only online players can be invited
             UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));

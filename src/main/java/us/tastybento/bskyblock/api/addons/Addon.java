@@ -157,36 +157,32 @@ public abstract class Addon implements AddonInterface {
         }
 
         jarResource = jarResource.replace('\\', '/');
-        InputStream in = null; 
-        try {
-            JarFile jar = new JarFile(file);
+        try (JarFile jar = new JarFile(file)) {
             JarEntry config = jar.getJarEntry(jarResource);
             if (config != null) {
-                in = jar.getInputStream(config);
+                try (InputStream in = jar.getInputStream(config)) {
+                    if (in == null) {
+                        jar.close();
+                        throw new IllegalArgumentException("The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
+                    }
+                    // There are two options, use the path of the resource or not
+                    File outFile = new File(destinationFolder, jarResource);
+                    if (noPath) {
+                        outFile = new File(destinationFolder, outFile.getName());
+                    }
+                    // Make any dirs that need to be made
+                    outFile.getParentFile().mkdirs();
+                    if (DEBUG) {
+                        Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
+                        Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
+                    }
+                    if (!outFile.exists() || replace) {
+                        java.nio.file.Files.copy(in, outFile.toPath());
+                    }
+                }
             }
-            if (in == null) {
-                jar.close();
-                throw new IllegalArgumentException("The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
-            }
-            
-            // There are two options, use the path of the resource or not
-            File outFile = new File(destinationFolder, jarResource);
-            if (noPath) {
-                outFile = new File(destinationFolder, outFile.getName());
-            }
-            // Make any dirs that need to be made
-            outFile.getParentFile().mkdirs();
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
-                Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
-            }
-            if (!outFile.exists() || replace) {
-                java.nio.file.Files.copy(in, outFile.toPath());
-            }
-            in.close();
-            jar.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

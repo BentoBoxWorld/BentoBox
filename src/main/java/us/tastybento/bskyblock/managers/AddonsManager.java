@@ -148,7 +148,7 @@ public final class AddonsManager {
             
             // Close the jar
             jar.close();
-        } catch (IOException e) {
+        } catch (Exception e) {
             if (DEBUG) {
                 plugin.getLogger().info(f.getName() + "is not a jarfile, ignoring...");
             }

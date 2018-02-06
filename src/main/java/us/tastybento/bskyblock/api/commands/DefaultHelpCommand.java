@@ -74,14 +74,11 @@ public class DefaultHelpCommand extends CompositeCommand {
                 // Ignore the help command
                 if (!subCommand.getLabel().equals("help")) {
                     // Every command should have help because every command has a default help
-                    if (subCommand.getSubCommand("help").isPresent()) {
-                        // This sub-sub command has a help, so use it
-                        subCommand.getSubCommand("help").get().execute(user, Arrays.asList(String.valueOf(newDepth)));
-                    } 
+                    subCommand.getSubCommand("help").ifPresent(sub -> execute(user, Arrays.asList(String.valueOf(newDepth))));
                 }
             }
         }
-        
+
         if (depth == 0) {
             user.sendMessage("commands.help.end");
         }
