@@ -91,7 +91,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
                     }
                     // Next three layers are a mix of netherrack and air
                     for (int y = 5; y < 8; y++) {
-                        double r = gen.noise(x, maxHeight - y, z, 0.5, 0.5);
+                        double r = gen.noise(x, (double)maxHeight - y, z, 0.5, 0.5);
                         if (r > 0D) {
                             result.setBlock(x, (maxHeight - y), z, Material.NETHERRACK);
                         } else {
@@ -99,7 +99,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
                         }
                     }
                     // Layer 8 may be glowstone
-                    double r = gen.noise(x, maxHeight - 8, z, random.nextFloat(), random.nextFloat());
+                    double r = gen.noise(x, (double)maxHeight - 8, z, random.nextFloat(), random.nextFloat());
                     if (r > 0.5D) {
                         // Have blobs of glowstone
                         switch (random.nextInt(4)) {
