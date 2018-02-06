@@ -219,7 +219,12 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // TODO: this may not work with all keys. Further serialization may be required.
                     Map<Object,Object> value = new HashMap<Object, Object>();
                     for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
+                        // Keys cannot be null - skip if they exist
                         Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
+                        if (mapKey == null) {
+                            continue;
+                        }
+                        // Map values can be null - it is allowed here
                         Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
                         if (DEBUG) {
                             plugin.getLogger().info("DEBUG: mapKey = " + mapKey + " (" + mapKey.getClass().getCanonicalName() + ")");
@@ -459,6 +464,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.getLogger().info("DEBUG: value  is " + value);
             if (value != null)
                 plugin.getLogger().info("DEBUG: value class  is " + value.getClass().getCanonicalName());
+        }
+        // If value is already null, then it can be nothing else
+        if (value == null) {
+            return null;
         }
         if (value instanceof String && value.equals("null")) {
             // If the value is null as a string, return null 
