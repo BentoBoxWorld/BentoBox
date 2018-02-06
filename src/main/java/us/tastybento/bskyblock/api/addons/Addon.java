@@ -101,7 +101,7 @@ public abstract class Addon implements AddonInterface {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                e.printStackTrace();
+                Bukkit.getLogger().severe("Could not load YAML file: " + file);
             }
         }
         return config;
@@ -122,7 +122,7 @@ public abstract class Addon implements AddonInterface {
         try {
             this.config.save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not save config!");
         }
     }
 
@@ -182,7 +182,7 @@ public abstract class Addon implements AddonInterface {
                 }
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }
     }
 
