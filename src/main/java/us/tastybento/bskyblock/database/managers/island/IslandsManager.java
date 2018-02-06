@@ -73,19 +73,19 @@ public class IslandsManager {
             return false;
         }
         // In BSkyBlock, liquid may be unsafe
-        if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
-            // Check if acid has no damage
-            if (plugin.getSettings().getAcidDamage() > 0D) {
-                // Bukkit.getLogger().info("DEBUG: acid");
-                return false;
-            } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
-                    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
-                    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
-                // Lava check only
-                // Bukkit.getLogger().info("DEBUG: lava");
-                return false;
-            }
+        // Check if acid has no damage
+        if (plugin.getSettings().getAcidDamage() > 0D && (ground.isLiquid() || space1.isLiquid() || space2.isLiquid())) {
+            // Bukkit.getLogger().info("DEBUG: acid");
+            return false;
         }
+        if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
+                || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
+                || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
+            // Lava check only
+            // Bukkit.getLogger().info("DEBUG: lava");
+            return false;
+        }
+
         MaterialData md = ground.getState().getData();
         if (md instanceof SimpleAttachableMaterialData) {
             //Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
@@ -160,7 +160,7 @@ public class IslandsManager {
             height = i;
             depth = i;
         } else {
-            
+
             Optional<Island> island = getIslandAt(l);
             if (!island.isPresent()) {
                 return null;
@@ -649,7 +649,7 @@ public class IslandsManager {
         location = getClosestIsland(location);
         if (islandCache.contains(location))
             return true;
-        
+
         if (!plugin.getSettings().isUseOwnGenerator()) {
             // Block check
             if (!location.getBlock().isEmpty() && !location.getBlock().isLiquid()) {
@@ -689,7 +689,7 @@ public class IslandsManager {
         long y = plugin.getSettings().getIslandHeight();
         return new Location(location.getWorld(), x, y, z);
     }
-    
+
     /**
      * @param uniqueId
      * @return true if the player is the owner of their island, i.e., owner or team leader
@@ -863,7 +863,7 @@ public class IslandsManager {
     public boolean playerIsOnIsland(User user, boolean coop) {
         return locationIsAtHome(user.getUniqueId(), coop, user.getLocation());
     }
-    
+
     /**
      * @param location
      */
