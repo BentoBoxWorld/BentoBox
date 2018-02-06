@@ -101,53 +101,52 @@ public final class AddonsManager {
             if (!f.getName().endsWith(".jar")) {
                 return;
             }
-            JarFile jar = new JarFile(f);
-            
-            // Obtain the addon.yml file
-            JarEntry entry = jar.getJarEntry("addon.yml");
-            if (entry == null) {
-                jar.close();
-                throw new InvalidAddonFormatException("Addon doesn't contains description file");
+            try (JarFile jar = new JarFile(f)) {
 
-            }
-            // Open a reader to the jar
-            BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
-            // Grab the description in the addon.yml file
-            Map<String, String> data = this.data(reader);
+                // Obtain the addon.yml file
+                JarEntry entry = jar.getJarEntry("addon.yml");
+                if (entry == null) {
+                    jar.close();
+                    throw new InvalidAddonFormatException("Addon doesn't contains description file");
 
-            // Load the addon
-            AddonClassLoader loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
-            // Add to the list of loaders
-            this.loader.add(loader);
-            
-            // Get the addon itself
-            addon = loader.addon;
-            // Initialize some settings
-            addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-            addon.setAddonFile(f);
-            
-            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
-            // Obtain any locale files and save them
-            for (String localeFile : listJarYamlFiles(jar, "locales")) {
-                //plugin.getLogger().info("DEBUG: saving " + localeFile + " from jar");
-                addon.saveResource(localeFile, localeDir, false, true);
+                }
+                // Open a reader to the jar
+                BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
+                // Grab the description in the addon.yml file
+                Map<String, String> data = this.data(reader);
+
+                // Load the addon
+                AddonClassLoader loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
+                // Add to the list of loaders
+                this.loader.add(loader);
+
+                // Get the addon itself
+                addon = loader.addon;
+                // Initialize some settings
+                addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
+                addon.setAddonFile(f);
+
+                File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
+                // Obtain any locale files and save them
+                for (String localeFile : listJarYamlFiles(jar, "locales")) {
+                    //plugin.getLogger().info("DEBUG: saving " + localeFile + " from jar");
+                    addon.saveResource(localeFile, localeDir, false, true);
+                }
+                plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
+
+                // Fire the load event
+                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+
+                // Add it to the list of addons
+                this.addons.add(addon);
+
+                // Run the onLoad() method
+                addon.onLoad();
+
+                // Inform the console
+                plugin.getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
             }
-            plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
-            
-            // Fire the load event
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-            
-            // Add it to the list of addons
-            this.addons.add(addon);
-            
-            // Run the onLoad() method
-            addon.onLoad();
-            
-            // Inform the console
-            plugin.getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
-            
-            // Close the jar
-            jar.close();
+
         } catch (Exception e) {
             if (DEBUG) {
                 plugin.getLogger().info(f.getName() + "is not a jarfile, ignoring...");
@@ -201,7 +200,7 @@ public final class AddonsManager {
         this.loader = loader;
     }
 
-    
+
     /**
      * Finds a class by name that has been loaded by this loader
      * Code copied from Bukkit JavaPluginLoader
