@@ -55,7 +55,7 @@ public final class AddonsManager {
                         try {
                             this.loadAddon(file);
                         } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
-                            e.printStackTrace();
+                            plugin.getLogger().severe("Could not load addon " + file.getName() + " : " + e.getMessage());
                         }
                     }
                 }
