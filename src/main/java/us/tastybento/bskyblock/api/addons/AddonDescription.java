@@ -81,7 +81,7 @@ public final class AddonDescription {
     
     public static class AddonDescriptionBuilder{
         
-        public AddonDescription description;
+        private AddonDescription description;
         
         public AddonDescriptionBuilder(String name){
             description = new AddonDescription();
