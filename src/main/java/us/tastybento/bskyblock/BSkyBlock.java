@@ -49,8 +49,8 @@ public class BSkyBlock extends JavaPlugin {
     public void onEnable(){
         // Save the default config from config.yml
         saveDefaultConfig();
-        plugin = this;
-
+        setInstance(this);
+        
         settings = new Settings();
         // Load settings from config.yml. This will check if there are any issues with it too.        
         try {
@@ -184,6 +184,10 @@ public class BSkyBlock extends JavaPlugin {
         return islandsManager;
     }
 
+    private static void setInstance(BSkyBlock plugin) {
+        BSkyBlock.plugin = plugin;
+    }
+    
     public static BSkyBlock getInstance() {
         return plugin;
     }
