@@ -22,7 +22,7 @@ import us.tastybento.bskyblock.managers.AddonsManager;
 public class AddonClassLoader extends URLClassLoader {
 
     private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
-	public Addon addon;
+	private Addon addon;
     private AddonsManager loader;
 	
 	public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, BufferedReader reader, ClassLoader parent) 
@@ -114,6 +114,13 @@ public class AddonClassLoader extends URLClassLoader {
         }
 
         return result;
+    }
+
+    /**
+     * @return the addon
+     */
+    public Addon getAddon() {
+        return addon;
     }
     
 }

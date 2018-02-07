@@ -121,7 +121,7 @@ public final class AddonsManager {
                 this.loader.add(loader);
 
                 // Get the addon itself
-                addon = loader.addon;
+                addon = loader.getAddon();
                 // Initialize some settings
                 addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
                 addon.setAddonFile(f);
