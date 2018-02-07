@@ -11,13 +11,13 @@ import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 
 public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
-    
+
     Set<UUID> leaveSet;
 
     public IslandTeamLeaveCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "leave");
     }
-    
+
     @Override
     public void setup() {
         this.setPermission(Constants.PERMPREFIX + "island.team");
@@ -30,7 +30,7 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         if (!getPlayers().inTeam(user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
-            return true;
+            return false;
         }
         if (!getSettings().isKickConfirmation() || leaveSet.contains(user.getUniqueId())) {
             leaveSet.remove(user.getUniqueId());
@@ -40,6 +40,7 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
             }
             getIslands().removePlayer(user.getUniqueId());
             user.sendMessage("general.success");
+            return true;
         } else {
             user.sendMessage("commands.island.team.leave.type-again");
             leaveSet.add(user.getUniqueId());
@@ -50,8 +51,8 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
                     leaveSet.remove(user.getUniqueId());
                     user.sendMessage("general.errors.command-cancelled");
                 }}.runTaskLater(getPlugin(), getSettings().getKickWait());
+                return false;
         }
-        return true;
     }
 
 }

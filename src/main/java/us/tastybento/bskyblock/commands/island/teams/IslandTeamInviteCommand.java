@@ -37,12 +37,11 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getPlayers().hasIsland(playerUUID)) {
-            // If the player is in a team, they are not the leader
-            if (getPlayers().inTeam(playerUUID)) {
-                user.sendMessage("general.errors.not-leader");
-            }
-            user.sendMessage("general.errors.no-island");
+        boolean inTeam = getPlugin().getPlayers().inTeam(playerUUID);
+        UUID teamLeaderUUID = getPlugin().getIslands().getTeamLeader(playerUUID);
+        if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
+            user.sendMessage("general.errors.not-leader");
+            return false;
         }
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
@@ -58,29 +57,29 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
             if (invitedPlayerUUID == null) {
                 user.sendMessage("general.errors.offline-player");
-                return true;
+                return false;
             }
             User invitedPlayer = User.getInstance(invitedPlayerUUID);
             if (!invitedPlayer.isOnline()) {
                 user.sendMessage("general.errors.offline-player");
-                return true;
+                return false;
             }
             // Player cannot invite themselves
             if (playerUUID.equals(invitedPlayerUUID)) {
                 user.sendMessage("commands.island.team.invite.cannot-invite-self");
-                return true;
+                return false;
             }
             // Check if this player can be invited to this island, or
             // whether they are still on cooldown
             long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(playerUUID));
             if (time > 0 && !user.isOp()) {
                 user.sendMessage("commands.island.team.invite.cooldown", "[time]", String.valueOf(time));
-                return true;
+                return false;
             }
             // Player cannot invite someone already on a team
             if (getPlayers().inTeam(invitedPlayerUUID)) {
                 user.sendMessage("commands.island.team.invite.already-on-team");
-                return true;
+                return false;
             }
             Set<UUID> teamMembers = getMembers(user);
             // Check if player has space on their team
@@ -131,11 +130,12 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
                     invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
                 }
+                return true;
             } else {
                 user.sendMessage("commands.island.team.invite.errors.island-is-full");
+                return false;
             }
         }
-        return false;
     }
 
     @Override

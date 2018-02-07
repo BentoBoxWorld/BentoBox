@@ -34,7 +34,7 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
                     .involvedPlayer(playerUUID)
                     .build();
             getPlugin().getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) return true;
+            if (event.isCancelled()) return false;
 
             // Remove this player from the global invite list
             inviteList.remove(user.getUniqueId());
@@ -45,6 +45,7 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
         } else {
             // Someone typed /island reject and had not been invited
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
+            return false;
         }
         return true;
     }
