@@ -34,7 +34,7 @@ public class AdminTeleportCommand extends CompositeCommand {
         final UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("errors.unknown-player");
-            return true;
+            return false;
         } else {
             if (getPlayers().hasIsland(targetUUID) || getPlayers().inTeam(targetUUID)) {
                 Location warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getIslandWorld());
@@ -50,7 +50,7 @@ public class AdminTeleportCommand extends CompositeCommand {
                 return true;
             }
             user.sendMessage("command.admin.tp.no-island");
-            return true;
+            return false;
         }
     }
 
