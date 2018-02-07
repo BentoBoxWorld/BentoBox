@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.api.addons;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -25,7 +24,7 @@ public class AddonClassLoader extends URLClassLoader {
 	private Addon addon;
     private AddonsManager loader;
 	
-	public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, BufferedReader reader, ClassLoader parent) 
+	public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, ClassLoader parent) 
 	        throws InvalidAddonInheritException, 
 	        MalformedURLException, 
 	        InvalidAddonFormatException, 

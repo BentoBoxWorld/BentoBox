@@ -189,39 +189,22 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private CompositeCommand getCommandFromArgs(String[] args) {
         CompositeCommand subCommand = this;
         // Run through any arguments
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: Running through args: " + Arrays.asList(args).toString());
-        }
-        if (args.length > 0) {
-            for (int i = 0; i < args.length; i++) {
-                if (DEBUG) {
-                    Bukkit.getLogger().info("DEBUG: Argument " + i);
-                }
-                // get the subcommand corresponding to the arg
-                if (subCommand.hasSubCommmands()) {
-                    if (DEBUG) {
-                        Bukkit.getLogger().info("DEBUG: This command has subcommands");
-                    }
-                    Optional<CompositeCommand> sub = subCommand.getSubCommand(args[i]);
-                    if (!sub.isPresent()) {
-                        return subCommand;
-                    }
-                    // Step down one
-                    subCommand = sub.orElse(subCommand);
-                    if (DEBUG) {
-                        Bukkit.getLogger().info("DEBUG: Moved to " + subCommand.getLabel());
-                    }
-                    // Set the label
-                    subCommand.setLabel(args[i]);
-                } else {
-                    // We are at the end of the walk
-                    if (DEBUG) {
-                        Bukkit.getLogger().info("DEBUG: End of traversal");
-                    }
+        for (int i = 0; i < args.length; i++) {
+            // get the subcommand corresponding to the arg
+            if (subCommand.hasSubCommmands()) {
+                Optional<CompositeCommand> sub = subCommand.getSubCommand(args[i]);
+                if (!sub.isPresent()) {
                     return subCommand;
                 }
-                // else continue the loop
+                // Step down one
+                subCommand = sub.orElse(subCommand);
+                // Set the label
+                subCommand.setLabel(args[i]);
+            } else {
+                // We are at the end of the walk
+                return subCommand;
             }
+            // else continue the loop
         }
         return subCommand;
     }
@@ -477,7 +460,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         return Util.tabLimit(options, lastArg);
     }
-    
+
     /**
      * Show help
      * @param command

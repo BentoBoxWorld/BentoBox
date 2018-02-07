@@ -95,16 +95,16 @@ public abstract class Addon implements AddonInterface {
     private FileConfiguration loadYamlFile(String file) {
         File yamlFile = new File(dataFolder, file);
 
-        YamlConfiguration config = null;
+        YamlConfiguration yamlConfig = null;
         if (yamlFile.exists()) {
             try {
-                config = new YamlConfiguration();
-                config.load(yamlFile);
+                yamlConfig = new YamlConfiguration();
+                yamlConfig.load(yamlFile);
             } catch (Exception e) {
                 Bukkit.getLogger().severe("Could not load YAML file: " + file);
             }
         }
-        return config;
+        return yamlConfig;
     }
 
     /**
@@ -158,9 +158,9 @@ public abstract class Addon implements AddonInterface {
 
         jarResource = jarResource.replace('\\', '/');
         try (JarFile jar = new JarFile(file)) {
-            JarEntry config = jar.getJarEntry(jarResource);
-            if (config != null) {
-                try (InputStream in = jar.getInputStream(config)) {
+            JarEntry jarConfig = jar.getJarEntry(jarResource);
+            if (jarConfig != null) {
+                try (InputStream in = jar.getInputStream(jarConfig)) {
                     if (in == null) {
                         jar.close();
                         throw new IllegalArgumentException("The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());

@@ -116,7 +116,7 @@ public final class AddonsManager {
                 Map<String, String> data = this.data(reader);
 
                 // Load the addon
-                AddonClassLoader loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
+                AddonClassLoader loader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
                 // Add to the list of loaders
                 this.loader.add(loader);
 

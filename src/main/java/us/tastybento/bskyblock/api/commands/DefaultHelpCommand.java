@@ -16,6 +16,10 @@ public class DefaultHelpCommand extends CompositeCommand {
 
     // TODO: make this a setting
     private static final int MAX_DEPTH = 2;
+    private static final String USAGE_PLACEHOLDER = "[usage]";
+    private static final String PARAMS_PLACEHOLDER = "[parameters]";
+    private static final String DESC_PLACEHOLDER = "[description]";
+    private static final String HELP_SYNTAX_REF = "commands.help.syntax";
 
     public DefaultHelpCommand(CompositeCommand parent) {
         super(parent, "help");
@@ -39,7 +43,7 @@ public class DefaultHelpCommand extends CompositeCommand {
                 String usage = user.getTranslation(parent.getUsage());
                 String params = user.getTranslation("commands.help.parameters");
                 String desc = user.getTranslation("commands.help.description");
-                user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
+                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
                 return true;
             }
         }
@@ -57,14 +61,14 @@ public class DefaultHelpCommand extends CompositeCommand {
                 if (user.isPlayer()) {
                     // Player. Check perms
                     if (user.hasPermission(parent.getPermission())) {
-                        user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
+                        user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
                     } else {
                         // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
                         return true;
                     }
                 } else if (!parent.isOnlyPlayer()) {
                     // Console. Only show if it is a console command
-                    user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
+                    user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
                 }
             }
             // Increment the depth

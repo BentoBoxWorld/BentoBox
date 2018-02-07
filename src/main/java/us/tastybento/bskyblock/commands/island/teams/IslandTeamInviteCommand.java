@@ -19,6 +19,8 @@ import us.tastybento.bskyblock.util.Util;
 
 public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
 
+    private static final String NAME_PLACEHOLDER = "[name]";
+
     public IslandTeamInviteCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "invite");
     }
@@ -47,7 +49,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
                 OfflinePlayer inviter = getPlugin().getServer().getOfflinePlayer(inviteList.get(playerUUID));
-                user.sendMessage("commands.island.team.invite.name-has-invited-you", "[name]", inviter.getName());
+                user.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, inviter.getName());
                 return true;
             }
             // Show help
@@ -124,9 +126,9 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
                 inviteList.put(invitedPlayerUUID, playerUUID);
-                user.sendMessage("commands.island.team.invite.invitation-sent", "[name]", args.get(0));
+                user.sendMessage("commands.island.team.invite.invitation-sent", NAME_PLACEHOLDER, args.get(0));
                 // Send message to online player
-                invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", "[name]", user.getName());
+                invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
                 invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
                 if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
                     invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
