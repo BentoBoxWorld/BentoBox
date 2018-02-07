@@ -28,11 +28,11 @@ public class IslandSethomeCommand extends CompositeCommand {
         // Check island
         if (getPlugin().getIslands().getIsland(user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
-            return true;
+            return false;
         }
         if (!getPlugin().getIslands().playerIsOnIsland(user)) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
-            return true; 
+            return false; 
         }
         if (args.isEmpty()) {
             // island sethome
@@ -48,15 +48,18 @@ public class IslandSethomeCommand extends CompositeCommand {
                     number = Integer.valueOf(args.get(0));
                     if (number < 1 || number > maxHomes) {
                         user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
+                        return false;
                     } else {
                         getPlugin().getPlayers().setHomeLocation(playerUUID, user.getLocation(), number);
                         user.sendMessage("commands.island.sethome.home-set");
                     }
                 } catch (Exception e) {
                     user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
+                    return false;
                 }
             } else {
                 user.sendMessage("general.errors.no-permission");
+                return false;
             }
         }
         return true;
