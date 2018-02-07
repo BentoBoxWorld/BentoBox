@@ -78,9 +78,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.subCommands = new LinkedHashMap<>();
         this.subCommandAliases = new LinkedHashMap<>();
         this.setup();
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
-
+        }
     }
 
 
@@ -106,11 +106,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         setUsage("");
         this.setup();
         // If this command does not define its own help class, then use the default help command
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
-
-        if (DEBUG)
+        }
+        if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: registering command " + label);
+        }
     }
 
     /**
@@ -120,8 +121,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(String label, String... aliases) {
         super(label);
-        if (DEBUG)
+        if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: top level command registering..." + label);
+        }
         this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
         this.parent = null;
         setUsage("");
@@ -133,9 +135,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             getPlugin().getCommandsManager().registerCommand(this);
         }
         this.setup();
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help"))
+        if (!this.getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
-
+        }
     }
 
 
@@ -145,8 +147,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (DEBUG)
+        if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: executing command " + label);
+        }
         // Get the User instance for this sender
         User user = User.getInstance(sender);
         CompositeCommand cmd = getCommandFromArgs(args);
@@ -186,30 +189,35 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private CompositeCommand getCommandFromArgs(String[] args) {
         CompositeCommand subCommand = this;
         // Run through any arguments
-        if (DEBUG)
+        if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: Running through args: " + Arrays.asList(args).toString());
+        }
         if (args.length > 0) {
             for (int i = 0; i < args.length; i++) {
-                if (DEBUG)
+                if (DEBUG) {
                     Bukkit.getLogger().info("DEBUG: Argument " + i);
+                }
                 // get the subcommand corresponding to the arg
                 if (subCommand.hasSubCommmands()) {
-                    if (DEBUG)
+                    if (DEBUG) {
                         Bukkit.getLogger().info("DEBUG: This command has subcommands");
+                    }
                     Optional<CompositeCommand> sub = subCommand.getSubCommand(args[i]);
                     if (!sub.isPresent()) {
                         return subCommand;
                     }
                     // Step down one
                     subCommand = sub.orElse(subCommand);
-                    if (DEBUG)
+                    if (DEBUG) {
                         Bukkit.getLogger().info("DEBUG: Moved to " + subCommand.getLabel());
+                    }
                     // Set the label
                     subCommand.setLabel(args[i]);
                 } else {
                     // We are at the end of the walk
-                    if (DEBUG)
+                    if (DEBUG) {
                         Bukkit.getLogger().info("DEBUG: End of traversal");
+                    }
                     return subCommand;
                 }
                 // else continue the loop
@@ -294,17 +302,20 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return CompositeCommand or null if none found
      */
     public Optional<CompositeCommand> getSubCommand(String label) {
-        if (DEBUG)
+        if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: label = " + label);
+        }
         for (Map.Entry<String, CompositeCommand> entry : subCommands.entrySet()) {
-            if (DEBUG)
+            if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: " + entry.getKey());
+            }
             if (entry.getKey().equalsIgnoreCase(label)) return Optional.of(subCommands.get(label));
         }
         // Try aliases
         for (Map.Entry<String, CompositeCommand> entry : subCommandAliases.entrySet()) {
-            if (DEBUG)
+            if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: alias " + entry.getKey());
+            }
             if (entry.getKey().equalsIgnoreCase(label)) return Optional.of(subCommandAliases.get(label));
         }
         return Optional.empty();
@@ -422,13 +433,15 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         // Check for console and permissions
         if (cmd.onlyPlayer && !(sender instanceof Player)) {
-            if (DEBUG)
+            if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: returning, only for player");
+            }
             return options;
         }
         if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
-            if (DEBUG)
+            if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: failed perm check");
+            }
             return options;
         }
         // Add any tab completion from the subcommand
