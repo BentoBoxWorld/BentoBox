@@ -570,8 +570,8 @@ public class IslandsManager {
      * @param player
      * @return true if the home teleport is successful
      */
-    public boolean homeTeleport(final Player player) {
-        return homeTeleport(player, 1);
+    public void homeTeleport(final Player player) {
+        homeTeleport(player, 1);
     }
 
     /**
@@ -582,7 +582,7 @@ public class IslandsManager {
      * @return true if successful, false if not
      */
     @SuppressWarnings("deprecation")
-    public boolean homeTeleport(final Player player, int number) {
+    public void homeTeleport(final Player player, int number) {
         Location home;
         if (DEBUG)
             plugin.getLogger().info("home teleport called for #" + number);
@@ -605,7 +605,7 @@ public class IslandsManager {
                 plugin.getLogger().info("Fixing home location using safe spot teleport");
             // Try to fix this teleport location and teleport the player if possible
             new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
-            return true;
+            return;
         }
         if (DEBUG)
             plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
@@ -622,7 +622,7 @@ public class IslandsManager {
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
-        return true;
+        return;
     }
 
     /**
