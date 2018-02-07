@@ -594,11 +594,4 @@ public class PlayersManager{
         }
     }
 
-    public boolean isKnown(String string) {
-        UUID uuid = this.getUUID(string);
-        if (uuid == null) return false;
-        return false;
-    }
-
-
 }
