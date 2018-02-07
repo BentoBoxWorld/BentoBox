@@ -1,6 +1,8 @@
 package us.tastybento.bskyblock.commands;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -45,10 +47,19 @@ public class IslandCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         // If this player does not have an island, create one
         if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
-            return this.getSubCommand("create").map(command -> execute(user, args)).orElse(false);
+            Optional<CompositeCommand> subCreate = this.getSubCommand("create");
+            if (subCreate.isPresent()) {
+                subCreate.get().execute(user, new ArrayList<>());
+            }
         }
+        Optional<CompositeCommand> go = this.getSubCommand("go");
         // Otherwise, currently, just go home
-        return this.getSubCommand("go").map(command -> execute(user, args)).orElse(false);
+        if (go.isPresent()) {
+            go.get().execute(user, new ArrayList<>());
+        }
+        
+        return true;
     }
+    
 
 }

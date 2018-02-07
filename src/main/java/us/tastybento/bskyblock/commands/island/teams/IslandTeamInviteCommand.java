@@ -51,7 +51,8 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 return true;
             }
             // Show help
-            return this.getSubCommand("help").map(command -> execute(user, args)).orElse(false);
+            showHelp(this, user, args);
+            return false;
         } else  {
             // Only online players can be invited
             UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));

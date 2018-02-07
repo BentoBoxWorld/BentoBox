@@ -477,4 +477,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         return Util.tabLimit(options, lastArg);
     }
+    
+    /**
+     * Show help
+     * @param command
+     * @param user
+     * @param args
+     */
+    protected void showHelp(CompositeCommand command, User user, List<String> args) {
+        Optional<CompositeCommand> helpCommand = command.getSubCommand("help");
+        if (helpCommand.isPresent()) {
+            helpCommand.get().execute(user, args);
+        }
+    }
 }

@@ -40,7 +40,8 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
         }
         // If args are not right, show help
         if (args.size() != 1) {
-            return this.getSubCommand("help").map(command -> execute(user, new ArrayList<>())).orElse(false);
+            showHelp(this, user, args);
+            return false;
         }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));

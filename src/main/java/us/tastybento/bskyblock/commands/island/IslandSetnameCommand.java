@@ -51,7 +51,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
         // Explain command
         if (args.isEmpty()) {
-            this.getSubCommand("help").ifPresent(help -> help.execute(user, args));
+            showHelp(this, user, args);
             return false;
         }
 

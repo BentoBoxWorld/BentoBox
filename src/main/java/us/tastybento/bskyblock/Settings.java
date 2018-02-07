@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.entity.EntityType;
@@ -129,8 +130,8 @@ public class Settings implements ISettings<Settings> {
     private boolean endIslands = true;
 
     // Entities
-    private HashMap<EntityType, Integer> entityLimits;
-    private HashMap<String, Integer> tileEntityLimits;
+    private Map<EntityType, Integer> entityLimits = new HashMap<>();
+    private Map<String, Integer> tileEntityLimits = new HashMap<>();
 
     // ---------------------------------------------
 
@@ -188,7 +189,7 @@ public class Settings implements ISettings<Settings> {
     
     // Ranks
     @ConfigEntry(path = "island.customranks")
-    private HashMap<String, Integer> customRanks = new HashMap<>();
+    private Map<String, Integer> customRanks = new HashMap<>();
 
     // ---------------------------------------------
 
@@ -201,7 +202,7 @@ public class Settings implements ISettings<Settings> {
 
     private int togglePvPCooldown;
 
-    private HashMap<Flag, Boolean> defaultFlags;
+    private Map<Flag, Boolean> defaultFlags = new HashMap<>();
 
     //TODO transform these options below into flags
     private boolean allowEndermanGriefing;
@@ -252,7 +253,7 @@ public class Settings implements ISettings<Settings> {
 
     private boolean useOwnGenerator;
 
-    private HashMap<String,Integer> limitedBlocks;
+    private Map<String,Integer> limitedBlocks = new HashMap<>();
     private boolean teamJoinDeathReset;
     
     private String uniqueId = "config";
@@ -316,7 +317,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the customRanks
      */
-    public HashMap<String, Integer> getCustomRanks() {
+    public Map<String, Integer> getCustomRanks() {
         return customRanks;
     }
     /**
@@ -370,7 +371,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the defaultFlags
      */
-    public HashMap<Flag, Boolean> getDefaultFlags() {
+    public Map<Flag, Boolean> getDefaultFlags() {
         return defaultFlags;
     }
     /**
@@ -382,7 +383,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the entityLimits
      */
-    public HashMap<EntityType, Integer> getEntityLimits() {
+    public Map<EntityType, Integer> getEntityLimits() {
         return entityLimits;
     }
     @Override
@@ -452,7 +453,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the limitedBlocks
      */
-    public HashMap<String, Integer> getLimitedBlocks() {
+    public Map<String, Integer> getLimitedBlocks() {
         return limitedBlocks;
     }
     /**
@@ -524,7 +525,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the tileEntityLimits
      */
-    public HashMap<String, Integer> getTileEntityLimits() {
+    public Map<String, Integer> getTileEntityLimits() {
         return tileEntityLimits;
     }
     /**
@@ -860,7 +861,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param customRanks the customRanks to set
      */
-    public void setCustomRanks(HashMap<String, Integer> customRanks) {
+    public void setCustomRanks(Map<String, Integer> customRanks) {
         this.customRanks = customRanks;
     }
     /**
@@ -920,7 +921,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param defaultFlags the defaultFlags to set
      */
-    public void setDefaultFlags(HashMap<Flag, Boolean> defaultFlags) {
+    public void setDefaultFlags(Map<Flag, Boolean> defaultFlags) {
         this.defaultFlags = defaultFlags;
     }
     /**
@@ -950,7 +951,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param entityLimits the entityLimits to set
      */
-    public void setEntityLimits(HashMap<EntityType, Integer> entityLimits) {
+    public void setEntityLimits(Map<EntityType, Integer> entityLimits) {
         this.entityLimits = entityLimits;
     }
     /**
@@ -1046,7 +1047,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param limitedBlocks the limitedBlocks to set
      */
-    public void setLimitedBlocks(HashMap<String, Integer> limitedBlocks) {
+    public void setLimitedBlocks(Map<String, Integer> limitedBlocks) {
         this.limitedBlocks = limitedBlocks;
     }
     /**
@@ -1191,7 +1192,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param tileEntityLimits the tileEntityLimits to set
      */
-    public void setTileEntityLimits(HashMap<String, Integer> tileEntityLimits) {
+    public void setTileEntityLimits(Map<String, Integer> tileEntityLimits) {
         this.tileEntityLimits = tileEntityLimits;
     }
     /**

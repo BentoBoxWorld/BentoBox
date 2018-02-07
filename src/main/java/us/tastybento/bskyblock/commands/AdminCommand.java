@@ -28,7 +28,8 @@ public class AdminCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         // By default run the attached help command, if it exists (it should)
-        return this.getSubCommand("help").map(help -> execute(user, args)).orElse(false);
+        showHelp(this, user, args);
+        return false;
     }
 
 }
