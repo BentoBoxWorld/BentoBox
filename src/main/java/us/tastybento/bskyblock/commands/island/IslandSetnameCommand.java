@@ -42,17 +42,17 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         if (!getIslands().hasIsland(playerUUID)) {
             user.sendMessage("general.errors.no-island");
-            return true;
+            return false;
         }
 
         if (!getIslands().isOwner(playerUUID)) {
             user.sendMessage("general.errors.not-leader");
-            return true;
+            return false;
         }
         // Explain command
         if (args.isEmpty()) {
-            user.sendMessage(getUsage());
-            return true;
+            this.getSubCommand("help").ifPresent(help -> help.execute(user, args));
+            return false;
         }
 
         // Naming the island - join all the arguments with spaces.
@@ -61,11 +61,11 @@ public class IslandSetnameCommand extends CompositeCommand {
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength()) {
             user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(getSettings().getNameMinLength()));
-            return true;
+            return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
             user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(getSettings().getNameMaxLength()));
-            return true;
+            return false;
         }
 
         // Set the name
