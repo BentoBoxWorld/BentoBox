@@ -129,6 +129,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
                 break;
             case MONSTER_EGG:
                 checkIsland(e, e.getClickedBlock().getLocation(), Flags.SPAWN_EGGS);
+                break;
             default:
                 break;
             
