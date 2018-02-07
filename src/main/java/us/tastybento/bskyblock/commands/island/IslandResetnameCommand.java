@@ -37,12 +37,12 @@ public class IslandResetnameCommand extends CompositeCommand {
 
         if (!getIslands().hasIsland(playerUUID)) {
             user.sendMessage("general.errors.no-island");
-            return true;
+            return false;
         }
 
         if (!getIslands().isOwner(playerUUID)) {
             user.sendMessage("general.errors.not-leader");
-            return true;
+            return false;
         }
         // Resets the island name
         getIslands().getIsland(playerUUID).setName(null);
