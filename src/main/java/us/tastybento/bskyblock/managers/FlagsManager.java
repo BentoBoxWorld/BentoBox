@@ -1,19 +1,29 @@
 package us.tastybento.bskyblock.managers;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
 
+import org.bukkit.event.Listener;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.lists.Flags;
 
+/**
+ * @author Poslovitch
+ * @author tastybento
+ */
 public class FlagsManager {
 
     private BSkyBlock plugin;
     private HashMap<String, Flag> flags = new HashMap<>();
 
+    /**
+     * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
+     */
+    private ArrayList<Listener> registeredListeners = new ArrayList<>();
 
     public FlagsManager(BSkyBlock plugin) {
         this.plugin = plugin;
@@ -31,8 +41,13 @@ public class FlagsManager {
     public void registerFlag(Flag flag) {
         //Bukkit.getLogger().info("DEBUG: registering flag " + flag.getID());
         flags.put(flag.getID(), flag);
-        // If there is a listener, register it into Bukkit.
-        flag.getListener().ifPresent(l -> Bukkit.getServer().getPluginManager().registerEvents(l, plugin));
+        // If there is a listener which is not already registered, register it into Bukkit.
+        flag.getListener().ifPresent(l -> {
+            if (!registeredListeners.contains(l)) {
+                Bukkit.getServer().getPluginManager().registerEvents(l, plugin);
+                registeredListeners.add(l);
+            }
+        });
     }
 
     public HashMap<String, Flag> getFlags() {
@@ -40,8 +55,8 @@ public class FlagsManager {
     }
 
     /**
-     * Get flag by string
-     * @param key - string name same as the enum
+     * Get flag by ID
+     * @param id
      * @return Flag or null if not known
      */
     public Flag getFlagByID(String id) {

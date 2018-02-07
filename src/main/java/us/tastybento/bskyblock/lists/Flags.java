@@ -38,11 +38,11 @@ public class Flags {
     public static final Flag BED = new FlagBuilder().id("BED").icon(Material.BED).build();
     public static final Flag BREWING = new FlagBuilder().id("BREWING").icon(Material.BREWING_STAND_ITEM).build();
     public static final Flag CHEST = new FlagBuilder().id("CHEST").icon(Material.CHEST).build();
-    public static final Flag DOOR = new FlagBuilder().id("DOOR).allowedByDefault(true").icon(Material.WOODEN_DOOR).build();
-    public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING).allowedByDefault(true").icon(Material.WORKBENCH).build();
-    public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING).allowedByDefault(true").icon(Material.ENCHANTMENT_TABLE).build();
+    public static final Flag DOOR = new FlagBuilder().id("DOOR").allowedByDefault(true).icon(Material.WOODEN_DOOR).build();
+    public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING").allowedByDefault(true).icon(Material.WORKBENCH).build();
+    public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING").allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build();
     public static final Flag FURNACE = new FlagBuilder().id("FURNACE").icon(Material.FURNACE).build();
-    public static final Flag GATE = new FlagBuilder().id("GATE).allowedByDefault(true").icon(Material.FENCE_GATE).build();
+    public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.FENCE_GATE).build();
     public static final Flag MUSIC = new FlagBuilder().id("MUSIC").icon(Material.JUKEBOX).build();
     public static final Flag LEVER_BUTTON = new FlagBuilder().id("LEVER_BUTTON").icon(Material.LEVER).build();
     public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).build();
@@ -51,7 +51,7 @@ public class Flags {
     // Entity interactions
     public static final Flag ARMOR_STAND = new FlagBuilder().id("ARMOR_STAND").icon(Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
     public static final Flag RIDING = new FlagBuilder().id("RIDING").icon(Material.GOLD_BARDING).build();
-    public static final Flag TRADING = new FlagBuilder().id("TRADING).allowedByDefault(true").icon(Material.EMERALD).build();
+    public static final Flag TRADING = new FlagBuilder().id("TRADING").allowedByDefault(true).icon(Material.EMERALD).build();
 
     // Breeding
     public static final Flag BREEDING = new FlagBuilder().id("BREEDING").icon(Material.CARROT).listener(new BreedingListener()).build();
