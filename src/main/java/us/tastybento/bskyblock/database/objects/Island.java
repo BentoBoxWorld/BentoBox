@@ -438,7 +438,7 @@ public class Island implements DataObject {
      * @return Returns true if target is banned on this island
      */
     public boolean isBanned(UUID targetUUID) {
-        return members.containsKey(targetUUID) && members.get(targetUUID) == RanksManager.BANNED_RANK;
+        return members.containsKey(targetUUID) && members.get(targetUUID).equals(RanksManager.BANNED_RANK);
     }
 
     /**
