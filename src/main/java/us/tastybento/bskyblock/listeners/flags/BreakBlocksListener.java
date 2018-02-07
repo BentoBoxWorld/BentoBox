@@ -78,6 +78,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
                 // Prevent explosions checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
                 return;
             }
+            break;
         default:
             break;
         }
