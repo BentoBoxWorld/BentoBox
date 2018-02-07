@@ -11,23 +11,23 @@ public class Constants {
         BSKYBLOCK, ACIDISLAND, BOTH
     }
     /*
-    public final static GameType GAMETYPE = GameType.ACIDISLAND;
+    public static final GameType GAMETYPE = GameType.ACIDISLAND;
     // The spawn command (Essentials spawn for example)
-    public final static String SPAWNCOMMAND = "spawn";
+    public static final String SPAWNCOMMAND = "spawn";
     // Permission prefix
-    public final static String PERMPREFIX = "acidisland.";
+    public static final String PERMPREFIX = "acidisland.";
     // The island command
-    public final static String ISLANDCOMMAND = "ai";
+    public static final String ISLANDCOMMAND = "ai";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
     */
-    public final static GameType GAMETYPE = GameType.BSKYBLOCK;
+    public static final GameType GAMETYPE = GameType.BSKYBLOCK;
     // Permission prefix
-    public final static String PERMPREFIX = "bskyblock.";
+    public static final String PERMPREFIX = "bskyblock.";
     // The island command
-    public final static String ISLANDCOMMAND = "island";
+    public static final String ISLANDCOMMAND = "island";
     // The spawn command (Essentials spawn for example)
-    public final static String SPAWNCOMMAND = "spawn";
+    public static final String SPAWNCOMMAND = "spawn";
     // Admin command
     public static final String ADMINCOMMAND = "bsadmin";
 
