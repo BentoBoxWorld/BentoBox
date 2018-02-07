@@ -113,10 +113,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Check if the table exists in the database and if not, create it
         try {
             createSchema();
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (IntrospectionException | SQLException e) {
+            plugin.getLogger().severe("Could not create database schema! " + e.getMessage());
         }
     }
 
@@ -188,7 +186,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 plugin.getLogger().info("DEBUG: pstmt = " + pstmt.toString());
             pstmt.executeUpdate();
         } catch (Exception e) {
-            e.printStackTrace();
+            plugin.getLogger().severe("Could not create database schema! " + e.getMessage());
         } finally {
             // Close the database properly
             MySQLDatabaseResourceCloser.close(pstmt);
@@ -858,9 +856,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 Class<Enum> enumClass = (Class<Enum>)clazz;
                 value = Enum.valueOf(enumClass, (String)value);
             } catch (Exception e) {
-                // Maybe this value does not exist?
-                // TODO return something?
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not deserialize enum! " + e.getMessage());
             }
         }
         return value;
@@ -952,7 +948,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 return resultSet.getBoolean(1);
             }
         } catch (SQLException e) {
-            e.printStackTrace();
+            plugin.getLogger().severe("Could not check if key exists in database! " + key + " " + e.getMessage());
         } finally {
             MySQLDatabaseResourceCloser.close(resultSet);
             MySQLDatabaseResourceCloser.close(preparedStatement);

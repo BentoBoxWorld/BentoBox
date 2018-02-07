@@ -361,24 +361,23 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         storageLocation = configEntry.path();
                     }         
                     // TODO: add in game-specific saving
-                    
+
                 }
-                
+
                 Adapter adapterNotation = field.getAnnotation(Adapter.class);
                 if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
                     if (DEBUG) 
                         plugin.getLogger().info("DEBUG: there is an adapter");
-                    // A conversion adapter has been defined
-                 // A conversion adapter has been defined              
+                    // A conversion adapter has been defined           
                     try {
                         config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
                     } catch (InstantiationException e) {
-                        e.printStackTrace();
+                        plugin.getLogger().severe("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                     }
                     // We are done here
                     continue fields;
                 }
-                
+
                 //plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
                 // Depending on the vale type, it'll need serializing differenty
                 // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
@@ -503,7 +502,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             } catch (Exception e) {
                 // Maybe this value does not exist?
                 // TODO return something?
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not deserialize enum:  " + clazz.getCanonicalName() + " " + value);
             }
         }
         return value;
@@ -522,7 +521,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         File tableFolder = new File(dataFolder, dataObject.getSimpleName());
         if (tableFolder.exists()) {
             File file = new File(tableFolder, fileName);
-            file.delete();
+            if (!file.delete()) {
+                plugin.getLogger().severe("Could not delete yaml database object! " + file.getName());
+            }
         }
     }
 

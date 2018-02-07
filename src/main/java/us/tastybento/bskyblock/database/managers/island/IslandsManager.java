@@ -271,7 +271,7 @@ public class IslandsManager {
             try {
                 handler.deleteObject(island);
             } catch (Exception e) {
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not delete island from database! " + e.getMessage());
             }
             // Remove blocks from world
             new DeleteIslandChunks(plugin, island);
@@ -716,7 +716,7 @@ public class IslandsManager {
                 islandCache.addIsland(island);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            plugin.getLogger().severe("Could not load islands to cache! " + e.getMessage());
         }
         if (DEBUG)
             plugin.getLogger().info("DEBUG: islands loaded");
@@ -930,7 +930,7 @@ public class IslandsManager {
                     try {
                         handler.saveObject(island);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        plugin.getLogger().severe("Could not save island to datavase when running async! " + e.getMessage());
                     }
                 }
             };
@@ -943,7 +943,7 @@ public class IslandsManager {
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    plugin.getLogger().severe("Could not save island to datavase when running sync! " + e.getMessage());
                 }
             }
         }

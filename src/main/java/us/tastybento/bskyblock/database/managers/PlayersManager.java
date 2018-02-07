@@ -31,7 +31,6 @@ public class PlayersManager{
 
     private HashMap<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
-    private HashMap<String, UUID> nameCache;
 
     /**
      * Provides a memory cache of online player information
@@ -62,7 +61,7 @@ public class PlayersManager{
                 playerCache.put(player.getPlayerUUID(), player);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            plugin.getLogger().severe("Could not load players from the database!" + e.getMessage());
         }
     }
 
@@ -82,7 +81,7 @@ public class PlayersManager{
                     try {
                         handler.saveObject(player);
                     } catch (Exception e) {
-                        e.printStackTrace();
+                        plugin.getLogger().severe("Could not save player " + player.getPlayerName() + " "+ player.getUniqueId() + " " + e.getMessage());
                     }
                 }
             };
@@ -94,7 +93,7 @@ public class PlayersManager{
                 try {
                     handler.saveObject(player);
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    plugin.getLogger().severe("Could not save player " + player.getPlayerName() + " "+ player.getUniqueId() + " " + e.getMessage());
                 }
             }
         }
@@ -137,7 +136,7 @@ public class PlayersManager{
                 try {
                     player = handler.loadObject(playerUUID.toString());
                 } catch (Exception e) {
-                    e.printStackTrace();
+                    plugin.getLogger().severe("Could not load player " + playerUUID + " " + e.getMessage());
                 }
             } else {
                 if (DEBUG)
@@ -160,26 +159,16 @@ public class PlayersManager{
      *
      */
     public void removeOnlinePlayer(final UUID player) {
-        // plugin.getLogger().info("Removing player from cache: " + player);
-        if (playerCache.containsKey(player)) {
-            try {
-                handler.saveObject(playerCache.get(player));
-                playerCache.remove(player);
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | SecurityException
-                    | InstantiationException | NoSuchMethodException
-                    | IntrospectionException | SQLException e) {
-                e.printStackTrace();
-            }
-        }
+        save(player);
+        playerCache.remove(player);
     }
 
     /**
-     * Removes all players on the server now from cache and saves their info
+     * Saves all players on the server and clears the cache
      */
     public void removeAllPlayers() {
         for (UUID pl : playerCache.keySet()) {
-            removeOnlinePlayer(pl);
+            save(pl);
         }
         playerCache.clear();
     }
@@ -597,7 +586,7 @@ public class PlayersManager{
                     | InvocationTargetException | SecurityException
                     | InstantiationException | NoSuchMethodException
                     | IntrospectionException | SQLException e) {
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not save player to database: " + playerUUID + " " + e.getMessage());
             }
         } else {
             if (DEBUG)
