@@ -27,7 +27,9 @@ import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
 public class Settings implements ISettings<Settings> {
-        
+
+    private String uniqueId = "config";
+
     // ---------------------------------------------
 
     /*      GENERAL     */
@@ -141,9 +143,9 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "island.max-homes")
     private int maxHomes = 5;
     @ConfigEntry(path = "island.name.min-length")
-    private int nameMinLength;
+    private int nameMinLength = 4;
     @ConfigEntry(path = "island.name.max-length")
-    private int nameMaxLength;
+    private int nameMaxLength = 20;
     @ConfigEntry(path = "island.invite-wait")
     private int inviteWait = 60;
 
@@ -152,33 +154,33 @@ public class Settings implements ISettings<Settings> {
     private int resetLimit = -1;
     
     @ConfigEntry(path = "island.require-confirmation.reset")
-    private boolean resetConfirmation;
+    private boolean resetConfirmation = true;
 
     @ConfigEntry(path = "island.reset-wait")
     private long resetWait = 300;
 
     @ConfigEntry(path = "island.reset.leavers-lose-reset")
-    private boolean leaversLoseReset;
+    private boolean leaversLoseReset = false;
     
     @ConfigEntry(path = "island.reset.kicked-keep-inventory")
-    private boolean kickedKeepInventory;
+    private boolean kickedKeepInventory = false;
 
     // Remove mobs
     @ConfigEntry(path = "island.remove-mobs.on-login")
-    private boolean removeMobsOnLogin;
+    private boolean removeMobsOnLogin = false;
     @ConfigEntry(path = "island.remove-mobs.on-island")
-    private boolean removeMobsOnIsland;
+    private boolean removeMobsOnIsland = false;
     
     @ConfigEntry(path = "island.remove-mobs.whitelist")
     private List<String> removeMobsWhitelist = new ArrayList<>();
 
     @ConfigEntry(path = "island.make-island-if-none")
-    private boolean makeIslandIfNone;
+    private boolean makeIslandIfNone = false;
     
     @ConfigEntry(path = "island.immediate-teleport-on-island")
-    private boolean immediateTeleportOnIsland;
+    private boolean immediateTeleportOnIsland = false;
     
-    private boolean respawnOnIsland;
+    private boolean respawnOnIsland = true;
 
     // Deaths
     @ConfigEntry(path = "island.deaths.max")
@@ -255,21 +257,19 @@ public class Settings implements ISettings<Settings> {
 
     private Map<String,Integer> limitedBlocks = new HashMap<>();
     private boolean teamJoinDeathReset;
-    
-    private String uniqueId = "config";
 
     // Timeout for team kick and leave commands
     @ConfigEntry(path = "island.require-confirmation.kick")
-    private boolean kickConfirmation;
+    private boolean kickConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.kick-wait")
-    private long kickWait;
+    private long kickWait = 300;
  
     @ConfigEntry(path = "island.require-confirmation.leave")
-    private boolean leaveConfirmation;
+    private boolean leaveConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
-    private long leaveWait;
+    private long leaveWait = 300;
     
 
     /**
