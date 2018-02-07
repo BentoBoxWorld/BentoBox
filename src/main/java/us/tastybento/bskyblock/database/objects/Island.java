@@ -153,15 +153,15 @@ public class Island implements DataObject {
     }
 
     /**
-     * Get the Island Guard flag ranking
-     * @param breakBlocks
-     * @return flag rank. Players must have at least this rank to bypass this flag
+     * Gets the rank needed to bypass this Island Guard flag
+     * @param flag
+     * @return the rank needed to bypass this flag. Players must have at least this rank to bypass this flag.
      */
-    public int getFlagReq(Flag breakBlocks){
-        if(flags.containsKey(breakBlocks)) {
-            return flags.get(breakBlocks);
+    public int getFlag(Flag flag){
+        if(flags.containsKey(flag)) {
+            return flags.get(flag);
         } else {
-            flags.put(breakBlocks, RanksManager.MEMBER_RANK);
+            flags.put(flag, RanksManager.MEMBER_RANK);
             return RanksManager.MEMBER_RANK;
         }
     }
@@ -401,7 +401,7 @@ public class Island implements DataObject {
      */
     public boolean inIslandSpace(int x, int z) {
         //Bukkit.getLogger().info("DEBUG: center - " + center);
-        return (x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2) ? true: false;
+        return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
 
     public boolean inIslandSpace(Location location) {
@@ -414,11 +414,11 @@ public class Island implements DataObject {
     /**
      * Check if the flag is allowed or not
      * For flags that are for the island in general and not related to rank
-     * @param breakBlocks
+     * @param flag
      * @return true if allowed, false if not
      */
-    public boolean isAllowed(Flag breakBlocks) {
-        return this.getFlagReq(breakBlocks) >= 0 ? true : false;
+    public boolean isAllowed(Flag flag) {
+        return this.getFlag(flag) >= 0;
     }
 
     /**
@@ -429,7 +429,7 @@ public class Island implements DataObject {
      */
     public boolean isAllowed(User user, Flag flag) {
         //Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
-        return (this.getRank(user) >= this.getFlagReq(flag)) ? true : false;
+        return this.getRank(user) >= this.getFlag(flag);
     }
 
     /**
@@ -438,7 +438,7 @@ public class Island implements DataObject {
      * @return Returns true if target is banned on this island
      */
     public boolean isBanned(UUID targetUUID) {
-        return members.containsKey(targetUUID) && members.get(targetUUID) == RanksManager.BANNED_RANK ? true : false;
+        return members.containsKey(targetUUID) && members.get(targetUUID) == RanksManager.BANNED_RANK;
     }
 
     /**
