@@ -173,7 +173,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (event.isCancelled()) {
             return true;
         }
-        
+
         // Execute and trim args
         return cmd.execute(user, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
     }
@@ -195,17 +195,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 // get the subcommand corresponding to the arg
                 if (subCommand.hasSubCommmands()) {
                     if (DEBUG)
-                        Bukkit.getLogger().info("DEBUG: This command has subcommands");                   
-                    if (subCommand.getSubCommand(args[i]).isPresent()) {
-                        // Step down one
-                        subCommand = subCommand.getSubCommand(args[i]).get();
-                        if (DEBUG)
-                            Bukkit.getLogger().info("DEBUG: Moved to " + subCommand.getLabel());
-                        // Set the label
-                        subCommand.setLabel(args[i]);
-                    } else {
+                        Bukkit.getLogger().info("DEBUG: This command has subcommands");
+                    Optional<CompositeCommand> sub = subCommand.getSubCommand(args[i]);
+                    if (!sub.isPresent()) {
                         return subCommand;
                     }
+                    // Step down one
+                    subCommand = sub.orElse(subCommand);
+                    if (DEBUG)
+                        Bukkit.getLogger().info("DEBUG: Moved to " + subCommand.getLabel());
+                    // Set the label
+                    subCommand.setLabel(args[i]);
                 } else {
                     // We are at the end of the walk
                     if (DEBUG)
