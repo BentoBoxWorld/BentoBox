@@ -440,11 +440,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // Collection
                     // The table is cleared for this uniqueId every time the data is stored
                     String clearTableSql = "DELETE FROM  `" + dataObject.getCanonicalName() + "." + field.getName() + "` WHERE uniqueId = ?";
-                    PreparedStatement collStatement = connection.prepareStatement(clearTableSql);
-                    collStatement.setString(1, uniqueId);
-                    collStatement.execute();
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collStatement " + collStatement.toString());
+                    try (PreparedStatement collStatement = connection.prepareStatement(clearTableSql)) {
+                        collStatement.setString(1, uniqueId);
+                        collStatement.execute();
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: collStatement " + collStatement.toString());
+                    }
                     // Insert into the table
                     String setSql = "INSERT INTO `" + dataObject.getCanonicalName() + "." + field.getName() + "` (uniqueId, ";
                     // Get the columns we are going to insert, just the names of them
@@ -452,60 +453,61 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // Get all the ?'s for the columns
                     setSql += "VALUES ('" + uniqueId + "'," + getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false) + ")";
                     // Prepare the statement
-                    collStatement = connection.prepareStatement(setSql);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collection insert =" + setSql);
-                    // Do single dimension types (set and list)
-                    if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                            propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                        //plugin.getLogger().info("DEBUG: set class for ");
-                        // Loop through the set or list
-                        // Note that we have no idea what type this is
-                        Collection<?> collection = (Collection<?>)value;
-                        Iterator<?> it = collection.iterator();
-                        while (it.hasNext()) {
-                            Object setValue = it.next();
-                            //if (setValue instanceof UUID) {
-                            // Serialize everything
-                            setValue = serialize(setValue, setValue.getClass());
-                            //}
-                            // Set the value from ? to whatever it is
-                            collStatement.setObject(1, setValue);
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: " + collStatement.toString());
-                            // Execute the SQL in the database
-                            collStatement.execute();
-                        }
-                    } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
-                            propertyDescriptor.getPropertyType().equals(HashMap.class)) {
-                        // Loop through the map
-                        Map<?,?> collection = (Map<?,?>)value;
-                        Iterator<?> it = collection.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Entry<?,?> en = (Entry<?, ?>) it.next();
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: entry ket = " + en.getKey());
+                    try (PreparedStatement collStatement = connection.prepareStatement(setSql)) {
+                        if (DEBUG)
+                            plugin.getLogger().info("DEBUG: collection insert =" + setSql);
+                        // Do single dimension types (set and list)
+                        if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                                propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                            //plugin.getLogger().info("DEBUG: set class for ");
+                            // Loop through the set or list
+                            // Note that we have no idea what type this is
+                            Collection<?> collection = (Collection<?>)value;
+                            Iterator<?> it = collection.iterator();
+                            while (it.hasNext()) {
+                                Object setValue = it.next();
+                                //if (setValue instanceof UUID) {
+                                // Serialize everything
+                                setValue = serialize(setValue, setValue.getClass());
+                                //}
+                                // Set the value from ? to whatever it is
+                                collStatement.setObject(1, setValue);
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: " + collStatement.toString());
+                                // Execute the SQL in the database
+                                collStatement.execute();
+                            }
+                        } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
+                                propertyDescriptor.getPropertyType().equals(HashMap.class)) {
+                            // Loop through the map
+                            Map<?,?> collection = (Map<?,?>)value;
+                            Iterator<?> it = collection.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Entry<?,?> en = (Entry<?, ?>) it.next();
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: entry ket = " + en.getKey());
 
-                            // Get the key and serialize it
-                            Object key = serialize(en.getKey(), en.getKey().getClass());
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: key class = " + en.getKey().getClass().getTypeName());
-                            // Get the value and serialize it
-                            Object mapValue = serialize(en.getValue(), en.getValue().getClass());
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: mapValue = " + mapValue);
-                            // Write the objects into prepared statement
-                            collStatement.setObject(1, key);
-                            collStatement.setObject(2, mapValue);
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: " + collStatement.toString());
-                            // Write to database
-                            collStatement.execute();
+                                // Get the key and serialize it
+                                Object key = serialize(en.getKey(), en.getKey().getClass());
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: key class = " + en.getKey().getClass().getTypeName());
+                                // Get the value and serialize it
+                                Object mapValue = serialize(en.getValue(), en.getValue().getClass());
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: mapValue = " + mapValue);
+                                // Write the objects into prepared statement
+                                collStatement.setObject(1, key);
+                                collStatement.setObject(2, mapValue);
+                                if (DEBUG)
+                                    plugin.getLogger().info("DEBUG: " + collStatement.toString());
+                                // Write to database
+                                collStatement.execute();
+                            }
                         }
+                        // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
+                        // additional table.
+                        value = true;
                     }
-                    // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
-                    // additional table.
-                    value = true;
                 } else {
                     // If the value is not a collection, it just needs to be serialized to go into the database.
                     value = serialize(value, propertyDescriptor.getPropertyType());
