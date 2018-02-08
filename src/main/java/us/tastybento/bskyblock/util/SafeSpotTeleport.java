@@ -23,8 +23,6 @@ import us.tastybento.bskyblock.database.objects.Island;
  */
 public class SafeSpotTeleport {
 
-    //private NMSAbstraction nms;
-    //private BSkyBlock plugin;
     /**
      * Teleport to a safe place and if it fails, show a failure message
      * @param plugin
@@ -58,6 +56,8 @@ public class SafeSpotTeleport {
     }
     /**
      * Teleport to a safe spot on an island
+     * 
+     * TODO: REFACTOR THIS!
 
      * @param plugin
      * @param entity

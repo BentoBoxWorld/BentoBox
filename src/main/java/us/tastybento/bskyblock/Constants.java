@@ -31,5 +31,4 @@ public class Constants {
     // Admin command
     public static final String ADMINCOMMAND = "bsadmin";
 
-
 }

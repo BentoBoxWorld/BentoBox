@@ -124,8 +124,7 @@ public final class AddonsManager {
 
                 File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
                 // Obtain any locale files and save them
-                for (String localeFile : listJarYamlFiles(jar, "locales")) {
-                    //plugin.getLogger().info("DEBUG: saving " + localeFile + " from jar");
+                for (String localeFile : listJarYamlFiles(jar, LOCALE_FOLDER)) {
                     addon.saveResource(localeFile, localeDir, false, true);
                 }
                 plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
