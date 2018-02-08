@@ -911,8 +911,9 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         preparedStatement2.setString(1, uniqueId);
                         preparedStatement2.addBatch();
                         // Execute
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: " + preparedStatement2.toString());
+                        if (DEBUG) {
+                            plugin.getLogger().info(() -> "DEBUG: " + preparedStatement2.toString()); // Evaluated lazily
+                        }
                         preparedStatement2.executeBatch();
                     }
                 }
