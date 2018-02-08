@@ -451,9 +451,11 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // Get the columns we are going to insert, just the names of them
                     setSql += getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false) + ") ";
                     // Get all the ?'s for the columns
-                    setSql += "VALUES ('" + uniqueId + "'," + getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false) + ")";
+                    setSql += "VALUES ('?'," + getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false) + ")";
                     // Prepare the statement
                     try (PreparedStatement collStatement = connection.prepareStatement(setSql)) {
+                        // Set the uniqueId
+                        collStatement.setString(1, uniqueId);
                         if (DEBUG)
                             plugin.getLogger().info("DEBUG: collection insert =" + setSql);
                         // Do single dimension types (set and list)
@@ -471,7 +473,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                                 setValue = serialize(setValue, setValue.getClass());
                                 //}
                                 // Set the value from ? to whatever it is
-                                collStatement.setObject(1, setValue);
+                                collStatement.setObject(2, setValue);
                                 if (DEBUG)
                                     plugin.getLogger().info("DEBUG: " + collStatement.toString());
                                 // Execute the SQL in the database
