@@ -162,7 +162,6 @@ public abstract class Addon implements AddonInterface {
             if (jarConfig != null) {
                 try (InputStream in = jar.getInputStream(jarConfig)) {
                     if (in == null) {
-                        jar.close();
                         throw new IllegalArgumentException("The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
                     }
                     // There are two options, use the path of the resource or not
