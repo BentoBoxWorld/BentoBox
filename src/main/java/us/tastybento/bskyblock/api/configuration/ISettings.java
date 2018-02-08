@@ -39,13 +39,13 @@ public interface ISettings<T> {
 
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
-    default T loadSettings() throws Exception {
+    default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException  {
         // See if this settings object already exists in the database
         AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(this.getClass());
         T dbConfig = null;
         if (dbhandler.objectExits(this.getUniqueId())) {
             // Load it
-            dbConfig = dbhandler.loadObject(getUniqueId());
+                dbConfig = dbhandler.loadObject(getUniqueId());
         }
         // Get the handler
         AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
