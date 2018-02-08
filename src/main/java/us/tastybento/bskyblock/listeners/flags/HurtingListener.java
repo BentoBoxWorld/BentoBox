@@ -92,21 +92,18 @@ public class HurtingListener extends AbstractFlagListener {
         if (e.getCaught() == null)
             return;
 
-        if (e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman
-                || e.getCaught() instanceof Villager) {
-            if (checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
-                e.getHook().remove();
-                return;
-            }
+        if ((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman
+                || e.getCaught() instanceof Villager) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
+            e.getHook().remove();
+            return;
         }
-        if (e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) {
-            if (checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
-                e.getHook().remove();
-                return;
-            }
+
+        if ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) 
+                && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
+            e.getHook().remove();
+            return;
         }
     }
-
 
     /**
      * Handles feeding cookies to animals, which may hurt them
@@ -173,8 +170,8 @@ public class HurtingListener extends AbstractFlagListener {
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
             plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                    thrownPotions.remove(e.getAreaEffectCloud().getEntityId());
-                    }, e.getAreaEffectCloud().getDuration());
+                thrownPotions.remove(e.getAreaEffectCloud().getEntityId());
+            }, e.getAreaEffectCloud().getDuration());
         }
     }
 
