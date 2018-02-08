@@ -58,11 +58,8 @@ public class AddonClassLoader extends URLClassLoader {
 			throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
 		}
 		
-		Addon addon = addonClass.newInstance();
-
+		this.addon = addonClass.newInstance();
 		addon.setDescription(this.asDescription(data));
-		
-		this.addon = addon;
 	}
 	
 	private AddonDescription asDescription(Map<String, String> data){
