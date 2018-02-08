@@ -2,6 +2,7 @@ package us.tastybento.bskyblock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -132,7 +133,9 @@ public class Settings implements ISettings<Settings> {
     private boolean endIslands = true;
 
     // Entities
-    private Map<EntityType, Integer> entityLimits = new HashMap<>();
+    @ConfigEntry(path = "island.limits.entities")
+    private Map<EntityType, Integer> entityLimits = new EnumMap<>(EntityType.class);
+    @ConfigEntry(path = "island.limits.tile-entities")
     private Map<String, Integer> tileEntityLimits = new HashMap<>();
 
     // ---------------------------------------------
