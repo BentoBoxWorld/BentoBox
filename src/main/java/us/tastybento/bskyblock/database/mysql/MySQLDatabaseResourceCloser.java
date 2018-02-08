@@ -5,6 +5,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
+import org.bukkit.Bukkit;
+
 public class MySQLDatabaseResourceCloser {
 
     /**
@@ -23,8 +25,7 @@ public class MySQLDatabaseResourceCloser {
                 try {
                     resultSet.close();
                 } catch (SQLException e) {
-                    /* Do some exception-logging here. */
-                    e.printStackTrace();
+                    Bukkit.getLogger().severe("Could not close MySQL resultset");
                 }
             }
         }
@@ -50,8 +51,7 @@ public class MySQLDatabaseResourceCloser {
                 try {
                     statement.close();
                 } catch (SQLException e) {
-                    /* Do some exception-logging here. */
-                    e.printStackTrace();
+                    Bukkit.getLogger().severe("Could not close MySQL statement");
                 }
             }
         }
@@ -72,8 +72,7 @@ public class MySQLDatabaseResourceCloser {
                 try {
                     connection.close();
                 } catch (SQLException e) {
-                    /* Do some exception-logging here. */
-                    e.printStackTrace();
+                    Bukkit.getLogger().severe("Could not close MySQL connection");
                 }
             }
         }

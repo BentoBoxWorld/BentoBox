@@ -40,7 +40,7 @@ public class FireListener extends AbstractFlagListener {
             return;
         }
         // Check if the island exists and if fire is allowed
-        Optional<Island> island = plugin.getIslands().getIslandAt(e.getBlock().getLocation());
+        Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         island.ifPresent(x ->  {
             if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
         });
@@ -59,7 +59,7 @@ public class FireListener extends AbstractFlagListener {
                 return;
             }
             // Check if the island exists and if fire is allowed
-            Optional<Island> island = plugin.getIslands().getIslandAt(e.getBlock().getLocation());
+            Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
             island.ifPresent(x ->  {
                 if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
             });
@@ -82,7 +82,7 @@ public class FireListener extends AbstractFlagListener {
             return;
         }
         // Check if the island exists and if fire is allowed
-        Optional<Island> island = plugin.getIslands().getIslandAt(e.getBlock().getLocation());
+        Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         island.ifPresent(x ->  {
             if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
         });
@@ -135,7 +135,7 @@ public class FireListener extends AbstractFlagListener {
             return;
         }
         // Check if the island exists and if fire is allowed
-        Optional<Island> island = plugin.getIslands().getIslandAt(e.getBlock().getLocation());
+        Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         island.ifPresent(x ->  {
             if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
         });

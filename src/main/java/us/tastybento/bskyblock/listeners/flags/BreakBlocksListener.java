@@ -94,7 +94,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
         if (inWorld(e.getVehicle()) && e.getAttacker() instanceof Player) {
             User user = User.getInstance((Player) e.getAttacker());
             // Get the island and if present, check the flag, react if required and return
-            plugin.getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> { 
+            getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> { 
                 if (!x.isAllowed(user, Flags.BREAK_BLOCKS)) {
                     e.setCancelled(true);
                     user.sendMessage("protection.protected");

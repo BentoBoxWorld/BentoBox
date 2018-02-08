@@ -287,7 +287,7 @@ public class Util {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not load yml file " + e.getMessage());
             }
         } else {
             // Create the missing file

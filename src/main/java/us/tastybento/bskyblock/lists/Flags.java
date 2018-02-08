@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import us.tastybento.bskyblock.api.flags.Flag;
@@ -126,9 +127,8 @@ public class Flags {
         return Arrays.asList(Flags.class.getFields()).stream().map(field -> {
             try {
                 return (Flag)field.get(null);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                
-                e.printStackTrace();
+            } catch (IllegalArgumentException | IllegalAccessException e) {                
+                Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
             }
             return null;
         }).collect(Collectors.toList());

@@ -41,7 +41,7 @@ public class MobSpawnListener extends AbstractFlagListener {
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)
                 || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
-            Optional<Island> island = plugin.getIslands().getIslandAt(e.getLocation());
+            Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             if (island.isPresent()) {
                 if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {             
                     if (!island.get().isAllowed(Flags.MOB_SPAWN)) {

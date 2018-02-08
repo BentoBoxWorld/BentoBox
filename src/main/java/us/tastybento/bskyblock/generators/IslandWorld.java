@@ -81,7 +81,6 @@ public class IslandWorld {
                 }
             } catch (Exception e) {
                 Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
-                e.printStackTrace();
                 Bukkit.getServer().getPluginManager().disablePlugin(plugin);
             }
         }

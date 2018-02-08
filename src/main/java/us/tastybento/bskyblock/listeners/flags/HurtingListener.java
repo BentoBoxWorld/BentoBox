@@ -169,7 +169,7 @@ public class HurtingListener extends AbstractFlagListener {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
-            plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> {
                 thrownPotions.remove(e.getAreaEffectCloud().getEntityId());
             }, e.getAreaEffectCloud().getDuration());
         }

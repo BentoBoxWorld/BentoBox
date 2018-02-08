@@ -19,7 +19,7 @@ public class PanelListenerManager implements Listener {
 
     //private static final boolean DEBUG = false;
 
-    public static HashMap<UUID, Panel> openPanels = new HashMap<>();
+    private static HashMap<UUID, Panel> openPanels = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -28,11 +28,11 @@ public class PanelListenerManager implements Listener {
         //UUID playerUUID = player.getUniqueId();
         Inventory inventory = event.getInventory(); // The inventory that was
         // Open the inventory panel that this player has open (they can only ever have one)
-        if (openPanels.containsKey(user.getUniqueId())) {
+        if (getOpenPanels().containsKey(user.getUniqueId())) {
             // Check the name of the panel
-            if (inventory.getName().equals(openPanels.get(user.getUniqueId()).getInventory().getName())) {
+            if (inventory.getName().equals(getOpenPanels().get(user.getUniqueId()).getInventory().getName())) {
                 // Get the panel itself
-                Panel panel = openPanels.get(user.getUniqueId());
+                Panel panel = getOpenPanels().get(user.getUniqueId());
                 // Check that they clicked on a specific item
                 for (int slot : panel.getItems().keySet()) {
                     if (slot == event.getRawSlot()) {
@@ -48,19 +48,26 @@ public class PanelListenerManager implements Listener {
                 }
             } else {
                 // Wrong name - delete this panel
-                openPanels.remove(user.getUniqueId());
+                getOpenPanels().remove(user.getUniqueId());
             }
         }
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (openPanels.containsKey(event.getPlayer().getUniqueId())) openPanels.remove(event.getPlayer().getUniqueId());
+        if (getOpenPanels().containsKey(event.getPlayer().getUniqueId())) getOpenPanels().remove(event.getPlayer().getUniqueId());
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogOut(PlayerQuitEvent event) {
-        if (openPanels.containsKey(event.getPlayer().getUniqueId())) openPanels.remove(event.getPlayer().getUniqueId());
+        if (getOpenPanels().containsKey(event.getPlayer().getUniqueId())) getOpenPanels().remove(event.getPlayer().getUniqueId());
+    }
+
+    /**
+     * @return the openPanels
+     */
+    public static HashMap<UUID, Panel> getOpenPanels() {
+        return openPanels;
     }
     
 }

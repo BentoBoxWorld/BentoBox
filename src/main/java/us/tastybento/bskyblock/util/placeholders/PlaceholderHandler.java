@@ -40,7 +40,6 @@ public class PlaceholderHandler {
         } catch (Exception e){
             // Should never happen.
             plugin.getLogger().severe("Failed to load default placeholder API");
-            e.printStackTrace();
         }
 
         // Load hooks

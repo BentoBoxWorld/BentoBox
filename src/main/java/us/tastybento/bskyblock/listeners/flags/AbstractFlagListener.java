@@ -18,6 +18,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.FlagType;
+import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
@@ -27,9 +28,16 @@ import us.tastybento.bskyblock.database.objects.Island;
  */
 public abstract class AbstractFlagListener implements Listener {
 
-    public BSkyBlock plugin = BSkyBlock.getInstance();
+    private BSkyBlock plugin = BSkyBlock.getInstance();
     private User user = null;
     
+    /**
+     * @return the plugin
+     */
+    public BSkyBlock getPlugin() {
+        return plugin;
+    }
+
     /**
      * Used for unit testing only to set the plugin
      * @param plugin
@@ -47,13 +55,13 @@ public abstract class AbstractFlagListener implements Listener {
     private boolean createEventUser(Event e) {
         try {
             // Use reflection to get the getPlayer method if it exists
-
             Method getPlayer = e.getClass().getMethod("getPlayer");
             if (getPlayer != null) {
                 setUser(User.getInstance((Player)getPlayer.invoke(e)));
                 return true;
             }
-        } catch (Exception e1) { e1.printStackTrace();}
+        } catch (Exception e1) {  // Do nothing 
+        }
         return false;
     }
 
@@ -147,7 +155,7 @@ public abstract class AbstractFlagListener implements Listener {
         if (!inWorld(loc)) return true;
 
         // Get the island and if present
-        Optional<Island> island = plugin.getIslands().getIslandAt(loc);
+        Optional<Island> island = getIslands().getIslandAt(loc);
 
         // Handle Settings Flag
         if (flag.getType().equals(FlagType.SETTING)) {
@@ -201,4 +209,11 @@ public abstract class AbstractFlagListener implements Listener {
         return plugin.getFlagsManager().getFlagByID(id);
     }
 
+    /**
+     * Get the island database manager
+     * @return the island database manager
+     */
+    protected IslandsManager getIslands() {
+        return plugin.getIslands();
+    }
 }

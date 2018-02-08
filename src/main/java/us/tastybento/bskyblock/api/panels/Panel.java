@@ -70,7 +70,7 @@ public class Panel {
     public void open(Player... players) {
         for (Player player : players) {
             player.openInventory(inventory);
-            PanelListenerManager.openPanels.put(player.getUniqueId(), this);
+            PanelListenerManager.getOpenPanels().put(player.getUniqueId(), this);
         }
     }
 
@@ -81,7 +81,7 @@ public class Panel {
     public void open(User... users) {
         for (User user : users) {
             user.getPlayer().openInventory(inventory);
-            PanelListenerManager.openPanels.put(user.getUniqueId(), this);
+            PanelListenerManager.getOpenPanels().put(user.getUniqueId(), this);
         }
     }
 

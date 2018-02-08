@@ -64,10 +64,7 @@ public final class AddonsManager {
             try {
                 f.mkdir();
             } catch (SecurityException e) {
-                e.printStackTrace();
-                if (DEBUG) {
-                    Bukkit.getLogger().severe("Cannot create folder 'addons' (Permission ?)");
-                }
+                Bukkit.getLogger().severe("Cannot create folder 'addons' (Permission ?)");
             }
         }
 
@@ -182,7 +179,7 @@ public final class AddonsManager {
             try {
                 loader.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                // Do nothing
             }
         });
     }
