@@ -33,23 +33,23 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         
         UUID playerUUID = user.getUniqueId();
         if(!inviteList.containsKey(playerUUID))
-                return true;
+                return false;
         // Check if player has been invited
         if (!inviteList.containsKey(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
-            return true;
+            return false;
         }
         // Check if player is already in a team
         if (getPlayers().inTeam(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
-            return true;
+            return false;
         }
         // Get the team leader
         UUID prospectiveTeamLeaderUUID = inviteList.get(playerUUID);
         if (!getIslands().hasIsland(prospectiveTeamLeaderUUID)) {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
             inviteList.remove(playerUUID);
-            return true;
+            return false;
         }
         if (DEBUG)
             getPlugin().getLogger().info("DEBUG: Invite is valid");
