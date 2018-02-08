@@ -4,10 +4,12 @@ import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -520,9 +522,12 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
         File tableFolder = new File(dataFolder, dataObject.getSimpleName());
         if (tableFolder.exists()) {
+            
             File file = new File(tableFolder, fileName);
-            if (!file.delete()) {
-                plugin.getLogger().severe("Could not delete yaml database object! " + file.getName());
+            try {
+                Files.delete(file.toPath());
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not delete yaml database object! " + file.getName() + " - " + e.getMessage());
             }
         }
     }
