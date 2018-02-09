@@ -31,12 +31,12 @@ public class IslandCache {
     private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
-    
+
     public IslandCache() {
         islandsByLocation = HashBiMap.create();
         islandsByUUID = new HashMap<>();
     }
-    
+
     /**
      * Adds an island to the grid
      * @param island
@@ -55,11 +55,11 @@ public class IslandCache {
         }
         addToGrid(island);
     }
-    
+
     public void addPlayer(UUID playerUUID, Island teamIsland) {
         islandsByUUID.put(playerUUID, teamIsland);
     }
-    
+
     /**
      * Adds an island to the grid register
      * @param newIsland
@@ -109,12 +109,12 @@ public class IslandCache {
             islandGrid.put(newIsland.getMinX(), zEntry);
         }
     }
-    
+
     public void clear() {
         islandsByLocation.clear();
         islandsByUUID.clear();
     }
-    
+
     public Island createIsland(Island island) {
         islandsByLocation.put(island.getCenter(), island);
         if (island.getOwner() != null)
@@ -122,7 +122,7 @@ public class IslandCache {
         addToGrid(island);
         return island;
     }
-    
+
     /**
      * Create an island with no owner at location
      * @param location
@@ -130,7 +130,7 @@ public class IslandCache {
     public Island createIsland(Location location){
         return createIsland(location, null);
     }
-    
+
     /**
      * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
      * @param location
@@ -187,15 +187,15 @@ public class IslandCache {
             }
         }
     }
-    
+
     public Island get(Location location) {
         return islandsByLocation.get(location);
     }
-    
+
     public Island get(UUID uuid) {
         return islandsByUUID.get(uuid);
     }
-    
+
     /**
      * Gets the island for this player. If they are in a team, the team island is returned
      * @param uuid
@@ -310,7 +310,7 @@ public class IslandCache {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: checking if " + playerUUID + " has an island");
             plugin.getLogger().info("DEBUG: islandsByUUID : " + islandsByUUID.toString());
-    
+
             if (!islandsByUUID.containsKey(playerUUID)) {
                 plugin.getLogger().info("DEBUG: player is not in islandsByUUID");
             } else {
@@ -348,7 +348,7 @@ public class IslandCache {
         if (DEBUG)
             plugin.getLogger().info("DEBUG: removing reference to island by UUID");
         islandsByUUID.remove(playerUUID);
-        
+
     }
 
     public void setIslandName(UUID owner, String name) {
@@ -356,7 +356,7 @@ public class IslandCache {
             Island island = islandsByUUID.get(owner);
             island.setName(name);
         }
-        
+
     }
 
     public int size() {
@@ -374,8 +374,9 @@ public class IslandCache {
         }
         if (o instanceof Island) {
             Island is = (Island)o;
-            if (is.getOwner() != null &&  islandsByUUID.containsKey(is.getOwner()));
-                    return true;
+            if (is.getOwner() != null &&  islandsByUUID.containsKey(is.getOwner())) {
+                return true;
+            }
         }
         return false;
     }
