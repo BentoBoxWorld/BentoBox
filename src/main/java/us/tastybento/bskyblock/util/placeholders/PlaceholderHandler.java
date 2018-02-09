@@ -56,7 +56,6 @@ public class PlaceholderHandler {
                     }
                 } catch (Exception e){
                     plugin.getLogger().info("Failed to hook placeholders into " + hook);
-                    e.printStackTrace();
                 }
             }
         }
