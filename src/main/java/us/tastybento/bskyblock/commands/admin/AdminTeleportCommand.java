@@ -9,6 +9,7 @@ import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.util.SafeSpotTeleport;
+import us.tastybento.bskyblock.util.SafeTeleportBuilder;
 
 public class AdminTeleportCommand extends CompositeCommand {
 
@@ -46,7 +47,10 @@ public class AdminTeleportCommand extends CompositeCommand {
                 // Other wise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                         + warpSpot.getBlockZ());
-                new SafeSpotTeleport(getPlugin(), user.getPlayer(), warpSpot, failureMessage);
+                new SafeTeleportBuilder(getPlugin()).entity(user.getPlayer())
+                .location(warpSpot)
+                .failureMessage(failureMessage)
+                .build();
                 return true;
             }
             user.sendMessage("command.admin.tp.no-island");

@@ -27,7 +27,7 @@ import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.DeleteIslandChunks;
-import us.tastybento.bskyblock.util.SafeSpotTeleport;
+import us.tastybento.bskyblock.util.SafeTeleportBuilder;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -625,7 +625,11 @@ public class IslandsManager {
                 plugin.getLogger().info("Fixing home location using safe spot teleport");
             }
             // Try to fix this teleport location and teleport the player if possible
-            new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
+            new SafeTeleportBuilder(plugin).entity(player)
+            .location(plugin.getPlayers().getHomeLocation(player.getUniqueId(), number))
+            .setHome(true)
+            .homeNumber(number)
+            .build();
             return;
         }
         if (DEBUG) {
@@ -633,7 +637,6 @@ public class IslandsManager {
         }
         //home.getChunk().load();
         player.teleport(home);
-        //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
         User user = User.getInstance(player);
         if (number == 1) {
             user.sendMessage("commands.island.go.teleport", "[label]", Constants.ISLANDCOMMAND);
