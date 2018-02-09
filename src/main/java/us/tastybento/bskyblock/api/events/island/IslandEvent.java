@@ -143,10 +143,10 @@ public class IslandEvent {
         }
 
         public IslandEventBuilder location(Location center) {
-            this.location = center;
+            location = center;
             return this;
         }
-        
+
         public IslandBaseEvent build() {
             switch (reason) {
             case CREATE:
@@ -194,7 +194,7 @@ public class IslandEvent {
                 BSkyBlock.getInstance().getServer().getPluginManager().callEvent(general);
                 return general;
             }
-            
+
         }
     }
 }

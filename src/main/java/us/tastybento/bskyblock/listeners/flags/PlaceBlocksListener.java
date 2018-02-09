@@ -59,7 +59,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
             }
             return;
         default:
-            // Check in-hand items 
+            // Check in-hand items
             if (e.getMaterial() != null) {
                 // This check protects against an exploit in 1.7.9 against cactus
                 // and sugar cane and placing boats on non-liquids
@@ -71,7 +71,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
             }
         }
     }
-    
+
     /**
      * Handles Frost Walking on visitor's islands. This creates ice blocks, which is like placing blocks
      * @param e
@@ -80,7 +80,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
     public void onBlockForm(EntityBlockFormEvent e) {
         if (e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             // Silently check
-            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS, true); 
+            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS, true);
         }
     }
 

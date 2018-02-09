@@ -31,21 +31,22 @@ public class Players implements DataObject {
     public Players() {}
 
     /**
-     * @param plugin 
+     * @param plugin
      * @param uniqueId
      *            Constructor - initializes the state variables
      *
      */
     public Players(BSkyBlock plugin, final UUID uniqueId) {
         this.uniqueId = uniqueId.toString();
-        this.homeLocations = new HashMap<>();
-        this.playerName = "";
-        this.resetsLeft = plugin.getSettings().getResetLimit();
-        this.locale = "";
-        this.kickedList = new HashMap<>();
-        this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
-        if (this.playerName == null)
-            this.playerName = uniqueId.toString();
+        homeLocations = new HashMap<>();
+        playerName = "";
+        resetsLeft = plugin.getSettings().getResetLimit();
+        locale = "";
+        kickedList = new HashMap<>();
+        playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
+        if (playerName == null) {
+            playerName = uniqueId.toString();
+        }
     }
 
     /**
@@ -64,7 +65,7 @@ public class Players implements DataObject {
     public Location getHomeLocation(int number) {
         /*
          Bukkit.getLogger().info("DEBUG: getting home location " + number);
-        
+
         Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
         for (Entry<Integer, Location> en : homeLocations.entrySet()) {
             Bukkit.getLogger().info("DEBUG: " + en.getKey() + " ==> " + en.getValue());
@@ -148,7 +149,7 @@ public class Players implements DataObject {
     }
 
     /**
-     * Stores the numbered home location of the player. Numbering starts at 1. 
+     * Stores the numbered home location of the player. Numbering starts at 1.
      * @param location
      * @param number
      */
@@ -165,7 +166,7 @@ public class Players implements DataObject {
      * @param uuid
      */
     public void setPlayerUUID(final UUID uuid) {
-        this.uniqueId = uuid.toString();
+        uniqueId = uuid.toString();
     }
 
     /**
@@ -210,9 +211,9 @@ public class Players implements DataObject {
      * Add death
      */
     public void addDeath() {
-        this.deaths++;
-        if (this.deaths > getPlugin().getSettings().getDeathsMax()) {
-            this.deaths = getPlugin().getSettings().getDeathsMax();
+        deaths++;
+        if (deaths > getPlugin().getSettings().getDeathsMax()) {
+            deaths = getPlugin().getSettings().getDeathsMax();
         }
     }
 

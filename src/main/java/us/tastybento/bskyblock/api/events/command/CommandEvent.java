@@ -20,7 +20,7 @@ public class CommandEvent extends PremadeEvent implements Cancellable {
     private final Command command;
     private final String label;
     private final String[] args;
-   
+
     private CommandEvent(CommandSender sender, Command command, String label, String[] args) {
         super();
         this.sender = sender;
@@ -32,14 +32,14 @@ public class CommandEvent extends PremadeEvent implements Cancellable {
     public static CommandEventBuilder builder() {
         return new CommandEventBuilder();
     }
-    
+
     public static class CommandEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private CommandSender sender;
         private Command command;
         private String label;
         private String[] args;
-                     
+
         public CommandEventBuilder setSender(CommandSender sender) {
             this.sender = sender;
             return this;
@@ -63,7 +63,7 @@ public class CommandEvent extends PremadeEvent implements Cancellable {
         public CommandEvent build() {
             return new CommandEvent(sender, command, label, args);
         }
-        
+
     }
 
     public CommandSender getSender() {
@@ -89,6 +89,6 @@ public class CommandEvent extends PremadeEvent implements Cancellable {
 
     @Override
     public void setCancelled(boolean arg0) {
-        cancelled = arg0;        
+        cancelled = arg0;
     }
 }

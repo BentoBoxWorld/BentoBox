@@ -12,15 +12,15 @@ public class Flag  implements Comparable<Flag> {
         PROTECTION,
         SETTING
     }
-    
+
     private final String id;
     private final PanelItem icon;
     private final Listener listener;
     private final FlagType type;
     private boolean defaultSetting;
-    
+
     public Flag(String id2, PanelItem icon, Listener listener, boolean defaultSetting, FlagType type) {
-        this.id = id2;
+        id = id2;
         this.icon = icon;
         this.listener = listener;
         this.type = type;

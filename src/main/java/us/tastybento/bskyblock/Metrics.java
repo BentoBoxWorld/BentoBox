@@ -30,7 +30,7 @@ import org.json.simple.JSONObject;
  * bStats collects some data for plugin authors.
  *
  * Check out https://bStats.org/ to learn more about bStats!
- * 
+ *
  * @author BtoBastian
  */
 @SuppressWarnings("unchecked")
@@ -96,7 +96,7 @@ public class Metrics {
                             "To honor their work, you should not disable it.\n" +
                             "This has nearly no effect on the server performance!\n" +
                             "Check out https://bStats.org/ to learn more :)"
-            ).copyDefaults(true);
+                    ).copyDefaults(true);
             try {
                 config.save(configFile);
             } catch (IOException ignored) { }
@@ -150,12 +150,7 @@ public class Metrics {
                 }
                 // Nevertheless we want our code to run in the Bukkit main thread, so we have to use the Bukkit scheduler
                 // Don't be afraid! The connection to the bStats server is still async, only the stats collection is sync ;)
-                Bukkit.getScheduler().runTask(plugin, new Runnable() {
-                    @Override
-                    public void run() {
-                        submitData();
-                    }
-                });
+                Bukkit.getScheduler().runTask(plugin, () -> submitData());
             }
         }, 1000*60*5L, 1000*60*30L);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start
@@ -250,17 +245,14 @@ public class Metrics {
         data.put("plugins", pluginData);
 
         // Create a new thread for the connection to the bStats server
-        new Thread(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    // Send the data
-                    sendData(data);
-                } catch (Exception e) {
-                    // Something went wrong! :(
-                    if (logFailedRequests) {
-                        plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
-                    }
+        new Thread(() -> {
+            try {
+                // Send the data
+                sendData(data);
+            } catch (Exception e) {
+                // Something went wrong! :(
+                if (logFailedRequests) {
+                    plugin.getLogger().log(Level.WARNING, "Could not submit plugin stats of " + plugin.getName(), e);
                 }
             }
         }).start();
@@ -283,7 +275,9 @@ public class Metrics {
 
         // Compress the data to save bandwidth
         byte[] compressedData = compress(data.toString());
-        if (compressedData == null) throw new Exception();
+        if (compressedData == null) {
+            throw new Exception();
+        }
         // Add headers
         connection.setRequestMethod("POST");
         connection.addRequestProperty("Accept", "application/json");

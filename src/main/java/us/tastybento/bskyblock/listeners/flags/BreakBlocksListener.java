@@ -52,7 +52,9 @@ public class BreakBlocksListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
         // Only handle hitting things
-        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) return;
+        if (!e.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+            return;
+        }
 
         // Look along player's sight line to see if any blocks are skulls
         try {
@@ -94,7 +96,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
         if (inWorld(e.getVehicle()) && e.getAttacker() instanceof Player) {
             User user = User.getInstance((Player) e.getAttacker());
             // Get the island and if present, check the flag, react if required and return
-            getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> { 
+            getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> {
                 if (!x.isAllowed(user, Flags.BREAK_BLOCKS)) {
                     e.setCancelled(true);
                     user.sendMessage("protection.protected");
@@ -117,7 +119,9 @@ public class BreakBlocksListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         // Only handle item frames and armor stands
-        if (!(e.getEntity() instanceof ItemFrame) && !(e.getEntity() instanceof ArmorStand)) return;
+        if (!(e.getEntity() instanceof ItemFrame) && !(e.getEntity() instanceof ArmorStand)) {
+            return;
+        }
 
         // Get the attacker
         if (e.getDamager() instanceof Player) {

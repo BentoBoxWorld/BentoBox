@@ -71,14 +71,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(BSkyBlock plugin, String label, String... string) {
         super(label);
-        this.setAliases(new ArrayList<>(Arrays.asList(string)));
-        this.parent = null;
+        setAliases(new ArrayList<>(Arrays.asList(string)));
+        parent = null;
         setUsage("");
-        this.subCommandLevel = 0; // Top level
-        this.subCommands = new LinkedHashMap<>();
-        this.subCommandAliases = new LinkedHashMap<>();
-        this.setup();
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help")) {
+        subCommandLevel = 0; // Top level
+        subCommands = new LinkedHashMap<>();
+        subCommandAliases = new LinkedHashMap<>();
+        setup();
+        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
@@ -93,20 +93,20 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
         super(label);
         this.parent = parent;
-        this.subCommandLevel = parent.getLevel() + 1;
+        subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
         parent.getSubCommands().put(label, this);
-        this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
-        this.subCommands = new LinkedHashMap<>();
-        this.subCommandAliases = new LinkedHashMap<>();
+        setAliases(new ArrayList<>(Arrays.asList(aliases)));
+        subCommands = new LinkedHashMap<>();
+        subCommandAliases = new LinkedHashMap<>();
         // Add aliases to the parent for this command
         for (String alias : aliases) {
             parent.subCommandAliases.put(alias, this);
         }
         setUsage("");
-        this.setup();
+        setup();
         // If this command does not define its own help class, then use the default help command
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help")) {
+        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
         if (DEBUG) {
@@ -124,25 +124,25 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: top level command registering..." + label);
         }
-        this.setAliases(new ArrayList<>(Arrays.asList(aliases)));
-        this.parent = null;
+        setAliases(new ArrayList<>(Arrays.asList(aliases)));
+        parent = null;
         setUsage("");
-        this.subCommandLevel = 0; // Top level
-        this.subCommands = new LinkedHashMap<>();
-        this.subCommandAliases = new LinkedHashMap<>();
+        subCommandLevel = 0; // Top level
+        subCommands = new LinkedHashMap<>();
+        subCommandAliases = new LinkedHashMap<>();
         // Register command if it is not already registered
         if (getPlugin().getCommand(label) == null) {
             getPlugin().getCommandsManager().registerCommand(this);
         }
-        this.setup();
-        if (!this.getSubCommand("help").isPresent() && !label.equals("help")) {
+        setup();
+        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
 
 
-    /* 
-     * This method deals with the command execution. It traverses the tree of 
+    /*
+     * This method deals with the command execution. It traverses the tree of
      * subcommands until it finds the right object and then runs execute on it.
      */
     @Override
@@ -189,17 +189,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private CompositeCommand getCommandFromArgs(String[] args) {
         CompositeCommand subCommand = this;
         // Run through any arguments
-        for (int i = 0; i < args.length; i++) {
+        for (String arg : args) {
             // get the subcommand corresponding to the arg
             if (subCommand.hasSubCommmands()) {
-                Optional<CompositeCommand> sub = subCommand.getSubCommand(args[i]);
+                Optional<CompositeCommand> sub = subCommand.getSubCommand(arg);
                 if (!sub.isPresent()) {
                     return subCommand;
                 }
                 // Step down one
                 subCommand = sub.orElse(subCommand);
                 // Set the label
-                subCommand.setLabel(args[i]);
+                subCommand.setLabel(arg);
             } else {
                 // We are at the end of the walk
                 return subCommand;
@@ -254,7 +254,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public String getPermission() {
-        return this.permission;
+        return permission;
     }
 
     /**
@@ -292,14 +292,18 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: " + entry.getKey());
             }
-            if (entry.getKey().equalsIgnoreCase(label)) return Optional.of(subCommands.get(label));
+            if (entry.getKey().equalsIgnoreCase(label)) {
+                return Optional.of(subCommands.get(label));
+            }
         }
         // Try aliases
         for (Map.Entry<String, CompositeCommand> entry : subCommandAliases.entrySet()) {
             if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: alias " + entry.getKey());
             }
-            if (entry.getKey().equalsIgnoreCase(label)) return Optional.of(subCommandAliases.get(label));
+            if (entry.getKey().equalsIgnoreCase(label)) {
+                return Optional.of(subCommandAliases.get(label));
+            }
         }
         return Optional.empty();
     }
@@ -396,8 +400,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @Override
     public Command setUsage(String usage) {
         // Go up the chain
-        CompositeCommand parent = this.getParent();
-        this.usage = this.getLabel() + " " + usage;
+        CompositeCommand parent = getParent();
+        this.usage = getLabel() + " " + usage;
         while (parent != null) {
             this.usage = parent.getLabel() + " " + this.usage;
             parent = parent.getParent();
@@ -428,7 +432,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return options;
         }
         // Add any tab completion from the subcommand
-        options.addAll(cmd.tabComplete(User.getInstance(sender), alias, new LinkedList<String>(Arrays.asList(args))).orElse(new ArrayList<>()));
+        options.addAll(cmd.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElse(new ArrayList<>()));
         // Add any sub-commands automatically
         if (cmd.hasSubCommmands()) {
             // Check if subcommands are visible to this sender

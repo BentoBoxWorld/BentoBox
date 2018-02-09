@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -19,7 +19,7 @@ public class TeleportationListener extends AbstractFlagListener {
 
     /**
      * Ender pearl and chorus fruit teleport checks
-     * 
+     *
      * @param e
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)

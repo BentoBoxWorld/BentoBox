@@ -27,9 +27,9 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.team.invite.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setDescription("commands.island.team.invite.description");
 
         new IslandTeamInviteAcceptCommand(this);
         new IslandTeamInviteRejectCommand(this);
@@ -106,7 +106,9 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                     }
                 }
                 // Do some sanity checking
-                if (maxSize < 1) maxSize = 1;
+                if (maxSize < 1) {
+                    maxSize = 1;
+                }
             }
             if (teamMembers.size() < maxSize) {
                 // If that player already has an invite out then retract it.
@@ -122,7 +124,9 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                         .involvedPlayer(invitedPlayerUUID)
                         .build();
                 getPlugin().getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) return true;
+                if (event.isCancelled()) {
+                    return true;
+                }
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
                 inviteList.put(invitedPlayerUUID, playerUUID);

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.commands.island;
 
@@ -23,13 +23,13 @@ public class IslandSetnameCommand extends CompositeCommand {
     public IslandSetnameCommand(CompositeCommand islandCommand) {
         super(islandCommand, "setname");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.name");
-        this.setOnlyPlayer(true);
-        this.setParameters("commands.island.setname.parameters");
-        this.setDescription("commands.island.setname.description");
+        setPermission(Constants.PERMPREFIX + "island.name");
+        setOnlyPlayer(true);
+        setParameters("commands.island.setname.parameters");
+        setDescription("commands.island.setname.description");
     }
 
     /* (non-Javadoc)
@@ -69,9 +69,11 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
 
         // Set the name
-        if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format"))
+        if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format")) {
             getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
-        else getIslands().getIsland(playerUUID).setName(name);
+        } else {
+            getIslands().getIsland(playerUUID).setName(name);
+        }
 
         user.sendMessage("general.success");
         return true;

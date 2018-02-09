@@ -28,7 +28,7 @@ public class NewIsland {
 
     private NewIsland(Island oldIsland, Player player, Reason reason) {
         super();
-        this.plugin = BSkyBlock.getInstance();
+        plugin = BSkyBlock.getInstance();
         this.player = player;
         this.reason = reason;
         newIsland();
@@ -47,7 +47,7 @@ public class NewIsland {
 
     /**
      * Start building a new island
-     * @param plugin 
+     * @param plugin
      * @return New island builder object
      */
     public static Builder builder(BSkyBlock plugin) {
@@ -93,8 +93,9 @@ public class NewIsland {
      * Makes an island.
      */
     public void newIsland() {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: new island");
+        }
         //long time = System.nanoTime();
         final UUID playerUUID = player.getUniqueId();
         /*
@@ -102,11 +103,13 @@ public class NewIsland {
         if (!plugin.getPlayers().hasIsland(playerUUID)) {
             firstTime = true;
         }*/
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: finding island location");
+        }
         Location next = getNextIsland(player.getUniqueId());
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: found " + next);
+        }
 
         // Add to the grid
         island = plugin.getIslands().createIsland(next, playerUUID);
@@ -123,16 +126,18 @@ public class NewIsland {
         plugin.getPlayers().setHomeLocation(playerUUID, next, 1);
 
         // Fire event
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: firing event");
+        }
         IslandBaseEvent event = IslandEvent.builder()
                 .involvedPlayer(player.getUniqueId())
                 .reason(reason)
                 .island(island)
                 .location(island.getCenter())
                 .build();
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: event cancelled status = " + event.isCancelled());
+        }
         if (!event.isCancelled()) {
             // Create island
             new IslandBuilder(plugin, island)
@@ -153,7 +158,7 @@ public class NewIsland {
                 .setChestItems(plugin.getSettings().getChestItems())
                 .setType(IslandType.END)
                 .build();
-            }            
+            }
             // Teleport player to their island
             plugin.getIslands().homeTeleport(player);
             // Fire exit event
@@ -186,25 +191,30 @@ public class NewIsland {
         Location last = plugin.getIslands().getLast();
 
         if (DEBUG)
+        {
             plugin.getLogger().info("DEBUG: last = " + last);
-        // Find the next free spot
+            // Find the next free spot
+        }
 
         if (last == null) {
             last = new Location(plugin.getIslandWorldManager().getIslandWorld(), plugin.getSettings().getIslandXOffset() + plugin.getSettings().getIslandStartX(),
                     plugin.getSettings().getIslandHeight(), plugin.getSettings().getIslandZOffset() + plugin.getSettings().getIslandStartZ());
         }
         Location next = last.clone();
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: last 2 = " + last);
+        }
         while (plugin.getIslands().isIsland(next)) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: getting next loc");
+            }
             next = nextGridLocation(next);
         };
         // Make the last next, last
         last = next.clone();
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: last 3 = " + last);
+        }
         return next;
     }
 

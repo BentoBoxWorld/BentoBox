@@ -22,7 +22,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
     BSkyBlock plugin;
     Random rand = new Random();
     PerlinOctaveGenerator gen;
-    
+
     /**
      * @param plugin
      */

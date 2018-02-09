@@ -39,7 +39,7 @@ public class Island implements DataObject {
 
     private String uniqueId = "";
 
-    //// Island ////    
+    //// Island ////
     // The center of the island itself
     private Location center;
 
@@ -77,13 +77,13 @@ public class Island implements DataObject {
     //// State ////
     private boolean locked = false;
     private boolean spawn = false;
-    
+
     private boolean purgeProtected = false;
-    
+
     //// Protection flags ////
     @Adapter(FlagSerializer.class)
     private HashMap<Flag, Integer> flags = new HashMap<>();
-    
+
     private int levelHandicap;
     private Location spawnPoint;
 
@@ -91,16 +91,16 @@ public class Island implements DataObject {
 
     public Island(Location location, UUID owner, int protectionRange) {
         setOwner(owner);
-        this.createdDate = System.currentTimeMillis();
-        this.updatedDate = System.currentTimeMillis();
-        this.world = location.getWorld();
-        this.center = location;
-        this.range = BSkyBlock.getInstance().getSettings().getIslandDistance();
-        this.minX = center.getBlockX() - range;
-        this.minZ = center.getBlockZ() - range;
+        createdDate = System.currentTimeMillis();
+        updatedDate = System.currentTimeMillis();
+        world = location.getWorld();
+        center = location;
+        range = BSkyBlock.getInstance().getSettings().getIslandDistance();
+        minX = center.getBlockX() - range;
+        minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;
-        this.minProtectedX = center.getBlockX() - protectionRange;
-        this.minProtectedZ = center.getBlockZ() - protectionRange;
+        minProtectedX = center.getBlockX() - protectionRange;
+        minProtectedZ = center.getBlockZ() - protectionRange;
     }
 
     /**
@@ -108,10 +108,11 @@ public class Island implements DataObject {
      * @param playerUUID
      */
     public void addMember(UUID playerUUID) {
-        if (playerUUID != null)
+        if (playerUUID != null) {
             members.put(playerUUID, RanksManager.MEMBER_RANK);
+        }
     }
-    
+
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
@@ -120,8 +121,9 @@ public class Island implements DataObject {
      */
     public boolean addToBanList(UUID targetUUID) {
         // TODO fire ban event
-        if (targetUUID != null)
+        if (targetUUID != null) {
             members.put(targetUUID, RanksManager.BANNED_RANK);
+        }
         return true;
     }
 
@@ -350,6 +352,7 @@ public class Island implements DataObject {
         return result;
     }
 
+    @Override
     public String getUniqueId() {
         // Island's have UUID's that are randomly assigned if they do not exist
         if (uniqueId.isEmpty()) {
@@ -418,7 +421,7 @@ public class Island implements DataObject {
      * @return true if allowed, false if not
      */
     public boolean isAllowed(Flag flag) {
-        return this.getFlag(flag) >= 0;
+        return getFlag(flag) >= 0;
     }
 
     /**
@@ -429,7 +432,7 @@ public class Island implements DataObject {
      */
     public boolean isAllowed(User user, Flag flag) {
         //Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
-        return this.getRank(user) >= this.getFlag(flag);
+        return getRank(user) >= getFlag(flag);
     }
 
     /**
@@ -547,7 +550,7 @@ public class Island implements DataObject {
             }
         } else {
             // Unlock the island
-            IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build(); 
+            IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build();
             if(!event.isCancelled()){
                 this.locked = locked;
             }
@@ -603,14 +606,16 @@ public class Island implements DataObject {
      */
     public void setOwner(UUID owner){
         this.owner = owner;
-        if (owner == null) return;
+        if (owner == null) {
+            return;
+        }
         // Defensive code: demote any previous owner
         for (Entry<UUID, Integer> en : members.entrySet()) {
             if (en.getValue().equals(RanksManager.OWNER_RANK)) {
                 en.setValue(RanksManager.MEMBER_RANK);
             }
         }
-        this.members.put(owner, RanksManager.OWNER_RANK);
+        members.put(owner, RanksManager.OWNER_RANK);
     }
 
     /**
@@ -640,23 +645,25 @@ public class Island implements DataObject {
      * @param rank
      */
     public void setRank(User user, int rank) {
-        if (user.getUniqueId() != null) members.put(user.getUniqueId(), rank);
+        if (user.getUniqueId() != null) {
+            members.put(user.getUniqueId(), rank);
+        }
     }
 
     /**
      * @param ranks the ranks to set
      */
     public void setRanks(HashMap<UUID, Integer> ranks) {
-        this.members = ranks;
+        members = ranks;
     }
 
     /**
      * @param isSpawn - if the island is the spawn
      */
     public void setSpawn(boolean isSpawn){
-        this.spawn = isSpawn;
+        spawn = isSpawn;
     }
-    
+
     /**
      * Resets the flags to their default as set in config.yml for the spawn
      */
@@ -671,6 +678,7 @@ public class Island implements DataObject {
 
     }
 
+    @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }

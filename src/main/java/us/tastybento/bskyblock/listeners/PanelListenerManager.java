@@ -55,12 +55,16 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (getOpenPanels().containsKey(event.getPlayer().getUniqueId())) getOpenPanels().remove(event.getPlayer().getUniqueId());
+        if (getOpenPanels().containsKey(event.getPlayer().getUniqueId())) {
+            getOpenPanels().remove(event.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogOut(PlayerQuitEvent event) {
-        if (getOpenPanels().containsKey(event.getPlayer().getUniqueId())) getOpenPanels().remove(event.getPlayer().getUniqueId());
+        if (getOpenPanels().containsKey(event.getPlayer().getUniqueId())) {
+            getOpenPanels().remove(event.getPlayer().getUniqueId());
+        }
     }
 
     /**
@@ -69,5 +73,5 @@ public class PanelListenerManager implements Listener {
     public static HashMap<UUID, Panel> getOpenPanels() {
         return openPanels;
     }
-    
+
 }

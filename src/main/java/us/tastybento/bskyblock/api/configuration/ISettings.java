@@ -31,7 +31,7 @@ public interface ISettings<T> {
     }
 
     default void saveBackup() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
-        // Save backup 
+        // Save backup
         @SuppressWarnings("unchecked")
         AbstractDatabaseHandler<T> backupHandler =  (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         backupHandler.saveObject(getInstance());
@@ -41,11 +41,11 @@ public interface ISettings<T> {
     @SuppressWarnings("unchecked")
     default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException  {
         // See if this settings object already exists in the database
-        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(this.getClass());
+        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getClass());
         T dbConfig = null;
         if (dbhandler.objectExits(this.getUniqueId())) {
             // Load it
-                dbConfig = dbhandler.loadObject(getUniqueId());
+            dbConfig = dbhandler.loadObject(getUniqueId());
         }
         // Get the handler
         AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());

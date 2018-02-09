@@ -44,8 +44,9 @@ public class User {
      * @return user
      */
     public static User getInstance(Player player) {
-        if (player == null)
+        if (player == null) {
             return null;
+        }
         if (users.containsKey(player.getUniqueId())) {
             return users.get(player.getUniqueId());
         }
@@ -80,22 +81,22 @@ public class User {
     private final CommandSender sender;
 
     private User(CommandSender sender) {
-        this.player = null;
-        this.playerUUID = null;
+        player = null;
+        playerUUID = null;
         this.sender = sender;
     }
 
     private User(Player player) {
         this.player = player;
-        this.sender = player;
-        this.playerUUID = player.getUniqueId();
+        sender = player;
+        playerUUID = player.getUniqueId();
         users.put(player.getUniqueId(), this);
     }
 
     private User(UUID playerUUID) {
-        this.player = Bukkit.getPlayer(playerUUID);
+        player = Bukkit.getPlayer(playerUUID);
         this.playerUUID = playerUUID;
-        this.sender = null;
+        sender = null;
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {
@@ -160,7 +161,9 @@ public class User {
         String translation = plugin.getLocalesManager().get(this, reference);
 
         // If no translation has been found, return the reference for debug purposes.
-        if (translation == null) return reference;
+        if (translation == null) {
+            return reference;
+        }
 
         // Then replace variables
         if (variables.length > 1) {
@@ -168,7 +171,7 @@ public class User {
                 translation = translation.replace(variables[i], variables[i+1]);
             }
         }
-        
+
         return ChatColor.translateAlternateColorCodes('&', translation);
     }
 
@@ -182,7 +185,7 @@ public class User {
         String translation = getTranslation(reference, variables);
         return translation.equals(reference) ? "" : translation;
     }
-    
+
     /**
      * Send a message to sender if message is not empty. Does not include color codes or spaces.
      * @param reference - language file reference
@@ -199,7 +202,7 @@ public class User {
             }
         }
     }
-    
+
     /**
      * Sends a message to sender without any modification (colors, multi-lines, placeholders).
      * Should only be used for debug purposes.
@@ -244,23 +247,24 @@ public class User {
     public void closeInventory() {
         player.closeInventory();
     }
-    
+
     /**
      * Get the user's locale
      * @return Locale
      */
     public Locale getLocale() {
         if (sender instanceof Player) {
-            if (!plugin.getPlayers().getLocale(this.playerUUID).isEmpty())
-                return Locale.forLanguageTag(plugin.getPlayers().getLocale(this.playerUUID));
-        } 
+            if (!plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
+                return Locale.forLanguageTag(plugin.getPlayers().getLocale(playerUUID));
+            }
+        }
         return Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage());
 
     }
-    
+
     @SuppressWarnings("deprecation")
     public void updateInventory() {
         player.updateInventory();
-        
+
     }
 }

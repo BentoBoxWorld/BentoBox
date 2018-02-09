@@ -15,12 +15,12 @@ public class IslandAboutCommand extends CompositeCommand {
     public IslandAboutCommand(CompositeCommand islandCommand) {
         super(islandCommand, "about", "ab");
     }
-    
+
     @Override
     public void setup() {
-        this.setDescription("commands.island.about.description");
+        setDescription("commands.island.about.description");
     }
-    
+
     @Override
     public boolean execute(User user, List<String> args) {
         user.sendRawMessage("About " + BSkyBlock.getInstance().getDescription().getName() + " v" + BSkyBlock.getInstance().getDescription().getVersion() + ":");

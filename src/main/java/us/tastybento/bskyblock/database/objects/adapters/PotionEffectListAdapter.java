@@ -22,13 +22,13 @@ public class PotionEffectListAdapter implements AdapterInterface<List<PotionEffe
     @SuppressWarnings("unchecked")
     @Override
     public List<String> deserialize(Object to) {
-       List<String> result = new ArrayList<>();
-       if (to instanceof ArrayList) {
-           for (PotionEffectType type: (ArrayList<PotionEffectType>)to) {
-               result.add(type.getName());
-           } 
-       }
-       return result;
+        List<String> result = new ArrayList<>();
+        if (to instanceof ArrayList) {
+            for (PotionEffectType type: (ArrayList<PotionEffectType>)to) {
+                result.add(type.getName());
+            }
+        }
+        return result;
     }
 
 }

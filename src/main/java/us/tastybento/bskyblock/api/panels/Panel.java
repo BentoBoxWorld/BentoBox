@@ -22,7 +22,7 @@ public class Panel {
         // If size is undefined (0) then use the number of items
         if (size == 0) {
             size = items.keySet().size();
-        } 
+        }
         // Create panel
         if (size > 0) {
             // Make sure size is a multiple of 9

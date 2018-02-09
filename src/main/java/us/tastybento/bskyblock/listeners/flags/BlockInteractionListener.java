@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -65,7 +65,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
 
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.CHEST);
             break;
-            
+
         case ACACIA_DOOR:
         case BIRCH_DOOR:
         case DARK_OAK_DOOR:
@@ -87,7 +87,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case SPRUCE_FENCE_GATE:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.GATE);
             break;
-           
+
         case BURNING_FURNACE:
         case FURNACE:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.FURNACE);
@@ -121,7 +121,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
         default:
             break;
         }
-        // Now check for in-hand items        
+        // Now check for in-hand items
         if (e.getItem() != null) {
             switch (e.getItem().getType()) {
             case ENDER_PEARL:
@@ -132,7 +132,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
                 break;
             default:
                 break;
-            
+
             }
         }
     }

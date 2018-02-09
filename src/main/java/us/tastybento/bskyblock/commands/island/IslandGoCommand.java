@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.commands.island;
 
@@ -26,9 +26,9 @@ public class IslandGoCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.home");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.go.description");
+        setPermission(Constants.PERMPREFIX + "island.home");
+        setOnlyPlayer(true);
+        setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
     }
 

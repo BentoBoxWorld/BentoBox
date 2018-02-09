@@ -20,57 +20,57 @@ import us.tastybento.bskyblock.managers.AddonsManager;
  */
 public class AddonClassLoader extends URLClassLoader {
 
-    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
-	private Addon addon;
+    private final Map<String, Class<?>> classes = new HashMap<>();
+    private Addon addon;
     private AddonsManager loader;
-	
-	public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, ClassLoader parent) 
-	        throws InvalidAddonInheritException, 
-	        MalformedURLException, 
-	        InvalidAddonFormatException, 
-	        InvalidDescriptionException, 
-	        InstantiationException, 
-	        IllegalAccessException {
-		super(new URL[]{path.toURI().toURL()}, parent);
-		
-		this.loader = addonsManager;
-				
-		Class<?> javaClass = null;
-		try {
-		    //Bukkit.getLogger().info("data " + data.get("main"));
-		    /*
+
+    public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, ClassLoader parent)
+            throws InvalidAddonInheritException,
+            MalformedURLException,
+            InvalidAddonFormatException,
+            InvalidDescriptionException,
+            InstantiationException,
+            IllegalAccessException {
+        super(new URL[]{path.toURI().toURL()}, parent);
+
+        loader = addonsManager;
+
+        Class<?> javaClass = null;
+        try {
+            //Bukkit.getLogger().info("data " + data.get("main"));
+            /*
 		    for (Entry<String, String> en : data.entrySet()) {
 		        Bukkit.getLogger().info(en.getKey() + " => " + en.getValue());
 		    }*/
-			javaClass = Class.forName(data.get("main"), true, this);
-			if(data.get("main").contains("us.tastybento")){
-				throw new InvalidAddonFormatException("Packages declaration cannot start with 'us.tastybento'");
-			}
-		} catch (ClassNotFoundException e) {
-			BSkyBlock.getInstance().getLogger().severe("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "'");
-			throw new InvalidDescriptionException("Invalid addon.yml");
-		}
-		
-		Class<? extends Addon> addonClass;
-		try{
-			addonClass = javaClass.asSubclass(Addon.class);
-		} catch(ClassCastException e){
-			throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
-		}
-		
-		this.addon = addonClass.newInstance();
-		addon.setDescription(this.asDescription(data));
-	}
-	
-	private AddonDescription asDescription(Map<String, String> data){
-		String[] authors = data.get("authors").split("\\,");
-		
-		return new AddonDescriptionBuilder(data.get("name"))
-		.withVersion(data.get("version"))
-		.withAuthor(authors).build();
-	}
+            javaClass = Class.forName(data.get("main"), true, this);
+            if(data.get("main").contains("us.tastybento")){
+                throw new InvalidAddonFormatException("Packages declaration cannot start with 'us.tastybento'");
+            }
+        } catch (ClassNotFoundException e) {
+            BSkyBlock.getInstance().getLogger().severe("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "'");
+            throw new InvalidDescriptionException("Invalid addon.yml");
+        }
 
-	
+        Class<? extends Addon> addonClass;
+        try{
+            addonClass = javaClass.asSubclass(Addon.class);
+        } catch(ClassCastException e){
+            throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
+        }
+
+        addon = addonClass.newInstance();
+        addon.setDescription(asDescription(data));
+    }
+
+    private AddonDescription asDescription(Map<String, String> data){
+        String[] authors = data.get("authors").split("\\,");
+
+        return new AddonDescriptionBuilder(data.get("name"))
+                .withVersion(data.get("version"))
+                .withAuthor(authors).build();
+    }
+
+
     /* (non-Javadoc)
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
@@ -118,5 +118,5 @@ public class AddonClassLoader extends URLClassLoader {
     public Addon getAddon() {
         return addon;
     }
-    
+
 }

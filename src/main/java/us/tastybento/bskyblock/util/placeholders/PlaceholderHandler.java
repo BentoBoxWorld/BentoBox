@@ -10,7 +10,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * Handles hooks with other Placeholder APIs.
- * 
+ *
  * @author Poslovitch, Tastybento
  */
 public class PlaceholderHandler {
@@ -82,7 +82,9 @@ public class PlaceholderHandler {
      * @return updated message
      */
     public static String replacePlaceholders(CommandSender receiver, String message){
-        if(message == null || message.isEmpty()) return "";
+        if(message == null || message.isEmpty()) {
+            return "";
+        }
 
         for(PlaceholderInterface api : apis){
             message = api.replacePlaceholders(receiver, message);

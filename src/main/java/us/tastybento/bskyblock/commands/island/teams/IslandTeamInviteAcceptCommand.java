@@ -18,22 +18,23 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
     public IslandTeamInviteAcceptCommand(IslandTeamInviteCommand islandTeamInviteCommand) {
         super(islandTeamInviteCommand, "accept");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.team.invite.accept.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setDescription("commands.island.team.invite.accept.description");
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
-        
+
         Bukkit.getLogger().info("DEBUG: accept - " + inviteList.toString());
-        
+
         UUID playerUUID = user.getUniqueId();
-        if(!inviteList.containsKey(playerUUID))
-                return false;
+        if(!inviteList.containsKey(playerUUID)) {
+            return false;
+        }
         // Check if player has been invited
         if (!inviteList.containsKey(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
@@ -51,20 +52,24 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             inviteList.remove(playerUUID);
             return false;
         }
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: Invite is valid");
+        }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                .getIsland(prospectiveTeamLeaderUUID))
+                        .getIsland(prospectiveTeamLeaderUUID))
                 .reason(TeamEvent.Reason.JOIN)
                 .involvedPlayer(playerUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return true;
+        if (event.isCancelled()) {
+            return true;
+        }
         // Remove the invite
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: Removing player from invite list");
+        }
         inviteList.remove(playerUUID);
         // Put player into Spectator mode
         user.setGameMode(GameMode.SPECTATOR);
@@ -100,8 +105,9 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", user.getName());
         }
         getIslands().save(false);
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMemberSet().toString());
+        }
         return true;
     }
 

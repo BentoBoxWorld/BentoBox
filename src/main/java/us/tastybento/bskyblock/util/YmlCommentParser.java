@@ -160,7 +160,7 @@ public class YmlCommentParser {
                 if (comment != null) {
                     sb.append((lineNum > 1 ? "\n" : "") + comment
                             .replaceAll("^#", Matcher.quoteReplacement(indent + "#"))
-                            .replaceAll("\n#", Matcher.quoteReplacement("\n" + indent + "#")));
+                    .replaceAll("\n#", Matcher.quoteReplacement("\n" + indent + "#")));
                 }
                 if (value != null && !value.trim().isEmpty()) {
                     // Scalar with value
@@ -197,7 +197,7 @@ public class YmlCommentParser {
 
         private Section(String name, int indentation) {
             this.indentation = indentation;
-            this.path = name;
+            path = name;
         }
 
         public int getIndentation() {

@@ -29,8 +29,8 @@ public class PanelItemBuilder {
     }
 
     public PanelItemBuilder name(String name) {
-         this.name = name;
-         return this;
+        this.name = name;
+        return this;
     }
 
     public PanelItemBuilder description(List<String> description) {
@@ -47,7 +47,7 @@ public class PanelItemBuilder {
         this.description.add(description);
         return this;
     }
-    
+
     public PanelItemBuilder glow(boolean glow) {
         this.glow = glow;
         return this;
@@ -59,8 +59,9 @@ public class PanelItemBuilder {
     }
 
     public PanelItem build() {
-        if (icon == null)
+        if (icon == null) {
             Bukkit.getLogger().info("DEBUG: icon is null");
+        }
         return new PanelItem(icon, name, description, glow, clickHandler);
     }
 

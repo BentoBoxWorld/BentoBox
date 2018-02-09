@@ -49,7 +49,7 @@ public class RanksManager {
                 plugin.getLogger().severe("Error loading custom rank: " + en.getKey() + " " + en.getValue() + " skipping...");
             }
         }
-    } 
+    }
 
     /**
      * Try to add a new rank. Owner, member, visitor and banned ranks cannot be changed.
@@ -67,12 +67,12 @@ public class RanksManager {
         ranks.put(reference, value);
         // Sort
         ranks = ranks.entrySet().stream()
-        .sorted(Map.Entry.comparingByValue())
-        .collect(Collectors.toMap(
-           Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
+                .sorted(Map.Entry.comparingByValue())
+                .collect(Collectors.toMap(
+                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
         return true;
     }
-    
+
     /**
      * Try to remove a rank. Owner, member, visitor and banned ranks cannot be removed.
      * @param reference
@@ -85,10 +85,10 @@ public class RanksManager {
                 || reference.equalsIgnoreCase(BANNED_RANK_REF)) {
             return false;
         }
-        
+
         return ranks.remove(reference) == null ? false : true;
     }
-    
+
     /**
      * Get the rank value for this reference
      * @param reference - locale reference to the name of this rank
@@ -97,7 +97,7 @@ public class RanksManager {
     public int getRankValue(String reference) {
         return ranks.getOrDefault(reference, VISITOR_RANK);
     }
-    
+
     /**
      * Get the ranks. Ranks are listed in ascending order
      * @return immutable map of ranks

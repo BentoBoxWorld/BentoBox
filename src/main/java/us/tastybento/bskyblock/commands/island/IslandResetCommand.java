@@ -20,12 +20,12 @@ public class IslandResetCommand extends CompositeCommand {
     public IslandResetCommand(CompositeCommand islandCommand) {
         super(islandCommand, "reset", "restart");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.create");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.reset.description");
+        setPermission(Constants.PERMPREFIX + "island.create");
+        setOnlyPlayer(true);
+        setDescription("commands.island.reset.description");
     }
 
     @Override
@@ -36,7 +36,7 @@ public class IslandResetCommand extends CompositeCommand {
         }
         if (!getIslands().isOwner(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
-            return false; 
+            return false;
         }
         if (getPlugin().getPlayers().inTeam(user.getUniqueId())) {
             user.sendMessage("commands.island.reset.must-remove-members");
@@ -46,15 +46,18 @@ public class IslandResetCommand extends CompositeCommand {
         player.setGameMode(GameMode.SPECTATOR);
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(player.getUniqueId());
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: old island is at " + oldIsland.getCenter().getBlockX() + "," + oldIsland.getCenter().getBlockZ());
+        }
         // Remove them from this island (it still exists and will be deleted later)
         getIslands().removePlayer(player.getUniqueId());
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: old island's owner is " + oldIsland.getOwner());
+        }
         // Create new island and then delete the old one
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: making new island ");
+        }
         try {
             NewIsland.builder(getPlugin())
             .player(player)

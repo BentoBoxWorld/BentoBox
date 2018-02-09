@@ -16,9 +16,9 @@ public interface AdapterInterface<S,V> {
      * @return serialized object
      */
     S serialize(Object object);
-     
-     /**
-      * Deserialize object
+
+    /**
+     * Deserialize object
      * @param object
      * @return deserialized object
      */

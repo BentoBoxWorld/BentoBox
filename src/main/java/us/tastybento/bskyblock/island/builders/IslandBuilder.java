@@ -50,7 +50,7 @@ public class IslandBuilder {
     public IslandBuilder(BSkyBlock plugin, Island island) {
         this.plugin = plugin;
         this.island = island;
-        this.world = island.getWorld();
+        world = island.getWorld();
     }
 
 
@@ -61,16 +61,16 @@ public class IslandBuilder {
         this.type = type;
         switch(type) {
         case END:
-            this.world = plugin.getIslandWorldManager().getEndWorld();
+            world = plugin.getIslandWorldManager().getEndWorld();
             break;
         case ISLAND:
-            this.world = plugin.getIslandWorldManager().getIslandWorld();
+            world = plugin.getIslandWorldManager().getIslandWorld();
             break;
         case NETHER:
-            this.world = plugin.getIslandWorldManager().getNetherWorld();
+            world = plugin.getIslandWorldManager().getNetherWorld();
             break;
         default:
-            this.world = island.getWorld();
+            world = island.getWorld();
             break;
 
         }
@@ -82,8 +82,8 @@ public class IslandBuilder {
      * @param player the player to set
      */
     public IslandBuilder setPlayer(Player player) {
-        this.playerUUID = player.getUniqueId();
-        this.playerName = player.getName();
+        playerUUID = player.getUniqueId();
+        playerName = player.getName();
         return this;
     }
 
@@ -92,7 +92,7 @@ public class IslandBuilder {
      * @param list the default chestItems to set
      */
     public IslandBuilder setChestItems(List<ItemStack> list) {
-        this.chestItems = list;
+        chestItems = list;
         return this;
     }
 
@@ -109,7 +109,7 @@ public class IslandBuilder {
             generateNetherBlocks();
         } else if (type == IslandType.END){
             generateEndBlocks();
-        } 
+        }
         // Do other stuff
     }
 
@@ -477,12 +477,12 @@ public class IslandBuilder {
     private void placeSign(int x, int y, int z) {
         Block blockToChange = world.getBlockAt(x, y, z);
         blockToChange.setType(Material.SIGN_POST);
-        if (this.playerUUID != null) {
+        if (playerUUID != null) {
             Sign sign = (Sign) blockToChange.getState();
             User user = User.getInstance(playerUUID);
             for (int i = 0; i < 4; i++) {
                 sign.setLine(i, user.getTranslation("new-island.sign.line" + i, "[player]", playerName));
-            }         
+            }
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();
         }

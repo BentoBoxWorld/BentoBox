@@ -9,11 +9,11 @@ import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * Register placeholders
- * 
+ *
  * @author Poslovitch
  */
 public class Placeholders {
-    private static Set<Placeholder> placeholders = new HashSet<Placeholder>();
+    private static Set<Placeholder> placeholders = new HashSet<>();
 
     private BSkyBlock plugin;
 

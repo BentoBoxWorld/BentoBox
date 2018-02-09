@@ -14,7 +14,7 @@ public class IslandWorld {
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
     private static final String CREATING = "Creating ";
-    
+
     private BSkyBlock plugin;
     private static World islandWorld;
     private static World netherWorld;
@@ -91,7 +91,7 @@ public class IslandWorld {
             }
         }
 
-        
+
     }
 
     /**

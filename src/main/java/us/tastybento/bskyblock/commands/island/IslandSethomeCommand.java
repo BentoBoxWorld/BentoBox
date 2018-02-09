@@ -16,9 +16,9 @@ public class IslandSethomeCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.sethome");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.sethome.description");
+        setPermission(Constants.PERMPREFIX + "island.sethome");
+        setOnlyPlayer(true);
+        setDescription("commands.island.sethome.description");
         new CustomIslandMultiHomeHelp(this);
     }
 
@@ -32,7 +32,7 @@ public class IslandSethomeCommand extends CompositeCommand {
         }
         if (!getPlugin().getIslands().playerIsOnIsland(user)) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
-            return false; 
+            return false;
         }
         if (args.isEmpty()) {
             // island sethome

@@ -155,7 +155,7 @@ public class Settings implements ISettings<Settings> {
     // Reset
     @ConfigEntry(path = "island.reset.reset-limit")
     private int resetLimit = -1;
-    
+
     @ConfigEntry(path = "island.require-confirmation.reset")
     private boolean resetConfirmation = true;
 
@@ -164,7 +164,7 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "island.reset.leavers-lose-reset")
     private boolean leaversLoseReset = false;
-    
+
     @ConfigEntry(path = "island.reset.kicked-keep-inventory")
     private boolean kickedKeepInventory = false;
 
@@ -173,16 +173,16 @@ public class Settings implements ISettings<Settings> {
     private boolean removeMobsOnLogin = false;
     @ConfigEntry(path = "island.remove-mobs.on-island")
     private boolean removeMobsOnIsland = false;
-    
+
     @ConfigEntry(path = "island.remove-mobs.whitelist")
     private List<String> removeMobsWhitelist = new ArrayList<>();
 
     @ConfigEntry(path = "island.make-island-if-none")
     private boolean makeIslandIfNone = false;
-    
+
     @ConfigEntry(path = "island.immediate-teleport-on-island")
     private boolean immediateTeleportOnIsland = false;
-    
+
     private boolean respawnOnIsland = true;
 
     // Deaths
@@ -191,7 +191,7 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "island.deaths.sum-team")
     private boolean deathsSumTeam = false;
-    
+
     // Ranks
     @ConfigEntry(path = "island.customranks")
     private Map<String, Integer> customRanks = new HashMap<>();
@@ -250,10 +250,10 @@ public class Settings implements ISettings<Settings> {
 
     /*      SCHEMATICS      */
     private List<String> companionNames = new ArrayList<>();
-    
+
     @ConfigEntry(path = "island.chest-items")
     private List<ItemStack> chestItems = new ArrayList<>();
-    
+
     private EntityType companionType = EntityType.COW;
 
     private boolean useOwnGenerator;
@@ -267,13 +267,13 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "island.require-confirmation.kick-wait")
     private long kickWait = 300;
- 
+
     @ConfigEntry(path = "island.require-confirmation.leave")
     private boolean leaveConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
     private long leaveWait = 300;
-    
+
 
     /**
      * @return the acidDamage
@@ -540,6 +540,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the uniqueId
      */
+    @Override
     public String getUniqueId() {
         return uniqueId;
     }
@@ -1137,7 +1138,7 @@ public class Settings implements ISettings<Settings> {
     public void setRemoveMobsOnIsland(boolean removeMobsOnIsland) {
         this.removeMobsOnIsland = removeMobsOnIsland;
     }
-    
+
     /**
      * @param removeMobsOnLogin the removeMobsOnLogin to set
      */
@@ -1207,6 +1208,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param uniqueId the uniqueId to set
      */
+    @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
@@ -1240,6 +1242,6 @@ public class Settings implements ISettings<Settings> {
     public void setFakePlayers(Set<String> fakePlayers) {
         this.fakePlayers = fakePlayers;
     }
-    
+
 
 }

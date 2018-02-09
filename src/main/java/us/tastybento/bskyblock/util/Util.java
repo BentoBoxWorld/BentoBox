@@ -110,11 +110,11 @@ public class Util {
         // In this way, we can deduce what type needs to be written at runtime.
         Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
         // There could be more than one argument, so step through them
-        for (int i = 0; i < genericParameterTypes.length; i++) {
+        for (Type genericParameterType : genericParameterTypes) {
             // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if( genericParameterTypes[i] instanceof ParameterizedType ) {
-                // Get the actual type arguments of the parameter 
-                Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
+            if( genericParameterType instanceof ParameterizedType ) {
+                // Get the actual type arguments of the parameter
+                Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
                 result.addAll(Arrays.asList(parameters));
             }
         }
@@ -128,17 +128,20 @@ public class Util {
      */
     @SuppressWarnings("deprecation")
     public static List<ItemStack> getPlayerInHandItems(Player player) {
-        List<ItemStack> result = new ArrayList<ItemStack>(2);
+        List<ItemStack> result = new ArrayList<>(2);
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
                 || plugin.getServer().getVersion().contains("(MC: 1.8")) {
-            if (player.getItemInHand() != null)
+            if (player.getItemInHand() != null) {
                 result.add(player.getItemInHand());
+            }
             return result;
         }
-        if (player.getInventory().getItemInMainHand() != null)
+        if (player.getInventory().getItemInMainHand() != null) {
             result.add(player.getInventory().getItemInMainHand());
-        if (player.getInventory().getItemInOffHand() != null)
+        }
+        if (player.getInventory().getItemInOffHand() != null) {
             result.add(player.getInventory().getItemInOffHand());
+        }
         return result;
     }
 
@@ -152,8 +155,9 @@ public class Util {
      *         Credits to mikenon on GitHub!
      */
     public static String prettifyText(String ugly) {
-        if (!ugly.contains("_") && (!ugly.equals(ugly.toUpperCase())))
+        if (!ugly.contains("_") && (!ugly.equals(ugly.toUpperCase()))) {
             return ugly;
+        }
         String fin = "";
         ugly = ugly.toLowerCase();
         if (ugly.contains("_")) {
@@ -162,8 +166,9 @@ public class Util {
             for (String s : splt) {
                 i += 1;
                 fin += Character.toUpperCase(s.charAt(0)) + s.substring(1);
-                if (i < splt.length)
+                if (i < splt.length) {
                     fin += " ";
+                }
             }
         } else {
             fin += Character.toUpperCase(ugly.charAt(0)) + ugly.substring(1);
@@ -251,8 +256,8 @@ public class Util {
     }
 
     /**
-     * Returns all of the items that begin with the given start, 
-     * ignoring case.  Intended for tabcompletion. 
+     * Returns all of the items that begin with the given start,
+     * ignoring case.  Intended for tabcompletion.
      *
      * @param list
      * @param start
@@ -261,8 +266,9 @@ public class Util {
     public static List<String> tabLimit(final List<String> list, final String start) {
         final List<String> returned = new ArrayList<>();
         for (String s : list) {
-            if (s == null)
+            if (s == null) {
                 continue;
+            }
             if (s.toLowerCase().startsWith(start.toLowerCase())) {
                 returned.add(s);
             }
@@ -273,7 +279,7 @@ public class Util {
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
-     * 
+     *
      * @param file
      * @return
      */
@@ -312,12 +318,7 @@ public class Util {
     }
 
     public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                player.performCommand(string);               
-            }});
+        plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
 
     }
 

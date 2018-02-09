@@ -29,7 +29,7 @@ import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 
 public class Flags {
-    
+
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
     public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.DIRT).listener(new PlaceBlocksListener()).build();
 
@@ -61,7 +61,7 @@ public class Flags {
     public static final Flag BUCKET = new FlagBuilder().id("BUCKET").icon(Material.BUCKET).listener(new BucketListener()).build();
     public static final Flag COLLECT_LAVA = new FlagBuilder().id("COLLECT_LAVA").icon(Material.LAVA_BUCKET).build();
     public static final Flag COLLECT_WATER = new FlagBuilder().id("COLLECT_WATER").icon(Material.WATER_BUCKET).build();
-    public static final Flag MILKING = new FlagBuilder().id("MILKING").icon(Material.MILK_BUCKET).build();    
+    public static final Flag MILKING = new FlagBuilder().id("MILKING").icon(Material.MILK_BUCKET).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new FlagBuilder().id("CHORUS_FRUIT").icon(Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
@@ -79,7 +79,7 @@ public class Flags {
      * I'll take you to burn.
      * Fire
      * I'll take you to learn.
-     * You gonna burn, burn, burn 
+     * You gonna burn, burn, burn
      * Fire
      * I'll take you to burn
      * - The Crazy World of Arthur Brown
@@ -127,7 +127,7 @@ public class Flags {
         return Arrays.asList(Flags.class.getFields()).stream().map(field -> {
             try {
                 return (Flag)field.get(null);
-            } catch (IllegalArgumentException | IllegalAccessException e) {                
+            } catch (IllegalArgumentException | IllegalAccessException e) {
                 Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
             }
             return null;

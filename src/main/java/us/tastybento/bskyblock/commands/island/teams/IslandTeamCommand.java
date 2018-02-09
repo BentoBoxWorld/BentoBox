@@ -23,9 +23,9 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.team.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setDescription("commands.island.team.description");
 
         new IslandTeamInviteCommand(this);
         new IslandTeamLeaveCommand(this);
@@ -36,17 +36,20 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
-        if (DEBUG)
+        if (DEBUG) {
             getPlugin().getLogger().info("DEBUG: executing team command for " + playerUUID);
+        }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                .getIsland(playerUUID))
+                        .getIsland(playerUUID))
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(playerUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return true;
+        if (event.isCancelled()) {
+            return true;
+        }
         UUID teamLeaderUUID = getTeamLeader(user);
         Set<UUID> teamMembers = getMembers(user);
         if (teamLeaderUUID.equals(playerUUID)) {
@@ -69,9 +72,11 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
                     }
                 }
                 // Do some sanity checking
-                if (maxSize < 1) maxSize = 1;
+                if (maxSize < 1) {
+                    maxSize = 1;
+                }
             }
-            
+
             if (teamMembers.size() < maxSize) {
                 user.sendMessage("commands.island.team.invite.you-can-invite", "[number]", String.valueOf(maxSize - teamMembers.size()));
             } else {

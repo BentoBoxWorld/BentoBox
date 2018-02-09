@@ -15,7 +15,7 @@ public class BSBLocale {
 
     public BSBLocale(Locale locale, File file) {
         this.locale = locale;
-        this.config = YamlConfiguration.loadConfiguration(file);
+        config = YamlConfiguration.loadConfiguration(file);
     }
 
     /**
@@ -35,7 +35,9 @@ public class BSBLocale {
      * @return the locale language
      */
     public String getLanguage(){
-        if(locale == null) return "unknown";
+        if(locale == null) {
+            return "unknown";
+        }
 
         return locale.getDisplayLanguage();
     }
@@ -45,7 +47,9 @@ public class BSBLocale {
      * @return the locale country
      */
     public String getCountry(){
-        if(locale == null) return "unknown";
+        if(locale == null) {
+            return "unknown";
+        }
 
         return locale.getDisplayCountry();
     }
@@ -55,7 +59,7 @@ public class BSBLocale {
      * @return the locale language tag
      */
     public String toLanguageTag(){
-        return this.locale.toLanguageTag();
+        return locale.toLanguageTag();
     }
 
     /**

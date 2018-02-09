@@ -11,7 +11,7 @@ import us.tastybento.bskyblock.util.placeholders.Placeholders.Placeholder;
 
 /**
  * Built-in placeholder API
- * 
+ *
  * @author Poslovitch
  */
 public class InternalPlaceholderImpl implements PlaceholderInterface{
@@ -33,7 +33,9 @@ public class InternalPlaceholderImpl implements PlaceholderInterface{
 
     @Override
     public String replacePlaceholders(CommandSender receiver, String message) {
-        if(message == null || message.isEmpty()) return "";
+        if(message == null || message.isEmpty()) {
+            return "";
+        }
 
         for(Placeholder placeholder : Placeholders.getPlaceholders()){
             String identifier = "{" + placeholder.getIdentifier() + "}";

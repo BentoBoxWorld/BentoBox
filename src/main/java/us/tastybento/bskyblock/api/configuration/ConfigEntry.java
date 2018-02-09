@@ -22,5 +22,5 @@ public @interface ConfigEntry {
     boolean experimental() default false;
     boolean needsReset() default false;
     GameType specificTo() default GameType.BOTH;
-    
+
 }

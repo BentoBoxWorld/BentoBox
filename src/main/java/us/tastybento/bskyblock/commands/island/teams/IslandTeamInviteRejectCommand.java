@@ -13,12 +13,12 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
     public IslandTeamInviteRejectCommand(IslandTeamInviteCommand islandTeamInviteCommand) {
         super(islandTeamInviteCommand, "reject");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.team.invite.reject.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setDescription("commands.island.team.invite.reject.description");
     }
 
     @Override
@@ -29,12 +29,14 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
-                    .getIsland(inviteList.get(playerUUID)))
+                            .getIsland(inviteList.get(playerUUID)))
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
             getPlugin().getServer().getPluginManager().callEvent(event);
-            if (event.isCancelled()) return false;
+            if (event.isCancelled()) {
+                return false;
+            }
 
             // Remove this player from the global invite list
             inviteList.remove(user.getUniqueId());

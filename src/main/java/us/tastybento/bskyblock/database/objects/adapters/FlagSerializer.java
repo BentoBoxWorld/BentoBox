@@ -10,7 +10,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
 
 /**
- * Serializes the {@link us.tastybento.bskyblock.database.objects.Island#getFlags() getFlags()} and 
+ * Serializes the {@link us.tastybento.bskyblock.database.objects.Island#getFlags() getFlags()} and
  * {@link us.tastybento.bskyblock.database.objects.Island#setFlags() setFlags()}
  * in {@link us.tastybento.bskyblock.database.objects.Island}
  * @author tastybento
@@ -21,8 +21,9 @@ public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, 
     @Override
     public HashMap<Flag, Integer> serialize(Object object) {
         HashMap<Flag, Integer> result = new HashMap<>();
-        if (object == null)
+        if (object == null) {
             return result;
+        }
         // For YAML
         if (object instanceof MemorySection) {
             MemorySection section = (MemorySection) object;
@@ -42,8 +43,9 @@ public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, 
     @Override
     public HashMap<String, Integer> deserialize(Object object) {
         HashMap<String, Integer> result = new HashMap<>();
-        if (object == null)
+        if (object == null) {
             return result;
+        }
         HashMap<Flag, Integer> flags = (HashMap<Flag, Integer>)object;
         for (Entry<Flag, Integer> en: flags.entrySet()) {
             result.put(en.getKey().getID(), en.getValue());

@@ -66,7 +66,9 @@ public class FlagsManager {
 
     public Flag getFlagByIcon(PanelItem item) {
         for (Flag flag : flags.values()) {
-            if (flag.getIcon().equals(item)) return flag;
+            if (flag.getIcon().equals(item)) {
+                return flag;
+            }
         }
         return null;
     }

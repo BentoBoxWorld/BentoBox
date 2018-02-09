@@ -50,9 +50,9 @@ public class BSkyBlock extends JavaPlugin {
         // Save the default config from config.yml
         saveDefaultConfig();
         setInstance(this);
-        
+
         settings = new Settings();
-        // Load settings from config.yml. This will check if there are any issues with it too.        
+        // Load settings from config.yml. This will check if there are any issues with it too.
         try {
             //settings.saveSettings();
             settings = settings.loadSettings();
@@ -88,7 +88,7 @@ public class BSkyBlock extends JavaPlugin {
             islandWorldManager = new IslandWorld(plugin);
 
             getServer().getScheduler().runTask(plugin, () -> {
-                
+
                 // Load Flags
                 flagsManager = new FlagsManager(plugin);
 
@@ -187,7 +187,7 @@ public class BSkyBlock extends JavaPlugin {
     private static void setInstance(BSkyBlock plugin) {
         BSkyBlock.plugin = plugin;
     }
-    
+
     public static BSkyBlock getInstance() {
         return plugin;
     }

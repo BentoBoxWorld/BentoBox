@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -34,11 +34,11 @@ public class InventoryListener extends AbstractFlagListener {
     public void onMountInventoryClick(InventoryClickEvent e) {
         if (e.getInventory().getHolder() == null) {
             return;
-        }        
+        }
         if (e.getInventory().getHolder() instanceof Animals) {
             checkIsland(e, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
         }
-        else if (e.getInventory().getHolder() instanceof Chest 
+        else if (e.getInventory().getHolder() instanceof Chest
                 || e.getInventory().getHolder() instanceof Dispenser
                 || e.getInventory().getHolder() instanceof Hopper
                 || e.getInventory().getHolder() instanceof Dropper

@@ -34,13 +34,13 @@ public final class AddonsManager {
     private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
     private List<AddonClassLoader> loader;
-    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> classes = new HashMap<>();
     private BSkyBlock plugin;
 
     public AddonsManager(BSkyBlock plugin) {
         this.plugin = plugin;
-        this.addons = new ArrayList<>();
-        this.loader = new ArrayList<>();
+        addons = new ArrayList<>();
+        loader = new ArrayList<>();
     }
 
     /**
@@ -53,7 +53,7 @@ public final class AddonsManager {
                 for (File file : f.listFiles()) {
                     if (!file.isDirectory()) {
                         try {
-                            this.loadAddon(file);
+                            loadAddon(file);
                         } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
                             plugin.getLogger().severe("Could not load addon " + file.getName() + " : " + e.getMessage());
                         }
@@ -68,7 +68,7 @@ public final class AddonsManager {
             }
         }
 
-        this.addons.forEach(addon -> {
+        addons.forEach(addon -> {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
@@ -83,10 +83,14 @@ public final class AddonsManager {
      * @return
      */
     public Optional<Addon> getAddonByName(String name){
-        if(name.equals("")) return Optional.empty();
+        if(name.equals("")) {
+            return Optional.empty();
+        }
 
-        for(Addon addon  : this.addons){
-            if(addon.getDescription().getName().contains(name)) return Optional.of(addon);
+        for(Addon addon  : addons){
+            if(addon.getDescription().getName().contains(name)) {
+                return Optional.of(addon);
+            }
         }
         return Optional.empty();
     }
@@ -109,7 +113,7 @@ public final class AddonsManager {
                 // Open a reader to the jar
                 BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
                 // Grab the description in the addon.yml file
-                Map<String, String> data = this.data(reader);
+                Map<String, String> data = data(reader);
 
                 // Load the addon
                 AddonClassLoader loader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
@@ -133,7 +137,7 @@ public final class AddonsManager {
                 Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
 
                 // Add it to the list of addons
-                this.addons.add(addon);
+                addons.add(addon);
 
                 // Run the onLoad() method
                 addon.onLoad();
@@ -153,8 +157,9 @@ public final class AddonsManager {
     private Map<String, String> data(BufferedReader reader) {
         Map<String, String> map = new HashMap<>();
         reader.lines().forEach(string -> {
-            if (DEBUG)
+            if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: " + string);
+            }
             String[] data = string.split("\\: ");
             if (data.length > 1) {
                 map.put(data[0], data[1].substring(0, data[1].length()));
@@ -223,7 +228,7 @@ public final class AddonsManager {
     /**
      * Sets a class that this loader should know about
      * Code copied from Bukkit JavaPluginLoader
-     * 
+     *
      * @param name
      * @param clazz
      */

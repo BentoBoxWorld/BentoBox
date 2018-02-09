@@ -17,8 +17,9 @@ public class MySQLDatabaseResourceCloser {
      */
     public static void close(ResultSet... resultSets) {
 
-        if (resultSets == null)
+        if (resultSets == null) {
             return;
+        }
 
         for (ResultSet resultSet : resultSets) {
             if (resultSet != null) {
@@ -43,8 +44,9 @@ public class MySQLDatabaseResourceCloser {
          * CallableStatement, because they extend Statement.
          */
 
-        if (statements == null)
+        if (statements == null) {
             return;
+        }
 
         for (Statement statement : statements) {
             if (statement != null) {
@@ -64,8 +66,9 @@ public class MySQLDatabaseResourceCloser {
      *            Connections that should be closed
      */
     public static void close(Connection... connections) {
-        if (connections == null)
+        if (connections == null) {
             return;
+        }
 
         for (Connection connection : connections) {
             if (connection != null) {

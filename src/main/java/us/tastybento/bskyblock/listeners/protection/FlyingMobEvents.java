@@ -38,7 +38,7 @@ public class FlyingMobEvents implements Listener {
      */
     public FlyingMobEvents(BSkyBlock plugin) {
         this.plugin = plugin;
-        this.mobSpawnInfo = new WeakHashMap<>();
+        mobSpawnInfo = new WeakHashMap<>();
 
         plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             //Bukkit.getLogger().info("DEBUG: checking - mobspawn size = " + mobSpawnInfo.size());

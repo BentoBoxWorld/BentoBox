@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -21,14 +21,14 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class EntityInteractListener extends AbstractFlagListener {
-    
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked() instanceof ArmorStand) {
             checkIsland(e, e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
         }
     }
-    
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
         // Animal riding

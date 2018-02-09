@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -30,7 +30,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     private BSkyBlock plugin = BSkyBlock.getInstance();
     private User user = null;
-    
+
     /**
      * @return the plugin
      */
@@ -45,7 +45,7 @@ public abstract class AbstractFlagListener implements Listener {
     public void setPlugin(BSkyBlock plugin) {
         this.plugin = plugin;
     }
-    
+
     /**
      * Sets the player associated with this event.
      * If the user is a fake player, they are not counted.
@@ -60,7 +60,7 @@ public abstract class AbstractFlagListener implements Listener {
                 setUser(User.getInstance((Player)getPlayer.invoke(e)));
                 return true;
             }
-        } catch (Exception e1) {  // Do nothing 
+        } catch (Exception e1) {  // Do nothing
         }
         return false;
     }
@@ -70,7 +70,9 @@ public abstract class AbstractFlagListener implements Listener {
      * @param user
      */
     public AbstractFlagListener setUser(User user) {
-        if (!plugin.getSettings().getFakePlayers().contains(user.getName())) this.user = user;
+        if (!plugin.getSettings().getFakePlayers().contains(user.getName())) {
+            this.user = user;
+        }
         return this;
     }
 
@@ -92,11 +94,13 @@ public abstract class AbstractFlagListener implements Listener {
      * @param silent - if true, message is not sent
      */
     public void noGo(Event e, boolean silent) {
-        if (e instanceof Cancellable)       
+        if (e instanceof Cancellable) {
             ((Cancellable)e).setCancelled(true);
+        }
         if (user != null) {
-            if (!silent)
+            if (!silent) {
                 user.sendMessage("protection.protected");
+            }
             user.updateInventory();
         }
     }
@@ -137,7 +141,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param breakBlocks
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flag breakBlocks) { 
+    public boolean checkIsland(Event e, Location loc, Flag breakBlocks) {
         return checkIsland(e, loc, breakBlocks, false);
     }
 
@@ -152,7 +156,9 @@ public abstract class AbstractFlagListener implements Listener {
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If this is not an Island World, skip
-        if (!inWorld(loc)) return true;
+        if (!inWorld(loc)) {
+            return true;
+        }
 
         // Get the island and if present
         Optional<Island> island = getIslands().getIslandAt(loc);
@@ -161,10 +167,10 @@ public abstract class AbstractFlagListener implements Listener {
         if (flag.getType().equals(FlagType.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
             return island.map(x -> x.isAllowed(flag)).orElse(flag.isDefaultSetting());
-        } 
-        
+        }
+
         // Protection flag
-        
+
         // If the user is not set already, try to get it from the event
         if (user == null) {
             // Set the user associated with this event

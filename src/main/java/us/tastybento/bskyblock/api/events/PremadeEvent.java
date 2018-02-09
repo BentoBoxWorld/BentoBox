@@ -6,7 +6,7 @@ import org.bukkit.event.HandlerList;
 public abstract class PremadeEvent extends Event {
 
     private static final HandlerList handlers = new HandlerList();
-	
+
     @Override
     public HandlerList getHandlers() {
         return handlers;

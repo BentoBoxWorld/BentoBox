@@ -134,10 +134,10 @@ public class TeamEvent {
         }
 
         public TeamEventBuilder location(Location center) {
-            this.location = center;
+            location = center;
             return this;
         }
-        
+
         public IslandBaseEvent build() {
             switch (reason) {
             case JOIN:

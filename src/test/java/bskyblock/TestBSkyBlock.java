@@ -38,6 +38,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -98,14 +99,14 @@ public class TestBSkyBlock {
         Mockito.when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         PluginManager pluginManager = mock(PluginManager.class);
         Mockito.when(server.getPluginManager()).thenReturn(pluginManager);
-        
+
         sender = mock(CommandSender.class);
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
         visitorToIsland = mock(Player.class);
         Mockito.when(player.hasPermission(Constants.PERMPREFIX + "default.permission")).thenReturn(true);
 
-        
+
         //Mockito.when(plugin.getServer()).thenReturn(server);
 
         location = mock(Location.class);
@@ -113,40 +114,40 @@ public class TestBSkyBlock {
         Mockito.when(location.getBlockX()).thenReturn(0);
         Mockito.when(location.getBlockY()).thenReturn(0);
         Mockito.when(location.getBlockZ()).thenReturn(0);
-        
+
         Mockito.when(player.getLocation()).thenReturn(location);
         Mockito.when(ownerOfIsland.getLocation()).thenReturn(location);
         Mockito.when(visitorToIsland.getLocation()).thenReturn(location);
-        
+
         Mockito.when(player.getUniqueId()).thenReturn(MEMBER_UUID);
         Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(OWNER_UUID);
         Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
-        // Mock itemFactory for ItemStack        
+        // Mock itemFactory for ItemStack
         ItemFactory itemFactory = PowerMockito.mock(ItemFactory.class);
         PowerMockito.when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         ItemMeta itemMeta = PowerMockito.mock(ItemMeta.class);
-        PowerMockito.when(itemFactory.getItemMeta(Mockito.any())).thenReturn(itemMeta);
-        
+        PowerMockito.when(itemFactory.getItemMeta(Matchers.any())).thenReturn(itemMeta);
+
         PowerMockito.mockStatic(Flags.class);
-        
+
         plugin = Mockito.mock(BSkyBlock.class);
         flagsManager = new FlagsManager(plugin);
         Mockito.when(plugin.getFlagsManager()).thenReturn(flagsManager);
-        
+
         block = Mockito.mock(Block.class);
-        
+
         // Worlds
         IslandWorld iwm = mock(IslandWorld.class);
         Mockito.when(plugin.getIslandWorldManager()).thenReturn(iwm);
         Mockito.when(iwm.getIslandWorld()).thenReturn(world);
         Mockito.when(iwm.getNetherWorld()).thenReturn(world);
         Mockito.when(iwm.getEndWorld()).thenReturn(world);
-        
+
         // User
         //User user = Mockito.mock(User.class);
         //Mockito.when(user.getName()).thenReturn("tastybento");
-        
+
         // Islands
         IslandsManager im = mock(IslandsManager.class);
         Mockito.when(plugin.getIslands()).thenReturn(im);
@@ -162,12 +163,12 @@ public class TestBSkyBlock {
         Bukkit.getLogger().info("SETUP: owner UUID = " + OWNER_UUID);
         Bukkit.getLogger().info("SETUP: member UUID = " + MEMBER_UUID);
         Bukkit.getLogger().info("SETUP: visitor UUID = " + VISITOR_UUID);
-        Mockito.when(im.getIslandAt(Mockito.any())).thenReturn(Optional.of(island));
+        Mockito.when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
 
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
-        
+
     }
 
     @Test
@@ -181,7 +182,7 @@ public class TestBSkyBlock {
                 .build();
         assertEquals(playerUUID, event.getPlayerUUID());
     }
-    
+
     @Test
     public void testCommandAPI() {
         // Test command
@@ -203,7 +204,7 @@ public class TestBSkyBlock {
             // Check aliases
             for (String alias : command.getValue().getAliases()) {
                 assertEquals(testCommand.getSubCommand(alias), Optional.of(command.getValue()));
-            }            
+            }
         }
         String[] args = {""};
         assertEquals(Arrays.asList("sub1","sub2", "help"), testCommand.tabComplete(player, "test", args));
@@ -224,23 +225,23 @@ public class TestBSkyBlock {
         assertEquals(Arrays.asList(new String[] {"Florian", "Ben", "Bill", "Ted", "help"}),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
         // Test for partial word
-        assertEquals(Arrays.asList(new String[] {"Ben", "Bill"}), 
+        assertEquals(Arrays.asList(new String[] {"Ben", "Bill"}),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", "b"}));
 
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
         argCmd.setPermission(Constants.PERMPREFIX + "default.permission");
-        assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));        
+        assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100"}));
         assertTrue(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben", "100", "today"}));
-        
+
         // Usage tests
         assertEquals("/test", testCommand.getUsage());
         assertEquals("test.params", testCommand.getParameters());
-        
+
         // Test help
         //assertTrue(testCommand.execute(player,  "test", new String[] {"help"}));
     }
@@ -249,7 +250,7 @@ public class TestBSkyBlock {
 
         public TestCommand() {
             super(plugin, "test", "t", "tt");
-            this.setParameters("test.params");
+            setParameters("test.params");
         }
 
         @Override
@@ -271,10 +272,10 @@ public class TestBSkyBlock {
         public TestSubCommand(CompositeCommand parent) {
             super(parent, "sub1", "subone");
         }
-        
+
         @Override
         public void setup() {
-            this.setParameters("sub.params");
+            setParameters("sub.params");
         }
 
         @Override
@@ -328,14 +329,16 @@ public class TestBSkyBlock {
         public TestSubSubSubCommand(CompositeCommand parent) {
             super(parent, "subsubsub", "level3", "subsubsubby");
         }
-        
+
         @Override
         public void setup() {}
 
         @Override
         public boolean execute(User user, List<String> args) {
             Bukkit.getLogger().info("args are " + args.toString());
-            if (args.size() == 3) return true;
+            if (args.size() == 3) {
+                return true;
+            }
             return false;
         }
 
@@ -347,13 +350,13 @@ public class TestBSkyBlock {
             return Optional.of(Util.tabLimit(options, lastArg));
         }
     }
-    
+
     private class Test3ArgsCommand extends CompositeCommand {
 
         public Test3ArgsCommand() {
             super(plugin, "args", "");
         }
-        
+
         @Override
         public void setup() {}
 
@@ -363,8 +366,8 @@ public class TestBSkyBlock {
             return args.size() == 3 ? true : false;
         }
 
-   }
-    
+    }
+
     // Protection tests
     @Test
     public void TestProtection() {
@@ -373,29 +376,29 @@ public class TestBSkyBlock {
         island.setOwner(playerUUID);
         island.setCenter(location);
         island.setProtectionRange(100);
-        
+
         assertNotNull(island);
-        
+
         User visitor = User.getInstance(UUID.randomUUID());
         assertEquals(RanksManager.OWNER_RANK, island.getRank(owner));
         assertEquals(RanksManager.VISITOR_RANK, island.getRank(visitor));
-        
+
         // Make members
         UUID member1 = UUID.randomUUID();
         UUID member2 = UUID.randomUUID();
         UUID member3 = UUID.randomUUID();
-        
+
         // Add members
         island.addMember(member1);
         island.addMember(member2);
         island.addMember(member3);
-        
+
         Set<UUID> members = island.getMemberSet();
         assertTrue(members.contains(playerUUID));
         assertTrue(members.contains(member1));
         assertTrue(members.contains(member2));
         assertTrue(members.contains(member3));
-        
+
         // Remove members
         island.removeMember(member3);
         members = island.getMemberSet();
@@ -403,7 +406,7 @@ public class TestBSkyBlock {
         assertTrue(members.contains(member1));
         assertTrue(members.contains(member2));
         assertFalse(members.contains(member3));
-        
+
         // Ban member
         island.addToBanList(member1);
         members = island.getMemberSet();
@@ -411,16 +414,16 @@ public class TestBSkyBlock {
         assertFalse(members.contains(member1));
         assertTrue(members.contains(member2));
         assertFalse(members.contains(member3));
-        
+
         Set<UUID> banned = island.getBanned();
         assertTrue(banned.contains(member1));
-        
+
         // Unban
         island.removeFromBanList(member1);
         assertFalse(island.getBanned().contains(member1));
-        
+
         // Protection
-        
+
         // Check default settings
         // Owner should be able to do anything
         assertTrue(island.isAllowed(owner, Flags.PLACE_BLOCKS));
@@ -429,11 +432,11 @@ public class TestBSkyBlock {
         // Visitor can do nothing
         assertFalse(island.isAllowed(visitor, Flags.PLACE_BLOCKS));
         assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
-                
-        // Set up protection settings - members can break blocks, visitors and place blocks        
+
+        // Set up protection settings - members can break blocks, visitors and place blocks
         island.setFlag(Flags.BREAK_BLOCKS, RanksManager.MEMBER_RANK);
         assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
-        
+
         island.setFlag(Flags.PLACE_BLOCKS, RanksManager.VISITOR_RANK);
         assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 
@@ -463,16 +466,16 @@ public class TestBSkyBlock {
         assertFalse(island.isAllowed(mem3, Flags.PLACE_BLOCKS));
         assertFalse(island.isAllowed(mem3, Flags.BREAK_BLOCKS));
     }
-    
+
     @Test
     public void TestEventProtection() {
         // Test events
-        
+
         FlagListener fl = new FlagListener(plugin);
         Bukkit.getLogger().info("SETUP: owner UUID = " + ownerOfIsland.getUniqueId());
         Bukkit.getLogger().info("SETUP: member UUID = " + player.getUniqueId());
         Bukkit.getLogger().info("SETUP: visitor UUID = " + visitorToIsland.getUniqueId());
-        
+
         Bukkit.getLogger().info("DEBUG: checking events - vistor");
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
         Assert.assertFalse(fl.checkIsland(e3, location, Flags.BREAK_BLOCKS, true));
@@ -480,14 +483,14 @@ public class TestBSkyBlock {
         Bukkit.getLogger().info("DEBUG: checking events - owner");
         Event e = new BlockBreakEvent(block, ownerOfIsland);
         Assert.assertTrue(fl.checkIsland(e, location, Flags.BREAK_BLOCKS, true));
-        
+
         Bukkit.getLogger().info("DEBUG: checking events - member");
 
         Event e2 = new BlockBreakEvent(block, player);
         Assert.assertTrue(fl.checkIsland(e2, location, Flags.BREAK_BLOCKS, true));
-        
+
     }
-    
+
     @Test
     public void TestDefaultFlags() {
         // Check all the default flags
@@ -501,7 +504,7 @@ public class TestBSkyBlock {
             assertTrue(flag.getID(), defaultFlags.contains(flag));
         }
     }
-    
+
     @Test
     public void TestCustomFlags() {
         // Custom
@@ -510,12 +513,12 @@ public class TestBSkyBlock {
         assertEquals("CUSTOM_FLAG", customFlag.getID());
         assertEquals(Material.DIAMOND, customFlag.getIcon().getItem().getType());
         assertEquals(fl, customFlag.getListener().get());
-        // Add it to the Flag Manager        
+        // Add it to the Flag Manager
         flagsManager.registerFlag(customFlag);
         assertEquals(customFlag, flagsManager.getFlagByID("CUSTOM_FLAG"));
         assertEquals(customFlag, flagsManager.getFlagByIcon(customFlag.getIcon()));
     }
-    
+
     /**
      * Dummy flag listener
      *

@@ -20,7 +20,7 @@ public class Constants {
     public static final String ISLANDCOMMAND = "ai";
     // Admin command
     public static final String ADMINCOMMAND = "acid";
-    */
+     */
     public static final GameType GAMETYPE = GameType.BSKYBLOCK;
     // Permission prefix
     public static final String PERMPREFIX = "bskyblock.";

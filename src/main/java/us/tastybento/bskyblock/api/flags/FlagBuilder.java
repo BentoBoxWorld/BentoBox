@@ -17,7 +17,7 @@ public class FlagBuilder {
     private FlagType type = FlagType.PROTECTION;
 
     public FlagBuilder id(String string) {
-        this.id = string;
+        id = string;
         return this;
     }
 
@@ -42,17 +42,17 @@ public class FlagBuilder {
     public Flag build() {
         return new Flag(id, icon, listener, defaultSetting, type);
     }
-    
+
     /**
      * Sets the default setting for this flag in the world
      * @param setting
      * @return
      */
     public FlagBuilder allowedByDefault(boolean setting) {
-        this.defaultSetting = setting;
+        defaultSetting = setting;
         return this;
     }
-    
+
     /**
      * Set the type of this flag
      * @param type {@link FlagType}
@@ -69,7 +69,7 @@ public class FlagBuilder {
      * @return
      */
     public FlagBuilder id(Enum<?> flag) {
-        this.id = flag.name();
+        id = flag.name();
         return this;
     }
 }

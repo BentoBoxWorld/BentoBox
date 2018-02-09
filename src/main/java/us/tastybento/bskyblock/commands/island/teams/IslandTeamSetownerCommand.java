@@ -21,13 +21,13 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public IslandTeamSetownerCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "setleader");
     }
-     
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setParameters("commands.island.team.setowner.parameters");
-        this.setDescription("commands.island.team.setowner.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setParameters("commands.island.team.setowner.parameters");
+        setDescription("commands.island.team.setowner.description");
     }
 
     @Override
@@ -75,7 +75,9 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
                 .involvedPlayer(targetUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return false;
+        if (event.isCancelled()) {
+            return false;
+        }
 
         // target is the new leader
         getIslands().getIsland(playerUUID).setOwner(targetUUID);

@@ -57,14 +57,14 @@ public class AddonEvent {
 
         public AddonBaseEvent build() {
             switch (reason) {
-                case ENABLE:
-                    return new AddonEnableEvent(addon);
-                case DISABLE:
-                    return new AddonDisableEvent(addon);
-                case LOAD:
-                    return new AddonLoadEvent(addon);
-                default:
-                    return new AddonGeneralEvent(addon);
+            case ENABLE:
+                return new AddonEnableEvent(addon);
+            case DISABLE:
+                return new AddonDisableEvent(addon);
+            case LOAD:
+                return new AddonLoadEvent(addon);
+            default:
+                return new AddonGeneralEvent(addon);
             }
         }
     }

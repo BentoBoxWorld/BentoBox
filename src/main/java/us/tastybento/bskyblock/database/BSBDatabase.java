@@ -14,7 +14,9 @@ public abstract class BSBDatabase {
      */
     public static BSBDatabase getDatabase(){
         for(DatabaseType type : DatabaseType.values()){
-            if(type == BSkyBlock.getInstance().getSettings().getDatabaseType()) return type.database;
+            if(type == BSkyBlock.getInstance().getSettings().getDatabaseType()) {
+                return type.database;
+            }
         }
         return DatabaseType.FLATFILE.database;
     }

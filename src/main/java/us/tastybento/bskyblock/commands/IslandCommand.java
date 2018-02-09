@@ -27,10 +27,10 @@ public class IslandCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        this.setDescription("commands.island.help.description");
-        this.setOnlyPlayer(true);
+        setDescription("commands.island.help.description");
+        setOnlyPlayer(true);
         // Permission
-        this.setPermission(Constants.PERMPREFIX + "island");
+        setPermission(Constants.PERMPREFIX + "island");
         // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);
@@ -47,19 +47,19 @@ public class IslandCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         // If this player does not have an island, create one
         if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
-            Optional<CompositeCommand> subCreate = this.getSubCommand("create");
+            Optional<CompositeCommand> subCreate = getSubCommand("create");
             if (subCreate.isPresent()) {
                 subCreate.get().execute(user, new ArrayList<>());
             }
         }
-        Optional<CompositeCommand> go = this.getSubCommand("go");
+        Optional<CompositeCommand> go = getSubCommand("go");
         // Otherwise, currently, just go home
         if (go.isPresent()) {
             go.get().execute(user, new ArrayList<>());
         }
-        
+
         return true;
     }
-    
+
 
 }

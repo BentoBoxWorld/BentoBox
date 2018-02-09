@@ -30,11 +30,11 @@ public class PanelItem {
         meta = icon.getItemMeta();
 
         this.clickHandler = clickHandler;
-        
+
         // Create the final item
-        this.setName(name);
-        this.setDescription(description);
-        this.setGlow(glow);
+        setName(name);
+        setDescription(description);
+        setGlow(glow);
 
         // Set flags to neaten up the view
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -78,10 +78,11 @@ public class PanelItem {
 
     public void setGlow(boolean glow) {
         this.glow = glow;
-        if (glow)
+        if (glow) {
             meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-        else
+        } else {
             meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, false);
+        }
     }
 
     /**

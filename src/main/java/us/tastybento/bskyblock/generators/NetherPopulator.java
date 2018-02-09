@@ -32,17 +32,17 @@ public class NetherPopulator extends BlockPopulator {
                     if (b.getType().equals(Material.MOB_SPAWNER)) {
                         CreatureSpawner cs = (CreatureSpawner) b.getState();
                         switch (random.nextInt(3)) {
-                            case 0:
-                                cs.setSpawnedType(EntityType.BLAZE);
-                                break;
-                            case 1:
-                                cs.setSpawnedType(EntityType.SKELETON);
-                                break;
-                            case 2:
-                                cs.setSpawnedType(EntityType.MAGMA_CUBE);
-                                break;
-                            default:
-                                cs.setSpawnedType(EntityType.BLAZE);
+                        case 0:
+                            cs.setSpawnedType(EntityType.BLAZE);
+                            break;
+                        case 1:
+                            cs.setSpawnedType(EntityType.SKELETON);
+                            break;
+                        case 2:
+                            cs.setSpawnedType(EntityType.MAGMA_CUBE);
+                            break;
+                        default:
+                            cs.setSpawnedType(EntityType.BLAZE);
                         }
                     } else if (b.getType().equals(Material.OBSIDIAN)) {
                         b.setType(Material.CHEST);

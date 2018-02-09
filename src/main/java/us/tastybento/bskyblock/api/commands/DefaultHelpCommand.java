@@ -28,8 +28,8 @@ public class DefaultHelpCommand extends CompositeCommand {
     @Override
     public void setup() {
         // Set the usage to what the parent's command is
-        this.setParameters(parent.getParameters());
-        this.setDescription(parent.getDescription());        
+        setParameters(parent.getParameters());
+        setDescription(parent.getDescription());
     }
 
     @Override

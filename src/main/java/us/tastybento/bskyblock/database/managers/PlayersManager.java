@@ -70,14 +70,16 @@ public class PlayersManager{
      * @param async - if true, save async
      */
     public void save(boolean async){
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: saving " + async);
+        }
         Collection<Players> set = Collections.unmodifiableCollection(playerCache.values());
         if(async){
             Runnable save = () -> {
                 for(Players player : set){
-                    if (DEBUG)
+                    if (DEBUG) {
                         plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
+                    }
                     try {
                         handler.saveObject(player);
                     } catch (Exception e) {
@@ -88,8 +90,9 @@ public class PlayersManager{
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
         } else {
             for(Players player : set){
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
+                }
                 try {
                     handler.saveObject(player);
                 } catch (Exception e) {
@@ -121,33 +124,39 @@ public class PlayersManager{
      * @return the players object
      */
     public Players addPlayer(final UUID playerUUID) {
-        if (playerUUID == null)
+        if (playerUUID == null) {
             return null;
-        if (DEBUG)
+        }
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: adding player " + playerUUID);
+        }
         if (!playerCache.containsKey(playerUUID)) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: player not in cache");
+            }
             Players player = null;
             // If the player is in the database, load it, otherwise create a new player
             if (handler.objectExits(playerUUID.toString())) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: player in database");
+                }
                 try {
                     player = handler.loadObject(playerUUID.toString());
                 } catch (Exception e) {
                     plugin.getLogger().severe("Could not load player " + playerUUID + " " + e.getMessage());
                 }
             } else {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: new player");
+                }
                 player = new Players(plugin, playerUUID);
             }
             playerCache.put(playerUUID, player);
             return player;
         } else {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: known player");
+            }
             return playerCache.get(playerUUID);
         }
     }
@@ -331,8 +340,9 @@ public class PlayersManager{
      * @param name
      */
     public void setPlayerName(User user) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: Setting player name to " + user.getName() + " for " + user.getUniqueId());
+        }
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
     }
@@ -345,14 +355,16 @@ public class PlayersManager{
      * @return String - playerName
      */
     public String getName(UUID playerUUID) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: Geting player name");
+        }
         if (playerUUID == null) {
             return "";
         }
         addPlayer(playerUUID);
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: name is " + playerCache.get(playerUUID).getPlayerName());
+        }
         return playerCache.get(playerUUID).getPlayerName();
     }
 
@@ -363,8 +375,9 @@ public class PlayersManager{
      * @return UUID of owner of island
      */
     public UUID getPlayerFromIslandLocation(Location loc) {
-        if (loc == null)
+        if (loc == null) {
             return null;
+        }
         // Look in the grid
         Optional<Island> island = plugin.getIslands().getIslandAt(loc);
         return island.map(x->x.getOwner()).orElse(null);
@@ -425,7 +438,9 @@ public class PlayersManager{
      */
     public String getLocale(UUID playerUUID) {
         addPlayer(playerUUID);
-        if (playerUUID == null) return "";
+        if (playerUUID == null) {
+            return "";
+        }
         return playerCache.get(playerUUID).getLocale();
     }
 
@@ -578,8 +593,9 @@ public class PlayersManager{
         if (playerCache.containsKey(playerUUID)) {
             final Players player = playerCache.get(playerUUID);
             try {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: saving player by uuid " + player.getPlayerName() + " " + playerUUID + " saved");
+                }
                 handler.saveObject(player);
 
             } catch (IllegalAccessException | IllegalArgumentException
@@ -589,8 +605,9 @@ public class PlayersManager{
                 plugin.getLogger().severe("Could not save player to database: " + playerUUID + " " + e.getMessage());
             }
         } else {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: " + playerUUID + " is not in the cache to save");
+            }
         }
     }
 

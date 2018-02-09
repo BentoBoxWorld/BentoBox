@@ -17,9 +17,9 @@ public class AdminCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "admin.*");
-        this.setOnlyPlayer(false);
-        this.setDescription("admin.help.description");
+        setPermission(Constants.PERMPREFIX + "admin.*");
+        setOnlyPlayer(false);
+        setDescription("admin.help.description");
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
         new AdminTeleportCommand(this);

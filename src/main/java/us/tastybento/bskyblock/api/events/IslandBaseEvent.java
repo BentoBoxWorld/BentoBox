@@ -23,11 +23,11 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
     public IslandBaseEvent(Island island) {
         super();
         this.island = island;
-        this.playerUUID = island == null ? null : island.getOwner();
-        this.admin = false;
-        this.location = island == null ? null : island.getCenter(); 
+        playerUUID = island == null ? null : island.getOwner();
+        admin = false;
+        location = island == null ? null : island.getCenter();
     }
-    
+
     /**
      * @param island
      * @param playerUUID
@@ -46,14 +46,14 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
      * @return the island involved in this event
      */
     public Island getIsland(){
-        return this.island;
+        return island;
     }
-    
+
     /**
      * @return the owner of the island
      */
     public UUID getOwner() {
-        return this.getOwner();
+        return getOwner();
     }
 
     /**
@@ -84,6 +84,6 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        cancelled = cancel;
     }
 }

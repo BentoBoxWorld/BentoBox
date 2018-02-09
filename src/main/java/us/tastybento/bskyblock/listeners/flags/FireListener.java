@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -42,10 +42,14 @@ public class FireListener extends AbstractFlagListener {
         // Check if the island exists and if fire is allowed
         Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         island.ifPresent(x ->  {
-            if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
+            if (!x.isAllowed(Flags.FIRE_SPREAD)) {
+                e.setCancelled(true);
+            }
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) e.setCancelled(true);
+        if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) {
+            e.setCancelled(true);
+        }
     }
 
     /**
@@ -61,10 +65,14 @@ public class FireListener extends AbstractFlagListener {
             // Check if the island exists and if fire is allowed
             Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
             island.ifPresent(x ->  {
-                if (!x.isAllowed(Flags.FIRE_SPREAD)) e.setCancelled(true);
+                if (!x.isAllowed(Flags.FIRE_SPREAD)) {
+                    e.setCancelled(true);
+                }
             });
             // If not on an island, check the default setting
-            if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) e.setCancelled(true);
+            if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) {
+                e.setCancelled(true);
+            }
         }
     }
 
@@ -84,10 +92,14 @@ public class FireListener extends AbstractFlagListener {
         // Check if the island exists and if fire is allowed
         Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         island.ifPresent(x ->  {
-            if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
+            if (!x.isAllowed(Flags.FIRE)) {
+                e.setCancelled(true);
+            }
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) e.setCancelled(true);
+        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) {
+            e.setCancelled(true);
+        }
 
     }
 
@@ -137,13 +149,19 @@ public class FireListener extends AbstractFlagListener {
         // Check if the island exists and if fire is allowed
         Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
         island.ifPresent(x ->  {
-            if (!x.isAllowed(Flags.FIRE)) e.setCancelled(true);
+            if (!x.isAllowed(Flags.FIRE)) {
+                e.setCancelled(true);
+            }
         });
         // If not on an island, check the default setting
-        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) e.setCancelled(true);
+        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) {
+            e.setCancelled(true);
+        }
 
         // If either of these canceled the event, return
-        if (e.isCancelled()) return;
+        if (e.isCancelled()) {
+            return;
+        }
 
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
         if (e.getEntity() instanceof Projectile) {

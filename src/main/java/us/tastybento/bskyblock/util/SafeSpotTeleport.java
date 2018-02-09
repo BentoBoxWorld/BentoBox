@@ -17,7 +17,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
- * A class that calculates finds a safe spot asynchronously and then teleports the player there. 
+ * A class that calculates finds a safe spot asynchronously and then teleports the player there.
  * @author tastybento
  *
  */
@@ -56,7 +56,7 @@ public class SafeSpotTeleport {
     }
     /**
      * Teleport to a safe spot on an island
-     * 
+     *
      * TODO: REFACTOR THIS!
 
      * @param plugin
@@ -71,7 +71,7 @@ public class SafeSpotTeleport {
         if (island != null) {
             final World world = islandLoc.getWorld();
             // Get the chunks
-            List<ChunkSnapshot> chunkSnapshot = new ArrayList<ChunkSnapshot>();
+            List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
             // Add the center chunk
             chunkSnapshot.add(island.getCenter().toVector().toLocation(world).getChunk().getChunkSnapshot());
             // Add immediately adjacent chunks

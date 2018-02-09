@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -89,8 +89,9 @@ public class HurtingListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
-        if (e.getCaught() == null)
+        if (e.getCaught() == null) {
             return;
+        }
 
         if ((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman
                 || e.getCaught() instanceof Villager) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
@@ -98,7 +99,7 @@ public class HurtingListener extends AbstractFlagListener {
             return;
         }
 
-        if ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) 
+        if ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime)
                 && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
             e.getHook().remove();
             return;
@@ -126,7 +127,7 @@ public class HurtingListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Try to get the shooter
-        Projectile projectile = (Projectile) e.getEntity();
+        Projectile projectile = e.getEntity();
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
             // Run through all the affected entities
@@ -164,7 +165,7 @@ public class HurtingListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
-        Projectile projectile = (Projectile) e.getEntity();
+        Projectile projectile = e.getEntity();
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone

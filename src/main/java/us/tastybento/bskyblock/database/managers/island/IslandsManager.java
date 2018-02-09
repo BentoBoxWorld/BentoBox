@@ -224,7 +224,7 @@ public class IslandsManager {
             if (maxYradius < height) {
                 maxYradius++;
             }
-            //plugin.getLogger().info("DEBUG: Radii " + minXradius + "," + minYradius + "," + minZradius + 
+            //plugin.getLogger().info("DEBUG: Radii " + minXradius + "," + minYradius + "," + minZradius +
             //    "," + maxXradius + "," + maxYradius + "," + maxZradius);
         } while (minXradius < i || maxXradius < i || minZradius < i || maxZradius < i || minYradius < depth
                 || maxYradius < height);
@@ -246,8 +246,9 @@ public class IslandsManager {
      * @param owner UUID
      */
     public Island createIsland(Location location, UUID owner){
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: adding island for " + owner + " at " + location);
+        }
         return islandCache.createIsland(new Island(location, owner, plugin.getSettings().getIslandProtectionRange()));
     }
 
@@ -257,8 +258,9 @@ public class IslandsManager {
      * @param removeBlocks - if the island blocks should be removed or not
      */
     public void deleteIsland(Island island, boolean removeBlocks) {
-        if (island == null)
+        if (island == null) {
             return;
+        }
         // Set the owner of the island to no one.
         island.setOwner(null);
         island.setLocked(false);
@@ -291,8 +293,9 @@ public class IslandsManager {
      */
     public void deleteIsland(final UUID player, boolean removeBlocks) {
         // Removes the island
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: deleting player island");
+        }
         //CoopPlay.getInstance().clearAllIslandCoops(player);
         //getWarpSignsListener().removeWarp(player);
         final Island island = getIsland(player);
@@ -377,8 +380,9 @@ public class IslandsManager {
      * @return Location of player's island or null if one does not exist
      */
     public Location getIslandLocation(UUID playerUUID) {
-        if (hasIsland(playerUUID))
+        if (hasIsland(playerUUID)) {
             return getIsland(playerUUID).getCenter();
+        }
         return null;
     }
 
@@ -439,8 +443,9 @@ public class IslandsManager {
             l = plugin.getPlayers().getHomeLocation(playerUUID, number);
         }
         // Check if it is safe
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: Home location " + l);
+        }
         if (l != null) {
             if (isSafeLocation(l)) {
                 return l;
@@ -456,38 +461,45 @@ public class IslandsManager {
                 }
             }
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: Home location either isn't safe, or does not exist so try the island");
+        }
         // Home location either isn't safe, or does not exist so try the island
         // location
         if (plugin.getPlayers().inTeam(playerUUID)) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG:player is in team");
+            }
             l = plugin.getIslands().getIslandLocation(playerUUID);
             if (isSafeLocation(l)) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG:island loc is safe");
+                }
                 plugin.getPlayers().setHomeLocation(playerUUID, l, number);
                 return l;
             } else {
                 // try team leader's home
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: trying leader's home");
+                }
                 Location tlh = plugin.getPlayers().getHomeLocation(plugin.getIslands().getTeamLeader(playerUUID));
                 if (tlh != null) {
-                    if (DEBUG)
+                    if (DEBUG) {
                         plugin.getLogger().info("DEBUG: leader has a home");
+                    }
                     if (isSafeLocation(tlh)) {
-                        if (DEBUG)
+                        if (DEBUG) {
                             plugin.getLogger().info("DEBUG: team leader's home is safe");
+                        }
                         plugin.getPlayers().setHomeLocation(playerUUID, tlh, number);
                         return tlh;
                     }
                 }
             }
         } else {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: player is not in team - trying island location");
+            }
             l = plugin.getIslands().getIslandLocation(playerUUID);
             if (isSafeLocation(l)) {
                 plugin.getPlayers().setHomeLocation(playerUUID, l, number);
@@ -498,28 +510,32 @@ public class IslandsManager {
             plugin.getLogger().warning(plugin.getPlayers().getName(playerUUID) + " player has no island!");
             return null;
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: If these island locations are not safe, then we need to get creative");
+        }
         // If these island locations are not safe, then we need to get creative
         // Try the default location
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: try default location");
+        }
         Location dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 2.5D, 0F, 30F);
         if (isSafeLocation(dl)) {
             plugin.getPlayers().setHomeLocation(playerUUID, dl, number);
             return dl;
         }
         // Try just above the bedrock
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: above bedrock");
+        }
         dl = new Location(l.getWorld(), l.getX() + 0.5D, l.getY() + 5D, l.getZ() + 0.5D, 0F, 30F);
         if (isSafeLocation(dl)) {
             plugin.getPlayers().setHomeLocation(playerUUID, dl, number);
             return dl;
         }
         // Try all the way up to the sky
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: try all the way to the sky");
+        }
         for (int y = l.getBlockY(); y < 255; y++) {
             final Location n = new Location(l.getWorld(), l.getX() + 0.5D, y, l.getZ() + 0.5D);
             if (isSafeLocation(n)) {
@@ -527,8 +543,9 @@ public class IslandsManager {
                 return n;
             }
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: unsuccessful");
+        }
         // Unsuccessful
         return null;
     }
@@ -542,8 +559,9 @@ public class IslandsManager {
      */
     public Location getSpawnPoint() {
         //plugin.getLogger().info("DEBUG: getting spawn point : " + spawn.getSpawnPoint());
-        if (spawn == null)
+        if (spawn == null) {
             return null;
+        }
         return spawn.getSpawnPoint();
     }
 
@@ -584,11 +602,13 @@ public class IslandsManager {
     @SuppressWarnings("deprecation")
     public void homeTeleport(final Player player, int number) {
         Location home;
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("home teleport called for #" + number);
+        }
         home = getSafeHomeLocation(player.getUniqueId(), number);
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("home get safe loc = " + home);
+        }
         // Check if the player is a passenger in a boat
         if (player.isInsideVehicle()) {
             Entity boat = player.getVehicle();
@@ -601,14 +621,16 @@ public class IslandsManager {
             }
         }
         if (home == null) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("Fixing home location using safe spot teleport");
+            }
             // Try to fix this teleport location and teleport the player if possible
             new SafeSpotTeleport(plugin, player, plugin.getPlayers().getHomeLocation(player.getUniqueId(), number), number);
             return;
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
+        }
         //home.getChunk().load();
         player.teleport(home);
         //player.sendBlockChange(home, Material.GLOWSTONE, (byte)0);
@@ -644,11 +666,13 @@ public class IslandsManager {
      * @return
      */
     public boolean isIsland(Location location){
-        if (location == null)
+        if (location == null) {
             return true;
+        }
         location = getClosestIsland(location);
-        if (islandCache.contains(location))
+        if (islandCache.contains(location)) {
             return true;
+        }
 
         if (!plugin.getSettings().isUseOwnGenerator()) {
             // Block check
@@ -662,7 +686,7 @@ public class IslandsManager {
             for (int x = -5; x <= 5; x++) {
                 for (int y = 10; y <= 255; y++) {
                     for (int z = -5; z <= 5; z++) {
-                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty() 
+                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty()
                                 && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isLiquid()) {
                             plugin.getLogger().info("Solid block found during long search - adding ");
                             createIsland(location);
@@ -677,14 +701,14 @@ public class IslandsManager {
 
     /**
      * This returns the coordinate of where an island should be on the grid.
-     * 
+     *
      * @param location location to query
      * @return Location of closest island
      */
     public Location getClosestIsland(Location location) {
-        long x = Math.round((double) location.getBlockX() / plugin.getSettings().getIslandDistance()) 
+        long x = Math.round((double) location.getBlockX() / plugin.getSettings().getIslandDistance())
                 * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandXOffset();
-        long z = Math.round((double) location.getBlockZ() / plugin.getSettings().getIslandDistance()) 
+        long z = Math.round((double) location.getBlockZ() / plugin.getSettings().getIslandDistance())
                 * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandZOffset();
         long y = plugin.getSettings().getIslandHeight();
         return new Location(location.getWorld(), x, y, z);
@@ -708,18 +732,21 @@ public class IslandsManager {
         islandCache.clear();
         spawn = null;
         try {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: loading grid");
+            }
             for (Island island : handler.loadObjects()) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: adding island at "+ island.getCenter());
+                }
                 islandCache.addIsland(island);
             }
         } catch (Exception e) {
             plugin.getLogger().severe("Could not load islands to cache! " + e.getMessage());
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: islands loaded");
+        }
     }
 
     /**
@@ -731,7 +758,7 @@ public class IslandsManager {
      */
     public boolean locationIsAtHome(UUID uuid, boolean coop, Location loc) {
         // Make a list of test locations and test them
-        Set<Location> islandTestLocations = new HashSet<Location>();
+        Set<Location> islandTestLocations = new HashSet<>();
         if (plugin.getPlayers().hasIsland(uuid) || plugin.getPlayers().inTeam(uuid)) {
             islandTestLocations.add(plugin.getIslands().getIslandLocation(uuid));
             // If new Nether
@@ -800,7 +827,7 @@ public class IslandsManager {
         }
         // Not in the grid, so do it the old way
         // Make a list of test locations and test them
-        Set<Location> islandTestLocations = new HashSet<Location>();
+        Set<Location> islandTestLocations = new HashSet<>();
         if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
             islandTestLocations.add(getIslandLocation(player.getUniqueId()));
         }
@@ -829,7 +856,7 @@ public class IslandsManager {
     }
 
     public void metrics_setCreatedCount(int count){
-        this.metrics_createdcount = count;
+        metrics_createdcount = count;
     }
 
     /**
@@ -877,8 +904,9 @@ public class IslandsManager {
      * @param playerUUID
      */
     public void removePlayer(UUID playerUUID) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: removing player");
+        }
         islandCache.removePlayer(playerUUID);
     }
 
@@ -920,13 +948,14 @@ public class IslandsManager {
      * @param async - if true, saving will be done async
      */
     public void save(boolean async){
-        Collection<Island> collection = islandCache.getIslands();    
+        Collection<Island> collection = islandCache.getIslands();
         if(async){
             Runnable save = () -> {
                 int index = 1;
                 for(Island island : collection){
-                    if (DEBUG)
+                    if (DEBUG) {
                         plugin.getLogger().info("DEBUG: saving island async " + index++);
+                    }
                     try {
                         handler.saveObject(island);
                     } catch (Exception e) {
@@ -938,8 +967,9 @@ public class IslandsManager {
         } else {
             int index = 1;
             for(Island island : collection){
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: saving island " + index++);
+                }
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {
@@ -967,8 +997,9 @@ public class IslandsManager {
      */
     public boolean setJoinTeam(Island teamIsland, UUID playerUUID) {
         // Add player to new island
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: Adding player to new island");
+        }
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
         if (DEBUG) {
@@ -990,8 +1021,9 @@ public class IslandsManager {
      * @param playerUUID
      */
     public void setLeaveTeam(UUID playerUUID) {
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: leaving team");
+        }
         plugin.getPlayers().clearPlayerHomes(playerUUID);
         removePlayer(playerUUID);
     }
