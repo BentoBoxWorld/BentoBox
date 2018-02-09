@@ -21,7 +21,7 @@ public interface ISettings<T> {
 
     // ----------------Saver-------------------
     @SuppressWarnings("unchecked")
-    default void saveSettings() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveSettings() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Get the handler
         AbstractDatabaseHandler<T> settingsHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         // Load every field in the config class
@@ -30,7 +30,7 @@ public interface ISettings<T> {
         settingsHandler.saveSettings(getInstance());
     }
 
-    default void saveBackup() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveBackup() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Save backup
         @SuppressWarnings("unchecked")
         AbstractDatabaseHandler<T> backupHandler =  (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
@@ -39,7 +39,7 @@ public interface ISettings<T> {
 
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
-    default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException  {
+    default T loadSettings() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, SQLException  {
         // See if this settings object already exists in the database
         AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getClass());
         T dbConfig = null;

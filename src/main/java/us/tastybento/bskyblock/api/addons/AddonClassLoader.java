@@ -7,6 +7,7 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.InvalidDescriptionException;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -81,34 +82,34 @@ public class AddonClassLoader extends URLClassLoader {
 
     /**
      * This is a custom findClass that enables classes in other addons to be found
-     * (This code was copied from Bukkit's PluginLoader class
      * @param name
      * @param checkGlobal
      * @return Class
-     * @throws ClassNotFoundException
      */
     public Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
         if (name.startsWith("us.tastybento.")) {
             throw new ClassNotFoundException(name);
         }
-        Class<?> result = classes.get(name);
+        return classes.computeIfAbsent(name, k -> createFor(k, checkGlobal));
+    }
 
-        if (result == null) {
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
-            }
-
-            if (result == null) {
-                result = super.findClass(name);
-
-                if (result != null) {
-                    loader.setClass(name, result);
-                }
-            }
-
-            classes.put(name, result);
+    private Class<?> createFor(String name, boolean checkGlobal) {
+        Class<?> result = null;
+        if (checkGlobal) {
+            result = loader.getClassByName(name);
         }
 
+        if (result == null) {
+            try {
+                result = super.findClass(name);
+            } catch (ClassNotFoundException e) {
+                Bukkit.getLogger().severe("Could not find class! " + e.getMessage());
+            }
+
+            if (result != null) {
+                loader.setClass(name, result);
+            }
+        }
         return result;
     }
 

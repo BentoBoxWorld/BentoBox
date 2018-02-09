@@ -253,10 +253,8 @@ public class User {
      * @return Locale
      */
     public Locale getLocale() {
-        if (sender instanceof Player) {
-            if (!plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
-                return Locale.forLanguageTag(plugin.getPlayers().getLocale(playerUUID));
-            }
+        if (sender instanceof Player && !plugin.getPlayers().getLocale(playerUUID).isEmpty()) {
+            return Locale.forLanguageTag(plugin.getPlayers().getLocale(playerUUID));
         }
         return Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage());
 

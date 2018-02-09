@@ -400,11 +400,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     @Override
     public Command setUsage(String usage) {
         // Go up the chain
-        CompositeCommand parent = getParent();
+        CompositeCommand parentCommand = getParent();
         this.usage = getLabel() + " " + usage;
-        while (parent != null) {
-            this.usage = parent.getLabel() + " " + this.usage;
-            parent = parent.getParent();
+        while (parentCommand != null) {
+            this.usage = parentCommand.getLabel() + " " + this.usage;
+            parentCommand = parentCommand.getParent();
         }
         this.usage = this.usage.trim();
         return this;
