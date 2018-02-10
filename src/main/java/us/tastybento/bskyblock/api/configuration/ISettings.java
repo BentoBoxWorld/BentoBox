@@ -43,7 +43,7 @@ public interface ISettings<T> {
         // See if this settings object already exists in the database
         AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getClass());
         T dbConfig = null;
-        if (dbhandler.objectExits(this.getUniqueId())) {
+        if (dbhandler.objectExists(this.getUniqueId())) {
             // Load it
             dbConfig = dbhandler.loadObject(getUniqueId());
         }

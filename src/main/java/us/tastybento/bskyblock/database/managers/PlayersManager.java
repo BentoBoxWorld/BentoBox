@@ -136,7 +136,7 @@ public class PlayersManager{
             }
             Players player = null;
             // If the player is in the database, load it, otherwise create a new player
-            if (handler.objectExits(playerUUID.toString())) {
+            if (handler.objectExists(playerUUID.toString())) {
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: player in database");
                 }
@@ -201,7 +201,7 @@ public class PlayersManager{
             return true;
         } else {
             // Get from the database - do not add to cache yet
-            return handler.objectExits(uniqueID.toString());
+            return handler.objectExists(uniqueID.toString());
         }
     }
 

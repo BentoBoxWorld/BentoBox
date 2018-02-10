@@ -93,7 +93,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @Override
-    public boolean objectExits(String key) {
+    public boolean objectExists(String key) {
         return databaseConnecter.uniqueIdExists(dataObject.getSimpleName(), key);
     }
 
