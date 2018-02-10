@@ -6,7 +6,6 @@ import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.lists.Placeholders;
 
 /**
  * Handles hooks with other Placeholder APIs.
@@ -29,8 +28,6 @@ public class PlaceholderHandler {
      * @param plugin
      */
     public static void register(BSkyBlock plugin){
-        // Register placeholders
-        new Placeholders();
 
         // Load Internal Placeholder API
         try{

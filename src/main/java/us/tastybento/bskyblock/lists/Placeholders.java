@@ -12,7 +12,10 @@ import us.tastybento.bskyblock.api.placeholders.PlaceholderBuilder;
 
 public class Placeholders {
 
-    public static final Placeholder PLUGIN_NAME = new PlaceholderBuilder().identifier("bsb_plugin_name").value((user) -> BSkyBlock.getInstance().getDescription().getName()).build();
+    // Utility classes, which are collections of static members, are not meant to be instantiated.
+    private Placeholders() {}
+    
+    public static final Placeholder PLUGIN_NAME = new PlaceholderBuilder().identifier("bsb_plugin_name").value(user -> BSkyBlock.getInstance().getDescription().getName()).build();
 
     /**
      * @return List of all the flags in this class
