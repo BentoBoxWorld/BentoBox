@@ -51,6 +51,7 @@ public class IslandCommand extends CompositeCommand {
             if (subCreate.isPresent()) {
                 subCreate.get().execute(user, new ArrayList<>());
             }
+            return true;
         }
         Optional<CompositeCommand> go = getSubCommand("go");
         // Otherwise, currently, just go home

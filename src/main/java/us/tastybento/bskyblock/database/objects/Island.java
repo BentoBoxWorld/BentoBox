@@ -73,10 +73,12 @@ public class Island implements DataObject {
 
     //// Team ////
     private UUID owner;
+
     private HashMap<UUID, Integer> members = new HashMap<>();
 
     //// State ////
     private boolean locked = false;
+
     private boolean spawn = false;
 
     private boolean purgeProtected = false;
@@ -86,10 +88,10 @@ public class Island implements DataObject {
     private HashMap<Flag, Integer> flags = new HashMap<>();
 
     private int levelHandicap;
+
     private Location spawnPoint;
 
     public Island() {}
-
     public Island(Location location, UUID owner, int protectionRange) {
         setOwner(owner);
         createdDate = System.currentTimeMillis();
@@ -113,7 +115,6 @@ public class Island implements DataObject {
             members.put(playerUUID, RanksManager.MEMBER_RANK);
         }
     }
-
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
@@ -154,7 +155,6 @@ public class Island implements DataObject {
     public long getCreatedDate(){
         return createdDate;
     }
-
     /**
      * Gets the rank needed to bypass this Island Guard flag
      * @param flag
@@ -213,28 +213,28 @@ public class Island implements DataObject {
     /**
      * @return the minProtectedX
      */
-    public int getMinProtectedX() {
+    public final int getMinProtectedX() {
         return minProtectedX;
     }
 
     /**
      * @return the minProtectedZ
      */
-    public int getMinProtectedZ() {
+    public final int getMinProtectedZ() {
         return minProtectedZ;
     }
 
     /**
      * @return the minX
      */
-    public int getMinX() {
+    public final int getMinX() {
         return minX;
     }
 
     /**
      * @return the minZ
      */
-    public int getMinZ() {
+    public final int getMinZ() {
         return minZ;
     }
 
@@ -397,13 +397,6 @@ public class Island implements DataObject {
         return center.getBlockZ();
     }
 
-    public boolean inIslandSpace(Location location) {
-        if (Util.inWorld(location)) {
-            return inIslandSpace(location.getBlockX(), location.getBlockZ());
-        }
-        return false;
-    }
-
     /**
      * Checks if coords are in the island space
      * @param x
@@ -413,6 +406,13 @@ public class Island implements DataObject {
     public boolean inIslandSpace(int x, int z) {
         //Bukkit.getLogger().info("DEBUG: center - " + center);
         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
+    }
+
+    public boolean inIslandSpace(Location location) {
+        if (Util.inWorld(location)) {
+            return inIslandSpace(location.getBlockX(), location.getBlockZ());
+        }
+        return false;
     }
 
     /**
@@ -594,7 +594,6 @@ public class Island implements DataObject {
     public final void setMinX(int minX) {
         this.minX = minX;
     }
-
 
     /**
      * @param minZ the minZ to set
