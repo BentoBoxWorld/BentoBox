@@ -79,20 +79,13 @@ public final class LocalesManager {
             try {
                 for (String name : lister.listJar(LOCALE_FOLDER)) {
                     // We cannot use Bukkit's saveResource, because we want it to go into a specific folder, so...
-                    try (InputStream initialStream = plugin.getResource(name)) {
-                        // Get the last part of the name
-                        int lastIndex = name.lastIndexOf('/');
-                        File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0, name.length()));
-                        if (DEBUG) {
-                            plugin.getLogger().info("DEBUG: targetFile = " + targetFile.getAbsolutePath());
-                        }
-                        if (!targetFile.exists()) {
-                            java.nio.file.Files.copy(initialStream, targetFile.toPath());
-                        }
-                    } catch (IOException e) {
-                        plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
+                    // Get the last part of the name
+                    int lastIndex = name.lastIndexOf('/');
+                    File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0, name.length()));
+                    if (DEBUG) {
+                        plugin.getLogger().info("DEBUG: targetFile = " + targetFile.getAbsolutePath());
                     }
-
+                    copyFile(name, targetFile);
                 }
             } catch (IOException e) {
                 plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
@@ -123,5 +116,17 @@ public final class LocalesManager {
                 languages.put(localeObject, new BSBLocale(localeObject, language));
             }
         }
+    }
+
+    private void copyFile(String name, File targetFile) {
+        try (InputStream initialStream = plugin.getResource(name)) {
+            if (!targetFile.exists()) {
+                java.nio.file.Files.copy(initialStream, targetFile.toPath());
+            }
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
+        }
+
+
     }
 }
