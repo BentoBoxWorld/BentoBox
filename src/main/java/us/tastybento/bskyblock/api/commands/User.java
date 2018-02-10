@@ -17,6 +17,7 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 
 /**
  * BSB's user object. Wraps Player.
@@ -171,6 +172,9 @@ public class User {
                 translation = translation.replace(variables[i], variables[i+1]);
             }
         }
+
+        // Replace placeholders
+        translation = PlaceholderHandler.replacePlaceholders(this, translation);
 
         return ChatColor.translateAlternateColorCodes('&', translation);
     }

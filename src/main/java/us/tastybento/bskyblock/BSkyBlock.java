@@ -3,6 +3,7 @@ package us.tastybento.bskyblock;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDatabase;
@@ -96,10 +97,10 @@ public class BSkyBlock extends JavaPlugin {
                 islandsManager.load();
 
                 localesManager = new LocalesManager(plugin);
+                PlaceholderHandler.register(plugin);
 
                 // Register Listeners
                 registerListeners();
-
 
                 // Load addons
                 addonsManager = new AddonsManager(plugin);

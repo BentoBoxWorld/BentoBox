@@ -1,40 +1,39 @@
-package us.tastybento.bskyblock.util.placeholders;
-
-import org.bukkit.command.CommandSender;
+package us.tastybento.bskyblock.api.placeholders;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 
 /**
  * Simple interface for every Placeholder API.
  *
  * @author Poslovitch
  */
-public interface PlaceholderInterface {
+public interface PlaceholderAPIInterface {
 
     /**
-     * Get the name of the Placeholder API
+     * Gets the name of the Placeholder API
      * @return name of the placeholder plugin
      */
     String getName();
 
     /**
-     * Register the placeholder API
+     * Registers the placeholder API
      * @param plugin
-     * @return true if registered
+     * @return true if successfully registered
      */
     boolean register(BSkyBlock plugin);
 
     /**
-     * Unregister the placeholder API
+     * Unregisters the placeholder API
      * @param plugin
      */
     void unregister(BSkyBlock plugin);
 
     /**
      * Replace placeholders in the message according to the receiver
-     * @param sender
+     * @param receiver
      * @param message
      * @return updated message
      */
-    String replacePlaceholders(CommandSender receiver, String message);
+    String replacePlaceholders(User receiver, String message);
 }
