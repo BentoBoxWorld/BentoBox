@@ -316,8 +316,8 @@ public class Island implements DataObject {
      */
     public int getTileEntityCount(Material material, World world) {
         int result = 0;
-        for (int x = (int) (getMinProtectedX() /16); x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
-            for (int z = (int) (getMinProtectedZ() /16); z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
+        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
+            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
                     //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
                     if (onIsland(holder.getLocation())) {

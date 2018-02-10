@@ -40,20 +40,14 @@ public class BucketListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
         // Check filling of various liquids
-        if (e.getItemStack().getType().equals(Material.LAVA_BUCKET)) {
-            if (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA)) {
-                return;
-            }
+        if (e.getItemStack().getType().equals(Material.LAVA_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA))) {
+            return;
         }
-        if (e.getItemStack().getType().equals(Material.WATER_BUCKET)) {
-            if (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_WATER)) {
-                return;
-            }
+        if (e.getItemStack().getType().equals(Material.WATER_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_WATER))) {
+            return;
         }
-        if (e.getItemStack().getType().equals(Material.MILK_BUCKET)) {
-            if (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.MILKING)) {
-                return;
-            }
+        if (e.getItemStack().getType().equals(Material.MILK_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.MILKING))) {
+            return;
         }
         // Check general bucket use
         checkIsland(e, e.getBlockClicked().getLocation(), Flags.BUCKET);
