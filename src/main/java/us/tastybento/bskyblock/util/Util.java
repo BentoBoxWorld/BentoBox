@@ -11,7 +11,6 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -174,30 +173,6 @@ public class Util {
             fin += Character.toUpperCase(ugly.charAt(0)) + ugly.substring(1);
         }
         return fin;
-    }
-
-    /**
-     * Checks if player has this type of item in either hand
-     * @param player
-     * @param type
-     * @return true if they are holding an item of type type
-     */
-    @SuppressWarnings("deprecation")
-    public static boolean playerIsHolding(Player player, Material type) {
-        if (plugin.getServer().getVersion().contains("(MC: 1.7")
-                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
-            if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
-                return true;
-            }
-            return false;
-        }
-        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().getType().equals(type)) {
-            return true;
-        }
-        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInOffHand().getType().equals(type)) {
-            return true;
-        }
-        return false;
     }
 
     /**

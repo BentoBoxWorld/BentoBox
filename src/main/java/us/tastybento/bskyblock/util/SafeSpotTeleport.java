@@ -71,7 +71,7 @@ public class SafeSpotTeleport {
 
         // Start checking
         checking = true;
-        
+
         // Start a recurring task until done or cancelled
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
@@ -120,7 +120,7 @@ public class SafeSpotTeleport {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
         // Get island if available
         Optional<Island> island = plugin.getIslands().getIslandAt(location);
-        int maxRadius = island.map(x -> x.getProtectionRange()).orElse(plugin.getSettings().getIslandProtectionRange());
+        int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getSettings().getIslandProtectionRange());
         int x = location.getBlockX();
         int z = location.getBlockZ();
         // Create ever increasing squares around the target location
@@ -130,7 +130,7 @@ public class SafeSpotTeleport {
                 for (int j = z - radius; j <= z + radius; j++) {
 
                     Pair<Integer, Integer> blockCoord = new Pair<>(i,j);
-                    Pair<Integer, Integer> chunkCoord = new Pair<>((int)i/16, (int)j/16);    
+                    Pair<Integer, Integer> chunkCoord = new Pair<>(i/16, j/16);    
                     if (!result.contains(chunkCoord)) {
                         // Add the chunk coord
                         if (!island.isPresent()) {
@@ -142,7 +142,7 @@ public class SafeSpotTeleport {
                                 if (is.inIslandSpace(blockCoord)) {
                                     result.add(chunkCoord);
                                 }
-                             });  
+                            });  
                         }
                     }
                 }
@@ -176,7 +176,6 @@ public class SafeSpotTeleport {
      * @return true if a safe spot was found
      */
     private boolean scanChunk(ChunkSnapshot chunk) { 
-        World world = location.getWorld();
         // Max height
         int maxHeight = location.getWorld().getMaxHeight() - 20;
         // Run through the chunk
@@ -185,25 +184,9 @@ public class SafeSpotTeleport {
                 // Work down from the entry point up
                 for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
                     if (checkBlock(chunk, x,y,z, maxHeight)) {
-                        Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
-                        // Check for portal
-                        if (portal) {
-                            if (chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
-                                // Teleport as soon as we find a portal
-                                teleportEntity(newSpot.toLocation(world));
-                                return true;
-                            } else if (bestSpot == null ) {
-                                // Stash the best spot
-                                bestSpot = newSpot.toLocation(world);
-                            }
-                        } else {
-                            // Regular search - teleport as soon as we find something
-                            teleportEntity(newSpot.toLocation(world));
-                            return true;
-                        }
+                        return true;
                     }
-
-                }
+                } // end y
             } //end z
         } // end x
         return false;
@@ -270,56 +253,72 @@ public class SafeSpotTeleport {
      * @param y
      * @param z
      * @param worldHeight
-     * @return
+     * @return true if this is a safe spot, false if this is a portal scan
      */
     private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
+        World world = location.getWorld();
+
         Bukkit.getLogger().info("checking " + x + " " + y + " "+ z);
         Material type = chunk.getBlockType(x, y, z);
         if (!type.equals(Material.AIR)) { // AIR
             Material space1 = chunk.getBlockType(x, Math.min(y + 1, worldHeight), z);
             Material space2 = chunk.getBlockType(x, Math.min(y + 2, worldHeight), z);
             if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) 
-                    || (space1.equals(Material.PORTAL) && space2.equals(Material.PORTAL))) {
-                // Now there is a chance that this is a safe spot
-                // Check for safe ground
-                if (!type.toString().contains("FENCE")
-                        && !type.toString().contains("DOOR")
-                        && !type.toString().contains("GATE")
-                        && !type.toString().contains("PLATE")) {
-                    switch (type) {
-                    // Unsafe
-                    case ANVIL:
-                    case BARRIER:
-                    case BOAT:
-                    case CACTUS:
-                    case DOUBLE_PLANT:
-                    case ENDER_PORTAL:
-                    case FIRE:
-                    case FLOWER_POT:
-                    case LADDER:
-                    case LAVA:
-                    case LEVER:
-                    case LONG_GRASS:
-                    case PISTON_EXTENSION:
-                    case PISTON_MOVING_PIECE:
-                    case PORTAL:
-                    case SIGN_POST:
-                    case SKULL:
-                    case STANDING_BANNER:
-                    case STATIONARY_LAVA:
-                    case STATIONARY_WATER:
-                    case STONE_BUTTON:
-                    case TORCH:
-                    case TRIPWIRE:
-                    case WATER:
-                    case WEB:
-                    case WOOD_BUTTON:
-                        //Block is dangerous
-                        break;
-                    default:
-                        // Safe
+                    || (space1.equals(Material.PORTAL) && space2.equals(Material.PORTAL))
+                    && (!type.toString().contains("FENCE")
+                            && !type.toString().contains("DOOR")
+                            && !type.toString().contains("GATE")
+                            && !type.toString().contains("PLATE"))) {
+                switch (type) {
+                // Unsafe
+                case ANVIL:
+                case BARRIER:
+                case BOAT:
+                case CACTUS:
+                case DOUBLE_PLANT:
+                case ENDER_PORTAL:
+                case FIRE:
+                case FLOWER_POT:
+                case LADDER:
+                case LAVA:
+                case LEVER:
+                case LONG_GRASS:
+                case PISTON_EXTENSION:
+                case PISTON_MOVING_PIECE:
+                case PORTAL:
+                case SIGN_POST:
+                case SKULL:
+                case STANDING_BANNER:
+                case STATIONARY_LAVA:
+                case STATIONARY_WATER:
+                case STONE_BUTTON:
+                case TORCH:
+                case TRIPWIRE:
+                case WATER:
+                case WEB:
+                case WOOD_BUTTON:
+                    //Block is dangerous
+                    break;
+                default:
+                    // Safe
+                    Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
+                    // Check for portal
+                    if (portal) {
+                        if (chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
+                            // Teleport as soon as we find a portal
+                            teleportEntity(newSpot.toLocation(world));
+                            return true;
+                        } else if (bestSpot == null) {
+                            // Stash the best spot
+                            bestSpot = newSpot.toLocation(world);
+                            return false;
+                        }
+                    } else {
+                        // Regular search - teleport as soon as we find something
+                        teleportEntity(newSpot.toLocation(world));
                         return true;
                     }
+                    return true;
                 }
             }
         }
