@@ -19,7 +19,7 @@ public class AdminCommand extends CompositeCommand {
     public void setup() {
         setPermission(Constants.PERMPREFIX + "admin.*");
         setOnlyPlayer(false);
-        setDescription("admin.help.description");
+        setDescription("commands.admin.help.description");
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
         new AdminTeleportCommand(this);
