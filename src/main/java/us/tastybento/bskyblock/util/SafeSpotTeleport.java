@@ -26,20 +26,17 @@ import us.tastybento.bskyblock.database.objects.Island;
  */
 public class SafeSpotTeleport {
 
-    private enum State {
-        CHECKING, WAITING
-    }
     private static final int MAX_CHUNKS = 10;
     private static final long SPEED = 10;
-    private State step = State.CHECKING;
+    private boolean checking = true;
     private BukkitTask task;
-    
+
     // Parameters
     private final Entity entity;
     private final Location location;
     private final boolean portal;
     private final int homeNumber;
-    
+
     // Locations
     private Location bestSpot;
 
@@ -72,13 +69,13 @@ public class SafeSpotTeleport {
         // Get chunks to scan
         chunksToScan = getChunksToScan();
 
+        // Start checking
+        checking = true;
+        
         // Start a recurring task until done or cancelled
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            Bukkit.getLogger().info("State = " + step);
-            Bukkit.getLogger().info("Chunks to scan size = " + chunksToScan.size());
             List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
-            switch (step) {
-            case CHECKING:
+            if (checking) {
                 Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
                 if (!it.hasNext()) {
                     Bukkit.getLogger().info("Nothing left!");
@@ -93,13 +90,8 @@ public class SafeSpotTeleport {
                     it.remove();
                 }
                 // Move to next step
-                step = State.WAITING;
-                Bukkit.getLogger().info("Chunk snapshot size = " + chunkSnapshot.size());
+                checking = false;
                 checkChunks(chunkSnapshot);
-                break;
-            case WAITING:
-                // Do nothing while the scan is done
-                break;
             }
         }, 0L, SPEED);
     }
@@ -109,7 +101,6 @@ public class SafeSpotTeleport {
         task.cancel();
         // Check portal
         if (portal && bestSpot != null) {
-            Bukkit.getLogger().info("No portals found, going to best spot");
             // No portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
         }
@@ -130,8 +121,6 @@ public class SafeSpotTeleport {
         // Get island if available
         Optional<Island> island = plugin.getIslands().getIslandAt(location);
         int maxRadius = island.map(x -> x.getProtectionRange()).orElse(plugin.getSettings().getIslandProtectionRange());
-        Bukkit.getLogger().info("default island radius = " + plugin.getSettings().getIslandProtectionRange());
-        Bukkit.getLogger().info("Max radius = " + maxRadius);
         int x = location.getBlockX();
         int z = location.getBlockZ();
         // Create ever increasing squares around the target location
@@ -139,27 +128,21 @@ public class SafeSpotTeleport {
         do {
             for (int i = x - radius; i <= x + radius; i++) {
                 for (int j = z - radius; j <= z + radius; j++) {
-                    
+
                     Pair<Integer, Integer> blockCoord = new Pair<>(i,j);
                     Pair<Integer, Integer> chunkCoord = new Pair<>((int)i/16, (int)j/16);    
                     if (!result.contains(chunkCoord)) {
-                        Bukkit.getLogger().info("Block coord = " + blockCoord);
-                        Bukkit.getLogger().info("New chunk coord " + chunkCoord);
                         // Add the chunk coord
                         if (!island.isPresent()) {
                             // If there is no island, just add it
-                            Bukkit.getLogger().info("No island, adding chunk coord ");
                             result.add(chunkCoord);
                         } else {
                             // If there is an island, only add it if the coord is in island space
                             island.ifPresent(is -> {
                                 if (is.inIslandSpace(blockCoord)) {
-                                    Bukkit.getLogger().info("Island, adding chunk coord");
                                     result.add(chunkCoord);
-                                } else {
-                                    Bukkit.getLogger().info("Island, block coord not in island space");
                                 }
-                            });  
+                             });  
                         }
                     }
                 }
@@ -183,7 +166,7 @@ public class SafeSpotTeleport {
                 }
             }
             // Nothing happened, change state
-            step = State.CHECKING;
+            checking = true;
         });
     }
 
@@ -193,8 +176,6 @@ public class SafeSpotTeleport {
      * @return true if a safe spot was found
      */
     private boolean scanChunk(ChunkSnapshot chunk) { 
-        Bukkit.getLogger().info("Scanning chunk at " + chunk.getX() + " " + chunk.getZ());
-        Bukkit.getLogger().info("Portal = " + portal);
         World world = location.getWorld();
         // Max height
         int maxHeight = location.getWorld().getMaxHeight() - 20;
@@ -204,7 +185,6 @@ public class SafeSpotTeleport {
                 // Work down from the entry point up
                 for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
                     if (checkBlock(chunk, x,y,z, maxHeight)) {
-                        Bukkit.getLogger().info("safe: " + x + " " + y + " "+ z);
                         Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
                         // Check for portal
                         if (portal) {
@@ -222,7 +202,7 @@ public class SafeSpotTeleport {
                             return true;
                         }
                     }
-                    
+
                 }
             } //end z
         } // end x
@@ -255,7 +235,7 @@ public class SafeSpotTeleport {
 
     }
 
-    
+
     /**
      * Subscan to find the bottom of the portal 
      */
