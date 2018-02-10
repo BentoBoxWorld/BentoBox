@@ -137,10 +137,10 @@ public class SafeSpotTeleport {
         // Create ever increasing squares around the target location
         int radius = 0;
         do {
-            for (long i = x - radius; i <= x + radius; i++) {
-                for (long j = z - radius; j <= z + radius; j++) {
+            for (int i = x - radius; i <= x + radius; i++) {
+                for (int j = z - radius; j <= z + radius; j++) {
                     
-                    Pair<Long, Long> blockCoord = new Pair<>(i,j);
+                    Pair<Integer, Integer> blockCoord = new Pair<>(i,j);
                     Pair<Integer, Integer> chunkCoord = new Pair<>((int)i/16, (int)j/16);    
                     if (!result.contains(chunkCoord)) {
                         Bukkit.getLogger().info("Block coord = " + blockCoord);

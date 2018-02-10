@@ -48,14 +48,14 @@ public class Island implements DataObject {
     private int range;
 
     // Coordinates of the island area
-    private long minX;
+    private int minX;
 
-    private long minZ;
+    private int minZ;
 
     // Coordinates of minimum protected area
-    private long minProtectedX;
+    private int minProtectedX;
 
-    private long minProtectedZ;
+    private int minProtectedZ;
 
     // Protection size
     private int protectionRange;
@@ -213,28 +213,28 @@ public class Island implements DataObject {
     /**
      * @return the minProtectedX
      */
-    public long getMinProtectedX() {
+    public int getMinProtectedX() {
         return minProtectedX;
     }
 
     /**
      * @return the minProtectedZ
      */
-    public long getMinProtectedZ() {
+    public int getMinProtectedZ() {
         return minProtectedZ;
     }
 
     /**
      * @return the minX
      */
-    public long getMinX() {
+    public int getMinX() {
         return minX;
     }
 
     /**
      * @return the minZ
      */
-    public long getMinZ() {
+    public int getMinZ() {
         return minZ;
     }
 
@@ -410,7 +410,7 @@ public class Island implements DataObject {
      * @param z
      * @return true if in the island space
      */
-    public boolean inIslandSpace(long x, long z) {
+    public boolean inIslandSpace(int x, int z) {
         //Bukkit.getLogger().info("DEBUG: center - " + center);
         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
@@ -420,7 +420,7 @@ public class Island implements DataObject {
      * @param blockCoord
      * @return true or false
      */
-    public boolean inIslandSpace(Pair<Long, Long> blockCoord) {
+    public boolean inIslandSpace(Pair<Integer, Integer> blockCoord) {
         return inIslandSpace(blockCoord.x, blockCoord.z);
     }
 
@@ -577,21 +577,21 @@ public class Island implements DataObject {
     /**
      * @param minProtectedX the minProtectedX to set
      */
-    public final void setMinProtectedX(long minProtectedX) {
+    public final void setMinProtectedX(int minProtectedX) {
         this.minProtectedX = minProtectedX;
     }
 
     /**
      * @param minProtectedZ the minProtectedZ to set
      */
-    public final void setMinProtectedZ(long minProtectedZ) {
+    public final void setMinProtectedZ(int minProtectedZ) {
         this.minProtectedZ = minProtectedZ;
     }
 
     /**
      * @param minX the minX to set
      */
-    public final void setMinX(long minX) {
+    public final void setMinX(int minX) {
         this.minX = minX;
     }
 
@@ -599,7 +599,7 @@ public class Island implements DataObject {
     /**
      * @param minZ the minZ to set
      */
-    public final void setMinZ(long minZ) {
+    public final void setMinZ(int minZ) {
         this.minZ = minZ;
     }
 
