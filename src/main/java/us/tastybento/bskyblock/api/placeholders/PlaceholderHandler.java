@@ -14,6 +14,10 @@ import us.tastybento.bskyblock.api.commands.User;
  */
 public class PlaceholderHandler {
     private static final String PACKAGE = "us.tastybento.bskyblock.api.placeholders.hooks.";
+    
+    // This class should never be instantiated (all methods are static)
+    private PlaceholderHandler() {}
+    
     /**
      * List of API classes in the package specified above (except the Internal one)
      */
@@ -46,13 +50,13 @@ public class PlaceholderHandler {
                     Class<?> clazz = Class.forName(PACKAGE + hook + "PlaceholderImpl");
                     PlaceholderAPIInterface api = (PlaceholderAPIInterface)clazz.newInstance();
                     if(api.register(plugin)){
-                        plugin.getLogger().info("Hooked placeholders into " + hook);
+                        plugin.getLogger().info(() -> "Hooked placeholders into " + hook); // since Java 8, we can use Supplier , which will be evaluated lazily
                         apis.add(api);
                     } else {
-                        plugin.getLogger().info("Failed to hook placeholders into " + hook);
+                        plugin.getLogger().info(() -> "Failed to hook placeholders into " + hook);
                     }
                 } catch (Exception e){
-                    plugin.getLogger().info("Failed to hook placeholders into " + hook);
+                    plugin.getLogger().info(() -> "Failed to hook placeholders into " + hook);
                 }
             }
         }
