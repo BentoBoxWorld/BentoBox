@@ -378,123 +378,120 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     InstantiationException, IllegalAccessException,
     IntrospectionException, InvocationTargetException, NoSuchMethodException {
 
-        // Try to connect to the database
-        try (Connection connection = databaseConnecter.createConnection()) {          
-            // insertQuery is created in super from the createInsertQuery() method
-            try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
-                // Get the uniqueId. As each class extends DataObject, it must have this method in it.
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
-                Method getUniqueId = propertyDescriptor.getReadMethod();
-                final String uniqueId = (String) getUniqueId.invoke(instance);
-                if (uniqueId.isEmpty()) {
-                    throw new SQLException("uniqueId is blank");
-                }
-                // Create the insertion
-                int i = 0;
-                // Run through the fields in the class using introspection
-                for (Field field : dataObject.getDeclaredFields()) {
-                    // Get the field's property descriptor
-                    propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
-                    // Get the read method for this field
-                    Method method = propertyDescriptor.getReadMethod();
-                    //sql += "`" + field.getName() + "` " + mapping + ",";
-                    // Invoke the read method to obtain the value from the class - this is the value we need to store in the database
-                    Object value = method.invoke(instance);
-                    // Adapter Notation
-                    Adapter adapterNotation = field.getAnnotation(Adapter.class);
-                    if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
-                        // A conversion adapter has been defined
-                        value = ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value);
-                    }
-                    // Create set and map table inserts if this is a Collection
-                    if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                            propertyDescriptor.getPropertyType().equals(Map.class) ||
-                            propertyDescriptor.getPropertyType().equals(HashMap.class) ||
-                            propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                        // Collection
-                        // The table is cleared for this uniqueId every time the data is stored
-                        StringBuilder clearTableSql = new StringBuilder();
-                        clearTableSql.append("DELETE FROM  `");
-                        clearTableSql.append(dataObject.getCanonicalName());
-                        clearTableSql.append(".");
-                        clearTableSql.append(field.getName());
-                        clearTableSql.append("` WHERE uniqueId = ?");
-                        try (PreparedStatement collStatement = connection.prepareStatement(clearTableSql.toString())) {
-                            collStatement.setString(1, uniqueId);
-                            collStatement.execute();
-                        }
-                        // Insert into the table
-                        StringBuilder setSql = new StringBuilder();
-                        setSql.append("INSERT INTO `");
-                        setSql.append(dataObject.getCanonicalName());
-                        setSql.append(".");
-                        setSql.append(field.getName());
-                        setSql.append("` (uniqueId, ");
-                        // Get the columns we are going to insert, just the names of them
-                        setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false));
-                        setSql.append(") ");
-                        // Get all the ?'s for the columns
-                        setSql.append("VALUES ('?',");
-                        setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false));
-                        setSql.append(")");
-                        // Prepare the statement
-                        try (PreparedStatement collStatement = connection.prepareStatement(setSql.toString())) {
-                            // Set the uniqueId
-                            collStatement.setString(1, uniqueId);
-                            // Do single dimension types (set and list)
-                            if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                                    propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                                //plugin.getLogger().info("DEBUG: set class for ");
-                                // Loop through the set or list
-                                // Note that we have no idea what type this is
-                                Collection<?> collection = (Collection<?>)value;
-                                Iterator<?> it = collection.iterator();
-                                while (it.hasNext()) {
-                                    Object setValue = it.next();
-                                    //if (setValue instanceof UUID) {
-                                    // Serialize everything
-                                    setValue = serialize(setValue, setValue.getClass());
-                                    //}
-                                    // Set the value from ? to whatever it is
-                                    collStatement.setObject(2, setValue);
-                                    // Execute the SQL in the database
-                                    collStatement.execute();
-                                }
-                            } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
-                                    propertyDescriptor.getPropertyType().equals(HashMap.class)) {
-                                // Loop through the map
-                                Map<?,?> collection = (Map<?,?>)value;
-                                Iterator<?> it = collection.entrySet().iterator();
-                                while (it.hasNext()) {
-                                    Entry<?,?> en = (Entry<?, ?>) it.next();
-                                    // Get the key and serialize it
-                                    Object key = serialize(en.getKey(), en.getKey().getClass());
-                                    // Get the value and serialize it
-                                    Object mapValue = serialize(en.getValue(), en.getValue().getClass());
-                                    // Write the objects into prepared statement
-                                    collStatement.setObject(1, key);
-                                    collStatement.setObject(2, mapValue);
-                                    // Write to database
-                                    collStatement.execute();
-                                }
-                            }
-                            // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
-                            // additional table.
-                            value = true;
-                        }
-                    } else {
-                        // If the value is not a collection, it just needs to be serialized to go into the database.
-                        value = serialize(value, propertyDescriptor.getPropertyType());
-                    }
-                    // Set the value in the main prepared statement and increment the location
-                    // Note that with prepared statements, they count from 1, not 0, so the ++ goes on the front of i.
-                    preparedStatement.setObject(++i, value);
-                }
-                // Add the statements to a batch
-                preparedStatement.addBatch();
-                // Execute
-                preparedStatement.executeBatch();
+        // insertQuery is created in super from the createInsertQuery() method
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+            // Get the uniqueId. As each class extends DataObject, it must have this method in it.
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
+            Method getUniqueId = propertyDescriptor.getReadMethod();
+            final String uniqueId = (String) getUniqueId.invoke(instance);
+            if (uniqueId.isEmpty()) {
+                throw new SQLException("uniqueId is blank");
             }
+            // Create the insertion
+            int i = 0;
+            // Run through the fields in the class using introspection
+            for (Field field : dataObject.getDeclaredFields()) {
+                // Get the field's property descriptor
+                propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
+                // Get the read method for this field
+                Method method = propertyDescriptor.getReadMethod();
+                //sql += "`" + field.getName() + "` " + mapping + ",";
+                // Invoke the read method to obtain the value from the class - this is the value we need to store in the database
+                Object value = method.invoke(instance);
+                // Adapter Notation
+                Adapter adapterNotation = field.getAnnotation(Adapter.class);
+                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                    // A conversion adapter has been defined
+                    value = ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value);
+                }
+                // Create set and map table inserts if this is a Collection
+                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                        propertyDescriptor.getPropertyType().equals(Map.class) ||
+                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    // Collection
+                    // The table is cleared for this uniqueId every time the data is stored
+                    StringBuilder clearTableSql = new StringBuilder();
+                    clearTableSql.append("DELETE FROM  `");
+                    clearTableSql.append(dataObject.getCanonicalName());
+                    clearTableSql.append(".");
+                    clearTableSql.append(field.getName());
+                    clearTableSql.append("` WHERE uniqueId = ?");
+                    try (PreparedStatement collStatement = connection.prepareStatement(clearTableSql.toString())) {
+                        collStatement.setString(1, uniqueId);
+                        collStatement.execute();
+                    }
+                    // Insert into the table
+                    StringBuilder setSql = new StringBuilder();
+                    setSql.append("INSERT INTO `");
+                    setSql.append(dataObject.getCanonicalName());
+                    setSql.append(".");
+                    setSql.append(field.getName());
+                    setSql.append("` (uniqueId, ");
+                    // Get the columns we are going to insert, just the names of them
+                    setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false));
+                    setSql.append(") ");
+                    // Get all the ?'s for the columns
+                    setSql.append("VALUES ('?',");
+                    setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false));
+                    setSql.append(")");
+                    // Prepare the statement
+                    try (PreparedStatement collStatement = connection.prepareStatement(setSql.toString())) {
+                        // Set the uniqueId
+                        collStatement.setString(1, uniqueId);
+                        // Do single dimension types (set and list)
+                        if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                                propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                            //plugin.getLogger().info("DEBUG: set class for ");
+                            // Loop through the set or list
+                            // Note that we have no idea what type this is
+                            Collection<?> collection = (Collection<?>)value;
+                            Iterator<?> it = collection.iterator();
+                            while (it.hasNext()) {
+                                Object setValue = it.next();
+                                //if (setValue instanceof UUID) {
+                                // Serialize everything
+                                setValue = serialize(setValue, setValue.getClass());
+                                //}
+                                // Set the value from ? to whatever it is
+                                collStatement.setObject(2, setValue);
+                                // Execute the SQL in the database
+                                collStatement.execute();
+                            }
+                        } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
+                                propertyDescriptor.getPropertyType().equals(HashMap.class)) {
+                            // Loop through the map
+                            Map<?,?> collection = (Map<?,?>)value;
+                            Iterator<?> it = collection.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Entry<?,?> en = (Entry<?, ?>) it.next();
+                                // Get the key and serialize it
+                                Object key = serialize(en.getKey(), en.getKey().getClass());
+                                // Get the value and serialize it
+                                Object mapValue = serialize(en.getValue(), en.getValue().getClass());
+                                // Write the objects into prepared statement
+                                collStatement.setObject(1, key);
+                                collStatement.setObject(2, mapValue);
+                                // Write to database
+                                collStatement.execute();
+                            }
+                        }
+                        // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
+                        // additional table.
+                        value = true;
+                    }
+                } else {
+                    // If the value is not a collection, it just needs to be serialized to go into the database.
+                    value = serialize(value, propertyDescriptor.getPropertyType());
+                }
+                // Set the value in the main prepared statement and increment the location
+                // Note that with prepared statements, they count from 1, not 0, so the ++ goes on the front of i.
+                preparedStatement.setObject(++i, value);
+            }
+            // Add the statements to a batch
+            preparedStatement.addBatch();
+            // Execute
+            preparedStatement.executeBatch();
         }
     }
 

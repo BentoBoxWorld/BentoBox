@@ -1,13 +1,14 @@
 package us.tastybento.bskyblock.lists;
 
-import org.bukkit.Bukkit;
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.placeholders.Placeholder;
-import us.tastybento.bskyblock.api.placeholders.PlaceholderBuilder;
-
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.placeholders.Placeholder;
+import us.tastybento.bskyblock.api.placeholders.PlaceholderBuilder;
 
 public class Placeholders {
 

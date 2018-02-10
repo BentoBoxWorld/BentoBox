@@ -2,8 +2,8 @@ package us.tastybento.bskyblock.util;
 
 
 public class Pair<X, Z> {
-    public X x;
-    public Z z;
+    public final X x;
+    public final Z z;
 
     public Pair(X x, Z z) {
         this.x = x;

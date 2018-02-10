@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.api.placeholders.hooks;
 
-import java.util.regex.Pattern;
-
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.placeholders.Placeholder;
