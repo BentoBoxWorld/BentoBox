@@ -8,7 +8,6 @@ import org.bukkit.Location;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.util.SafeSpotTeleport;
 import us.tastybento.bskyblock.util.SafeTeleportBuilder;
 
 public class AdminTeleportCommand extends CompositeCommand {

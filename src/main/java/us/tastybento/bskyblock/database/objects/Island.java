@@ -25,6 +25,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.util.Pair;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -47,14 +48,14 @@ public class Island implements DataObject {
     private int range;
 
     // Coordinates of the island area
-    private int minX;
+    private long minX;
 
-    private int minZ;
+    private long minZ;
 
     // Coordinates of minimum protected area
-    private int minProtectedX;
+    private long minProtectedX;
 
-    private int minProtectedZ;
+    private long minProtectedZ;
 
     // Protection size
     private int protectionRange;
@@ -212,28 +213,28 @@ public class Island implements DataObject {
     /**
      * @return the minProtectedX
      */
-    public int getMinProtectedX() {
+    public long getMinProtectedX() {
         return minProtectedX;
     }
 
     /**
      * @return the minProtectedZ
      */
-    public int getMinProtectedZ() {
+    public long getMinProtectedZ() {
         return minProtectedZ;
     }
 
     /**
      * @return the minX
      */
-    public int getMinX() {
+    public long getMinX() {
         return minX;
     }
 
     /**
      * @return the minZ
      */
-    public int getMinZ() {
+    public long getMinZ() {
         return minZ;
     }
 
@@ -315,8 +316,8 @@ public class Island implements DataObject {
      */
     public int getTileEntityCount(Material material, World world) {
         int result = 0;
-        for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
-            for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
+        for (int x = (int) (getMinProtectedX() /16); x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
+            for (int z = (int) (getMinProtectedZ() /16); z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
                     //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
                     if (onIsland(holder.getLocation())) {
@@ -396,22 +397,31 @@ public class Island implements DataObject {
         return center.getBlockZ();
     }
 
+    public boolean inIslandSpace(Location location) {
+        if (Util.inWorld(location)) {
+            return inIslandSpace(location.getBlockX(), location.getBlockZ());
+        }
+        return false;
+    }
+
     /**
      * Checks if coords are in the island space
      * @param x
      * @param z
      * @return true if in the island space
      */
-    public boolean inIslandSpace(int x, int z) {
+    public boolean inIslandSpace(long x, long z) {
         //Bukkit.getLogger().info("DEBUG: center - " + center);
         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
 
-    public boolean inIslandSpace(Location location) {
-        if (Util.inWorld(location)) {
-            return inIslandSpace(location.getBlockX(), location.getBlockZ());
-        }
-        return false;
+    /**
+     * Checks if the coords are in island space
+     * @param blockCoord
+     * @return true or false
+     */
+    public boolean inIslandSpace(Pair<Long, Long> blockCoord) {
+        return inIslandSpace(blockCoord.x, blockCoord.z);
     }
 
     /**
@@ -567,28 +577,29 @@ public class Island implements DataObject {
     /**
      * @param minProtectedX the minProtectedX to set
      */
-    public void setMinProtectedX(int minProtectedX) {
+    public final void setMinProtectedX(long minProtectedX) {
         this.minProtectedX = minProtectedX;
     }
 
     /**
      * @param minProtectedZ the minProtectedZ to set
      */
-    public void setMinProtectedZ(int minProtectedZ) {
+    public final void setMinProtectedZ(long minProtectedZ) {
         this.minProtectedZ = minProtectedZ;
     }
 
     /**
      * @param minX the minX to set
      */
-    public void setMinX(int minX) {
+    public final void setMinX(long minX) {
         this.minX = minX;
     }
+
 
     /**
      * @param minZ the minZ to set
      */
-    public void setMinZ(int minZ) {
+    public final void setMinZ(long minZ) {
         this.minZ = minZ;
     }
 

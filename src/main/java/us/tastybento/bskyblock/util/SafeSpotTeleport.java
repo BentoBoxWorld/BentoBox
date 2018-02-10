@@ -1,21 +1,22 @@
 package us.tastybento.bskyblock.util;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.World.Environment;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
@@ -26,197 +27,221 @@ import us.tastybento.bskyblock.database.objects.Island;
 public class SafeSpotTeleport {
 
     private enum State {
-        CENTER, SURROUNDING, LAST_CHECK, FAILURE, CENTER_WAIT, SURROUNDING_WAIT
+        CHECKING, WAITING
     }
+    private static final int MAX_CHUNKS = 10;
     private static final long SPEED = 10;
-    private State step = State.CENTER;
+    private State step = State.CHECKING;
     private BukkitTask task;
+    
+    // Parameters
+    private final Entity entity;
+    private final Location location;
+    private final boolean portal;
+    private final int homeNumber;
+    
+    // Locations
+    private Location bestSpot;
 
 
     private BSkyBlock plugin;
-    private final Entity entity;
-    private final Location location;
-    private final int homeNumber;
-    private final boolean setHome;
-    private int lastX;
-    private int lastZ;
-    private int chunksToCheck = 10;
-    private int worldHeight = 255;
-    private World world;
-    private double safeDistance;
-    private Vector safeSpotInChunk;
-    private boolean safeSpotFound;
-    private Vector portalPart;
-    private ChunkSnapshot portalChunk;
-    private ChunkSnapshot safeChunk;
+    private List<Pair<Integer, Integer>> chunksToScan;
 
     /**
      * Teleports and entity to a safe spot on island
-     * @param plugin2
-     * @param entity2
-     * @param island
+     * @param plugin
+     * @param entity
+     * @param location
      * @param failureMessage
-     * @param setHome2
-     * @param homeNumber2
+     * @param portal
+     * @param homeNumber
      */
-    public SafeSpotTeleport(BSkyBlock plugin2, Entity entity2, Location location, String failureMessage, boolean setHome2,
-            int homeNumber2) {
-        this.plugin = plugin2;
-        this.entity = entity2;
-        this.setHome = setHome2;
-        this.homeNumber = homeNumber2;
+    public SafeSpotTeleport(BSkyBlock plugin, Entity entity, Location location, String failureMessage, boolean portal,
+            int homeNumber) {
+        this.plugin = plugin;
+        this.entity = entity;
         this.location = location;
+        this.portal = portal;
+        this.homeNumber = homeNumber;
 
         // Put player into spectator mode
         if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SURVIVAL)) {
             ((Player)entity).setGameMode(GameMode.SPECTATOR);
         }
-        // Get world info
-        world = location.getWorld();
-        worldHeight = world.getEnvironment().equals(Environment.NETHER) ? world.getMaxHeight() - 20 : world.getMaxHeight() - 2;
 
-        // Get island mins and max
-        Island island = plugin.getIslands().getIslandAt(location).orElse(null);
-        if (island == null) {
-            if (entity instanceof Player) {
-                User.getInstance((Player)entity).sendMessage(failureMessage);
-            }
-            return;
-        }
-        // Set the minimums and maximums
-        lastX = island.getMinProtectedX() / 16;
-        lastZ = island.getMinProtectedZ() / 16;
-        int biggestX = (island.getMinProtectedX() + island.getProtectionRange() - 1) / 16;
-        int biggestZ = (island.getMinProtectedZ() + island.getProtectionRange() - 1) / 16;
+        // Get chunks to scan
+        chunksToScan = getChunksToScan();
 
         // Start a recurring task until done or cancelled
         task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            Bukkit.getLogger().info("State = " + step);
+            Bukkit.getLogger().info("Chunks to scan size = " + chunksToScan.size());
             List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
             switch (step) {
-            case CENTER:
-                // Add the center chunk
-                chunkSnapshot.add(location.toVector().toLocation(world).getChunk().getChunkSnapshot());
-                // Add immediately adjacent chunks
-                for (int x = location.getChunk().getX()-1; x <= location.getChunk().getX()+1; x++) {
-                    for (int z = location.getChunk().getZ()-1; z <= location.getChunk().getZ()+1; z++) {
-                        if (x != location.getChunk().getX() || z != location.getChunk().getZ()) {
-                            chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());
-                        }
-                    }
+            case CHECKING:
+                Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
+                if (!it.hasNext()) {
+                    Bukkit.getLogger().info("Nothing left!");
+                    // Nothing left
+                    tidyUp(entity, failureMessage);
+                    return;
+                }
+                // Add chunk snapshots to the list
+                while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
+                    Pair<Integer, Integer> pair = it.next();
+                    chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                    it.remove();
                 }
                 // Move to next step
-                step = State.CENTER_WAIT;
+                step = State.WAITING;
+                Bukkit.getLogger().info("Chunk snapshot size = " + chunkSnapshot.size());
                 checkChunks(chunkSnapshot);
                 break;
-            case CENTER_WAIT:
-                // Do nothing while the center scan is done
+            case WAITING:
+                // Do nothing while the scan is done
                 break;
-            case SURROUNDING:
-                for (int x = lastX; x <= biggestX; x++) {
-                    for (int z = lastZ; z <= biggestZ; z++) {
-                        chunkSnapshot.add(world.getChunkAt(x, z).getChunkSnapshot());                     
-                        if (chunkSnapshot.size() == chunksToCheck) {
-                            lastX = x;
-                            lastZ = z;
-                            step = State.SURROUNDING_WAIT;
-                            checkChunks(chunkSnapshot);
-                            return;
-                        }
-                    }                   
-                }
-                // Last few chunks, may be none
-                step = State.LAST_CHECK;
-                checkChunks(chunkSnapshot);
-                break;
-            case SURROUNDING_WAIT:
-                // Do nothing while the surrounding scan is done
-                break;
-            case LAST_CHECK:
-                // Do nothing while the last few chunks are scanned
-                break;
-            case FAILURE:
-                // We are done searching - failure
-                task.cancel();
-                if (entity instanceof Player) {
-                    if (!failureMessage.isEmpty()) {
-                        entity.sendMessage(failureMessage);
-                    }
-                }
             }
         }, 0L, SPEED);
     }
 
-    private boolean checkChunks(List<ChunkSnapshot> chunkSnapshot) {
+    private void tidyUp(Entity entity, String failureMessage) {
+        // Nothing left to check and still not canceled
+        task.cancel();
+        // Check portal
+        if (portal && bestSpot != null) {
+            Bukkit.getLogger().info("No portals found, going to best spot");
+            // No portals found, teleport to the best spot we found
+            teleportEntity(bestSpot);
+        }
+        // Failed - no safe spot 
+        if (entity instanceof Player && !failureMessage.isEmpty()) {
+            entity.sendMessage(failureMessage);
+        }
+    }
+
+    /**
+     * Gets a set of chunk coords that will be scanned.
+     * @param entity
+     * @param location
+     * @return
+     */
+    private List<Pair<Integer, Integer>> getChunksToScan() {
+        List<Pair<Integer, Integer>> result = new ArrayList<>();
+        // Get island if available
+        Optional<Island> island = plugin.getIslands().getIslandAt(location);
+        int maxRadius = island.map(x -> x.getProtectionRange()).orElse(plugin.getSettings().getIslandProtectionRange());
+        Bukkit.getLogger().info("default island radius = " + plugin.getSettings().getIslandProtectionRange());
+        Bukkit.getLogger().info("Max radius = " + maxRadius);
+        int x = location.getBlockX();
+        int z = location.getBlockZ();
+        // Create ever increasing squares around the target location
+        int radius = 0;
+        do {
+            for (long i = x - radius; i <= x + radius; i++) {
+                for (long j = z - radius; j <= z + radius; j++) {
+                    
+                    Pair<Long, Long> blockCoord = new Pair<>(i,j);
+                    Pair<Integer, Integer> chunkCoord = new Pair<>((int)i/16, (int)j/16);    
+                    if (!result.contains(chunkCoord)) {
+                        Bukkit.getLogger().info("Block coord = " + blockCoord);
+                        Bukkit.getLogger().info("New chunk coord " + chunkCoord);
+                        // Add the chunk coord
+                        if (!island.isPresent()) {
+                            // If there is no island, just add it
+                            Bukkit.getLogger().info("No island, adding chunk coord ");
+                            result.add(chunkCoord);
+                        } else {
+                            // If there is an island, only add it if the coord is in island space
+                            island.ifPresent(is -> {
+                                if (is.inIslandSpace(blockCoord)) {
+                                    Bukkit.getLogger().info("Island, adding chunk coord");
+                                    result.add(chunkCoord);
+                                } else {
+                                    Bukkit.getLogger().info("Island, block coord not in island space");
+                                }
+                            });  
+                        }
+                    }
+                }
+            }
+            radius++;
+        } while (radius < maxRadius);
+        return result;
+    }
+
+    /**
+     * Loops through the chunks and if a safe spot is found, fires off the teleportation 
+     * @param chunkSnapshot
+     */
+    private void checkChunks(List<ChunkSnapshot> chunkSnapshot) {
+        // Run async task to scan chunks
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-            // Find a safe spot, defined as a solid block, with 2 air spaces above it
-            //long time = System.nanoTime();
-            int x = 0;
-            int y = 0;
-            int z = 0;
-            double distance = 0D;
 
             for (ChunkSnapshot chunk: chunkSnapshot) {
-                // Run through the chunk
-                for (x = 0; x< 16; x++) {
-                    for (z = 0; z < 16; z++) {
-                        // Work down from the entry point up
-                        for (y = Math.min(chunk.getHighestBlockYAt(x, z), worldHeight); y >= 0; y--) {
-                            //System.out.println("Trying " + (16 * chunk.getX() + x) + " " + y + " " + (16 * chunk.getZ() + z));
-                            // Check for portal - only if this is not a safe home search
-                            if (!setHome && chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
-                                if (portalPart == null || (distance > location.toVector().distanceSquared(new Vector(x,y,z)))) {
-                                    // First one found or a closer one, save the chunk the position and the distance
-                                    portalChunk = chunk;
-                                    portalPart = new Vector(x,y,z);
-                                    distance = portalPart.distanceSquared(location.toVector());
-                                }
-                            }
-                            // Check for safe spot, but only if it is closer than one we have found already
-                            if (!safeSpotFound || (safeDistance > location.toVector().distanceSquared(new Vector(x,y,z)))) {
-                                // No safe spot yet, or closer distance
-                                if (checkBlock(chunk,x,y,z, worldHeight)) {
-                                    safeChunk = chunk;
-                                    safeSpotFound = true;
-                                    safeSpotInChunk = new Vector(x,y,z);
-                                    safeDistance = location.toVector().distanceSquared(safeSpotInChunk);
-                                }
-                            }
-                        }
-                    } //end z
-                } // end x
-                // If this is not a home search do a check for portal
-                if (!this.setHome) {
-                    checkPortal();
+                if (scanChunk(chunk)) {
+                    return;
                 }
-
-                // If successful, teleport otherwise move to the next step in the state machine
-                if (safeSpotFound) {
-                    task.cancel();
-                    teleportEntity();
-                } else if (step.equals(State.SURROUNDING_WAIT) || step.equals(State.CENTER_WAIT)) {
-                    step = State.SURROUNDING;
-                } else if (step.equals(State.LAST_CHECK)) {
-                    step = State.FAILURE;
-                } 
             }
+            // Nothing happened, change state
+            step = State.CHECKING;
         });
-        return false;
     }
 
 
     /**
+     * @param chunk
+     * @return true if a safe spot was found
+     */
+    private boolean scanChunk(ChunkSnapshot chunk) { 
+        Bukkit.getLogger().info("Scanning chunk at " + chunk.getX() + " " + chunk.getZ());
+        Bukkit.getLogger().info("Portal = " + portal);
+        World world = location.getWorld();
+        // Max height
+        int maxHeight = location.getWorld().getMaxHeight() - 20;
+        // Run through the chunk
+        for (int x = 0; x< 16; x++) {
+            for (int z = 0; z < 16; z++) {
+                // Work down from the entry point up
+                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
+                    if (checkBlock(chunk, x,y,z, maxHeight)) {
+                        Bukkit.getLogger().info("safe: " + x + " " + y + " "+ z);
+                        Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
+                        // Check for portal
+                        if (portal) {
+                            if (chunk.getBlockType(x, y, z).equals(Material.PORTAL)) {
+                                // Teleport as soon as we find a portal
+                                teleportEntity(newSpot.toLocation(world));
+                                return true;
+                            } else if (bestSpot == null ) {
+                                // Stash the best spot
+                                bestSpot = newSpot.toLocation(world);
+                            }
+                        } else {
+                            // Regular search - teleport as soon as we find something
+                            teleportEntity(newSpot.toLocation(world));
+                            return true;
+                        }
+                    }
+                    
+                }
+            } //end z
+        } // end x
+        return false;
+    }
+
+    /**
      * Teleports entity to the safe spot
      */
-    private void teleportEntity() {
-        final Vector spot = new Vector((16 *safeChunk.getX()) + 0.5D, 1, (16 * safeChunk.getZ()) + 0.5D).add(safeSpotInChunk);
+    private void teleportEntity(Location loc) {
+        task.cancel();
         // Return to main thread and teleport the player
         plugin.getServer().getScheduler().runTask(plugin, () -> {
-            Location destination = spot.toLocation(world);
-            if (setHome && entity instanceof Player) {
-                plugin.getPlayers().setHomeLocation(entity.getUniqueId(), destination, homeNumber);
+            if (!portal && entity instanceof Player) {
+                // Set home
+                plugin.getPlayers().setHomeLocation(entity.getUniqueId(), loc, homeNumber);
             }
             Vector velocity = entity.getVelocity();
-            entity.teleport(destination);
+            entity.teleport(loc);
             // Exit spectator mode if in it
             if (entity instanceof Player) {
                 Player player = (Player)entity;
@@ -230,10 +255,12 @@ public class SafeSpotTeleport {
 
     }
 
+    
     /**
-     * Checks if a portal is safe
+     * Subscan to find the bottom of the portal 
      */
-    private void checkPortal() {
+    /*
+    private Location checkPortal() {
         if (portalPart == null) {
             return;
         }
@@ -254,7 +281,7 @@ public class SafeSpotTeleport {
             safeSpotInChunk = new Vector(x,y,z);
             safeChunk = portalChunk;
         }
-    }
+    }*/
 
     /**
      * Returns true if the location is a safe one.
@@ -265,21 +292,21 @@ public class SafeSpotTeleport {
      * @param worldHeight
      * @return
      */
-    @SuppressWarnings("deprecation")
     private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
-        int type = chunk.getBlockTypeId(x, y, z);
-        if (type != 0) { // AIR
-            int space1 = chunk.getBlockTypeId(x, Math.min(y + 1, worldHeight), z);
-            int space2 = chunk.getBlockTypeId(x, Math.min(y + 2, worldHeight), z);
-            if ((space1 == 0 && space2 == 0) || (space1 == Material.PORTAL.getId() || space2 == Material.PORTAL.getId())) {
+        Bukkit.getLogger().info("checking " + x + " " + y + " "+ z);
+        Material type = chunk.getBlockType(x, y, z);
+        if (!type.equals(Material.AIR)) { // AIR
+            Material space1 = chunk.getBlockType(x, Math.min(y + 1, worldHeight), z);
+            Material space2 = chunk.getBlockType(x, Math.min(y + 2, worldHeight), z);
+            if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) 
+                    || (space1.equals(Material.PORTAL) && space2.equals(Material.PORTAL))) {
                 // Now there is a chance that this is a safe spot
                 // Check for safe ground
-                Material mat = Material.getMaterial(type);
-                if (!mat.toString().contains("FENCE")
-                        && !mat.toString().contains("DOOR")
-                        && !mat.toString().contains("GATE")
-                        && !mat.toString().contains("PLATE")) {
-                    switch (mat) {
+                if (!type.toString().contains("FENCE")
+                        && !type.toString().contains("DOOR")
+                        && !type.toString().contains("GATE")
+                        && !type.toString().contains("PLATE")) {
+                    switch (type) {
                     // Unsafe
                     case ANVIL:
                     case BARRIER:
@@ -307,11 +334,10 @@ public class SafeSpotTeleport {
                     case WATER:
                     case WEB:
                     case WOOD_BUTTON:
-                        //System.out.println("Block is dangerous " + mat.toString());
+                        //Block is dangerous
                         break;
                     default:
                         // Safe
-                        // System.out.println("Block is safe " + mat.toString());
                         return true;
                     }
                 }
@@ -319,5 +345,6 @@ public class SafeSpotTeleport {
         }
         return false;
     }
+
 
 }

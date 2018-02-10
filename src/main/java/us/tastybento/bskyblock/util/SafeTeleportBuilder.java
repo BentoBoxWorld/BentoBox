@@ -11,7 +11,7 @@ public class SafeTeleportBuilder {
     private BSkyBlock plugin;
     private Entity entity;
     private int homeNumber = 0;
-    private boolean setHome = false;
+    private boolean portal = false;
     private String failureMessage = "";
     private Location location;
 
@@ -51,12 +51,12 @@ public class SafeTeleportBuilder {
     }
 
     /**
-     * Set the home of the player to the safe location
+     * This is a portal teleportation
      * @param setHome
      * @return
      */
-    public SafeTeleportBuilder setHome(boolean setHome) {
-        this.setHome = setHome;
+    public SafeTeleportBuilder portal(boolean portal) {
+        this.portal = portal;
         return this;
     }
 
@@ -85,7 +85,7 @@ public class SafeTeleportBuilder {
      * @return
      */
     public SafeSpotTeleport build() {
-        return new SafeSpotTeleport(plugin, entity, location, failureMessage, setHome, homeNumber);
+        return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber);
     }
 
 

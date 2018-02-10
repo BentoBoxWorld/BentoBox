@@ -34,10 +34,10 @@ public class DeleteIslandChunks {
         if (world == null) {
             return;
         }
-        int minXChunk = island.getMinX() / 16;
-        int maxXChunk = (island.getRange() * 2 + island.getMinX() - 1) /16;
-        int minZChunk = island.getMinZ() / 16;
-        int maxZChunk = (island.getRange() * 2 + island.getMinZ() - 1) /16;
+        int minXChunk = (int) (island.getMinX() / 16);
+        int maxXChunk = (int) ((island.getRange() * 2 + island.getMinX() - 1) /16);
+        int minZChunk = (int) (island.getMinZ() / 16);
+        int maxZChunk = (int) ((island.getRange() * 2 + island.getMinZ() - 1) /16);
         for (int x = minXChunk; x <= maxXChunk; x++) {
             for (int z = minZChunk; z<=maxZChunk; z++) {
                 world.regenerateChunk(x, z);

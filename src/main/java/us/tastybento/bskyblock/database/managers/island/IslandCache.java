@@ -30,7 +30,7 @@ public class IslandCache {
      */
     private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
-    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
+    private TreeMap<Long, TreeMap<Long, Island>> islandGrid = new TreeMap<>();
 
     public IslandCache() {
         islandsByLocation = HashBiMap.create();
@@ -72,7 +72,7 @@ public class IslandCache {
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: min x is in the grid :" + newIsland.getMinX());
             }
-            TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
+            TreeMap<Long, Island> zEntry = islandGrid.get(newIsland.getMinX());
             if (zEntry.containsKey(newIsland.getMinZ())) {
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: min z is in the grid :" + newIsland.getMinZ());
@@ -111,7 +111,7 @@ public class IslandCache {
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
             }
-            TreeMap<Integer, Island> zEntry = new TreeMap<>();
+            TreeMap<Long, Island> zEntry = new TreeMap<>();
             zEntry.put(newIsland.getMinZ(), newIsland);
             islandGrid.put(newIsland.getMinX(), zEntry);
         }
@@ -177,8 +177,8 @@ public class IslandCache {
             plugin.getLogger().info("DEBUG: deleting island at " + island.getCenter());
         }
         if (island != null) {
-            int x = island.getMinX();
-            int z = island.getMinZ();
+            long x = island.getMinX();
+            long z = island.getMinZ();
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
             }
@@ -186,7 +186,7 @@ public class IslandCache {
                 if (DEBUG) {
                     plugin.getLogger().info("DEBUG: x found");
                 }
-                TreeMap<Integer, Island> zEntry = islandGrid.get(x);
+                TreeMap<Long, Island> zEntry = islandGrid.get(x);
                 if (zEntry.containsKey(z)) {
                     if (DEBUG) {
                         plugin.getLogger().info("DEBUG: z found - deleting the island");
@@ -228,14 +228,14 @@ public class IslandCache {
      * @param z
      * @return Island or null
      */
-    public Island getIslandAt(int x, int z) {
+    public Island getIslandAt(long x, long z) {
         if (DEBUG2) {
             plugin.getLogger().info("DEBUG: getting island at " + x + "," + z);
             plugin.getLogger().info("DEBUG: island grid is " + islandGrid.size());
         }
-        Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
+        Entry<Long, TreeMap<Long, Island>> en = islandGrid.floorEntry(x);
         if (en != null) {
-            Entry<Integer, Island> ent = en.getValue().floorEntry(z);
+            Entry<Long, Island> ent = en.getValue().floorEntry(z);
             if (ent != null) {
                 // Check if in the island range
                 Island island = ent.getValue();

@@ -16,9 +16,9 @@ public class IslandWorld {
     private static final String CREATING = "Creating ";
 
     private BSkyBlock plugin;
-    private static World islandWorld;
-    private static World netherWorld;
-    private static World endWorld;
+    private World islandWorld;
+    private World netherWorld;
+    private World endWorld;
 
     /**
      * Generates the Skyblock worlds.
