@@ -16,7 +16,6 @@ import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
@@ -116,30 +115,6 @@ public class Util {
                 Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
                 result.addAll(Arrays.asList(parameters));
             }
-        }
-        return result;
-    }
-
-    /**
-     * Results a list of items in a player's hands. Works for older versions of servers
-     * @param player
-     * @return list of itemstacks
-     */
-    @SuppressWarnings("deprecation")
-    public static List<ItemStack> getPlayerInHandItems(Player player) {
-        List<ItemStack> result = new ArrayList<>(2);
-        if (plugin.getServer().getVersion().contains("(MC: 1.7")
-                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
-            if (player.getItemInHand() != null) {
-                result.add(player.getItemInHand());
-            }
-            return result;
-        }
-        if (player.getInventory().getItemInMainHand() != null) {
-            result.add(player.getInventory().getItemInMainHand());
-        }
-        if (player.getInventory().getItemInOffHand() != null) {
-            result.add(player.getInventory().getItemInOffHand());
         }
         return result;
     }
