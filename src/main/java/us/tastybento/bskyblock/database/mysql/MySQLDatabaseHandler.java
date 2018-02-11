@@ -432,7 +432,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false));
                     setSql.append(") ");
                     // Get all the ?'s for the columns
-                    setSql.append("VALUES ('?',");
+                    setSql.append("VALUES (?,");
                     setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false));
                     setSql.append(")");
                     // Prepare the statement
@@ -470,8 +470,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                                 // Get the value and serialize it
                                 Object mapValue = serialize(en.getValue(), en.getValue().getClass());
                                 // Write the objects into prepared statement
-                                collStatement.setObject(1, key);
-                                collStatement.setObject(2, mapValue);
+                                collStatement.setObject(2, key);
+                                collStatement.setObject(3, mapValue);
                                 // Write to database
                                 collStatement.execute();
                             }
