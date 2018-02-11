@@ -1,6 +1,9 @@
 package us.tastybento.bskyblock.commands.admin;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -9,6 +12,7 @@ import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.util.SafeTeleportBuilder;
+import us.tastybento.bskyblock.util.Util;
 
 public class AdminTeleportCommand extends CompositeCommand {
 
@@ -55,6 +59,18 @@ public class AdminTeleportCommand extends CompositeCommand {
             user.sendMessage("command.admin.tp.no-island");
             return false;
         }
+    }
+    
+    @Override
+    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
+        List<String> options = new ArrayList<>();
+        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        if (args.isEmpty()) {
+            // Don't show every player on the server. Require at least the first letter
+            return Optional.empty();
+        }
+        options.addAll(Util.getOnlinePlayerList(user));
+        return Optional.of(Util.tabLimit(options, lastArg));
     }
 
 }

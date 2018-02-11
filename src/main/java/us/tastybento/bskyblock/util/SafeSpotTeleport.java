@@ -257,8 +257,6 @@ public class SafeSpotTeleport {
      */
     private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
         World world = location.getWorld();
-
-        Bukkit.getLogger().info("checking " + x + " " + y + " "+ z);
         Material type = chunk.getBlockType(x, y, z);
         if (!type.equals(Material.AIR)) { // AIR
             Material space1 = chunk.getBlockType(x, Math.min(y + 1, worldHeight), z);

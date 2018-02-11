@@ -627,7 +627,6 @@ public class IslandsManager {
             // Try to fix this teleport location and teleport the player if possible
             new SafeTeleportBuilder(plugin).entity(player)
             .island(plugin.getIslands().getIsland(player.getUniqueId()))
-            .portal(false)
             .homeNumber(number)
             .build();
             return;
