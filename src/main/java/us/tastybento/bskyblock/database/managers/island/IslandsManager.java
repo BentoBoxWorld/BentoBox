@@ -671,7 +671,7 @@ public class IslandsManager {
             return true;
         }
         location = getClosestIsland(location);
-        if (islandCache.contains(location)) {
+        if (islandCache.getIslandAt(location) != null) {
             return true;
         }
 
