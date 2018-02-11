@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import us.tastybento.bskyblock.database.DatabaseConnecter;
@@ -24,8 +25,7 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not instantiate JDBC driver! " + e.getMessage());
         }
         // jdbc:mysql://localhost:3306/Peoples?autoReconnect=true&useSSL=false
         connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + "/" + dbSettings.getDatabaseName() + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";

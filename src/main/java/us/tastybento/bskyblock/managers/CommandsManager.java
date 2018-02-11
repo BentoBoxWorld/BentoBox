@@ -13,9 +13,10 @@ public final class CommandsManager {
     private HashMap<String, Command> commands = new HashMap<>();
 
     public void registerCommand(Command command) {
-        if (DEBUG)
+        if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: registering command - " + command.getLabel());
-       commands.put(command.getLabel(), command);
+        }
+        commands.put(command.getLabel(), command);
         // Use reflection to obtain the commandMap method in Bukkit's server. It used to be visible, but isn't anymore.
         try{
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
@@ -25,7 +26,7 @@ public final class CommandsManager {
         }
         catch(Exception exception){
             Bukkit.getLogger().severe("Bukkit server commandMap method is not there! This means no commands can be registered!");
-        }     
+        }
     }
 
     public Command getCommand(String command) {

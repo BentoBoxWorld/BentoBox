@@ -24,7 +24,7 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
     /**
      * Called to create the event
      * @param user - the UUID of the player who launched the purge, may be null if purge is launched using the console.
-     * @param islandsList - the list of islands to remove, based on their leader's UUID 
+     * @param islandsList - the list of islands to remove, based on their leader's UUID
      */
     public PurgeStartEvent(UUID user, List<UUID> islandsList) {
         this.user = user;
@@ -35,14 +35,14 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
      * @return the user who launched the purge, may be null if purge is launched using the console.
      */
     public UUID getUser( ){
-        return this.user;
+        return user;
     }
 
     /**
-     * @return the list of islands to remove, based on their leader's UUID 
+     * @return the list of islands to remove, based on their leader's UUID
      */
     public List<UUID> getIslandsList() {
-        return this.islandsList;
+        return islandsList;
     }
 
     /**
@@ -50,7 +50,9 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
      * @param - the owner's UUID from the island to remove
      */
     public void add(UUID islandOwner) {
-        if(!this.islandsList.contains(islandOwner)) islandsList.add(islandOwner);
+        if(!islandsList.contains(islandOwner)) {
+            islandsList.add(islandOwner);
+        }
     }
 
     /**
@@ -58,7 +60,9 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
      * @param - the owner's UUID from the island to remove
      */
     public void remove(UUID islandOwner) {
-        if(this.islandsList.contains(islandOwner)) islandsList.remove(islandOwner);
+        if(islandsList.contains(islandOwner)) {
+            islandsList.remove(islandOwner);
+        }
     }
 
     /**
@@ -76,6 +80,6 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
 
     @Override
     public void setCancelled(boolean cancel) {
-        this.cancelled = cancel;
+        cancelled = cancel;
     }
 }

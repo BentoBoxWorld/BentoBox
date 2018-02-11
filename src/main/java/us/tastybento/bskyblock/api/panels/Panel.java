@@ -22,7 +22,7 @@ public class Panel {
         // If size is undefined (0) then use the number of items
         if (size == 0) {
             size = items.keySet().size();
-        } 
+        }
         // Create panel
         if (size > 0) {
             // Make sure size is a multiple of 9
@@ -70,7 +70,7 @@ public class Panel {
     public void open(Player... players) {
         for (Player player : players) {
             player.openInventory(inventory);
-            PanelListenerManager.openPanels.put(player.getUniqueId(), this);
+            PanelListenerManager.getOpenPanels().put(player.getUniqueId(), this);
         }
     }
 
@@ -81,7 +81,7 @@ public class Panel {
     public void open(User... users) {
         for (User user : users) {
             user.getPlayer().openInventory(inventory);
-            PanelListenerManager.openPanels.put(user.getUniqueId(), this);
+            PanelListenerManager.getOpenPanels().put(user.getUniqueId(), this);
         }
     }
 

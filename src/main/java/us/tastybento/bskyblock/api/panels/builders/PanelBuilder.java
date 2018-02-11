@@ -27,27 +27,27 @@ public class PanelBuilder {
      * @return PanelBuilder
      */
     public PanelBuilder addItem(int slot, PanelItem item) {
-        this.items.put(slot, item);
+        items.put(slot, item);
         return this;
     }
 
     public int nextSlot() {
-        if (this.items.isEmpty()) {
+        if (items.isEmpty()) {
             return 0;
         } else {
             return items.lastEntry().getKey() + 1;
-        }  
+        }
     }
-    
+
     /**
      * Checks if a slot is occupied in the panel or not
      * @param slot to check
      * @return true or false
      */
     public boolean slotOccupied(int slot) {
-        return this.items.containsKey(slot);
+        return items.containsKey(slot);
     }
-    
+
     /**
      * Build the panel
      * @return Panel
@@ -63,9 +63,9 @@ public class PanelBuilder {
      */
     public PanelBuilder addItem(PanelItem item) {
         if (items.isEmpty()) {
-            this.items.put(0, item);
+            items.put(0, item);
         } else {
-            this.items.put(items.lastEntry().getKey() + 1, item);
+            items.put(items.lastEntry().getKey() + 1, item);
         }
         return this;
     }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.commands.island;
 
@@ -23,13 +23,13 @@ public class IslandSetnameCommand extends CompositeCommand {
     public IslandSetnameCommand(CompositeCommand islandCommand) {
         super(islandCommand, "setname");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.name");
-        this.setOnlyPlayer(true);
-        this.setParameters("commands.island.setname.parameters");
-        this.setDescription("commands.island.setname.description");
+        setPermission(Constants.PERMPREFIX + "island.name");
+        setOnlyPlayer(true);
+        setParameters("commands.island.setname.parameters");
+        setDescription("commands.island.setname.description");
     }
 
     /* (non-Javadoc)
@@ -42,17 +42,17 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         if (!getIslands().hasIsland(playerUUID)) {
             user.sendMessage("general.errors.no-island");
-            return true;
+            return false;
         }
 
         if (!getIslands().isOwner(playerUUID)) {
             user.sendMessage("general.errors.not-leader");
-            return true;
+            return false;
         }
         // Explain command
         if (args.isEmpty()) {
-            user.sendMessage(getUsage());
-            return true;
+            showHelp(this, user, args);
+            return false;
         }
 
         // Naming the island - join all the arguments with spaces.
@@ -61,17 +61,19 @@ public class IslandSetnameCommand extends CompositeCommand {
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength()) {
             user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(getSettings().getNameMinLength()));
-            return true;
+            return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
             user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(getSettings().getNameMaxLength()));
-            return true;
+            return false;
         }
 
         // Set the name
-        if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format"))
+        if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format")) {
             getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
-        else getIslands().getIsland(playerUUID).setName(name);
+        } else {
+            getIslands().getIsland(playerUUID).setName(name);
+        }
 
         user.sendMessage("general.success");
         return true;

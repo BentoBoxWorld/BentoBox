@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
@@ -36,10 +37,11 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
-     * 
+     *
      * @param fileName
      * @return
      */
+    @Override
     public YamlConfiguration loadYamlFile(String tableName, String fileName) {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
@@ -52,7 +54,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                e.printStackTrace();
+                Bukkit.getLogger().severe("Could not load yaml file from database " + tableName + " " + fileName + " " + e.getMessage());
             }
         } else {
             // Create the missing file
@@ -76,7 +78,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     /**
      * Saves a YAML file
-     * 
+     *
      * @param yamlConfig
      * @param fileName
      */
@@ -93,7 +95,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         try {
             yamlConfig.save(file);
         } catch (Exception e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not save yaml file to database " + tableName + " " + fileName + " " + e.getMessage());
         }
     }
 

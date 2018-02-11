@@ -2,8 +2,12 @@ package us.tastybento.bskyblock;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.EnumMap;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
@@ -12,10 +16,11 @@ import org.bukkit.potion.PotionEffectType;
 import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ISettings;
-import us.tastybento.bskyblock.api.configuration.PotionEffectListAdpater;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter;
 
 /**
  * All the plugin settings are here
@@ -23,7 +28,9 @@ import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
 public class Settings implements ISettings<Settings> {
-        
+
+    private String uniqueId = "config";
+
     // ---------------------------------------------
 
     /*      GENERAL     */
@@ -66,9 +73,8 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
-    //TODO change allowAutoActivator to the fakePlayers introduced in ASB 3.0.8
-    @ConfigEntry(path = "general.allow-FTB-auto-activators")
-    private boolean allowAutoActivator = false;
+    @ConfigEntry(path = "general.fakeplayers")
+    private Set<String> fakePlayers = new HashSet<>();
 
     @ConfigEntry(path = "general.allow-obsidian-scooping")
     private boolean allowObsidianScooping = true;
@@ -127,37 +133,57 @@ public class Settings implements ISettings<Settings> {
     private boolean endIslands = true;
 
     // Entities
-    private HashMap<EntityType, Integer> entityLimits;
-    private HashMap<String, Integer> tileEntityLimits;
+    @ConfigEntry(path = "island.limits.entities")
+    private Map<EntityType, Integer> entityLimits = new EnumMap<>(EntityType.class);
+    @ConfigEntry(path = "island.limits.tile-entities")
+    private Map<String, Integer> tileEntityLimits = new HashMap<>();
 
     // ---------------------------------------------
 
     /*      ISLAND      */
-    private int maxTeamSize;
-    private int maxHomes;
-    private int nameMinLength;
-    private int nameMaxLength;
-    private int inviteWait;
+    @ConfigEntry(path = "island.max-team-size")
+    private int maxTeamSize = 4;
+    @ConfigEntry(path = "island.max-homes")
+    private int maxHomes = 5;
+    @ConfigEntry(path = "island.name.min-length")
+    private int nameMinLength = 4;
+    @ConfigEntry(path = "island.name.max-length")
+    private int nameMaxLength = 20;
+    @ConfigEntry(path = "island.invite-wait")
+    private int inviteWait = 60;
 
     // Reset
-    private int resetLimit;
+    @ConfigEntry(path = "island.reset.reset-limit")
+    private int resetLimit = -1;
+
     @ConfigEntry(path = "island.require-confirmation.reset")
-    private boolean resetConfirmation;
+    private boolean resetConfirmation = true;
 
-    @ConfigEntry(path = "island.require-confirmation.reset-wait")
-    private long resetWait;
+    @ConfigEntry(path = "island.reset-wait")
+    private long resetWait = 300;
 
-    private boolean leaversLoseReset;
-    private boolean kickedKeepInventory;
+    @ConfigEntry(path = "island.reset.leavers-lose-reset")
+    private boolean leaversLoseReset = false;
+
+    @ConfigEntry(path = "island.reset.kicked-keep-inventory")
+    private boolean kickedKeepInventory = false;
 
     // Remove mobs
-    private boolean removeMobsOnLogin;
-    private boolean removeMobsOnIsland;
+    @ConfigEntry(path = "island.remove-mobs.on-login")
+    private boolean removeMobsOnLogin = false;
+    @ConfigEntry(path = "island.remove-mobs.on-island")
+    private boolean removeMobsOnIsland = false;
+
+    @ConfigEntry(path = "island.remove-mobs.whitelist")
     private List<String> removeMobsWhitelist = new ArrayList<>();
 
-    private boolean makeIslandIfNone;
-    private boolean immediateTeleportOnIsland;
-    private boolean respawnOnIsland;
+    @ConfigEntry(path = "island.make-island-if-none")
+    private boolean makeIslandIfNone = false;
+
+    @ConfigEntry(path = "island.immediate-teleport-on-island")
+    private boolean immediateTeleportOnIsland = false;
+
+    private boolean respawnOnIsland = true;
 
     // Deaths
     @ConfigEntry(path = "island.deaths.max")
@@ -165,6 +191,10 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "island.deaths.sum-team")
     private boolean deathsSumTeam = false;
+
+    // Ranks
+    @ConfigEntry(path = "island.customranks")
+    private Map<String, Integer> customRanks = new HashMap<>();
 
     // ---------------------------------------------
 
@@ -177,7 +207,7 @@ public class Settings implements ISettings<Settings> {
 
     private int togglePvPCooldown;
 
-    private HashMap<Flag, Boolean> defaultFlags;
+    private Map<Flag, Boolean> defaultFlags = new HashMap<>();
 
     //TODO transform these options below into flags
     private boolean allowEndermanGriefing;
@@ -214,37 +244,36 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "acid.damage.rain", specificTo = GameType.ACIDISLAND)
     private int acidRainDamage = 1;
 
-    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND, adapter = PotionEffectListAdpater.class)
+    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND)
+    @Adapter(PotionEffectListAdapter.class)
     private List<PotionEffectType> acidEffects = new ArrayList<>(Arrays.asList(PotionEffectType.CONFUSION, PotionEffectType.SLOW));
 
     /*      SCHEMATICS      */
     private List<String> companionNames = new ArrayList<>();
-    
+
     @ConfigEntry(path = "island.chest-items")
     private List<ItemStack> chestItems = new ArrayList<>();
-    
+
     private EntityType companionType = EntityType.COW;
 
     private boolean useOwnGenerator;
 
-    private HashMap<String,Integer> limitedBlocks;
+    private Map<String,Integer> limitedBlocks = new HashMap<>();
     private boolean teamJoinDeathReset;
-    
-    private String uniqueId = "config";
 
     // Timeout for team kick and leave commands
     @ConfigEntry(path = "island.require-confirmation.kick")
-    private boolean kickConfirmation;
+    private boolean kickConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.kick-wait")
-    private long kickWait;
- 
+    private long kickWait = 300;
+
     @ConfigEntry(path = "island.require-confirmation.leave")
-    private boolean leaveConfirmation;
+    private boolean leaveConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
-    private long leaveWait;
-    
+    private long leaveWait = 300;
+
 
     /**
      * @return the acidDamage
@@ -287,6 +316,12 @@ public class Settings implements ISettings<Settings> {
      */
     public EntityType getCompanionType() {
         return companionType;
+    }
+    /**
+     * @return the customRanks
+     */
+    public Map<String, Integer> getCustomRanks() {
+        return customRanks;
     }
     /**
      * @return the databaseBackupPeriod
@@ -339,7 +374,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the defaultFlags
      */
-    public HashMap<Flag, Boolean> getDefaultFlags() {
+    public Map<Flag, Boolean> getDefaultFlags() {
         return defaultFlags;
     }
     /**
@@ -351,12 +386,11 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the entityLimits
      */
-    public HashMap<EntityType, Integer> getEntityLimits() {
+    public Map<EntityType, Integer> getEntityLimits() {
         return entityLimits;
     }
     @Override
     public Settings getInstance() {
-        // TODO Auto-generated method stub
         return this;
     }
     /**
@@ -422,7 +456,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the limitedBlocks
      */
-    public HashMap<String, Integer> getLimitedBlocks() {
+    public Map<String, Integer> getLimitedBlocks() {
         return limitedBlocks;
     }
     /**
@@ -494,7 +528,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the tileEntityLimits
      */
-    public HashMap<String, Integer> getTileEntityLimits() {
+    public Map<String, Integer> getTileEntityLimits() {
         return tileEntityLimits;
     }
     /**
@@ -506,6 +540,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the uniqueId
      */
+    @Override
     public String getUniqueId() {
         return uniqueId;
     }
@@ -526,12 +561,6 @@ public class Settings implements ISettings<Settings> {
      */
     public boolean isAcidDamageOp() {
         return acidDamageOp;
-    }
-    /**
-     * @return the allowAutoActivator
-     */
-    public boolean isAllowAutoActivator() {
-        return allowAutoActivator;
     }
     /**
      * @return the allowChestDamage
@@ -762,12 +791,6 @@ public class Settings implements ISettings<Settings> {
         this.acidRainDamage = acidRainDamage;
     }
     /**
-     * @param allowAutoActivator the allowAutoActivator to set
-     */
-    public void setAllowAutoActivator(boolean allowAutoActivator) {
-        this.allowAutoActivator = allowAutoActivator;
-    }
-    /**
      * @param allowChestDamage the allowChestDamage to set
      */
     public void setAllowChestDamage(boolean allowChestDamage) {
@@ -840,6 +863,12 @@ public class Settings implements ISettings<Settings> {
         this.companionType = companionType;
     }
     /**
+     * @param customRanks the customRanks to set
+     */
+    public void setCustomRanks(Map<String, Integer> customRanks) {
+        this.customRanks = customRanks;
+    }
+    /**
      * @param databaseBackupPeriod the databaseBackupPeriod to set
      */
     public void setDatabaseBackupPeriod(int databaseBackupPeriod) {
@@ -896,7 +925,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param defaultFlags the defaultFlags to set
      */
-    public void setDefaultFlags(HashMap<Flag, Boolean> defaultFlags) {
+    public void setDefaultFlags(Map<Flag, Boolean> defaultFlags) {
         this.defaultFlags = defaultFlags;
     }
     /**
@@ -926,7 +955,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param entityLimits the entityLimits to set
      */
-    public void setEntityLimits(HashMap<EntityType, Integer> entityLimits) {
+    public void setEntityLimits(Map<EntityType, Integer> entityLimits) {
         this.entityLimits = entityLimits;
     }
     /**
@@ -1022,7 +1051,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param limitedBlocks the limitedBlocks to set
      */
-    public void setLimitedBlocks(HashMap<String, Integer> limitedBlocks) {
+    public void setLimitedBlocks(Map<String, Integer> limitedBlocks) {
         this.limitedBlocks = limitedBlocks;
     }
     /**
@@ -1109,6 +1138,7 @@ public class Settings implements ISettings<Settings> {
     public void setRemoveMobsOnIsland(boolean removeMobsOnIsland) {
         this.removeMobsOnIsland = removeMobsOnIsland;
     }
+
     /**
      * @param removeMobsOnLogin the removeMobsOnLogin to set
      */
@@ -1121,7 +1151,6 @@ public class Settings implements ISettings<Settings> {
     public void setRemoveMobsWhitelist(List<String> removeMobsWhitelist) {
         this.removeMobsWhitelist = removeMobsWhitelist;
     }
-    
     /**
      * @param resetConfirmation the resetConfirmation to set
      */
@@ -1167,7 +1196,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param tileEntityLimits the tileEntityLimits to set
      */
-    public void setTileEntityLimits(HashMap<String, Integer> tileEntityLimits) {
+    public void setTileEntityLimits(Map<String, Integer> tileEntityLimits) {
         this.tileEntityLimits = tileEntityLimits;
     }
     /**
@@ -1179,6 +1208,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param uniqueId the uniqueId to set
      */
+    @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
@@ -1200,6 +1230,18 @@ public class Settings implements ISettings<Settings> {
     public void setWorldName(String worldName) {
         this.worldName = worldName;
     }
-    
+    /**
+     * @return the fakePlayers
+     */
+    public Set<String> getFakePlayers() {
+        return fakePlayers;
+    }
+    /**
+     * @param fakePlayers the fakePlayers to set
+     */
+    public void setFakePlayers(Set<String> fakePlayers) {
+        this.fakePlayers = fakePlayers;
+    }
+
 
 }

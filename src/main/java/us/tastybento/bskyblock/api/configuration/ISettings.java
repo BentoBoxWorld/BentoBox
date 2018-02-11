@@ -14,13 +14,14 @@ import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
  * Simple interface for tagging all classes containing ConfigEntries.
  *
  * @author Poslovitch
+ * @author tastybento
  * @param <T>
  */
 public interface ISettings<T> {
 
     // ----------------Saver-------------------
     @SuppressWarnings("unchecked")
-    default void saveSettings() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveSettings() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Get the handler
         AbstractDatabaseHandler<T> settingsHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         // Load every field in the config class
@@ -29,20 +30,20 @@ public interface ISettings<T> {
         settingsHandler.saveSettings(getInstance());
     }
 
-    default void saveBackup() throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
-        // Save backup in real database
+    default void saveBackup() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+        // Save backup
         @SuppressWarnings("unchecked")
-        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getInstance().getClass());
-        dbhandler.saveObject(getInstance());
+        AbstractDatabaseHandler<T> backupHandler =  (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
+        backupHandler.saveObject(getInstance());
     }
 
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
-    default T loadSettings() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, SecurityException, ClassNotFoundException, IntrospectionException, SQLException {
+    default T loadSettings() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, SQLException  {
         // See if this settings object already exists in the database
-        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(this.getClass());
+        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getClass());
         T dbConfig = null;
-        if (dbhandler.objectExits(this.getUniqueId())) {
+        if (dbhandler.objectExists(this.getUniqueId())) {
             // Load it
             dbConfig = dbhandler.loadObject(getUniqueId());
         }

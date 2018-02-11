@@ -11,7 +11,7 @@ public interface PanelListener {
      * This is called when the panel is first setup
      */
     void setup();
-    
+
     /**
      * Called when the panel is clicked
      * @param user

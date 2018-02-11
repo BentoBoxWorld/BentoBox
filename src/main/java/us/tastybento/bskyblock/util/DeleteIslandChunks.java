@@ -27,12 +27,14 @@ public class DeleteIslandChunks {
         //plugin.getLogger().info("DEBUG: deleting the island");
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
-        if (event.isCancelled())
+        if (event.isCancelled()) {
             return;
+        }
         final World world = island.getCenter().getWorld();
-        if (world == null)
+        if (world == null) {
             return;
-        int minXChunk = island.getMinX() / 16;
+        }
+        int minXChunk =  island.getMinX() / 16;
         int maxXChunk = (island.getRange() * 2 + island.getMinX() - 1) /16;
         int minZChunk = island.getMinZ() / 16;
         int maxZChunk = (island.getRange() * 2 + island.getMinZ() - 1) /16;

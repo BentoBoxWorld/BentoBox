@@ -15,7 +15,7 @@ public final class AddonDescription {
     private List<String> authors;
 
     public AddonDescription() {}
-    
+
     public AddonDescription(String main, String name, String version, String description, List<String> authors) {
         this.main = main;
         this.name = name;
@@ -78,34 +78,34 @@ public final class AddonDescription {
     public List<String> getAuthors() {
         return authors;
     }
-    
+
     public static class AddonDescriptionBuilder{
-        
-        public AddonDescription description;
-        
+
+        private AddonDescription description;
+
         public AddonDescriptionBuilder(String name){
             description = new AddonDescription();
             description.setName(name);
         }
-        
+
         public AddonDescriptionBuilder withAuthor(String... authors){
-            this.description.setAuthors(Arrays.asList(authors));
+            description.setAuthors(Arrays.asList(authors));
             return this;
         }
-        
+
         public AddonDescriptionBuilder withDescription(String desc){
-            this.description.setDescription(desc);
+            description.setDescription(desc);
             return this;
         }
-        
+
         public AddonDescriptionBuilder withVersion(String version){
-            this.description.setVersion(version);
+            description.setVersion(version);
             return this;
         }
-        
+
         public AddonDescription build(){
-            return this.description;
+            return description;
         }
-        
+
     }
 }

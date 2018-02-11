@@ -8,11 +8,11 @@ import us.tastybento.bskyblock.BSkyBlock;
  *
  */
 public interface DataObject {
-        
+
     default BSkyBlock getPlugin() {
         return BSkyBlock.getInstance();
     }
-	
+
     /**
      * @return the uniqueId
      */
@@ -22,5 +22,5 @@ public interface DataObject {
      * @param uniqueId the uniqueId to set
      */
     void setUniqueId(String uniqueId);
-    
+
 }

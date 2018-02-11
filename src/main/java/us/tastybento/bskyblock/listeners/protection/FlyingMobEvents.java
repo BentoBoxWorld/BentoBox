@@ -38,7 +38,7 @@ public class FlyingMobEvents implements Listener {
      */
     public FlyingMobEvents(BSkyBlock plugin) {
         this.plugin = plugin;
-        this.mobSpawnInfo = new WeakHashMap<>();
+        mobSpawnInfo = new WeakHashMap<>();
 
         plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
             //Bukkit.getLogger().info("DEBUG: checking - mobspawn size = " + mobSpawnInfo.size());
@@ -86,13 +86,7 @@ public class FlyingMobEvents implements Listener {
             plugin.getLogger().info("Flying mobs " + e.getEventName());
         }
         // Store where this mob originated
-        Island island = plugin.getIslands().getIslandAt(e.getLocation());
-        if (island != null) {
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: Mob spawned on known island - id = " + e.getEntity().getUniqueId());
-            }
-            mobSpawnInfo.put(e.getEntity(),island);
-        } // Else do nothing - maybe an Op spawned it? If so, on their head be it!
+        plugin.getIslands().getIslandAt(e.getLocation()).ifPresent(island->mobSpawnInfo.put(e.getEntity(),island));
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

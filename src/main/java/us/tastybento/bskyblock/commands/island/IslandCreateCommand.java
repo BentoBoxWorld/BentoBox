@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.commands.island;
 
@@ -23,12 +23,12 @@ public class IslandCreateCommand extends CompositeCommand {
     public IslandCreateCommand(IslandCommand islandCommand) {
         super(islandCommand, "create", "auto");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.create");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.create.description");
+        setPermission(Constants.PERMPREFIX + "island.create");
+        setOnlyPlayer(true);
+        setDescription("commands.island.create.description");
     }
 
     /* (non-Javadoc)
@@ -41,7 +41,7 @@ public class IslandCreateCommand extends CompositeCommand {
             return false;
         }
         if (getPlayers().inTeam(user.getUniqueId())) {
-            return false; 
+            return false;
         }
         user.sendMessage("commands.island.create.creating-island");
         createIsland(user);
@@ -60,9 +60,8 @@ public class IslandCreateCommand extends CompositeCommand {
             .reason(Reason.CREATE)
             .build();
         } catch (IOException e) {
-            getPlugin().getLogger().severe("Could not create island for player.");
+            getPlugin().getLogger().severe("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
-            e.printStackTrace();
         }
     }
 }

@@ -10,13 +10,13 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
     public IslandTeamPromoteCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "promote");
     }
-    
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setParameters("commands.island.team.promote.parameters");
-        this.setDescription("commands.island.team.promote.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setParameters("commands.island.team.promote.parameters");
+        setDescription("commands.island.team.promote.description");
     }
 
     @Override

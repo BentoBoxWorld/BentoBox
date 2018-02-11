@@ -21,13 +21,13 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public IslandTeamSetownerCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "setleader");
     }
-     
+
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setParameters("commands.island.team.setowner.parameters");
-        this.setDescription("commands.island.team.setowner.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setParameters("commands.island.team.setowner.parameters");
+        setDescription("commands.island.team.setowner.description");
     }
 
     @Override
@@ -37,34 +37,35 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         boolean inTeam = getPlugin().getPlayers().inTeam(playerUUID);
         UUID teamLeaderUUID = getPlugin().getIslands().getTeamLeader(playerUUID);
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
-            return true;
+            user.sendMessage("general.errors.not-leader");
+            return false;
         }
         // If args are not right, show help
         if (args.size() != 1) {
-            this.getSubCommand("help").get().execute(user, new ArrayList<>());
-            return true;
+            showHelp(this, user, args);
+            return false;
         }
         //getPlugin().getLogger().info("DEBUG: arg[0] = " + args.get(0));
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player");
-            return true;
+            return false;
         }
         if (!getPlayers().inTeam(playerUUID)) {
             user.sendMessage("general.errors.no-team");
-            return true;
+            return false;
         }
         if (!teamLeaderUUID.equals(playerUUID)) {
             user.sendMessage("general.errors.not-leader");
-            return true;
+            return false;
         }
         if (targetUUID.equals(playerUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
-            return true;
+            return false;
         }
         if (!getPlugin().getIslands().getMembers(playerUUID).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
-            return true;
+            return false;
         }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
@@ -74,7 +75,9 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
                 .involvedPlayer(targetUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) return true;
+        if (event.isCancelled()) {
+            return false;
+        }
 
         // target is the new leader
         getIslands().getIsland(playerUUID).setOwner(targetUUID);

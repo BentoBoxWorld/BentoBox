@@ -11,17 +11,12 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.SimpleAttachableMaterialData;
-import org.bukkit.material.TrapDoor;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
@@ -114,11 +109,11 @@ public class Util {
         // In this way, we can deduce what type needs to be written at runtime.
         Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
         // There could be more than one argument, so step through them
-        for (int i = 0; i < genericParameterTypes.length; i++) {
+        for (Type genericParameterType : genericParameterTypes) {
             // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if( genericParameterTypes[i] instanceof ParameterizedType ) {
-                // Get the actual type arguments of the parameter 
-                Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
+            if( genericParameterType instanceof ParameterizedType ) {
+                // Get the actual type arguments of the parameter
+                Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
                 result.addAll(Arrays.asList(parameters));
             }
         }
@@ -132,17 +127,20 @@ public class Util {
      */
     @SuppressWarnings("deprecation")
     public static List<ItemStack> getPlayerInHandItems(Player player) {
-        List<ItemStack> result = new ArrayList<ItemStack>(2);
+        List<ItemStack> result = new ArrayList<>(2);
         if (plugin.getServer().getVersion().contains("(MC: 1.7")
                 || plugin.getServer().getVersion().contains("(MC: 1.8")) {
-            if (player.getItemInHand() != null)
+            if (player.getItemInHand() != null) {
                 result.add(player.getItemInHand());
+            }
             return result;
         }
-        if (player.getInventory().getItemInMainHand() != null)
+        if (player.getInventory().getItemInMainHand() != null) {
             result.add(player.getInventory().getItemInMainHand());
-        if (player.getInventory().getItemInOffHand() != null)
+        }
+        if (player.getInventory().getItemInOffHand() != null) {
             result.add(player.getInventory().getItemInOffHand());
+        }
         return result;
     }
 
@@ -156,8 +154,9 @@ public class Util {
      *         Credits to mikenon on GitHub!
      */
     public static String prettifyText(String ugly) {
-        if (!ugly.contains("_") && (!ugly.equals(ugly.toUpperCase())))
+        if (!ugly.contains("_") && (!ugly.equals(ugly.toUpperCase()))) {
             return ugly;
+        }
         String fin = "";
         ugly = ugly.toLowerCase();
         if (ugly.contains("_")) {
@@ -166,37 +165,14 @@ public class Util {
             for (String s : splt) {
                 i += 1;
                 fin += Character.toUpperCase(s.charAt(0)) + s.substring(1);
-                if (i < splt.length)
+                if (i < splt.length) {
                     fin += " ";
+                }
             }
         } else {
             fin += Character.toUpperCase(ugly.charAt(0)) + ugly.substring(1);
         }
         return fin;
-    }
-
-    /**
-     * Checks if player has this type of item in either hand
-     * @param player
-     * @param type
-     * @return true if they are holding an item of type type
-     */
-    @SuppressWarnings("deprecation")
-    public static boolean playerIsHolding(Player player, Material type) {
-        if (plugin.getServer().getVersion().contains("(MC: 1.7")
-                || plugin.getServer().getVersion().contains("(MC: 1.8")) {
-            if (player.getItemInHand() != null && player.getItemInHand().getType().equals(type)) {
-                return true;
-            }
-            return false;
-        }
-        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInMainHand().getType().equals(type)) {
-            return true;
-        }
-        if (player.getInventory().getItemInMainHand() != null && player.getInventory().getItemInOffHand().getType().equals(type)) {
-            return true;
-        }
-        return false;
     }
 
     /**
@@ -247,9 +223,7 @@ public class Util {
     public static List<String> getOnlinePlayerList(User user) {
         final List<String> returned = new ArrayList<>();
         for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            if (user == null) {
-                returned.add(p.getName());
-            } else if (user.getPlayer().canSee(p)) {
+            if (user == null || user.getPlayer().canSee(p)) {
                 returned.add(p.getName());
             }
         }
@@ -257,8 +231,8 @@ public class Util {
     }
 
     /**
-     * Returns all of the items that begin with the given start, 
-     * ignoring case.  Intended for tabcompletion. 
+     * Returns all of the items that begin with the given start,
+     * ignoring case.  Intended for tabcompletion.
      *
      * @param list
      * @param start
@@ -267,8 +241,9 @@ public class Util {
     public static List<String> tabLimit(final List<String> list, final String start) {
         final List<String> returned = new ArrayList<>();
         for (String s : list) {
-            if (s == null)
+            if (s == null) {
                 continue;
+            }
             if (s.toLowerCase().startsWith(start.toLowerCase())) {
                 returned.add(s);
             }
@@ -279,7 +254,7 @@ public class Util {
 
     /**
      * Loads a YAML file and if it does not exist it is looked for in the JAR
-     * 
+     *
      * @param file
      * @return
      */
@@ -293,7 +268,7 @@ public class Util {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not load yml file " + e.getMessage());
             }
         } else {
             // Create the missing file
@@ -318,94 +293,8 @@ public class Util {
     }
 
     public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+        plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
 
-            @Override
-            public void run() {
-                player.performCommand(string);               
-            }});
-
-    }
-
-    /**
-     * Checks if this location is safe for a player to teleport to. Used by
-     * warps and boat exits Unsafe is any liquid or air and also if there's no
-     * space
-     * 
-     * @param l
-     *            - Location to be checked
-     * @return true if safe, otherwise false
-     */
-    public static boolean isSafeLocation(final Location l) {
-        if (l == null) {
-            return false;
-        }
-        // TODO: improve the safe location finding.
-        //Bukkit.getLogger().info("DEBUG: " + l.toString());
-        final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
-        final Block space1 = l.getBlock();
-        final Block space2 = l.getBlock().getRelative(BlockFace.UP);
-        //Bukkit.getLogger().info("DEBUG: ground = " + ground.getType());
-        //Bukkit.getLogger().info("DEBUG: space 1 = " + space1.getType());
-        //Bukkit.getLogger().info("DEBUG: space 2 = " + space2.getType());
-        // Portals are not "safe"
-        if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
-                || space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
-            return false;
-        }
-        // If ground is AIR, then this is either not good, or they are on slab,
-        // stair, etc.
-        if (ground.getType() == Material.AIR) {
-            // Bukkit.getLogger().info("DEBUG: air");
-            return false;
-        }
-        // In ASkyBlock, liquid may be unsafe
-        if (ground.isLiquid() || space1.isLiquid() || space2.isLiquid()) {
-            // Check if acid has no damage
-            if (plugin.getSettings().getAcidDamage() > 0D) {
-                // Bukkit.getLogger().info("DEBUG: acid");
-                return false;
-            } else if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
-                    || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
-                    || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
-                // Lava check only
-                // Bukkit.getLogger().info("DEBUG: lava");
-                return false;
-            }
-        }
-        MaterialData md = ground.getState().getData();
-        if (md instanceof SimpleAttachableMaterialData) {
-            //Bukkit.getLogger().info("DEBUG: trapdoor/button/tripwire hook etc.");
-            if (md instanceof TrapDoor) {
-                TrapDoor trapDoor = (TrapDoor)md;
-                if (trapDoor.isOpen()) {
-                    //Bukkit.getLogger().info("DEBUG: trapdoor open");
-                    return false;
-                }
-            } else {
-                return false;
-            }
-            //Bukkit.getLogger().info("DEBUG: trapdoor closed");
-        }
-        if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().equals(Material.FENCE)
-                || ground.getType().equals(Material.NETHER_FENCE) || ground.getType().equals(Material.SIGN_POST) || ground.getType().equals(Material.WALL_SIGN)) {
-            // Bukkit.getLogger().info("DEBUG: cactus");
-            return false;
-        }
-        // Check that the space is not solid
-        // The isSolid function is not fully accurate (yet) so we have to
-        // check
-        // a few other items
-        // isSolid thinks that PLATEs and SIGNS are solid, but they are not
-        if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN_POST) && !space1.getType().equals(Material.WALL_SIGN)) {
-            return false;
-        }
-        if (space2.getType().isSolid()&& !space2.getType().equals(Material.SIGN_POST) && !space2.getType().equals(Material.WALL_SIGN)) {
-            return false;
-        }
-        // Safe
-        //Bukkit.getLogger().info("DEBUG: safe!");
-        return true;
     }
 
     /**

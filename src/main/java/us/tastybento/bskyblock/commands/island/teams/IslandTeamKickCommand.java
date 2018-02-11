@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,10 +20,10 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setParameters("commands.island.team.kick.parameters");
-        this.setDescription("commands.island.team.kick.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setParameters("commands.island.team.kick.parameters");
+        setDescription("commands.island.team.kick.description");
         kickSet = new HashSet<>();
     }
 
@@ -40,18 +39,18 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
         }
         // If args are not right, show help
         if (args.size() != 1) {
-            this.getSubCommand("help").get().execute(user, new ArrayList<>());
-            return true;
+            showHelp(this, user, args);
+            return false;
         }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player");
-            return true; 
+            return true;
         }
         if (!getIslands().getMembers(user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
-            return true;  
+            return true;
         }
         if (!getSettings().isKickConfirmation() || kickSet.contains(targetUUID)) {
             kickSet.remove(targetUUID);

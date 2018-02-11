@@ -34,13 +34,13 @@ public final class AddonsManager {
     private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
     private List<AddonClassLoader> loader;
-    private final Map<String, Class<?>> classes = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> classes = new HashMap<>();
     private BSkyBlock plugin;
 
     public AddonsManager(BSkyBlock plugin) {
         this.plugin = plugin;
-        this.addons = new ArrayList<>();
-        this.loader = new ArrayList<>();
+        addons = new ArrayList<>();
+        loader = new ArrayList<>();
     }
 
     /**
@@ -53,9 +53,9 @@ public final class AddonsManager {
                 for (File file : f.listFiles()) {
                     if (!file.isDirectory()) {
                         try {
-                            this.loadAddon(file);
+                            loadAddon(file);
                         } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
-                            e.printStackTrace();
+                            plugin.getLogger().severe("Could not load addon " + file.getName() + " : " + e.getMessage());
                         }
                     }
                 }
@@ -64,14 +64,11 @@ public final class AddonsManager {
             try {
                 f.mkdir();
             } catch (SecurityException e) {
-                e.printStackTrace();
-                if (DEBUG) {
-                    Bukkit.getLogger().severe("Cannot create folder 'addons' (Permission ?)");
-                }
+                Bukkit.getLogger().severe("Cannot create folder 'addons' (Permission ?)");
             }
         }
 
-        this.addons.forEach(addon -> {
+        addons.forEach(addon -> {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
@@ -86,10 +83,14 @@ public final class AddonsManager {
      * @return
      */
     public Optional<Addon> getAddonByName(String name){
-        if(name.equals("")) return Optional.empty();
+        if(name.equals("")) {
+            return Optional.empty();
+        }
 
-        for(Addon addon  : this.addons){
-            if(addon.getDescription().getName().contains(name)) return Optional.of(addon);
+        for(Addon addon  : addons){
+            if(addon.getDescription().getName().contains(name)) {
+                return Optional.of(addon);
+            }
         }
         return Optional.empty();
     }
@@ -101,54 +102,51 @@ public final class AddonsManager {
             if (!f.getName().endsWith(".jar")) {
                 return;
             }
-            JarFile jar = new JarFile(f);
-            
-            // Obtain the addon.yml file
-            JarEntry entry = jar.getJarEntry("addon.yml");
-            if (entry == null) {
-                jar.close();
-                throw new InvalidAddonFormatException("Addon doesn't contains description file");
+            try (JarFile jar = new JarFile(f)) {
 
-            }
-            // Open a reader to the jar
-            BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
-            // Grab the description in the addon.yml file
-            Map<String, String> data = this.data(reader);
+                // Obtain the addon.yml file
+                JarEntry entry = jar.getJarEntry("addon.yml");
+                if (entry == null) {
+                    throw new InvalidAddonFormatException("Addon doesn't contains description file");
 
-            // Load the addon
-            AddonClassLoader loader = new AddonClassLoader(this, data, f, reader, this.getClass().getClassLoader());
-            // Add to the list of loaders
-            this.loader.add(loader);
-            
-            // Get the addon itself
-            addon = loader.addon;
-            // Initialize some settings
-            addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-            addon.setAddonFile(f);
-            
-            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
-            // Obtain any locale files and save them
-            for (String localeFile : listJarYamlFiles(jar, "locales")) {
-                //plugin.getLogger().info("DEBUG: saving " + localeFile + " from jar");
-                addon.saveResource(localeFile, localeDir, false, true);
+                }
+                // Open a reader to the jar
+                BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
+                // Grab the description in the addon.yml file
+                Map<String, String> data = data(reader);
+
+                // Load the addon
+                AddonClassLoader loader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+                // Add to the list of loaders
+                this.loader.add(loader);
+
+                // Get the addon itself
+                addon = loader.getAddon();
+                // Initialize some settings
+                addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
+                addon.setAddonFile(f);
+
+                File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
+                // Obtain any locale files and save them
+                for (String localeFile : listJarYamlFiles(jar, LOCALE_FOLDER)) {
+                    addon.saveResource(localeFile, localeDir, false, true);
+                }
+                plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
+
+                // Fire the load event
+                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+
+                // Add it to the list of addons
+                addons.add(addon);
+
+                // Run the onLoad() method
+                addon.onLoad();
+
+                // Inform the console
+                plugin.getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
             }
-            plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
-            
-            // Fire the load event
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-            
-            // Add it to the list of addons
-            this.addons.add(addon);
-            
-            // Run the onLoad() method
-            addon.onLoad();
-            
-            // Inform the console
-            plugin.getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
-            
-            // Close the jar
-            jar.close();
-        } catch (IOException e) {
+
+        } catch (Exception e) {
             if (DEBUG) {
                 plugin.getLogger().info(f.getName() + "is not a jarfile, ignoring...");
             }
@@ -159,8 +157,9 @@ public final class AddonsManager {
     private Map<String, String> data(BufferedReader reader) {
         Map<String, String> map = new HashMap<>();
         reader.lines().forEach(string -> {
-            if (DEBUG)
+            if (DEBUG) {
                 Bukkit.getLogger().info("DEBUG: " + string);
+            }
             String[] data = string.split("\\: ");
             if (data.length > 1) {
                 map.put(data[0], data[1].substring(0, data[1].length()));
@@ -184,7 +183,7 @@ public final class AddonsManager {
             try {
                 loader.close();
             } catch (IOException e) {
-                e.printStackTrace();
+                // Do nothing
             }
         });
     }
@@ -201,7 +200,7 @@ public final class AddonsManager {
         this.loader = loader;
     }
 
-    
+
     /**
      * Finds a class by name that has been loaded by this loader
      * Code copied from Bukkit JavaPluginLoader
@@ -229,7 +228,7 @@ public final class AddonsManager {
     /**
      * Sets a class that this loader should know about
      * Code copied from Bukkit JavaPluginLoader
-     * 
+     *
      * @param name
      * @param clazz
      */

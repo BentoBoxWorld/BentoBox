@@ -22,7 +22,7 @@ public class FileLister{
     private Plugin plugin;
 
     public FileLister(Plugin level){
-        this.plugin = level;
+        plugin = level;
     }
 
     /**
@@ -52,7 +52,7 @@ public class FileLister{
                 Method method = JavaPlugin.class.getDeclaredMethod("getFile");
                 method.setAccessible(true);
 
-                jarfile = (File) method.invoke(this.plugin);
+                jarfile = (File) method.invoke(plugin);
             } catch (Exception e) {
                 throw new IOException(e);
             }
@@ -97,7 +97,7 @@ public class FileLister{
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
 
-            jarfile = (File) method.invoke(this.plugin);
+            jarfile = (File) method.invoke(plugin);
         } catch (Exception e) {
             throw new IOException(e);
         }

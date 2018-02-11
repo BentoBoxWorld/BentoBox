@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.commands.island;
 
@@ -26,9 +26,9 @@ public class IslandGoCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.home");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.go.description");
+        setPermission(Constants.PERMPREFIX + "island.home");
+        setOnlyPlayer(true);
+        setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
     }
 
@@ -39,7 +39,7 @@ public class IslandGoCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         if (!getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
-            return true;
+            return false;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.valueOf(args.get(0));

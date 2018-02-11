@@ -31,43 +31,52 @@ public class IslandCache {
     private HashMap<UUID, Island> islandsByUUID;
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
-    
+
     public IslandCache() {
         islandsByLocation = HashBiMap.create();
         islandsByUUID = new HashMap<>();
     }
-    
+
+    /**
+     * Adds an island to the grid
+     * @param island
+     */
     public void addIsland(Island island) {
         islandsByLocation.put(island.getCenter(), island);
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: owner = " + island.getOwner());
+        }
         islandsByUUID.put(island.getOwner(), island);
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: island has " + island.getMembers().size() + " members");
-        for (UUID member: island.getMembers()) {
-            if (DEBUG)
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: island has " + island.getMemberSet().size() + " members");
+        }
+        for (UUID member: island.getMemberSet()) {
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: " + member);
+            }
             islandsByUUID.put(member, island);
         }
         addToGrid(island);
     }
-    
+
     public void addPlayer(UUID playerUUID, Island teamIsland) {
         islandsByUUID.put(playerUUID, teamIsland);
     }
-    
+
     /**
      * Adds an island to the grid register
      * @param newIsland
      */
     private void addToGrid(Island newIsland) {
         if (islandGrid.containsKey(newIsland.getMinX())) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: min x is in the grid :" + newIsland.getMinX());
+            }
             TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
             if (zEntry.containsKey(newIsland.getMinZ())) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: min z is in the grid :" + newIsland.getMinZ());
+                }
                 // Island already exists
                 Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
                 plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
@@ -90,35 +99,38 @@ public class IslandCache {
                 return;
             } else {
                 // Add island
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
+                }
                 zEntry.put(newIsland.getMinZ(), newIsland);
                 islandGrid.put(newIsland.getMinX(), zEntry);
                 // plugin.getLogger().info("Debug: " + newIsland.toString());
             }
         } else {
             // Add island
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: added island to grid at " + newIsland.getMinX() + "," + newIsland.getMinZ());
-            TreeMap<Integer, Island> zEntry = new TreeMap<Integer, Island>();
+            }
+            TreeMap<Integer, Island> zEntry = new TreeMap<>();
             zEntry.put(newIsland.getMinZ(), newIsland);
             islandGrid.put(newIsland.getMinX(), zEntry);
         }
     }
-    
+
     public void clear() {
         islandsByLocation.clear();
         islandsByUUID.clear();
     }
-    
+
     public Island createIsland(Island island) {
         islandsByLocation.put(island.getCenter(), island);
-        if (island.getOwner() != null)
+        if (island.getOwner() != null) {
             islandsByUUID.put(island.getOwner(), island);
+        }
         addToGrid(island);
         return island;
     }
-    
+
     /**
      * Create an island with no owner at location
      * @param location
@@ -126,19 +138,21 @@ public class IslandCache {
     public Island createIsland(Location location){
         return createIsland(location, null);
     }
-    
+
     /**
      * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
      * @param location
      * @param owner UUID
      */
     public Island createIsland(Location location, UUID owner){
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: adding island for " + owner + " at " + location);
+        }
         Island island = new Island(location, owner, plugin.getSettings().getIslandProtectionRange());
         islandsByLocation.put(location, island);
-        if (owner != null)
+        if (owner != null) {
             islandsByUUID.put(owner, island);
+        }
         addToGrid(island);
         return island;
     }
@@ -159,39 +173,44 @@ public class IslandCache {
             }
         }
         // Remove from grid
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: deleting island at " + island.getCenter());
+        }
         if (island != null) {
             int x = island.getMinX();
             int z = island.getMinZ();
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: x = " + x + " z = " + z);
+            }
             if (islandGrid.containsKey(x)) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: x found");
+                }
                 TreeMap<Integer, Island> zEntry = islandGrid.get(x);
                 if (zEntry.containsKey(z)) {
-                    if (DEBUG)
+                    if (DEBUG) {
                         plugin.getLogger().info("DEBUG: z found - deleting the island");
+                    }
                     // Island exists - delete it
                     zEntry.remove(z);
                     islandGrid.put(x, zEntry);
                 } else {
-                    if (DEBUG)
+                    if (DEBUG) {
                         plugin.getLogger().info("DEBUG: could not find z");
+                    }
                 }
             }
         }
     }
-    
+
     public Island get(Location location) {
         return islandsByLocation.get(location);
     }
-    
+
     public Island get(UUID uuid) {
         return islandsByUUID.get(uuid);
     }
-    
+
     /**
      * Gets the island for this player. If they are in a team, the team island is returned
      * @param uuid
@@ -221,12 +240,14 @@ public class IslandCache {
                 // Check if in the island range
                 Island island = ent.getValue();
                 if (island.inIslandSpace(x, z)) {
-                    if (DEBUG2)
+                    if (DEBUG2) {
                         plugin.getLogger().info("DEBUG: In island space");
+                    }
                     return island;
                 }
-                if (DEBUG2)
+                if (DEBUG2) {
                     plugin.getLogger().info("DEBUG: not in island space");
+                }
             }
         }
         return null;
@@ -260,8 +281,9 @@ public class IslandCache {
      * @return Location of player's island or null if one does not exist
      */
     public Location getIslandLocation(UUID playerUUID) {
-        if (hasIsland(playerUUID))
+        if (hasIsland(playerUUID)) {
             return getIsland(playerUUID).getCenter();
+        }
         return null;
     }
 
@@ -287,14 +309,16 @@ public class IslandCache {
 
     public Set<UUID> getMembers(UUID playerUUID) {
         Island island = islandsByUUID.get(playerUUID);
-        if (island != null)
-            return new HashSet<UUID>(island.getMembers());
-        return new HashSet<UUID>(0);
+        if (island != null) {
+            return new HashSet<>(island.getMemberSet());
+        }
+        return new HashSet<>(0);
     }
 
     public UUID getTeamLeader(UUID playerUUID) {
-        if (islandsByUUID.containsKey(playerUUID))
+        if (islandsByUUID.containsKey(playerUUID)) {
             return islandsByUUID.get(playerUUID).getOwner();
+        }
         return null;
     }
 
@@ -306,7 +330,7 @@ public class IslandCache {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: checking if " + playerUUID + " has an island");
             plugin.getLogger().info("DEBUG: islandsByUUID : " + islandsByUUID.toString());
-    
+
             if (!islandsByUUID.containsKey(playerUUID)) {
                 plugin.getLogger().info("DEBUG: player is not in islandsByUUID");
             } else {
@@ -314,37 +338,43 @@ public class IslandCache {
             }
         }
         if (islandsByUUID.containsKey(playerUUID) && islandsByUUID.get(playerUUID).getOwner() != null) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: checking for equals");
+            }
             if (islandsByUUID.get(playerUUID).getOwner().equals(playerUUID)) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: has island");
+                }
                 return true;
             }
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: doesn't have island");
+        }
         return false;
     }
 
     public void removePlayer(UUID playerUUID) {
         Island island = islandsByUUID.get(playerUUID);
         if (island != null) {
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: island found");
+            }
             if (island.getOwner() != null && island.getOwner().equals(playerUUID)) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: player is the owner of this island");
+                }
                 // Clear ownership and members
-                island.getMembers().clear();
+                island.getMemberSet().clear();
                 island.setOwner(null);
             }
-            island.getMembers().remove(playerUUID);
+            island.getMemberSet().remove(playerUUID);
         }
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: removing reference to island by UUID");
+        }
         islandsByUUID.remove(playerUUID);
-        
+
     }
 
     public void setIslandName(UUID owner, String name) {
@@ -352,7 +382,7 @@ public class IslandCache {
             Island island = islandsByUUID.get(owner);
             island.setName(name);
         }
-        
+
     }
 
     public int size() {
@@ -370,8 +400,9 @@ public class IslandCache {
         }
         if (o instanceof Island) {
             Island is = (Island)o;
-            if (is.getOwner() != null &&  islandsByUUID.containsKey(is.getOwner()));
-                    return true;
+            if (is.getOwner() != null &&  islandsByUUID.containsKey(is.getOwner())) {
+                return true;
+            }
         }
         return false;
     }

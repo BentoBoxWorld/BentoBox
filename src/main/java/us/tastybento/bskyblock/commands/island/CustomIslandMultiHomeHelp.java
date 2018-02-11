@@ -11,25 +11,25 @@ import us.tastybento.bskyblock.util.Util;
  * This is a custom help for the /island go and /island sethome commands. It overrides the default help sub command.
  * The number of homes can change depending on the player's permissions and config.yml settings.
  * This is an example of a custom help as much as anything.
- * 
+ *
  * @author tastybento
  *
  */
 public class CustomIslandMultiHomeHelp extends CompositeCommand {
 
     public CustomIslandMultiHomeHelp(CompositeCommand parent) {
-        super(parent, "help");        
+        super(parent, "help");
     }
-    
+
     @Override
     public void setup() {
-        this.setOnlyPlayer(true);
+        setOnlyPlayer(true);
         // Inherit parameters from the respective parent class - in this case, only /island go and /island sethome
-        this.setParameters(parent.getParameters());
-        this.setDescription(parent.getDescription());
-        this.setPermission(parent.getPermission());
+        setParameters(parent.getParameters());
+        setDescription(parent.getDescription());
+        setPermission(parent.getPermission());
     }
-        
+
     @Override
     public boolean execute(User user, List<String> args) {
         // This will only be shown if it is for a player
@@ -56,6 +56,6 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
         }
         return false;
     }
-    
+
 }
 

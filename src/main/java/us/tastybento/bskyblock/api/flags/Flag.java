@@ -4,20 +4,26 @@ import java.util.Optional;
 
 import org.bukkit.event.Listener;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 
-public class Flag {
+public class Flag  implements Comparable<Flag> {
 
-    private String id;
-    private PanelItem icon;
-    private Optional<Listener> listener;
+    public enum FlagType {
+        PROTECTION,
+        SETTING
+    }
 
-    public Flag(String id, PanelItem icon, Optional<Listener> listener) {
-        this.id = id;
+    private final String id;
+    private final PanelItem icon;
+    private final Listener listener;
+    private final FlagType type;
+    private boolean defaultSetting;
+
+    public Flag(String id2, PanelItem icon, Listener listener, boolean defaultSetting, FlagType type) {
+        id = id2;
         this.icon = icon;
         this.listener = listener;
-        BSkyBlock.getInstance().getFlagsManager().registerFlag(this);
+        this.type = type;
     }
 
     public String getID() {
@@ -29,6 +35,26 @@ public class Flag {
     }
 
     public Optional<Listener> getListener() {
-        return listener;
+        return Optional.ofNullable(listener);
+    }
+
+    public boolean isDefaultSetting() {
+        return defaultSetting;
+    }
+
+    public void setDefaultSetting(boolean defaultSetting) {
+        this.defaultSetting = defaultSetting;
+    }
+
+    /**
+     * @return the type
+     */
+    public FlagType getType() {
+        return type;
+    }
+
+    @Override
+    public int compareTo(Flag o) {
+        return id.compareTo(o.getID());
     }
 }

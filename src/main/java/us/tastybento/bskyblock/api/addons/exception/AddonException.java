@@ -2,13 +2,13 @@ package us.tastybento.bskyblock.api.addons.exception;
 
 public abstract class AddonException extends Exception {
 
-	/**
-	 * 
-	 */
-	private static final long serialVersionUID = 4203162022348693854L;
+    /**
+     *
+     */
+    private static final long serialVersionUID = 4203162022348693854L;
 
-	public AddonException(String errorMessage){
-		super("AddonException : " + errorMessage);
-	}
-	
+    public AddonException(String errorMessage){
+        super("AddonException : " + errorMessage);
+    }
+
 }

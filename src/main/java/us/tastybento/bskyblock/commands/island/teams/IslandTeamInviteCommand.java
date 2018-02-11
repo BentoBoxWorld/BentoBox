@@ -19,15 +19,17 @@ import us.tastybento.bskyblock.util.Util;
 
 public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
 
+    private static final String NAME_PLACEHOLDER = "[name]";
+
     public IslandTeamInviteCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "invite");
     }
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "island.team");
-        this.setOnlyPlayer(true);
-        this.setDescription("commands.island.team.invite.description");
+        setPermission(Constants.PERMPREFIX + "island.team");
+        setOnlyPlayer(true);
+        setDescription("commands.island.team.invite.description");
 
         new IslandTeamInviteAcceptCommand(this);
         new IslandTeamInviteRejectCommand(this);
@@ -37,50 +39,50 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getPlayers().hasIsland(playerUUID)) {
-            // If the player is in a team, they are not the leader
-            if (getPlayers().inTeam(playerUUID)) {
-                user.sendMessage("general.errors.not-leader");
-            }
-            user.sendMessage("general.errors.no-island");
+        boolean inTeam = getPlugin().getPlayers().inTeam(playerUUID);
+        UUID teamLeaderUUID = getPlugin().getIslands().getTeamLeader(playerUUID);
+        if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
+            user.sendMessage("general.errors.not-leader");
+            return false;
         }
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
                 OfflinePlayer inviter = getPlugin().getServer().getOfflinePlayer(inviteList.get(playerUUID));
-                user.sendMessage("invite.nameHasInvitedYou", "[name]", inviter.getName());
-            } else {
-                user.sendMessage("help.island.invite");
+                user.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, inviter.getName());
+                return true;
             }
-            return true;
+            // Show help
+            showHelp(this, user, args);
+            return false;
         } else  {
             // Only online players can be invited
             UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
             if (invitedPlayerUUID == null) {
                 user.sendMessage("general.errors.offline-player");
-                return true;
+                return false;
             }
             User invitedPlayer = User.getInstance(invitedPlayerUUID);
             if (!invitedPlayer.isOnline()) {
                 user.sendMessage("general.errors.offline-player");
-                return true;
+                return false;
             }
             // Player cannot invite themselves
             if (playerUUID.equals(invitedPlayerUUID)) {
-                user.sendMessage("invite.error.YouCannotInviteYourself");
-                return true;
+                user.sendMessage("commands.island.team.invite.cannot-invite-self");
+                return false;
             }
             // Check if this player can be invited to this island, or
             // whether they are still on cooldown
             long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(playerUUID));
             if (time > 0 && !user.isOp()) {
-                user.sendMessage("invite.error.CoolDown", "[time]", String.valueOf(time));
-                return true;
+                user.sendMessage("commands.island.team.invite.cooldown", "[time]", String.valueOf(time));
+                return false;
             }
             // Player cannot invite someone already on a team
             if (getPlayers().inTeam(invitedPlayerUUID)) {
-                user.sendMessage("invite.error.ThatPlayerIsAlreadyInATeam");
-                return true;
+                user.sendMessage("commands.island.team.invite.already-on-team");
+                return false;
             }
             Set<UUID> teamMembers = getMembers(user);
             // Check if player has space on their team
@@ -104,14 +106,16 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                     }
                 }
                 // Do some sanity checking
-                if (maxSize < 1) maxSize = 1;
+                if (maxSize < 1) {
+                    maxSize = 1;
+                }
             }
             if (teamMembers.size() < maxSize) {
                 // If that player already has an invite out then retract it.
                 // Players can only have one invite one at a time - interesting
                 if (inviteList.containsValue(playerUUID)) {
                     inviteList.inverse().remove(playerUUID);
-                    user.sendMessage("invite.removingInvite");
+                    user.sendMessage("commands.island.team.invite.removing-invite");
                 }
                 // Fire event so add-ons can run commands, etc.
                 IslandBaseEvent event = TeamEvent.builder()
@@ -120,22 +124,25 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                         .involvedPlayer(invitedPlayerUUID)
                         .build();
                 getPlugin().getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) return true;
+                if (event.isCancelled()) {
+                    return true;
+                }
                 // Put the invited player (key) onto the list with inviter (value)
                 // If someone else has invited a player, then this invite will overwrite the previous invite!
                 inviteList.put(invitedPlayerUUID, playerUUID);
-                user.sendMessage("invite.inviteSentTo", "[name]", args.get(0));
+                user.sendMessage("commands.island.team.invite.invitation-sent", NAME_PLACEHOLDER, args.get(0));
                 // Send message to online player
-                invitedPlayer.sendMessage("invite.nameHasInvitedYou", "[name]", user.getName());
-                invitedPlayer.sendMessage("invite.toAcceptOrReject", "[label]", getLabel());
+                invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
+                invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
                 if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
-                    invitedPlayer.sendMessage("invite.warningYouWillLoseIsland");
+                    invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
                 }
+                return true;
             } else {
-                user.sendMessage("invite.error.YourIslandIsFull");
+                user.sendMessage("commands.island.team.invite.errors.island-is-full");
+                return false;
             }
         }
-        return false;
     }
 
     @Override

@@ -3,6 +3,7 @@ package us.tastybento.bskyblock;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDatabase;
@@ -15,10 +16,11 @@ import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.managers.RanksManager;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
- * @author Tastybento
+ * @author tastybento
  * @author Poslovitch
  */
 public class BSkyBlock extends JavaPlugin {
@@ -38,6 +40,7 @@ public class BSkyBlock extends JavaPlugin {
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
     private IslandWorld islandWorldManager;
+    private RanksManager ranksManager;
 
     // Settings
     Settings settings;
@@ -47,26 +50,27 @@ public class BSkyBlock extends JavaPlugin {
     public void onEnable(){
         // Save the default config from config.yml
         saveDefaultConfig();
-        plugin = this;
+        setInstance(this);
 
         settings = new Settings();
-        // Load settings from config.yml. This will check if there are any issues with it too.        
+        // Load settings from config.yml. This will check if there are any issues with it too.
         try {
             //settings.saveSettings();
             settings = settings.loadSettings();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().severe("Settings could not be loaded" + e.getMessage());
         }
 
         // Save a backup of settings to the database so it can be checked next time
         try {
             settings.saveBackup();
         } catch (Exception e) {
-            e.printStackTrace();
+            getLogger().severe("Settings backup could not be saved" + e.getMessage());
         }
 
         playersManager = new PlayersManager(this);
         islandsManager = new IslandsManager(this);
+        ranksManager = new RanksManager(this);
 
         // Load metrics
         metrics = new Metrics(plugin);
@@ -80,57 +84,35 @@ public class BSkyBlock extends JavaPlugin {
         // These items have to be loaded when the server has done 1 tick.
         // Note Worlds are not loaded this early, so any Locations or World reference will be null
         // at this point. Therefore, the 1 tick scheduler is required.
-        getServer().getScheduler().runTask(this, new Runnable() {
+        getServer().getScheduler().runTask(this, () -> {
+            // Create the world if it does not exist
+            islandWorldManager = new IslandWorld(plugin);
 
-            @Override
-            public void run() {
-                // Create the world if it does not exist
-                islandWorldManager = new IslandWorld(plugin);
+            getServer().getScheduler().runTask(plugin, () -> {
 
-                getServer().getScheduler().runTask(plugin, new Runnable() {
+                // Load Flags
+                flagsManager = new FlagsManager(plugin);
 
-                    @Override
-                    public void run() {
-                        // Load islands from database
-                        islandsManager.load();
+                // Load islands from database
+                islandsManager.load();
 
-                        localesManager = new LocalesManager(plugin);
-                        //TODO localesManager.registerLocales(plugin);
+                localesManager = new LocalesManager(plugin);
+                PlaceholderHandler.register(plugin);
 
-                        // Register Listeners
-                        registerListeners();
+                // Register Listeners
+                registerListeners();
 
-                        // Load Flags
-                        flagsManager = new FlagsManager();
+                // Load addons
+                addonsManager = new AddonsManager(plugin);
+                addonsManager.enableAddons();
 
-                        // Load addons
-                        addonsManager = new AddonsManager(plugin);
-                        addonsManager.enableAddons();
-
-                        /*
-                         *DEBUG CODE
-                            Island loadedIsland = islandsManager.getIsland(owner);
-                            getLogger().info("Island name = " + loadedIsland.getName());
-                            getLogger().info("Island locked = " + loadedIsland.getLocked());
-                            //getLogger().info("Random set = " + randomSet);
-                            getLogger().info("Island coops = " + loadedIsland.getCoops());
-                            for (Entry<SettingsFlag, Boolean> flag: loadedIsland.getFlags().entrySet()) {
-                                getLogger().info("Flag " + flag.getKey().name() + " = " + flag.getValue());
-                            }
-                         */
-                        // Save islands & players data asynchronously every X minutes
-                        getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
-                        plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-
-                            @Override
-                            public void run() {
-                                playersManager.save(true);
-                                islandsManager.save(true);
-                            }
-                        }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
-                    }
-                });
-            } 
+                // Save islands & players data asynchronously every X minutes
+                getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
+                plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+                    playersManager.save(true);
+                    islandsManager.save(true);
+                }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
+            });
         });
     }
 
@@ -203,6 +185,10 @@ public class BSkyBlock extends JavaPlugin {
         return islandsManager;
     }
 
+    private static void setInstance(BSkyBlock plugin) {
+        BSkyBlock.plugin = plugin;
+    }
+
     public static BSkyBlock getInstance() {
         return plugin;
     }
@@ -248,6 +234,15 @@ public class BSkyBlock extends JavaPlugin {
      */
     public IslandWorld getIslandWorldManager() {
         return islandWorldManager;
+    }
+
+
+
+    /**
+     * @return the ranksManager
+     */
+    public RanksManager getRanksManager() {
+        return ranksManager;
     }
 
 }

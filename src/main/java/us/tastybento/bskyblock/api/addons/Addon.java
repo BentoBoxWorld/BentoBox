@@ -16,8 +16,8 @@ import org.bukkit.event.Listener;
 import us.tastybento.bskyblock.BSkyBlock;
 
 /**
- * Add-on class for BSkyBlock. Extend this to create an add-on.
- * The operation and methods are very similar to Bukkit's JavaPlugin.
+ * Add-on class for BSkyBlock. Extend this to create an add-on. The operation
+ * and methods are very similar to Bukkit's JavaPlugin.
  *
  * @author tastybento, ComminQ_Q
  */
@@ -32,10 +32,10 @@ public abstract class Addon implements AddonInterface {
     private File file;
 
     public Addon() {
-        this.enabled = false;
+        enabled = false;
     }
 
-    public BSkyBlock getBSkyBlock(){
+    public BSkyBlock getBSkyBlock() {
         return BSkyBlock.getInstance();
     }
 
@@ -77,6 +77,7 @@ public abstract class Addon implements AddonInterface {
 
     /**
      * Convenience method to obtain the server
+     *
      * @return the server object
      */
     public Server getServer() {
@@ -89,29 +90,31 @@ public abstract class Addon implements AddonInterface {
 
     /**
      * Load a YAML file
+     *
      * @param file
      * @return Yaml File configuration
      */
     private FileConfiguration loadYamlFile(String file) {
         File yamlFile = new File(dataFolder, file);
 
-        YamlConfiguration config = null;
+        YamlConfiguration yamlConfig = null;
         if (yamlFile.exists()) {
             try {
-                config = new YamlConfiguration();
-                config.load(yamlFile);
+                yamlConfig = new YamlConfiguration();
+                yamlConfig.load(yamlFile);
             } catch (Exception e) {
-                e.printStackTrace();
+                Bukkit.getLogger().severe("Could not load YAML file: " + file);
             }
         }
-        return config;
+        return yamlConfig;
     }
 
     /**
      * Register a listener for this addon
+     *
      * @param listener
      */
-    public void registerListener(Listener listener){
+    public void registerListener(Listener listener) {
         BSkyBlock.getInstance().getServer().getPluginManager().registerEvents(listener, BSkyBlock.getInstance());
     }
 
@@ -120,15 +123,15 @@ public abstract class Addon implements AddonInterface {
      */
     public void saveConfig() {
         try {
-            this.config.save(new File(dataFolder, ADDON_CONFIG_FILENAME));
+            config.save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
-            e.printStackTrace();
+            Bukkit.getLogger().severe("Could not save config!");
         }
     }
 
     /**
-     * Saves the addon's config.yml file to the addon's data folder and loads it.
-     * If the file exists already, it will not be replaced.
+     * Saves the addon's config.yml file to the addon's data folder and loads it. If
+     * the file exists already, it will not be replaced.
      */
     public void saveDefaultConfig() {
         saveResource(ADDON_CONFIG_FILENAME, false);
@@ -136,20 +139,30 @@ public abstract class Addon implements AddonInterface {
     }
 
     /**
-     * Saves a resource contained in this add-on's jar file to the addon's data folder.
-     * @param resourcePath in jar file
-     * @param replace - if true, will overwrite previous file
+     * Saves a resource contained in this add-on's jar file to the addon's data
+     * folder.
+     *
+     * @param resourcePath
+     *            in jar file
+     * @param replace
+     *            - if true, will overwrite previous file
      */
     public void saveResource(String resourcePath, boolean replace) {
         saveResource(resourcePath, dataFolder, replace, false);
     }
 
     /**
-     * Saves a resource contained in this add-on's jar file to the destination folder.
-     * @param jarResource in jar file
-     * @param destinationFolder on file system
-     * @param replace - if true, will overwrite previous file
-     * @param noPath - if true, the resource's path will be ignored when saving
+     * Saves a resource contained in this add-on's jar file to the destination
+     * folder.
+     *
+     * @param jarResource
+     *            in jar file
+     * @param destinationFolder
+     *            on file system
+     * @param replace
+     *            - if true, will overwrite previous file
+     * @param noPath
+     *            - if true, the resource's path will be ignored when saving
      */
     public void saveResource(String jarResource, File destinationFolder, boolean replace, boolean noPath) {
         if (jarResource == null || jarResource.equals("")) {
@@ -157,65 +170,67 @@ public abstract class Addon implements AddonInterface {
         }
 
         jarResource = jarResource.replace('\\', '/');
-        InputStream in = null; 
-        try {
-            JarFile jar = new JarFile(file);
-            JarEntry config = jar.getJarEntry(jarResource);
-            if (config != null) {
-                in = jar.getInputStream(config);
+        try (JarFile jar = new JarFile(file)) {
+            JarEntry jarConfig = jar.getJarEntry(jarResource);
+            if (jarConfig != null) {
+                try (InputStream in = jar.getInputStream(jarConfig)) {
+                    if (in == null) {
+                        throw new IllegalArgumentException(
+                                "The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
+                    }
+                    // There are two options, use the path of the resource or not
+                    File outFile = new File(destinationFolder, jarResource);
+                    if (noPath) {
+                        outFile = new File(destinationFolder, outFile.getName());
+                    }
+                    // Make any dirs that need to be made
+                    outFile.getParentFile().mkdirs();
+                    if (DEBUG) {
+                        Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
+                        Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
+                    }
+                    if (!outFile.exists() || replace) {
+                        java.nio.file.Files.copy(in, outFile.toPath());
+                    }
+                }
             }
-            if (in == null) {
-                jar.close();
-                throw new IllegalArgumentException("The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
-            }
-            
-            // There are two options, use the path of the resource or not
-            File outFile = new File(destinationFolder, jarResource);
-            if (noPath) {
-                outFile = new File(destinationFolder, outFile.getName());
-            }
-            // Make any dirs that need to be made
-            outFile.getParentFile().mkdirs();
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
-                Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
-            }
-            if (!outFile.exists() || replace) {
-                java.nio.file.Files.copy(in, outFile.toPath());
-            }
-            in.close();
-            jar.close();
-        } catch (IOException ex) {
-            ex.printStackTrace();
+        } catch (IOException e) {
+            Bukkit.getLogger().severe(
+                    "Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }
     }
 
     /**
      * Set the file that contains this addon
-     * @param f the file to set
+     *
+     * @param f
+     *            the file to set
      */
     public void setAddonFile(File f) {
-        this.file = f;
+        file = f;
     }
 
     /**
      * Set this addon's data folder
+     *
      * @param file
      */
     public void setDataFolder(File file) {
-        this.dataFolder = file;    
+        dataFolder = file;
     }
 
     /**
      * Set this addons description
+     *
      * @param desc
      */
-    public void setDescription(AddonDescription desc){
-        this.description = desc;
+    public void setDescription(AddonDescription desc) {
+        description = desc;
     }
 
     /**
      * Set whether this addon is enabled or not
+     *
      * @param enabled
      */
     public void setEnabled(boolean enabled) {

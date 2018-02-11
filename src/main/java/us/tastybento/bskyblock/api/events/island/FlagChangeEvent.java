@@ -43,13 +43,13 @@ public class FlagChangeEvent extends IslandBaseEvent {
      * @return the edited flag
      */
     public Flag getFlag() {
-        return this.editedFlag;
+        return editedFlag;
     }
 
     /**
      * @return enabled/disabled
      */
     public boolean getSetTo() {
-        return this.setTo;
+        return setTo;
     }
 }

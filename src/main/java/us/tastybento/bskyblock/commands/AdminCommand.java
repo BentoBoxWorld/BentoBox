@@ -17,9 +17,9 @@ public class AdminCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        this.setPermission(Constants.PERMPREFIX + "admin.*");
-        this.setOnlyPlayer(false);
-        this.setDescription("admin.help.description");
+        setPermission(Constants.PERMPREFIX + "admin.*");
+        setOnlyPlayer(false);
+        setDescription("commands.admin.help.description");
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
         new AdminTeleportCommand(this);
@@ -27,7 +27,9 @@ public class AdminCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        return this.getSubCommand("help").get().execute(user, args);
+        // By default run the attached help command, if it exists (it should)
+        showHelp(this, user, args);
+        return false;
     }
 
 }

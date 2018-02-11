@@ -34,6 +34,8 @@ import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.AdapterInterface;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -46,7 +48,6 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
-    private static final boolean DEBUG = false;
     /**
      * Connection to the database
      */
@@ -54,47 +55,48 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     /**
      * This hashmap maps Java types to MySQL SQL types because they are not the same
      */
-    private static HashMap<String, String> mySQLmapping;
-    {
-        mySQLmapping = new HashMap<>();
-        mySQLmapping.put(boolean.class.getTypeName(), "BOOL");
-        mySQLmapping.put(byte.class.getTypeName(), "TINYINT");
-        mySQLmapping.put(short.class.getTypeName(), "SMALLINT");
-        mySQLmapping.put(int.class.getTypeName(), "INTEGER");
-        mySQLmapping.put(long.class.getTypeName(), "BIGINT");
-        mySQLmapping.put(double.class.getTypeName(), "DOUBLE PRECISION");
-        mySQLmapping.put(Boolean.class.getTypeName(), "BOOL");
-        mySQLmapping.put(Byte.class.getTypeName(), "TINYINT");
-        mySQLmapping.put(Short.class.getTypeName(), "SMALLINT");
-        mySQLmapping.put(Integer.class.getTypeName(), "INTEGER");
-        mySQLmapping.put(Long.class.getTypeName(), "BIGINT");
-        mySQLmapping.put(Double.class.getTypeName(), "DOUBLE PRECISION");
-        mySQLmapping.put(BigDecimal.class.getTypeName(), "DECIMAL(13,0)");
-        mySQLmapping.put(String.class.getTypeName(), "VARCHAR(254)");
-        mySQLmapping.put(Date.class.getTypeName(), "DATE");
-        mySQLmapping.put(Time.class.getTypeName(), "TIME");
-        mySQLmapping.put(Timestamp.class.getTypeName(), "TIMESTAMP");
-        mySQLmapping.put(UUID.class.getTypeName(), "VARCHAR(36)");
+    private static final HashMap<String, String> MYSQL_MAPPING = new HashMap<>();
+    private static final String STRING_MAP = "VARCHAR(254)";
+
+    static {
+        MYSQL_MAPPING.put(boolean.class.getTypeName(), "BOOL");
+        MYSQL_MAPPING.put(byte.class.getTypeName(), "TINYINT");
+        MYSQL_MAPPING.put(short.class.getTypeName(), "SMALLINT");
+        MYSQL_MAPPING.put(int.class.getTypeName(), "INTEGER");
+        MYSQL_MAPPING.put(long.class.getTypeName(), "BIGINT");
+        MYSQL_MAPPING.put(double.class.getTypeName(), "DOUBLE PRECISION");
+        MYSQL_MAPPING.put(Boolean.class.getTypeName(), "BOOL");
+        MYSQL_MAPPING.put(Byte.class.getTypeName(), "TINYINT");
+        MYSQL_MAPPING.put(Short.class.getTypeName(), "SMALLINT");
+        MYSQL_MAPPING.put(Integer.class.getTypeName(), "INTEGER");
+        MYSQL_MAPPING.put(Long.class.getTypeName(), "BIGINT");
+        MYSQL_MAPPING.put(Double.class.getTypeName(), "DOUBLE PRECISION");
+        MYSQL_MAPPING.put(BigDecimal.class.getTypeName(), "DECIMAL(13,0)");
+        MYSQL_MAPPING.put(String.class.getTypeName(), STRING_MAP);
+        MYSQL_MAPPING.put(Date.class.getTypeName(), "DATE");
+        MYSQL_MAPPING.put(Time.class.getTypeName(), "TIME");
+        MYSQL_MAPPING.put(Timestamp.class.getTypeName(), "TIMESTAMP");
+        MYSQL_MAPPING.put(UUID.class.getTypeName(), "VARCHAR(36)");
 
         // Bukkit Mappings
-        mySQLmapping.put(Location.class.getTypeName(), "VARCHAR(254)");
-        mySQLmapping.put(World.class.getTypeName(), "VARCHAR(254)");
+        MYSQL_MAPPING.put(Location.class.getTypeName(), STRING_MAP);
+        MYSQL_MAPPING.put(World.class.getTypeName(), STRING_MAP);
 
-        // Collections are stored as additional tables. The boolean indicates whether there 
+        // Collections are stored as additional tables. The boolean indicates whether there
         // is any data in it or not (maybe)
-        mySQLmapping.put(Set.class.getTypeName(), "BOOL");
-        mySQLmapping.put(Map.class.getTypeName(), "BOOL");
-        mySQLmapping.put(HashMap.class.getTypeName(), "BOOL");
-        mySQLmapping.put(ArrayList.class.getTypeName(), "BOOL");
+        MYSQL_MAPPING.put(Set.class.getTypeName(), "BOOL");
+        MYSQL_MAPPING.put(Map.class.getTypeName(), "BOOL");
+        MYSQL_MAPPING.put(HashMap.class.getTypeName(), "BOOL");
+        MYSQL_MAPPING.put(ArrayList.class.getTypeName(), "BOOL");
 
         // Enums
-        mySQLmapping.put(Enum.class.getTypeName(), "VARCHAR(254)");
+        MYSQL_MAPPING.put(Enum.class.getTypeName(), STRING_MAP);
 
     }
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
-     * the class that will be stored. 
+     * the class that will be stored.
      * @param plugin
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param databaseConnecter - authentication details for the database
@@ -110,10 +112,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Check if the table exists in the database and if not, create it
         try {
             createSchema();
-        } catch (IntrospectionException e) {
-            e.printStackTrace();
-        } catch (SQLException e) {
-            e.printStackTrace();
+        } catch (IntrospectionException | SQLException e) {
+            plugin.getLogger().severe("Could not create database schema! " + e.getMessage());
         }
     }
 
@@ -123,72 +123,71 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws SQLException
      */
     private void createSchema() throws IntrospectionException, SQLException {
-        PreparedStatement pstmt = null;
-        try {
-            String sql = "CREATE TABLE IF NOT EXISTS `" + dataObject.getCanonicalName() + "` (";
-            // Run through the fields of the class using introspection
-            for (Field field : dataObject.getDeclaredFields()) {
-                // Get the description of the field
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
-                //plugin.getLogger().info("DEBUG: Field = " + field.getName() + "(" + propertyDescriptor.getPropertyType().getTypeName() + ")");
-                // Get default SQL mappings
-                // Get the write method for this field. This method will take an argument of the type of this field.
-                Method writeMethod = propertyDescriptor.getWriteMethod();
-                // The SQL column name is the name of the field
-                String columnName = field.getName();
-                // Get the mapping for this field from the hashmap
-                String typeName = propertyDescriptor.getPropertyType().getTypeName();
-                if (propertyDescriptor.getPropertyType().isEnum()) {
-                    typeName = "Enum";
-                }
-                String mapping = mySQLmapping.get(typeName);
-                // If it exists, then create the SQL
-                if (mapping != null) {
-                    // Note that the column name must be enclosed in `'s because it may include reserved words.
-                    sql += "`" + columnName + "` " + mapping + ",";
-                    // Create set and map tables if the type is a collection
-                    if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                            propertyDescriptor.getPropertyType().equals(Map.class) ||
-                            propertyDescriptor.getPropertyType().equals(HashMap.class) ||
-                            propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                        // The ID in this table relates to the parent table and is unique
-                        String setSql = "CREATE TABLE IF NOT EXISTS `" + dataObject.getCanonicalName() + "." + field.getName() + "` ("
-                                + "uniqueId VARCHAR(36) NOT NULL, ";
-                        // Get columns separated by commas
-                        setSql += getCollectionColumnString(writeMethod,false,true);
-                        // Close the SQL string
-                        setSql += ")";
-
-                        //plugin.getLogger().info(setSql);
-                        // Execute the statement
-                        PreparedStatement collections = connection.prepareStatement(setSql);
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: collections prepared statement = " + collections.toString());
+        StringBuilder sql = new StringBuilder();
+        sql.append("CREATE TABLE IF NOT EXISTS `");
+        sql.append(dataObject.getCanonicalName());
+        sql.append("` (");
+        // Run through the fields of the class using introspection
+        for (Field field : dataObject.getDeclaredFields()) {
+            // Get the description of the field
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
+            // Get default SQL mappings
+            // Get the write method for this field. This method will take an argument of the type of this field.
+            Method writeMethod = propertyDescriptor.getWriteMethod();
+            // The SQL column name is the name of the field
+            String columnName = field.getName();
+            // Get the mapping for this field from the hashmap
+            String typeName = propertyDescriptor.getPropertyType().getTypeName();
+            if (propertyDescriptor.getPropertyType().isEnum()) {
+                typeName = "Enum";
+            }
+            String mapping = MYSQL_MAPPING.get(typeName);
+            // If it exists, then create the SQL
+            if (mapping != null) {
+                // Note that the column name must be enclosed in `'s because it may include reserved words.
+                sql.append("`");
+                sql.append(columnName);
+                sql.append("` ");
+                sql.append(mapping);
+                sql.append(",");
+                // Create set and map tables if the type is a collection
+                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                        propertyDescriptor.getPropertyType().equals(Map.class) ||
+                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                    // The ID in this table relates to the parent table and is unique
+                    StringBuilder setSql = new StringBuilder();
+                    setSql.append("CREATE TABLE IF NOT EXISTS `");
+                    setSql.append(dataObject.getCanonicalName());
+                    setSql.append(".");
+                    setSql.append(field.getName());
+                    setSql.append("` (");
+                    setSql.append("uniqueId VARCHAR(36) NOT NULL, ");
+                    // Get columns separated by commas
+                    setSql.append(getCollectionColumnString(writeMethod,false,true));
+                    // Close the SQL string
+                    setSql.append(")");
+                    // Execute the statement
+                    try (PreparedStatement collections = connection.prepareStatement(setSql.toString())) {
                         collections.executeUpdate();
                     }
-                } else {
-                    // The Java type is not in the hashmap, so we'll just guess that it can be stored in a string
-                    // This should NOT be used in general because every type should be in the hashmap
-                    sql += field.getName() + " VARCHAR(254),";
-                    plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
-                    plugin.getLogger().severe(propertyDescriptor.getPropertyType().getTypeName());
                 }
+            } else {
+                // The Java type is not in the hashmap, so we'll just guess that it can be stored in a string
+                // This should NOT be used in general because every type should be in the hashmap
+                sql.append(field.getName());
+                sql.append(" ");
+                sql.append(STRING_MAP);
+                sql.append(",");
+                plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
+                plugin.getLogger().severe(propertyDescriptor.getPropertyType().getTypeName());
             }
-            //plugin.getLogger().info("DEBUG: SQL before trim string = " + sql);
-            // For the main table for the class, the unique ID is the primary key
-            sql += " PRIMARY KEY (uniqueId))";
-            //plugin.getLogger().info("DEBUG: SQL string = " + sql);
-            // Prepare and execute the database statements
-            pstmt = connection.prepareStatement(sql);
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: pstmt = " + pstmt.toString());
+        }
+        // For the main table for the class, the unique ID is the primary key
+        sql.append(" PRIMARY KEY (uniqueId))");
+        // Prepare and execute the database statements
+        try (PreparedStatement pstmt = connection.prepareStatement(sql.toString())) {
             pstmt.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            // Close the database properly
-            MySQLDatabaseResourceCloser.close(pstmt);
-            MySQLDatabaseResourceCloser.close(pstmt);
         }
     }
 
@@ -208,15 +207,17 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         boolean first = true;
         /* Iterate the column-names */
         for (Field f : dataObject.getDeclaredFields()) {
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 sb.append(", ");
+            }
 
-            if (usePlaceHolders)
+            if (usePlaceHolders) {
                 sb.append("?");
-            else
+            } else {
                 sb.append("`" + f.getName() + "`");
+            }
         }
 
         return sb.toString();
@@ -239,18 +240,18 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         boolean first = true;
         for (String col : cols) {
             // Add commas
-            if (first)
+            if (first) {
                 first = false;
-            else
+            } else {
                 sb.append(", ");
+            }
             // this is used if the string is going to be used to insert something so the value will replace the ?
-            if (usePlaceHolders)
+            if (usePlaceHolders) {
                 sb.append("?");
-            else
+            } else {
                 sb.append(col);
+            }
         }
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: collection column string = " + sb.toString());
         return sb.toString();
     }
 
@@ -263,15 +264,15 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private List<String> getCollentionColumnList(Method method, boolean createSchema) {
         List<String> columns = new ArrayList<>();
         for (Entry<String,String> en : getCollectionColumnMap(method).entrySet()) {
-            String col = en.getKey();
+            StringBuilder col = new StringBuilder();
+            col.append(en.getKey());
             if (createSchema) {
-                col += " " + en.getValue();
+                col.append(" ");
+                col.append(en.getValue());
             }
-            columns.add(col);
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: collection columns = " + col);
+            columns.add(col.toString());
         }
-        
+
         return columns;
     }
 
@@ -287,23 +288,22 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // In this way, we can deduce what type needs to be written at runtime.
         Type[] genericParameterTypes = method.getGenericParameterTypes();
         // There could be more than one argument, so step through them
-        for (int i = 0; i < genericParameterTypes.length; i++) {
+        for (Type genericParameterType : genericParameterTypes) {
             // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if (genericParameterTypes[i] instanceof ParameterizedType) {
-                // Get the actual type arguments of the parameter 
-                Type[] parameters = ((ParameterizedType)genericParameterTypes[i]).getActualTypeArguments();
+            if (genericParameterType instanceof ParameterizedType) {
+                // Get the actual type arguments of the parameter
+                Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
                 //parameters[0] contains java.lang.String for method like "method(List<String> value)"
                 // Run through them one by one and create a SQL string
                 int index = 0;
                 for (Type type : parameters) {
                     // This is a request for column names.
-                    String setMapping = mySQLmapping.get(type.getTypeName());
-                    columns.put("`" + type.getTypeName() + "_" + index + "`", setMapping != null ? setMapping : "VARCHAR(254)");
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collection column = " + "`" + type.getTypeName() + "_" + index + "`" + setMapping);
+                    String setMapping = MYSQL_MAPPING.get(type.getTypeName());
+                    // This column name format is typeName_# where # is a number incremented from 0
+                    columns.put("`" + type.getTypeName() + "_" + index + "`", setMapping != null ? setMapping : STRING_MAP);
+                    // Increment the index so each column has a unique name
+                    index++;
                 }
-                // Increment the index so each column has a unique name
-                index++;
             }
         }
         return columns;
@@ -378,42 +378,32 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     InstantiationException, IllegalAccessException,
     IntrospectionException, InvocationTargetException, NoSuchMethodException {
 
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: saveObject ");
-        try {
-            // Try to connect to the database
-            connection = databaseConnecter.createConnection();
-            // insertQuery is created in super from the createInsertQuery() method
-            preparedStatement = connection.prepareStatement(insertQuery);
+        // insertQuery is created in super from the createInsertQuery() method
+        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
             // Get the uniqueId. As each class extends DataObject, it must have this method in it.
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
             Method getUniqueId = propertyDescriptor.getReadMethod();
             final String uniqueId = (String) getUniqueId.invoke(instance);
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: Unique Id = " + uniqueId);
-            }
             if (uniqueId.isEmpty()) {
                 throw new SQLException("uniqueId is blank");
             }
             // Create the insertion
             int i = 0;
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: insert Query " + insertQuery);
             // Run through the fields in the class using introspection
             for (Field field : dataObject.getDeclaredFields()) {
                 // Get the field's property descriptor
                 propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
                 // Get the read method for this field
                 Method method = propertyDescriptor.getReadMethod();
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: Field = " + field.getName() + "(" + propertyDescriptor.getPropertyType().getTypeName() + ")");
                 //sql += "`" + field.getName() + "` " + mapping + ",";
                 // Invoke the read method to obtain the value from the class - this is the value we need to store in the database
                 Object value = method.invoke(instance);
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: value = " + value);
+                // Adapter Notation
+                Adapter adapterNotation = field.getAnnotation(Adapter.class);
+                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                    // A conversion adapter has been defined
+                    value = ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value);
+                }
                 // Create set and map table inserts if this is a Collection
                 if (propertyDescriptor.getPropertyType().equals(Set.class) ||
                         propertyDescriptor.getPropertyType().equals(Map.class) ||
@@ -421,70 +411,75 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                     // Collection
                     // The table is cleared for this uniqueId every time the data is stored
-                    String clearTableSql = "DELETE FROM  `" + dataObject.getCanonicalName() + "." + field.getName() + "` WHERE uniqueId = ?";
-                    PreparedStatement collStatement = connection.prepareStatement(clearTableSql);
-                    collStatement.setString(1, uniqueId);
-                    collStatement.execute();
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collStatement " + collStatement.toString());
-                    // Insert into the table
-                    String setSql = "INSERT INTO `" + dataObject.getCanonicalName() + "." + field.getName() + "` (uniqueId, ";
-                    // Get the columns we are going to insert, just the names of them
-                    setSql += getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false) + ") ";
-                    // Get all the ?'s for the columns
-                    setSql += "VALUES ('" + uniqueId + "'," + getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false) + ")";
-                    // Prepare the statement
-                    collStatement = connection.prepareStatement(setSql);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collection insert =" + setSql);
-                    // Do single dimension types (set and list)
-                    if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                            propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                        //plugin.getLogger().info("DEBUG: set class for ");
-                        // Loop through the set or list
-                        // Note that we have no idea what type this is
-                        Collection<?> collection = (Collection<?>)value;
-                        Iterator<?> it = collection.iterator();
-                        while (it.hasNext()) {
-                            Object setValue = it.next();
-                            //if (setValue instanceof UUID) {
-                            // Serialize everything
-                            setValue = serialize(setValue, setValue.getClass());
-                            //}
-                            // Set the value from ? to whatever it is
-                            collStatement.setObject(1, setValue);
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: " + collStatement.toString());
-                            // Execute the SQL in the database
-                            collStatement.execute();
-                        }
-                    } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
-                            propertyDescriptor.getPropertyType().equals(HashMap.class)) {
-                        // Loop through the map
-                        Map<?,?> collection = (Map<?,?>)value;
-                        Iterator<?> it = collection.entrySet().iterator();
-                        while (it.hasNext()) {
-                            Entry<?,?> en = (Entry<?, ?>) it.next();
-                            // Get the key and serialize it
-                            Object key = serialize(en.getKey(), en.getKey().getClass());
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: key class = " + en.getKey().getClass().getTypeName());
-                            // Get the value and serialize it
-                            Object mapValue = serialize(en.getValue(), en.getValue().getClass());
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: mapValue = " + mapValue);
-                            // Write the objects into prepared statement
-                            collStatement.setObject(1, key);
-                            collStatement.setObject(2, mapValue);
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: " + collStatement.toString());
-                            // Write to database
-                            collStatement.execute();
-                        }
+                    StringBuilder clearTableSql = new StringBuilder();
+                    clearTableSql.append("DELETE FROM  `");
+                    clearTableSql.append(dataObject.getCanonicalName());
+                    clearTableSql.append(".");
+                    clearTableSql.append(field.getName());
+                    clearTableSql.append("` WHERE uniqueId = ?");
+                    try (PreparedStatement collStatement = connection.prepareStatement(clearTableSql.toString())) {
+                        collStatement.setString(1, uniqueId);
+                        collStatement.execute();
                     }
-                    // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
-                    // additional table.
-                    value = true;
+                    // Insert into the table
+                    StringBuilder setSql = new StringBuilder();
+                    setSql.append("INSERT INTO `");
+                    setSql.append(dataObject.getCanonicalName());
+                    setSql.append(".");
+                    setSql.append(field.getName());
+                    setSql.append("` (uniqueId, ");
+                    // Get the columns we are going to insert, just the names of them
+                    setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), false, false));
+                    setSql.append(") ");
+                    // Get all the ?'s for the columns
+                    setSql.append("VALUES ('?',");
+                    setSql.append(getCollectionColumnString(propertyDescriptor.getWriteMethod(), true, false));
+                    setSql.append(")");
+                    // Prepare the statement
+                    try (PreparedStatement collStatement = connection.prepareStatement(setSql.toString())) {
+                        // Set the uniqueId
+                        collStatement.setString(1, uniqueId);
+                        // Do single dimension types (set and list)
+                        if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                                propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                            //plugin.getLogger().info("DEBUG: set class for ");
+                            // Loop through the set or list
+                            // Note that we have no idea what type this is
+                            Collection<?> collection = (Collection<?>)value;
+                            Iterator<?> it = collection.iterator();
+                            while (it.hasNext()) {
+                                Object setValue = it.next();
+                                //if (setValue instanceof UUID) {
+                                // Serialize everything
+                                setValue = serialize(setValue, setValue.getClass());
+                                //}
+                                // Set the value from ? to whatever it is
+                                collStatement.setObject(2, setValue);
+                                // Execute the SQL in the database
+                                collStatement.execute();
+                            }
+                        } else if (propertyDescriptor.getPropertyType().equals(Map.class) ||
+                                propertyDescriptor.getPropertyType().equals(HashMap.class)) {
+                            // Loop through the map
+                            Map<?,?> collection = (Map<?,?>)value;
+                            Iterator<?> it = collection.entrySet().iterator();
+                            while (it.hasNext()) {
+                                Entry<?,?> en = (Entry<?, ?>) it.next();
+                                // Get the key and serialize it
+                                Object key = serialize(en.getKey(), en.getKey().getClass());
+                                // Get the value and serialize it
+                                Object mapValue = serialize(en.getValue(), en.getValue().getClass());
+                                // Write the objects into prepared statement
+                                collStatement.setObject(1, key);
+                                collStatement.setObject(2, mapValue);
+                                // Write to database
+                                collStatement.execute();
+                            }
+                        }
+                        // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
+                        // additional table.
+                        value = true;
+                    }
                 } else {
                     // If the value is not a collection, it just needs to be serialized to go into the database.
                     value = serialize(value, propertyDescriptor.getPropertyType());
@@ -496,14 +491,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Add the statements to a batch
             preparedStatement.addBatch();
             // Execute
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: prepared statement = " + preparedStatement.toString());
             preparedStatement.executeBatch();
-
-        } finally {
-            // Close properly
-            MySQLDatabaseResourceCloser.close(preparedStatement);
-            MySQLDatabaseResourceCloser.close(preparedStatement);
         }
     }
 
@@ -568,25 +556,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     InstantiationException, IllegalAccessException,
     IntrospectionException, InvocationTargetException, ClassNotFoundException {
 
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-
-        try {
-            connection = databaseConnecter.createConnection();
-            statement = connection.createStatement();
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: selectQuery = " + selectQuery);
-            resultSet = statement.executeQuery(selectQuery);
-
+        try (Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery(selectQuery)) {
             return createObjects(resultSet);
-
-        } finally {
-            MySQLDatabaseResourceCloser.close(resultSet);
-            MySQLDatabaseResourceCloser.close(statement);
-            MySQLDatabaseResourceCloser.close(connection);
-        }
+        } 
     }
+
 
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#selectObject(java.lang.String)
@@ -595,32 +570,28 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public T loadObject(String uniqueId) throws InstantiationException,
     IllegalAccessException, IllegalArgumentException,
     InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException {
-        Connection connection = null;
-        Statement statement = null;
-        ResultSet resultSet = null;
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: loading object for " + uniqueId);
-        try {
-            connection = databaseConnecter.createConnection();
-            String query = "SELECT " + getColumns(false) + " FROM `" + dataObject.getCanonicalName() + "` WHERE uniqueId = ? LIMIT 1";
-            PreparedStatement preparedStatement = connection.prepareStatement(query);
+
+        // Build the select query
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT ");
+        query.append(getColumns(false));
+        query.append(" FROM `");
+        query.append(dataObject.getCanonicalName());
+        query.append("` WHERE uniqueId = ? LIMIT 1");
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query.toString())) {
             preparedStatement.setString(1, uniqueId);
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: load Object query = " + preparedStatement.toString());
-            resultSet = preparedStatement.executeQuery();
-
-            List<T> result = createObjects(resultSet);
-            if (!result.isEmpty()) {
-                return result.get(0);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                // If there is a result, we only want/need the first one
+                List<T> result = createObjects(resultSet);
+                if (!result.isEmpty()) {
+                    return result.get(0);
+                }
             }
-            return null;
-
-        } finally {
-            MySQLDatabaseResourceCloser.close(resultSet);
-            MySQLDatabaseResourceCloser.close(statement);
-            MySQLDatabaseResourceCloser.close(connection);
         }
+        return null;
     }
+
 
     /**
      *
@@ -648,7 +619,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             IllegalAccessException, IntrospectionException,
             InvocationTargetException, ClassNotFoundException {
 
-        List<T> list = new ArrayList<T>();
+        List<T> list = new ArrayList<>();
         // The database can return multiple results in one go, e.g., all the islands in the database
         // Run through them one by one
         while (resultSet.next()) {
@@ -668,101 +639,85 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Get the write method for this field, because we are going to use it to write the value
                 // once we get the value from the database
                 Method method = propertyDescriptor.getWriteMethod();
-                // If the type is a Collection, then we need to deal with set and map tables 
-                if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                // If the type is a Collection, then we need to deal with set and map tables
+                if (Collection.class.isAssignableFrom(propertyDescriptor.getPropertyType())
+                        || Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Collection
-                    //plugin.getLogger().info("DEBUG: Collection");
-                    // TODO Get the values from the subsidiary tables.
                     // value is just of type boolean right now
-                    String setSql = "SELECT ";
+                    StringBuilder setSql = new StringBuilder();
+                    setSql.append("SELECT ");
                     // Get the columns, just the names of them, no ?'s or types
-                    setSql += getCollectionColumnString(method, false, false) + " ";
-                    setSql += "FROM `" + dataObject.getCanonicalName() + "." + field.getName() + "` ";
+                    setSql.append(getCollectionColumnString(method, false, false));
+                    setSql.append(" ");
+                    setSql.append("FROM `");
+                    setSql.append(dataObject.getCanonicalName());
+                    setSql.append(".");
+                    setSql.append(field.getName());
+                    setSql.append("` ");
                     // We will need to fill in the ? later with the unique id of the class from the database
-                    setSql += "WHERE uniqueId = ?";
+                    setSql.append("WHERE uniqueId = ?");
                     // Prepare the statement
-                    PreparedStatement collStatement = connection.prepareStatement(setSql);
-                    // Set the unique ID
-                    collStatement.setObject(1, uniqueId);
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: collStatement = " + collStatement.toString());
-                    ResultSet collectionResultSet = collStatement.executeQuery();
-                    //plugin.getLogger().info("DEBUG: collectionResultSet = " + collectionResultSet.toString());
-                    // Do single dimension types (set and list)
-                    if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: adding a set");
-                        // Loop through the collection resultset 
-                        // Note that we have no idea what type this is
-                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                        // collectionTypes should be only 1 long
-                        Type setType = collectionTypes.get(0);
-                        value = new HashSet<Object>();
-                        if (DEBUG) {
-                            plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                            plugin.getLogger().info("DEBUG: setType = " + setType.getTypeName());
+                    try (PreparedStatement collStatement = connection.prepareStatement(setSql.toString())) {
+                        // Set the unique ID
+                        collStatement.setObject(1, uniqueId);
+                        try (ResultSet collectionResultSet = collStatement.executeQuery()) {
+
+                            //plugin.getLogger().info("DEBUG: collectionResultSet = " + collectionResultSet.toString());
+                            // Do single dimension types (set and list)
+                            if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                                // Loop through the collection resultset
+                                // Note that we have no idea what type this is
+                                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                                // collectionTypes should be only 1 long
+                                Type setType = collectionTypes.get(0);
+                                value = new HashSet<>();
+                                while (collectionResultSet.next()) {
+                                    ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
+                                }
+                            } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                                // Loop through the collection resultset
+                                // Note that we have no idea what type this is
+                                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                                // collectionTypes should be only 1 long
+                                Type setType = collectionTypes.get(0);
+                                value = new ArrayList<>();
+                                //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
+                                while (collectionResultSet.next()) {
+                                    // Add to the list
+                                    ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
+                                }
+                            } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) ||
+                                    HashMap.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                                // Loop through the collection resultset
+                                // Note that we have no idea what type this is
+                                List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                                // collectionTypes should be 2 long
+                                Type keyType = collectionTypes.get(0);
+                                Type valueType = collectionTypes.get(1);
+                                value = new HashMap<>();
+                                while (collectionResultSet.next()) {
+                                    // Work through the columns
+                                    // Key
+                                    Object key = deserialize(collectionResultSet.getObject(1),Class.forName(keyType.getTypeName()));
+                                    Object mapValue = deserialize(collectionResultSet.getObject(2),Class.forName(valueType.getTypeName()));
+                                    ((Map<Object,Object>) value).put(key,mapValue);
+                                }
+                            } else {
+                                // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
+                                // additional table.
+                                value = true;
+                            }
                         }
-                        while (collectionResultSet.next()) {
-                            ((Set<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
-                        }
-                    } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: Adding a list ");
-                        // Loop through the collection resultset 
-                        // Note that we have no idea what type this is
-                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                        // collectionTypes should be only 1 long
-                        Type setType = collectionTypes.get(0);
-                        value = new ArrayList<Object>();
-                        //plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                        while (collectionResultSet.next()) {
-                            //plugin.getLogger().info("DEBUG: adding to the list");
-                            //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                            ((List<Object>) value).add(deserialize(collectionResultSet.getObject(1),Class.forName(setType.getTypeName())));
-                        }
-                    } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: Adding a map ");
-                        // Loop through the collection resultset 
-                        // Note that we have no idea what type this is
-                        List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
-                        // collectionTypes should be 2 long
-                        Type keyType = collectionTypes.get(0);
-                        Type valueType = collectionTypes.get(1);
-                        value = new HashMap<Object, Object>();
-                        if (DEBUG)
-                            plugin.getLogger().info("DEBUG: collection type argument = " + collectionTypes);
-                        while (collectionResultSet.next()) {
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: adding to the map");
-                            //plugin.getLogger().info("DEBUG: collectionResultSet size = " + collectionResultSet.getFetchSize());
-                            // Work through the columns
-                            // Key
-                            Object key = deserialize(collectionResultSet.getObject(1),Class.forName(keyType.getTypeName()));
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: key = " + key);
-                            Object mapValue = deserialize(collectionResultSet.getObject(2),Class.forName(valueType.getTypeName()));
-                            if (DEBUG)
-                                plugin.getLogger().info("DEBUG: value = " + mapValue);
-                            ((Map<Object,Object>) value).put(key,mapValue);
-                        }
-                    } else {
-                        // Set value for the main insert. For collections, this is just a dummy value because the real values are in the
-                        // additional table.
-                        value = true;
                     }
                 } else {
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: regular type");
                     value = deserialize(value, propertyDescriptor.getPropertyType());
                 }
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: invoking method " + method.getName());
-                    if (value == null) {
-                        plugin.getLogger().info("DEBUG: value = null");
-                    } else {
-                        plugin.getLogger().info("DEBUG: value class = " + value.getClass().getName());
-                    }
+                // Adapter
+                // Check if there is an annotation on the field
+                Adapter adapterNotation = field.getAnnotation(Adapter.class);
+                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                    // A conversion adapter has been defined
+                    value = ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value);
                 }
                 // Write the value to the class
                 method.invoke(instance, value);
@@ -782,10 +737,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @SuppressWarnings({ "unchecked", "rawtypes" })
     private Object deserialize(Object value, Class<? extends Object> clazz) {
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getTypeName());
         if (value instanceof String && value.equals("null")) {
-            // If the value is null as a string, return null 
+            // If the value is null as a string, return null
             return null;
         }
         // Types that need to be deserialized
@@ -809,9 +762,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 Class<Enum> enumClass = (Class<Enum>)clazz;
                 value = Enum.valueOf(enumClass, (String)value);
             } catch (Exception e) {
-                // Maybe this value does not exist?
-                // TODO return something?
-                e.printStackTrace();
+                plugin.getLogger().severe("Could not deserialize enum! " + e.getMessage());
             }
         }
         return value;
@@ -825,12 +776,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             throws IllegalAccessException, IllegalArgumentException,
             InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException {
         // Delete this object from all tables
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-
-        try {
-            // Try to connect to the database
-            connection = databaseConnecter.createConnection();
+        // Try to connect to the database
+        try (Connection conn = databaseConnecter.createConnection()){
             // Get the uniqueId. As each class extends DataObject, it must have this method in it.
             Method getUniqueId = dataObject.getMethod("getUniqueId");
             String uniqueId = (String) getUniqueId.invoke(instance);
@@ -841,13 +788,13 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Delete from the main table
             // First substitution is the table name
             // deleteQuery is created in super from the createInsertQuery() method
-            preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "`"));
-            // Second is the unique ID
-            preparedStatement.setString(1, uniqueId);
-            preparedStatement.addBatch();
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: DELETE Query " + preparedStatement.toString());
-            preparedStatement.executeBatch();
+            try (PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "`"))) {
+                // Second is the unique ID
+                preparedStatement.setString(1, uniqueId);
+                preparedStatement.addBatch();
+                preparedStatement.executeBatch();
+            }
+
             // Delete from any sub tables created from the object
             // Run through the fields in the class using introspection
             for (Field field : dataObject.getDeclaredFields()) {
@@ -859,53 +806,39 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         propertyDescriptor.getPropertyType().equals(HashMap.class) ||
                         propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
                     // First substitution is the table name
-                    preparedStatement = connection.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"));
-                    // Second is the unique ID
-                    preparedStatement.setString(1, uniqueId);
-                    preparedStatement.addBatch();
-                    // Execute
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: " + preparedStatement.toString());
-                    preparedStatement.executeBatch();
+                    try (PreparedStatement preparedStatement2 = conn.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"))) {
+                        // Second is the unique ID
+                        preparedStatement2.setString(1, uniqueId);
+                        preparedStatement2.addBatch();
+                        // Execute
+                        preparedStatement2.executeBatch();
+                    }
                 }
             }
-        } finally {
-            // Close properly
-            MySQLDatabaseResourceCloser.close(preparedStatement);
-        }
-
+        } 
     }
 
     /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExits(java.lang.String)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExists(java.lang.String)
      */
     @Override
-    public boolean objectExits(String key) {
-        if (DEBUG)
-            plugin.getLogger().info("DEBUG: checking if " + key + " exists in the database");
-        Connection connection = null;
-        PreparedStatement preparedStatement = null;
-        ResultSet resultSet = null;
-        String query = "SELECT  IF ( EXISTS( SELECT * FROM `" + dataObject.getCanonicalName() + "` WHERE `uniqueId` = ?), 1, 0)";
-        //String query = "SELECT * FROM `" + type.getCanonicalName() + "` WHERE uniqueId = ?";
-        try {
-            connection = databaseConnecter.createConnection();
-            preparedStatement = connection.prepareStatement(query);
+    public boolean objectExists(String key) {
+        // Create the query to see if this key exists
+        StringBuilder query = new StringBuilder();
+        query.append("SELECT  IF ( EXISTS( SELECT * FROM `");
+        query.append(dataObject.getCanonicalName());
+        query.append("` WHERE `uniqueId` = ?), 1, 0)");
+
+        try (Connection conn = databaseConnecter.createConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(query.toString())) {
             preparedStatement.setString(1, key);
-            resultSet = preparedStatement.executeQuery();
-            if (DEBUG)
-                plugin.getLogger().info("DEBUG: object exists sql " + preparedStatement.toString());
-            if (resultSet.next()) {
-                if (DEBUG)
-                    plugin.getLogger().info("DEBUG: result is " + resultSet.getBoolean(1));
-                return resultSet.getBoolean(1);
+            try (ResultSet resultSet = preparedStatement.executeQuery()) {
+                if (resultSet.next()) {
+                    return resultSet.getBoolean(1);
+                }
             }
         } catch (SQLException e) {
-            e.printStackTrace();
-        } finally {
-            MySQLDatabaseResourceCloser.close(resultSet);
-            MySQLDatabaseResourceCloser.close(preparedStatement);
-            MySQLDatabaseResourceCloser.close(connection);
+            plugin.getLogger().severe("Could not check if key exists in database! " + key + " " + e.getMessage());
         }
         return false;
     }
@@ -913,14 +846,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public void saveSettings(T instance)
             throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-        plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
-        
+        // This method should not be used because configs are not stored in MySQL
+
     }
 
     @Override
     public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException,
-            IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
-        plugin.getLogger().severe("This method should not be used because configs are not stored in MySQL");
+    IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+        // This method should not be used because configs are not stored in MySQL
         return null;
     }
 

@@ -9,13 +9,14 @@ import us.tastybento.bskyblock.api.commands.User;
 public class AdminVersionCommand extends CompositeCommand {
 
     public AdminVersionCommand(CompositeCommand adminCommand) {
-        super(adminCommand, "version");
+        super(adminCommand, "version", "v");
     }
 
     @Override
     public void setup() {
         // Permission
-        this.setPermission(Constants.PERMPREFIX + "admin.version");
+        setPermission(Constants.PERMPREFIX + "admin.version");
+        setDescription("commands.admin.version.description");
     }
 
     @Override

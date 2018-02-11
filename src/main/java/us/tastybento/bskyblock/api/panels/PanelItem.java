@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.api.panels;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Material;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -19,23 +18,23 @@ public class PanelItem {
     }
 
     private ItemStack icon;
-    private Optional<ClickHandler> clickHandler;
+    private ClickHandler clickHandler;
     private List<String> description;
     private String name;
     private boolean glow;
     private ItemMeta meta;
 
-    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, Optional<ClickHandler> clickHandler) {
+    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, ClickHandler clickHandler) {
         this.icon = icon;
         // Get the meta
         meta = icon.getItemMeta();
 
         this.clickHandler = clickHandler;
-        
+
         // Create the final item
-        this.setName(name);
-        this.setDescription(description);
-        this.setGlow(glow);
+        setName(name);
+        setDescription(description);
+        setGlow(glow);
 
         // Set flags to neaten up the view
         meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
@@ -70,7 +69,7 @@ public class PanelItem {
     }
 
     public Optional<ClickHandler> getClickHandler() {
-        return clickHandler;
+        return Optional.of(clickHandler);
     }
 
     public boolean isGlow() {
@@ -79,10 +78,11 @@ public class PanelItem {
 
     public void setGlow(boolean glow) {
         this.glow = glow;
-        if (glow)
+        if (glow) {
             meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-        else
+        } else {
             meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, false);
+        }
     }
 
     /**

@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.managers;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
@@ -23,7 +24,7 @@ public final class LocalesManager {
 
     public LocalesManager(BSkyBlock plugin) {
         this.plugin = plugin;
-        this.loadLocales("BSkyBlock"); // Default
+        loadLocales("BSkyBlock"); // Default
     }
 
     /**
@@ -34,8 +35,9 @@ public final class LocalesManager {
      */
     public String get(User user, String reference) {
         BSBLocale locale = languages.get(user.getLocale());
-        if (locale != null && locale.contains(reference))
+        if (locale != null && locale.contains(reference)) {
             return locale.get(reference);
+        }
         // Return the default
         if (languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
             return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
@@ -53,23 +55,22 @@ public final class LocalesManager {
             plugin.getLogger().info("DEBUG: loading locale for " + parent);
         }
         // Describe the filter - we only want files that are correctly named
-        FilenameFilter ymlFilter = new FilenameFilter() {
-            @Override
-            public boolean accept(File dir, String name) {
-                // Files must be 9 chars long
-                if (name.toLowerCase().endsWith(".yml") && name.length() == 9) {               
-                    if (DEBUG)
-                        plugin.getLogger().info("DEBUG: bsb locale filename = " + name);
-                    return true;
-                } 
-                return false;
+        FilenameFilter ymlFilter = (dir, name) -> {
+            // Files must be 9 chars long
+            if (name.toLowerCase().endsWith(".yml") && name.length() == 9) {
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: bsb locale filename = " + name);
+                }
+                return true;
             }
+            return false;
         };
 
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);
-        if (DEBUG)
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: localeDir = " + localeDir.getAbsolutePath());
+        }
         // If the folder does not exist, then make it and fill with the locale files from the jar
         // If it does exist, then new files will NOT be written!
         if (!localeDir.exists()) {
@@ -78,40 +79,54 @@ public final class LocalesManager {
             try {
                 for (String name : lister.listJar(LOCALE_FOLDER)) {
                     // We cannot use Bukkit's saveResource, because we want it to go into a specific folder, so...
-                    InputStream initialStream = plugin.getResource(name);
                     // Get the last part of the name
                     int lastIndex = name.lastIndexOf('/');
                     File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0, name.length()));
-                    if (DEBUG)
+                    if (DEBUG) {
                         plugin.getLogger().info("DEBUG: targetFile = " + targetFile.getAbsolutePath());
-                    if (!targetFile.exists()) {
-                        java.nio.file.Files.copy(initialStream, targetFile.toPath());
                     }
-                    initialStream.close();
+                    copyFile(name, targetFile);
                 }
-            } catch (Exception e) {
-                e.printStackTrace();
+            } catch (IOException e) {
+                plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
             }
+
         }
 
         // Store all the locales available
         for (File language : localeDir.listFiles(ymlFilter)) {
-            if (DEBUG) 
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: parent = " + parent + " language = " + language.getName().substring(0, language.getName().length() - 4));
+            }
             Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
-            if (DEBUG)
+            if (DEBUG) {
                 plugin.getLogger().info("DEBUG: locale country found = " + localeObject.getCountry());
+            }
             if (languages.containsKey(localeObject)) {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: this locale is known");
+                }
                 // Merge into current language
                 languages.get(localeObject).merge(language);
             } else {
-                if (DEBUG)
+                if (DEBUG) {
                     plugin.getLogger().info("DEBUG: this locale is not known - new language");
+                }
                 // New language
                 languages.put(localeObject, new BSBLocale(localeObject, language));
             }
         }
+    }
+
+    private void copyFile(String name, File targetFile) {
+        try (InputStream initialStream = plugin.getResource(name)) {
+            if (!targetFile.exists()) {
+                java.nio.file.Files.copy(initialStream, targetFile.toPath());
+            }
+        } catch (IOException e) {
+            plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
+        }
+
+
     }
 }

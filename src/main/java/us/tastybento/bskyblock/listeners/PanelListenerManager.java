@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.listeners;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.event.EventHandler;
@@ -17,9 +18,7 @@ import us.tastybento.bskyblock.api.panels.Panel;
 
 public class PanelListenerManager implements Listener {
 
-    //private static final boolean DEBUG = false;
-
-    public static HashMap<UUID, Panel> openPanels = new HashMap<>();
+    private static HashMap<UUID, Panel> openPanels = new HashMap<>();
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -38,12 +37,12 @@ public class PanelListenerManager implements Listener {
                     if (slot == event.getRawSlot()) {
                         // Check that they left clicked on it
                         // TODO: in the future, we may want to support right clicking
-                        if (panel.getItems().get(slot).getClickHandler().isPresent()) {
-                            // Cancel the event if true was returned by the ClickHandler
-                            event.setCancelled(panel.getItems().get(slot).getClickHandler().get().onClick(user, ClickType.LEFT));
+                        panel.getItems().get(slot).getClickHandler().ifPresent(handler -> {
+                            // Execute the handler's onClick method and optionally cancel the event if the handler returns true
+                            event.setCancelled(handler.onClick(user, ClickType.LEFT));
                             // If there is a listener, then run it.
                             panel.getListener().ifPresent(l -> l.onInventoryClick(user, inventory, event.getCurrentItem()));
-                        }
+                        });
                     }
                 }
             } else {
@@ -55,12 +54,23 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClose(InventoryCloseEvent event) {
-        if (openPanels.containsKey(event.getPlayer().getUniqueId())) openPanels.remove(event.getPlayer().getUniqueId());
+        if (openPanels.containsKey(event.getPlayer().getUniqueId())) {
+            openPanels.remove(event.getPlayer().getUniqueId());
+        }
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogOut(PlayerQuitEvent event) {
-        if (openPanels.containsKey(event.getPlayer().getUniqueId())) openPanels.remove(event.getPlayer().getUniqueId());
+        if (openPanels.containsKey(event.getPlayer().getUniqueId())) {
+            openPanels.remove(event.getPlayer().getUniqueId());
+        }
     }
-    
+
+    /**
+     * @return the openPanels
+     */
+    public static Map<UUID, Panel> getOpenPanels() {
+        return openPanels;
+    }
+
 }

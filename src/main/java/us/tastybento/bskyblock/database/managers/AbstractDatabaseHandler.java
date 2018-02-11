@@ -130,7 +130,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * @param key
      * @return true if this key exists
      */
-    public abstract boolean objectExits(String key);
+    public abstract boolean objectExists(String key);
 
     /**
      * Saves a file as settings
