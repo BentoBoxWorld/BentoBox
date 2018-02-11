@@ -38,23 +38,22 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
             String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
             String params = "";
             String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
-            // Player. Check perms
-            if (user.hasPermission(getPermission())) {
-                int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
-                if (maxHomes > 1) {
-                    params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
-                    user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
-                } else {
-                    // No params
-                    user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
-                }
-                return true;
-            } else {
-                return true;
-            }
 
+            showPrettyHelp(user, usage, params, desc);
+            return true;
         }
         return false;
+    }
+
+    private void showPrettyHelp(User user, String usage, String params, String desc) {
+        // Player. Check perms
+        if (user.hasPermission(getPermission())) {
+            int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
+            if (maxHomes > 1) {
+                params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
+            }
+            user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
+        }   
     }
 
 }

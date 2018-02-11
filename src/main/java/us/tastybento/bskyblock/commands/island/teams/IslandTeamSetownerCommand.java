@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
@@ -45,7 +42,6 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             showHelp(this, user);
             return false;
         }
-        //getPlugin().getLogger().info("DEBUG: arg[0] = " + args.get(0));
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player");
@@ -78,9 +74,16 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         if (event.isCancelled()) {
             return false;
         }
+        makeLeader(user, targetUUID);
 
+        getIslands().save(true);
+        return true;
+    }
+
+    private void makeLeader(User user, UUID targetUUID) {
         // target is the new leader
-        getIslands().getIsland(playerUUID).setOwner(targetUUID);
+        Island island = getIslands().getIsland(user.getUniqueId());
+        island.setOwner(targetUUID);
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", getPlayers().getName(targetUUID));
 
         // Check if online
@@ -88,54 +91,18 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
         if (target.isOnline()) {
             // Check if new leader has a lower range permission than the island size
-            boolean hasARangePerm = false;
-            int range = getSettings().getIslandProtectionRange();
-            // Check for zero protection range
-            Island islandByOwner = getIslands().getIsland(targetUUID);
-            if (islandByOwner.getProtectionRange() == 0) {
-                getPlugin().getLogger().warning("Player " + user.getName() + "'s island had a protection range of 0. Setting to default " + range);
-                islandByOwner.setProtectionRange(range);
+            int range = getMaxRangeSize(user);
+            // Range can go up or down
+            if (range != island.getProtectionRange()) {
+                user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
+                target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
+                getPlugin().getLogger().info(
+                        "Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
+                                + range + " for " + user.getName() + " due to permission.");
             }
-            for (PermissionAttachmentInfo perms : target.getEffectivePermissions()) {
-                if (perms.getPermission().startsWith(Constants.PERMPREFIX + "island.range.")) {
-                    if (perms.getPermission().contains(Constants.PERMPREFIX + "island.range.*")) {
-                        // Ignore
-                        break;
-                    } else {
-                        String[] spl = perms.getPermission().split(Constants.PERMPREFIX + "island.range.");
-                        if (spl.length > 1) {
-                            if (!NumberUtils.isDigits(spl[1])) {
-                                getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+            island.setProtectionRange(range);
 
-                            } else {
-                                hasARangePerm = true;
-                                range = Math.max(range, Integer.valueOf(spl[1]));
-                            }
-                        }
-                    }
-                }
-            }
-            // Only set the island range if the player has a perm to override the default
-            if (hasARangePerm) {
-                // Do some sanity checking
-                if (range % 2 != 0) {
-                    range--;
-                }
-                // Get island range
-
-                // Range can go up or down
-                if (range != islandByOwner.getProtectionRange()) {
-                    user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                    target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                    getPlugin().getLogger().info(
-                            "Makeleader: Island protection range changed from " + islandByOwner.getProtectionRange() + " to "
-                                    + range + " for " + user.getName() + " due to permission.");
-                }
-                islandByOwner.setProtectionRange(range);
-            }
         }
-        getIslands().save(true);
-        return true;
     }
 
     @Override

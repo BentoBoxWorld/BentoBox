@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -31,7 +30,6 @@ import us.tastybento.bskyblock.util.Util;
  */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BSBCommand {
 
-    private static final boolean DEBUG = false;
     /**
      * True if the command is for the player only (not for the console)
      */
@@ -109,9 +107,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: registering command " + label);
-        }
     }
 
     /**
@@ -121,9 +116,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(String label, String... aliases) {
         super(label);
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: top level command registering..." + label);
-        }
         setAliases(new ArrayList<>(Arrays.asList(aliases)));
         parent = null;
         setUsage("");
@@ -147,15 +139,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     @Override
     public boolean execute(CommandSender sender, String label, String[] args) {
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: executing command " + label);
-        }
         // Get the User instance for this sender
         User user = User.getInstance(sender);
         CompositeCommand cmd = getCommandFromArgs(args);
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: Command = " + cmd.getLabel() + " onlyplayer = " + cmd.isOnlyPlayer() + " permission = " + cmd.getPermission());
-        }
         // Check for console and permissions
         if (cmd.onlyPlayer && !(sender instanceof Player)) {
             user.sendMessage("general.errors.use-in-game");
@@ -285,22 +271,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return CompositeCommand or null if none found
      */
     public Optional<CompositeCommand> getSubCommand(String label) {
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: label = " + label);
-        }
         for (Map.Entry<String, CompositeCommand> entry : subCommands.entrySet()) {
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: " + entry.getKey());
-            }
             if (entry.getKey().equalsIgnoreCase(label)) {
                 return Optional.of(subCommands.get(label));
             }
         }
         // Try aliases
         for (Map.Entry<String, CompositeCommand> entry : subCommandAliases.entrySet()) {
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: alias " + entry.getKey());
-            }
             if (entry.getKey().equalsIgnoreCase(label)) {
                 return Optional.of(subCommandAliases.get(label));
             }
@@ -415,20 +392,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
         CompositeCommand cmd = getCommandFromArgs(args);
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: subCommand = " + cmd.getLabel() + " onlyplayer = " + cmd.isOnlyPlayer() + " permission = " + cmd.getPermission());
-        }
         // Check for console and permissions
         if (cmd.onlyPlayer && !(sender instanceof Player)) {
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: returning, only for player");
-            }
             return options;
         }
         if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: failed perm check");
-            }
             return options;
         }
         // Add any tab completion from the subcommand
@@ -454,14 +422,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         String lastArg = (args.length != 0 ? args[args.length - 1] : "");
 
-        if (DEBUG) {
-            String arguments = "";
-            for (String arg : args) {
-                arguments += "'" + arg + "' ";
-            }
-            Bukkit.getLogger().info("DEBUG: tab complete for " + arguments);
-            Bukkit.getLogger().info("DEBUG: result = " + Util.tabLimit(options, lastArg));
-        }
         return Util.tabLimit(options, lastArg);
     }
 

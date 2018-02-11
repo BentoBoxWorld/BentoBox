@@ -7,9 +7,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.permissions.PermissionAttachmentInfo;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
@@ -84,64 +82,45 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 user.sendMessage("commands.island.team.invite.already-on-team");
                 return false;
             }
-            Set<UUID> teamMembers = getMembers(user);
-            // Check if player has space on their team
-            int maxSize = getSettings().getMaxTeamSize();
-            // Dynamic team sizes with permissions
-            for (PermissionAttachmentInfo perms : user.getEffectivePermissions()) {
-                if (perms.getPermission().startsWith(Constants.PERMPREFIX + "team.maxsize.")) {
-                    if (perms.getPermission().contains(Constants.PERMPREFIX + "team.maxsize.*")) {
-                        maxSize = getSettings().getMaxTeamSize();
-                        break;
-                    } else {
-                        // Get the max value should there be more than one
-                        String[] spl = perms.getPermission().split(Constants.PERMPREFIX + "team.maxsize.");
-                        if (spl.length > 1) {
-                            if (!NumberUtils.isDigits(spl[1])) {
-                                getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
-                            } else {
-                                maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
-                            }
-                        }
-                    }
-                }
-                // Do some sanity checking
-                if (maxSize < 1) {
-                    maxSize = 1;
-                }
+            return invite(user,invitedPlayer);
+        }
+    }
+
+    private boolean invite(User user, User invitedPlayer) {
+        Set<UUID> teamMembers = getMembers(user);
+        // Check if player has space on their team
+        int maxSize = getMaxTeamSize(user);
+        if (teamMembers.size() < maxSize) {
+            // If that player already has an invite out then retract it.
+            // Players can only have one invite one at a time - interesting
+            if (inviteList.containsValue(user.getUniqueId())) {
+                inviteList.inverse().remove(user.getUniqueId());
+                user.sendMessage("commands.island.team.invite.removing-invite");
             }
-            if (teamMembers.size() < maxSize) {
-                // If that player already has an invite out then retract it.
-                // Players can only have one invite one at a time - interesting
-                if (inviteList.containsValue(playerUUID)) {
-                    inviteList.inverse().remove(playerUUID);
-                    user.sendMessage("commands.island.team.invite.removing-invite");
-                }
-                // Fire event so add-ons can run commands, etc.
-                IslandBaseEvent event = TeamEvent.builder()
-                        .island(getIslands().getIsland(playerUUID))
-                        .reason(TeamEvent.Reason.INVITE)
-                        .involvedPlayer(invitedPlayerUUID)
-                        .build();
-                getPlugin().getServer().getPluginManager().callEvent(event);
-                if (event.isCancelled()) {
-                    return true;
-                }
-                // Put the invited player (key) onto the list with inviter (value)
-                // If someone else has invited a player, then this invite will overwrite the previous invite!
-                inviteList.put(invitedPlayerUUID, playerUUID);
-                user.sendMessage("commands.island.team.invite.invitation-sent", NAME_PLACEHOLDER, args.get(0));
-                // Send message to online player
-                invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
-                invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
-                if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
-                    invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
-                }
-                return true;
-            } else {
-                user.sendMessage("commands.island.team.invite.errors.island-is-full");
+            // Fire event so add-ons can run commands, etc.
+            IslandBaseEvent event = TeamEvent.builder()
+                    .island(getIslands().getIsland(user.getUniqueId()))
+                    .reason(TeamEvent.Reason.INVITE)
+                    .involvedPlayer(invitedPlayer.getUniqueId())
+                    .build();
+            getPlugin().getServer().getPluginManager().callEvent(event);
+            if (event.isCancelled()) {
                 return false;
             }
+            // Put the invited player (key) onto the list with inviter (value)
+            // If someone else has invited a player, then this invite will overwrite the previous invite!
+            inviteList.put(invitedPlayer.getUniqueId(), user.getUniqueId());
+            user.sendMessage("commands.island.team.invite.invitation-sent", NAME_PLACEHOLDER, invitedPlayer.getName());
+            // Send message to online player
+            invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
+            invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
+            if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
+                invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
+            }
+            return true;
+        } else {
+            user.sendMessage("commands.island.team.invite.errors.island-is-full");
+            return false;
         }
     }
 

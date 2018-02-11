@@ -5,7 +5,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -129,28 +128,30 @@ public class SafeSpotTeleport {
         do {
             for (int i = x - radius; i <= x + radius; i++) {
                 for (int j = z - radius; j <= z + radius; j++) {
-
-                    Pair<Integer, Integer> blockCoord = new Pair<>(i,j);
-                    Pair<Integer, Integer> chunkCoord = new Pair<>(i/16, j/16);    
-                    if (!result.contains(chunkCoord)) {
-                        // Add the chunk coord
-                        if (!island.isPresent()) {
-                            // If there is no island, just add it
-                            result.add(chunkCoord);
-                        } else {
-                            // If there is an island, only add it if the coord is in island space
-                            island.ifPresent(is -> {
-                                if (is.inIslandSpace(blockCoord)) {
-                                    result.add(chunkCoord);
-                                }
-                            });  
-                        }
-                    }
+                    addChunk(result, island, new Pair<>(i,j), new Pair<>(i/16, j/16));
                 }
             }
             radius++;
         } while (radius < maxRadius);
         return result;
+    }
+
+    private void addChunk(List<Pair<Integer, Integer>> result, Optional<Island> island, Pair<Integer, Integer> blockCoord, Pair<Integer, Integer> chunkCoord) {
+        if (!result.contains(chunkCoord)) {
+            // Add the chunk coord
+            if (!island.isPresent()) {
+                // If there is no island, just add it
+                result.add(chunkCoord);
+            } else {
+                // If there is an island, only add it if the coord is in island space
+                island.ifPresent(is -> {
+                    if (is.inIslandSpace(blockCoord)) {
+                        result.add(chunkCoord);
+                    }
+                });  
+            }
+        }
+        
     }
 
     /**
@@ -268,7 +269,6 @@ public class SafeSpotTeleport {
                     break;
                 case PORTAL:
                     if (portal) {
-                        Bukkit.getLogger().info("Portal found");
                         Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
                         // Teleport as soon as we find a portal
                         teleportEntity(newSpot.toLocation(world));
@@ -276,26 +276,28 @@ public class SafeSpotTeleport {
                     }
                     break;
                 default:
-                    // Safe
-                    Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
-                    // Check for portal
-                    if (portal) {
-                        if (bestSpot == null) {
-                            Bukkit.getLogger().info("Best spot found = " + bestSpot);
-                            // Stash the best spot
-                            bestSpot = newSpot.toLocation(world);
-                            return false;
-                        }
-                    } else {
-                        // Regular search - teleport as soon as we find something
-                        Bukkit.getLogger().info("Safe spot found, teleporting to new spot");
-                        teleportEntity(newSpot.toLocation(world));
-                        return true;
-                    }
+                    return safe(world, chunk, x, y, z);
                 }
             }
         }
         return false;
+    }
+
+    private boolean safe(World world, ChunkSnapshot chunk, int x, int y, int z) {
+        // Safe
+        Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
+        // Check for portal
+        if (portal) {
+            if (bestSpot == null) {
+                // Stash the best spot
+                bestSpot = newSpot.toLocation(world);
+            }
+            return false;
+        } else {
+            // Regular search - teleport as soon as we find something
+            teleportEntity(newSpot.toLocation(world));
+            return true;
+        }
     }
 
 

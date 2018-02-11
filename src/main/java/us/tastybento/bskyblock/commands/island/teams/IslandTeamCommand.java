@@ -4,9 +4,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
-import org.apache.commons.lang.math.NumberUtils;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
@@ -14,8 +11,6 @@ import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 
 public class IslandTeamCommand extends AbstractIslandTeamCommand {
-
-    private static final boolean DEBUG = false;
 
     public IslandTeamCommand(CompositeCommand islandCommand) {
         super(islandCommand, "team");
@@ -36,47 +31,15 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
-        if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: executing team command for " + playerUUID);
-        }
         // Fire event so add-ons can run commands, etc.
-        IslandBaseEvent event = TeamEvent.builder()
-                .island(getIslands()
-                        .getIsland(playerUUID))
-                .reason(TeamEvent.Reason.INFO)
-                .involvedPlayer(playerUUID)
-                .build();
-        getPlugin().getServer().getPluginManager().callEvent(event);
-        if (event.isCancelled()) {
-            return true;
+        if (fireEvent(playerUUID)) {
+            // Cancelled
+            return false;
         }
         UUID teamLeaderUUID = getTeamLeader(user);
         Set<UUID> teamMembers = getMembers(user);
         if (teamLeaderUUID.equals(playerUUID)) {
-            int maxSize = getSettings().getMaxTeamSize();
-            for (PermissionAttachmentInfo perms : user.getEffectivePermissions()) {
-                if (perms.getPermission().startsWith(Constants.PERMPREFIX + "team.maxsize.")) {
-                    if (perms.getPermission().contains(Constants.PERMPREFIX + "team.maxsize.*")) {
-                        maxSize = getSettings().getMaxTeamSize();
-                        break;
-                    } else {
-                        // Get the max value should there be more than one
-                        String[] spl = perms.getPermission().split(Constants.PERMPREFIX + "team.maxsize.");
-                        if (spl.length > 1) {
-                            if (!NumberUtils.isDigits(spl[1])) {
-                                getPlugin().getLogger().severe("Player " + user.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
-                            } else {
-                                maxSize = Math.max(maxSize, Integer.valueOf(spl[1]));
-                            }
-                        }
-                    }
-                }
-                // Do some sanity checking
-                if (maxSize < 1) {
-                    maxSize = 1;
-                }
-            }
-
+            int maxSize = getMaxTeamSize(user);
             if (teamMembers.size() < maxSize) {
                 user.sendMessage("commands.island.team.invite.you-can-invite", "[number]", String.valueOf(maxSize - teamMembers.size()));
             } else {
@@ -84,6 +47,18 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
             }
         }
         return true;
+    }
+
+
+    private boolean fireEvent(UUID playerUUID) {
+        IslandBaseEvent event = TeamEvent.builder()
+                .island(getIslands()
+                .getIsland(playerUUID))
+                .reason(TeamEvent.Reason.INFO)
+                .involvedPlayer(playerUUID)
+                .build();
+        getPlugin().getServer().getPluginManager().callEvent(event);
+        return event.isCancelled();
     }
 
 }

@@ -129,9 +129,6 @@ public class Util {
      *         Credits to mikenon on GitHub!
      */
     public static String prettifyText(String ugly) {
-        if (!ugly.contains("_") && (!ugly.equals(ugly.toUpperCase()))) {
-            return ugly;
-        }
         String fin = "";
         ugly = ugly.toLowerCase();
         if (ugly.contains("_")) {

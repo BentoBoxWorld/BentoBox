@@ -14,15 +14,15 @@ import org.apache.commons.lang.math.NumberUtils;
  */
 public class DefaultHelpCommand extends CompositeCommand {
 
-    // TODO: make this a setting
     private static final int MAX_DEPTH = 2;
     private static final String USAGE_PLACEHOLDER = "[usage]";
     private static final String PARAMS_PLACEHOLDER = "[parameters]";
     private static final String DESC_PLACEHOLDER = "[description]";
     private static final String HELP_SYNTAX_REF = "commands.help.syntax";
+    private static final String HELP = "help";
 
     public DefaultHelpCommand(CompositeCommand parent) {
-        super(parent, "help");
+        super(parent, HELP);
     }
 
     @Override
@@ -51,46 +51,56 @@ public class DefaultHelpCommand extends CompositeCommand {
         if (depth == 0) {
             user.sendMessage("commands.help.header");
         }
-        //if (args.isEmpty()) {
         if (depth < MAX_DEPTH) {
-            if (!parent.getLabel().equals("help")) {
+            if (!parent.getLabel().equals(HELP)) {
+
                 // Get elements
                 String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
                 String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
                 String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
-                // Show the help
-                if (user.isPlayer()) {
-                    // Player. Check perms
-                    if (user.hasPermission(parent.getPermission())) {
-                        user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
-                    } else {
-                        // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
-                        return true;
-                    }
-                } else if (!parent.isOnlyPlayer()) {
-                    // Console. Only show if it is a console command
-                    user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
-                }
-            }
-            // Increment the depth
-            int newDepth = depth + 1;
-            // Run through any subcommands and get their help
-            for (CompositeCommand subCommand : parent.getSubCommands().values()) {
-                // Ignore the help command
-                if (!subCommand.getLabel().equals("help")) {
-                    // Every command should have help because every command has a default help
-                    Optional<CompositeCommand> sub = subCommand.getSubCommand("help");
-                    if (sub.isPresent()) {
-                        sub.get().execute(user, Arrays.asList(String.valueOf(newDepth)));
-                    }
-                }
-            }
-        }
 
+                if (showPrettyHelp(user, usage, params, desc)) {
+                    // No more to show
+                    return true;
+                }
+            }
+            // Increment the depth and run through any subcommands and get their help too
+            runSubCommandHelp(user, depth + 1);
+        }
         if (depth == 0) {
             user.sendMessage("commands.help.end");
         }
         return true;
+    }
+
+    private void runSubCommandHelp(User user, int newDepth) {
+        for (CompositeCommand subCommand : parent.getSubCommands().values()) {
+            // Ignore the help command
+            if (!subCommand.getLabel().equals(HELP)) {
+                // Every command should have help because every command has a default help
+                Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
+                if (sub.isPresent()) {
+                    sub.get().execute(user, Arrays.asList(String.valueOf(newDepth)));
+                }
+            }
+        }        
+    }
+
+    private boolean showPrettyHelp(User user, String usage, String params, String desc) {
+        // Show the help
+        if (user.isPlayer()) {
+            // Player. Check perms
+            if (user.hasPermission(parent.getPermission())) {
+                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+            } else {
+                // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
+                return true;
+            }
+        } else if (!parent.isOnlyPlayer()) {
+            // Console. Only show if it is a console command
+            user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+        }
+        return false;
     }
 
 }
