@@ -26,6 +26,7 @@ general:
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&cUnknown player!"
     general: "&cThat command is not ready yet - contact admin"
+    warp-not-safe: "&cThat warp is not safe right now!"
 
 commands:
   help:

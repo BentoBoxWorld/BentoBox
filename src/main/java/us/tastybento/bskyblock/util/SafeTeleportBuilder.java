@@ -12,7 +12,7 @@ public class SafeTeleportBuilder {
     private Entity entity;
     private int homeNumber = 0;
     private boolean portal = false;
-    private String failureMessage = "";
+    private String failureMessage = "general.errors.warp-not-safe";
     private Location location;
 
 

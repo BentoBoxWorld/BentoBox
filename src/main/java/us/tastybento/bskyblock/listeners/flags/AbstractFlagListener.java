@@ -135,7 +135,7 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Generic place blocks checker
+     * Generic flag checker
      * @param e
      * @param loc
      * @param breakBlocks
