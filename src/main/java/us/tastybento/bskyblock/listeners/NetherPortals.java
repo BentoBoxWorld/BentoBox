@@ -57,7 +57,6 @@ public class NetherPortals implements Listener {
     } 
 
     private boolean inWorlds(Location from) {
-        plugin.getLogger().info("In world = " + (from.getWorld().equals(world) || from.getWorld().equals(nether) || from.getWorld().equals(the_end)));
         return (from.getWorld().equals(world) || from.getWorld().equals(nether) || from.getWorld().equals(the_end)) ? true : false;
     }
 

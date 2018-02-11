@@ -634,7 +634,6 @@ public class IslandsManager {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: home loc = " + home + " teleporting");
         }
-        //home.getChunk().load();
         player.teleport(home);
         User user = User.getInstance(player);
         if (number == 1) {
