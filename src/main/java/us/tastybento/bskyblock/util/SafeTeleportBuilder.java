@@ -55,8 +55,8 @@ public class SafeTeleportBuilder {
      * @param setHome
      * @return
      */
-    public SafeTeleportBuilder portal(boolean portal) {
-        this.portal = portal;
+    public SafeTeleportBuilder portal() {
+        this.portal = true;
         return this;
     }
 
