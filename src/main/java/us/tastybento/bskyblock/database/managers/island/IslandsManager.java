@@ -27,8 +27,8 @@ import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.DeleteIslandChunks;
-import us.tastybento.bskyblock.util.SafeTeleportBuilder;
 import us.tastybento.bskyblock.util.Util;
+import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 /**
  * The job of this class is manage all island related data.

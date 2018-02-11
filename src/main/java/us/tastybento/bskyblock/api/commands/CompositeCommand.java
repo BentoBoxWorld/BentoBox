@@ -162,7 +162,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return true;
         }
         // Check perms, but only if this isn't the console
-        if ((sender instanceof Player) && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
+        if ((sender instanceof Player) && !sender.isOp() && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
             user.sendMessage("general.errors.no-permission");
             return true;
         }
@@ -469,12 +469,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * Show help
      * @param command
      * @param user
-     * @param args
      */
-    protected void showHelp(CompositeCommand command, User user, List<String> args) {
+    protected void showHelp(CompositeCommand command, User user) {
         Optional<CompositeCommand> helpCommand = command.getSubCommand("help");
         if (helpCommand.isPresent()) {
-            helpCommand.get().execute(user, args);
+            helpCommand.get().execute(user, new ArrayList<>());
         }
     }
 }

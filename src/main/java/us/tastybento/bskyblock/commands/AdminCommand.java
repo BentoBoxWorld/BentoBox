@@ -19,16 +19,19 @@ public class AdminCommand extends CompositeCommand {
     public void setup() {
         setPermission(Constants.PERMPREFIX + "admin.*");
         setOnlyPlayer(false);
+        setParameters("commands.admin.help.parameters");
         setDescription("commands.admin.help.description");
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
-        new AdminTeleportCommand(this);
+        new AdminTeleportCommand(this, "tp");
+        new AdminTeleportCommand(this, "tpnether");
+        new AdminTeleportCommand(this, "tpend");
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
         // By default run the attached help command, if it exists (it should)
-        showHelp(this, user, args);
+        showHelp(this, user);
         return false;
     }
 

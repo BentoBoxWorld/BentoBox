@@ -1,9 +1,11 @@
-package us.tastybento.bskyblock.util;
+package us.tastybento.bskyblock.util.teleport;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.database.objects.Island;
 
 public class SafeTeleportBuilder {
@@ -12,7 +14,7 @@ public class SafeTeleportBuilder {
     private Entity entity;
     private int homeNumber = 0;
     private boolean portal = false;
-    private String failureMessage = "general.errors.warp-not-safe";
+    private String failureMessage = "";
     private Location location;
 
 
@@ -84,7 +86,19 @@ public class SafeTeleportBuilder {
      * Try to teleport the player
      * @return
      */
-    public SafeSpotTeleport build() {
+    public SafeSpotTeleport build() {      
+        // Error checking
+        if (entity == null) {
+            plugin.getLogger().severe("Attempt to safe teleport a null entity!");
+            return null;
+        }
+        if (location == null) {
+            plugin.getLogger().severe("Attempt to safe teleport to a null location!");
+            return null;
+        }
+        if (failureMessage.isEmpty() && entity instanceof Player) {
+            failureMessage = User.getInstance(entity).getTranslation("general.errors.warp-not-safe");
+        }
         return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber);
     }
 

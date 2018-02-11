@@ -19,6 +19,7 @@ general:
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
     no-island: "&cYou do not have an island!"
+    player-has-no-island: "&cThat player has no island!"
     already-have-island: "&cYou already have an island!"
     no-safe-location: "&cNo safe location found on island!"
     not-leader: "&cYou are not the leader of your island!"
@@ -31,17 +32,26 @@ general:
 commands:
   help:
     header: "&7=========== &c%bsb_plugin_name% &7==========="
-    syntax: "&b[usage] &a[parameters] &7: &e[description]"
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
     description: "help command"
   admin:
     help:
-      description: "Admin command"
+      description: "admin command"
+      parameters: ""
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
+      parameters: "[player] [range]"
+      description: "set the range of player's island"
       range-updated: "Island range updated to [number]"
+    reload:
+      description: "reload the plugin"
+    tp:
+      parameters: "[player]"
+      description: "teleport to a player's island"
+      manual: "&cNo safe warp found! Manually tp near to &b[location] &cand check it out"
   island:
     about:
       description: "display info about %bsb_plugin_name%"

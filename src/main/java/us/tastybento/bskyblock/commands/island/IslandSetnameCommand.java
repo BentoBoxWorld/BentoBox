@@ -51,7 +51,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
         // Explain command
         if (args.isEmpty()) {
-            showHelp(this, user, args);
+            showHelp(this, user);
             return false;
         }
 

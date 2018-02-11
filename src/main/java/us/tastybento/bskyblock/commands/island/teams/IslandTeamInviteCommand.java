@@ -53,7 +53,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 return true;
             }
             // Show help
-            showHelp(this, user, args);
+            showHelp(this, user);
             return false;
         } else  {
             // Only online players can be invited

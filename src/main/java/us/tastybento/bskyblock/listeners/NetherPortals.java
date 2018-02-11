@@ -24,7 +24,7 @@ import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.util.SafeTeleportBuilder;
+import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 public class NetherPortals implements Listener {
     private final BSkyBlock plugin;
@@ -194,14 +194,19 @@ public class NetherPortals implements Listener {
         if (!inWorlds(event.getFrom())) {
             return;
         }
-        // If entering a portal in the nether or end, teleport home if you have one, else do nothing
-        if (!event.getFrom().getWorld().equals(world)) {  
-            plugin.getLogger().info("Entered portal in nether or end");
-            if (plugin.getIslands().hasIsland(event.getPlayer().getUniqueId())) {
-                plugin.getLogger().info("player has island - teleporting home");
-                event.setCancelled(true);
-                plugin.getIslands().homeTeleport(event.getPlayer());
-            } 
+        // If entering a portal in the nether, teleport to portal in overworld if there is one
+        if (event.getFrom().getWorld().equals(nether)) {  
+            plugin.getLogger().info("Entered portal in nether");
+            // If this is island nether, then go to the same vector, otherwise try spawn
+            Location to = plugin.getSettings().isNetherIslands() ? event.getFrom().toVector().toLocation(world) : plugin.getIslands().getIslandLocation(event.getPlayer().getUniqueId());
+            plugin.getLogger().info("Going to " + to);
+            event.setCancelled(true);
+            // Else other worlds teleport to the nether
+            new SafeTeleportBuilder(plugin)
+            .entity(event.getPlayer())
+            .location(to)
+            .portal()
+            .build();
             return;
         }
         plugin.getLogger().info("Entering nether portal in overworld");

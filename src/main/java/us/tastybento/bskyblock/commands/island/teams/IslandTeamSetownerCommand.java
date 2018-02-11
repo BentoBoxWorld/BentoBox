@@ -42,7 +42,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         }
         // If args are not right, show help
         if (args.size() != 1) {
-            showHelp(this, user, args);
+            showHelp(this, user);
             return false;
         }
         //getPlugin().getLogger().info("DEBUG: arg[0] = " + args.get(0));

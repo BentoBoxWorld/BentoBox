@@ -39,7 +39,7 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
         }
         // If args are not right, show help
         if (args.size() != 1) {
-            showHelp(this, user, args);
+            showHelp(this, user);
             return false;
         }
         // Get target

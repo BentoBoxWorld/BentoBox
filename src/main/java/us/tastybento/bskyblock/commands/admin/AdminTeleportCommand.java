@@ -11,33 +11,34 @@ import org.bukkit.Location;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.util.SafeTeleportBuilder;
 import us.tastybento.bskyblock.util.Util;
+import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 public class AdminTeleportCommand extends CompositeCommand {
 
-    public AdminTeleportCommand(CompositeCommand parent) {
-        super(parent, "tp", "tpnether", "tpend");
+    public AdminTeleportCommand(CompositeCommand parent, String tpCommand) {
+        super(parent, tpCommand);
     }
 
     @Override
     public void setup() {
         setPermission(Constants.PERMPREFIX + "admin.tp");
         setOnlyPlayer(true);
+        setParameters("commands.admin.tp.parameters");
         setDescription("commands.admin.tp.description");
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
         if (args.isEmpty()) {
-            user.sendMessage("commands.admin.tp.help");
+            this.showHelp(this, user);
             return true;
         }
 
         // Convert name to a UUID
         final UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
-            user.sendMessage("errors.unknown-player");
+            user.sendMessage("general.errors.unknown-player");
             return false;
         } else {
             if (getPlayers().hasIsland(targetUUID) || getPlayers().inTeam(targetUUID)) {
@@ -56,7 +57,7 @@ public class AdminTeleportCommand extends CompositeCommand {
                 .build();
                 return true;
             }
-            user.sendMessage("command.admin.tp.no-island");
+            user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
     }
