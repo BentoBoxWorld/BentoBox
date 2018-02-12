@@ -24,19 +24,28 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
         new IslandTeamInviteCommand(this);
         new IslandTeamLeaveCommand(this);
-        new IslandTeamPromoteCommand(this);
+        // TODO: These are still in development
+        //new IslandTeamPromoteCommand(this, "promote");
+        //new IslandTeamPromoteCommand(this, "demote");
         new IslandTeamSetownerCommand(this);
+        new IslandTeamKickCommand(this);
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
+        // Player issuing the command must have an island
+        UUID teamLeaderUUID = getTeamLeader(user);
+        if (teamLeaderUUID == null) {
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
+
         UUID playerUUID = user.getUniqueId();
         // Fire event so add-ons can run commands, etc.
         if (fireEvent(playerUUID)) {
             // Cancelled
             return false;
         }
-        UUID teamLeaderUUID = getTeamLeader(user);
         Set<UUID> teamMembers = getMembers(user);
         if (teamLeaderUUID.equals(playerUUID)) {
             int maxSize = getMaxTeamSize(user);

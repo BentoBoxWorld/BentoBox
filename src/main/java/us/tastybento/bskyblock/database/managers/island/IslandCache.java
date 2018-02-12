@@ -310,7 +310,7 @@ public class IslandCache {
     public Set<UUID> getMembers(UUID playerUUID) {
         Island island = islandsByUUID.get(playerUUID);
         if (island != null) {
-            return new HashSet<>(island.getMemberSet());
+            return island.getMemberSet();
         }
         return new HashSet<>(0);
     }
@@ -365,10 +365,10 @@ public class IslandCache {
                     plugin.getLogger().info("DEBUG: player is the owner of this island");
                 }
                 // Clear ownership and members
-                island.getMemberSet().clear();
+                island.getMembers().clear();
                 island.setOwner(null);
             }
-            island.getMemberSet().remove(playerUUID);
+            island.removeMember(playerUUID);
         }
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: removing reference to island by UUID");

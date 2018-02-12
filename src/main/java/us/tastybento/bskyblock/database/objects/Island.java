@@ -14,6 +14,9 @@ import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
@@ -200,14 +203,15 @@ public class Island implements DataObject {
     /**
      * @return the members of the island (owner included)
      */
-    public Set<UUID> getMemberSet(){
-        Set<UUID> result = new HashSet<>();
+    public ImmutableSet<UUID> getMemberSet(){
+        Builder<UUID> result = new ImmutableSet.Builder<>();
+        
         for (Entry<UUID, Integer> member: members.entrySet()) {
             if (member.getValue() >= RanksManager.MEMBER_RANK) {
                 result.add(member.getKey());
             }
         }
-        return result;
+        return result.build();
     }
 
     /**

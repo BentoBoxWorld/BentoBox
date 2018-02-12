@@ -48,9 +48,11 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
                 @Override
                 public void run() {
-                    leaveSet.remove(user.getUniqueId());
-                    user.sendMessage("general.errors.command-cancelled");
-                }}.runTaskLater(getPlugin(), getSettings().getKickWait());
+                    if (leaveSet.contains(user.getUniqueId())) {
+                        leaveSet.remove(user.getUniqueId());
+                        user.sendMessage("general.errors.command-cancelled");
+                    }
+                }}.runTaskLater(getPlugin(), getSettings().getLeaveWait() * 20);
                 return false;
         }
     }

@@ -2,26 +2,88 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
 
 public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
-    public IslandTeamPromoteCommand(IslandTeamCommand islandTeamCommand) {
-        super(islandTeamCommand, "promote");
+    public IslandTeamPromoteCommand(IslandTeamCommand islandTeamCommand, String string) {
+        super(islandTeamCommand, string);
     }
 
     @Override
     public void setup() {
         setPermission(Constants.PERMPREFIX + "island.team");
         setOnlyPlayer(true);
-        setParameters("commands.island.team.promote.parameters");
-        setDescription("commands.island.team.promote.description");
+        if (this.getLabel().equals("promote")) {
+            setParameters("commands.island.team.promote.parameters");
+            setDescription("commands.island.team.promote.description");
+        } else {
+            setParameters("commands.island.team.demote.parameters");
+            setDescription("commands.island.team.demote.description"); 
+        }
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
-        return true;
+        if (!getPlayers().inTeam(user.getUniqueId())) {
+            user.sendMessage("general.errors.no-team");
+            return true;
+        }
+        if (!getTeamLeader(user).equals(user.getUniqueId())) {
+            user.sendMessage("general.errors.not-leader");
+            return true;
+        }
+        // If args are not right, show help
+        if (args.size() != 1) {
+            showHelp(this, user);
+            return false;
+        }
+        // Get target
+        User target = getPlayers().getUser(args.get(0));
+        if (target == null) {
+            user.sendMessage("general.errors.unknown-player");
+            return true;
+        }
+        if (!inTeam(target) || !getTeamLeader(user).equals(getTeamLeader(target))) {
+            user.sendMessage("general.errors.not-in-team");
+            return true;
+        }
+
+        return change(user, target);
+    }
+
+    private boolean change(User user, User target) {
+        int currentRank = getIslands().getIsland(user.getUniqueId()).getRank(target);
+        Bukkit.getLogger().info("DEBUG: current rank = " + currentRank);
+        if (this.getLabel().equals("promote")) {
+            int nextRank = getPlugin().getRanksManager().getNextRankValue(currentRank);
+            Bukkit.getLogger().info("DEBUG: next rank = " + nextRank);
+            if (nextRank > currentRank) {
+                getIslands().getIsland(user.getUniqueId()).setRank(target, nextRank);
+                String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
+                user.sendMessage("commands.island.team.promote.success", "[name]", target.getName(), "[rank]", rankName);
+                return true;
+            } else {
+                user.sendMessage("commands.island.team.promote.failure");
+                return false;
+            }
+        } else {
+            // Demote
+            int prevRank = getPlugin().getRanksManager().getPreviousRankValue(currentRank);
+            Bukkit.getLogger().info("DEBUG: Rev rank = " + prevRank);
+            if (prevRank < currentRank) {
+                getIslands().getIsland(user.getUniqueId()).setRank(target, prevRank);
+                String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
+                user.sendMessage("commands.island.team.demote.success", "[name]", target.getName(), "[rank]", rankName);
+                return true;
+            } else {
+                user.sendMessage("commands.island.team.demote.failure");
+                return false;
+            }
+        }
     }
 
 }

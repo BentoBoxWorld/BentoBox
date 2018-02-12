@@ -23,13 +23,6 @@ public class RanksManager {
 
     // The store of ranks
     private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
-    {
-        // Hard coded ranks
-        addRank(OWNER_RANK_REF, OWNER_RANK);
-        addRank(MEMBER_RANK_REF, MEMBER_RANK);
-        addRank(VISITOR_RANK_REF, VISITOR_RANK);
-        addRank(BANNED_RANK_REF, BANNED_RANK);
-    }
 
     /**
      * @param plugin
@@ -37,6 +30,11 @@ public class RanksManager {
     public RanksManager(BSkyBlock plugin) {
         super();
         this.plugin = plugin;
+        // Hard coded ranks
+        ranksPut(OWNER_RANK_REF, OWNER_RANK);
+        ranksPut(MEMBER_RANK_REF, MEMBER_RANK);
+        ranksPut(VISITOR_RANK_REF, VISITOR_RANK);
+        ranksPut(BANNED_RANK_REF, BANNED_RANK);
         loadCustomRanks();
     }
 
@@ -64,13 +62,18 @@ public class RanksManager {
                 || reference.equalsIgnoreCase(BANNED_RANK_REF)) {
             return false;
         }
+        ranksPut(reference, value);
+        
+        return true;
+    }
+
+    private void ranksPut(String reference, int value) {
         ranks.put(reference, value);
         // Sort
         ranks = ranks.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
-        return true;
+                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));   
     }
 
     /**
@@ -102,9 +105,50 @@ public class RanksManager {
      * Get the ranks. Ranks are listed in ascending order
      * @return immutable map of ranks
      */
-    public LinkedHashMap<String, Integer> getRanks() {
+    public Map<String, Integer> getRanks() {
         return new LinkedHashMap<>(ranks);
     }
 
 
+    /**
+     * Gets the next rank value above the current rank, excluding the owner rank
+     * @param currentRank
+     * @return Optional rank value
+     */
+    public int getNextRankValue(int currentRank) {
+        return getRanks().values().stream().mapToInt(x -> {
+            if (x > currentRank) {
+                return x;
+            };
+            return OWNER_RANK;
+        }).min().orElse(currentRank);  
+    }
+    
+    /**
+     * Gets the previous rank value below the current rank
+     * @param currentRank
+     * @return Optional rank value
+     */
+    public int getPreviousRankValue(int currentRank) {
+        return getRanks().values().stream().mapToInt(x -> {
+            if (x < currentRank) {
+                return x;
+            };
+            return BANNED_RANK;
+        }).max().orElse(currentRank);       
+    }
+
+    /**
+     * Gets the reference to the rank name for value
+     * @param rank - value
+     * @return Reference
+     */
+    public String getRank(int rank) {
+        for (Entry<String, Integer> en : ranks.entrySet()) {
+            if (rank == en.getValue()) {
+                return en.getKey();
+            }
+        }
+        return "";
+    }
 }

@@ -33,7 +33,7 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
             user.sendMessage("general.errors.no-team");
             return true;
         }
-        if (!getIslands().getTeamLeader(user.getUniqueId()).equals(user.getUniqueId())) {
+        if (!getTeamLeader(user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return true;
         }
@@ -64,9 +64,11 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
 
                 @Override
                 public void run() {
-                    kickSet.remove(targetUUID);
-                    user.sendMessage("general.errors.command-cancelled");
-                }}.runTaskLater(getPlugin(), getSettings().getKickWait());
+                    if (kickSet.contains(targetUUID)) {
+                        kickSet.remove(targetUUID);
+                        user.sendMessage("general.errors.command-cancelled");
+                    }
+                }}.runTaskLater(getPlugin(), getSettings().getKickWait() * 20);
         }
         return true;
     }

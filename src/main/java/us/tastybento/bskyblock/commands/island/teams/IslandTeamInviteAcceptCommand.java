@@ -106,7 +106,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         }
         getIslands().save(false);
         if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMemberSet().toString());
+            getPlugin().getLogger().info(() -> "DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMemberSet().toString());
         }
         return true;
     }

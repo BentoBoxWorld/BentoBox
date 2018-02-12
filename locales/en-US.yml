@@ -126,9 +126,16 @@ commands:
         parameters: "<player>"
         type-again: "&cEnter the kick command again to confirm"
         leader-kicked: "&cThe leader kicked you from the island!"
-      promote:
-        description: "promote a player on your island to another rank"
+      demote:
+        description: "demote a player on your island down a rank"
         parameters: "<player>"
+        failure: "&cPlayer cannot be demoted any further!"
+        success: "Demoted [name] to [rank]"      
+      promote:
+        description: "promote a player on your island up a rank"
+        parameters: "<player>"
+        failure: "&cPlayer cannot be promoted any further!"
+        success: "Promoted [name] to [rank]"
       setowner:
         description: "transfer your island ownership to a member"
         errors:

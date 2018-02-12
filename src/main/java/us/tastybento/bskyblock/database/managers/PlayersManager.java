@@ -611,4 +611,14 @@ public class PlayersManager{
         }
     }
 
+
+    /**
+     * Tries to get the user from this name
+     * @param string
+     * @return
+     */
+    public User getUser(String string) {        
+        return User.getInstance(getUUID(string));
+    }
+
 }

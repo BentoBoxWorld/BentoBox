@@ -37,9 +37,12 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        boolean inTeam = getPlugin().getPlayers().inTeam(playerUUID);
-        UUID teamLeaderUUID = getPlugin().getIslands().getTeamLeader(playerUUID);
-        if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
+        UUID teamLeaderUUID = getTeamLeader(user);
+        if (teamLeaderUUID == null) {
+            user.sendMessage("general.errors.no-island");
+            return false;
+        }
+        if (!(teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }

@@ -160,7 +160,7 @@ public class Settings implements ISettings<Settings> {
     private boolean resetConfirmation = true;
 
     @ConfigEntry(path = "island.reset-wait")
-    private long resetWait = 300;
+    private long resetWait = 10L;
 
     @ConfigEntry(path = "island.reset.leavers-lose-reset")
     private boolean leaversLoseReset = false;
@@ -266,13 +266,13 @@ public class Settings implements ISettings<Settings> {
     private boolean kickConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.kick-wait")
-    private long kickWait = 300;
+    private long kickWait = 10L;
 
     @ConfigEntry(path = "island.require-confirmation.leave")
     private boolean leaveConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
-    private long leaveWait = 300;
+    private long leaveWait = 10L;
 
 
     /**
