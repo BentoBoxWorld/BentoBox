@@ -1,11 +1,11 @@
 BSkyBlock
 ==========
-[![Build Status](https://travis-ci.org/tastybento/bskyblock.svg?branch=master)](https://travis-ci.org/tastybento/bskyblock)
-[![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=ncloc)
-[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=sqale_rating)
-[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=reliability_rating)
-[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=security_rating)
-[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=bugs)
+[![Build Status](https://travis-ci.org/tastybento/bskyblock.svg?branch=master)](https://travis-ci.org/tastybento/bskyblock)]
+[![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=ncloc)]
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=sqale_rating)]
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=reliability_rating)]
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=security_rating)]
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=us.tastybento%3Abskyblock&metric=bugs)]
 
 A skyblock Bukkit plugin for Minecraft derived from the well-known ASkyBlock!
 This is a survival game where the player starts with an island in the sky.
