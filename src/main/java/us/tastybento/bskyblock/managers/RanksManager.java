@@ -119,7 +119,7 @@ public class RanksManager {
         return getRanks().values().stream().mapToInt(x -> {
             if (x > currentRank) {
                 return x;
-            };
+            }
             return OWNER_RANK;
         }).min().orElse(currentRank);  
     }
@@ -133,7 +133,7 @@ public class RanksManager {
         return getRanks().values().stream().mapToInt(x -> {
             if (x < currentRank) {
                 return x;
-            };
+            }
             return BANNED_RANK;
         }).max().orElse(currentRank);       
     }
