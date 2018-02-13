@@ -111,12 +111,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException {
         List<T> list = new ArrayList<>();
         FilenameFilter ymlFilter = (dir, name) -> {
-            String lowercaseName = name.toLowerCase();
-            if (lowercaseName.endsWith(".yml")) {
-                return true;
-            } else {
-                return false;
-            }
+            return name.toLowerCase().endsWith(".yml");
         };
         String path = dataObject.getSimpleName();
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
@@ -489,7 +484,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         // Types that need to be deserialized
         if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
-            return new Long((Integer)value);
+            return Long.valueOf((Integer) value);
         }
         if (clazz.equals(UUID.class)) {
             value = UUID.fromString((String)value);
