@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
@@ -29,7 +30,7 @@ public class PlayersManager{
     private BSBDatabase database;
     private AbstractDatabaseHandler<Players> handler;
 
-    private HashMap<UUID, Players> playerCache;
+    private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
 
     /**
@@ -241,20 +242,6 @@ public class PlayersManager{
     }
 
     /**
-     * Clears player home locations
-     *
-     * @param playerUUID
-     */
-    public void clearPlayerHomes(UUID playerUUID) {
-        Players player = addPlayer(playerUUID);
-        player.clearHomeLocations();
-        /*
-         * TODO
-        playerCache.get(playerUUID).save(); // Needed?
-        TopTen.topTenRemoveEntry(playerUUID);*/
-    }
-
-    /**
      * Sets the home location for the player
      * @param playerUUID
      * @param location
@@ -313,7 +300,7 @@ public class PlayersManager{
      * @param playerUUID
      * @return List of home locations
      */
-    public HashMap<Integer, Location> getHomeLocations(UUID playerUUID) {
+    public Map<Integer, Location> getHomeLocations(UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getHomeLocations();
     }
@@ -327,8 +314,7 @@ public class PlayersManager{
     public UUID getUUID(String string) {
         // See if this is a UUID
         try {
-            UUID uuid = UUID.fromString(string);
-            return uuid;
+            return UUID.fromString(string);
         } catch (Exception e) {}
         // Look in the name cache
         return Bukkit.getOfflinePlayer(string).getUniqueId();
@@ -336,8 +322,7 @@ public class PlayersManager{
 
     /**
      * Sets the player's name and updates the name>UUID database
-     * @param uniqueId
-     * @param name
+     * @param user
      */
     public void setPlayerName(User user) {
         if (DEBUG) {
@@ -380,7 +365,7 @@ public class PlayersManager{
         }
         // Look in the grid
         Optional<Island> island = plugin.getIslands().getIslandAt(loc);
-        return island.map(x->x.getOwner()).orElse(null);
+        return island.map(Island::getOwner).orElse(null);
     }
 
     /**
@@ -617,7 +602,7 @@ public class PlayersManager{
      * @param string
      * @return
      */
-    public User getUser(String string) {        
+    public User getUser(String string) {
         return User.getInstance(getUUID(string));
     }
 

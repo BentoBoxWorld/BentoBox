@@ -28,7 +28,7 @@ public class BreedingListener extends AbstractFlagListener {
      * A list of items that cause breeding if a player has them in their hand and they click an animal
      * This list may need to be extended with future versions of Minecraft.
      */
-    private final static List<Material> BREEDING_ITEMS = Arrays.asList(
+    private static final List<Material> BREEDING_ITEMS = Arrays.asList(
             Material.EGG,
             Material.WHEAT,
             Material.CARROT_ITEM,

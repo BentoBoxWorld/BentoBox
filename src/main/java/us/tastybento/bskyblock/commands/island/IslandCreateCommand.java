@@ -55,7 +55,7 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     protected void createIsland(User user) {
         try {
-            NewIsland.builder(getPlugin())
+            NewIsland.builder()
             .player(user.getPlayer())
             .reason(Reason.CREATE)
             .build();

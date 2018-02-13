@@ -43,33 +43,25 @@ public class MobSpawnListener extends AbstractFlagListener {
                 || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             if (island.isPresent()) {
-                if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-                    if (!island.get().isAllowed(Flags.MOB_SPAWN)) {
-                        // Mobs not allowed to spawn
-                        e.setCancelled(true);
-                        return;
-                    }
-                } else if (e.getEntity() instanceof Animals) {
-                    if (!island.get().isAllowed(Flags.MONSTER_SPAWN)) {
-                        // Mobs not allowed to spawn
-                        e.setCancelled(true);
-                        return;
-                    }
+                if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)
+                        && !island.get().isAllowed(Flags.MOB_SPAWN)) {
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
+                } else if (e.getEntity() instanceof Animals
+                        && !island.get().isAllowed(Flags.MONSTER_SPAWN)) {
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
                 }
             } else {
                 // Outside of the island
-                if (e.getEntity() instanceof Monster || e.getEntity() instanceof Slime) {
-                    if (!Flags.MOB_SPAWN.isDefaultSetting()) {
-                        // Mobs not allowed to spawn
-                        e.setCancelled(true);
-                        return;
-                    }
-                } else if (e.getEntity() instanceof Animals) {
-                    if (!Flags.MONSTER_SPAWN.isDefaultSetting()) {
-                        // Mobs not allowed to spawn
-                        e.setCancelled(true);
-                        return;
-                    }
+                if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)
+                        && !Flags.MOB_SPAWN.isDefaultSetting()) {
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
+                } else if (e.getEntity() instanceof Animals
+                        && !Flags.MONSTER_SPAWN.isDefaultSetting()) {
+                    // Mobs not allowed to spawn
+                    e.setCancelled(true);
                 }
             }
         }

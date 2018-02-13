@@ -59,7 +59,7 @@ public class IslandResetCommand extends CompositeCommand {
             getPlugin().getLogger().info("DEBUG: making new island ");
         }
         try {
-            NewIsland.builder(getPlugin())
+            NewIsland.builder()
             .player(player)
             .reason(Reason.RESET)
             .oldIsland(oldIsland)

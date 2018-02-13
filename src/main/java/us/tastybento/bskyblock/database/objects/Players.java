@@ -1,9 +1,6 @@
 package us.tastybento.bskyblock.database.objects;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -17,13 +14,13 @@ import us.tastybento.bskyblock.BSkyBlock;
  * @author tastybento
  */
 public class Players implements DataObject {
-    private HashMap<Integer, Location> homeLocations;
+    private Map<Integer, Location> homeLocations;
     private String uniqueId;
     private String playerName;
     private int resetsLeft;
     private String locale = "";
     private int deaths;
-    private HashMap<Location, Long> kickedList;
+    private Map<Location, Long> kickedList;
 
     /**
      * This is required for database storage
@@ -78,28 +75,28 @@ public class Players implements DataObject {
     /**
      * @return List of home locations
      */
-    public HashMap<Integer,Location> getHomeLocations() {
+    public Map<Integer,Location> getHomeLocations() {
         return homeLocations;
     }
 
     /**
      * @return the kickedList
      */
-    public HashMap<Location, Long> getKickedList() {
+    public Map<Location, Long> getKickedList() {
         return kickedList;
     }
 
     /**
      * @param kickedList the kickedList to set
      */
-    public void setKickedList(HashMap<Location, Long> kickedList) {
+    public void setKickedList(Map<Location, Long> kickedList) {
         this.kickedList = kickedList;
     }
 
     /**
      * @param homeLocations the homeLocations to set
      */
-    public void setHomeLocations(HashMap<Integer, Location> homeLocations) {
+    public void setHomeLocations(Map<Integer, Location> homeLocations) {
         //Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
         this.homeLocations = homeLocations;
     }
@@ -248,8 +245,7 @@ public class Players implements DataObject {
                 // long hours = (coolDownTime.getTimeInMillis() -
                 // timeNow.getTimeInMillis())/(1000 * 60 * 60);
                 // Temp minutes
-                long hours = (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60);
-                return hours;
+                return (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60);
             }
         }
         return 0;
@@ -267,14 +263,12 @@ public class Players implements DataObject {
 
     @Override
     public String getUniqueId() {
-        return uniqueId.toString();
+        return uniqueId;
     }
 
     @Override
     public void setUniqueId(String uniqueId) {
-        //Bukkit.getLogger().info("DEBUG: uniqueId = " + uniqueId);
         this.uniqueId = uniqueId;
-        //Bukkit.getLogger().info("DEBUG: UUID = " + this.uniqueId);
     }
 
 }

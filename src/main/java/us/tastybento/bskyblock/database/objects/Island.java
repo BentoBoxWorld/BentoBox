@@ -1,10 +1,7 @@
 package us.tastybento.bskyblock.database.objects;
 
-import java.util.HashMap;
-import java.util.HashSet;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -77,7 +74,7 @@ public class Island implements DataObject {
     //// Team ////
     private UUID owner;
 
-    private HashMap<UUID, Integer> members = new HashMap<>();
+    private Map<UUID, Integer> members = new HashMap<>();
 
     //// State ////
     private boolean locked = false;
@@ -88,7 +85,7 @@ public class Island implements DataObject {
 
     //// Protection flags ////
     @Adapter(FlagSerializer.class)
-    private HashMap<Flag, Integer> flags = new HashMap<>();
+    private Map<Flag, Integer> flags = new HashMap<>();
 
     private int levelHandicap;
 
@@ -175,7 +172,7 @@ public class Island implements DataObject {
     /**
      * @return the flags
      */
-    public HashMap<Flag, Integer> getFlags() {
+    public Map<Flag, Integer> getFlags() {
         return flags;
     }
 
@@ -196,7 +193,7 @@ public class Island implements DataObject {
     /**
      * @return the members
      */
-    public HashMap<UUID, Integer> getMembers() {
+    public Map<UUID, Integer> getMembers() {
         return members;
     }
 
@@ -292,14 +289,7 @@ public class Island implements DataObject {
      */
     public int getRank(User user) {
         //Bukkit.getLogger().info("DEBUG: user UUID = " + user.getUniqueId());
-        return members.containsKey(user.getUniqueId()) ? members.get(user.getUniqueId()) : RanksManager.VISITOR_RANK;
-    }
-
-    /**
-     * @return the ranks
-     */
-    public HashMap<UUID, Integer> getRanks() {
-        return members;
+        return members.getOrDefault(user.getUniqueId(), RanksManager.VISITOR_RANK);
     }
 
     /**
@@ -480,10 +470,8 @@ public class Island implements DataObject {
      */
     public boolean onIsland(Location target) {
         if (center != null && center.getWorld() != null) {
-            if (target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2)) {
-                return true;
-            }
+            return target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2)
+                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
         }
 
         return false;
@@ -530,7 +518,7 @@ public class Island implements DataObject {
     /**
      * @param flags the flags to set
      */
-    public void setFlags(HashMap<Flag, Integer> flags) {
+    public void setFlags(Map<Flag, Integer> flags) {
         this.flags = flags;
     }
 
@@ -574,7 +562,7 @@ public class Island implements DataObject {
     /**
      * @param members the members to set
      */
-    public void setMembers(HashMap<UUID, Integer> members) {
+    public void setMembers(Map<UUID, Integer> members) {
         this.members = members;
     }
 
@@ -667,7 +655,7 @@ public class Island implements DataObject {
     /**
      * @param ranks the ranks to set
      */
-    public void setRanks(HashMap<UUID, Integer> ranks) {
+    public void setRanks(Map<UUID, Integer> ranks) {
         members = ranks;
     }
 

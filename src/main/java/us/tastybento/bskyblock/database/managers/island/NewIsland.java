@@ -47,10 +47,9 @@ public class NewIsland {
 
     /**
      * Start building a new island
-     * @param plugin
      * @return New island builder object
      */
-    public static Builder builder(BSkyBlock plugin) {
+    public static Builder builder() {
         return new Builder();
     }
 
@@ -106,7 +105,7 @@ public class NewIsland {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: finding island location");
         }
-        Location next = getNextIsland(player.getUniqueId());
+        Location next = getNextIsland();
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: found " + next);
         }
@@ -173,7 +172,7 @@ public class NewIsland {
             default:
                 break;
             }
-            event = IslandEvent.builder()
+            IslandEvent.builder()
                     .involvedPlayer(player.getUniqueId())
                     .reason(reasonDone)
                     .island(island)
@@ -184,14 +183,12 @@ public class NewIsland {
 
     /**
      * Get the location of next free island spot
-     * @param playerUUID
      * @return Location of island spot
      */
-    private Location getNextIsland(UUID playerUUID) {
+    private Location getNextIsland() {
         Location last = plugin.getIslands().getLast();
 
-        if (DEBUG)
-        {
+        if (DEBUG) {
             plugin.getLogger().info("DEBUG: last = " + last);
             // Find the next free spot
         }
@@ -209,7 +206,7 @@ public class NewIsland {
                 plugin.getLogger().info("DEBUG: getting next loc");
             }
             next = nextGridLocation(next);
-        };
+        }
         // Make the last next, last
         last = next.clone();
         if (DEBUG) {

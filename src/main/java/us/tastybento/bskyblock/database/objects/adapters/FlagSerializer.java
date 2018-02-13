@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.database.objects.adapters;
 
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -11,16 +12,16 @@ import us.tastybento.bskyblock.api.flags.Flag;
 
 /**
  * Serializes the {@link us.tastybento.bskyblock.database.objects.Island#getFlags() getFlags()} and
- * {@link us.tastybento.bskyblock.database.objects.Island#setFlags() setFlags()}
+ * {@link us.tastybento.bskyblock.database.objects.Island#setFlags(Map)} () setFlags()}
  * in {@link us.tastybento.bskyblock.database.objects.Island}
  * @author tastybento
  *
  */
-public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, HashMap<String, Integer>> {
+public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<String, Integer>> {
 
     @Override
-    public HashMap<Flag, Integer> serialize(Object object) {
-        HashMap<Flag, Integer> result = new HashMap<>();
+    public Map<Flag, Integer> serialize(Object object) {
+        Map<Flag, Integer> result = new HashMap<>();
         if (object == null) {
             return result;
         }
@@ -33,7 +34,7 @@ public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, 
                 result.put(BSkyBlock.getInstance().getFlagsManager().getFlagByID(key), section.getInt(key));
             }
         } else {
-            for (Entry<String, Integer> en : ((HashMap<String, Integer>)object).entrySet()) {
+            for (Entry<String, Integer> en : ((Map<String, Integer>)object).entrySet()) {
                 result.put(BSkyBlock.getInstance().getFlagsManager().getFlagByID(en.getKey()), en.getValue());
             }
         }
@@ -41,18 +42,15 @@ public class FlagSerializer implements AdapterInterface<HashMap<Flag, Integer>, 
     }
 
     @Override
-    public HashMap<String, Integer> deserialize(Object object) {
-        HashMap<String, Integer> result = new HashMap<>();
+    public Map<String, Integer> deserialize(Object object) {
+        Map<String, Integer> result = new HashMap<>();
         if (object == null) {
             return result;
         }
-        HashMap<Flag, Integer> flags = (HashMap<Flag, Integer>)object;
+        Map<Flag, Integer> flags = (Map<Flag, Integer>)object;
         for (Entry<Flag, Integer> en: flags.entrySet()) {
             result.put(en.getKey().getID(), en.getValue());
         }
         return result;
     }
-
-
-
 }

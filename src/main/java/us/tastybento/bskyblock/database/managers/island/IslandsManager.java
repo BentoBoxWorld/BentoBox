@@ -780,7 +780,7 @@ public class IslandsManager {
             // Must be in the same world as the locations being checked
             // Note that getWorld can return null if a world has been deleted on the server
             if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
-                int protectionRange = getIslandAt(islandTestLocation).map(x->x.getProtectionRange())
+                int protectionRange = getIslandAt(islandTestLocation).map(Island::getProtectionRange)
                         .orElse(plugin.getSettings().getIslandProtectionRange());
                 if (loc.getX() > islandTestLocation.getX() - protectionRange
                         && loc.getX() < islandTestLocation.getX() + protectionRange
@@ -808,23 +808,8 @@ public class IslandsManager {
         // Get the player's island from the grid if it exists
         Optional<Island> island = getIslandAt(loc);
         if (island.isPresent()) {
-            //plugin.getLogger().info("DEBUG: island here is " + island.getCenter());
-            // On an island in the grid
-            //plugin.getLogger().info("DEBUG: onIsland = " + island.onIsland(loc));
-            //plugin.getLogger().info("DEBUG: members = " + island.getMembers());
-            //plugin.getLogger().info("DEBUG: player UUID = " + player.getUniqueId());
-
-            if (island.get().onIsland(loc) && island.get().getMemberSet().contains(player.getUniqueId())) {
-                //plugin.getLogger().info("DEBUG: allowed");
-                // In a protected zone but is on the list of acceptable players
-                return true;
-            } else {
-                // Not allowed
-                //plugin.getLogger().info("DEBUG: not allowed");
-                return false;
-            }
-        } else {
-            //plugin.getLogger().info("DEBUG: no island at this location");
+            // Return whether the location is within the protected zone and the player is on the list of acceptable players
+            return island.get().onIsland(loc) && island.get().getMemberSet().contains(player.getUniqueId());
         }
         // Not in the grid, so do it the old way
         // Make a list of test locations and test them
@@ -833,20 +818,13 @@ public class IslandsManager {
             islandTestLocations.add(getIslandLocation(player.getUniqueId()));
         }
         // TODO: Check any coop locations
-        /*
-        islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
-        if (islandTestLocations.isEmpty()) {
-            return false;
-        }*/
         // Run through all the locations
         for (Location islandTestLocation : islandTestLocations) {
             if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-                if (loc.getX() >= islandTestLocation.getX() - plugin.getSettings().getIslandProtectionRange()
+                return loc.getX() >= islandTestLocation.getX() - plugin.getSettings().getIslandProtectionRange()
                         && loc.getX() < islandTestLocation.getX() + plugin.getSettings().getIslandProtectionRange()
                         && loc.getZ() >= islandTestLocation.getZ() - plugin.getSettings().getIslandProtectionRange()
-                        && loc.getZ() < islandTestLocation.getZ() + plugin.getSettings().getIslandProtectionRange()) {
-                    return true;
-                }
+                        && loc.getZ() < islandTestLocation.getZ() + plugin.getSettings().getIslandProtectionRange();
             }
         }
         return false;
@@ -866,7 +844,6 @@ public class IslandsManager {
      * @return
      */
     private Location netherIsland(Location islandLocation) {
-        //plugin.getLogger().info("DEBUG: netherworld = " + ASkyBlock.getNetherWorld());
         return islandLocation.toVector().toLocation(plugin.getIslandWorldManager().getNetherWorld());
     }
 
@@ -874,7 +851,7 @@ public class IslandsManager {
      * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      *
-     * @param player
+     * @param user
      * @return true if on valid island, false if not
      */
     public boolean playerIsOnIsland(User user) {
@@ -1025,7 +1002,7 @@ public class IslandsManager {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: leaving team");
         }
-        plugin.getPlayers().clearPlayerHomes(playerUUID);
+        plugin.getPlayers().clearHomeLocations(playerUUID);
         removePlayer(playerUUID);
     }
 
