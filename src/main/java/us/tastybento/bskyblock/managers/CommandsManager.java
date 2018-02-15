@@ -4,15 +4,16 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandMap;
+
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 
 public final class CommandsManager {
 
     private static final boolean DEBUG = false;
-    private HashMap<String, Command> commands = new HashMap<>();
+    private HashMap<String, CompositeCommand> commands = new HashMap<>();
 
-    public void registerCommand(Command command) {
+    public void registerCommand(CompositeCommand command) {
         if (DEBUG) {
             Bukkit.getLogger().info("DEBUG: registering command - " + command.getLabel());
         }
@@ -29,7 +30,7 @@ public final class CommandsManager {
         }
     }
 
-    public Command getCommand(String command) {
+    public CompositeCommand getCommand(String command) {
         return commands.get(command);
     }
 
