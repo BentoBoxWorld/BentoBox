@@ -26,15 +26,16 @@ import us.tastybento.bskyblock.util.Pair;
  */
 public class SafeSpotTeleport {
 
-    private static final int MAX_CHUNKS = 50;
-    private static final long SPEED = 5;
+    private static final int MAX_CHUNKS = 200;
+    private static final long SPEED = 1;
+    private static final int MAX_RADIUS = 200;
     private boolean checking = true;
     private BukkitTask task;
 
     // Parameters
     private final Entity entity;
     private final Location location;
-    private final boolean portal;
+    private boolean portal;
     private final int homeNumber;
 
     // Locations
@@ -46,14 +47,14 @@ public class SafeSpotTeleport {
 
     /**
      * Teleports and entity to a safe spot on island
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      * @param entity
      * @param location
      * @param failureMessage - already translated failure message
      * @param portal
      * @param homeNumber
      */
-    protected SafeSpotTeleport(BSkyBlock plugin, Entity entity, Location location, String failureMessage, boolean portal,
+    protected SafeSpotTeleport(BSkyBlock plugin, final Entity entity, final Location location, final String failureMessage, boolean portal,
             int homeNumber) {
         this.plugin = plugin;
         this.entity = entity;
@@ -73,24 +74,29 @@ public class SafeSpotTeleport {
         checking = true;
 
         // Start a recurring task until done or cancelled
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
-            List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
-            if (checking) {
-                Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
-                if (!it.hasNext()) {
-                    // Nothing left
-                    tidyUp(entity, failureMessage);
-                    return;
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
+
+            @Override
+            public void run() {
+                List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
+                if (checking) {
+                    Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
+                    if (!it.hasNext()) {
+                        // Nothing left
+                        tidyUp(entity, failureMessage);
+                        return;
+                    }
+                    // Add chunk snapshots to the list
+                    while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
+                        Pair<Integer, Integer> pair = it.next();
+                        chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                        it.remove();
+                    }
+                    // Move to next step
+                    checking = false;
+                    checkChunks(chunkSnapshot);
                 }
-                // Add chunk snapshots to the list
-                while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
-                    Pair<Integer, Integer> pair = it.next();
-                    chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
-                    it.remove();
-                }
-                // Move to next step
-                checking = false;
-                checkChunks(chunkSnapshot);
+
             }
         }, 0L, SPEED);
     }
@@ -102,11 +108,12 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // No portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
-            return;
-        }
-        // Failed - no safe spot 
-        if (entity instanceof Player && !failureMessage.isEmpty()) {
+        } else if (entity instanceof Player && !failureMessage.isEmpty()) {
+            // Failed, no safe spot
             entity.sendMessage(failureMessage);
+        }
+        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+            ((Player)entity).setGameMode(GameMode.SURVIVAL);
         }
     }
 
@@ -121,13 +128,15 @@ public class SafeSpotTeleport {
         // Get island if available
         Optional<Island> island = plugin.getIslands().getIslandAt(location);
         int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getSettings().getIslandProtectionRange());
+        maxRadius = maxRadius > MAX_RADIUS ? MAX_RADIUS : maxRadius;
+
         int x = location.getBlockX();
         int z = location.getBlockZ();
         // Create ever increasing squares around the target location
         int radius = 0;
         do {
-            for (int i = x - radius; i <= x + radius; i++) {
-                for (int j = z - radius; j <= z + radius; j++) {
+            for (int i = x - radius; i <= x + radius; i+=16) {
+                for (int j = z - radius; j <= z + radius; j+=16) {
                     addChunk(result, island, new Pair<>(i,j), new Pair<>(i/16, j/16));
                 }
             }
@@ -151,17 +160,15 @@ public class SafeSpotTeleport {
                 });  
             }
         }
-        
     }
 
     /**
      * Loops through the chunks and if a safe spot is found, fires off the teleportation 
      * @param chunkSnapshot
      */
-    private void checkChunks(List<ChunkSnapshot> chunkSnapshot) {
+    private void checkChunks(final List<ChunkSnapshot> chunkSnapshot) {
         // Run async task to scan chunks
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
-
             for (ChunkSnapshot chunk: chunkSnapshot) {
                 if (scanChunk(chunk)) {
                     task.cancel();
@@ -198,7 +205,7 @@ public class SafeSpotTeleport {
     /**
      * Teleports entity to the safe spot
      */
-    private void teleportEntity(Location loc) {
+    private void teleportEntity(final Location loc) {
         task.cancel();
         // Return to main thread and teleport the player
         plugin.getServer().getScheduler().runTask(plugin, () -> {
@@ -269,24 +276,20 @@ public class SafeSpotTeleport {
                     break;
                 case PORTAL:
                     if (portal) {
-                        Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
-                        // Teleport as soon as we find a portal
-                        teleportEntity(newSpot.toLocation(world));
-                        return true;
+                        // A portal has been found, switch to non-portal mode now
+                        portal = false;
                     }
                     break;
                 default:
-                    return safe(world, chunk, x, y, z);
+                    return safe(chunk, x, y, z, world);
                 }
             }
         }
         return false;
     }
 
-    private boolean safe(World world, ChunkSnapshot chunk, int x, int y, int z) {
-        // Safe
+    private boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
         Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
-        // Check for portal
         if (portal) {
             if (bestSpot == null) {
                 // Stash the best spot
@@ -294,11 +297,8 @@ public class SafeSpotTeleport {
             }
             return false;
         } else {
-            // Regular search - teleport as soon as we find something
             teleportEntity(newSpot.toLocation(world));
             return true;
         }
     }
-
-
 }
