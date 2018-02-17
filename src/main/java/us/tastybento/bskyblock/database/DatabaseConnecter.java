@@ -15,8 +15,7 @@ public interface DatabaseConnecter {
     /**
      * Establishes a new connection to the database
      *
-     * @return A new connection to the database
-     * @throws SQLException
+     * @return A new connection to the database using the settings provided
      */
     public Connection createConnection() throws SQLException;
 
@@ -29,26 +28,26 @@ public interface DatabaseConnecter {
 
     /**
      * Looks through the database (or files) and returns a known unique key
-     * @param tableName
+     * @param tableName - name of the table
      * @return a unique key for this record
      */
     public String getUniqueId(String tableName);
 
     /**
      * Check if a key exists in the database in this table or not
-     * @param simpleName
-     * @param key
+     * @param tableName - name of the table
+     * @param key - key to check
      * @return true if it exists
      */
-    public boolean uniqueIdExists(String simpleName, String key);
+    public boolean uniqueIdExists(String tableName, String key);
 
     /**
      * Loads a YAML file. Used by the flat file database
-     * @param string
-     * @param key
+     * @param tableName - the table name to load
+     * @param fileName - the filename
      * @return Yaml Configuration
      */
-    public YamlConfiguration loadYamlFile(String string, String key);
+    public YamlConfiguration loadYamlFile(String tableName, String fileName);
 
     /**
      * Save the Yaml Config

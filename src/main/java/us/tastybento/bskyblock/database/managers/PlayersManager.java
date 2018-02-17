@@ -38,7 +38,7 @@ public class PlayersManager{
      * This is the one-stop-shop of player info
      * If the player is not cached, then a request is made to Players to obtain it
      *
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     @SuppressWarnings("unchecked")
     public PlayersManager(BSkyBlock plugin){

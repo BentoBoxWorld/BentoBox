@@ -40,7 +40,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Used for unit testing only to set the plugin
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public void setPlugin(BSkyBlock plugin) {
         this.plugin = plugin;

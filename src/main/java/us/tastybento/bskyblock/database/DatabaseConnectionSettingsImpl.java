@@ -9,11 +9,11 @@ public class DatabaseConnectionSettingsImpl {
 
     /**
      * Hosts database settings
-     * @param host
-     * @param port
-     * @param databaseName
-     * @param username
-     * @param password
+     * @param host - database host
+     * @param port - port
+     * @param databaseName - database name
+     * @param username - username 
+     * @param password - password
      */
     public DatabaseConnectionSettingsImpl(String host, int port, String databaseName, String username, String password) {
         this.host = host;

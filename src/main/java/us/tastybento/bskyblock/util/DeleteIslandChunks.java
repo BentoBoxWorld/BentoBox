@@ -20,7 +20,7 @@ public class DeleteIslandChunks {
 
     /**
      * Deletes the island
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      * @param island
      */
     public DeleteIslandChunks(final BSkyBlock plugin, final Island island) {

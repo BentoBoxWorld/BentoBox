@@ -29,7 +29,7 @@ public class PlaceholderHandler {
 
     /**
      * Register placeholders and hooks
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public static void register(BSkyBlock plugin){
 
@@ -64,7 +64,7 @@ public class PlaceholderHandler {
 
     /**
      * Unregister placeholder hooks
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public static void unregister(BSkyBlock plugin){
         Iterator<PlaceholderAPIInterface> it = apis.iterator();

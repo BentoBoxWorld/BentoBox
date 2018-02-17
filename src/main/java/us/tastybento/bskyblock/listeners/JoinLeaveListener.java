@@ -21,7 +21,7 @@ public class JoinLeaveListener implements Listener {
     private PlayersManager players;
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public JoinLeaveListener(BSkyBlock plugin) {
         this.plugin = plugin;

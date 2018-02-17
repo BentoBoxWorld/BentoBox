@@ -18,14 +18,14 @@ public interface PlaceholderAPIInterface {
 
     /**
      * Registers the placeholder API
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      * @return true if successfully registered
      */
     boolean register(BSkyBlock plugin);
 
     /**
      * Unregisters the placeholder API
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     void unregister(BSkyBlock plugin);
 

@@ -25,7 +25,7 @@ public class RanksManager {
     private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public RanksManager(BSkyBlock plugin) {
         super();

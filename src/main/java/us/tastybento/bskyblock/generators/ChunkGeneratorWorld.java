@@ -24,7 +24,7 @@ public class ChunkGeneratorWorld extends ChunkGenerator {
     PerlinOctaveGenerator gen;
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      */
     public ChunkGeneratorWorld(BSkyBlock plugin) {
         super();

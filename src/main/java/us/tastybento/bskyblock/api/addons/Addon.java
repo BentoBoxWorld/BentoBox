@@ -14,6 +14,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.managers.PlayersManager;
+import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 
 /**
  * Add-on class for BSkyBlock. Extend this to create an add-on. The operation
@@ -231,9 +233,25 @@ public abstract class Addon implements AddonInterface {
     /**
      * Set whether this addon is enabled or not
      *
-     * @param enabled
+     * @param enabled - true if enabled
      */
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
+    }
+    
+    /**
+     * Get Players Manager
+     * @return Players manager
+     */
+    public PlayersManager getPlayers() {
+        return getBSkyBlock().getPlayers();
+    }
+    
+    /**
+     * Get Islands Manager
+     * @return Islands manager
+     */
+    public IslandsManager getIslands() {
+        return getBSkyBlock().getIslands();
     }
 }

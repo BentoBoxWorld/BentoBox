@@ -39,7 +39,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
      * Loads a YAML file and if it does not exist it is looked for in the JAR
      *
      * @param fileName
-     * @return
+     * @return Yaml Config file
      */
     @Override
     public YamlConfiguration loadYamlFile(String tableName, String fileName) {

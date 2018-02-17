@@ -32,7 +32,7 @@ public class Players implements DataObject {
     public Players() {}
 
     /**
-     * @param plugin
+     * @param plugin - BSkyBlock plugin object
      * @param uniqueId
      *            Constructor - initializes the state variables
      *

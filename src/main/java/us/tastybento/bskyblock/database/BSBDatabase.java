@@ -34,9 +34,8 @@ public abstract class BSBDatabase {
 
     /**
      * Gets a database handler that will store and retrieve classes of type dataObjectClass
-     * @param plugin
-     * @param dataObjectClass
-     * @return database handler
+     * @param dataObjectClass - class of the object to be stored in the database
+     * @return handler for this database object
      */
     public abstract AbstractDatabaseHandler<?> getHandler(Class<?> dataObjectClass);
 
