@@ -26,7 +26,7 @@ public class MobSpawnListener extends AbstractFlagListener {
     /**
      * Prevents mobs spawning naturally
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onNaturalMobSpawn(final CreatureSpawnEvent e) {

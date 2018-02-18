@@ -71,7 +71,7 @@ public class FlyingMobEvents implements Listener {
 
     /**
      * Track where the mob was created. This will determine its allowable movement zone.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void mobSpawn(CreatureSpawnEvent e) {
@@ -173,7 +173,7 @@ public class FlyingMobEvents implements Listener {
     /**
      * Withers change blocks to air after they are hit (don't know why)
      * This prevents this when the wither has been spawned by a visitor
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void WitherChangeBlocks(EntityChangeBlockEvent e) {

@@ -21,7 +21,7 @@ public class LeashListener extends AbstractFlagListener {
     /**
      * Prevents leashing
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeashUse(PlayerLeashEntityEvent e) {
@@ -32,7 +32,7 @@ public class LeashListener extends AbstractFlagListener {
     /**
      * Prevents unleashing
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeashUse(PlayerUnleashEntityEvent e) {
@@ -41,7 +41,7 @@ public class LeashListener extends AbstractFlagListener {
 
     /**
      * Prevents hitching
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {

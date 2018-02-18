@@ -30,9 +30,9 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
 
     /**
      * @param island
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param admin
-     * @param location
+     * @param location - the location
      */
     public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
         super();

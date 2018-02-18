@@ -22,7 +22,7 @@ public class BucketListener extends AbstractFlagListener {
 
     /**
      * Prevents emptying of buckets
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
@@ -35,7 +35,7 @@ public class BucketListener extends AbstractFlagListener {
 
     /**
      * Prevents collecting of lava, water, milk. If bucket use is denied in general, it is blocked.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {

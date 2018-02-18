@@ -17,7 +17,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
     /**
      * Check blocks being placed in general
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent e) {
@@ -26,7 +26,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
 
     /**
      * Handles placing items into ItemFrames
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
@@ -38,7 +38,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
     /**
      * Handle placing of fireworks, mine carts, end crystals, doors, chests and boats on land
      * The doors and chests are related to an exploit.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
@@ -74,7 +74,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
 
     /**
      * Handles Frost Walking on visitor's islands. This creates ice blocks, which is like placing blocks
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {

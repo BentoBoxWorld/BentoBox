@@ -29,7 +29,7 @@ public final class LocalesManager {
 
     /**
      * Gets the reference from the locale file for this user
-     * @param user
+     * @param user - the User
      * @param reference
      * @return the translated string, or if the translation does not exist, the default language version, or if that does not exist null
      */

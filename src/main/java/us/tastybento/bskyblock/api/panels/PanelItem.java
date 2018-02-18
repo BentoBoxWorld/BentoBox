@@ -92,7 +92,7 @@ public class PanelItem {
     public interface ClickHandler {
         /**
          * This is executed when the icon is clicked
-         * @param user
+         * @param user - the User
          * @param click
          * @return true if the click event should be cancelled
          */

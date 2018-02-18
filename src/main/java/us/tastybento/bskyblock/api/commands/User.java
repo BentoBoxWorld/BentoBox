@@ -41,7 +41,7 @@ public class User {
     }
     /**
      * Get an instance of User from a Player object
-     * @param player
+     * @param player - the player
      * @return user
      */
     public static User getInstance(Player player) {
@@ -55,7 +55,7 @@ public class User {
     }
     /**
      * Get an instance of User from a UUID
-     * @param uuid
+     * @param uuid - UUID
      * @return user
      */
     public static User getInstance(UUID uuid) {
@@ -67,7 +67,7 @@ public class User {
     }
     /**
      * Removes this player from the User cache
-     * @param player
+     * @param player - the player
      */
     public static void removePlayer(Player player) {
         users.remove(player.getUniqueId());
@@ -231,7 +231,7 @@ public class User {
 
     /**
      * Teleports user to this location. If the user is in a vehicle, they will exit first.
-     * @param location
+     * @param location - the location
      */
     public void teleport(Location location) {
         player.teleport(location);

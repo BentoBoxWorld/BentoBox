@@ -44,7 +44,7 @@ public class NetherPortals implements Listener {
      * Function to check proximity to nether or end spawn location.
      * Used when playing with the standard nether or end.
      * 
-     * @param location
+     * @param location - the location
      * @return true if in the spawn area, false if not
      */
     private boolean awayFromSpawn(Location location) {
@@ -55,7 +55,7 @@ public class NetherPortals implements Listener {
 
     /**
      * Check if the player is in the island worlds
-     * @param location
+     * @param location - the location
      * @return true if the player is
      */
     private boolean inWorlds(Location location) {
@@ -65,7 +65,7 @@ public class NetherPortals implements Listener {
     /**
      * If the player is in the standard nether or standard end or op, do nothing.
      * Used to protect the standard spawn for nether or end
-     * @param player
+     * @param player - the player
      * @return true if nothing needs to be done
      */
     private boolean noAction(Player player) {
@@ -78,60 +78,60 @@ public class NetherPortals implements Listener {
     /**
      * Prevents blocks from being broken
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockBreak(BlockBreakEvent event) {
-        if (noAction(event.getPlayer())) {
+    public void onBlockBreak(BlockBreakEvent e) {
+        if (noAction(e.getPlayer())) {
             return;
         }
-        if (!awayFromSpawn(event.getBlock().getLocation())) {
-            User.getInstance(event.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
-            event.setCancelled(true);
+        if (!awayFromSpawn(e.getBlock().getLocation())) {
+            User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
+            e.setCancelled(true);
         }
     }
 
     /**
      * Protects standard nether or end spawn from bucket abuse
-     * @param event
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBucketEmpty(PlayerBucketEmptyEvent event) {
-        if (noAction(event.getPlayer())) {
+    public void onBucketEmpty(PlayerBucketEmptyEvent e) {
+        if (noAction(e.getPlayer())) {
             return;
         }
-        if (!awayFromSpawn(event.getBlockClicked().getLocation())) {
-            User.getInstance(event.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
-            event.setCancelled(true);
+        if (!awayFromSpawn(e.getBlockClicked().getLocation())) {
+            User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
+            e.setCancelled(true);
         }
     }
 
     /**
      * Handle end portals
-     * @param event
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEndIslandPortal(PlayerPortalEvent event) {
-        if (!event.getCause().equals(TeleportCause.END_PORTAL) || !plugin.getSettings().isEndGenerate()) {
+    public void onEndIslandPortal(PlayerPortalEvent e) {
+        if (!e.getCause().equals(TeleportCause.END_PORTAL) || !plugin.getSettings().isEndGenerate()) {
             return;
         }
-        if (!inWorlds(event.getFrom())) {
+        if (!inWorlds(e.getFrom())) {
             return;
         }
         // If entering a portal in the end, teleport home if you have one, else do nothing
-        if (event.getFrom().getWorld().equals(theEnd)) { 
-            if (plugin.getIslands().hasIsland(event.getPlayer().getUniqueId())) {
-                event.setCancelled(true);
-                plugin.getIslands().homeTeleport(event.getPlayer());
+        if (e.getFrom().getWorld().equals(theEnd)) { 
+            if (plugin.getIslands().hasIsland(e.getPlayer().getUniqueId())) {
+                e.setCancelled(true);
+                plugin.getIslands().homeTeleport(e.getPlayer());
             } 
             return;
         }
         // If this is island end, then go to the same location, otherwise try spawn
-        Location to = plugin.getSettings().isEndIslands() ? event.getFrom().toVector().toLocation(theEnd) : theEnd.getSpawnLocation();
+        Location to = plugin.getSettings().isEndIslands() ? e.getFrom().toVector().toLocation(theEnd) : theEnd.getSpawnLocation();
         // Else other worlds teleport to the end
-        event.setCancelled(true);
+        e.setCancelled(true);
         new SafeTeleportBuilder(plugin)
-        .entity(event.getPlayer())
+        .entity(e.getPlayer())
         .location(to)
         .build();
         return;
@@ -141,37 +141,37 @@ public class NetherPortals implements Listener {
      * This handles non-player portal use
      * Currently disables portal use by entities
      * 
-     * @param event
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityPortal(EntityPortalEvent event) {
-        if (inWorlds(event.getFrom())) {
+    public void onEntityPortal(EntityPortalEvent e) {
+        if (inWorlds(e.getFrom())) {
             // Disable entity portal transfer due to dupe glitching
-            event.setCancelled(true);
+            e.setCancelled(true);
         }
     }
 
     /**
      * Prevent standard nether or end spawns from being blown up
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onExplosion(EntityExplodeEvent event) {
-        if (!inWorlds(event.getLocation())) {
+    public void onExplosion(EntityExplodeEvent e) {
+        if (!inWorlds(e.getLocation())) {
             return;
         }
-        if ((event.getLocation().getWorld().equals(nether) && plugin.getSettings().isNetherIslands())
-                || (event.getLocation().getWorld().equals(theEnd) && plugin.getSettings().isEndIslands())) {
+        if ((e.getLocation().getWorld().equals(nether) && plugin.getSettings().isNetherIslands())
+                || (e.getLocation().getWorld().equals(theEnd) && plugin.getSettings().isEndIslands())) {
             // Not used in island worlds
             return;
         }
         // Find out what is exploding
-        Entity expl = event.getEntity();
+        Entity expl = e.getEntity();
         if (expl == null) {
             return;
         }
-        Iterator<Block> it = event.blockList().iterator();
+        Iterator<Block> it = e.blockList().iterator();
         while (it.hasNext()) {
             Block b = it.next();
             if (!awayFromSpawn(b.getLocation())) {
@@ -182,35 +182,35 @@ public class NetherPortals implements Listener {
 
     /**
      * Handle nether portals
-     * @param event
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onNetherPortal(PlayerPortalEvent event) {
-        if (!event.getCause().equals(TeleportCause.NETHER_PORTAL)) {
+    public void onNetherPortal(PlayerPortalEvent e) {
+        if (!e.getCause().equals(TeleportCause.NETHER_PORTAL)) {
             return;
         }
-        if (!inWorlds(event.getFrom())) {
+        if (!inWorlds(e.getFrom())) {
             return;
         }
         // If entering a portal in the nether, teleport to portal in overworld if there is one
-        if (event.getFrom().getWorld().equals(nether)) {
+        if (e.getFrom().getWorld().equals(nether)) {
             // If this is island nether, then go to the same vector, otherwise try spawn
-            Location to = plugin.getSettings().isNetherIslands() ? event.getFrom().toVector().toLocation(world) : plugin.getIslands().getIslandLocation(event.getPlayer().getUniqueId());
-            event.setCancelled(true);
+            Location to = plugin.getSettings().isNetherIslands() ? e.getFrom().toVector().toLocation(world) : plugin.getIslands().getIslandLocation(e.getPlayer().getUniqueId());
+            e.setCancelled(true);
             // Else other worlds teleport to the nether
             new SafeTeleportBuilder(plugin)
-            .entity(event.getPlayer())
+            .entity(e.getPlayer())
             .location(to)
             .portal()
             .build();
             return;
         }
         // If this is island nether, then go to the same vector, otherwise try spawn
-        Location to = plugin.getSettings().isNetherIslands() ? event.getFrom().toVector().toLocation(nether) : nether.getSpawnLocation();
-        event.setCancelled(true);
+        Location to = plugin.getSettings().isNetherIslands() ? e.getFrom().toVector().toLocation(nether) : nether.getSpawnLocation();
+        e.setCancelled(true);
         // Else other worlds teleport to the nether
         new SafeTeleportBuilder(plugin)
-        .entity(event.getPlayer())
+        .entity(e.getPlayer())
         .location(to)
         .portal()
         .build();
@@ -220,30 +220,30 @@ public class NetherPortals implements Listener {
     /**
      * Prevents placing of blocks at standard nether or end spawns
      * 
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onPlayerBlockPlace(BlockPlaceEvent event) {
-        if (noAction(event.getPlayer())) {
+    public void onPlayerBlockPlace(BlockPlaceEvent e) {
+        if (noAction(e.getPlayer())) {
             return;
         }
-        if (!awayFromSpawn(event.getBlock().getLocation())) {
-            User.getInstance(event.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
-            event.setCancelled(true);
+        if (!awayFromSpawn(e.getBlock().getLocation())) {
+            User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
+            e.setCancelled(true);
         }
     }
 
     /**
      * Converts trees to gravel and glowstone
      * 
-     * @param event
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onTreeGrow(StructureGrowEvent event) {
-        if (!plugin.getSettings().isNetherTrees() || !event.getWorld().equals(nether)) {
+    public void onTreeGrow(StructureGrowEvent e) {
+        if (!plugin.getSettings().isNetherTrees() || !e.getWorld().equals(nether)) {
             return;
         }
-        for (BlockState b : event.getBlocks()) {
+        for (BlockState b : e.getBlocks()) {
             if (b.getType() == Material.LOG || b.getType() == Material.LOG_2) {
                 b.setType(Material.GRAVEL);
             } else if (b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {

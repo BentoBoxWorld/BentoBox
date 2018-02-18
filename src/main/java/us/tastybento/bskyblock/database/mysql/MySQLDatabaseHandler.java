@@ -103,84 +103,79 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     public MySQLDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
-        try {
-            connection = databaseConnecter.createConnection();
-        } catch (SQLException e1) {
-            plugin.getLogger().severe(e1.getMessage());
-            return;
-        }
+        connection = databaseConnecter.createConnection();
         // Check if the table exists in the database and if not, create it
-        try {
-            createSchema();
-        } catch (IntrospectionException | SQLException e) {
-            plugin.getLogger().severe("Could not create database schema! " + e.getMessage());
-        }
+        createSchema();
     }
 
     /**
      * Creates the table in the database if it doesn't exist already
-     * @throws IntrospectionException
-     * @throws SQLException
      */
-    private void createSchema() throws IntrospectionException, SQLException {
+    private void createSchema() {
         StringBuilder sql = new StringBuilder();
         sql.append("CREATE TABLE IF NOT EXISTS `");
         sql.append(dataObject.getCanonicalName());
         sql.append("` (");
         // Run through the fields of the class using introspection
         for (Field field : dataObject.getDeclaredFields()) {
-            // Get the description of the field
-            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
-            // Get default SQL mappings
-            // Get the write method for this field. This method will take an argument of the type of this field.
-            Method writeMethod = propertyDescriptor.getWriteMethod();
-            // The SQL column name is the name of the field
-            String columnName = field.getName();
-            // Get the mapping for this field from the hashmap
-            String typeName = propertyDescriptor.getPropertyType().getTypeName();
-            if (propertyDescriptor.getPropertyType().isEnum()) {
-                typeName = "Enum";
-            }
-            String mapping = MYSQL_MAPPING.get(typeName);
-            // If it exists, then create the SQL
-            if (mapping != null) {
-                // Note that the column name must be enclosed in `'s because it may include reserved words.
-                sql.append("`");
-                sql.append(columnName);
-                sql.append("` ");
-                sql.append(mapping);
-                sql.append(",");
-                // Create set and map tables if the type is a collection
-                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                        propertyDescriptor.getPropertyType().equals(Map.class) ||
-                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
-                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                    // The ID in this table relates to the parent table and is unique
-                    StringBuilder setSql = new StringBuilder();
-                    setSql.append("CREATE TABLE IF NOT EXISTS `");
-                    setSql.append(dataObject.getCanonicalName());
-                    setSql.append(".");
-                    setSql.append(field.getName());
-                    setSql.append("` (");
-                    setSql.append("uniqueId VARCHAR(36) NOT NULL, ");
-                    // Get columns separated by commas
-                    setSql.append(getCollectionColumnString(writeMethod,false,true));
-                    // Close the SQL string
-                    setSql.append(")");
-                    // Execute the statement
-                    try (PreparedStatement collections = connection.prepareStatement(setSql.toString())) {
-                        collections.executeUpdate();
-                    }
+            try {
+                // Get the description of the field
+                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
+                // Get default SQL mappings
+                // Get the write method for this field. This method will take an argument of the type of this field.
+                Method writeMethod = propertyDescriptor.getWriteMethod();
+                // The SQL column name is the name of the field
+                String columnName = field.getName();
+                // Get the mapping for this field from the hashmap
+                String typeName = propertyDescriptor.getPropertyType().getTypeName();
+                if (propertyDescriptor.getPropertyType().isEnum()) {
+                    typeName = "Enum";
                 }
-            } else {
-                // The Java type is not in the hashmap, so we'll just guess that it can be stored in a string
-                // This should NOT be used in general because every type should be in the hashmap
-                sql.append(field.getName());
-                sql.append(" ");
-                sql.append(STRING_MAP);
-                sql.append(",");
-                plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
-                plugin.getLogger().severe(propertyDescriptor.getPropertyType().getTypeName());
+                String mapping = MYSQL_MAPPING.get(typeName);
+                // If it exists, then create the SQL
+                if (mapping != null) {
+                    // Note that the column name must be enclosed in `'s because it may include reserved words.
+                    sql.append("`");
+                    sql.append(columnName);
+                    sql.append("` ");
+                    sql.append(mapping);
+                    sql.append(",");
+                    // Create set and map tables if the type is a collection
+                    if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                            propertyDescriptor.getPropertyType().equals(Map.class) ||
+                            propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                            propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                        // The ID in this table relates to the parent table and is unique
+                        StringBuilder setSql = new StringBuilder();
+                        setSql.append("CREATE TABLE IF NOT EXISTS `");
+                        setSql.append(dataObject.getCanonicalName());
+                        setSql.append(".");
+                        setSql.append(field.getName());
+                        setSql.append("` (");
+                        setSql.append("uniqueId VARCHAR(36) NOT NULL, ");
+                        // Get columns separated by commas
+                        setSql.append(getCollectionColumnString(writeMethod,false,true));
+                        // Close the SQL string
+                        setSql.append(")");
+                        // Execute the statement
+                        try (PreparedStatement collections = connection.prepareStatement(setSql.toString())) {
+                            collections.executeUpdate();
+                        } catch (SQLException e) {
+                            plugin.getLogger().severe(() -> "Getter or setter missing in data object. Cannot create schema! " + e.getMessage());
+                        }
+                    }
+                } else {
+                    // The Java type is not in the hashmap, so we'll just guess that it can be stored in a string
+                    // This should NOT be used in general because every type should be in the hashmap
+                    sql.append(field.getName());
+                    sql.append(" ");
+                    sql.append(STRING_MAP);
+                    sql.append(",");
+                    plugin.getLogger().severe("Unknown type! Hoping it'll fit in a string!");
+                    plugin.getLogger().severe(propertyDescriptor.getPropertyType().getTypeName());
+                }
+            } catch (IntrospectionException e) {
+                plugin.getLogger().severe(() -> "Getter or setter missing in data object. Cannot create schema! " + e.getMessage());
             }
         }
         // For the main table for the class, the unique ID is the primary key
@@ -188,6 +183,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Prepare and execute the database statements
         try (PreparedStatement pstmt = connection.prepareStatement(sql.toString())) {
             pstmt.executeUpdate();
+        } catch (SQLException e) {
+            plugin.getLogger().severe(() -> "Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 
@@ -199,7 +196,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param usePlaceHolders
      *            true, if PreparedStatement-placeholders ('?') should be used
      *            instead of the names of the variables
-     * @return
+     * @return a comma-separated-String with the names of the variables
      */
     public String getColumns(boolean usePlaceHolders) {
         StringBuilder sb = new StringBuilder();
@@ -360,14 +357,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Inserts a <T> into the corresponding database-table
      *
      * @param instance <T> that should be inserted into the corresponding database-table. Must extend DataObject.
-     * @throws SQLException
-     * @throws SecurityException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws NoSuchMethodException
+     
+     
+     
+     
+     
+     
+     
+     
      */
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#insertObject(java.lang.Object)
@@ -541,14 +538,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @return List of <T>s filled with values from the corresponding
      *         database-table
      *
-     * @throws SQLException
-     * @throws SecurityException
-     * @throws IllegalArgumentException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws ClassNotFoundException
+     
+     
+     
+     
+     
+     
+     
+     
      */
     @Override
     public List<T> loadObjects() throws SQLException,
@@ -603,14 +600,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      *
      * @return List of <T>s filled with values from the provided ResultSet
      *
-     * @throws SecurityException
-     * @throws IllegalArgumentException
-     * @throws SQLException
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws ClassNotFoundException
+     
+     
+     
+     
+     
+     
+     
+     
      */
     @SuppressWarnings("unchecked")
     private List<T> createObjects(ResultSet resultSet)

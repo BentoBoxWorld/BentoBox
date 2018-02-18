@@ -38,7 +38,7 @@ public abstract class AbstractIslandTeamCommand extends CompositeCommand {
     /**
      * Sets a timeout for player into the Hashmap resetWaitTime
      *
-     * @param player
+     * @param player - the player
      */
     protected void setResetWaitTime(final Player player) {
         resetWaitTime.put(player.getUniqueId(), Calendar.getInstance().getTimeInMillis() + getSettings().getResetWait() * 1000);
@@ -54,7 +54,7 @@ public abstract class AbstractIslandTeamCommand extends CompositeCommand {
     
     /**
      * Get the max size based on permissions
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return the max permission for this perm
      */
     private int getMaxPermSize(User user, String perm, int maxSize) {

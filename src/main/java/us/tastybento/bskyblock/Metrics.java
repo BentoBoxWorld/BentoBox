@@ -302,7 +302,7 @@ public class Metrics {
      *
      * @param str The string to gzip.
      * @return The gzipped String.
-     * @throws IOException If the compression failed.
+      If the compression failed.
      */
     private static byte[] compress(final String str) throws IOException {
         if (str == null) {

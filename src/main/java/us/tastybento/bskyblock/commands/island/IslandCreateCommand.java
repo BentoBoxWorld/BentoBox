@@ -51,7 +51,7 @@ public class IslandCreateCommand extends CompositeCommand {
     /**
      * Creates an island for player
      *
-     * @param user
+     * @param user - the User
      */
     protected void createIsland(User user) {
         try {

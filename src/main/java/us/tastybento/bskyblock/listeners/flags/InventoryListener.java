@@ -28,7 +28,7 @@ public class InventoryListener extends AbstractFlagListener {
 
     /**
      * Prevents visitors picking items from inventories
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onMountInventoryClick(InventoryClickEvent e) {

@@ -107,7 +107,7 @@ public class Panel {
     }
 
     /**
-     * @param user the user to set
+     * @param user - the User the user to set
      */
     public void setUser(Optional<User> user) {
         this.user = user;

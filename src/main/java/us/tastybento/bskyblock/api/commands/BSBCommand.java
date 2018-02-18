@@ -19,7 +19,7 @@ public interface BSBCommand {
 
     /**
      * What will be executed when this command is run
-     * @param user
+     * @param user - the User
      * @param args
      * @return true or false - true if the command executed successfully
      */
@@ -28,7 +28,7 @@ public interface BSBCommand {
     /**
      * Tab Completer for CompositeCommands. Note that any registered sub-commands will be automatically
      * added to the list must not be manually added. Use this to add tab-complete for things like names.
-     * @param user
+     * @param user - the User
      * @param alias
      * @param args
      * @return List of strings that could be used to complete this command.

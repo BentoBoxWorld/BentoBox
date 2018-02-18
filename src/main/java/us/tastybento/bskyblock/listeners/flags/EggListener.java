@@ -18,7 +18,7 @@ public class EggListener extends AbstractFlagListener {
 
     /**
      * Handle visitor chicken egg throwing
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEggThrow(PlayerEggThrowEvent e) {

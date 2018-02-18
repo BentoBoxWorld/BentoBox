@@ -32,7 +32,7 @@ public class FireListener extends AbstractFlagListener {
 
     /**
      * Prevents fire spread
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBurn(BlockBurnEvent e) {
@@ -54,7 +54,7 @@ public class FireListener extends AbstractFlagListener {
 
     /**
      * Prevent fire spread
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockSpread(BlockSpreadEvent e) {
@@ -78,7 +78,7 @@ public class FireListener extends AbstractFlagListener {
 
     /**
      * Igniting fires
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockIgnite(BlockIgniteEvent e) {
@@ -104,8 +104,8 @@ public class FireListener extends AbstractFlagListener {
     }
 
     /**
-     * Flint & Steel and Extinguishing fire
-     * @param e
+     * Flint and Steel and Extinguishing fire
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent e) {
@@ -133,7 +133,7 @@ public class FireListener extends AbstractFlagListener {
     /**
      * Protect TNT.
      * Note that allowing TNT to explode is governed by the Break Blocks flag.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onTNTPrimed(EntityChangeBlockEvent e) {

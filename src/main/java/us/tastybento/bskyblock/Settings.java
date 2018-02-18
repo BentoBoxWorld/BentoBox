@@ -1206,7 +1206,7 @@ public class Settings implements ISettings<Settings> {
         this.togglePvPCooldown = togglePvPCooldown;
     }
     /**
-     * @param uniqueId the uniqueId to set
+     * @param uniqueId - unique ID the uniqueId to set
      */
     @Override
     public void setUniqueId(String uniqueId) {

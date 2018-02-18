@@ -126,7 +126,7 @@ public class IslandEvent {
 
         /**
          * @param reason for the event
-         * @return
+         * @return IslandEventBuilder
          */
         public IslandEventBuilder reason(Reason reason) {
             this.reason = reason;
@@ -134,8 +134,8 @@ public class IslandEvent {
         }
 
         /**
-         * @param player involved in the event
-         * @return
+         * @param player - the player involved in the event
+         * @return IslandEventBuilder
          */
         public IslandEventBuilder involvedPlayer(UUID player) {
             this.player = player;

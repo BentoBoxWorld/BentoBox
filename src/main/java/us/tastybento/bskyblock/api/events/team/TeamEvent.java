@@ -117,7 +117,7 @@ public class TeamEvent {
 
         /**
          * @param reason for the event
-         * @return
+         * @return TeamEventBuilder
          */
         public TeamEventBuilder reason(Reason reason) {
             this.reason = reason;
@@ -125,8 +125,8 @@ public class TeamEvent {
         }
 
         /**
-         * @param player involved in the event
-         * @return
+         * @param player - the player involved in the event
+         * @return TeamEventBuilder
          */
         public TeamEventBuilder involvedPlayer(UUID player) {
             this.player = player;

@@ -14,7 +14,7 @@ public interface PanelListener {
 
     /**
      * Called when the panel is clicked
-     * @param user
+     * @param user - the User
      * @param inventory
      * @param clicked
      */

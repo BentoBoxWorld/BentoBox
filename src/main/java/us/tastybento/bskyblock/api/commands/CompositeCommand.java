@@ -220,7 +220,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to obtain team members
-     * @param user
+     * @param user - the User
      * @return set of UUIDs of all team members
      */
     protected Set<UUID> getMembers(User user) {
@@ -294,7 +294,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to obtain the user's team leader
-     * @param user
+     * @param user - the User
      * @return UUID of player's team leader
      */
     protected UUID getTeamLeader(User user) {
@@ -326,7 +326,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to check if a user has a team
-     * @param user
+     * @param user - the User
      * @return true if player is in a team
      */
     protected boolean inTeam(User user) {
@@ -343,7 +343,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to check if a user is a player
-     * @param user
+     * @param user - the User
      * @return true if sender is a player
      */
     protected boolean isPlayer(User user) {
@@ -428,7 +428,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Show help
      * @param command
-     * @param user
+     * @param user - the User
      */
     protected void showHelp(CompositeCommand command, User user) {
         Optional<CompositeCommand> helpCommand = command.getSubCommand("help");

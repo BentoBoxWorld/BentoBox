@@ -47,7 +47,7 @@ public class HurtingListener extends AbstractFlagListener {
     /**
      * Handles mob and monster protection
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
@@ -85,7 +85,7 @@ public class HurtingListener extends AbstractFlagListener {
 
     /**
      * Handle attacks with a fishing rod
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
@@ -108,7 +108,7 @@ public class HurtingListener extends AbstractFlagListener {
 
     /**
      * Handles feeding cookies to animals, which may hurt them
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
@@ -122,7 +122,7 @@ public class HurtingListener extends AbstractFlagListener {
 
     /**
      * Checks for splash damage. Remove damage if it should not affect.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
@@ -160,7 +160,7 @@ public class HurtingListener extends AbstractFlagListener {
 
     /**
      * Handle lingering potions. This tracks when a potion has been initially splashed.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {

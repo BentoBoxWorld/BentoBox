@@ -39,7 +39,7 @@ public class PVPListener extends AbstractFlagListener {
      * This method protects players from PVP if it is not allowed and from
      * arrows fired by other players
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
@@ -90,7 +90,7 @@ public class PVPListener extends AbstractFlagListener {
 
     /**
      * Checks for splash damage. Remove damage if it should not affect.
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {

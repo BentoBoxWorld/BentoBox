@@ -133,7 +133,7 @@ public class IslandCache {
 
     /**
      * Create an island with no owner at location
-     * @param location
+     * @param location - the location
      */
     public Island createIsland(Location location){
         return createIsland(location, null);
@@ -141,8 +141,8 @@ public class IslandCache {
 
     /**
      * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
-     * @param location
-     * @param owner UUID
+     * @param location - the location
+     * @param owner - the island owner UUID
      */
     public Island createIsland(Location location, UUID owner){
         if (DEBUG) {
@@ -213,8 +213,8 @@ public class IslandCache {
 
     /**
      * Gets the island for this player. If they are in a team, the team island is returned
-     * @param uuid
-     * @return
+     * @param uuid - UUID
+     * @return Island
      */
     public Island getIsland(UUID uuid){
         return islandsByUUID.get(uuid);
@@ -224,8 +224,8 @@ public class IslandCache {
      * Returns the island at the x,z location or null if there is none.
      * This includes the full island space, not just the protected area.
      *
-     * @param x
-     * @param z
+     * @param x - x coordinate
+     * @param z - z coordinate
      * @return Island or null
      */
     public Island getIslandAt(int x, int z) {
@@ -257,7 +257,7 @@ public class IslandCache {
      * Returns the island at the location or null if there is none.
      * This includes the full island space, not just the protected area
      *
-     * @param location
+     * @param location - the location
      * @return Island object
      */
     public Island getIslandAt(Location location) {
@@ -277,7 +277,7 @@ public class IslandCache {
      * Returns the player's island location.
      * Returns an island location OR a team island location
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Location of player's island or null if one does not exist
      */
     public Location getIslandLocation(UUID playerUUID) {
@@ -289,7 +289,7 @@ public class IslandCache {
 
     /**
      * Get name of the island owned by owner
-     * @param owner
+     * @param owner - the island owner
      * @return Returns the name of owner's island, or the owner's name if there is none.
      */
     public String getIslandName(UUID owner) {
@@ -323,7 +323,7 @@ public class IslandCache {
     }
 
     /**
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if player has island and owns it
      */
     public boolean hasIsland(UUID playerUUID) {

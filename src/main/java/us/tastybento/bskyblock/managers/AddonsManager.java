@@ -79,8 +79,8 @@ public final class AddonsManager {
 
     /**
      * Gets the addon by name
-     * @param name
-     * @return
+     * @param name - addon name
+     * @return Optional addon object
      */
     public Optional<Addon> getAddonByName(String name){
         if(name.equals("")) {
@@ -204,8 +204,8 @@ public final class AddonsManager {
     /**
      * Finds a class by name that has been loaded by this loader
      * Code copied from Bukkit JavaPluginLoader
-     * @param name
-     * @return Class
+     * @param name - name of the class
+     * @return Class - the class
      */
     public Class<?> getClassByName(final String name) {
         Class<?> cachedClass = classes.get(name);
@@ -229,8 +229,8 @@ public final class AddonsManager {
      * Sets a class that this loader should know about
      * Code copied from Bukkit JavaPluginLoader
      *
-     * @param name
-     * @param clazz
+     * @param name - name of the class
+     * @param clazz - the class
      */
     public void setClass(final String name, final Class<?> clazz) {
         if (!classes.containsKey(name)) {
@@ -245,10 +245,10 @@ public final class AddonsManager {
 
     /**
      * Lists all the yml files found in the jar in the folder
-     * @param jar
-     * @param folderPath
-     * @return List<String>
-     * @throws IOException
+     * @param jar - the jar file
+     * @param folderPath - the path within the jar
+     * @return a list of files
+      - if the file cannot be read
      */
     public List<String> listJarYamlFiles(JarFile jar, String folderPath) throws IOException {
         List<String> result = new ArrayList<>();

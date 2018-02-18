@@ -20,7 +20,7 @@ public class TeleportationListener extends AbstractFlagListener {
     /**
      * Ender pearl and chorus fruit teleport checks
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {

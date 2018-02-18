@@ -32,8 +32,12 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
     }
 
     @Override
-    public Connection createConnection() throws SQLException {
-        connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
+    public Connection createConnection() {
+        try {
+            connection = DriverManager.getConnection(connectionUrl, dbSettings.getUsername(), dbSettings.getPassword());
+        } catch (SQLException e) {
+            Bukkit.getLogger().severe("Could not connect to the database! " + e.getMessage());
+        }
         return connection;
     }
 

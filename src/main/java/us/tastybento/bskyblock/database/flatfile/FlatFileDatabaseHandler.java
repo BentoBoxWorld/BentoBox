@@ -42,8 +42,9 @@ import us.tastybento.bskyblock.util.Util;
  *
  * @author tastybento
  *
- * @param <T>
+ * @param <T> Handles flat files for Class <T>
  */
+
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
@@ -67,17 +68,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return ""; // Not used
     }
 
-    /**
-     * Creates a <T> filled with values from the corresponding
-     * database file
-     *
-     * @return <T> filled with values from the corresponding database file
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws ClassNotFoundException
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
     @Override
     public T loadObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException  {
@@ -97,15 +89,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return databaseConnecter.uniqueIdExists(dataObject.getSimpleName(), key);
     }
 
-    /**
-     * Loads all the records in this table and returns a list of them
-     * @return list of <T>
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws IntrospectionException
-     * @throws ClassNotFoundException
+
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadObjects()
      */
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, ClassNotFoundException {
@@ -134,6 +120,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         return list;
     }
+    
     /**
      *
      * Creates a list of <T>s filled with values from the provided ResultSet
@@ -141,13 +128,12 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param config - YAML config file
      *
      * @return <T> filled with values
-     *
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws ClassNotFoundException
+     
+     
+     
+     
+     
+     
      */
     private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
         T instance = dataObject.newInstance();
@@ -312,10 +298,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Inserts T into the corresponding database-table
      *
      * @param instance that should be inserted into the database
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws IntrospectionException
      */
     @SuppressWarnings("unchecked")
     @Override

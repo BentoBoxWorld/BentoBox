@@ -82,7 +82,7 @@ public class PanelBuilder {
 
     /**
      * Sets the user who will get this panel. This will open it immediately when it is built
-     * @param user
+     * @param user - the User
      * @return PanelBuilder
      */
     public PanelBuilder setUser(User user) {

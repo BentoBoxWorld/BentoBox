@@ -25,7 +25,7 @@ public class InventorySave {
     }
 
     /** Save player's inventory
-     * @param player
+     * @param player - the player
      */
     public void savePlayerInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Saving inventory");
@@ -35,7 +35,7 @@ public class InventorySave {
 
     /**
      * Clears any saved inventory
-     * @param player
+     * @param player - the player
      */
     public void clearSavedInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Clearing inventory");
@@ -44,7 +44,7 @@ public class InventorySave {
     /**
      * Load the player's inventory
      *
-     * @param player
+     * @param player - the player
      */
     public void loadPlayerInventory(Player player) {
         //plugin.getLogger().info("DEBUG: Loading inventory");
@@ -66,7 +66,7 @@ public class InventorySave {
     /**
      * Returns whether the player's inventory has been stored to give him back.
      *
-     * @param uuid UUID of the player
+     * @param uuid - UUID UUID of the player
      * @return <code>true</code> if the inventory is stored, <code>false</code> otherwise
      */
     public static boolean isStored(UUID uuid) {

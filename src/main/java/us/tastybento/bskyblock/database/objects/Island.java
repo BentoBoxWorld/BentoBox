@@ -112,7 +112,7 @@ public class Island implements DataObject {
 
     /**
      * Adds a team member. If player is on banned list, they will be removed from it.
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void addMember(UUID playerUUID) {
         if (playerUUID != null) {
@@ -122,8 +122,8 @@ public class Island implements DataObject {
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
-     * @param targetUUID
-     * @return
+     * @param targetUUID - the target's UUID
+     * @return true if successfully added
      */
     public boolean addToBanList(UUID targetUUID) {
         // TODO fire ban event
@@ -288,7 +288,7 @@ public class Island implements DataObject {
 
     /**
      * Get the rank of user for this island
-     * @param user
+     * @param user - the User
      * @return rank integer
      */
     public int getRank(User user) {
@@ -397,8 +397,8 @@ public class Island implements DataObject {
 
     /**
      * Checks if coords are in the island space
-     * @param x
-     * @param z
+     * @param x - x coordinate
+     * @param z - z coordinate
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
@@ -434,7 +434,7 @@ public class Island implements DataObject {
 
     /**
      * Check if a user is allowed to bypass the flag or not
-     * @param user - user
+     * @param user - the User - user
      * @param flag - flag
      * @return true if allowed, false if not
      */
@@ -445,7 +445,7 @@ public class Island implements DataObject {
 
     /**
      * Check if banned
-     * @param targetUUID
+     * @param targetUUID - the target's UUID
      * @return Returns true if target is banned on this island
      */
     public boolean isBanned(UUID targetUUID) {
@@ -483,7 +483,7 @@ public class Island implements DataObject {
 
     /**
      * Removes target from the banned list. May be cancelled by unban event.
-     * @param targetUUID
+     * @param targetUUID - the target's UUID
      * @return true if successful, otherwise false.
      */
     public boolean removeFromBanList(UUID targetUUID) {
@@ -608,7 +608,7 @@ public class Island implements DataObject {
 
     /**
      * Sets the owner of the island.
-     * @param owner - the owner/team leader to set
+     * @param owner - the island owner - the owner/team leader to set
      */
     public void setOwner(UUID owner){
         this.owner = owner;
@@ -647,7 +647,7 @@ public class Island implements DataObject {
 
     /**
      * Set user's rank to an arbitrary rank value
-     * @param user
+     * @param user - the User
      * @param rank
      */
     public void setRank(User user, int rank) {

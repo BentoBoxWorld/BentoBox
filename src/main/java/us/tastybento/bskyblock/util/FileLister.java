@@ -31,7 +31,7 @@ public class FileLister{
      * @param folderPath
      * @param checkJar - if true, the jar will be checked
      * @return List of file names
-     * @throws IOException
+     
      */
     public List<String> list(String folderPath, boolean checkJar) throws IOException {
         List<String> result = new ArrayList<>();

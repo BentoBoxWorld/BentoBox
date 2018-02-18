@@ -49,7 +49,7 @@ public class SafeSpotTeleport {
      * Teleports and entity to a safe spot on island
      * @param plugin - BSkyBlock plugin object
      * @param entity
-     * @param location
+     * @param location - the location
      * @param failureMessage - already translated failure message
      * @param portal
      * @param homeNumber
@@ -120,7 +120,7 @@ public class SafeSpotTeleport {
     /**
      * Gets a set of chunk coords that will be scanned.
      * @param entity
-     * @param location
+     * @param location - the location
      * @return
      */
     private List<Pair<Integer, Integer>> getChunksToScan() {
@@ -231,9 +231,9 @@ public class SafeSpotTeleport {
     /**
      * Returns true if the location is a safe one.
      * @param chunk
-     * @param x
+     * @param x - x coordinate
      * @param y
-     * @param z
+     * @param z - z coordinate
      * @param worldHeight
      * @return true if this is a safe spot, false if this is a portal scan
      */

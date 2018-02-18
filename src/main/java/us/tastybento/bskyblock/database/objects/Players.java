@@ -33,7 +33,7 @@ public class Players implements DataObject {
 
     /**
      * @param plugin - BSkyBlock plugin object
-     * @param uniqueId
+     * @param uniqueId - unique ID
      *            Constructor - initializes the state variables
      *
      */
@@ -60,7 +60,7 @@ public class Players implements DataObject {
 
     /**
      * Gets the home location by number.
-     * @param number
+     * @param number - a number
      * @return Location of this home or null if not available
      */
     public Location getHomeLocation(int number) {
@@ -151,8 +151,8 @@ public class Players implements DataObject {
 
     /**
      * Stores the numbered home location of the player. Numbering starts at 1.
-     * @param location
-     * @param number
+     * @param location - the location
+     * @param number - a number
      */
     public void setHomeLocation(final Location location, int number) {
         if (location == null) {
@@ -164,7 +164,7 @@ public class Players implements DataObject {
 
     /**
      * Set the uuid for this player object
-     * @param uuid
+     * @param uuid - UUID
      */
     public void setPlayerUUID(final UUID uuid) {
         uniqueId = uuid.toString();
@@ -221,7 +221,7 @@ public class Players implements DataObject {
     /**
      * Can invite or still waiting for cool down to end
      *
-     * @param location
+     * @param location - the location
      *            to check
      * @return number of mins/hours left until cool down ends
      */
@@ -257,7 +257,7 @@ public class Players implements DataObject {
 
     /**
      * Starts the invite cooldown timer for location. Location should be the center of an island.
-     * @param location
+     * @param location - the location
      */
     public void startInviteCoolDownTimer(Location location) {
         if (location != null) {

@@ -25,7 +25,7 @@ public class SafeTeleportBuilder {
     /**
      * Set who or what is going to teleport
      * @param entity
-     * @return
+     * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder entity(Entity entity) {
         this.entity = entity;
@@ -35,7 +35,7 @@ public class SafeTeleportBuilder {
     /**
      * Set the island to teleport to
      * @param island
-     * @return
+     * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder island(Island island) {
         this.location = island.getCenter();
@@ -45,7 +45,7 @@ public class SafeTeleportBuilder {
     /**
      * Set the home number to this number
      * @param homeNumber
-     * @return
+     * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder homeNumber(int homeNumber) {
         this.homeNumber = homeNumber;
@@ -54,8 +54,7 @@ public class SafeTeleportBuilder {
 
     /**
      * This is a portal teleportation
-     * @param setHome
-     * @return
+     * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder portal() {
         this.portal = true;
@@ -65,7 +64,7 @@ public class SafeTeleportBuilder {
     /**
      * Set the failure message if this teleport cannot happen
      * @param failureMessage
-     * @return
+     * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder failureMessage(String failureMessage) {
         this.failureMessage = failureMessage;
@@ -74,8 +73,8 @@ public class SafeTeleportBuilder {
 
     /**
      * Set the desired location
-     * @param location
-     * @return
+     * @param location - the location
+     * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder location(Location location) {
         this.location = location;
@@ -84,7 +83,7 @@ public class SafeTeleportBuilder {
 
     /**
      * Try to teleport the player
-     * @return
+     * @return SafeSpotTeleport
      */
     public SafeSpotTeleport build() {      
         // Error checking
@@ -101,6 +100,5 @@ public class SafeTeleportBuilder {
         }
         return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber);
     }
-
 
 }

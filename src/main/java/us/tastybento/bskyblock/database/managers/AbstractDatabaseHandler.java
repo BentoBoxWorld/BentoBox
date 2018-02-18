@@ -70,30 +70,14 @@ public abstract class AbstractDatabaseHandler<T> {
     /**
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws IntrospectionException
-     * @throws SecurityException
-     * @throws SQLException
-     * @throws ClassNotFoundException
      */
     public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
     /**
      * Creates a <T> filled with values from the corresponding
      * database file
-     * @param uniqueId
+     * @param uniqueId - unique ID
      * @return <T>
-     * @throws IntrospectionException
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     * @throws InstantiationException
-     * @throws SQLException
-     * @throws ClassNotFoundException
-     * @throws SecurityException
      */
     public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
 
@@ -101,27 +85,12 @@ public abstract class AbstractDatabaseHandler<T> {
      * Save T into the corresponding database
      *
      * @param instance that should be inserted into the database
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws IntrospectionException
-     * @throws InstantiationException
-     * @throws SecurityException
-     * @throws SQLException
-     * @throws NoSuchMethodException
      */
     public abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
 
     /**
      * Deletes the object with the unique id from the database
      * @param instance
-     * @throws InvocationTargetException
-     * @throws IllegalArgumentException
-     * @throws IllegalAccessException
-     * @throws IntrospectionException
-     * @throws SQLException
-     * @throws SecurityException
-     * @throws NoSuchMethodException
      */
     public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
 
@@ -135,24 +104,14 @@ public abstract class AbstractDatabaseHandler<T> {
     /**
      * Saves a file as settings
      * @param instance
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws IntrospectionException
      */
     public abstract void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
 
     /**
      * Loads a file as settings
-     * @param uniqueId
+     * @param uniqueId - unique ID
      * @param dbConfig - the database mirror of this object. It will be checked against what is loaded to see if any significant changes have been made
-     * @return
-     * @throws InstantiationException
-     * @throws IllegalAccessException
-     * @throws IllegalArgumentException
-     * @throws InvocationTargetException
-     * @throws ClassNotFoundException
-     * @throws IntrospectionException
+     * @return Settings object
      */
     public abstract T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 

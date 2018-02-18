@@ -21,7 +21,7 @@ public class FlagChangeEvent extends IslandBaseEvent {
 
     /**
      * @param island
-     * @param player
+     * @param player - the player
      * @param editedFlag
      * @param setTo
      */

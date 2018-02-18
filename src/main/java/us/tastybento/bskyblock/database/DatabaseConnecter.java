@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock.database;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -17,12 +16,12 @@ public interface DatabaseConnecter {
      *
      * @return A new connection to the database using the settings provided
      */
-    public Connection createConnection() throws SQLException;
+    public Connection createConnection();
 
     /**
      * Returns the connection url
      *
-     * @return
+     * @return the connector's URL
      */
     public String getConnectionUrl();
 
@@ -51,7 +50,7 @@ public interface DatabaseConnecter {
 
     /**
      * Save the Yaml Config
-     * @param yamlFile
+     * @param yamlFile - the YAML config
      * @param tableName - analogous to a table in a database
      * @param fileName - the name of the record. Must be unique.
      */

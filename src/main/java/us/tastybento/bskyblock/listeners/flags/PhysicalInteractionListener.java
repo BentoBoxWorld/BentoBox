@@ -19,7 +19,7 @@ public class PhysicalInteractionListener extends AbstractFlagListener {
     /**
      * Handle physical interaction with blocks
      * Crop trample, pressure plates, triggering redstone, tripwires
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {

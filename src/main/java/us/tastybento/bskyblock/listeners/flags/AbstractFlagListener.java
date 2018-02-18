@@ -49,7 +49,7 @@ public abstract class AbstractFlagListener implements Listener {
     /**
      * Sets the player associated with this event.
      * If the user is a fake player, they are not counted.
-     * @param e - the event
+     * @param e - event
      * @return true if found, otherwise false
      */
     private boolean createEventUser(Event e) {
@@ -67,7 +67,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
-     * @param user
+     * @param user - the User
      */
     public AbstractFlagListener setUser(User user) {
         if (!plugin.getSettings().getFakePlayers().contains(user.getName())) {
@@ -82,7 +82,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Cancels the event and sends the island public message to user
-     * @param e Event
+     * @param e - event
      */
     public void noGo(Event e) {
         noGo(e, false);
@@ -90,7 +90,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Cancels the event and sends the island protected message to user unless silent is true
-     * @param e Event
+     * @param e - event
      * @param silent - if true, message is not sent
      */
     public void noGo(Event e, boolean silent) {
@@ -107,7 +107,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Check if loc is in the island worlds
-     * @param loc
+     * @param loc - location
      * @return true if the location is in the island worlds
      */
     public boolean inWorld(Location loc) {
@@ -127,7 +127,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Check if user is in the island worlds
-     * @param user - a user
+     * @param user - the User - a user
      * @return true if in world
      */
     public boolean inWorld(User user) {
@@ -136,8 +136,8 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Generic flag checker
-     * @param e
-     * @param loc
+     * @param e - event
+     * @param loc - location
      * @param breakBlocks
      * @return true if the check is okay, false if it was disallowed
      */
@@ -149,8 +149,8 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Check if flag is allowed
-     * @param e
-     * @param loc
+     * @param e - event
+     * @param loc - location
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */

@@ -25,7 +25,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
     /**
      * Prevents blocks from being broken
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
@@ -35,7 +35,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
     /**
      * Prevents the breakage of hanging items
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
@@ -47,7 +47,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
     /**
      * Handles breaking objects
      *
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
@@ -89,7 +89,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
 
     /**
      * Handles vehicle breaking
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
@@ -114,7 +114,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
 
     /**
      * Protect item frames, armor stands, etc. Entities that are actually blocks...
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {

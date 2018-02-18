@@ -35,7 +35,7 @@ public class Util {
 
     /**
      * Returns the server version
-     * @return
+     * @return server version
      */
     public static String getServerVersion() {
         if (serverVersion == null) {
@@ -86,7 +86,7 @@ public class Util {
      * Converts a location to a simple string representation
      * If location is null, returns empty string
      *
-     * @param location
+     * @param location - the location
      * @return String of location
      */
     static public String getStringLocation(final Location location) {
@@ -99,7 +99,7 @@ public class Util {
     /**
      * Get a list of parameter types for the collection argument in this method
      * @param writeMethod
-     * @return
+     * @return a list of parameter types for the collection argument in this method
      */
     public static List<Type> getCollectionParameterTypes(Method writeMethod) {
         List<Type> result = new ArrayList<>();
@@ -150,7 +150,7 @@ public class Util {
     /**
      * Determines if a location is in the island world or not or
      * in the new nether if it is activated
-     * @param loc
+     * @param loc - location
      * @return true if in the island world
      */
     public static boolean inWorld(Location loc) {
@@ -172,7 +172,7 @@ public class Util {
      * Determines if an entity is in the island world or not or
      * in the new nether if it is activated
      * @param entity
-     * @return
+     * @return true if in world
      */
     public static boolean inWorld(Entity entity) {
         return inWorld(entity.getLocation());
@@ -189,8 +189,8 @@ public class Util {
 
     /**
      * Return a list of online players this player can see, i.e. are not invisible
-     * @param user - if null, all player names on the server are shown
-     * @return
+     * @param user - the User - if null, all player names on the server are shown
+     * @return a list of online players this player can see
      */
     public static List<String> getOnlinePlayerList(User user) {
         final List<String> returned = new ArrayList<>();
@@ -228,7 +228,7 @@ public class Util {
      * Loads a YAML file and if it does not exist it is looked for in the JAR
      *
      * @param file
-     * @return
+     * @return Yaml Config
      */
     public static YamlConfiguration loadYamlFile(Plugin plugin, String file) {
         File dataFolder = plugin.getDataFolder();
@@ -271,10 +271,10 @@ public class Util {
 
     /**
      * Get the maximum value of a numerical perm setting
-     * @param player - the player to check
+     * @param player - the player - the player to check
      * @param perm - the start of the perm, e.g., bskyblock.maxhomes
      * @param permValue - the default value - the result may be higher or lower than this
-     * @return
+     * @return max value
      */
     public static int getPermValue(Player player, String perm, int permValue) {
         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {

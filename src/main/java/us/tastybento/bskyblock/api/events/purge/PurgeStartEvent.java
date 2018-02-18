@@ -23,7 +23,7 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
 
     /**
      * Called to create the event
-     * @param user - the UUID of the player who launched the purge, may be null if purge is launched using the console.
+     * @param user - the User - the UUID of the player who launched the purge, may be null if purge is launched using the console.
      * @param islandsList - the list of islands to remove, based on their leader's UUID
      */
     public PurgeStartEvent(UUID user, List<UUID> islandsList) {
@@ -47,7 +47,7 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
 
     /**
      * Convenience method to directly add an island owner's UUID to the list
-     * @param - the owner's UUID from the island to remove
+     * @param islandOwner - the owner's UUID from the island to remove
      */
     public void add(UUID islandOwner) {
         if(!islandsList.contains(islandOwner)) {
@@ -57,7 +57,7 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
 
     /**
      * Convenience method to directly remove an island owner's UUID to the list
-     * @param - the owner's UUID from the island to remove
+     * @param islandOwner - the owner's UUID from the island to remove
      */
     public void remove(UUID islandOwner) {
         if(islandsList.contains(islandOwner)) {
@@ -67,7 +67,7 @@ public class PurgeStartEvent extends PremadeEvent implements Cancellable {
 
     /**
      * Replace the island list
-     * @param - a new island owners' UUIDs list
+     * @param islandsList - a new island owners' UUIDs list
      */
     public void setIslandsList(List<UUID> islandsList) {
         this.islandsList = islandsList;

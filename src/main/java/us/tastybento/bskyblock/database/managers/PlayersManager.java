@@ -121,7 +121,7 @@ public class PlayersManager{
 
     /**
      * Adds a player to the cache
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return the players object
      */
     public Players addPlayer(final UUID playerUUID) {
@@ -165,7 +165,7 @@ public class PlayersManager{
     /**
      * Stores the player's info and removes the player from the cache
      *
-     * @param player - UUID of player
+     * @param player - the player - UUID of player
      *
      */
     public void removeOnlinePlayer(final UUID player) {
@@ -190,7 +190,7 @@ public class PlayersManager{
     /**
      * Checks if the player is known or not
      *
-     * @param uniqueID
+     * @param uniqueID - unique ID
      * @return true if player is know, otherwise false
      */
     public boolean isKnown(final UUID uniqueID) {
@@ -209,7 +209,7 @@ public class PlayersManager{
     /**
      * Returns the player object for the named player
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      *            - String name of player
      * @return - player object
      */
@@ -221,7 +221,7 @@ public class PlayersManager{
     /**
      * Checks if player has an island.
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      *            - string name of player
      * @return true if player has island
      */
@@ -233,7 +233,7 @@ public class PlayersManager{
     /**
      * Checks if player is in a Team from cache if available
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if player in a team
      */
     public boolean inTeam(UUID playerUUID) {
@@ -243,9 +243,9 @@ public class PlayersManager{
 
     /**
      * Sets the home location for the player
-     * @param playerUUID
-     * @param location
-     * @param number - 1 is default. Can be any number.
+     * @param playerUUID - the player's UUID
+     * @param location - the location
+     * @param number - a number - 1 is default. Can be any number.
      */
     public void setHomeLocation(UUID playerUUID, Location location, int number) {
         addPlayer(playerUUID);
@@ -255,8 +255,8 @@ public class PlayersManager{
 
     /**
      * Set the default home location for player
-     * @param playerUUID
-     * @param location
+     * @param playerUUID - the player's UUID
+     * @param location - the location
      */
     public void setHomeLocation(UUID playerUUID, Location location) {
         addPlayer(playerUUID);
@@ -266,7 +266,7 @@ public class PlayersManager{
 
     /**
      * Clears any home locations for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void clearHomeLocations(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -276,8 +276,8 @@ public class PlayersManager{
     /**
      * Returns the home location, or null if none
      *
-     * @param playerUUID
-     * @param number
+     * @param playerUUID - the player's UUID
+     * @param number - a number
      * @return Home location or null if none
      */
     public Location getHomeLocation(UUID playerUUID, int number) {
@@ -287,7 +287,7 @@ public class PlayersManager{
 
     /**
      * Gets the default home location for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Home location or null if none
      */
     public Location getHomeLocation(UUID playerUUID) {
@@ -297,7 +297,7 @@ public class PlayersManager{
 
     /**
      * Provides all home locations for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return List of home locations
      */
     public Map<Integer, Location> getHomeLocations(UUID playerUUID) {
@@ -322,7 +322,7 @@ public class PlayersManager{
 
     /**
      * Sets the player's name and updates the name>UUID database
-     * @param user
+     * @param user - the User
      */
     public void setPlayerName(User user) {
         if (DEBUG) {
@@ -336,7 +336,7 @@ public class PlayersManager{
      * Obtains the name of the player from their UUID
      * Player must have logged into the game before
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return String - playerName
      */
     public String getName(UUID playerUUID) {
@@ -356,7 +356,7 @@ public class PlayersManager{
     /**
      * Reverse lookup - returns the owner of an island from the location
      *
-     * @param loc
+     * @param loc - location
      * @return UUID of owner of island
      */
     public UUID getPlayerFromIslandLocation(Location loc) {
@@ -371,7 +371,7 @@ public class PlayersManager{
     /**
      * Gets how many island resets the player has left
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return number of resets
      */
     public int getResetsLeft(UUID playerUUID) {
@@ -382,7 +382,7 @@ public class PlayersManager{
     /**
      * Sets how many resets the player has left
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param resets
      */
     public void setResetsLeft(UUID playerUUID, int resets) {
@@ -394,8 +394,8 @@ public class PlayersManager{
      * Returns how long the player must wait before they can be invited to an
      * island with the location
      *
-     * @param playerUUID
-     * @param location
+     * @param playerUUID - the player's UUID
+     * @param location - the location
      * @return time to wait in minutes/hours
      */
     public long getInviteCoolDownTime(UUID playerUUID, Location location) {
@@ -408,8 +408,8 @@ public class PlayersManager{
      * be invited
      * Called when they are kicked from an island or leave.
      *
-     * @param playerUUID
-     * @param location
+     * @param playerUUID - the player's UUID
+     * @param location - the location
      */
     public void startInviteCoolDownTimer(UUID playerUUID, Location location) {
         addPlayer(playerUUID);
@@ -418,7 +418,7 @@ public class PlayersManager{
 
     /**
      * Returns the locale for this player. If missing, will return nothing
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return name of the locale this player uses
      */
     public String getLocale(UUID playerUUID) {
@@ -431,7 +431,7 @@ public class PlayersManager{
 
     /**
      * Sets the locale this player wants to use
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param localeName
      */
     public void setLocale(UUID playerUUID, String localeName) {
@@ -441,8 +441,8 @@ public class PlayersManager{
 
     /**
      * Ban target from a player's island. Ban may be blocked by event being cancelled.
-     * @param playerUUID
-     * @param targetUUID
+     * @param playerUUID - the player's UUID
+     * @param targetUUID - the target's UUID
      * @return true if banned, false if not
      */
     public boolean ban(UUID playerUUID, UUID targetUUID) {
@@ -458,9 +458,9 @@ public class PlayersManager{
 
     /**
      * Unban target from player's island
-     * @param playerUUID
-     * @param targetUUID
-     * @return
+     * @param playerUUID - the player's UUID
+     * @param targetUUID - the target's UUID
+     * @return true if target sucessfully unbanned
      */
     public boolean unban(UUID playerUUID, UUID targetUUID) {
         addPlayer(playerUUID);
@@ -474,8 +474,8 @@ public class PlayersManager{
     }
 
     /**
-     * @param playerUUID
-     * @param targetUUID
+     * @param playerUUID - the player's UUID
+     * @param targetUUID - the target's UUID
      * @return true if target is banned from player's island
      */
     public boolean isBanned(UUID playerUUID, UUID targetUUID) {
@@ -510,7 +510,7 @@ public class PlayersManager{
 
     /**
      * Add death to player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void addDeath(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -519,7 +519,7 @@ public class PlayersManager{
 
     /**
      * Set death number for player
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @param deaths
      */
     public void setDeaths(UUID playerUUID, int deaths) {
@@ -528,9 +528,9 @@ public class PlayersManager{
     }
 
     /**
-     * Get number of times player has died in ASkyBlock worlds since counting began
-     * @param playerUUID
-     * @return
+     * Get number of times player has died in BSkyBlock worlds since counting began
+     * @param playerUUID - the player's UUID
+     * @return number of deaths
      */
     public int getDeaths(UUID playerUUID) {
         addPlayer(playerUUID);
@@ -539,7 +539,7 @@ public class PlayersManager{
 
     /**
      * Sets if a player is mid-teleport or not
-     * @param uniqueId
+     * @param uniqueId - unique ID
      */
     public void setInTeleport(UUID uniqueId) {
         inTeleport.add(uniqueId);
@@ -547,14 +547,14 @@ public class PlayersManager{
 
     /**
      * Removes player from in-teleport
-     * @param uniqueId
+     * @param uniqueId - unique ID
      */
     public void removeInTeleport(UUID uniqueId) {
         inTeleport.remove(uniqueId);
     }
 
     /**
-     * @param uniqueId
+     * @param uniqueId - unique ID
      * @return true if a player is mid-teleport
      */
     public boolean isInTeleport(UUID uniqueId) {
@@ -563,7 +563,7 @@ public class PlayersManager{
 
     /**
      * Resets everything to do with a player that needs to be reset
-     * @param player
+     * @param player - the player
      */
     public void resetPlayer(Player player) {
         // TODO Auto-generated method stub
@@ -572,7 +572,7 @@ public class PlayersManager{
 
     /**
      * Saves the player to the database
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void save(UUID playerUUID) {
         if (playerCache.containsKey(playerUUID)) {
@@ -600,7 +600,7 @@ public class PlayersManager{
     /**
      * Tries to get the user from this name
      * @param string
-     * @return
+     * @return user
      */
     public User getUser(String string) {
         return User.getInstance(getUUID(string));

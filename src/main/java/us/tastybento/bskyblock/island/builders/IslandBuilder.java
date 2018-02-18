@@ -79,7 +79,7 @@ public class IslandBuilder {
 
 
     /**
-     * @param player the player to set
+     * @param player - the player the player to set
      */
     public IslandBuilder setPlayer(Player player) {
         playerUUID = player.getUniqueId();

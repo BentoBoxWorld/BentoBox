@@ -150,7 +150,7 @@ public class IslandsManager {
     /**
      * This is a generic scan that can work in the overworld or the nether
      * @param l - location around which to scan
-     * @param i - the range to scan for a location < 0 means the full island.
+     * @param i - the range to scan for a location less than 0 means the full island.
      * @return - safe location, or null if none can be found
      */
     public Location bigScan(Location l, int i) {
@@ -234,7 +234,8 @@ public class IslandsManager {
 
     /**
      * Create an island with no owner at location
-     * @param location
+     * @param location - the location - location
+     * @return Island
      */
     public Island createIsland(Location location){
         return createIsland(location, null);
@@ -242,8 +243,9 @@ public class IslandsManager {
 
     /**
      * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
-     * @param location
-     * @param owner UUID
+     * @param location - the location - location
+     * @param owner - the island owner UUID
+     * @return Island
      */
     public Island createIsland(Location location, UUID owner){
         if (DEBUG) {
@@ -254,7 +256,7 @@ public class IslandsManager {
 
     /**
      * Deletes island. If island is null, it does nothing
-     * @param island
+     * @param island - island
      * @param removeBlocks - if the island blocks should be removed or not
      */
     public void deleteIsland(Island island, boolean removeBlocks) {
@@ -286,7 +288,7 @@ public class IslandsManager {
      * Delete Island
      * Called when an island is restarted or reset
      *
-     * @param player
+     * @param player - the player
      *            - player name String
      * @param removeBlocks
      *            - true to remove the island blocks
@@ -309,7 +311,7 @@ public class IslandsManager {
     }
 
     /**
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return ban list for player
      */
     public Set<UUID> getBanList(UUID playerUUID) {
@@ -328,8 +330,8 @@ public class IslandsManager {
 
     /**
      * Gets the island for this player. If they are in a team, the team island is returned
-     * @param uuid
-     * @return
+     * @param uuid - UUID
+     * @return Island or null
      */
     public Island getIsland(UUID uuid){
         return islandCache.get(uuid);
@@ -339,8 +341,8 @@ public class IslandsManager {
      * Returns the island at the x,z location or null if there is none.
      * This includes the full island space, not just the protected area.
      *
-     * @param x
-     * @param z
+     * @param x - x coordinate
+     * @param z - z coordinate
      * @return Island or null
      */
     public Island getIslandAt(int x, int z) {
@@ -351,7 +353,7 @@ public class IslandsManager {
      * Returns the island at the location or Optional empty if there is none.
      * This includes the full island space, not just the protected area
      *
-     * @param location
+     * @param location - the location
      * @return Island object
      */
     public Optional<Island> getIslandAt(Location location) {
@@ -376,7 +378,7 @@ public class IslandsManager {
      * Returns the player's island location.
      * Returns an island location OR a team island location
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Location of player's island or null if one does not exist
      */
     public Location getIslandLocation(UUID playerUUID) {
@@ -388,7 +390,7 @@ public class IslandsManager {
 
     /**
      * Get name of the island owned by owner
-     * @param owner
+     * @param owner - the island owner
      * @return Returns the name of owner's island, or the owner's name if there is none.
      */
     public String getIslandName(UUID owner) {
@@ -402,7 +404,7 @@ public class IslandsManager {
     /**
      * Returns a set of island member UUID's for the island of playerUUID
      *
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return Set of team UUIDs
      */
     public Set<UUID> getMembers(UUID playerUUID) {
@@ -412,7 +414,7 @@ public class IslandsManager {
     /**
      * Returns the island being public at the location or Optional Empty if there is none
      *
-     * @param location
+     * @param location - the location
      * @return Optional Island object
      */
 
@@ -430,8 +432,8 @@ public class IslandsManager {
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
      *
-     * @param playerUUID UUID of player
-     * @param number - starting home location e.g., 1
+     * @param playerUUID - the player's UUID UUID of player
+     * @param number - a number - starting home location e.g., 1
      * @return Location of a safe teleport spot or null if one cannot be found
      */
     public Location getSafeHomeLocation(final UUID playerUUID, int number) {
@@ -567,7 +569,7 @@ public class IslandsManager {
 
     /**
      * Provides UUID of this player's team leader or null if it does not exist
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return UUID of leader or null if player has no island
      */
     public UUID getTeamLeader(UUID playerUUID) {
@@ -575,7 +577,7 @@ public class IslandsManager {
     }
 
     /**
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if player has island and owns it
      */
     public boolean hasIsland(UUID playerUUID) {
@@ -585,8 +587,7 @@ public class IslandsManager {
      * This teleports player to their island. If not safe place can be found
      * then the player is sent to spawn via /spawn command
      *
-     * @param player
-     * @return true if the home teleport is successful
+     * @param player - the player
      */
     public void homeTeleport(final Player player) {
         homeTeleport(player, 1);
@@ -595,9 +596,8 @@ public class IslandsManager {
     /**
      * Teleport player to a home location. If one cannot be found a search is done to
      * find a safe place.
-     * @param player
-     * @param number - home location to do to
-     * @return true if successful, false if not
+     * @param player - the player
+     * @param number - a number - home location to do to
      */
     @SuppressWarnings("deprecation")
     public void homeTeleport(final Player player, int number) {
@@ -663,8 +663,8 @@ public class IslandsManager {
 
     /**
      * Checks if there is an island or blocks at this location
-     * @param location
-     * @return
+     * @param location - the location
+     * @return true if island found
      */
     public boolean isIsland(Location location){
         if (location == null) {
@@ -703,7 +703,7 @@ public class IslandsManager {
     /**
      * This returns the coordinate of where an island should be on the grid.
      *
-     * @param location location to query
+     * @param location - the location location to query
      * @return Location of closest island
      */
     public Location getClosestIsland(Location location) {
@@ -716,7 +716,7 @@ public class IslandsManager {
     }
 
     /**
-     * @param uniqueId
+     * @param uniqueId - unique ID
      * @return true if the player is the owner of their island, i.e., owner or team leader
      */
     public boolean isOwner(UUID uniqueId) {
@@ -751,54 +751,11 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if a location is within the home boundaries of a player. If coop is true, this check includes coop players.
-     * @param uuid
-     * @param coop
-     * @param loc
-     * @return
-     */
-    public boolean locationIsAtHome(UUID uuid, boolean coop, Location loc) {
-        // Make a list of test locations and test them
-        Set<Location> islandTestLocations = new HashSet<>();
-        if (plugin.getPlayers().hasIsland(uuid) || plugin.getPlayers().inTeam(uuid)) {
-            islandTestLocations.add(plugin.getIslands().getIslandLocation(uuid));
-            // If new Nether
-            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIslandWorldManager().getNetherWorld() != null) {
-                islandTestLocations.add(netherIsland(plugin.getIslands().getIslandLocation(uuid)));
-            }
-        }
-        // TODO: Check coop locations
-        /*
-        if (coop) {
-            islandTestLocations.addAll(CoopPlay.getInstance().getCoopIslands(player));
-        }*/
-        if (islandTestLocations.isEmpty()) {
-            return false;
-        }
-        // Run through all the locations
-        for (Location islandTestLocation : islandTestLocations) {
-            // Must be in the same world as the locations being checked
-            // Note that getWorld can return null if a world has been deleted on the server
-            if (islandTestLocation != null && islandTestLocation.getWorld() != null && islandTestLocation.getWorld().equals(loc.getWorld())) {
-                int protectionRange = getIslandAt(islandTestLocation).map(Island::getProtectionRange)
-                        .orElse(plugin.getSettings().getIslandProtectionRange());
-                if (loc.getX() > islandTestLocation.getX() - protectionRange
-                        && loc.getX() < islandTestLocation.getX() + protectionRange
-                        && loc.getZ() > islandTestLocation.getZ() - protectionRange
-                        && loc.getZ() < islandTestLocation.getZ() + protectionRange) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
      * Checks if a specific location is within the protected range of an island
      * owned by the player
      *
-     * @param player
-     * @param loc
+     * @param player - the player
+     * @param loc - location
      * @return true if location is on island of player
      */
     public boolean locationIsOnIsland(final Player player, final Location loc) {
@@ -839,38 +796,19 @@ public class IslandsManager {
     }
 
     /**
-     * Generates a Nether version of the locations
-     * @param islandLocation
-     * @return
-     */
-    private Location netherIsland(Location islandLocation) {
-        return islandLocation.toVector().toLocation(plugin.getIslandWorldManager().getNetherWorld());
-    }
-
-    /**
      * Checks if an online player is in the protected area of their island, a team island or a
      * coop island
      *
-     * @param user
+     * @param user - the User
      * @return true if on valid island, false if not
      */
     public boolean playerIsOnIsland(User user) {
-        return playerIsOnIsland(user, true);
+        return getIslandAt(user.getLocation()).map(x -> x.onIsland(user.getLocation())).orElse(false);
     }
 
-    /**
-     * Checks if an online player is in the protected area of their island, a team island or a
-     * coop island
-     * @param user
-     * @param coop - if true, coop islands are included
-     * @return true if on valid island, false if not
-     */
-    public boolean playerIsOnIsland(User user, boolean coop) {
-        return locationIsAtHome(user.getUniqueId(), coop, user.getLocation());
-    }
 
     /**
-     * @param location
+     * @param location - the location
      */
     public void removeMobs(Location location) {
         // TODO Auto-generated method stub
@@ -879,7 +817,7 @@ public class IslandsManager {
 
     /**
      * Removes this player from any and all islands
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void removePlayer(UUID playerUUID) {
         if (DEBUG) {
@@ -961,7 +899,7 @@ public class IslandsManager {
 
     /**
      * Set the island name
-     * @param owner
+     * @param owner - the island owner
      * @param name
      */
     public void setIslandName(UUID owner, String name) {
@@ -970,7 +908,7 @@ public class IslandsManager {
 
     /**
      * Puts a player in a team. Removes them from their old island if required.
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      * @return true if successful, false if not
      */
     public boolean setJoinTeam(Island teamIsland, UUID playerUUID) {
@@ -996,7 +934,7 @@ public class IslandsManager {
 
     /**
      * Called when a player leaves a team
-     * @param playerUUID
+     * @param playerUUID - the player's UUID
      */
     public void setLeaveTeam(UUID playerUUID) {
         if (DEBUG) {

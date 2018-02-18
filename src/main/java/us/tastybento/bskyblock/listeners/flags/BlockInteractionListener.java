@@ -18,7 +18,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
 
     /**
      * Handle interaction with blocks
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {

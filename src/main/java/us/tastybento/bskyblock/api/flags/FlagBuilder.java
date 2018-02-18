@@ -46,7 +46,7 @@ public class FlagBuilder {
     /**
      * Sets the default setting for this flag in the world
      * @param setting
-     * @return
+     * @return FlagBuilder
      */
     public FlagBuilder allowedByDefault(boolean setting) {
         defaultSetting = setting;
@@ -66,7 +66,7 @@ public class FlagBuilder {
     /**
      * Set the id of this flag to the name of this enum value
      * @param flag
-     * @return
+     * @return FlagBuilder
      */
     public FlagBuilder id(Enum<?> flag) {
         id = flag.name();

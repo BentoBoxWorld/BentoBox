@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.database.flatfile;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -26,7 +25,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
     }
 
     @Override
-    public Connection createConnection() throws SQLException {
+    public Connection createConnection() {
         return null; // Not used
     }
 
@@ -35,11 +34,8 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         return null; // Not used
     }
 
-    /**
-     * Loads a YAML file and if it does not exist it is looked for in the JAR
-     *
-     * @param fileName
-     * @return Yaml Config file
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.DatabaseConnecter#loadYamlFile(java.lang.String, java.lang.String)
      */
     @Override
     public YamlConfiguration loadYamlFile(String tableName, String fileName) {
@@ -76,11 +72,8 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         return config;
     }
 
-    /**
-     * Saves a YAML file
-     *
-     * @param yamlConfig
-     * @param fileName
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.DatabaseConnecter#saveYamlFile(org.bukkit.configuration.file.YamlConfiguration, java.lang.String, java.lang.String)
      */
     @Override
     public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName) {
@@ -99,6 +92,9 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         }
     }
 
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.DatabaseConnecter#getUniqueId(java.lang.String)
+     */
     @Override
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
@@ -111,6 +107,9 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         return uuid.toString();
     }
 
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.database.DatabaseConnecter#uniqueIdExists(java.lang.String, java.lang.String)
+     */
     @Override
     public boolean uniqueIdExists(String tableName, String key) {
         File file = new File(dataFolder, tableName + File.separator + key + ".yml");

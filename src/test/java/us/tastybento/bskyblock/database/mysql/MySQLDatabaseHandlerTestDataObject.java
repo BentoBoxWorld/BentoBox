@@ -74,7 +74,7 @@ public class MySQLDatabaseHandlerTestDataObject implements DataObject {
     }
 
     /**
-     * @param uniqueId the uniqueId to set
+     * @param uniqueId - unique ID the uniqueId to set
      */
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
@@ -242,7 +242,7 @@ public class MySQLDatabaseHandlerTestDataObject implements DataObject {
     }
 
     /**
-     * @param owner the owner to set
+     * @param owner - the island owner the owner to set
      */
     public void setOwner(UUID owner) {
         this.owner = owner;
