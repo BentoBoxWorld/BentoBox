@@ -16,7 +16,6 @@ import us.tastybento.bskyblock.util.Util;
 
 /**
  * @author tastybento
- *
  */
 public class IslandGoCommand extends CompositeCommand {
 
@@ -24,6 +23,9 @@ public class IslandGoCommand extends CompositeCommand {
         super(islandCommand, "go", "home", "h");
     }
 
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.api.commands.CompositeCommand#setup()
+     */
     @Override
     public void setup() {
         setPermission(Constants.PERMPREFIX + "island.home");
