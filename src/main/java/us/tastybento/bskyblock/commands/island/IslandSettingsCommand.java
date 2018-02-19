@@ -1,11 +1,11 @@
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.List;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
-
-import java.util.List;
 
 /**
  * @author Poslovitch

@@ -90,24 +90,17 @@ public class AddonClassLoader extends URLClassLoader {
         if (name.startsWith("us.tastybento.")) {
             throw new ClassNotFoundException(name);
         }
-        return classes.computeIfAbsent(name, k -> createFor(k, checkGlobal));
-    }
-
-    private Class<?> createFor(String name, boolean checkGlobal) {
-        Class<?> result = null;
-        if (checkGlobal) {
-            result = loader.getClassByName(name);
-        }
-
+        Class<?> result = classes.get(name);
         if (result == null) {
-            try {
-                result = super.findClass(name);
-            } catch (ClassNotFoundException e) {
-                Bukkit.getLogger().severe("Could not find class! " + e.getMessage());
+            if (checkGlobal) {
+                result = loader.getClassByName(name);
             }
-
-            if (result != null) {
-                loader.setClass(name, result);
+            if (result == null) {
+                result = super.findClass(name);
+                if (result != null) {
+                    loader.setClass(name, result);
+                }
+                classes.put(name, result);
             }
         }
         return result;
