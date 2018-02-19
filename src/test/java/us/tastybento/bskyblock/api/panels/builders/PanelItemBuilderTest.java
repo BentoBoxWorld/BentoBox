@@ -35,12 +35,10 @@ import us.tastybento.bskyblock.api.panels.PanelItem;
 @RunWith(PowerMockRunner.class)
 public class PanelItemBuilderTest {
 
-    private static PanelItemBuilder builder;
 
     @SuppressWarnings("deprecation")
     @BeforeClass
-    public static void setUp() throws Exception {
-        builder = new PanelItemBuilder();
+    public static void setUp() throws Exception {       
         Server server = mock(Server.class);
         World world = mock(World.class);
         world = mock(World.class);
@@ -71,6 +69,7 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testIconMaterial() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon(Material.STONE);
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
@@ -79,6 +78,7 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testIconItemStack() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon(new ItemStack(Material.IRON_ORE));
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
@@ -87,6 +87,7 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testIconUUID() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon(UUID.fromString("5988eecd-1dcd-4080-a843-785b62419"));
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
@@ -96,6 +97,7 @@ public class PanelItemBuilderTest {
     @SuppressWarnings("deprecation")
     @Test
     public void testIconString() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         builder.icon("tastybento");
         PanelItem item = builder.build();
         assertNotNull(item.getItem().getType());
@@ -106,6 +108,7 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testName() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         builder.name("test");
         PanelItem item = builder.build();
         assertEquals("test",item.getName());
@@ -113,6 +116,7 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testDescriptionListOfString() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         List<String> test = Arrays.asList("test line 1", "test line 2");
         builder.description(test);
         PanelItem item = builder.build();
@@ -121,7 +125,8 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testDescriptionStringArray() {
-        List<String> test = Arrays.asList("test line 1", "test line 2", "test line 3", "test line 4");
+        PanelItemBuilder builder = new PanelItemBuilder();
+        List<String> test = Arrays.asList("test line 3", "test line 4");
         builder.description("test line 3", "test line 4");
         PanelItem item = builder.build();
         assertEquals(test, item.getDescription());  
@@ -129,7 +134,8 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testDescriptionString() {
-        List<String> test = Arrays.asList("test line 1", "test line 2", "test line 3", "test line 4", "test line 5");
+        PanelItemBuilder builder = new PanelItemBuilder();
+        List<String> test = Arrays.asList("test line 5");
         builder.description("test line 5");
         PanelItem item = builder.build();
         assertEquals(test, item.getDescription());  
@@ -137,6 +143,7 @@ public class PanelItemBuilderTest {
 
     @Test
     public void testClickHandler() {
+        PanelItemBuilder builder = new PanelItemBuilder();
         // Test without click handler
         PanelItem item = builder.clickHandler(null).build();
         assertFalse(item.getClickHandler().isPresent());

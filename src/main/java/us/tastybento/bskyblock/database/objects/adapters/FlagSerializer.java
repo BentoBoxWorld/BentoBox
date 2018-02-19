@@ -19,6 +19,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
  */
 public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<String, Integer>> {
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<Flag, Integer> serialize(Object object) {
         Map<Flag, Integer> result = new HashMap<>();
@@ -41,6 +42,7 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
         return result;
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public Map<String, Integer> deserialize(Object object) {
         Map<String, Integer> result = new HashMap<>();

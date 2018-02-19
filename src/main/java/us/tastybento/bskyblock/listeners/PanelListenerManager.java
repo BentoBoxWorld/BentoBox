@@ -24,12 +24,13 @@ public class PanelListenerManager implements Listener {
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that
         // clicked the item
-        //UUID playerUUID = player.getUniqueId();
         Inventory inventory = event.getInventory(); // The inventory that was
         // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(user.getUniqueId())) {
             // Check the name of the panel
             if (inventory.getName().equals(openPanels.get(user.getUniqueId()).getInventory().getName())) {
+                // Cancel the event. If they don't want it to be canceled then the click handler(s) should uncancel it
+                event.setCancelled(true);
                 // Get the panel itself
                 Panel panel = openPanels.get(user.getUniqueId());
                 // Check that they clicked on a specific item

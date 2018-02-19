@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.api.addons;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
@@ -253,5 +254,13 @@ public abstract class Addon implements AddonInterface {
      */
     public IslandsManager getIslands() {
         return getBSkyBlock().getIslands();
+    }
+    
+    /**
+     * Get the Addon By Name
+     * @return Optional Addon
+     */
+    public Optional<Addon> getAddonByName(String name) {
+        return getBSkyBlock().getAddonsManager().getAddonByName(name);
     }
 }

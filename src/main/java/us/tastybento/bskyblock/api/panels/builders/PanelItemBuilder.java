@@ -29,7 +29,7 @@ public class PanelItemBuilder {
         this.icon = icon;
         return this;
     }
-    
+
     /**
      * Set icon to player's head
      * @param playerUUID - player's UUID
@@ -38,7 +38,7 @@ public class PanelItemBuilder {
     public PanelItemBuilder icon(UUID playerUUID) {
         return icon(Bukkit.getServer().getOfflinePlayer(playerUUID).getName());
     }
-    
+
     /**
      * Set icon to player's head
      * @param playerName - player's name

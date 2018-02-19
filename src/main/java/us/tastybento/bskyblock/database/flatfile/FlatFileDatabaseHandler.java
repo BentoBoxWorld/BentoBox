@@ -444,6 +444,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return object;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
     private Object deserialize(Object value, Class<? extends Object> clazz) {
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: deserialize - class is " + clazz.getCanonicalName());
