@@ -6,11 +6,13 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -271,16 +273,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return CompositeCommand or null if none found
      */
     public Optional<CompositeCommand> getSubCommand(String label) {
-        for (Map.Entry<String, CompositeCommand> entry : subCommands.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase(label)) {
-                return Optional.of(subCommands.get(label));
-            }
+        if (subCommands.containsKey(label.toLowerCase())) {
+            return Optional.ofNullable(subCommands.get(label));
         }
         // Try aliases
-        for (Map.Entry<String, CompositeCommand> entry : subCommandAliases.entrySet()) {
-            if (entry.getKey().equalsIgnoreCase(label)) {
-                return Optional.of(subCommandAliases.get(label));
-            }
+        if (subCommandAliases.containsKey(label.toLowerCase())) {
+            return Optional.ofNullable(subCommandAliases.get(label)); 
         }
         return Optional.empty();
     }

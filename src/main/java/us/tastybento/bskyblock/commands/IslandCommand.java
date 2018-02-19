@@ -6,7 +6,14 @@ import java.util.List;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.commands.island.*;
+import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
+import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
+import us.tastybento.bskyblock.commands.island.IslandGoCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
+import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
+import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
+import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
 
 public class IslandCommand extends CompositeCommand {
@@ -43,12 +50,14 @@ public class IslandCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         // If this player does not have an island, create one
+
         if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
-            getSubCommand("create").ifPresent(createCmd -> execute(user, new ArrayList<>()));
+            getSubCommand("create").ifPresent(createCmd -> createCmd.execute(user, new ArrayList<>()));
             return true;
         }
+
         // Otherwise, currently, just go home
-        getSubCommand("go").ifPresent(goCmd -> execute(user, new ArrayList<>()));
+        getSubCommand("go").ifPresent(goCmd -> goCmd.execute(user, new ArrayList<>()));
 
         return true;
     }
