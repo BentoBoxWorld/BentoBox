@@ -6,7 +6,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -24,6 +26,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -33,6 +36,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -80,26 +84,36 @@ public class TestBSkyBlock {
     private static World world;
     private static Player ownerOfIsland;
     private static Player visitorToIsland;
-
+    
     @BeforeClass
     public static void setUp() {
-        //PowerMockito.mockStatic(Bukkit.class);
-        //Mockito.doReturn(plugin).when(BSkyBlock.getPlugin());
-        //Mockito.when().thenReturn(plugin);
-        world = mock(World.class);
-
-
-        //Mockito.when(world.getWorldFolder()).thenReturn(worldFile);
-
         Server server = mock(Server.class);
+        World world = mock(World.class);
+        world = mock(World.class);
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
         Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
-        Bukkit.setServer(server);
-        Mockito.when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        
         PluginManager pluginManager = mock(PluginManager.class);
-        Mockito.when(server.getPluginManager()).thenReturn(pluginManager);
+        when(server.getPluginManager()).thenReturn(pluginManager);
+        
+        ItemFactory itemFactory = mock(ItemFactory.class);
+        when(server.getItemFactory()).thenReturn(itemFactory);
+        
+        Bukkit.setServer(server);
+        
+        SkullMeta skullMeta = mock(SkullMeta.class);
+        ItemMeta itemMeta = mock(ItemMeta.class);
+        when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
+        
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
+        when(offlinePlayer.getName()).thenReturn("tastybento");
 
+        when(Bukkit.getItemFactory()).thenReturn(itemFactory);
+        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        //when(Bukkit.getServer()).thenReturn(server);
+        
         sender = mock(CommandSender.class);
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
@@ -124,11 +138,12 @@ public class TestBSkyBlock {
         Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
         // Mock itemFactory for ItemStack
+        /*
         ItemFactory itemFactory = PowerMockito.mock(ItemFactory.class);
         PowerMockito.when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         ItemMeta itemMeta = PowerMockito.mock(ItemMeta.class);
         PowerMockito.when(itemFactory.getItemMeta(Matchers.any())).thenReturn(itemMeta);
-
+    */
         PowerMockito.mockStatic(Flags.class);
 
         plugin = Mockito.mock(BSkyBlock.class);

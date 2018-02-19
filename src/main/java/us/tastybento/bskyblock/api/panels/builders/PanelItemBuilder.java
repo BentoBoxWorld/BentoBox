@@ -1,7 +1,7 @@
 package us.tastybento.bskyblock.api.panels.builders;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,7 +36,7 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder icon(UUID playerUUID) {
-        return icon(Bukkit.getOfflinePlayer(playerUUID).getName());
+        return icon(Bukkit.getServer().getOfflinePlayer(playerUUID).getName());
     }
     
     /**
@@ -60,16 +60,35 @@ public class PanelItemBuilder {
         return this;
     }
 
+    /**
+     * Adds a list of strings to the descriptions
+     * @param description - List of strings
+     * @return PanelItemBuilder
+     */
     public PanelItemBuilder description(List<String> description) {
-        this.description = description;
+        this.description.addAll(description);
         return this;
     }
 
+    /**
+     * Add any number of lines to the description
+     * @param description strings of lines
+     * @return PanelItemBuilder
+     */
     public PanelItemBuilder description(String... description) {
-        Collections.addAll(this.description, description);
+        List<String> additions = Arrays.asList(description);
+        ArrayList<String> updatableList = new ArrayList<String>();
+        updatableList.addAll(this.description);
+        updatableList.addAll(additions);
+        this.description = updatableList;
         return this;
     }
 
+    /**
+     * Adds a line to the description
+     * @param description - string
+     * @return PanelItemBuilder
+     */
     public PanelItemBuilder description(String description) {
         this.description.add(description);
         return this;

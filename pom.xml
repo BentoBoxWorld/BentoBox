@@ -61,6 +61,7 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
+			<!-- I'm going to comment out these sections for now to speed up compilation
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
@@ -90,6 +91,7 @@
 					</execution>
 				</executions>
 			</plugin>
+			-->
 		</plugins>
 	</build>
 	<dependencies>

@@ -69,7 +69,7 @@ public class PanelItem {
     }
 
     public Optional<ClickHandler> getClickHandler() {
-        return Optional.of(clickHandler);
+        return Optional.ofNullable(clickHandler);
     }
 
     public boolean isGlow() {
