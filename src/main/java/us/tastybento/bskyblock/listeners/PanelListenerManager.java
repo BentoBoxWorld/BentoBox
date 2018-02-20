@@ -41,11 +41,12 @@ public class PanelListenerManager implements Listener {
                         panel.getItems().get(slot).getClickHandler().ifPresent(handler -> {
                             // Execute the handler's onClick method and optionally cancel the event if the handler returns true
                             event.setCancelled(handler.onClick(user, ClickType.LEFT));
-                            // If there is a listener, then run it.
-                            panel.getListener().ifPresent(l -> l.onInventoryClick(user, inventory, event.getCurrentItem()));
                         });
                     }
                 }
+                // If there is a listener, then run it.
+                panel.getListener().ifPresent(l -> l.onInventoryClick(user, event));
+
             } else {
                 // Wrong name - delete this panel
                 openPanels.remove(user.getUniqueId());
@@ -56,6 +57,8 @@ public class PanelListenerManager implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClose(InventoryCloseEvent event) {
         if (openPanels.containsKey(event.getPlayer().getUniqueId())) {
+            // Run any close inventory methods
+            openPanels.get(event.getPlayer().getUniqueId()).getListener().ifPresent(l -> l.onInventoryClose(event));
             openPanels.remove(event.getPlayer().getUniqueId());
         }
     }

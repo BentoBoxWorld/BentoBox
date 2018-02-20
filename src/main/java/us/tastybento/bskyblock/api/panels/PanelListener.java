@@ -1,7 +1,7 @@
 package us.tastybento.bskyblock.api.panels;
 
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.event.inventory.InventoryClickEvent;
+import org.bukkit.event.inventory.InventoryCloseEvent;
 
 import us.tastybento.bskyblock.api.commands.User;
 
@@ -12,11 +12,8 @@ public interface PanelListener {
      */
     void setup();
 
-    /**
-     * Called when the panel is clicked
-     * @param user - the User
-     * @param inventory
-     * @param clicked
-     */
-    void onInventoryClick(User user, Inventory inventory, ItemStack clicked);
+    void onInventoryClose(InventoryCloseEvent event);
+
+    void onInventoryClick(User user, InventoryClickEvent event);
+
 }
