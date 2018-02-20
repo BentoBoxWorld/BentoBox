@@ -25,7 +25,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
-import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.FlagType;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
 import us.tastybento.bskyblock.managers.RanksManager;
@@ -89,7 +89,7 @@ public class Island implements DataObject {
 
     //// Protection flags ////
     @Adapter(FlagSerializer.class)
-    private Map<Flag, Integer> flags = new HashMap<>();
+    private Map<FlagType, Integer> flags = new HashMap<>();
 
     private int levelHandicap;
 
@@ -164,7 +164,7 @@ public class Island implements DataObject {
      * @param flag
      * @return the rank needed to bypass this flag. Players must have at least this rank to bypass this flag.
      */
-    public int getFlag(Flag flag){
+    public int getFlag(FlagType flag){
         if(flags.containsKey(flag)) {
             return flags.get(flag);
         } else {
@@ -176,7 +176,7 @@ public class Island implements DataObject {
     /**
      * @return the flags
      */
-    public Map<Flag, Integer> getFlags() {
+    public Map<FlagType, Integer> getFlags() {
         return flags;
     }
 
@@ -428,7 +428,7 @@ public class Island implements DataObject {
      * @param flag
      * @return true if allowed, false if not
      */
-    public boolean isAllowed(Flag flag) {
+    public boolean isAllowed(FlagType flag) {
         return getFlag(flag) >= 0;
     }
 
@@ -438,7 +438,7 @@ public class Island implements DataObject {
      * @param flag - flag
      * @return true if allowed, false if not
      */
-    public boolean isAllowed(User user, Flag flag) {
+    public boolean isAllowed(User user, FlagType flag) {
         //Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
         return getRank(user) >= getFlag(flag);
     }
@@ -515,14 +515,14 @@ public class Island implements DataObject {
      * @param flag
      * @param value - rank value. If the flag applies to the island, a positive number = true, negative = false
      */
-    public void setFlag(Flag flag, int value){
+    public void setFlag(FlagType flag, int value){
         flags.put(flag, value);
     }
 
     /**
      * @param flags the flags to set
      */
-    public void setFlags(Map<Flag, Integer> flags) {
+    public void setFlags(Map<FlagType, Integer> flags) {
         this.flags = flags;
     }
 

@@ -17,7 +17,7 @@ import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
-import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.FlagType;
 import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter;
@@ -207,7 +207,7 @@ public class Settings implements ISettings<Settings> {
 
     private int togglePvPCooldown;
 
-    private Map<Flag, Boolean> defaultFlags = new HashMap<>();
+    private Map<FlagType, Boolean> defaultFlags = new HashMap<>();
 
     //TODO transform these options below into flags
     private boolean allowEndermanGriefing;
@@ -374,7 +374,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the defaultFlags
      */
-    public Map<Flag, Boolean> getDefaultFlags() {
+    public Map<FlagType, Boolean> getDefaultFlags() {
         return defaultFlags;
     }
     /**
@@ -925,7 +925,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @param defaultFlags the defaultFlags to set
      */
-    public void setDefaultFlags(Map<Flag, Boolean> defaultFlags) {
+    public void setDefaultFlags(Map<FlagType, Boolean> defaultFlags) {
         this.defaultFlags = defaultFlags;
     }
     /**

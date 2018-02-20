@@ -10,7 +10,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.lists.Flag;
 
 public class PlaceBlocksListener extends AbstractFlagListener {
 
@@ -21,7 +21,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent e) {
-        checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
+        checkIsland(e, e.getBlock().getLocation(), Flag.PLACE_BLOCKS);
     }
 
     /**
@@ -31,7 +31,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
         if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flags.PLACE_BLOCKS);
+            checkIsland(e, e.getRightClicked().getLocation(), Flag.PLACE_BLOCKS);
         }
     }
 
@@ -47,7 +47,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
         }
         switch (e.getClickedBlock().getType()) {
         case FIREWORK:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.PLACE_BLOCKS);
             return;
         case RAILS:
         case POWERED_RAIL:
@@ -55,7 +55,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
         case ACTIVATOR_RAIL:
             if (e.getMaterial() != null && (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.STORAGE_MINECART || e.getMaterial() == Material.HOPPER_MINECART
             || e.getMaterial() == Material.EXPLOSIVE_MINECART || e.getMaterial() == Material.POWERED_MINECART)) {
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                checkIsland(e, e.getClickedBlock().getLocation(), Flag.PLACE_BLOCKS);
             }
             return;
         default:
@@ -66,7 +66,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
                 if (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST
                         || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR
                         || (e.getMaterial().name().contains("BOAT") && !e.getClickedBlock().isLiquid())) {
-                    checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
+                    checkIsland(e, e.getPlayer().getLocation(), Flag.PLACE_BLOCKS);
                 }
             }
         }
@@ -80,7 +80,7 @@ public class PlaceBlocksListener extends AbstractFlagListener {
     public void onBlockForm(EntityBlockFormEvent e) {
         if (e.getNewState().getType().equals(Material.FROSTED_ICE)) {
             // Silently check
-            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS, true);
+            checkIsland(e, e.getBlock().getLocation(), Flag.PLACE_BLOCKS, true);
         }
     }
 

@@ -16,7 +16,11 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.World;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.Mockito;
@@ -38,7 +42,15 @@ public class MySQLDatabaseHandlerTest {
      */
     @BeforeClass
     public static void setUp() throws Exception {
+        Server server = mock(Server.class);
+        World world = mock(World.class);
+        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        when(server.getWorld("world")).thenReturn(world);
+        when(server.getVersion()).thenReturn("BSB_Mocking");
+        Bukkit.setServer(server);
+
         BSkyBlock plugin = mock(BSkyBlock.class);
+        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         MySQLDatabaseConnecter dbConn = mock(MySQLDatabaseConnecter.class);
         Connection connection = mock(Connection.class);
         when(dbConn.createConnection()).thenReturn(connection);

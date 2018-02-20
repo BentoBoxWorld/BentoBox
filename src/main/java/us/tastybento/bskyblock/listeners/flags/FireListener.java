@@ -3,12 +3,13 @@
  */
 package us.tastybento.bskyblock.listeners.flags;
 
-import java.util.Optional;
-
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -20,8 +21,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.lists.Flag;
 
 /**
  * Handles fire
@@ -31,25 +32,35 @@ import us.tastybento.bskyblock.lists.Flags;
 public class FireListener extends AbstractFlagListener {
 
     /**
+     * Checks if fire is allowed. If not, cancels the action
+     * @param e - cancellable event
+     * @param l - location
+     * @param flag - flag to check
+     * @return - true if cancelled, false if not
+     */
+    public boolean checkFire(Cancellable e, Location l, FlagType flag) {
+        // Check world
+        if (!inWorld(l)) {
+            //Bukkit.getLogger().info("DEBUG: not in world");
+            return false;
+        }
+        //Bukkit.getLogger().info("DEBUG: in world");
+        // Check if the island exists and if fire is allowed
+        boolean cancel = getIslands().getIslandAt(l).map(i -> {
+            return !i.isAllowed(flag);
+        }).orElse(!flag.isDefaultSetting());
+
+        e.setCancelled(cancel);
+        return cancel;
+    }
+
+    /**
      * Prevents fire spread
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockBurn(BlockBurnEvent e) {
-        if (!inWorld(e.getBlock().getLocation())) {
-            return;
-        }
-        // Check if the island exists and if fire is allowed
-        Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
-        island.ifPresent(x ->  {
-            if (!x.isAllowed(Flags.FIRE_SPREAD)) {
-                e.setCancelled(true);
-            }
-        });
-        // If not on an island, check the default setting
-        if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) {
-            e.setCancelled(true);
-        }
+    public boolean onBlockBurn(BlockBurnEvent e) {
+        return checkFire(e, e.getBlock().getLocation(), Flag.FIRE);
     }
 
     /**
@@ -57,23 +68,8 @@ public class FireListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockSpread(BlockSpreadEvent e) {
-        if (e.getSource().getType().equals(Material.FIRE)) {
-            if (!inWorld(e.getBlock().getLocation())) {
-                return;
-            }
-            // Check if the island exists and if fire is allowed
-            Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
-            island.ifPresent(x ->  {
-                if (!x.isAllowed(Flags.FIRE_SPREAD)) {
-                    e.setCancelled(true);
-                }
-            });
-            // If not on an island, check the default setting
-            if (!island.isPresent() && !Flags.FIRE_SPREAD.isDefaultSetting()) {
-                e.setCancelled(true);
-            }
-        }
+    public boolean onBlockSpread(BlockSpreadEvent e) {
+        return e.getSource().getType().equals(Material.FIRE) ? checkFire(e, e.getBlock().getLocation(), Flag.FIRE_SPREAD) : false;
     }
 
     /**
@@ -81,26 +77,9 @@ public class FireListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onBlockIgnite(BlockIgniteEvent e) {
-        if (!inWorld(e.getBlock().getLocation())) {
-            return;
-        }
+    public boolean onBlockIgnite(BlockIgniteEvent e) {
         // Check if this is a portal lighting - that is allowed any time
-        if (e.getBlock().getType().equals(Material.OBSIDIAN)) {
-            return;
-        }
-        // Check if the island exists and if fire is allowed
-        Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
-        island.ifPresent(x ->  {
-            if (!x.isAllowed(Flags.FIRE)) {
-                e.setCancelled(true);
-            }
-        });
-        // If not on an island, check the default setting
-        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) {
-            e.setCancelled(true);
-        }
-
+        return e.getBlock().getType().equals(Material.OBSIDIAN) ? false : checkFire(e, e.getBlock().getLocation(), Flag.FIRE);
     }
 
     /**
@@ -110,19 +89,19 @@ public class FireListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getMaterial() != null && e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.FIRE);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.FIRE);
         }
         // Look along player's sight line to see if any blocks are fire. Players can hit fire out quite a long way away.
         try {
             BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
-            Block lastBlock = iter.next();
             while (iter.hasNext()) {
+                Block lastBlock = iter.next();
                 lastBlock = iter.next();
                 if (lastBlock.equals(e.getClickedBlock())) {
                     break;
                 }
                 if (lastBlock.getType().equals(Material.FIRE)) {
-                    checkIsland(e, lastBlock.getLocation(), Flags.FIRE_EXTINGUISH);
+                    checkIsland(e, lastBlock.getLocation(), Flag.FIRE_EXTINGUISH);
                 }
             }
         } catch (Exception ex) {
@@ -134,49 +113,48 @@ public class FireListener extends AbstractFlagListener {
      * Protect TNT.
      * Note that allowing TNT to explode is governed by the Break Blocks flag.
      * @param e - event
+     * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onTNTPrimed(EntityChangeBlockEvent e) {
+    public boolean onTNTPrimed(EntityChangeBlockEvent e) {
+        //Bukkit.getLogger().info("DEBUG: " + e.getBlock().getType());
+        return e.getBlock().getType().equals(Material.TNT) ? checkFire(e, e.getBlock().getLocation(), Flag.FIRE) : false;
+    }
+
+    /**
+     * Protect TNT from being set light by a fire arrow
+     * @param e
+     * @return true if cancelled
+     */
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public boolean onTNTDamage(EntityChangeBlockEvent e) {
         // Check world
-        if (!inWorld(e.getBlock().getLocation())) {
-            return;
+        if (!e.getBlock().getType().equals(Material.TNT) || !inWorld(e.getBlock().getLocation())) {
+            Bukkit.getLogger().info("DEBUG: " + e.getBlock().getType());
+            return false;
         }
-        // Check for TNT
-        if (!e.getBlock().getType().equals(Material.TNT)) {
-            //plugin.getLogger().info("DEBUG: not tnt");
-            return;
-        }
-        // Check if the island exists and if fire is allowed
-        Optional<Island> island = getIslands().getIslandAt(e.getBlock().getLocation());
-        island.ifPresent(x ->  {
-            if (!x.isAllowed(Flags.FIRE)) {
-                e.setCancelled(true);
-            }
-        });
-        // If not on an island, check the default setting
-        if (!island.isPresent() && !Flags.FIRE.isDefaultSetting()) {
-            e.setCancelled(true);
-        }
-
-        // If either of these canceled the event, return
-        if (e.isCancelled()) {
-            return;
-        }
-
+        Bukkit.getLogger().info("DEBUG: in world");
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
         if (e.getEntity() instanceof Projectile) {
+            Bukkit.getLogger().info("DEBUG: projectile");
             Projectile projectile = (Projectile) e.getEntity();
             // Find out who fired it
-            if (projectile.getShooter() instanceof Player) {
-                if (projectile.getFireTicks() > 0) {
-                    Player shooter = (Player)projectile.getShooter();
-                    if (setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
-                        // Remove the arrow
-                        projectile.remove();
-                    }
+            if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0) {
+                Bukkit.getLogger().info("DEBUG: player fired a fire arrow");
+                Player shooter = (Player)projectile.getShooter();
+                setUser(User.getInstance(shooter));
+                Bukkit.getLogger().info("DEBUG: block loc = " + e.getBlock().getLocation());
+                Bukkit.getLogger().info("DEBUG: " + checkIsland(e, e.getBlock().getLocation(), Flag.BREAK_BLOCKS));
+                if (!setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flag.BREAK_BLOCKS)) {
+                    Bukkit.getLogger().info("DEBUG: remove arrow");
+                    // Remove the arrow
+                    projectile.remove();
+                    e.setCancelled(true);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
 }

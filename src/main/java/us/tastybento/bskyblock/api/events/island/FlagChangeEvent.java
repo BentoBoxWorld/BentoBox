@@ -3,7 +3,7 @@ package us.tastybento.bskyblock.api.events.island;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
-import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.FlagType;
 import us.tastybento.bskyblock.database.objects.Island;
 
 /**
@@ -16,7 +16,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  */
 public class FlagChangeEvent extends IslandBaseEvent {
     private final UUID player;
-    private final Flag editedFlag;
+    private final FlagType editedFlag;
     private final boolean setTo;
 
     /**
@@ -25,7 +25,7 @@ public class FlagChangeEvent extends IslandBaseEvent {
      * @param editedFlag
      * @param setTo
      */
-    public FlagChangeEvent(Island island, UUID player, Flag editedFlag, boolean setTo) {
+    public FlagChangeEvent(Island island, UUID player, FlagType editedFlag, boolean setTo) {
         super(island);
         this.player = player;
         this.editedFlag = editedFlag;
@@ -42,7 +42,7 @@ public class FlagChangeEvent extends IslandBaseEvent {
     /**
      * @return the edited flag
      */
-    public Flag getFlag() {
+    public FlagType getFlag() {
         return editedFlag;
     }
 

@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.lists.Flag;
 
 /**
  * Handles shearing
@@ -19,7 +19,7 @@ public class ShearingListener extends AbstractFlagListener {
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)
     public void onShear(final PlayerShearEntityEvent e) {
-        checkIsland(e, e.getEntity().getLocation(), Flags.SHEARING);
+        checkIsland(e, e.getEntity().getLocation(), Flag.SHEARING);
     }
 
 }

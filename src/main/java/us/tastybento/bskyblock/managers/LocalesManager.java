@@ -15,7 +15,7 @@ import us.tastybento.bskyblock.util.FileLister;
 /**
  * @author Tastybento, Poslovitch
  */
-public final class LocalesManager {
+public class LocalesManager {
 
     private BSkyBlock plugin;
     private HashMap<Locale, BSBLocale> languages = new HashMap<>();

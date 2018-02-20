@@ -18,7 +18,7 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.lists.Flag;
 
 public class BreakBlocksListener extends AbstractFlagListener {
 
@@ -29,7 +29,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-        checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
+        checkIsland(e, e.getBlock().getLocation(), Flag.BREAK_BLOCKS);
     }
 
     /**
@@ -40,7 +40,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
         if (e.getRemover() instanceof Player) {
-            setUser(User.getInstance(e.getRemover())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+            setUser(User.getInstance(e.getRemover())).checkIsland(e, e.getEntity().getLocation(), Flag.BREAK_BLOCKS);
         }
     }
 
@@ -63,7 +63,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             while (iter.hasNext()) {
                 lastBlock = iter.next();
                 if (lastBlock.getType().equals(Material.SKULL)) {
-                    checkIsland(e, lastBlock.getLocation(), Flags.BREAK_BLOCKS);
+                    checkIsland(e, lastBlock.getLocation(), Flag.BREAK_BLOCKS);
                     return;
                 }
             }
@@ -73,7 +73,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
         case CAKE_BLOCK:
         case DRAGON_EGG:
         case MOB_SPAWNER:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.BREAK_BLOCKS);
             return;
         case BED_BLOCK:
             if (e.getPlayer().getWorld().getEnvironment().equals(Environment.NETHER)) {
@@ -97,7 +97,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             User user = User.getInstance((Player) e.getAttacker());
             // Get the island and if present, check the flag, react if required and return
             getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> {
-                if (!x.isAllowed(user, Flags.BREAK_BLOCKS)) {
+                if (!x.isAllowed(user, Flag.BREAK_BLOCKS)) {
                     e.setCancelled(true);
                     user.sendMessage("protection.protected");
                 }
@@ -105,7 +105,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             });
 
             // The player is in the world, but not on an island, so general world settings apply
-            if (!Flags.BREAK_BLOCKS.isDefaultSetting()) {
+            if (!Flag.BREAK_BLOCKS.isDefaultSetting()) {
                 e.setCancelled(true);
                 user.sendMessage("protection.protected");
             }
@@ -125,12 +125,12 @@ public class BreakBlocksListener extends AbstractFlagListener {
 
         // Get the attacker
         if (e.getDamager() instanceof Player) {
-            setUser(User.getInstance(e.getDamager())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+            setUser(User.getInstance(e.getDamager())).checkIsland(e, e.getEntity().getLocation(), Flag.BREAK_BLOCKS);
         } else if (e.getDamager() instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
             if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
+                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flag.BREAK_BLOCKS)) {
                     e.getEntity().setFireTicks(0);
                     e.getDamager().remove();
                 }

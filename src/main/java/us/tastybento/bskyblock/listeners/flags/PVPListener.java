@@ -21,8 +21,8 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.potion.PotionEffect;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.lists.Flag;
 
 /**
  * TODO: PVP is different to other flags - it's either allowed for everyone or not allowed for everyone. Currently owners can hit visitors.
@@ -44,17 +44,17 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
-            Flag flag = Flags.PVP_OVERWORLD;
+            FlagType flag = Flag.PVP_OVERWORLD;
             if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = Flags.PVP_NETHER;
+                flag = Flag.PVP_NETHER;
             } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = Flags.PVP_END;
+                flag = Flag.PVP_END;
             }
             respond(e, e.getDamager(), flag);
         }
     }
 
-    private void respond(Event event, Entity damager, Flag flag) {
+    private void respond(Event event, Entity damager, FlagType flag) {
         // Get the attacker
         if (damager instanceof Player) {
             setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), flag);
@@ -75,11 +75,11 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
         if (e.getCaught() != null && e.getCaught() instanceof Player) {
-            Flag flag = Flags.PVP_OVERWORLD;
+            FlagType flag = Flag.PVP_OVERWORLD;
             if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = Flags.PVP_NETHER;
+                flag = Flag.PVP_NETHER;
             } else if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = Flags.PVP_END;
+                flag = Flag.PVP_END;
             }
             if (checkIsland(e, e.getCaught().getLocation(), flag)) {
                 e.getHook().remove();
@@ -95,11 +95,11 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Deduce the world
-        Flag flag = Flags.PVP_OVERWORLD;
+        FlagType flag = Flag.PVP_OVERWORLD;
         if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-            flag = Flags.PVP_NETHER;
+            flag = Flag.PVP_NETHER;
         } else if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-            flag = Flags.PVP_END;
+            flag = Flag.PVP_END;
         }
 
         // Try to get the thrower
@@ -144,11 +144,11 @@ public class PVPListener extends AbstractFlagListener {
 
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
             // Deduce the world
-            Flag flag = Flags.PVP_OVERWORLD;
+            FlagType flag = Flag.PVP_OVERWORLD;
             if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = Flags.PVP_NETHER;
+                flag = Flag.PVP_NETHER;
             } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = Flags.PVP_END;
+                flag = Flag.PVP_END;
             }
 
             UUID attacker = thrownPotions.get(e.getDamager().getEntityId());

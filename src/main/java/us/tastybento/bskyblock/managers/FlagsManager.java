@@ -7,9 +7,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.FlagType;
 import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.lists.Flag;
 
 /**
  * @author Poslovitch
@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.lists.Flags;
 public class FlagsManager {
 
     private BSkyBlock plugin;
-    private HashMap<String, Flag> flags = new HashMap<>();
+    private HashMap<String, FlagType> flags = new HashMap<>();
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
@@ -29,7 +29,7 @@ public class FlagsManager {
         this.plugin = plugin;
 
         // Register default flags
-        for (Flag flag : Flags.values()) {
+        for (FlagType flag : Flag.values()) {
             registerFlag(flag);
         }
     }
@@ -38,7 +38,7 @@ public class FlagsManager {
      * Register a new flag with BSkyBlock
      * @param flag
      */
-    public void registerFlag(Flag flag) {
+    public void registerFlag(FlagType flag) {
         //Bukkit.getLogger().info("DEBUG: registering flag " + flag.getID());
         flags.put(flag.getID(), flag);
         // If there is a listener which is not already registered, register it into Bukkit.
@@ -50,7 +50,7 @@ public class FlagsManager {
         });
     }
 
-    public HashMap<String, Flag> getFlags() {
+    public HashMap<String, FlagType> getFlags() {
         return flags;
     }
 
@@ -59,13 +59,13 @@ public class FlagsManager {
      * @param id
      * @return Flag or null if not known
      */
-    public Flag getFlagByID(String id) {
+    public FlagType getFlagByID(String id) {
         //Bukkit.getLogger().info("DEBUG: requesting " + id + " flags size = " + flags.size());
         return flags.get(id);
     }
 
-    public Flag getFlagByIcon(PanelItem item) {
-        for (Flag flag : flags.values()) {
+    public FlagType getFlagByIcon(PanelItem item) {
+        for (FlagType flag : flags.values()) {
             if (flag.getIcon().equals(item)) {
                 return flag;
             }

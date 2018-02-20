@@ -8,7 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.lists.Flag;
 
 /**
  * @author ben
@@ -27,17 +27,17 @@ public class BlockInteractionListener extends AbstractFlagListener {
         }
         switch (e.getClickedBlock().getType()) {
         case ANVIL:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ANVIL);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.ANVIL);
             break;
         case BEACON:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BEACON);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.BEACON);
             break;
         case BED_BLOCK:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BED);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.BED);
             break;
         case BREWING_STAND:
         case CAULDRON:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREWING);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.BREWING);
             break;
         case CHEST:
         case STORAGE_MINECART:
@@ -63,7 +63,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case HOPPER:
         case HOPPER_MINECART:
 
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.CHEST);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.CHEST);
             break;
 
         case ACACIA_DOOR:
@@ -77,7 +77,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case TRAP_DOOR:
         case WOODEN_DOOR:
         case WOOD_DOOR:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.DOOR);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.DOOR);
             break;
         case ACACIA_FENCE_GATE:
         case BIRCH_FENCE_GATE:
@@ -85,29 +85,29 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case FENCE_GATE:
         case JUNGLE_FENCE_GATE:
         case SPRUCE_FENCE_GATE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.GATE);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.GATE);
             break;
 
         case BURNING_FURNACE:
         case FURNACE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.FURNACE);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.FURNACE);
             break;
         case ENCHANTMENT_TABLE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENCHANTING);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.ENCHANTING);
             break;
         case ENDER_CHEST:
             break;
         case JUKEBOX:
         case NOTE_BLOCK:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.MUSIC);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.MUSIC);
             break;
         case WORKBENCH:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.CRAFTING);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.CRAFTING);
             break;
         case STONE_BUTTON:
         case WOOD_BUTTON:
         case LEVER:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.LEVER_BUTTON);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.LEVER_BUTTON);
             break;
         case DIODE:
         case DIODE_BLOCK_OFF:
@@ -116,7 +116,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case REDSTONE_COMPARATOR_OFF:
         case DAYLIGHT_DETECTOR:
         case DAYLIGHT_DETECTOR_INVERTED:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.REDSTONE);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flag.REDSTONE);
             break;
         default:
             break;
@@ -125,10 +125,10 @@ public class BlockInteractionListener extends AbstractFlagListener {
         if (e.getItem() != null) {
             switch (e.getItem().getType()) {
             case ENDER_PEARL:
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
+                checkIsland(e, e.getClickedBlock().getLocation(), Flag.ENDER_PEARL);
                 break;
             case MONSTER_EGG:
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.SPAWN_EGGS);
+                checkIsland(e, e.getClickedBlock().getLocation(), Flag.SPAWN_EGGS);
                 break;
             default:
                 break;

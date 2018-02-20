@@ -75,7 +75,7 @@ public class User {
 
     // ----------------------------------------------------
 
-    private final BSkyBlock plugin = BSkyBlock.getInstance();
+    private BSkyBlock plugin = BSkyBlock.getInstance();
 
     private final Player player;
     private final UUID playerUUID;
@@ -98,6 +98,14 @@ public class User {
         player = Bukkit.getPlayer(playerUUID);
         this.playerUUID = playerUUID;
         sender = null;
+    }
+    
+    /**
+     * Used for testing
+     * @param plugin
+     */
+    public void setPlugin(BSkyBlock plugin) {
+        this.plugin = plugin;
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {

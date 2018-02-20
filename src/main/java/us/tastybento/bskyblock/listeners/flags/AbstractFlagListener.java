@@ -16,8 +16,8 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.flags.Flag.FlagType;
+import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.api.flags.FlagType.Type;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -66,7 +66,7 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
+     * Explicitly set the user for the next {@link #checkIsland(Event, Location, FlagType)} or {@link #checkIsland(Event, Location, FlagType, boolean)}
      * @param user - the User
      */
     public AbstractFlagListener setUser(User user) {
@@ -106,7 +106,8 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Check if loc is in the island worlds
+     * Check if loc is in the island worlds.
+     * (If you are here because of an NPE in your test, then you need to do setPlugin(plugin) for your listener)
      * @param loc - location
      * @return true if the location is in the island worlds
      */
@@ -141,7 +142,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param breakBlocks
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flag breakBlocks) {
+    public boolean checkIsland(Event e, Location loc, FlagType breakBlocks) {
         return checkIsland(e, loc, breakBlocks, false);
     }
 
@@ -154,7 +155,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
+    public boolean checkIsland(Event e, Location loc, FlagType flag, boolean silent) {
         // If this is not an Island World, skip
         if (!inWorld(loc)) {
             return true;
@@ -162,9 +163,8 @@ public abstract class AbstractFlagListener implements Listener {
 
         // Get the island and if present
         Optional<Island> island = getIslands().getIslandAt(loc);
-
         // Handle Settings Flag
-        if (flag.getType().equals(FlagType.SETTING)) {
+        if (flag.getType().equals(Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
             return island.map(x -> x.isAllowed(flag)).orElse(flag.isDefaultSetting());
         }
@@ -181,7 +181,8 @@ public abstract class AbstractFlagListener implements Listener {
                 return false;
             }
         }
-
+        // Check if the plugin is set in User (required for testing)
+        user.setPlugin(plugin);
 
         if (island.isPresent()) {
             if (!island.get().isAllowed(user, flag)) {
@@ -194,7 +195,6 @@ public abstract class AbstractFlagListener implements Listener {
                 return true;
             }
         }
-
         // The player is in the world, but not on an island, so general world settings apply
         if (!flag.isDefaultSetting()) {
             noGo(e, silent);
@@ -211,7 +211,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param id
      * @return Flag denoted by the id
      */
-    protected Flag id(String id) {
+    protected FlagType id(String id) {
         return plugin.getFlagsManager().getFlagByID(id);
     }
 
