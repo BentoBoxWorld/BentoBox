@@ -111,9 +111,9 @@ public abstract class AbstractFlagListener implements Listener {
      * @return true if the location is in the island worlds
      */
     public boolean inWorld(Location loc) {
-        return (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())
+        return (loc != null && (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())
                 || loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())
-                || loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld())) ? true : false;
+                || loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld()))) ? true : false;
     }
 
     /**

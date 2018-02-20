@@ -35,7 +35,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.inventory.ItemFactory;
-import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Assert;
@@ -81,7 +80,6 @@ public class TestBSkyBlock {
     private static BSkyBlock plugin;
     private static FlagsManager flagsManager;
     private static Block block;
-    private static World world;
     private static Player ownerOfIsland;
     private static Player visitorToIsland;
     
@@ -89,7 +87,6 @@ public class TestBSkyBlock {
     public static void setUp() {
         Server server = mock(Server.class);
         World world = mock(World.class);
-        world = mock(World.class);
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
         Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -103,7 +100,6 @@ public class TestBSkyBlock {
         Bukkit.setServer(server);
         
         SkullMeta skullMeta = mock(SkullMeta.class);
-        ItemMeta itemMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
@@ -137,13 +133,6 @@ public class TestBSkyBlock {
         Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(OWNER_UUID);
         Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
-        // Mock itemFactory for ItemStack
-        /*
-        ItemFactory itemFactory = PowerMockito.mock(ItemFactory.class);
-        PowerMockito.when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        ItemMeta itemMeta = PowerMockito.mock(ItemMeta.class);
-        PowerMockito.when(itemFactory.getItemMeta(Matchers.any())).thenReturn(itemMeta);
-    */
         PowerMockito.mockStatic(Flags.class);
 
         plugin = Mockito.mock(BSkyBlock.class);

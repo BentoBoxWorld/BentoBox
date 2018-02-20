@@ -27,12 +27,13 @@ public class MobSpawnListener extends AbstractFlagListener {
      * Prevents mobs spawning naturally
      *
      * @param e - event
+     * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onNaturalMobSpawn(final CreatureSpawnEvent e) {
+    public boolean onNaturalMobSpawn(CreatureSpawnEvent e) {
         // If not in the right world, return
         if (!inWorld(e.getEntity())) {
-            return;
+            return false;
         }
         // Deal with natural spawning
         if (e.getSpawnReason().equals(SpawnReason.NATURAL)
@@ -41,30 +42,24 @@ public class MobSpawnListener extends AbstractFlagListener {
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)
                 || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
+            
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
-            if (island.isPresent()) {
-                if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)
-                        && !island.get().isAllowed(Flags.MOB_SPAWN)) {
-                    // Mobs not allowed to spawn
-                    e.setCancelled(true);
-                } else if (e.getEntity() instanceof Animals
-                        && !island.get().isAllowed(Flags.MONSTER_SPAWN)) {
-                    // Mobs not allowed to spawn
-                    e.setCancelled(true);
-                }
-            } else {
-                // Outside of the island
-                if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)
-                        && !Flags.MOB_SPAWN.isDefaultSetting()) {
-                    // Mobs not allowed to spawn
-                    e.setCancelled(true);
-                } else if (e.getEntity() instanceof Animals
-                        && !Flags.MONSTER_SPAWN.isDefaultSetting()) {
-                    // Mobs not allowed to spawn
-                    e.setCancelled(true);
-                }
+            // Cancel the event if these are true
+            if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) {
+                boolean cancel = island.map(i -> {
+                    return !i.isAllowed(Flags.MOB_SPAWN);
+                }).orElse(!Flags.MOB_SPAWN.isDefaultSetting());
+                e.setCancelled(cancel);
+                return cancel;
+            } else if (e.getEntity() instanceof Animals) {
+                boolean cancel = island.map(i -> {
+                    return !i.isAllowed(Flags.MONSTER_SPAWN);
+                }).orElse(!Flags.MONSTER_SPAWN.isDefaultSetting());
+                e.setCancelled(cancel);
+                return cancel;
             }
         }
+        return false;
     }
 
 }
