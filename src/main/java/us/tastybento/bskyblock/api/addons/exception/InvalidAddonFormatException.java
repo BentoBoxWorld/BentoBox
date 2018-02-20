@@ -19,8 +19,6 @@ public class InvalidAddonFormatException extends AddonException {
     public void printStackTrace(){
         super.printStackTrace();
 
-        System.out.println("");
-
         Bukkit.getLogger().log(Level.WARNING, "   Basic format : (addon.yml)");
         Bukkit.getLogger().log(Level.WARNING, "   main: path.to.your.MainClass");
         Bukkit.getLogger().log(Level.WARNING, "   name: <NameOfYourModule>");

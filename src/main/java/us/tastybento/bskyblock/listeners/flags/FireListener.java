@@ -3,7 +3,6 @@
  */
 package us.tastybento.bskyblock.listeners.flags;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -130,23 +129,16 @@ public class FireListener extends AbstractFlagListener {
     public boolean onTNTDamage(EntityChangeBlockEvent e) {
         // Check world
         if (!e.getBlock().getType().equals(Material.TNT) || !inWorld(e.getBlock().getLocation())) {
-            Bukkit.getLogger().info("DEBUG: " + e.getBlock().getType());
             return false;
         }
-        Bukkit.getLogger().info("DEBUG: in world");
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
         if (e.getEntity() instanceof Projectile) {
-            Bukkit.getLogger().info("DEBUG: projectile");
             Projectile projectile = (Projectile) e.getEntity();
             // Find out who fired it
             if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0) {
-                Bukkit.getLogger().info("DEBUG: player fired a fire arrow");
                 Player shooter = (Player)projectile.getShooter();
                 setUser(User.getInstance(shooter));
-                Bukkit.getLogger().info("DEBUG: block loc = " + e.getBlock().getLocation());
-                Bukkit.getLogger().info("DEBUG: " + checkIsland(e, e.getBlock().getLocation(), Flag.BREAK_BLOCKS));
                 if (!setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flag.BREAK_BLOCKS)) {
-                    Bukkit.getLogger().info("DEBUG: remove arrow");
                     // Remove the arrow
                     projectile.remove();
                     e.setCancelled(true);

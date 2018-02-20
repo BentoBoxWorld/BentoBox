@@ -4,8 +4,6 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
-import org.bukkit.Bukkit;
-
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
@@ -25,8 +23,6 @@ public interface ISettings<T> {
         // Get the handler
         AbstractDatabaseHandler<T> settingsHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
         // Load every field in the config class
-        Bukkit.getLogger().info("DEBUG: settingsHandler = " + settingsHandler);
-        Bukkit.getLogger().info("DEBUG: instance = " + getInstance());
         settingsHandler.saveSettings(getInstance());
     }
 
