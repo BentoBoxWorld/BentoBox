@@ -272,9 +272,23 @@ public class User {
 
     }
 
+    /**
+     * Forces an update of the user's complete inventory.
+     * Deprecated, but there is no current alternative.
+     */
     @SuppressWarnings("deprecation")
     public void updateInventory() {
         player.updateInventory();
 
+    }
+    
+    /**
+     * Performs a command as the player
+     * @param cmd
+     * @return true if the command was successful, otherwise false
+     */
+    public boolean performCommand(String cmd) {
+       return player.performCommand(cmd);
+        
     }
 }

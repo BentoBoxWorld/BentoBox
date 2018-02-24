@@ -120,7 +120,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         return list;
     }
-    
+
     /**
      *
      * Creates a list of <T>s filled with values from the provided ResultSet
@@ -245,8 +245,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // collectionTypes should be only 1 long
                     Type setType = collectionTypes.get(0);
                     List<Object> value = new ArrayList<>();
-                    for (Object listValue: config.getList(storageLocation)) {
-                        value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
+                    if (config.getList(storageLocation) != null) {
+                        for (Object listValue: config.getList(storageLocation)) {
+                            value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
+                        }
                     }
                     // TODO: this may not work with all keys. Further serialization may be required.
                     method.invoke(instance, value);
@@ -289,6 +291,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @SuppressWarnings("unchecked")
     @Override
     public void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+
+
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
 
@@ -315,7 +319,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 Method method = propertyDescriptor.getReadMethod();
                 // Invoke the read method to get the value. We have no idea what type of value it is.
                 Object value = method.invoke(instance);
-
+                if (DEBUG) {
+                    plugin.getLogger().info("DEBUG: field = " + field.getName() + " value = " + value);
+                }
                 String storageLocation = field.getName();
                 // Check if there is an annotation on the field
                 ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
@@ -350,12 +356,12 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     continue fields;
                 }
 
-                //plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
-                // Depending on the vale type, it'll need serializing differenty
+                plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
+                // Depending on the vale type, it'll need serializing differently
                 // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
                 if (method.getName().equals("getUniqueId")) {
                     // If the object does not have a unique name assigned to it already, one is created at random
-                    //plugin.getLogger().info("DEBUG: uniqueId = " + value);
+                    plugin.getLogger().info("DEBUG: flat file db uniqueId = " + value);
                     String id = (String)value;
                     if (value == null || id.isEmpty()) {
                         id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
@@ -398,6 +404,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             }
         if (filename.isEmpty()) {
             throw new IllegalArgumentException("No uniqueId in class");
+        }
+        if (DEBUG) {
+            plugin.getLogger().info("DEBUG: Saving YAML file : " + path + " " + filename);
         }
         databaseConnecter.saveYamlFile(config, path, filename);
     }
@@ -469,13 +478,23 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (Enum.class.isAssignableFrom(clazz)) {
             //Custom enums are a child of the Enum class.
             // Find out the value
+            Class<Enum> enumClass = (Class<Enum>)clazz;
             try {
-                Class<Enum> enumClass = (Class<Enum>)clazz;
                 value = Enum.valueOf(enumClass, (String)value);
             } catch (Exception e) {
-                // Maybe this value does not exist?
-                // TODO return something?
-                plugin.getLogger().severe(() -> "Could not deserialize enum:  " + clazz.getCanonicalName());
+                // This value does not exist - probably admin typed it wrongly
+                // Show what is available and pick one at random
+                plugin.getLogger().severe("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
+                plugin.getLogger().severe("Options are : ");
+                boolean isSet = false;
+                for (Field fields : enumClass.getFields()) {
+                    plugin.getLogger().severe(fields.getName());
+                    if (!isSet && !((String)value).isEmpty() && fields.getName().substring(0, 1).equals(((String)value).substring(0, 1))) {
+                        value = Enum.valueOf(enumClass, fields.getName());
+                        plugin.getLogger().severe("Setting to " + fields.getName() + " because it starts with the same letter");
+                        isSet = true;
+                    }
+                }
             }
         }
         return value;

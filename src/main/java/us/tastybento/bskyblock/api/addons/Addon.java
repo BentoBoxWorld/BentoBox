@@ -106,7 +106,7 @@ public abstract class Addon implements AddonInterface {
                 yamlConfig = new YamlConfiguration();
                 yamlConfig.load(yamlFile);
             } catch (Exception e) {
-                Bukkit.getLogger().severe("Could not load YAML file: " + file);
+                Bukkit.getLogger().severe("Could not load YAML file: " + file + " " + e.getMessage());
             }
         }
         return yamlConfig;
