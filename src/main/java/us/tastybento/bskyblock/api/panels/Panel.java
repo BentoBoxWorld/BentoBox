@@ -14,10 +14,10 @@ public class Panel {
 
     private Inventory inventory;
     private Map<Integer, PanelItem> items;
-    private Optional<PanelListener> listener;
-    private Optional<User> user;
+    private PanelListener listener;
+    private User user;
 
-    public Panel(String name, Map<Integer, PanelItem> items, int size, Optional<User> user, Optional<PanelListener> listener) {
+    public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
         this.items = items;
         // If size is undefined (0) then use the number of items
         if (size == 0) {
@@ -38,14 +38,11 @@ public class Panel {
         }
         this.listener = listener;
         // If the listener is defined, then run setup
-        listener.ifPresent(l -> l.setup());
-        /*
-        if (listener.isPresent()) {
-            listener.get().setup();
-        }*/
+        if (listener != null) listener.setup();
+
         // If the user is defined, then open panel immediately
         this.user = user;
-        user.ifPresent(this::open);
+        if (user != null) this.open(user);
     }
 
     public Inventory getInventory() {
@@ -60,11 +57,11 @@ public class Panel {
      * @return the listener
      */
     public Optional<PanelListener> getListener() {
-        return listener;
+        return Optional.of(listener);
     }
 
     public Optional<User> getUser() {
-        return user;
+        return Optional.of(user);
     }
 
     public void open(Player... players) {
@@ -102,14 +99,14 @@ public class Panel {
     /**
      * @param listener the listener to set
      */
-    public void setListener(Optional<PanelListener> listener) {
+    public void setListener(PanelListener listener) {
         this.listener = listener;
     }
 
     /**
      * @param user - the User the user to set
      */
-    public void setUser(Optional<User> user) {
+    public void setUser(User user) {
         this.user = user;
     }
 }

@@ -500,7 +500,7 @@ public class TestBSkyBlock {
         // Check all the default flags
         FlagsManager fm = new FlagsManager(plugin);
         Collection<Flag> defaultFlags = Flags.values();
-        Collection<Flag> f = fm.getFlags().values();
+        Collection<Flag> f = fm.getFlags();
         for (Flag flag : defaultFlags) {
             assertTrue(flag.getID(), f.contains(flag));
         }
@@ -515,7 +515,7 @@ public class TestBSkyBlock {
         FlagListener fl = new FlagListener(plugin);
         Flag customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
         assertEquals("CUSTOM_FLAG", customFlag.getID());
-        assertEquals(Material.DIAMOND, customFlag.getIcon().getItem().getType());
+        assertEquals(Material.DIAMOND, customFlag.getIcon());
         assertEquals(fl, customFlag.getListener().get());
         // Add it to the Flag Manager
         flagsManager.registerFlag(customFlag);

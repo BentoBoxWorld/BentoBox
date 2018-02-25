@@ -2,9 +2,13 @@ package us.tastybento.bskyblock.api.flags;
 
 import java.util.Optional;
 
+import org.bukkit.Material;
 import org.bukkit.event.Listener;
 
+import org.bukkit.inventory.ItemStack;
+import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.panels.PanelItem;
+import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
 public class Flag {
 
@@ -14,15 +18,16 @@ public class Flag {
     }
 
     private final String id;
-    private final PanelItem icon;
+    private final Material icon;
     private final Listener listener;
     private final Type type;
     private boolean defaultSetting;
 
-    public Flag(String id2, PanelItem icon, Listener listener, boolean defaultSetting, Type type) {
-        id = id2;
+    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type) {
+        this.id = id;
         this.icon = icon;
         this.listener = listener;
+        this.defaultSetting = defaultSetting;
         this.type = type;
     }
 
@@ -30,7 +35,7 @@ public class Flag {
         return id;
     }
 
-    public PanelItem getIcon() {
+    public Material getIcon() {
         return icon;
     }
 
@@ -100,4 +105,14 @@ public class Flag {
         return true;
     }
 
+    public PanelItem toPanelItem(User user) {
+        return new PanelItemBuilder()
+                .icon(new ItemStack(icon))
+                .name(user.getTranslation("protection.flags." + id))
+                .clickHandler((clicker, click) -> {
+                    clicker.sendRawMessage("You clicked on : " + id);
+                    return true;
+                })
+                .build();
+    }
 }
