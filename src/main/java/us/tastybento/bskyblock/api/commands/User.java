@@ -291,4 +291,39 @@ public class User {
        return player.performCommand(cmd);
         
     }
+    
+    /* (non-Javadoc)
+     * @see java.lang.Object#hashCode()
+     */
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ((playerUUID == null) ? 0 : playerUUID.hashCode());
+        return result;
+    }
+    /* (non-Javadoc)
+     * @see java.lang.Object#equals(java.lang.Object)
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof User)) {
+            return false;
+        }
+        User other = (User) obj;
+        if (playerUUID == null) {
+            if (other.playerUUID != null) {
+                return false;
+            }
+        } else if (!playerUUID.equals(other.playerUUID)) {
+            return false;
+        }
+        return true;
+    }
 }

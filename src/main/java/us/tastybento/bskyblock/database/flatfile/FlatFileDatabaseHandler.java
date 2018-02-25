@@ -196,19 +196,21 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     }
                     // TODO: this may not work with all keys. Further serialization may be required.
                     Map<Object,Object> value = new HashMap<>();
-                    for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
-                        // Keys cannot be null - skip if they exist
-                        Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
-                        if (mapKey == null) {
-                            continue;
+                    if (config.getConfigurationSection(storageLocation) != null) {
+                        for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
+                            // Keys cannot be null - skip if they exist
+                            Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
+                            if (mapKey == null) {
+                                continue;
+                            }
+                            // Map values can be null - it is allowed here
+                            Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
+                            if (DEBUG) {
+                                plugin.getLogger().info(() -> "DEBUG: mapKey = " + mapKey + " (" + mapKey.getClass().getCanonicalName() + ")");
+                                plugin.getLogger().info(() -> "DEBUG: mapValue = " + mapValue);
+                            }
+                            value.put(mapKey, mapValue);
                         }
-                        // Map values can be null - it is allowed here
-                        Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
-                        if (DEBUG) {
-                            plugin.getLogger().info(() -> "DEBUG: mapKey = " + mapKey + " (" + mapKey.getClass().getCanonicalName() + ")");
-                            plugin.getLogger().info(() -> "DEBUG: mapValue = " + mapValue);
-                        }
-                        value.put(mapKey, mapValue);
                     }
                     method.invoke(instance, value);
                 } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
