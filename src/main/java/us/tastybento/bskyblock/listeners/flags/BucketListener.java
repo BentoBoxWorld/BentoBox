@@ -10,7 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles interaction with beds
@@ -29,7 +29,7 @@ public class BucketListener extends AbstractFlagListener {
         if (e.getBlockClicked() != null) {
             // This is where the water or lava actually will be dumped
             Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
-            checkIsland(e, dumpBlock.getLocation(), Flag.BUCKET);
+            checkIsland(e, dumpBlock.getLocation(), Flags.BUCKET);
         }
     }
 
@@ -40,17 +40,17 @@ public class BucketListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
         // Check filling of various liquids
-        if (e.getItemStack().getType().equals(Material.LAVA_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flag.COLLECT_LAVA))) {
+        if (e.getItemStack().getType().equals(Material.LAVA_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA))) {
             return;
         }
-        if (e.getItemStack().getType().equals(Material.WATER_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flag.COLLECT_WATER))) {
+        if (e.getItemStack().getType().equals(Material.WATER_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_WATER))) {
             return;
         }
-        if (e.getItemStack().getType().equals(Material.MILK_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flag.MILKING))) {
+        if (e.getItemStack().getType().equals(Material.MILK_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.MILKING))) {
             return;
         }
         // Check general bucket use
-        checkIsland(e, e.getBlockClicked().getLocation(), Flag.BUCKET);
+        checkIsland(e, e.getBlockClicked().getLocation(), Flags.BUCKET);
     }
 
 }

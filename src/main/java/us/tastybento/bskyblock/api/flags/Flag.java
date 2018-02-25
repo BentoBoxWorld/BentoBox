@@ -6,7 +6,7 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.api.panels.PanelItem;
 
-public class FlagType {
+public class Flag {
 
     public enum Type {
         PROTECTION,
@@ -19,7 +19,7 @@ public class FlagType {
     private final Type type;
     private boolean defaultSetting;
 
-    public FlagType(String id2, PanelItem icon, Listener listener, boolean defaultSetting, Type type) {
+    public Flag(String id2, PanelItem icon, Listener listener, boolean defaultSetting, Type type) {
         id = id2;
         this.icon = icon;
         this.listener = listener;
@@ -83,10 +83,10 @@ public class FlagType {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof FlagType)) {
+        if (!(obj instanceof Flag)) {
             return false;
         }
-        FlagType other = (FlagType) obj;
+        Flag other = (Flag) obj;
         if (id == null) {
             if (other.id != null) {
                 return false;

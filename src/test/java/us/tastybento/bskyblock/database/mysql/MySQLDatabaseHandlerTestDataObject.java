@@ -6,7 +6,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.DataObject;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
@@ -59,7 +59,7 @@ public class MySQLDatabaseHandlerTestDataObject implements DataObject {
 
     //// Protection flags ////
     @Adapter(FlagSerializer.class)
-    private HashMap<FlagType, Integer> flags = new HashMap<>();
+    private HashMap<Flag, Integer> flags = new HashMap<>();
 
     private int levelHandicap;
     private Location spawnPoint;
@@ -307,14 +307,14 @@ public class MySQLDatabaseHandlerTestDataObject implements DataObject {
     /**
      * @return the flags
      */
-    public HashMap<FlagType, Integer> getFlags() {
+    public HashMap<Flag, Integer> getFlags() {
         return flags;
     }
 
     /**
      * @param flags the flags to set
      */
-    public void setFlags(HashMap<FlagType, Integer> flags) {
+    public void setFlags(HashMap<Flag, Integer> flags) {
         this.flags = flags;
     }
 

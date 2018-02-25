@@ -8,7 +8,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles portal protection
@@ -23,10 +23,10 @@ public class PortalListener extends AbstractFlagListener {
             return;
         }
         if (e.getCause().equals(TeleportCause.NETHER_PORTAL)) {
-            checkIsland(e, e.getFrom(), Flag.PORTAL);
+            checkIsland(e, e.getFrom(), Flags.PORTAL);
         } else if (e.getCause().equals(TeleportCause.END_PORTAL)) {
             // Silent check because it's spammy
-            checkIsland(e, e.getFrom(), Flag.PORTAL, true);
+            checkIsland(e, e.getFrom(), Flags.PORTAL, true);
         }
     }
 }

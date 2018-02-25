@@ -7,7 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerEggThrowEvent;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles throwing regular eggs (not spawn eggs)
@@ -22,7 +22,7 @@ public class EggListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEggThrow(PlayerEggThrowEvent e) {
-        if (!checkIsland(e, e.getEgg().getLocation(), Flag.EGGS)) {
+        if (!checkIsland(e, e.getEgg().getLocation(), Flags.EGGS)) {
             e.setHatching(false);
         }
     }

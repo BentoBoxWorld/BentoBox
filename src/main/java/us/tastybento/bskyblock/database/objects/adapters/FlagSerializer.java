@@ -8,7 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.api.flags.Flag;
 
 /**
  * Serializes the {@link us.tastybento.bskyblock.database.objects.Island#getFlags() getFlags()} and
@@ -17,12 +17,12 @@ import us.tastybento.bskyblock.api.flags.FlagType;
  * @author tastybento
  *
  */
-public class FlagSerializer implements AdapterInterface<Map<FlagType, Integer>, Map<String, Integer>> {
+public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<String, Integer>> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<FlagType, Integer> serialize(Object object) {
-        Map<FlagType, Integer> result = new HashMap<>();
+    public Map<Flag, Integer> serialize(Object object) {
+        Map<Flag, Integer> result = new HashMap<>();
         if (object == null) {
             return result;
         }
@@ -49,8 +49,8 @@ public class FlagSerializer implements AdapterInterface<Map<FlagType, Integer>, 
         if (object == null) {
             return result;
         }
-        Map<FlagType, Integer> flags = (Map<FlagType, Integer>)object;
-        for (Entry<FlagType, Integer> en: flags.entrySet()) {
+        Map<Flag, Integer> flags = (Map<Flag, Integer>)object;
+        for (Entry<Flag, Integer> en: flags.entrySet()) {
             result.put(en.getKey().getID(), en.getValue());
         }
         return result;

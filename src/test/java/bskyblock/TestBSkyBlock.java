@@ -54,13 +54,13 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.flags.AbstractFlagListener;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
@@ -68,7 +68,7 @@ import us.tastybento.bskyblock.util.Util;
 @RunWith(PowerMockRunner.class)
 //@SuppressStaticInitializationFor("us.tastybento.BSkyBlock")
 //@PrepareForTest( { Bukkit.class })
-@PrepareForTest( { Flag.class })
+@PrepareForTest( { Flags.class })
 public class TestBSkyBlock {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
@@ -133,7 +133,7 @@ public class TestBSkyBlock {
         Mockito.when(ownerOfIsland.getUniqueId()).thenReturn(OWNER_UUID);
         Mockito.when(visitorToIsland.getUniqueId()).thenReturn(VISITOR_UUID);
 
-        PowerMockito.mockStatic(Flag.class);
+        PowerMockito.mockStatic(Flags.class);
 
         plugin = Mockito.mock(BSkyBlock.class);
         flagsManager = new FlagsManager(plugin);
@@ -430,27 +430,27 @@ public class TestBSkyBlock {
 
         // Check default settings
         // Owner should be able to do anything
-        assertTrue(island.isAllowed(owner, Flag.PLACE_BLOCKS));
-        assertTrue(island.isAllowed(owner, Flag.BREAK_BLOCKS));
+        assertTrue(island.isAllowed(owner, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(owner, Flags.BREAK_BLOCKS));
 
         // Visitor can do nothing
-        assertFalse(island.isAllowed(visitor, Flag.PLACE_BLOCKS));
-        assertFalse(island.isAllowed(visitor, Flag.BREAK_BLOCKS));
+        assertFalse(island.isAllowed(visitor, Flags.PLACE_BLOCKS));
+        assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 
         // Set up protection settings - members can break blocks, visitors and place blocks
-        island.setFlag(Flag.BREAK_BLOCKS, RanksManager.MEMBER_RANK);
-        assertFalse(island.isAllowed(visitor, Flag.BREAK_BLOCKS));
+        island.setFlag(Flags.BREAK_BLOCKS, RanksManager.MEMBER_RANK);
+        assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 
-        island.setFlag(Flag.PLACE_BLOCKS, RanksManager.VISITOR_RANK);
-        assertFalse(island.isAllowed(visitor, Flag.BREAK_BLOCKS));
+        island.setFlag(Flags.PLACE_BLOCKS, RanksManager.VISITOR_RANK);
+        assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 
         // Owner should be able to do anything
-        assertTrue(island.isAllowed(owner, Flag.PLACE_BLOCKS));
-        assertTrue(island.isAllowed(owner, Flag.BREAK_BLOCKS));
+        assertTrue(island.isAllowed(owner, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(owner, Flags.BREAK_BLOCKS));
 
         // Visitor can only place blocks
-        assertTrue(island.isAllowed(visitor, Flag.PLACE_BLOCKS));
-        assertFalse(island.isAllowed(visitor, Flag.BREAK_BLOCKS));
+        assertTrue(island.isAllowed(visitor, Flags.PLACE_BLOCKS));
+        assertFalse(island.isAllowed(visitor, Flags.BREAK_BLOCKS));
 
         // Check if the members have capability
         User mem1 = User.getInstance(member1); // Visitor
@@ -459,16 +459,16 @@ public class TestBSkyBlock {
         User mem3 = User.getInstance(member3); // Banned
 
         // Member 1 is a visitor
-        assertTrue(island.isAllowed(mem1, Flag.PLACE_BLOCKS));
-        assertFalse(island.isAllowed(mem1, Flag.BREAK_BLOCKS));
+        assertTrue(island.isAllowed(mem1, Flags.PLACE_BLOCKS));
+        assertFalse(island.isAllowed(mem1, Flags.BREAK_BLOCKS));
 
         // Member 2 is a team member
-        assertTrue(island.isAllowed(mem2, Flag.PLACE_BLOCKS));
-        assertTrue(island.isAllowed(mem2, Flag.BREAK_BLOCKS));
+        assertTrue(island.isAllowed(mem2, Flags.PLACE_BLOCKS));
+        assertTrue(island.isAllowed(mem2, Flags.BREAK_BLOCKS));
 
         // Member 3 is no longer a member and is banned
-        assertFalse(island.isAllowed(mem3, Flag.PLACE_BLOCKS));
-        assertFalse(island.isAllowed(mem3, Flag.BREAK_BLOCKS));
+        assertFalse(island.isAllowed(mem3, Flags.PLACE_BLOCKS));
+        assertFalse(island.isAllowed(mem3, Flags.BREAK_BLOCKS));
     }
 
     @Test
@@ -482,16 +482,16 @@ public class TestBSkyBlock {
 
         Bukkit.getLogger().info("DEBUG: checking events - vistor");
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
-        Assert.assertFalse(fl.checkIsland(e3, location, Flag.BREAK_BLOCKS, true));
+        Assert.assertFalse(fl.checkIsland(e3, location, Flags.BREAK_BLOCKS, true));
 
         Bukkit.getLogger().info("DEBUG: checking events - owner");
         Event e = new BlockBreakEvent(block, ownerOfIsland);
-        Assert.assertTrue(fl.checkIsland(e, location, Flag.BREAK_BLOCKS, true));
+        Assert.assertTrue(fl.checkIsland(e, location, Flags.BREAK_BLOCKS, true));
 
         Bukkit.getLogger().info("DEBUG: checking events - member");
 
         Event e2 = new BlockBreakEvent(block, player);
-        Assert.assertTrue(fl.checkIsland(e2, location, Flag.BREAK_BLOCKS, true));
+        Assert.assertTrue(fl.checkIsland(e2, location, Flags.BREAK_BLOCKS, true));
 
     }
 
@@ -499,12 +499,12 @@ public class TestBSkyBlock {
     public void TestDefaultFlags() {
         // Check all the default flags
         FlagsManager fm = new FlagsManager(plugin);
-        Collection<FlagType> defaultFlags = Flag.values();
-        Collection<FlagType> f = fm.getFlags().values();
-        for (FlagType flag : defaultFlags) {
+        Collection<Flag> defaultFlags = Flags.values();
+        Collection<Flag> f = fm.getFlags().values();
+        for (Flag flag : defaultFlags) {
             assertTrue(flag.getID(), f.contains(flag));
         }
-        for (FlagType flag : f) {
+        for (Flag flag : f) {
             assertTrue(flag.getID(), defaultFlags.contains(flag));
         }
     }
@@ -513,7 +513,7 @@ public class TestBSkyBlock {
     public void TestCustomFlags() {
         // Custom
         FlagListener fl = new FlagListener(plugin);
-        FlagType customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
+        Flag customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
         assertEquals("CUSTOM_FLAG", customFlag.getID());
         assertEquals(Material.DIAMOND, customFlag.getIcon().getItem().getType());
         assertEquals(fl, customFlag.getListener().get());

@@ -14,7 +14,7 @@ import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles breeding protection
@@ -43,7 +43,7 @@ public class BreedingListener extends AbstractFlagListener {
                 inHand = e.getPlayer().getInventory().getItemInOffHand();
             }
             if (inHand != null && BREEDING_ITEMS.contains(inHand.getType())) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flag.BREEDING);
+                checkIsland(e, e.getRightClicked().getLocation(), Flags.BREEDING);
             }
         }
     }
