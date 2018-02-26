@@ -57,11 +57,11 @@ public class Panel {
      * @return the listener
      */
     public Optional<PanelListener> getListener() {
-        return Optional.of(listener);
+        return Optional.ofNullable(listener);
     }
 
     public Optional<User> getUser() {
-        return Optional.of(user);
+        return Optional.ofNullable(user);
     }
 
     public void open(Player... players) {
