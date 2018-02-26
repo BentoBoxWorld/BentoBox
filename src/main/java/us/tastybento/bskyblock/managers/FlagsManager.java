@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock.managers;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -10,7 +9,6 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**

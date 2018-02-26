@@ -2,11 +2,8 @@ package us.tastybento.bskyblock.api.flags;
 
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.api.flags.Flag.Type;
-import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
 public class FlagBuilder {
 

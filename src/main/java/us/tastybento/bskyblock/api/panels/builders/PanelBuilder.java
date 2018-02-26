@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.api.panels.builders;
 
-import java.util.Optional;
 import java.util.TreeMap;
 
 import us.tastybento.bskyblock.api.commands.User;

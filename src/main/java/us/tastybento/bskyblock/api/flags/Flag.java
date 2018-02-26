@@ -4,8 +4,8 @@ import java.util.Optional;
 
 import org.bukkit.Material;
 import org.bukkit.event.Listener;
-
 import org.bukkit.inventory.ItemStack;
+
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
