@@ -76,9 +76,9 @@ public class Panel {
      * @param users
      */
     public void open(User... users) {
-        for (User user : users) {
-            user.getPlayer().openInventory(inventory);
-            PanelListenerManager.getOpenPanels().put(user.getUniqueId(), this);
+        for (User u : users) {
+            u.getPlayer().openInventory(inventory);
+            PanelListenerManager.getOpenPanels().put(u.getUniqueId(), this);
         }
     }
 

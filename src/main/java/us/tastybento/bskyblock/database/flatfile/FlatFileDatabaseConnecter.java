@@ -134,10 +134,8 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
             Files.write(commentedFile.toPath(), (Iterable<String>)newFile.stream()::iterator);
             Files.move(commentedFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
+            plugin.getLogger().severe(() -> "Could not comment config file " + file.getName() + " " + e1.getMessage());
         } 
-
     }
 
     /* (non-Javadoc)

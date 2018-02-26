@@ -77,7 +77,7 @@ public class PanelItemBuilder {
      */
     public PanelItemBuilder description(String... description) {
         List<String> additions = Arrays.asList(description);
-        ArrayList<String> updatableList = new ArrayList<String>();
+        ArrayList<String> updatableList = new ArrayList<>();
         updatableList.addAll(this.description);
         updatableList.addAll(additions);
         this.description = updatableList;
