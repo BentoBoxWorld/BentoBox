@@ -520,7 +520,6 @@ public class TestBSkyBlock {
         // Add it to the Flag Manager
         flagsManager.registerFlag(customFlag);
         assertEquals(customFlag, flagsManager.getFlagByID("CUSTOM_FLAG"));
-        assertEquals(customFlag, flagsManager.getFlagByIcon(customFlag.getIcon()));
     }
 
     /**
