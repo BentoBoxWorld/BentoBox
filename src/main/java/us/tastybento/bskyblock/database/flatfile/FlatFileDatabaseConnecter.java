@@ -1,7 +1,15 @@
 package us.tastybento.bskyblock.database.flatfile;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Scanner;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -76,7 +84,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
      * @see us.tastybento.bskyblock.database.DatabaseConnecter#saveYamlFile(org.bukkit.configuration.file.YamlConfiguration, java.lang.String, java.lang.String)
      */
     @Override
-    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName) {
+    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName, Map<String, String> commentMap) {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
         }
@@ -89,7 +97,47 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
             yamlConfig.save(file);
         } catch (Exception e) {
             Bukkit.getLogger().severe("Could not save yaml file to database " + tableName + " " + fileName + " " + e.getMessage());
+            return;
         }
+        if (commentMap != null && !commentMap.isEmpty()) {
+            commentFile(file, commentMap);
+        }
+    }
+
+    /**
+     * Adds comments to a YAML file
+     * @param file
+     * @param commentMap
+     */
+    private void commentFile(File file, Map<String, String> commentMap) {
+        // Run through the file and add in the comments
+        File commentedFile = new File(file.getPath() + ".tmp");
+        List<String> newFile = new ArrayList<>();
+        try (Scanner scanner = new Scanner(file)) {
+            while (scanner.hasNextLine()) {
+                String nextLine = scanner.nextLine();
+                // See if there are any comments in this line
+                for (Entry<String, String> e : commentMap.entrySet()) {
+                    if (nextLine.contains(e.getKey())) {
+                        // We want the comment to start at the same level as the entry
+                        StringBuilder commentLine = new StringBuilder();
+                        for (int i = 0; i < nextLine.indexOf(e.getKey()); i++){
+                            commentLine.append(' ');
+                        }
+                        commentLine.append(e.getValue());
+                        nextLine = commentLine.toString();
+                        break;
+                    }
+                }
+                newFile.add(nextLine);
+            }
+            Files.write(commentedFile.toPath(), (Iterable<String>)newFile.stream()::iterator);
+            Files.move(commentedFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } 
+
     }
 
     /* (non-Javadoc)

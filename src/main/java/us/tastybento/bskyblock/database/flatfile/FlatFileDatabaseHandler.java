@@ -28,6 +28,7 @@ import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Constants.GameType;
+import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
@@ -301,6 +302,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // The file name of the Yaml file.
         String filename = "";
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
+        // Comments for the file
+        Map<String, String> yamlComments = new HashMap<>();
 
         // Only allow storing in an arbitrary place if it is a config object. Otherwise it is in the database
         if (configFlag) {
@@ -342,7 +345,19 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // TODO: add in game-specific saving
 
                 }
+                
+                // Comments          
+                ConfigComment comment = field.getAnnotation(ConfigComment.class);
+                if (comment != null) {
+                    // Create a random placeholder string
+                    String random = "comment-" + UUID.randomUUID().toString();
+                    // Store placeholder
+                    config.set(random, " ");
+                    // Create comment
+                    yamlComments.put(random, "# " + comment.value());
+                }
 
+                // Adapter
                 Adapter adapterNotation = field.getAnnotation(Adapter.class);
                 if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
                     if (DEBUG) {
@@ -357,13 +372,11 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // We are done here
                     continue fields;
                 }
-
-                plugin.getLogger().info("DEBUG: property desc = " + propertyDescriptor.getPropertyType().getTypeName());
+                
                 // Depending on the vale type, it'll need serializing differently
                 // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
                 if (method.getName().equals("getUniqueId")) {
                     // If the object does not have a unique name assigned to it already, one is created at random
-                    plugin.getLogger().info("DEBUG: flat file db uniqueId = " + value);
                     String id = (String)value;
                     if (value == null || id.isEmpty()) {
                         id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
@@ -407,10 +420,11 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (filename.isEmpty()) {
             throw new IllegalArgumentException("No uniqueId in class");
         }
+        
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: Saving YAML file : " + path + " " + filename);
         }
-        databaseConnecter.saveYamlFile(config, path, filename);
+        databaseConnecter.saveYamlFile(config, path, filename, yamlComments);
     }
 
     /**

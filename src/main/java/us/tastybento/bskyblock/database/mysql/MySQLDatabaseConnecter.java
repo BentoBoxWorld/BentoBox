@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.database.mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -59,15 +60,16 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
     }
 
     @Override
-    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName) {
+    public boolean uniqueIdExists(String tableName, String key) {
         // Not used
-
+        return false;
     }
 
     @Override
-    public boolean uniqueIdExists(String simpleName, String key) {
+    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName,
+            Map<String, String> commentMap) {
         // Not used
-        return false;
+        
     }
 
 }

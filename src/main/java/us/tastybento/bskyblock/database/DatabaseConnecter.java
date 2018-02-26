@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.database;
 
 import java.sql.Connection;
+import java.util.Map;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -16,21 +17,21 @@ public interface DatabaseConnecter {
      *
      * @return A new connection to the database using the settings provided
      */
-    public Connection createConnection();
+     Connection createConnection();
 
     /**
      * Returns the connection url
      *
      * @return the connector's URL
      */
-    public String getConnectionUrl();
+     String getConnectionUrl();
 
     /**
      * Looks through the database (or files) and returns a known unique key
      * @param tableName - name of the table
      * @return a unique key for this record
      */
-    public String getUniqueId(String tableName);
+     String getUniqueId(String tableName);
 
     /**
      * Check if a key exists in the database in this table or not
@@ -38,7 +39,7 @@ public interface DatabaseConnecter {
      * @param key - key to check
      * @return true if it exists
      */
-    public boolean uniqueIdExists(String tableName, String key);
+     boolean uniqueIdExists(String tableName, String key);
 
     /**
      * Loads a YAML file. Used by the flat file database
@@ -46,15 +47,16 @@ public interface DatabaseConnecter {
      * @param fileName - the filename
      * @return Yaml Configuration
      */
-    public YamlConfiguration loadYamlFile(String tableName, String fileName);
+     YamlConfiguration loadYamlFile(String tableName, String fileName);
 
     /**
      * Save the Yaml Config
      * @param yamlFile - the YAML config
      * @param tableName - analogous to a table in a database
      * @param fileName - the name of the record. Must be unique.
+     * @param commentMap - map of comments, may be empty
      */
-    public void saveYamlFile(YamlConfiguration yamlFile, String tableName, String fileName);
+    void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName, Map<String, String> commentMap);
 
 }
 

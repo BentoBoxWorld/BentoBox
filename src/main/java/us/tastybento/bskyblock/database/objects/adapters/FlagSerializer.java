@@ -4,7 +4,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Map.Entry;
 
-import org.bukkit.Bukkit;
 import org.bukkit.configuration.MemorySection;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -30,8 +29,6 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
         if (object instanceof MemorySection) {
             MemorySection section = (MemorySection) object;
             for (String key : section.getKeys(false)) {
-                Bukkit.getLogger().info("DEBUG: " + key + " = " + section.getInt(key));
-
                 result.put(BSkyBlock.getInstance().getFlagsManager().getFlagByID(key), section.getInt(key));
             }
         } else {
