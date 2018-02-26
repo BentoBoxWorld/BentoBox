@@ -10,7 +10,7 @@ import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
-public class Flag {
+public class Flag implements Comparable<Flag> {
 
     public enum Type {
         PROTECTION,
@@ -114,5 +114,18 @@ public class Flag {
                     return true;
                 })
                 .build();
+    }
+
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
+    @Override
+    public String toString() {
+        return "Flag [id=" + id + ", icon=" + icon + ", type=" + type + ", defaultSetting=" + defaultSetting + "]";
+    }
+
+    @Override
+    public int compareTo(Flag o) {
+        return getID().compareTo(o.getID());
     }
 }

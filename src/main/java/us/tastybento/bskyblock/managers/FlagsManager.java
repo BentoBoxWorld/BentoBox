@@ -29,17 +29,21 @@ public class FlagsManager {
         this.plugin = plugin;
 
         // Register default flags
-        for (Flag flag : Flags.values()) {
-            registerFlag(flag);
-        }
+        Flags.values().forEach(this::registerFlag);
     }
 
     /**
      * Register a new flag with BSkyBlock
-     * @param flag
+     * @param flag flag to be registered
+     * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
      */
-    public void registerFlag(Flag flag) {
-        //TODO throw an exception in case someone registers a flag with an existing id?
+    public boolean registerFlag(Flag flag) {
+        // Check in case the flag id or icon already exists
+        for (Flag fl : flags) {
+            if (fl.getID().equals(flag.getID()) || fl.getIcon().equals(flag.getIcon())) {
+                return false;
+            }
+        }
         flags.add(flag);
         // If there is a listener which is not already registered, register it into Bukkit.
         flag.getListener().ifPresent(l -> {
@@ -48,35 +52,32 @@ public class FlagsManager {
                 registeredListeners.add(l);
             }
         });
-
-        // Sorts the list
+        return true;
     }
 
+    /**
+     * @return list of all flags
+     */
     public List<Flag> getFlags() {
         return flags;
     }
 
     /**
      * Get flag by ID
-     * @param id
+     * @param id unique id for this flag
      * @return Flag or null if not known
      */
     public Flag getFlagByID(String id) {
-        for (Flag flag : flags) {
-            if (flag.getID().equals(id)) {
-                return flag;
-            }
-        }
-        return null;
+        return flags.stream().filter(flag -> flag.getID().equals(id)).findFirst().orElse(null);
     }
 
+    /**
+     * Get flag by icon
+     * @param icon material
+     * @return flag or null if it does not exist
+     */
     public Flag getFlagByIcon(Material icon) {
-        for (Flag flag : flags) {
-            if (flag.getIcon().equals(icon)) {
-                return flag;
-            }
-        }
-        return null;
+        return flags.stream().filter(flag -> flag.getIcon().equals(icon)).findFirst().orElse(null);
     }
 
 }

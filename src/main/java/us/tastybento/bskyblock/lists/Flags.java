@@ -31,7 +31,7 @@ import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 public class Flags {
 
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
-    public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.DIRT).listener(new PlaceBlocksListener()).build();
+    public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.BEDROCK).listener(new PlaceBlocksListener()).build();
 
     // Block interactions - all use BlockInteractionListener()
     public static final Flag ANVIL = new FlagBuilder().id("ANVIL").icon(Material.ANVIL).listener(new BlockInteractionListener()).build();
@@ -105,8 +105,8 @@ public class Flags {
     public static final Flag SHEARING = new FlagBuilder().id("SHEARING").icon(Material.SHEARS).listener(new ShearingListener()).build();
 
     // Item pickup or drop
-    public static final Flag ITEM_DROP = new FlagBuilder().id("ITEM_DROP").icon(Material.DIRT).allowedByDefault(true).listener(new ItemDropPickUpListener()).build();
-    public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.DIRT).build();
+    public static final Flag ITEM_DROP = new FlagBuilder().id("ITEM_DROP").icon(Material.BEETROOT_SOUP).allowedByDefault(true).listener(new ItemDropPickUpListener()).build();
+    public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
 
     /*
      * Settings flags (not protection flags)
