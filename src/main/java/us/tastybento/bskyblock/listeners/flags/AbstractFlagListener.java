@@ -16,8 +16,8 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.flags.FlagType;
-import us.tastybento.bskyblock.api.flags.FlagType.Type;
+import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -66,7 +66,7 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Explicitly set the user for the next {@link #checkIsland(Event, Location, FlagType)} or {@link #checkIsland(Event, Location, FlagType, boolean)}
+     * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
      * @param user - the User
      */
     public AbstractFlagListener setUser(User user) {
@@ -142,7 +142,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param breakBlocks
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, FlagType breakBlocks) {
+    public boolean checkIsland(Event e, Location loc, Flag breakBlocks) {
         return checkIsland(e, loc, breakBlocks, false);
     }
 
@@ -155,7 +155,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, FlagType flag, boolean silent) {
+    public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If this is not an Island World, skip
         if (!inWorld(loc)) {
             return true;
@@ -211,7 +211,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param id
      * @return Flag denoted by the id
      */
-    protected FlagType id(String id) {
+    protected Flag id(String id) {
         return plugin.getFlagsManager().getFlagByID(id);
     }
 

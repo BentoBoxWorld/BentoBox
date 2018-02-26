@@ -6,6 +6,7 @@ import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
+import us.tastybento.bskyblock.panels.SettingsPanel;
 
 /**
  * @author Poslovitch
@@ -31,6 +32,7 @@ public class IslandSettingsCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
+        SettingsPanel.openPanel(user);
         return true;
     }
 }

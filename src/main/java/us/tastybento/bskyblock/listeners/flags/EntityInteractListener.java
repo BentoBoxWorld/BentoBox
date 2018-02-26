@@ -12,7 +12,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles interaction with entities like armor stands
@@ -25,7 +25,7 @@ public class EntityInteractListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked() instanceof ArmorStand) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flag.ARMOR_STAND);
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
         }
     }
 
@@ -33,11 +33,11 @@ public class EntityInteractListener extends AbstractFlagListener {
     public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
         // Animal riding
         if (e.getRightClicked() instanceof Vehicle && e.getRightClicked() instanceof Animals) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flag.RIDING);
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.RIDING);
         }
         // Villager trading
         if (e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flag.TRADING);
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.TRADING);
         }
     }
 }

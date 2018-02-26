@@ -10,11 +10,10 @@ import org.bukkit.event.entity.EntityPickupItemEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * @author tastybento
- *
  */
 public class ItemDropPickUpListener extends AbstractFlagListener {
 
@@ -23,7 +22,7 @@ public class ItemDropPickUpListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onVisitorDrop(PlayerDropItemEvent e) {
-        checkIsland(e, e.getItemDrop().getLocation(), Flag.ITEM_DROP);
+        checkIsland(e, e.getItemDrop().getLocation(), Flags.ITEM_DROP);
     }
 
     /*
@@ -33,7 +32,7 @@ public class ItemDropPickUpListener extends AbstractFlagListener {
     public void onVisitorPickup(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof Player) {
             // Disallow, but don't tell the player an error
-            setUser(User.getInstance(e.getEntity())).checkIsland(e, e.getItem().getLocation(), Flag.ITEM_PICKUP, true);
+            setUser(User.getInstance(e.getEntity())).checkIsland(e, e.getItem().getLocation(), Flags.ITEM_PICKUP, true);
         }
     }
 }

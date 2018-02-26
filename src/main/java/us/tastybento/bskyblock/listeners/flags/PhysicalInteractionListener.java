@@ -8,10 +8,10 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
- * @author ben
+ * @author tastybento
  *
  */
 public class PhysicalInteractionListener extends AbstractFlagListener {
@@ -29,14 +29,14 @@ public class PhysicalInteractionListener extends AbstractFlagListener {
         switch (e.getClickedBlock().getType()) {
         case SOIL:
             // Crop trample
-            checkIsland(e, e.getPlayer().getLocation(), Flag.CROP_TRAMPLE);
+            checkIsland(e, e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
             break;
         case WOOD_PLATE:
         case STONE_PLATE:
         case GOLD_PLATE:
         case IRON_PLATE:
             // Pressure plates
-            checkIsland(e, e.getPlayer().getLocation(), Flag.PRESSURE_PLATE);
+            checkIsland(e, e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             break;
         default:
             break;

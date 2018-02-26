@@ -20,8 +20,8 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.flags.FlagType;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles fire
@@ -37,7 +37,7 @@ public class FireListener extends AbstractFlagListener {
      * @param flag - flag to check
      * @return - true if cancelled, false if not
      */
-    public boolean checkFire(Cancellable e, Location l, FlagType flag) {
+    public boolean checkFire(Cancellable e, Location l, Flag flag) {
         // Check world
         if (!inWorld(l)) {
             //Bukkit.getLogger().info("DEBUG: not in world");
@@ -59,7 +59,7 @@ public class FireListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onBlockBurn(BlockBurnEvent e) {
-        return checkFire(e, e.getBlock().getLocation(), Flag.FIRE);
+        return checkFire(e, e.getBlock().getLocation(), Flags.FIRE);
     }
 
     /**
@@ -68,7 +68,7 @@ public class FireListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onBlockSpread(BlockSpreadEvent e) {
-        return e.getSource().getType().equals(Material.FIRE) ? checkFire(e, e.getBlock().getLocation(), Flag.FIRE_SPREAD) : false;
+        return e.getSource().getType().equals(Material.FIRE) && checkFire(e, e.getBlock().getLocation(), Flags.FIRE_SPREAD);
     }
 
     /**
@@ -78,7 +78,7 @@ public class FireListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onBlockIgnite(BlockIgniteEvent e) {
         // Check if this is a portal lighting - that is allowed any time
-        return e.getBlock().getType().equals(Material.OBSIDIAN) ? false : checkFire(e, e.getBlock().getLocation(), Flag.FIRE);
+        return !e.getBlock().getType().equals(Material.OBSIDIAN) && checkFire(e, e.getBlock().getLocation(), Flags.FIRE);
     }
 
     /**
@@ -88,7 +88,7 @@ public class FireListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getMaterial() != null && e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
-            checkIsland(e, e.getClickedBlock().getLocation(), Flag.FIRE);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.FIRE);
         }
         // Look along player's sight line to see if any blocks are fire. Players can hit fire out quite a long way away.
         try {
@@ -100,7 +100,7 @@ public class FireListener extends AbstractFlagListener {
                     break;
                 }
                 if (lastBlock.getType().equals(Material.FIRE)) {
-                    checkIsland(e, lastBlock.getLocation(), Flag.FIRE_EXTINGUISH);
+                    checkIsland(e, lastBlock.getLocation(), Flags.FIRE_EXTINGUISH);
                 }
             }
         } catch (Exception ex) {
@@ -117,7 +117,7 @@ public class FireListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onTNTPrimed(EntityChangeBlockEvent e) {
         //Bukkit.getLogger().info("DEBUG: " + e.getBlock().getType());
-        return e.getBlock().getType().equals(Material.TNT) ? checkFire(e, e.getBlock().getLocation(), Flag.FIRE) : false;
+        return e.getBlock().getType().equals(Material.TNT) && checkFire(e, e.getBlock().getLocation(), Flags.FIRE);
     }
 
     /**
@@ -138,7 +138,7 @@ public class FireListener extends AbstractFlagListener {
             if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0) {
                 Player shooter = (Player)projectile.getShooter();
                 setUser(User.getInstance(shooter));
-                if (!setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flag.BREAK_BLOCKS)) {
+                if (!setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
                     // Remove the arrow
                     projectile.remove();
                     e.setCancelled(true);

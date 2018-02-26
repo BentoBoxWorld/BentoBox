@@ -12,8 +12,8 @@ public class PanelBuilder {
     private String name;
     private TreeMap<Integer, PanelItem> items = new TreeMap<>();
     private int size;
-    private Optional<User> user = Optional.empty();
-    private Optional<PanelListener> listener = Optional.empty();
+    private User user;
+    private PanelListener listener;
 
     public PanelBuilder setName(String name) {
         this.name = name;
@@ -86,7 +86,7 @@ public class PanelBuilder {
      * @return PanelBuilder
      */
     public PanelBuilder setUser(User user) {
-        this.user = Optional.of(user);
+        this.user = user;
         return this;
     }
 
@@ -96,7 +96,7 @@ public class PanelBuilder {
      * @return PanelBuilder
      */
     public PanelBuilder setListener(PanelListener listener) {
-        this.listener = Optional.of(listener);
+        this.listener = listener;
         return this;
     }
 }

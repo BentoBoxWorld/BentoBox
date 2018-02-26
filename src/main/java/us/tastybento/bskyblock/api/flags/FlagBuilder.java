@@ -4,14 +4,14 @@ import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import us.tastybento.bskyblock.api.flags.FlagType.Type;
+import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
 public class FlagBuilder {
 
     private String id;
-    private PanelItem icon;
+    private Material icon;
     private Listener listener;
     private boolean defaultSetting;
     private Type type = Type.PROTECTION;
@@ -22,15 +22,7 @@ public class FlagBuilder {
     }
 
     public FlagBuilder icon(Material icon) {
-        icon(new PanelItemBuilder().icon(new ItemStack(icon)).build());
-        return this;
-    }
-
-    public FlagBuilder icon(PanelItem icon) {
         this.icon = icon;
-        //TODO: if icon don't have a clickhandler, add the default one
-        //TODO: if icon don't have a display name, set it to the default reference
-        //TODO: if icon don't have a lore, set it to the default one
         return this;
     }
 
@@ -39,8 +31,8 @@ public class FlagBuilder {
         return this;
     }
 
-    public FlagType build() {
-        return new FlagType(id, icon, listener, defaultSetting, type);
+    public Flag build() {
+        return new Flag(id, icon, listener, defaultSetting, type);
     }
 
     /**

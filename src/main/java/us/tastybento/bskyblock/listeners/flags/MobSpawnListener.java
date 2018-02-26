@@ -14,7 +14,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles natural mob spawning.
@@ -47,14 +47,14 @@ public class MobSpawnListener extends AbstractFlagListener {
             // Cancel the event if these are true
             if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) {
                 boolean cancel = island.map(i -> {
-                    return !i.isAllowed(Flag.MOB_SPAWN);
-                }).orElse(!Flag.MOB_SPAWN.isDefaultSetting());
+                    return !i.isAllowed(Flags.MOB_SPAWN);
+                }).orElse(!Flags.MOB_SPAWN.isDefaultSetting());
                 e.setCancelled(cancel);
                 return cancel;
             } else if (e.getEntity() instanceof Animals) {
                 boolean cancel = island.map(i -> {
-                    return !i.isAllowed(Flag.MONSTER_SPAWN);
-                }).orElse(!Flag.MONSTER_SPAWN.isDefaultSetting());
+                    return !i.isAllowed(Flags.MONSTER_SPAWN);
+                }).orElse(!Flags.MONSTER_SPAWN.isDefaultSetting());
                 e.setCancelled(cancel);
                 return cancel;
             }

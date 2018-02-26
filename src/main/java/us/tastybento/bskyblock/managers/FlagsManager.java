@@ -2,14 +2,16 @@ package us.tastybento.bskyblock.managers;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.flags.FlagType;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * @author Poslovitch
@@ -18,7 +20,7 @@ import us.tastybento.bskyblock.lists.Flag;
 public class FlagsManager {
 
     private BSkyBlock plugin;
-    private HashMap<String, FlagType> flags = new HashMap<>();
+    private List<Flag> flags = new ArrayList<>();
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
@@ -29,7 +31,7 @@ public class FlagsManager {
         this.plugin = plugin;
 
         // Register default flags
-        for (FlagType flag : Flag.values()) {
+        for (Flag flag : Flags.values()) {
             registerFlag(flag);
         }
     }
@@ -38,9 +40,9 @@ public class FlagsManager {
      * Register a new flag with BSkyBlock
      * @param flag
      */
-    public void registerFlag(FlagType flag) {
-        //Bukkit.getLogger().info("DEBUG: registering flag " + flag.getID());
-        flags.put(flag.getID(), flag);
+    public void registerFlag(Flag flag) {
+        //TODO throw an exception in case someone registers a flag with an existing id?
+        flags.add(flag);
         // If there is a listener which is not already registered, register it into Bukkit.
         flag.getListener().ifPresent(l -> {
             if (!registeredListeners.contains(l)) {
@@ -48,9 +50,11 @@ public class FlagsManager {
                 registeredListeners.add(l);
             }
         });
+
+        // Sorts the list
     }
 
-    public HashMap<String, FlagType> getFlags() {
+    public List<Flag> getFlags() {
         return flags;
     }
 
@@ -59,14 +63,18 @@ public class FlagsManager {
      * @param id
      * @return Flag or null if not known
      */
-    public FlagType getFlagByID(String id) {
-        //Bukkit.getLogger().info("DEBUG: requesting " + id + " flags size = " + flags.size());
-        return flags.get(id);
+    public Flag getFlagByID(String id) {
+        for (Flag flag : flags) {
+            if (flag.getID().equals(id)) {
+                return flag;
+            }
+        }
+        return null;
     }
 
-    public FlagType getFlagByIcon(PanelItem item) {
-        for (FlagType flag : flags.values()) {
-            if (flag.getIcon().equals(item)) {
+    public Flag getFlagByIcon(Material icon) {
+        for (Flag flag : flags) {
+            if (flag.getIcon().equals(icon)) {
                 return flag;
             }
         }

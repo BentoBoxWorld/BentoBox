@@ -36,11 +36,11 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Flag.class })
+@PrepareForTest( { Flags.class })
 public class MobSpawnListenerTest {
 
     private static Location location;
@@ -75,7 +75,7 @@ public class MobSpawnListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        PowerMockito.mockStatic(Flag.class);
+        PowerMockito.mockStatic(Flags.class);
 
         plugin = Mockito.mock(BSkyBlock.class);
         flagsManager = new FlagsManager(plugin);
@@ -220,8 +220,8 @@ public class MobSpawnListenerTest {
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
 
         // Block mobs
-        Flag.MONSTER_SPAWN.setDefaultSetting(false);
-        Flag.MOB_SPAWN.setDefaultSetting(false);
+        Flags.MONSTER_SPAWN.setDefaultSetting(false);
+        Flags.MOB_SPAWN.setDefaultSetting(false);
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
         when(e.getLocation()).thenReturn(location);
@@ -248,8 +248,8 @@ public class MobSpawnListenerTest {
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
 
         // Block mobs
-        Flag.MONSTER_SPAWN.setDefaultSetting(true);
-        Flag.MOB_SPAWN.setDefaultSetting(true);
+        Flags.MONSTER_SPAWN.setDefaultSetting(true);
+        Flags.MOB_SPAWN.setDefaultSetting(true);
         
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);

@@ -17,7 +17,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * Handles inventory protection
@@ -36,23 +36,23 @@ public class InventoryListener extends AbstractFlagListener {
             return;
         }
         if (e.getInventory().getHolder() instanceof Animals) {
-            checkIsland(e, e.getInventory().getLocation(), Flag.MOUNT_INVENTORY);
+            checkIsland(e, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
         }
         else if (e.getInventory().getHolder() instanceof Chest
                 || e.getInventory().getHolder() instanceof Dispenser
                 || e.getInventory().getHolder() instanceof Hopper
                 || e.getInventory().getHolder() instanceof Dropper
                 || e.getInventory().getHolder() instanceof ShulkerBox) {
-            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flag.CHEST);
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (e.getInventory().getHolder() instanceof Furnace) {
-            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flag.FURNACE);
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.FURNACE);
         }
         else if (e.getInventory().getHolder() instanceof BrewingStand) {
-            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flag.BREWING);
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.BREWING);
         }
         else if (e.getInventory().getHolder() instanceof Beacon) {
-            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flag.BEACON);
+            setUser(User.getInstance(e.getWhoClicked())).checkIsland(e, e.getInventory().getLocation(), Flags.BEACON);
         }
     }
 

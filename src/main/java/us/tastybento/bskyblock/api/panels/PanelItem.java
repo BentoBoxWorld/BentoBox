@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.api.panels;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.ChatColor;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
@@ -64,7 +65,7 @@ public class PanelItem {
 
     public void setName(String name) {
         this.name = name;
-        meta.setDisplayName(name);
+        meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
         icon.setItemMeta(meta);
     }
 

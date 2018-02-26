@@ -31,8 +31,7 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 
 import us.tastybento.bskyblock.api.commands.User;
-import us.tastybento.bskyblock.api.flags.FlagType;
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.api.flags.Flag;
 
 /**
  * Handles hurting of monsters and animals directly and indirectly
@@ -54,9 +53,9 @@ public class HurtingListener extends AbstractFlagListener {
         // Mobs being hurt
         if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
                 || e.getEntity() instanceof Villager) {
-            respond(e, e.getDamager(), Flag.HURT_MOBS);
+            respond(e, e.getDamager(), us.tastybento.bskyblock.lists.Flags.HURT_MOBS);
         } else if (e.getEntity() instanceof Monster || e.getEntity() instanceof Squid || e.getEntity() instanceof Slime) {
-            respond(e, e.getDamager(), Flag.HURT_MONSTERS);
+            respond(e, e.getDamager(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS);
         }
     }
 
@@ -66,7 +65,7 @@ public class HurtingListener extends AbstractFlagListener {
      * @param damager
      * @param hurtMobs
      */
-    private void respond(Event event, Entity damager, FlagType hurtMobs) {
+    private void respond(Event event, Entity damager, Flag hurtMobs) {
         // Get the attacker
         if (damager instanceof Player) {
             setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), hurtMobs);
@@ -94,13 +93,13 @@ public class HurtingListener extends AbstractFlagListener {
         }
 
         if ((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman
-                || e.getCaught() instanceof Villager) && checkIsland(e, e.getCaught().getLocation(), Flag.HURT_MONSTERS)) {
+                || e.getCaught() instanceof Villager) && checkIsland(e, e.getCaught().getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS)) {
             e.getHook().remove();
             return;
         }
 
         if ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime)
-                && checkIsland(e, e.getCaught().getLocation(), Flag.HURT_MONSTERS)) {
+                && checkIsland(e, e.getCaught().getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS)) {
             e.getHook().remove();
             return;
         }
@@ -115,7 +114,7 @@ public class HurtingListener extends AbstractFlagListener {
         if (e.getRightClicked() instanceof Animals) {
             if ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
                     || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flag.HURT_MOBS);
+                checkIsland(e, e.getRightClicked().getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MOBS);
             }
         }
     }
@@ -138,7 +137,7 @@ public class HurtingListener extends AbstractFlagListener {
                 }
                 // Monsters being hurt
                 if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
-                    if (!setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), Flag.HURT_MONSTERS)) {
+                    if (!setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS)) {
                         for (PotionEffect effect : e.getPotion().getEffects()) {
                             entity.removePotionEffect(effect.getType());
                         }
@@ -148,7 +147,7 @@ public class HurtingListener extends AbstractFlagListener {
                 // Mobs being hurt
                 if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
                         || entity instanceof Villager) {
-                    if (!checkIsland(e, entity.getLocation(), Flag.HURT_MONSTERS)) {
+                    if (!checkIsland(e, entity.getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS)) {
                         for (PotionEffect effect : e.getPotion().getEffects()) {
                             entity.removePotionEffect(effect.getType());
                         }
@@ -189,12 +188,12 @@ public class HurtingListener extends AbstractFlagListener {
             Entity entity = e.getEntity();
             // Monsters being hurt
             if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
-                checkIsland(e, entity.getLocation(), Flag.HURT_MONSTERS);
+                checkIsland(e, entity.getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS);
             }
             // Mobs being hurt
             if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman
                     || entity instanceof Villager) {
-                checkIsland(e, entity.getLocation(), Flag.HURT_MONSTERS);
+                checkIsland(e, entity.getLocation(), us.tastybento.bskyblock.lists.Flags.HURT_MONSTERS);
             }
         }
     }

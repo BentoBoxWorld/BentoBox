@@ -10,7 +10,7 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 
-import us.tastybento.bskyblock.lists.Flag;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * @author tastybento
@@ -25,7 +25,7 @@ public class LeashListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeashUse(PlayerLeashEntityEvent e) {
-        checkIsland(e, e.getEntity().getLocation(),Flag.LEASH);
+        checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
     }
 
 
@@ -36,7 +36,7 @@ public class LeashListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeashUse(PlayerUnleashEntityEvent e) {
-        checkIsland(e, e.getEntity().getLocation(),Flag.LEASH);
+        checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
     }
 
     /**
@@ -46,7 +46,7 @@ public class LeashListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
-            checkIsland(e, e.getEntity().getLocation(),Flag.LEASH);
+            checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
         }
     }
 
