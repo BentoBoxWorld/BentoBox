@@ -1,9 +1,6 @@
 package us.tastybento.bskyblock.api.panels.builders;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -46,11 +43,11 @@ public class PanelItemBuilder {
      */
     @SuppressWarnings("deprecation")
     public PanelItemBuilder icon(String playerName) {
-        ItemStack item = new ItemStack(Material.SKULL_ITEM,1,(short)3);
+        ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         SkullMeta meta = (SkullMeta)item.getItemMeta();
         // This is deprecated, but apparently the only way to make it work right now
         meta.setOwner(playerName);
-        item.setItemMeta( meta );
+        item.setItemMeta(meta);
         this.icon = item;
         return this;
     }
@@ -90,7 +87,9 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder description(String description) {
-        this.description.add(description);
+        for (String line : description.split("\n")) {
+            this.description.add(line);
+        }
         return this;
     }
 

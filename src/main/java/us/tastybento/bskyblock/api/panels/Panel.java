@@ -31,7 +31,8 @@ public class Panel {
             inventory = Bukkit.createInventory(null, size, name);
             // Fill the inventory and return
             for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
-                inventory.setItem(en.getKey(), en.getValue().getItem());
+                //TODO allow multi-paging
+                if (en.getKey() < 54) inventory.setItem(en.getKey(), en.getValue().getItem());
             }
         } else {
             inventory = Bukkit.createInventory(null, 9, name);
