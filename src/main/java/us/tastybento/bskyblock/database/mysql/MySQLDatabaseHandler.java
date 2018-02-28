@@ -151,8 +151,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                         setSql.append(dataObject.getCanonicalName());
                         setSql.append(".");
                         setSql.append(field.getName());
-                        setSql.append("` (");
-                        setSql.append("uniqueId VARCHAR(36) NOT NULL, ");
+                        setSql.append("` (uniqueId VARCHAR(36) NOT NULL, ");
                         // Get columns separated by commas
                         setSql.append(getCollectionColumnString(writeMethod,false,true));
                         // Close the SQL string
@@ -306,11 +305,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return columns;
     }
 
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#createSelectQuery()
-     */
-    @Override
-    protected String createSelectQuery() {
+    String createSelectQuery() {
 
         StringBuilder sb = new StringBuilder();
 
@@ -324,12 +319,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return sb.toString();
     }
 
-
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#createInsertQuery()
-     */
-    @Override
-    protected String createInsertQuery() {
+    String createInsertQuery() {
 
         StringBuilder sb = new StringBuilder();
         // Replace into is used so that any data in the table will be replaced with updated data
@@ -348,8 +338,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return sb.toString();
     }
 
-    @Override
-    protected String createDeleteQuery() {
+    String createDeleteQuery() {
         return "DELETE FROM [table_name] WHERE uniqueId = ?";
     }
 
@@ -357,14 +346,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Inserts a <T> into the corresponding database-table
      *
      * @param instance <T> that should be inserted into the corresponding database-table. Must extend DataObject.
-     
-     
-     
-     
-     
-     
-     
-     
      */
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#insertObject(java.lang.Object)
@@ -375,8 +356,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     InstantiationException, IllegalAccessException,
     IntrospectionException, InvocationTargetException, NoSuchMethodException {
 
-        // insertQuery is created in super from the createInsertQuery() method
-        try (PreparedStatement preparedStatement = connection.prepareStatement(insertQuery)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(createInsertQuery())) {
             // Get the uniqueId. As each class extends DataObject, it must have this method in it.
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
             Method getUniqueId = propertyDescriptor.getReadMethod();
@@ -538,14 +518,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @return List of <T>s filled with values from the corresponding
      *         database-table
      *
-     
-     
-     
-     
-     
-     
-     
-     
      */
     @Override
     public List<T> loadObjects() throws SQLException,
@@ -554,7 +526,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     IntrospectionException, InvocationTargetException, ClassNotFoundException {
 
         try (Statement statement = connection.createStatement();
-                ResultSet resultSet = statement.executeQuery(selectQuery)) {
+                ResultSet resultSet = statement.executeQuery(createSelectQuery())) {
             return createObjects(resultSet);
         } 
     }
@@ -600,14 +572,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      *
      * @return List of <T>s filled with values from the provided ResultSet
      *
-     
-     
-     
-     
-     
-     
-     
-     
      */
     @SuppressWarnings("unchecked")
     private List<T> createObjects(ResultSet resultSet)
@@ -774,46 +738,45 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException {
         // Delete this object from all tables
         // Try to connect to the database
-        try (Connection conn = databaseConnecter.createConnection()){
-            // Get the uniqueId. As each class extends DataObject, it must have this method in it.
-            Method getUniqueId = dataObject.getMethod("getUniqueId");
-            String uniqueId = (String) getUniqueId.invoke(instance);
-            //plugin.getLogger().info("DEBUG: Unique Id = " + uniqueId);
-            if (uniqueId.isEmpty()) {
-                throw new SQLException("uniqueId is blank");
-            }
-            // Delete from the main table
-            // First substitution is the table name
-            // deleteQuery is created in super from the createInsertQuery() method
-            try (PreparedStatement preparedStatement = conn.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "`"))) {
-                // Second is the unique ID
-                preparedStatement.setString(1, uniqueId);
-                preparedStatement.addBatch();
-                preparedStatement.executeBatch();
-            }
+        // Get the uniqueId. As each class extends DataObject, it must have this method in it.
+        Method getUniqueId = dataObject.getMethod("getUniqueId");
+        String uniqueId = (String) getUniqueId.invoke(instance);
+        //plugin.getLogger().info("DEBUG: Unique Id = " + uniqueId);
+        if (uniqueId.isEmpty()) {
+            throw new SQLException("uniqueId is blank");
+        }
+        // Delete from the main table
+        // First substitution is the table name
+        // deleteQuery is created in super from the createInsertQuery() method
+        try (PreparedStatement preparedStatement = connection.prepareStatement(createDeleteQuery().replace("[table_name]", "`" + dataObject.getCanonicalName() + "`"))) {
+            // Second is the unique ID
+            preparedStatement.setString(1, uniqueId);
+            preparedStatement.addBatch();
+            preparedStatement.executeBatch();
+        }
 
-            // Delete from any sub tables created from the object
-            // Run through the fields in the class using introspection
-            for (Field field : dataObject.getDeclaredFields()) {
-                // Get the field's property descriptor
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
-                // Delete Collection tables
-                if (propertyDescriptor.getPropertyType().equals(Set.class) ||
-                        propertyDescriptor.getPropertyType().equals(Map.class) ||
-                        propertyDescriptor.getPropertyType().equals(HashMap.class) ||
-                        propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
-                    // First substitution is the table name
-                    try (PreparedStatement preparedStatement2 = conn.prepareStatement(deleteQuery.replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"))) {
-                        // Second is the unique ID
-                        preparedStatement2.setString(1, uniqueId);
-                        preparedStatement2.addBatch();
-                        // Execute
-                        preparedStatement2.executeBatch();
-                    }
+        // Delete from any sub tables created from the object
+        // Run through the fields in the class using introspection
+        for (Field field : dataObject.getDeclaredFields()) {
+            // Get the field's property descriptor
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
+            // Delete Collection tables
+            if (propertyDescriptor.getPropertyType().equals(Set.class) ||
+                    propertyDescriptor.getPropertyType().equals(Map.class) ||
+                    propertyDescriptor.getPropertyType().equals(HashMap.class) ||
+                    propertyDescriptor.getPropertyType().equals(ArrayList.class)) {
+                // First substitution is the table name
+                try (PreparedStatement preparedStatement2 = connection.prepareStatement(createDeleteQuery().replace("[table_name]", "`" + dataObject.getCanonicalName() + "." + field.getName() + "`"))) {
+                    // Second is the unique ID
+                    preparedStatement2.setString(1, uniqueId);
+                    preparedStatement2.addBatch();
+                    // Execute
+                    preparedStatement2.executeBatch();
                 }
             }
-        } 
-    }
+        }
+    } 
+
 
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExists(java.lang.String)
@@ -826,8 +789,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         query.append(dataObject.getCanonicalName());
         query.append("` WHERE `uniqueId` = ?), 1, 0)");
 
-        try (Connection conn = databaseConnecter.createConnection();
-                PreparedStatement preparedStatement = conn.prepareStatement(query.toString())) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query.toString())) {
             preparedStatement.setString(1, key);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

@@ -30,12 +30,6 @@ public abstract class AbstractDatabaseHandler<T> {
      */
     protected DatabaseConnecter     databaseConnecter;
 
-    /** The SQL-select- and insert query */
-    protected final String     selectQuery;
-    protected final String     insertQuery;
-    protected final String     deleteQuery;
-
-
     protected Plugin plugin;
 
 
@@ -53,19 +47,7 @@ public abstract class AbstractDatabaseHandler<T> {
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
         this.dataObject = type;
-        this.selectQuery = createSelectQuery();
-        this.insertQuery = createInsertQuery();
-        this.deleteQuery = createDeleteQuery();
     }
-
-    /**
-     * Create the SQL-String to insert into / select / delete from the database
-     * Not used in the flat file database
-     * @return the SQL-String
-     */
-    protected abstract String createSelectQuery();
-    protected abstract String createInsertQuery();
-    protected abstract String createDeleteQuery();
 
     /**
      * Loads all the records in this table and returns a list of them

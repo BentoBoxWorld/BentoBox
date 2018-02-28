@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.objects;
+package us.tastybento.bskyblock.database.mysqljson;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -11,6 +11,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.objects.DataObject;
 
 /**
  * Tracks the following info on the player
@@ -203,9 +204,6 @@ public class Players implements DataObject {
      */
     public void setDeaths(int deaths) {
         this.deaths = deaths;
-        if (this.deaths > getPlugin().getSettings().getDeathsMax()) {
-            this.deaths = getPlugin().getSettings().getDeathsMax();
-        }
     }
 
     /**

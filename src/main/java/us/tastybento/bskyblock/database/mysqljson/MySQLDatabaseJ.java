@@ -1,0 +1,22 @@
+package us.tastybento.bskyblock.database.mysqljson;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
+import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
+
+public class MySQLDatabaseJ extends BSBDatabase{
+
+    @Override
+    public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
+        BSkyBlock plugin = BSkyBlock.getInstance();
+        return new MySQLDatabaseHandlerJ<>(plugin, type, new MySQLDatabaseConnecterJ(new DatabaseConnectionSettingsImpl(
+                plugin.getSettings().getDbHost(),
+                plugin.getSettings().getDbPort(),
+                plugin.getSettings().getDbName(),
+                plugin.getSettings().getDbUsername(),
+                plugin.getSettings().getDbPassword()
+                )));
+    }
+
+}

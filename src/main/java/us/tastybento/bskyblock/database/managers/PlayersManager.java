@@ -25,7 +25,7 @@ import us.tastybento.bskyblock.database.objects.Players;
 
 public class PlayersManager{
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
     private BSkyBlock plugin;
     private BSBDatabase database;
     private AbstractDatabaseHandler<Players> handler;
@@ -250,7 +250,7 @@ public class PlayersManager{
     public void setHomeLocation(UUID playerUUID, Location location, int number) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,number);
-        this.save(true);
+        //this.save(true);
     }
 
     /**
@@ -261,7 +261,7 @@ public class PlayersManager{
     public void setHomeLocation(UUID playerUUID, Location location) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,1);
-        this.save(true);
+        //this.save(true);
     }
 
     /**

@@ -56,19 +56,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         super(plugin, type, databaseConnecter);
     }
 
-    @Override
-    protected String createSelectQuery() {
-        return ""; // not used
-    }
-    @Override
-    protected String createInsertQuery() {
-        return ""; // not used
-    }
-    @Override
-    protected String createDeleteQuery() {
-        return ""; // Not used
-    }
-
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
