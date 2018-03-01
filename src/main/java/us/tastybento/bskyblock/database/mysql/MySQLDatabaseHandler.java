@@ -189,7 +189,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     *
      * Creates a comma-separated-String with the names of the variables in this
      * class
      * Not used in Flat File database.

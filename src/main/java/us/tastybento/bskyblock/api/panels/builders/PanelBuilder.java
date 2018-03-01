@@ -14,9 +14,18 @@ public class PanelBuilder {
     private User user;
     private PanelListener listener;
 
-    public PanelBuilder setName(String name) {
+    public PanelBuilder name(String name) {
         this.name = name;
         return this;
+    }
+
+    /**
+     * Add item to the panel in the last slot.
+     * @param item - Panel item
+     * @return PanelBuilder
+     */
+    public PanelBuilder item(PanelItem item) {
+        return item(nextSlot(), item);
     }
 
     /**
@@ -25,8 +34,38 @@ public class PanelBuilder {
      * @param item - Panel item
      * @return PanelBuilder
      */
-    public PanelBuilder addItem(int slot, PanelItem item) {
+    public PanelBuilder item(int slot, PanelItem item) {
         items.put(slot, item);
+        return this;
+    }
+
+    /**
+     * Forces panel to be a specific number of slots.
+     * @param size
+     * @return PanelBuilder
+     */
+    public PanelBuilder size(int size) {
+        this.size = size;
+        return this;
+    }
+
+    /**
+     * Sets the user who will get this panel. This will open it immediately when it is built
+     * @param user - the User
+     * @return PanelBuilder
+     */
+    public PanelBuilder user(User user) {
+        this.user = user;
+        return this;
+    }
+
+    /**
+     * Sets which PanelListener will listen for clicks
+     * @param listener
+     * @return PanelBuilder
+     */
+    public PanelBuilder listener(PanelListener listener) {
+        this.listener = listener;
         return this;
     }
 
@@ -34,8 +73,11 @@ public class PanelBuilder {
         if (items.isEmpty()) {
             return 0;
         } else {
-            return items.lastEntry().getKey() + 1;
+            for (int i = 0; i < 54; i++) {
+                if (!slotOccupied(i)) return i;
+            }
         }
+        return 0;
     }
 
     /**
@@ -53,49 +95,5 @@ public class PanelBuilder {
      */
     public Panel build() {
         return new Panel(name, items, size, user, listener);
-    }
-
-    /**
-     * Add item to the panel in the last slot.
-     * @param item - Panel item
-     * @return PanelBuilder
-     */
-    public PanelBuilder addItem(PanelItem item) {
-        if (items.isEmpty()) {
-            items.put(0, item);
-        } else {
-            items.put(items.lastEntry().getKey() + 1, item);
-        }
-        return this;
-    }
-
-    /**
-     * Forces panel to be a specific number of slots.
-     * @param size
-     * @return PanelBuilder
-     */
-    public PanelBuilder setSize(int size) {
-        this.size = size;
-        return this;
-    }
-
-    /**
-     * Sets the user who will get this panel. This will open it immediately when it is built
-     * @param user - the User
-     * @return PanelBuilder
-     */
-    public PanelBuilder setUser(User user) {
-        this.user = user;
-        return this;
-    }
-
-    /**
-     * Sets which PanelListener will listen for clicks
-     * @param listener
-     * @return PanelBuilder
-     */
-    public PanelBuilder setListener(PanelListener listener) {
-        this.listener = listener;
-        return this;
     }
 }

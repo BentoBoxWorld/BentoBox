@@ -18,18 +18,18 @@ public class SettingsPanel {
      */
     public static void openPanel(User user) {
         PanelBuilder panelBuilder = new PanelBuilder()
-                .setName(user.getTranslation("protection.panel.title"));
+                .name(user.getTranslation("protection.panel.title"));
 
         PanelItem help = new PanelItemBuilder()
                 .name(user.getTranslation("protection.panel.help-item.name"))
                 .icon("crashdummie99") // Question marks
                 .build();
 
-        panelBuilder.addItem(8, help);
+        panelBuilder.item(8, help);
 
         for (Flag flag : BSkyBlock.getInstance().getFlagsManager().getFlags()) {
             PanelItem flagIcon = flag.toPanelItem(user);
-            panelBuilder.addItem(flagIcon);
+            panelBuilder.item(flagIcon);
         }
 
         panelBuilder.build().open(user);
