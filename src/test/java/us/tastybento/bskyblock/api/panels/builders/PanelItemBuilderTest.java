@@ -153,6 +153,18 @@ public class PanelItemBuilderTest {
         assertTrue(item.getClickHandler().map(x -> x.onClick(null, ClickType.LEFT)).orElse(false));
     }
 
+    @Test
+    public void testGlow() {
+        PanelItemBuilder builder = new PanelItemBuilder();
+        // Test without glowing
+        PanelItem item = builder.glow(false).build();
+        assertFalse(item.isGlow());
+
+        // Test with glowing
+        item = builder.glow(true).build();
+        assertTrue(item.isGlow());
+    }
+
     public class Clicker implements PanelItem.ClickHandler {
 
         @Override
