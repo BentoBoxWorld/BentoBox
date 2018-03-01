@@ -171,77 +171,89 @@ ranks:
 protection:
   protected: "&cIsland protected!"
   flags:
-    ACID_DAMAGE: "Acid damage"
-    ANVIL: "Use anvil"
-    ARMOR_STAND: "Interact with armor stands"
-    BEACON: "Use beacon"
-    BED: "Use bed"
-    BREAK_BLOCKS: "Break blocks"
-    BREEDING: "Breed animals"
-    BREWING: "Use brewing stands"
-    BUTTON: "Use buttons"
-    BUCKET: "Use buckets"
-    COLLECT_WATER: "Collect water (override use buckets)"
-    COLLECT_LAVA: "Collect lava (override use buckets)"
-    CHORUS_FRUIT: "Teleport using chorus fruits"
+    ANVIL:
+      name: "Anvils"
+      description: "Toggle interaction with anvils"
+    ARMOR_STAND:
+      name: "Armor stands"
+      description: "Toggle interaction with armor stands"
+    BEACON:
+      name: "Beacons"
+      description: "Toggle interaction with beacons"
+    BED:
+      name: "Beds"
+      description: "Toggle interaction with beds"
+    BREAK_BLOCKS:
+      name: "Break blocks"
+      description: "Toggle block breaking"
+    BREEDING:
+      name: "Breed animals"
+      description: "Toggle animal breeding"
+    BREWING:
+      name: "Brewing stands"
+      description: "Toggle interaction with brewing stands"
+    BUCKET:
+      name: "Buckets"
+      description: "Toggle interaction with buckets"
+    COLLECT_WATER:
+      name: "Collect water"
+      description: |
+        Toggle collecting water using buckets
+        (override Buckets)
+    COLLECT_LAVA:
+      name: "Collect lava"
+      description: |
+        Toggle collecting lava using buckets
+        (override Buckets)
+    CHORUS_FRUIT:
+      name: "Chorus fruits"
+      description: "Toggle teleportation using Chorus fruits"
     CRAFTING: "Use crafting table"
-    CREEPER_HURT: "Creepers deal damage"
-    MONSTER_GRIEFING: "Monsters (creepers, ghasts) destroy blocks"
-    MONSTER_BLOW_UP_CHEST: "Monsters (creepers, ghasts) destroy chests"
-    TRAMPLE_CROPS: "Trample crops"
+    CROP_TRAMPLE: "Trample crops"
     DOOR: "Use doors"
-    TRAPDOOR: "Use trapdoors"
-    DYEING: "Dye sheeps"
     ELYTRA: "Use elytras"
     ENCHANTING: "Use enchanting table"
-    ENDERMAN_GRIEFING: "Endermen move blocks"
     ENTER_EXIT_MESSAGES: "Display entry and exit messages"
     FIRE: "FIRE"
     FIRE_EXTINGUISH: "FIRE_EXTINGUISH"
     FIRE_SPREAD: "FIRE_SPREAD"
-    FISHING_ROD: "FISHING_ROD"
     FURNACE: "FURNACE"
     GATE: "GATE"
     HURT_ANIMALS: "HURT_ANIMALS"
     HURT_MONSTERS: "HURT_MONSTERS"
     HURT_VILLAGERS: "HURT_VILLAGERS"
-    IGNITE_CREEPER: "IGNITE_CREEPER"
-    IGNITE_TNT: "IGNITE_TNT"
-    INTERACT_TAMED: "INTERACT_TAMED"
     ITEM_DROP: "ITEM_DROP"
     ITEM_PICKUP: "ITEM_PICKUP"
-    KEEP_INVENTORY: "KEEP_INVENTORY"
     LEASH: "LEASH"
-    LEVER: "LEVER"
     MILKING: "MILKING"
-    ANIMAL_SPAWN: "ANIMAL_SPAWN"
+    MOB_SPAWN: "MOB_SPAWN"
     MONSTER_SPAWN: "MONSTER_SPAWN"
     MOUNT_INVENTORY: "MOUNT_INVENTORY"
-    MOUNT_RIDING: "MOUNT_RIDING"
+    RIDING: "RIDING"
     MUSIC: "MUSIC"
-    OPEN_CHESTS: "OPEN_CHESTS"
+    CHEST: "CHEST"
     PLACE_BLOCKS: "PLACE_BLOCKS"
     PORTAL: "PORTAL"
-    PRESSURE_PLATES: "PRESSURE_PLATES"
+    PRESSURE_PLATE: "PRESSURE_PLATE"
     PVP_OVERWORLD: "PVP_OVERWORLD"
     PVP_NETHER: "PVP_NETHER"
     PVP_END: "PVP_END"
     REDSTONE: "REDSTONE"
     SPAWN_EGGS: "SPAWN_EGGS"
     SHEARING: "SHEARING"
-    THROW_EGGS: "THROW_EGGS"
-    THROW_FIREWORKS: "THROW_FIREWORKS"
-    THROW_ENDERPEARLS: "THROW_ENDERPEARLS"
-    THROW_SNOWBALLS: "THROW_SNOWBALLS"
-    THROW_SPLASH_POTIONS: "THROW_SPLASH_POTIONS"
-    THROW_LINGERING_POTIONS: "THROW_LINGERING_POTIONS"
-    TNT_HURT: "TNT_HURT"
-    TNT_GRIEFING: "TNT_GRIEFING"
-    TNT_BLOW_UP_CHESTS: "TNT_BLOW_UP_CHESTS"
-    VILLAGER_TRADING: "VILLAGER_TRADING"
-  state:
-    allowed: "&aallowed"
-    disallowed: "&cdisallowed"
+    EGGS: "EGGS"
+    TRADING: "TRADING"
+  panel:
+    title: "Island flags"
+    flag-item:
+      name-layout: "&a[name]"
+      description-layout: |+
+        &a[description]
+
+        &7Allowed for: &f[rank]
+    help-item:
+      name: "&aNeed some help?"
+
 
   island:
     locked: "&cThis island is locked!"
