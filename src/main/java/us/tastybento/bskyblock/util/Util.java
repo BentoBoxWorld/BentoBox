@@ -20,7 +20,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 /**
  * A set of utility methods

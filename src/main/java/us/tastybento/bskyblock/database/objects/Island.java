@@ -19,7 +19,7 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;

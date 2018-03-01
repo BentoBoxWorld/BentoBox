@@ -1,7 +1,7 @@
 package us.tastybento.bskyblock.api.placeholders;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 /**
  * Simple interface for every Placeholder API.

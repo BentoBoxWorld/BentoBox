@@ -1,6 +1,6 @@
 package us.tastybento.bskyblock.api.placeholders;
 
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 /**
  * @author Poslovitch

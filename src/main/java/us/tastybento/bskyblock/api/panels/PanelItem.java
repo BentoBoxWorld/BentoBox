@@ -8,7 +8,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 
 public class PanelItem {

@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.api.commands;
 
+import us.tastybento.bskyblock.api.user.User;
+
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;

@@ -1,11 +1,16 @@
-package us.tastybento.bskyblock.api.commands;
+package us.tastybento.bskyblock.api.user;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
@@ -199,7 +204,7 @@ public class User {
     }
 
     /**
-     * Send a message to sender if message is not empty. Does not include color codes or spaces.
+     * Send a message to sender if message is not empty.
      * @param reference - language file reference
      * @param variables - CharSequence target, replacement pairs
      */
@@ -217,7 +222,6 @@ public class User {
 
     /**
      * Sends a message to sender without any modification (colors, multi-lines, placeholders).
-     * Should only be used for debug purposes.
      * @param message - the message to send
      */
     public void sendRawMessage(String message) {
@@ -226,6 +230,20 @@ public class User {
         } else {
             // TODO: Offline message
             // Save this message so the player can see it later
+        }
+    }
+
+    /**
+     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous {@link Notifier#NOTIFICATION_DELAY} seconds.
+     * @param reference - language file reference
+     * @param variables - CharSequence target, replacement pairs
+     *
+     * @see Notifier
+     */
+    public void notify(String reference, String... variables) {
+        String message = getTranslation(reference, variables);
+        if (!ChatColor.stripColor(message).trim().isEmpty()) {
+            if (sender != null || !plugin.getNotifier().notify(this, message)) sendRawMessage(message);
         }
     }
 

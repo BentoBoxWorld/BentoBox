@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 /**
  * @author tastybento

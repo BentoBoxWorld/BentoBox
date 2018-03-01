@@ -10,7 +10,7 @@ import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 
 import us.tastybento.bskyblock.Constants;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.util.Util;

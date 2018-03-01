@@ -3,7 +3,7 @@ package us.tastybento.bskyblock.api.panels;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 public interface PanelListener {
 

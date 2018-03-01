@@ -15,7 +15,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.database.managers.island.IslandsManager;
@@ -99,7 +99,7 @@ public abstract class AbstractFlagListener implements Listener {
         }
         if (user != null) {
             if (!silent) {
-                user.sendMessage("protection.protected");
+                user.notify("protection.protected");
             }
             user.updateInventory();
         }
@@ -112,9 +112,9 @@ public abstract class AbstractFlagListener implements Listener {
      * @return true if the location is in the island worlds
      */
     public boolean inWorld(Location loc) {
-        return (loc != null && (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())
+        return loc != null && (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())
                 || loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())
-                || loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld()))) ? true : false;
+                || loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld()));
     }
 
     /**

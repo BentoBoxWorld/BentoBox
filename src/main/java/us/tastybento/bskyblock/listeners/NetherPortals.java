@@ -23,7 +23,7 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 public class NetherPortals implements Listener {

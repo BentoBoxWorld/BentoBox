@@ -8,7 +8,7 @@ import java.util.UUID;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import us.tastybento.bskyblock.Constants;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 

@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.api.panels.builders;
 
 import java.util.TreeMap;
 
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.PanelListener;

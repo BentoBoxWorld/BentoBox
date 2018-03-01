@@ -5,7 +5,7 @@ import java.util.List;
 import org.bukkit.Bukkit;
 
 import us.tastybento.bskyblock.Constants;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 

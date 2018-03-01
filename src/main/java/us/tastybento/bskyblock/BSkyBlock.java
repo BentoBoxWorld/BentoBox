@@ -4,6 +4,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
+import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDatabase;
@@ -44,8 +45,10 @@ public class BSkyBlock extends JavaPlugin {
     private RanksManager ranksManager;
 
     // Settings
-    Settings settings;
+    private Settings settings;
 
+    // Notifier
+    private Notifier notifier;
 
     @Override
     public void onEnable(){
@@ -76,6 +79,9 @@ public class BSkyBlock extends JavaPlugin {
         // Load metrics
         metrics = new Metrics(plugin);
         registerCustomCharts();
+
+        // Load Notifier
+        notifier = new Notifier();
 
         // Set up commands
         commandsManager = new CommandsManager();
@@ -229,12 +235,11 @@ public class BSkyBlock extends JavaPlugin {
     }
 
     /**
-     * @return the settings
+     * @return the ranksManager
      */
-    public Settings getSettings() {
-        return settings;
+    public RanksManager getRanksManager() {
+        return ranksManager;
     }
-
 
     /**
      * @return the Island World Manager
@@ -243,13 +248,17 @@ public class BSkyBlock extends JavaPlugin {
         return islandWorldManager;
     }
 
-
-
     /**
-     * @return the ranksManager
+     * @return the settings
      */
-    public RanksManager getRanksManager() {
-        return ranksManager;
+    public Settings getSettings() {
+        return settings;
     }
 
+    /**
+     * @return the notifier
+     */
+    public Notifier getNotifier() {
+        return notifier;
+    }
 }

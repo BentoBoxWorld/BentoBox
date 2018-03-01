@@ -6,7 +6,7 @@ package us.tastybento.bskyblock.commands.admin;
 import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 /**
  * @author tastybento
@@ -30,7 +30,7 @@ public class AdminReloadCommand extends CompositeCommand {
     }
 
     /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.api.commands.BSBCommand#execute(us.tastybento.bskyblock.api.commands.User, java.util.List)
+     * @see us.tastybento.bskyblock.api.commands.BSBCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)
      */
     @Override
     public boolean execute(User user, List<String> args) {

@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.api.user.User;
 
 /**
  * Handles hooks with other Placeholder APIs.
