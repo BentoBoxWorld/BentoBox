@@ -19,7 +19,7 @@ public class LocalesManager {
 
     private BSkyBlock plugin;
     private HashMap<Locale, BSBLocale> languages = new HashMap<>();
-    final static String LOCALE_FOLDER = "locales";
+    private static final String LOCALE_FOLDER = "locales";
     private static final boolean DEBUG = false;
 
     public LocalesManager(BSkyBlock plugin) {

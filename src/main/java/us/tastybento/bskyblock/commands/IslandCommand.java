@@ -50,14 +50,11 @@ public class IslandCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         // If this player does not have an island, create one
-
         if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
             getSubCommand("create").ifPresent(createCmd -> createCmd.execute(user, new ArrayList<>()));
-            return true;
         }
-
         // Otherwise, currently, just go home
-        getSubCommand("go").ifPresent(goCmd -> goCmd.execute(user, new ArrayList<>()));
+        else getSubCommand("go").ifPresent(goCmd -> goCmd.execute(user, new ArrayList<>()));
 
         return true;
     }

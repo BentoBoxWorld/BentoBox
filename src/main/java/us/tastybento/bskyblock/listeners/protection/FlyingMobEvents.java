@@ -90,7 +90,7 @@ public class FlyingMobEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void MobExplosion(EntityExplodeEvent e) {
+    public void mobExplosion(EntityExplodeEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -118,7 +118,7 @@ public class FlyingMobEvents implements Listener {
      * Deal with pre-explosions
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void WitherExplode(ExplosionPrimeEvent e) {
+    public void witherExplode(ExplosionPrimeEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -176,7 +176,7 @@ public class FlyingMobEvents implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void WitherChangeBlocks(EntityChangeBlockEvent e) {
+    public void witherChangeBlocks(EntityChangeBlockEvent e) {
         if (DEBUG) {
             plugin.getLogger().info(e.getEventName());
         }
@@ -203,7 +203,7 @@ public class FlyingMobEvents implements Listener {
      * Clean up the hashmap. It's probably not needed, but just in case.
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void MobDeath(EntityDeathEvent e) {
+    public void mobDeath(EntityDeathEvent e) {
         mobSpawnInfo.remove(e.getEntity());
     }
 }

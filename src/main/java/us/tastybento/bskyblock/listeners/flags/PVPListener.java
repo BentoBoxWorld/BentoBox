@@ -60,7 +60,6 @@ public class PVPListener extends AbstractFlagListener {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                ;
                 if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     damager.remove();

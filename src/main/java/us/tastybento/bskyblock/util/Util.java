@@ -53,7 +53,7 @@ public class Util {
      *            - serialized location in format "world:x:y:z"
      * @return Location
      */
-    static public Location getLocationString(final String s) {
+    public static Location getLocationString(final String s) {
         if (s == null || s.trim().equals("")) {
             return null;
         }
@@ -89,7 +89,7 @@ public class Util {
      * @param location - the location
      * @return String of location
      */
-    static public String getStringLocation(final Location location) {
+    public static String getStringLocation(final Location location) {
         if (location == null || location.getWorld() == null) {
             return "";
         }

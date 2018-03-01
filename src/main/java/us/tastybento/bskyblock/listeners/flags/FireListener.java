@@ -40,14 +40,10 @@ public class FireListener extends AbstractFlagListener {
     public boolean checkFire(Cancellable e, Location l, Flag flag) {
         // Check world
         if (!inWorld(l)) {
-            //Bukkit.getLogger().info("DEBUG: not in world");
             return false;
         }
-        //Bukkit.getLogger().info("DEBUG: in world");
         // Check if the island exists and if fire is allowed
-        boolean cancel = getIslands().getIslandAt(l).map(i -> {
-            return !i.isAllowed(flag);
-        }).orElse(!flag.isDefaultSetting());
+        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag)).orElse(!flag.isDefaultSetting());
 
         e.setCancelled(cancel);
         return cancel;
