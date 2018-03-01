@@ -226,10 +226,10 @@ public class TestBSkyBlock {
         String[] args3 = {"sub2","subsub", ""};
         assertEquals(Arrays.asList("subsubsub", "help"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
-        assertEquals(Arrays.asList(new String[] {"Florian", "Ben", "Bill", "Ted", "help"}),
+        assertEquals(Arrays.asList("Florian", "Ben", "Bill", "Ted", "help"),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
         // Test for partial word
-        assertEquals(Arrays.asList(new String[] {"Ben", "Bill"}),
+        assertEquals(Arrays.asList("Ben", "Bill"),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", "b"}));
 
         // Test command arguments
@@ -253,7 +253,7 @@ public class TestBSkyBlock {
     private class TestCommand extends CompositeCommand {
 
         public TestCommand() {
-            super(plugin, "test", "t", "tt");
+            super("test", "t", "tt");
             setParameters("test.params");
         }
 
@@ -340,17 +340,15 @@ public class TestBSkyBlock {
         @Override
         public boolean execute(User user, List<String> args) {
             Bukkit.getLogger().info("args are " + args.toString());
-            if (args.size() == 3) {
-                return true;
-            }
-            return false;
+
+            return args.size() == 3;
         }
 
         @Override
         public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
             List<String> options = new ArrayList<>();
             String lastArg = (!args.isEmpty() ? args.getLast() : "");
-            options.addAll(Arrays.asList(new String[] {"Florian", "Ben", "Bill", "Ted"}));
+            options.addAll(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }
     }
@@ -358,7 +356,7 @@ public class TestBSkyBlock {
     private class Test3ArgsCommand extends CompositeCommand {
 
         public Test3ArgsCommand() {
-            super(plugin, "args", "");
+            super("args", "");
         }
 
         @Override
@@ -367,7 +365,7 @@ public class TestBSkyBlock {
         @Override
         public boolean execute(User user, List<String> args) {
             Bukkit.getLogger().info("args are " + args.toString());
-            return args.size() == 3 ? true : false;
+            return args.size() == 3;
         }
 
     }

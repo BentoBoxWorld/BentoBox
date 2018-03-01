@@ -26,8 +26,8 @@ import us.tastybento.bskyblock.util.Util;
 
 /**
  * BSB composite command
- * @author tastybento, poslovich
- *
+ * @author tastybento
+ * @author Poslovitch
  */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BSBCommand {
 
@@ -66,22 +66,27 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private String usage;
 
     /**
-     * Used only for testing....
+     * This is the top-level command constructor for commands that have no parent.
+     * @param label - string for this command
+     * @param aliases - aliases for this command
      */
-    public CompositeCommand(BSkyBlock plugin, String label, String... string) {
+    public CompositeCommand(String label, String... aliases) {
         super(label);
-        setAliases(new ArrayList<>(Arrays.asList(string)));
+        setAliases(new ArrayList<>(Arrays.asList(aliases)));
         parent = null;
         setUsage("");
         subCommandLevel = 0; // Top level
         subCommands = new LinkedHashMap<>();
         subCommandAliases = new LinkedHashMap<>();
+        // Register command if it is not already registered
+        if (getPlugin().getCommand(label) == null) {
+            getPlugin().getCommandsManager().registerCommand(this);
+        }
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
     }
-
 
     /**
      * Sub-command constructor
@@ -109,30 +114,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             new DefaultHelpCommand(this);
         }
     }
-
-    /**
-     * This is the top-level command constructor for commands that have no parent.
-     * @param label - string for this command
-     * @param aliases - aliases for this command
-     */
-    public CompositeCommand(String label, String... aliases) {
-        super(label);
-        setAliases(new ArrayList<>(Arrays.asList(aliases)));
-        parent = null;
-        setUsage("");
-        subCommandLevel = 0; // Top level
-        subCommands = new LinkedHashMap<>();
-        subCommandAliases = new LinkedHashMap<>();
-        // Register command if it is not already registered
-        if (getPlugin().getCommand(label) == null) {
-            getPlugin().getCommandsManager().registerCommand(this);
-        }
-        setup();
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
-            new DefaultHelpCommand(this);
-        }
-    }
-
 
     /*
      * This method deals with the command execution. It traverses the tree of
@@ -257,14 +238,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return BSkyBlock.getInstance();
     }
 
-
     /**
      * @return Settings object
      */
     public Settings getSettings() {
         return getPlugin().getSettings();
     }
-
 
     /**
      * Returns the CompositeCommand object referring to this command label
