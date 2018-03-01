@@ -31,6 +31,8 @@ import us.tastybento.bskyblock.util.Util;
  */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BSBCommand {
 
+    private BSkyBlock plugin;
+
     /**
      * True if the command is for the player only (not for the console)
      */
@@ -66,12 +68,31 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private String usage;
 
     /**
+     * Used only for testing....
+     */
+    public CompositeCommand(BSkyBlock plugin, String label, String... string) {
+        super(label);
+        this.plugin = plugin;
+        setAliases(new ArrayList<>(Arrays.asList(string)));
+        parent = null;
+        setUsage("");
+        subCommandLevel = 0; // Top level
+        subCommands = new LinkedHashMap<>();
+        subCommandAliases = new LinkedHashMap<>();
+        setup();
+        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
+            new DefaultHelpCommand(this);
+        }
+    }
+
+    /**
      * This is the top-level command constructor for commands that have no parent.
      * @param label - string for this command
      * @param aliases - aliases for this command
      */
     public CompositeCommand(String label, String... aliases) {
         super(label);
+        this.plugin = BSkyBlock.getInstance();
         setAliases(new ArrayList<>(Arrays.asList(aliases)));
         parent = null;
         setUsage("");
@@ -79,8 +100,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         subCommands = new LinkedHashMap<>();
         subCommandAliases = new LinkedHashMap<>();
         // Register command if it is not already registered
-        if (getPlugin().getCommand(label) == null) {
-            getPlugin().getCommandsManager().registerCommand(this);
+        if (plugin.getCommand(label) == null) {
+            plugin.getCommandsManager().registerCommand(this);
         }
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
@@ -96,6 +117,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
         super(label);
+        this.plugin = BSkyBlock.getInstance();
         this.parent = parent;
         subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
@@ -182,7 +204,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return IslandsManager
      */
     protected IslandsManager getIslands() {
-        return getPlugin().getIslands();
+        return plugin.getIslands();
     }
 
     /**
@@ -197,7 +219,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return Logger
      */
     public Logger getLogger() {
-        return getPlugin().getLogger();
+        return plugin.getLogger();
     }
 
     /**
@@ -206,7 +228,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return set of UUIDs of all team members
      */
     protected Set<UUID> getMembers(User user) {
-        return getPlugin().getIslands().getMembers(user.getUniqueId());
+        return plugin.getIslands().getMembers(user.getUniqueId());
     }
 
     public String getParameters() {
@@ -230,19 +252,19 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return PlayersManager
      */
     protected PlayersManager getPlayers() {
-        return getPlugin().getPlayers();
+        return plugin.getPlayers();
     }
 
     @Override
     public BSkyBlock getPlugin() {
-        return BSkyBlock.getInstance();
+        return plugin;
     }
 
     /**
      * @return Settings object
      */
     public Settings getSettings() {
-        return getPlugin().getSettings();
+        return plugin.getSettings();
     }
 
     /**
@@ -274,7 +296,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return UUID of player's team leader
      */
     protected UUID getTeamLeader(User user) {
-        return getPlugin().getIslands().getTeamLeader(user.getUniqueId());
+        return plugin.getIslands().getTeamLeader(user.getUniqueId());
     }
 
     @Override
@@ -306,7 +328,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if player is in a team
      */
     protected boolean inTeam(User user) {
-        return getPlugin().getPlayers().inTeam(user.getUniqueId());
+        return plugin.getPlayers().inTeam(user.getUniqueId());
     }
 
     /**
@@ -407,9 +429,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param user - the User
      */
     protected void showHelp(CompositeCommand command, User user) {
-        Optional<CompositeCommand> helpCommand = command.getSubCommand("help");
-        if (helpCommand.isPresent()) {
-            helpCommand.get().execute(user, new ArrayList<>());
-        }
+        command.getSubCommand("help").ifPresent(helpCommand -> helpCommand.execute(user, new ArrayList<>()));
     }
 }

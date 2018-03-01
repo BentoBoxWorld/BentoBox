@@ -253,7 +253,7 @@ public class TestBSkyBlock {
     private class TestCommand extends CompositeCommand {
 
         public TestCommand() {
-            super("test", "t", "tt");
+            super(plugin, "test", "t", "tt");
             setParameters("test.params");
         }
 
@@ -356,7 +356,7 @@ public class TestBSkyBlock {
     private class Test3ArgsCommand extends CompositeCommand {
 
         public Test3ArgsCommand() {
-            super("args", "");
+            super(plugin, "args", "");
         }
 
         @Override
