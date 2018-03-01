@@ -73,7 +73,7 @@ public class PanelBuilder {
         if (items.isEmpty()) {
             return 0;
         } else {
-            for (int i = 0; i < 54; i++) {
+            for (int i = 0; i < (size != 0 ? size : 54); i++) {
                 if (!slotOccupied(i)) return i;
             }
         }
