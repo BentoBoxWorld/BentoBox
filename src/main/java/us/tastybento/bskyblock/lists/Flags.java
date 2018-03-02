@@ -30,16 +30,12 @@ import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 
 public class Flags {
 
-    // TODO: add HURT_VILLAGERS
-    // TODO: add TRAPDOOR
     // TODO: add DYEING sheeps
     // TODO: add ELYTRA
     // TODO: add FISHING
-    // TODO: rename HURT_MOBS to HURT_ANIMALS
     // TODO: add INTERACT_TAMED
     // TODO: split LEVER_BUTTON into BUTTON and LEVER
-    // TODO: add KEEP_INVENTORY
-    // TODO: rename MOB_SPAWN to ANIMAL_SPAWN
+    // TODO: add KEEP_INVENTORY - is it needed?
 
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
     public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.BEDROCK).listener(new PlaceBlocksListener()).build();
@@ -51,6 +47,7 @@ public class Flags {
     public static final Flag BREWING = new FlagBuilder().id("BREWING").icon(Material.BREWING_STAND_ITEM).build();
     public static final Flag CHEST = new FlagBuilder().id("CHEST").icon(Material.CHEST).build();
     public static final Flag DOOR = new FlagBuilder().id("DOOR").allowedByDefault(true).icon(Material.WOOD_DOOR).build();
+    public static final Flag TRAPDOOR = new FlagBuilder().id("TRAPDOOR").allowedByDefault(true).icon(Material.TRAP_DOOR).build();
     public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING").allowedByDefault(true).icon(Material.WORKBENCH).build();
     public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING").allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build();
     public static final Flag FURNACE = new FlagBuilder().id("FURNACE").icon(Material.FURNACE).build();
@@ -97,14 +94,14 @@ public class Flags {
      */
     public static final Flag FIRE = new FlagBuilder().id("FIRE").icon(Material.FLINT_AND_STEEL).listener(new FireListener()).build();
     public static final Flag FIRE_EXTINGUISH = new FlagBuilder().id("FIRE_EXTINGUISH").icon(Material.POTION).build();
-    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).build();
 
     // Inventories
     public static final Flag MOUNT_INVENTORY = new FlagBuilder().id("MOUNT_INVENTORY").icon(Material.IRON_BARDING).listener(new InventoryListener()).build();
 
     // Hurting things
-    public static final Flag HURT_MOBS = new FlagBuilder().id("HURT_MOBS").icon(Material.STONE_SWORD).listener(new HurtingListener()).build();
+    public static final Flag HURT_ANIMALS = new FlagBuilder().id("HURT_ANIMALS").icon(Material.STONE_SWORD).listener(new HurtingListener()).build();
     public static final Flag HURT_MONSTERS = new FlagBuilder().id("HURT_MONSTERS").icon(Material.WOOD_SWORD).build();
+    public static final Flag HURT_VILLAGERS = new FlagBuilder().id("HURT_VILLAGERS").icon(Material.GOLD_SWORD).build();
 
     // Leashes
     public static final Flag LEASH = new FlagBuilder().id("LEASH").icon(Material.LEASH).listener(new LeashListener()).build();
@@ -128,8 +125,9 @@ public class Flags {
     public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING).build();
     // Others
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.SETTING).build();
-    public static final Flag MOB_SPAWN = new FlagBuilder().id("MOB_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
 
     /**
      * @return List of all the flags in this class

@@ -221,7 +221,7 @@ public class MobSpawnListenerTest {
 
         // Block mobs
         Flags.MONSTER_SPAWN.setDefaultSetting(false);
-        Flags.MOB_SPAWN.setDefaultSetting(false);
+        Flags.ANIMAL_SPAWN.setDefaultSetting(false);
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
         when(e.getLocation()).thenReturn(location);
@@ -249,7 +249,7 @@ public class MobSpawnListenerTest {
 
         // Block mobs
         Flags.MONSTER_SPAWN.setDefaultSetting(true);
-        Flags.MOB_SPAWN.setDefaultSetting(true);
+        Flags.ANIMAL_SPAWN.setDefaultSetting(true);
         
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);

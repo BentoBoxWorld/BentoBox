@@ -46,11 +46,11 @@ public class MobSpawnListener extends AbstractFlagListener {
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
             if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) {
-                boolean cancel = island.map(i -> !i.isAllowed(Flags.MOB_SPAWN)).orElse(!Flags.MOB_SPAWN.isDefaultSetting());
+                boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isDefaultSetting());
                 e.setCancelled(cancel);
                 return cancel;
             } else if (e.getEntity() instanceof Animals) {
-                boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isDefaultSetting());
+                boolean cancel = island.map(i -> !i.isAllowed(Flags.ANIMAL_SPAWN)).orElse(!Flags.ANIMAL_SPAWN.isDefaultSetting());
                 e.setCancelled(cancel);
                 return cancel;
             }

@@ -71,13 +71,15 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case DARK_OAK_DOOR:
         case IRON_DOOR:
         case IRON_DOOR_BLOCK:
-        case IRON_TRAPDOOR:
         case JUNGLE_DOOR:
         case SPRUCE_DOOR:
-        case TRAP_DOOR:
         case WOODEN_DOOR:
         case WOOD_DOOR:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.DOOR);
+            break;
+        case TRAP_DOOR:
+        case IRON_TRAPDOOR:
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.TRAPDOOR);
             break;
         case ACACIA_FENCE_GATE:
         case BIRCH_FENCE_GATE:
