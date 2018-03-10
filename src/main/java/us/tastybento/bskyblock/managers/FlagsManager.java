@@ -70,14 +70,4 @@ public class FlagsManager {
     public Flag getFlagByID(String id) {
         return flags.stream().filter(flag -> flag.getID().equals(id)).findFirst().orElse(null);
     }
-
-    /**
-     * Get flag by icon
-     * @param icon material
-     * @return flag or null if it does not exist
-     */
-    public Flag getFlagByIcon(Material icon) {
-        return flags.stream().filter(flag -> flag.getIcon().equals(icon)).findFirst().orElse(null);
-    }
-
 }

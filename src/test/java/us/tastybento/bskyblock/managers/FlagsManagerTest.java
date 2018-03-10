@@ -104,14 +104,4 @@ public class FlagsManagerTest {
         Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlagByID(flag.getID())));
 
     }
-
-    @Test
-    public void testGetFlagByIcon() {
-        BSkyBlock plugin = mock(BSkyBlock.class);
-        FlagsManager fm = new FlagsManager(plugin);
-        // Test in forward and reverse order so that any duplicates are caught
-        Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlagByIcon(flag.getIcon())));
-        Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlagByIcon(flag.getIcon())));
-    }
-
 }

@@ -30,6 +30,17 @@ import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 
 public class Flags {
 
+    // TODO: add HURT_VILLAGERS
+    // TODO: add TRAPDOOR
+    // TODO: add DYEING sheeps
+    // TODO: add ELYTRA
+    // TODO: add FISHING
+    // TODO: rename HURT_MOBS to HURT_ANIMALS
+    // TODO: add INTERACT_TAMED
+    // TODO: split LEVER_BUTTON into BUTTON and LEVER
+    // TODO: add KEEP_INVENTORY
+    // TODO: rename MOB_SPAWN to ANIMAL_SPAWN
+
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
     public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.BEDROCK).listener(new PlaceBlocksListener()).build();
 

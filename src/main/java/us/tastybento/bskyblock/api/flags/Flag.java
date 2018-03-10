@@ -9,6 +9,7 @@ import org.bukkit.inventory.ItemStack;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
+import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flag implements Comparable<Flag> {
 
@@ -108,7 +109,10 @@ public class Flag implements Comparable<Flag> {
     public PanelItem toPanelItem(User user) {
         return new PanelItemBuilder()
                 .icon(new ItemStack(icon))
-                .name(user.getTranslation("protection.flags." + id))
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", "[name]", user.getTranslation("protection.flags." + id + ".name")))
+                .description(user.getTranslation("protection.panel.flag-item.description-layout",
+                        "[description]", user.getTranslation("protection.flags." + id + ".description"),
+                        "[rank]", "Owner"))
                 .clickHandler((clicker, click) -> {
                     clicker.sendRawMessage("You clicked on : " + id);
                     return true;
