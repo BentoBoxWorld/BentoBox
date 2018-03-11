@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.managers;
+package us.tastybento.bskyblock.managers;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -19,13 +19,14 @@ import org.bukkit.entity.Player;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.User;
+import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 
 public class PlayersManager{
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
     private AbstractDatabaseHandler<Players> handler;

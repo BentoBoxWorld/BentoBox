@@ -9,7 +9,6 @@ import org.bukkit.inventory.ItemStack;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
-import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flag implements Comparable<Flag> {
 

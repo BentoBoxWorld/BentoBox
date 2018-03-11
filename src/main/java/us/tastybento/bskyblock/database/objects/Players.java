@@ -10,6 +10,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import com.google.gson.annotations.Expose;
+
 import us.tastybento.bskyblock.BSkyBlock;
 
 /**
@@ -18,12 +20,19 @@ import us.tastybento.bskyblock.BSkyBlock;
  * @author tastybento
  */
 public class Players implements DataObject {
+    @Expose
     private Map<Integer, Location> homeLocations = new HashMap<>();
+    @Expose
     private String uniqueId;
+    @Expose
     private String playerName;
+    @Expose
     private int resetsLeft;
+    @Expose
     private String locale = "";
+    @Expose
     private int deaths;
+    @Expose
     private Map<Location, Long> kickedList = new HashMap<>();
 
     /**
@@ -64,15 +73,6 @@ public class Players implements DataObject {
      * @return Location of this home or null if not available
      */
     public Location getHomeLocation(int number) {
-        /*
-         Bukkit.getLogger().info("DEBUG: getting home location " + number);
-
-        Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
-        for (Entry<Integer, Location> en : homeLocations.entrySet()) {
-            Bukkit.getLogger().info("DEBUG: " + en.getKey() + " ==> " + en.getValue());
-            if (number == en.getKey())
-                Bukkit.getLogger().info("DEBUG: key = number");
-        }*/
         return homeLocations.get(number);
     }
 
@@ -101,7 +101,6 @@ public class Players implements DataObject {
      * @param homeLocations the homeLocations to set
      */
     public void setHomeLocations(Map<Integer, Location> homeLocations) {
-        //Bukkit.getLogger().info("DEBUG: " + homeLocations.toString());
         this.homeLocations = homeLocations;
     }
 
@@ -166,7 +165,7 @@ public class Players implements DataObject {
      * Set the uuid for this player object
      * @param uuid - UUID
      */
-    public void setPlayerUUID(final UUID uuid) {
+    public void setPlayerUUID(UUID uuid) {
         uniqueId = uuid.toString();
     }
 

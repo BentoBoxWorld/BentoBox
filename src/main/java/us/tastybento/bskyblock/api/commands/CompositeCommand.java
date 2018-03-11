@@ -19,8 +19,8 @@ import org.bukkit.entity.Player;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
-import us.tastybento.bskyblock.database.managers.PlayersManager;
-import us.tastybento.bskyblock.database.managers.island.IslandsManager;
+import us.tastybento.bskyblock.managers.IslandsManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.util.Util;
 
 /**

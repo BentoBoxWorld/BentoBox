@@ -7,8 +7,6 @@ import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.managers.PlayersManager;
-import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
@@ -16,7 +14,9 @@ import us.tastybento.bskyblock.listeners.PanelListenerManager;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.managers.RanksManager;
 
 /**
@@ -26,7 +26,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
  */
 public class BSkyBlock extends JavaPlugin {
 
-    private static BSkyBlock plugin;
+    private static BSkyBlock instance;
 
     // Databases
     private PlayersManager playersManager;
@@ -74,7 +74,7 @@ public class BSkyBlock extends JavaPlugin {
         ranksManager = new RanksManager(this);
 
         // Load metrics
-        metrics = new Metrics(plugin);
+        metrics = new Metrics(instance);
         registerCustomCharts();
 
         // Set up commands
@@ -87,29 +87,29 @@ public class BSkyBlock extends JavaPlugin {
         // at this point. Therefore, the 1 tick scheduler is required.
         getServer().getScheduler().runTask(this, () -> {
             // Create the world if it does not exist
-            islandWorldManager = new IslandWorld(plugin);
+            islandWorldManager = new IslandWorld(instance);
 
-            getServer().getScheduler().runTask(plugin, () -> {
+            getServer().getScheduler().runTask(instance, () -> {
 
                 // Load Flags
-                flagsManager = new FlagsManager(plugin);
+                flagsManager = new FlagsManager(instance);
 
                 // Load islands from database
                 islandsManager.load();
 
-                localesManager = new LocalesManager(plugin);
-                PlaceholderHandler.register(plugin);
+                localesManager = new LocalesManager(instance);
+                PlaceholderHandler.register(instance);
 
                 // Register Listeners
                 registerListeners();
 
                 // Load addons
-                addonsManager = new AddonsManager(plugin);
+                addonsManager = new AddonsManager(instance);
                 addonsManager.enableAddons();
 
                 // Save islands & players data asynchronously every X minutes
                 getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
-                plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+                instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                     playersManager.save(true);
                     islandsManager.save(true);
                 }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
@@ -193,11 +193,11 @@ public class BSkyBlock extends JavaPlugin {
     }
 
     private static void setInstance(BSkyBlock plugin) {
-        BSkyBlock.plugin = plugin;
+        BSkyBlock.instance = plugin;
     }
 
     public static BSkyBlock getInstance() {
-        return plugin;
+        return instance;
     }
 
     /**

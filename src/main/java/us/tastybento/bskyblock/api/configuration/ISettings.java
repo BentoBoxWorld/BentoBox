@@ -4,9 +4,10 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
+import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.flatfile.ConfigHandler;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
-import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 
 /**
  * Simple interface for tagging all classes containing ConfigEntries.
@@ -21,7 +22,7 @@ public interface ISettings<T> {
     @SuppressWarnings("unchecked")
     default void saveSettings() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
         // Get the handler
-        AbstractDatabaseHandler<T> settingsHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
+        ConfigHandler<T> settingsHandler = (ConfigHandler<T>) new FlatFileDatabase().getConfig(getInstance().getClass());
         // Load every field in the config class
         settingsHandler.saveSettings(getInstance());
     }
@@ -44,7 +45,7 @@ public interface ISettings<T> {
             dbConfig = dbhandler.loadObject(getUniqueId());
         }
         // Get the handler
-        AbstractDatabaseHandler<T> configHandler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
+        ConfigHandler<T>  configHandler = (ConfigHandler<T> ) new FlatFileDatabase().getConfig(getInstance().getClass());
         // Load every field in the config class
         return configHandler.loadSettings(getUniqueId(), dbConfig);
     }

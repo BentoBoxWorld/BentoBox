@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.managers;
+package us.tastybento.bskyblock.database;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.bukkit.plugin.Plugin;
-
-import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -82,19 +80,5 @@ public abstract class AbstractDatabaseHandler<T> {
      * @return true if this key exists
      */
     public abstract boolean objectExists(String key);
-
-    /**
-     * Saves a file as settings
-     * @param instance
-     */
-    public abstract void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
-
-    /**
-     * Loads a file as settings
-     * @param uniqueId - unique ID
-     * @param dbConfig - the database mirror of this object. It will be checked against what is loaded to see if any significant changes have been made
-     * @return Settings object
-     */
-    public abstract T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
 }

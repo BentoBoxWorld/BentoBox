@@ -10,8 +10,8 @@ import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.commands.User;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
-import us.tastybento.bskyblock.database.managers.island.NewIsland;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.island.NewIsland;
 
 public class IslandResetCommand extends CompositeCommand {
 
