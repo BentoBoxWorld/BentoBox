@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.database;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
-import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.mysql.MySQLDatabase;
 
 public abstract class BSBDatabase {
@@ -24,7 +23,7 @@ public abstract class BSBDatabase {
     public enum DatabaseType{
         FLATFILE(new FlatFileDatabase()),
         MYSQL(new MySQLDatabase());
-
+        
         BSBDatabase database;
 
         DatabaseType(BSBDatabase database){

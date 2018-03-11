@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.managers;
+package us.tastybento.bskyblock.database;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -6,8 +6,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.bukkit.plugin.Plugin;
-
-import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -30,12 +28,6 @@ public abstract class AbstractDatabaseHandler<T> {
      */
     protected DatabaseConnecter     databaseConnecter;
 
-    /** The SQL-select- and insert query */
-    protected final String     selectQuery;
-    protected final String     insertQuery;
-    protected final String     deleteQuery;
-
-
     protected Plugin plugin;
 
 
@@ -53,19 +45,7 @@ public abstract class AbstractDatabaseHandler<T> {
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
         this.dataObject = type;
-        this.selectQuery = createSelectQuery();
-        this.insertQuery = createInsertQuery();
-        this.deleteQuery = createDeleteQuery();
     }
-
-    /**
-     * Create the SQL-String to insert into / select / delete from the database
-     * Not used in the flat file database
-     * @return the SQL-String
-     */
-    protected abstract String createSelectQuery();
-    protected abstract String createInsertQuery();
-    protected abstract String createDeleteQuery();
 
     /**
      * Loads all the records in this table and returns a list of them
@@ -100,19 +80,5 @@ public abstract class AbstractDatabaseHandler<T> {
      * @return true if this key exists
      */
     public abstract boolean objectExists(String key);
-
-    /**
-     * Saves a file as settings
-     * @param instance
-     */
-    public abstract void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException;
-
-    /**
-     * Loads a file as settings
-     * @param uniqueId - unique ID
-     * @param dbConfig - the database mirror of this object. It will be checked against what is loaded to see if any significant changes have been made
-     * @return Settings object
-     */
-    public abstract T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
 }

@@ -15,8 +15,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.database.managers.PlayersManager;
-import us.tastybento.bskyblock.database.managers.island.IslandsManager;
+import us.tastybento.bskyblock.managers.IslandsManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
 
 /**
  * Add-on class for BSkyBlock. Extend this to create an add-on. The operation

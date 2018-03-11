@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.managers.island;
+package us.tastybento.bskyblock.managers.island;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -296,7 +296,7 @@ public class IslandCache {
         String result = plugin.getPlayers().getName(owner);
         if (islandsByUUID.containsKey(owner)) {
             Island island = islandsByUUID.get(owner);
-            if (!island.getName().isEmpty()) {
+            if (island.getName() != null && !island.getName().isEmpty()) {
                 result = island.getName();
             }
         }

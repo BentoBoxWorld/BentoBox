@@ -1,6 +1,19 @@
-# Source language and JDK version to use.
 language: java
-jdk: oraclejdk8
+sudo: false
+install: true
 before_install:
-  - sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g' ~/.m2/settings.xml
-  
+- sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g'
+  ~/.m2/settings.xml
+addons:
+  sonarcloud:
+    organization: "tastybento-github"
+    token:
+      secure: "uJDH+Af1VSjvaOLOmA5KPofLnfqD7Y4j6bWnQ+mwuaJfOCG6D1SYeXg6LuBCLX2yXc9Li3fDQRxu9Xp521ph3kCfbeJLhQTMxoVDIS+3KY4FXrc+zEdg6G7hRsDD2iGCRtZjI52O7NdwWxUqftXIUFJjYoL0H2zJGJzF85dxOXFtve5CGIPkuvnZp+mUim+b0LBUpV1xjBU/8I0Q121FXxp0GH3Wi0SiAoU484bjOtbjEFvuJvVru45WtikJOKKabrxO5uoKqHPrjKdkkRrvKw6fBMpQ5b+/kXR3OWvi9Ap0IWKMkBQBq4R7xhaIVQVIkfwTPg6rl21nLKYHl679HzqpAozxR1CsDs9dXDj22ERRjjp9rKT5O1UHifCmLgOtB+hRKSDhipOayqRnxRhMYOzvniDcZ0Dr4jgsstY7VG2TFtuX7yLb//SqV+41XuClmtvX69vRD+iL5v0FR52ymf8x43ZnouxT+iAcLrfsm7ICOP8FmOQSGi0NkRhKc+6f+STy47kHzZgdzlQqJtmP6s7eXoGtOv4RuPlMoFMXyOba7SYtcxbUgg7dKiL4iHRB4+GX46uWl1hilWKCbkZrv6/u9SZsOQXwMC409qG5/G7aRC1ZZ/vlCMZz8+/QbNHGO0enhzeKD5mkZy6coi/c/9gYK0eXV0+s/gXHU9hx5v4="
+jdk:
+  - oraclejdk8
+script:
+  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.sonar/cache'

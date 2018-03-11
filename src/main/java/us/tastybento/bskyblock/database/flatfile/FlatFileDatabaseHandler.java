@@ -31,8 +31,8 @@ import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
+import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
-import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.AdapterInterface;
 import us.tastybento.bskyblock.util.Util;
@@ -50,23 +50,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String DATABASE_FOLDER_NAME = "database";
     private static final boolean DEBUG = false;
-    private boolean configFlag;
+    protected boolean configFlag;
 
     public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
-    }
-
-    @Override
-    protected String createSelectQuery() {
-        return ""; // not used
-    }
-    @Override
-    protected String createInsertQuery() {
-        return ""; // not used
-    }
-    @Override
-    protected String createDeleteQuery() {
-        return ""; // Not used
     }
 
     /* (non-Javadoc)
@@ -275,15 +262,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
 
         return instance;
-    }
-
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#saveConfig(java.lang.Object)
-     */
-    @Override
-    public void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
-        configFlag = true;
-        saveObject(instance);
     }
 
     /**
@@ -536,20 +514,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 plugin.getLogger().severe(() -> "Could not delete yaml database object! " + file.getName() + " - " + e.getMessage());
             }
         }
-    }
-
-    /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadSettings(java.lang.String, java.lang.Object)
-     */
-    @Override
-    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
-        if (dbConfig == null) {
-            return loadObject(uniqueId);
-        }
-
-        // TODO: compare the loaded with the database copy
-
-        return loadObject(uniqueId);
     }
 
 }

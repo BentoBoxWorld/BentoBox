@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.managers.island;
+package us.tastybento.bskyblock.managers;
 
 import java.util.Collection;
 import java.util.HashSet;
@@ -23,9 +23,10 @@ import org.bukkit.util.Vector;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.island.IslandCache;
 import us.tastybento.bskyblock.util.DeleteIslandChunks;
 import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
@@ -744,6 +745,7 @@ public class IslandsManager {
             }
         } catch (Exception e) {
             plugin.getLogger().severe("Could not load islands to cache! " + e.getMessage());
+            e.printStackTrace();
         }
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: islands loaded");

@@ -18,8 +18,8 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
-import us.tastybento.bskyblock.database.managers.island.IslandsManager;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.IslandsManager;
 
 /**
  * Abstract class for flag listeners. Provides common code.

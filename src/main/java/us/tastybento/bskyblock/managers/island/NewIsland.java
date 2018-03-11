@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.database.managers.island;
+package us.tastybento.bskyblock.managers.island;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -113,8 +113,8 @@ public class NewIsland {
         // Add to the grid
         island = plugin.getIslands().createIsland(next, playerUUID);
         // Save the player so that if the server is reset weird things won't happen
-        plugin.getPlayers().save(true);
-        plugin.getIslands().save(true);
+        //plugin.getPlayers().save(true);
+        //plugin.getIslands().save(true);
 
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(playerUUID);

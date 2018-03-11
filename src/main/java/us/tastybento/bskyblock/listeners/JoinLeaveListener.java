@@ -11,8 +11,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.managers.PlayersManager;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.PlayersManager;
 
 public class JoinLeaveListener implements Listener {
 

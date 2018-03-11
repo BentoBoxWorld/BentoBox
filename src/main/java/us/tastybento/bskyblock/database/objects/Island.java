@@ -7,25 +7,19 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
+import com.google.gson.annotations.Expose;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.api.events.IslandBaseEvent;
-import us.tastybento.bskyblock.api.events.island.IslandEvent;
-import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandLockEvent;
-import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandUnlockEvent;
-import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
 import us.tastybento.bskyblock.managers.RanksManager;
@@ -42,57 +36,71 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class Island implements DataObject {
 
-    private String uniqueId = "";
+    @Expose
+    private String uniqueId = UUID.randomUUID().toString();
 
     //// Island ////
     // The center of the island itself
+    @Expose
     private Location center;
 
     // Island range
+    @Expose
     private int range;
 
     // Coordinates of the island area
+    @Expose
     private int minX;
-
+    @Expose
     private int minZ;
 
     // Coordinates of minimum protected area
+    @Expose
     private int minProtectedX;
-
+    @Expose
     private int minProtectedZ;
 
     // Protection size
+    @Expose
     private int protectionRange;
 
-    // World the island is in
+    // World the island started in. This may be different from the island location
+    @Expose
     private World world;
 
     // Display name
-    private String name;
+    @Expose
+    private String name = "";
 
     // Time parameters
+    @Expose
     private long createdDate;
-
+    @Expose
     private long updatedDate;
 
     //// Team ////
+    @Expose
     private UUID owner;
 
+    @Expose
     private Map<UUID, Integer> members = new HashMap<>();
 
     //// State ////
+    @Expose
     private boolean locked = false;
-
+    @Expose
     private boolean spawn = false;
-
+    @Expose
     private boolean purgeProtected = false;
 
     //// Protection flags ////
     @Adapter(FlagSerializer.class)
+    @Expose
     private Map<Flag, Integer> flags = new HashMap<>();
 
+    @Expose
     private int levelHandicap;
-
+    @Expose
     private Location spawnPoint;
 
     public Island() {}
@@ -126,7 +134,6 @@ public class Island implements DataObject {
      * @return true if successfully added
      */
     public boolean addToBanList(UUID targetUUID) {
-        // TODO fire ban event
         if (targetUUID != null) {
             members.put(targetUUID, RanksManager.BANNED_RANK);
         }
@@ -206,7 +213,7 @@ public class Island implements DataObject {
      */
     public ImmutableSet<UUID> getMemberSet(){
         Builder<UUID> result = new ImmutableSet.Builder<>();
-        
+
         for (Entry<UUID, Integer> member: members.entrySet()) {
             if (member.getValue() >= RanksManager.MEMBER_RANK) {
                 result.add(member.getKey());
@@ -247,15 +254,7 @@ public class Island implements DataObject {
      * @return the island display name or the owner's name if none is set
      */
     public String getName() {
-        if (name != null) {
-            return name;
-        }
-        if (owner != null) {
-            OfflinePlayer player = Bukkit.getServer().getOfflinePlayer(owner);
-            name = player.getName();
-            return player.getName();
-        }
-        return "";
+        return name;
     }
 
     /**
@@ -292,7 +291,6 @@ public class Island implements DataObject {
      * @return rank integer
      */
     public int getRank(User user) {
-        //Bukkit.getLogger().info("DEBUG: user UUID = " + user.getUniqueId());
         return members.getOrDefault(user.getUniqueId(), RanksManager.VISITOR_RANK);
     }
 
@@ -353,10 +351,6 @@ public class Island implements DataObject {
 
     @Override
     public String getUniqueId() {
-        // Island's have UUID's that are randomly assigned if they do not exist
-        if (uniqueId.isEmpty()) {
-            uniqueId = UUID.randomUUID().toString();
-        }
         return uniqueId;
     }
 
@@ -402,8 +396,7 @@ public class Island implements DataObject {
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
-        //Bukkit.getLogger().info("DEBUG: center - " + center);
-        return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
+         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
 
     public boolean inIslandSpace(Location location) {
@@ -439,7 +432,6 @@ public class Island implements DataObject {
      * @return true if allowed, false if not
      */
     public boolean isAllowed(User user, Flag flag) {
-        //Bukkit.getLogger().info("DEBUG: " + flag.getID() + "  user score = " + getRank(user) + " flag req = "+ this.getFlagReq(flag));
         return getRank(user) >= getFlag(flag);
     }
 
@@ -487,7 +479,6 @@ public class Island implements DataObject {
      * @return true if successful, otherwise false.
      */
     public boolean removeFromBanList(UUID targetUUID) {
-        // TODO fire unban event
         members.remove(targetUUID);
         return true;
     }
@@ -543,24 +534,11 @@ public class Island implements DataObject {
     }
 
     /**
-     * Locks/Unlocks the island. May be cancelled by
-     * {@link IslandLockEvent} or {@link IslandUnlockEvent}.
+     * Locks/Unlocks the island.
      * @param locked - the lock state to set
      */
     public void setLocked(boolean locked){
-        if(locked){
-            // Lock the island
-            IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.LOCK).build();
-            if(!event.isCancelled()){
-                this.locked = locked;
-            }
-        } else {
-            // Unlock the island
-            IslandBaseEvent event = IslandEvent.builder().island(this).reason(Reason.UNLOCK).build();
-            if(!event.isCancelled()){
-                this.locked = locked;
-            }
-        }
+        this.locked = locked;
     }
 
     /**

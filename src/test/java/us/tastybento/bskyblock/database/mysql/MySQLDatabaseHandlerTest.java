@@ -1,57 +1,81 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.database.mysql;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.plugin.PluginManager;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.database.mysql.MySQLDatabaseConnecter;
+import us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.objects.Players;
+import us.tastybento.bskyblock.lists.Flags;
 
-/**
- * @author ben
- *
- */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest( { BSkyBlock.class })
 public class MySQLDatabaseHandlerTest {
-
-    private static MySQLDatabaseHandler<MySQLDatabaseHandlerTestDataObject> handler;
-    private static MySQLDatabaseHandlerTestDataObject instance;
+    
+    private static MySQLDatabaseHandler<Island> handler;
+    private static Island instance;
     private static String UNIQUE_ID = "xyz";
+    private static MySQLDatabaseConnecter dbConn;
+    private static World world;
+    @Mock
+    static BSkyBlock plugin = mock(BSkyBlock.class);
 
-    /**
-     * @throws java.lang.Exception
-     */
+
     @BeforeClass
-    public static void setUp() throws Exception {
+    public static void setUpBeforeClass() throws Exception {
         Server server = mock(Server.class);
-        World world = mock(World.class);
+        world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
+
+        PluginManager pluginManager = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pluginManager);
+
+        ItemFactory itemFactory = mock(ItemFactory.class);
+        when(server.getItemFactory()).thenReturn(itemFactory);
+
         Bukkit.setServer(server);
 
-        BSkyBlock plugin = mock(BSkyBlock.class);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        MySQLDatabaseConnecter dbConn = mock(MySQLDatabaseConnecter.class);
+        
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        
+        Settings settings = mock(Settings.class);
+        
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getDeathsMax()).thenReturn(10);
+        
+        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        dbConn = mock(MySQLDatabaseConnecter.class);
         Connection connection = mock(Connection.class);
         when(dbConn.createConnection()).thenReturn(connection);
         PreparedStatement ps = mock(PreparedStatement.class);
@@ -61,152 +85,74 @@ public class MySQLDatabaseHandlerTest {
         ResultSet rs = mock(ResultSet.class);
         when(ps.executeQuery()).thenReturn(rs);
         when(statement.executeQuery(Mockito.anyString())).thenReturn(rs);
-        instance = new MySQLDatabaseHandlerTestDataObject();
+        instance = new Island();
         instance.setUniqueId(UNIQUE_ID);
-        handler = new MySQLDatabaseHandler<>(plugin, MySQLDatabaseHandlerTestDataObject.class, dbConn);
+        handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
 
     }
 
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#getColumns(boolean)}.
-     */
-    @Test
-    public void testGetColumns() {
-        // This should be a list of 20 ?'s which related to the 20
-        assertEquals("?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?", handler.getColumns(true));
-        assertEquals("`uniqueId`, `center`, `range`, `minX`, `minZ`, `minProtectedX`, `minProtectedZ`, " + 
-                "`protectionRange`, `world`, `name`, `createdDate`, `updatedDate`, `owner`, `members`, `locked`, " + 
-                "`spawn`, `purgeProtected`, `flags`, `levelHandicap`, `spawnPoint`",
-                handler.getColumns(false));
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#createSelectQuery()}.
-     */
-    @Test
-    public void testCreateSelectQuery() {
-        assertEquals("SELECT `uniqueId`, `center`, `range`, `minX`, `minZ`, `minProtectedX`, " +
-                "`minProtectedZ`, `protectionRange`, `world`, `name`, `createdDate`, `updatedDate`, " +
-                "`owner`, `members`, `locked`, `spawn`, `purgeProtected`, `flags`, `levelHandicap`, " +
-                "`spawnPoint` FROM `us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandlerTestDataObject`",
-                handler.createSelectQuery());
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#createInsertQuery()}.
-     */
-    @Test
-    public void testCreateInsertQuery() {
-        assertEquals("REPLACE INTO `us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandlerTestDataObject`(`uniqueId`, " +
-                "`center`, `range`, `minX`, `minZ`, `minProtectedX`, `minProtectedZ`, `protectionRange`, " + 
-                "`world`, `name`, `createdDate`, `updatedDate`, `owner`, `members`, `locked`, `spawn`, " + 
-                "`purgeProtected`, `flags`, `levelHandicap`, `spawnPoint`) " + 
-                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                handler.createInsertQuery());
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#createDeleteQuery()}.
-     */
-    @Test
-    public void testCreateDeleteQuery() {        
-        assertEquals("DELETE FROM [table_name] WHERE uniqueId = ?", handler.createDeleteQuery());
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#loadObjects()}.
-     */
-    @Test
-    public void testLoadObjects() {
-        try {
-            java.util.List<MySQLDatabaseHandlerTestDataObject> result = handler.loadObjects();
-            System.out.println("Size of result " + result.size());
-        } catch (SecurityException | IllegalArgumentException | InstantiationException | IllegalAccessException
-                | InvocationTargetException | ClassNotFoundException | SQLException | IntrospectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#loadObject(java.lang.String)}.
-     */
-    @Test
-    public void testLoadObject() {
-        try {
-            MySQLDatabaseHandlerTestDataObject obj = (MySQLDatabaseHandlerTestDataObject) handler.loadObject(UNIQUE_ID);
-            assertNull(obj);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | SecurityException | ClassNotFoundException | IntrospectionException | SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#saveObject(java.lang.Object)}.
-     */
     @Test
     public void testSaveObject() {
-        try {
-            handler.saveObject(instance);
-        } catch (SecurityException | IllegalArgumentException | InstantiationException | IllegalAccessException
-                | InvocationTargetException | NoSuchMethodException | SQLException | IntrospectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+        handler.saveObject(instance);
+        BSkyBlock plugin = mock(BSkyBlock.class);
+        Settings settings = mock(Settings.class);
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.getDeathsMax()).thenReturn(10);
+        Players players = new Players();
+        players.setUniqueId(UUID.randomUUID().toString());
+        players.setDeaths(23);
+        Location location = mock(Location.class);
+        Mockito.when(location.getWorld()).thenReturn(world);
+        Mockito.when(location.getBlockX()).thenReturn(0);
+        Mockito.when(location.getBlockY()).thenReturn(0);
+        Mockito.when(location.getBlockZ()).thenReturn(0);
 
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#deleteObject(java.lang.Object)}.
-     */
-    @Test
-    public void testDeleteObject() {
-        try {
-            handler.deleteObject(instance);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | NoSuchMethodException
-                | SecurityException | IntrospectionException | SQLException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-    }
+        players.setHomeLocation(location);
+        players.setHomeLocation(location, 1);
+        players.setHomeLocation(location, 2);
+        Map<Location, Long> map = new HashMap<>();
+        map.put(location, 324L);
+        players.setKickedList(map);
+        players.setLocale("sdfsd");
+        players.setPlayerName("name");
+        players.setPlayerUUID(UUID.randomUUID());
+        players.setResetsLeft(3);
+       
 
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#objectExists(java.lang.String)}.
-     */
-    @Test
-    public void testObjectExits() {
-        // This right now is not tested properly
-        assertFalse(handler.objectExists(UNIQUE_ID));
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#saveSettings(java.lang.Object)}.
-     */
-    @Test
-    public void testSaveSettings() {
-        try {
-            handler.saveSettings(instance);
-        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | IntrospectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        MySQLDatabaseHandler<Players> h = new MySQLDatabaseHandler<>(plugin, Players.class, dbConn);
+        h.saveObject(players);
+        
+        Island island = new Island();
+        island.setUniqueId(UNIQUE_ID);
+        island.setCenter(location);
+        Map<Flag, Integer> flags = new HashMap<>();
+        for (Flag fl : Flags.values()) {
+            flags.put(fl, 100);
         }
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler#loadSettings(java.lang.String, java.lang.Object)}.
-     */
-    @Test
-    public void testLoadSettings() {
-        try {
-            handler.loadSettings(UNIQUE_ID, instance);
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | ClassNotFoundException | IntrospectionException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        island.setFlags(flags);
+        island.setLevelHandicap(10);
+        island.setLocked(true);
+        Map<UUID, Integer> members = new HashMap<>();
+        for (int i = 0; i < 100; i++) {
+            members.put(UUID.randomUUID(), i);
         }
+        island.setMembers(members);
+        island.setMinProtectedX(-100);
+        island.setMinProtectedZ(-300);
+        island.setMinX(-121);
+        island.setMinZ(-23423);
+        island.setName("ytasdgfsdfg");
+        island.setOwner(UUID.randomUUID());
+        island.setProtectionRange(100);
+        island.setPurgeProtected(true);
+        island.setRange(100);
+        island.setSpawn(true);
+        island.setSpawnPoint(location);
+        island.setWorld(world);
+        
+        MySQLDatabaseHandler<Island> ih = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
+        ih.saveObject(island);
+        
     }
 
 }

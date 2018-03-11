@@ -1,9 +1,9 @@
 package us.tastybento.bskyblock.database.mysql;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
-import us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler;
 
 public class MySQLDatabase extends BSBDatabase{
 
