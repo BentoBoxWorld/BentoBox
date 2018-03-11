@@ -41,7 +41,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     private Connection connection = null;
     
-    private BSkyBlock plugin;
+    private BSkyBlock bskyblock;
 
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
@@ -52,7 +52,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
-        this.plugin = plugin;
+        this.bskyblock = plugin;
         connection = databaseConnecter.createConnection();
         // Check if the table exists in the database and if not, create it
         createSchema();
@@ -82,7 +82,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Register adapters
         builder.registerTypeAdapter(Location.class, new LocationAdapter(plugin)) ;
         builder.registerTypeAdapter(World.class, new WorldAdapter(plugin));
-        builder.registerTypeAdapter(Flag.class, new FlagAdapter(plugin));
+        builder.registerTypeAdapter(Flag.class, new FlagAdapter(bskyblock));
         builder.registerTypeAdapter(PotionEffectType.class, new PotionEffectTypeAdapter());
         // Keep null in the database
         builder.serializeNulls();
@@ -154,8 +154,6 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             preparedStatement.execute(); 
         } catch (SQLException e) {
             plugin.getLogger().severe(() -> "Could not save object " + instance.getClass().getName() + " " + e.getMessage());
-            // Leave in for now until we know there are no particular issues
-            e.printStackTrace();
         }
     }
 
