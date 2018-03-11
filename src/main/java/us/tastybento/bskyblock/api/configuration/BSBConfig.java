@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.api.configuration;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
@@ -28,7 +27,7 @@ public class BSBConfig<T> {
         this.logger = plugin.getLogger();
         handler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(type);
     }
-    
+
     @SuppressWarnings("unchecked")
     public BSBConfig(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
@@ -43,25 +42,27 @@ public class BSBConfig<T> {
         List<T> result = new ArrayList<>();
         try {
             result = handler.loadObjects();
-        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | SecurityException | ClassNotFoundException | IntrospectionException | SQLException e) {
+        } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException | ClassNotFoundException | IntrospectionException e) {
             logger.severe(() -> "Could not load config! Error: " + e.getMessage());
         }
         return result;
     }
-    
+
     /**
      * Loads the config object
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
     public T loadConfigObject(String uniqueId) {
+
         try {
             return handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | SecurityException | ClassNotFoundException | IntrospectionException | SQLException e) {
+                | ClassNotFoundException | IntrospectionException e) {
             logger.severe(() -> "Could not load config object! " + e.getMessage());
         }
+
         return null;
     }
 
@@ -73,13 +74,13 @@ public class BSBConfig<T> {
         try {
             handler.saveObject(instance);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
-                | InstantiationException | NoSuchMethodException | IntrospectionException | SQLException e) {
+                | IntrospectionException e) {
             logger.severe(() -> "Could not save config! Error: " + e.getMessage());
             return false;
         }
         return true;
     }
-    
+
     /**
      * Checks if a config object exists or not
      * @param name - unique name of the config object

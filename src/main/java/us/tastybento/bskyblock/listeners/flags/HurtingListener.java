@@ -7,7 +7,18 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Material;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.Squid;
+import org.bukkit.entity.Villager;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -20,8 +31,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -83,13 +94,9 @@ public class HurtingListener extends AbstractFlagListener {
             return;
         }
 
-        if ((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman)
-                && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_ANIMALS)) {
-            e.getHook().remove();
-        } else if (e.getCaught() instanceof Villager && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_VILLAGERS)) {
-            e.getHook().remove();
-        } else if ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime)
-                && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS)) {
+        if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_ANIMALS)) 
+                || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS))
+                || (e.getCaught() instanceof Villager && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
     }

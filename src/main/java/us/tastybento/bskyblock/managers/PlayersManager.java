@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.managers;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -586,8 +585,7 @@ public class PlayersManager{
 
             } catch (IllegalAccessException | IllegalArgumentException
                     | InvocationTargetException | SecurityException
-                    | InstantiationException | NoSuchMethodException
-                    | IntrospectionException | SQLException e) {
+                    | IntrospectionException e) {
                 plugin.getLogger().severe("Could not save player to database: " + playerUUID + " " + e.getMessage());
             }
         } else {

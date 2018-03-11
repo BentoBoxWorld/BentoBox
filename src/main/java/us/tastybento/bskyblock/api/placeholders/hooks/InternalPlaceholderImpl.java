@@ -1,9 +1,9 @@
 package us.tastybento.bskyblock.api.placeholders.hooks;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.placeholders.Placeholder;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderAPIInterface;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Placeholders;
 
 /**

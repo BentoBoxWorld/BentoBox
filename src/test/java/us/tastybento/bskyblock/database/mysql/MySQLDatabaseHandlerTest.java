@@ -30,8 +30,6 @@ import org.powermock.reflect.Whitebox;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.database.mysql.MySQLDatabaseConnecter;
-import us.tastybento.bskyblock.database.mysql.MySQLDatabaseHandler;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 import us.tastybento.bskyblock.lists.Flags;

@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.database;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 import java.util.List;
 
 import org.bukkit.plugin.Plugin;
@@ -51,7 +50,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
      */
-    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
+    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
     /**
      * Creates a <T> filled with values from the corresponding
@@ -59,20 +58,20 @@ public abstract class AbstractDatabaseHandler<T> {
      * @param uniqueId - unique ID
      * @return <T>
      */
-    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, ClassNotFoundException;
+    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
     /**
      * Save T into the corresponding database
      *
      * @param instance that should be inserted into the database
      */
-    public abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, SecurityException, InstantiationException, NoSuchMethodException;
+    public abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException ;
 
     /**
      * Deletes the object with the unique id from the database
      * @param instance
      */
-    public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException, SQLException, NoSuchMethodException, SecurityException;
+    public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException ;
 
     /**
      * Checks if a key exists or not

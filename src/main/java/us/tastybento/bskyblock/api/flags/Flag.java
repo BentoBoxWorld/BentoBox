@@ -6,9 +6,9 @@ import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
+import us.tastybento.bskyblock.api.user.User;
 
 public class Flag implements Comparable<Flag> {
 

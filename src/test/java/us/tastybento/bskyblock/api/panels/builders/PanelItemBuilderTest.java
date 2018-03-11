@@ -28,9 +28,9 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.panels.ClickType;
 import us.tastybento.bskyblock.api.panels.PanelItem;
+import us.tastybento.bskyblock.api.user.User;
 
 @RunWith(PowerMockRunner.class)
 public class PanelItemBuilderTest {

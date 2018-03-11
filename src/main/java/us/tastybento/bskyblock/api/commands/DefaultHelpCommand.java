@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.math.NumberUtils;
+
 import us.tastybento.bskyblock.api.user.User;
 
 /**

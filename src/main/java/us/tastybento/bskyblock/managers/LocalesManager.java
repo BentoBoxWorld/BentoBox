@@ -8,8 +8,8 @@ import java.util.HashMap;
 import java.util.Locale;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.api.localization.BSBLocale;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.FileLister;
 
 /**
