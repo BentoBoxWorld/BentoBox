@@ -56,14 +56,19 @@ public class IslandsManager {
         final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
         final Block space1 = l.getBlock();
         final Block space2 = l.getBlock().getRelative(BlockFace.UP);
+
+        // Ground must be solid
+        if (!ground.getType().isSolid()) {
+            return false;
+        } 
+        // Cannot be submerged
+        if (space1.isLiquid() && space2.isLiquid()) {
+            return false;
+        }
+        
         // Portals are not "safe"
         if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
                 || space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
-            return false;
-        }
-        // If ground is AIR, then this is either not good, or they are on slab,
-        // stair, etc.
-        if (ground.getType() == Material.AIR) {
             return false;
         }
         // In BSkyBlock, liquid may be unsafe
@@ -106,7 +111,7 @@ public class IslandsManager {
         // Safe
         return true;
     }
-    
+
     private BSkyBlock plugin;
 
     private BSBDatabase database;
@@ -266,7 +271,7 @@ public class IslandsManager {
      */
     public void deleteIsland(final UUID player, boolean removeBlocks) {
         // Removes the island
-       final Island island = getIsland(player);
+        final Island island = getIsland(player);
         if (island != null) {
             deleteIsland(island, removeBlocks);
         } else {
@@ -432,7 +437,7 @@ public class IslandsManager {
                 Location tlh = plugin.getPlayers().getHomeLocation(plugin.getIslands().getTeamLeader(playerUUID));
                 if (tlh != null) {
                     if (isSafeLocation(tlh)) {
-                         plugin.getPlayers().setHomeLocation(playerUUID, tlh, number);
+                        plugin.getPlayers().setHomeLocation(playerUUID, tlh, number);
                         return tlh;
                     }
                 }
@@ -531,7 +536,7 @@ public class IslandsManager {
             }
         }
         if (home == null) {
-             // Try to fix this teleport location and teleport the player if possible
+            // Try to fix this teleport location and teleport the player if possible
             new SafeTeleportBuilder(plugin).entity(player)
             .island(plugin.getIslands().getIsland(player.getUniqueId()))
             .homeNumber(number)
@@ -633,7 +638,7 @@ public class IslandsManager {
         spawn = null;
         try {
             for (Island island : handler.loadObjects()) {
-               islandCache.addIsland(island);
+                islandCache.addIsland(island);
             }
         } catch (Exception e) {
             plugin.getLogger().severe(()->"Could not load islands to cache! " + e.getMessage());
@@ -734,7 +739,7 @@ public class IslandsManager {
                     } else {
                         if (!player.performCommand(Constants.SPAWNCOMMAND)) {
                             plugin.getLogger().warning(()->
-                                    "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
+                            "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
                         }
                     }
                 }
