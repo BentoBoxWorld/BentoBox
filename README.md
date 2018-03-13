@@ -31,4 +31,4 @@ File bug and feature requests here: https://github.com/tastybento/bskyblock/issu
 
 Note for developers
 ===================
-This is an actively developed project. Pull requests are accepted if they address a specific issue and are of high enough quality. The best way to do a pull request is to file an issue, then say that you'll fix it so we know it's coming and can coordinate with you.
+This is an actively developed project but we are not currently accepting Pull Requests from non-collaborators. Once we have finished the main development, we'll be open to PR's.
