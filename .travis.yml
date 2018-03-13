@@ -9,7 +9,6 @@ addons:
     organization: "tastybento-github"
     token:
       secure: $SONAR_TOKEN
-  sonarqube:
     branches:
       - develop
       - master
