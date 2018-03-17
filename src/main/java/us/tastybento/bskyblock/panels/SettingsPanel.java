@@ -22,7 +22,7 @@ public class SettingsPanel {
 
         PanelItem help = new PanelItemBuilder()
                 .name(user.getTranslation("protection.panel.help-item.name"))
-                .icon("crashdummie99") // Question marks
+                .icon("MHF_Question") // Question marks
                 .build();
 
         panelBuilder.item(8, help);
