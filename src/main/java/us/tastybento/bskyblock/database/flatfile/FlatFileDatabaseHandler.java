@@ -58,7 +58,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
     @Override
-    public T loadObject(String key) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         String fileName = key;
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
@@ -80,11 +80,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#loadObjects()
      */
     @Override
-    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
         List<T> list = new ArrayList<>();
-        FilenameFilter ymlFilter = (dir, name) -> {
-            return name.toLowerCase().endsWith(".yml");
-        };
+        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase().endsWith(".yml");
         String path = dataObject.getSimpleName();
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
         if (storeAt != null) {
@@ -115,7 +113,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      *
      * @return <T> filled with values
      */
-    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException {
+    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException {
         T instance = dataObject.newInstance();
 
         // Run through all the fields in the object
@@ -225,7 +223,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @SuppressWarnings("unchecked")
     @Override
-    public void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
 
 
         // This is the Yaml Configuration that will be used and saved at the end
@@ -429,7 +427,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @Override
-    public void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // The file name of the Yaml file.
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();
