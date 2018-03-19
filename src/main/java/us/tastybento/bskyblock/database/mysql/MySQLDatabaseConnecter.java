@@ -29,7 +29,7 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
             Bukkit.getLogger().severe("Could not instantiate JDBC driver! " + e.getMessage());
         }
         // jdbc:mysql://localhost:3306/Peoples?autoReconnect=true&useSSL=false
-        connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + "/" + dbSettings.getDatabaseName() + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";
+        connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName() + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";
     }
 
     @Override
@@ -69,7 +69,17 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
     public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName,
             Map<String, String> commentMap) {
         // Not used
-        
+
     }
 
+    @Override
+    public void closeConnection() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                Bukkit.getLogger().severe("Could not close MySQL database connection");
+            }
+        }
+    }
 }

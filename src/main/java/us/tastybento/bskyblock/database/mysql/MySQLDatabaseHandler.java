@@ -40,7 +40,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Connection to the database
      */
     private Connection connection = null;
-    
+
     private BSkyBlock bskyblock;
 
     /**
@@ -53,11 +53,11 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
         this.bskyblock = plugin;
-        connection = databaseConnecter.createConnection();
+        connection = (Connection)databaseConnecter.createConnection();
         // Check if the table exists in the database and if not, create it
         createSchema();
     }
-    
+
     /**
      * Creates the table in the database if it doesn't exist already
      */
@@ -73,7 +73,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.getLogger().severe(() -> "Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
-    
+
     // Gets the GSON builder
     private Gson getGSON() {
         // excludeFieldsWithoutExposeAnnotation - this means that every field to be stored should use @Expose
@@ -199,6 +199,17 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.getLogger().severe("Could not check if key exists in database! " + key + " " + e.getMessage());
         }
         return false;
+    }
+
+    @Override
+    public void close() {
+        if (connection != null) {
+            try {
+                connection.close();
+            } catch (SQLException e) {
+                plugin.getLogger().severe("Could not close database for some reason");
+            }
+        }
     }
 
 }

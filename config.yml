@@ -48,8 +48,10 @@ general:
 
   ### Database-related Settings ###
   database:
-    # FLATFILE, MYSQL
+    # FLATFILE, MYSQL, MONGO
     type: FLATFILE
+    host: localhost
+    # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.
     port: 3306
     name: BSkyBlock
     username: username

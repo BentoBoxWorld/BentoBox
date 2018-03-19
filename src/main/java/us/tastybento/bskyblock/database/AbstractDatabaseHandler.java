@@ -80,4 +80,5 @@ public abstract class AbstractDatabaseHandler<T> {
      */
     public abstract boolean objectExists(String key);
 
+    public abstract void close();
 }

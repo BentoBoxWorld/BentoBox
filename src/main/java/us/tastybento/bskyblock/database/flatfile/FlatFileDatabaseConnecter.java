@@ -162,4 +162,9 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         return file.exists();
     }
 
+    @Override
+    public void closeConnection() {
+        // Not used
+    }
+
 }

@@ -448,4 +448,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
     }
 
+    @Override
+    public void close() {
+        // Not used
+        
+    }
+
 }

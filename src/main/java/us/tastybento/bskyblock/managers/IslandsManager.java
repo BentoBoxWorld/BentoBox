@@ -642,6 +642,7 @@ public class IslandsManager {
             }
         } catch (Exception e) {
             plugin.getLogger().severe(()->"Could not load islands to cache! " + e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -815,6 +816,7 @@ public class IslandsManager {
     public void shutdown(){
         save(false);
         islandCache.clear();
+        handler.close();
     }
 
 }

@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.database;
 
-import java.sql.Connection;
 import java.util.Map;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,8 +16,13 @@ public interface DatabaseConnecter {
      *
      * @return A new connection to the database using the settings provided
      */
-     Connection createConnection();
-
+     Object createConnection();
+     
+     /**
+     * Close the database connection
+     */
+    void closeConnection();
+    
     /**
      * Returns the connection url
      *
