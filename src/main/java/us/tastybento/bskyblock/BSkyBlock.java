@@ -72,7 +72,12 @@ public class BSkyBlock extends JavaPlugin {
             getLogger().severe("Settings backup could not be saved" + e.getMessage());
         }
 
+        // Start Database managers
         playersManager = new PlayersManager(this);
+        // Check if this plugin is now disabled (due to bad database handling)
+        if (!this.isEnabled()) {
+            return;
+        }
         islandsManager = new IslandsManager(this);
         ranksManager = new RanksManager(this);
 
@@ -140,10 +145,16 @@ public class BSkyBlock extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        addonsManager.disableAddons();
+        if (addonsManager != null) {
+            addonsManager.disableAddons();
+        }
         // Save data
-        playersManager.shutdown();
-        islandsManager.shutdown();
+        if (playersManager != null) {
+            playersManager.shutdown();
+        }
+        if (islandsManager != null) {
+            islandsManager.shutdown();
+        }
     }
 
     private void registerCustomCharts(){

@@ -49,6 +49,8 @@ general:
   ### Database-related Settings ###
   database:
     # FLATFILE, MYSQL, MONGO
+    # if you use MONGO, you must also run the BSBMongo plugin (not addon)
+    # See https://github.com/tastybento/bsbMongo/releases/
     type: FLATFILE
     host: localhost
     # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.
