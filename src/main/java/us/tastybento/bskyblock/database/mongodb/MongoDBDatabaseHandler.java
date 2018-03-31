@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.potion.PotionEffectType;
@@ -40,6 +39,9 @@ import us.tastybento.bskyblock.database.objects.DataObject;
 @SuppressWarnings("deprecation")
 public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
+    private static final String UNIQUEID = "uniqueId";
+    private static final String MONGO_ID = "_id";
+    
     /**
      * Connection to the database
      */
@@ -63,7 +65,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         database = (MongoDatabase)databaseConnecter.createConnection();
         collection = database.getCollection(dataObject.getCanonicalName());
         IndexOptions indexOptions = new IndexOptions().unique(true);
-        collection.createIndex(Indexes.text("uniqueId"), indexOptions);       
+        collection.createIndex(Indexes.text(UNIQUEID), indexOptions);       
     }
 
     // Gets the GSON builder
@@ -91,24 +93,19 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         while (it.hasNext()) {
             // The deprecated serialize option does not have a viable alternative without involving a huge amount of custom code
             String json = JSON.serialize(it.next());
-            //String json = it.next().toJson();
-            Bukkit.getLogger().info("DEBUG: " + json);
-            json = json.replaceFirst("_id", "uniqueId");
-            Bukkit.getLogger().info("DEBUG: " + json);
-
+            json = json.replaceFirst(MONGO_ID, UNIQUEID);
             list.add(gson.fromJson(json, dataObject));
         }
-        Bukkit.getLogger().info("DEBUG: list is " + list.size());
         return list;
     }
 
     @Override
     public T loadObject(String uniqueId) { 
-        Document doc = collection.find(new Document("_id", uniqueId)).limit(1).first();
+        Document doc = collection.find(new Document(MONGO_ID, uniqueId)).limit(1).first();
         if (doc != null) {
             Gson gson = getGSON();
-            String json = JSON.serialize(doc).replaceFirst("_id", "uniqueId");
-            Bukkit.getLogger().info("DEBUG:loading single object: " + json);
+            String json = JSON.serialize(doc).replaceFirst(MONGO_ID, UNIQUEID);
+            // load single object
             return gson.fromJson(json, dataObject);
         }
         return null;
@@ -124,8 +121,8 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Gson gson = getGSON();
             String toStore = gson.toJson(instance);
             // Change uniqueId to _id
-            toStore = toStore.replaceFirst("uniqueId", "_id");
-            Bukkit.getLogger().info("DEBUG: Saving " + toStore);
+            toStore = toStore.replaceFirst(UNIQUEID, MONGO_ID);
+            // This parses JSON to a Mongo Document
             Document document = Document.parse(toStore);
             collection.insertOne(document);
         } catch (Exception e) {
@@ -142,7 +139,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         try {
             Method getUniqueId = dataObject.getMethod("getUniqueId");
             String uniqueId = (String) getUniqueId.invoke(instance);
-            collection.findOneAndDelete(new Document("_id", uniqueId));
+            collection.findOneAndDelete(new Document(MONGO_ID, uniqueId));
         } catch (Exception e) {
             plugin.getLogger().severe(() -> "Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }
@@ -153,7 +150,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public boolean objectExists(String key) {
-        return collection.find(new Document("_id", key)).limit(1).first() != null ? true : false;
+        return collection.find(new Document(MONGO_ID, key)).limit(1).first() != null ? true : false;
     }
 
     @Override

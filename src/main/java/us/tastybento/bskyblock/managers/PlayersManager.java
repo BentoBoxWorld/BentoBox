@@ -25,7 +25,7 @@ import us.tastybento.bskyblock.database.objects.Players;
 
 public class PlayersManager{
 
-    private static final boolean DEBUG = true;
+    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase database;
     private AbstractDatabaseHandler<Players> handler;
@@ -123,11 +123,10 @@ public class PlayersManager{
     /**
      * Adds a player to the cache
      * @param playerUUID - the player's UUID
-     * @return the players object
      */
-    public Players addPlayer(final UUID playerUUID) {
+    public void addPlayer(final UUID playerUUID) {
         if (playerUUID == null) {
-            return null;
+            return;
         }
         if (DEBUG) {
             plugin.getLogger().info("DEBUG: adding player " + playerUUID);
@@ -154,12 +153,12 @@ public class PlayersManager{
                 player = new Players(plugin, playerUUID);
             }
             playerCache.put(playerUUID, player);
-            return player;
+            return;
         } else {
             if (DEBUG) {
                 plugin.getLogger().info("DEBUG: known player");
             }
-            return playerCache.get(playerUUID);
+            return;
         }
     }
 
