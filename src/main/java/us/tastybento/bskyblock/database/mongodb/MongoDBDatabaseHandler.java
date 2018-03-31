@@ -1,10 +1,10 @@
 package us.tastybento.bskyblock.database.mongodb;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.potion.PotionEffectType;
@@ -14,6 +14,7 @@ import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import com.mongodb.util.JSON;
@@ -41,7 +42,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     private static final String UNIQUEID = "uniqueId";
     private static final String MONGO_ID = "_id";
-    
+
     /**
      * Connection to the database
      */
@@ -117,6 +118,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.getLogger().severe(() -> "This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
+        DataObject dataObj = (DataObject)instance;
         try {
             Gson gson = getGSON();
             String toStore = gson.toJson(instance);
@@ -124,7 +126,12 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             toStore = toStore.replaceFirst(UNIQUEID, MONGO_ID);
             // This parses JSON to a Mongo Document
             Document document = Document.parse(toStore);
-            collection.insertOne(document);
+            // Filter based on the id
+            Bson filter = new Document(MONGO_ID, dataObj.getUniqueId());
+            // Set the options to upsert (update or insert if doc is not there)
+            FindOneAndReplaceOptions options = new FindOneAndReplaceOptions().upsert(true);
+            // Do the deed
+            collection.findOneAndReplace(filter, document, options);
         } catch (Exception e) {
             plugin.getLogger().severe(() -> "Could not save object " + instance.getClass().getName() + " " + e.getMessage());
         }
@@ -137,9 +144,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             return;
         }
         try {
-            Method getUniqueId = dataObject.getMethod("getUniqueId");
-            String uniqueId = (String) getUniqueId.invoke(instance);
-            collection.findOneAndDelete(new Document(MONGO_ID, uniqueId));
+            collection.findOneAndDelete(new Document(MONGO_ID, ((DataObject)instance).getUniqueId()));
         } catch (Exception e) {
             plugin.getLogger().severe(() -> "Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }
@@ -150,7 +155,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public boolean objectExists(String key) {
-        return collection.find(new Document(MONGO_ID, key)).limit(1).first() != null ? true : false;
+        return collection.find(new Document(MONGO_ID, key)).first() != null ? true : false;
     }
 
     @Override
