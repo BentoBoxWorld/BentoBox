@@ -23,9 +23,12 @@ public class PanelItem {
     private String name;
     private boolean glow;
     private ItemMeta meta;
+    private boolean playerHead;
 
-    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, ClickHandler clickHandler) {
+    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, ClickHandler clickHandler, boolean playerHead) {
         this.icon = icon;
+        this.playerHead = playerHead;
+        setMeta();
         // Get the meta
         meta = icon.getItemMeta();
 
@@ -42,6 +45,11 @@ public class PanelItem {
         meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
         icon.setItemMeta(meta);
+    }
+
+    private void setMeta() {
+        // TODO Auto-generated method stub
+        
     }
 
     public ItemStack getItem() {
@@ -86,6 +94,13 @@ public class PanelItem {
     }
 
     /**
+     * @return the playerHead
+     */
+    public boolean isPlayerHead() {
+        return playerHead;
+    }
+
+    /**
      * Click handler interface
      *
      */
@@ -97,5 +112,23 @@ public class PanelItem {
          * @return true if the click event should be cancelled
          */
         boolean onClick(User user, ClickType click);
+    }
+
+    public void setHead(ItemStack itemStack) {
+        this.icon = itemStack;
+        setMeta();
+        // Get the meta
+        meta = icon.getItemMeta();
+        // Create the final item
+        setName(name);
+        setDescription(description);
+        setGlow(glow);
+
+        // Set flags to neaten up the view
+        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+        meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+        meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+        icon.setItemMeta(meta);        
     }
 }

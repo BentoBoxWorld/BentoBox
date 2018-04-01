@@ -3,12 +3,9 @@ package us.tastybento.bskyblock.api.panels.builders;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.PanelItem.ClickHandler;
@@ -19,6 +16,7 @@ public class PanelItemBuilder {
     private List<String> description = new ArrayList<>();
     private boolean glow = false;
     private PanelItem.ClickHandler clickHandler;
+    private boolean playerHead;
 
     public PanelItemBuilder icon(Material icon) {
         this.icon = new ItemStack(icon);
@@ -35,25 +33,14 @@ public class PanelItemBuilder {
      * @param playerUUID - player's UUID
      * @return PanelItemBuilder
      */
-    public PanelItemBuilder icon(UUID playerUUID) {
-        return icon(Bukkit.getServer().getOfflinePlayer(playerUUID).getName());
-    }
-
-    /**
-     * Set icon to player's head
-     * @param playerName - player's name
-     * @return PanelItemBuilder
-     */
-    @SuppressWarnings("deprecation")
     public PanelItemBuilder icon(String playerName) {
         ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        SkullMeta meta = (SkullMeta)item.getItemMeta();
-        // This is deprecated, but apparently the only way to make it work right now
-        meta.setOwner(playerName);
-        item.setItemMeta(meta);
         this.icon = item;
+        this.name = playerName;
+        this.playerHead = true;
         return this;
     }
+
 
     public PanelItemBuilder name(String name) {
         this.name = name;
@@ -107,7 +94,7 @@ public class PanelItemBuilder {
     }
 
     public PanelItem build() {
-        return new PanelItem(icon, name, description, glow, clickHandler);
+        return new PanelItem(icon, name, description, glow, clickHandler, playerHead);
     }
 
 }

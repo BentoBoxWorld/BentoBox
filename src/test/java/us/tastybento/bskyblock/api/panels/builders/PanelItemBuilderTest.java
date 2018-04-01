@@ -85,15 +85,6 @@ public class PanelItemBuilderTest {
         assertEquals(Material.IRON_ORE, item.getItem().getType());
     }
 
-    @Test
-    public void testIconUUID() {
-        PanelItemBuilder builder = new PanelItemBuilder();
-        builder.icon(UUID.fromString("5988eecd-1dcd-4080-a843-785b62419"));
-        PanelItem item = builder.build();
-        assertNotNull(item.getItem().getType());
-        assertEquals(Material.SKULL_ITEM, item.getItem().getType());
-    }
-
     @SuppressWarnings("deprecation")
     @Test
     public void testIconString() {

@@ -4,13 +4,18 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
 
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.listeners.PanelListenerManager;
+import us.tastybento.bskyblock.util.HeadGetter;
+import us.tastybento.bskyblock.util.HeadRequester;
 
-public class Panel {
+public class Panel implements HeadRequester {
 
     private Inventory inventory;
     private Map<Integer, PanelItem> items;
@@ -33,6 +38,10 @@ public class Panel {
             for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
                 //TODO allow multi-paging
                 if (en.getKey() < 54) inventory.setItem(en.getKey(), en.getValue().getItem());
+                // Get player head async
+                if (en.getValue().isPlayerHead()) {
+                    HeadGetter.getHead(en.getValue(), this);
+                }
             }
         } else {
             inventory = Bukkit.createInventory(null, 9, name);
@@ -109,5 +118,21 @@ public class Panel {
      */
     public void setUser(User user) {
         this.user = user;
+    }
+
+    @Override
+    public void setHead(PanelItem item) {
+        // Update the panel item
+        items.values().stream().filter(i -> i.getName().equals(item.getName())).forEach(i -> i = item);
+        for (int i = 0; i < inventory.getSize(); i++) {
+            ItemStack it = inventory.getItem(i);
+            if (it != null && it.getType().equals(Material.SKULL_ITEM)) {
+                ItemMeta meta = it.getItemMeta();
+                if (item.getName().equals(meta.getLocalizedName())) {
+                    inventory.setItem(i, item.getItem());
+                    return;
+                }
+            }
+        }
     }
 }

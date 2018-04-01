@@ -19,6 +19,7 @@ import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.util.HeadGetter;
 
 /**
  * Main BSkyBlock class - provides an island minigame in the sky
@@ -49,6 +50,8 @@ public class BSkyBlock extends JavaPlugin {
 
     // Notifier
     private Notifier notifier;
+
+    private HeadGetter headGetter;
 
     @Override
     public void onEnable(){
@@ -81,6 +84,9 @@ public class BSkyBlock extends JavaPlugin {
         islandsManager = new IslandsManager(this);
         ranksManager = new RanksManager(this);
 
+        // Start head getter
+        headGetter = new HeadGetter(this);
+        
         // Load metrics
         metrics = new Metrics(instance);
         registerCustomCharts();
@@ -271,5 +277,14 @@ public class BSkyBlock extends JavaPlugin {
      */
     public Notifier getNotifier() {
         return notifier;
+    }
+
+
+
+    /**
+     * @return the headGetter
+     */
+    public HeadGetter getHeadGetter() {
+        return headGetter;
     }
 }
