@@ -69,15 +69,12 @@ public class PanelBuilder {
         return this;
     }
 
+    /**
+     * Get the next free slot number
+     * @return next slot number
+     */
     public int nextSlot() {
-        if (items.isEmpty()) {
-            return 0;
-        } else {
-            for (int i = 0; i < (size != 0 ? size : 54); i++) {
-                if (!slotOccupied(i)) return i;
-            }
-        }
-        return 0;
+        return items.isEmpty() ? 0 : items.lastKey() + 1;
     }
 
     /**
@@ -94,6 +91,6 @@ public class PanelBuilder {
      * @return Panel
      */
     public Panel build() {
-        return new Panel(name, items, size, user, listener);
+        return new Panel(name, items, Math.max(size, items.lastKey()), user, listener);
     }
 }

@@ -65,7 +65,8 @@ public class BSkyBlock extends JavaPlugin {
             //settings.saveSettings();
             settings = settings.loadSettings();
         } catch (Exception e) {
-            getLogger().severe("Settings could not be loaded" + e.getMessage());
+            getLogger().severe("Settings could not be loaded " + e.getMessage());
+            e.printStackTrace();
         }
 
         // Save a backup of settings to the database so it can be checked next time

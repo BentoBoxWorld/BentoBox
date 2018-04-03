@@ -15,8 +15,11 @@ permissions:
     children:
       bskyblock.island.*:
         children:
+          bskyblock.island:
+           description: Allow island command usage
+           default: true
           bskyblock.island.create:
-            description: Allow island command usage
+            description: Allow island creation
             default: true
           bskyblock.island.home:
             description: Allow teleporting to player island

@@ -154,6 +154,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Check perms, but only if this isn't the console
         if ((sender instanceof Player) && !sender.isOp() && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
             user.sendMessage("general.errors.no-permission");
+            user.sendRawMessage("You need " + cmd.getPermission());
             return true;
         }
         // Fire an event to see if this command should be cancelled
