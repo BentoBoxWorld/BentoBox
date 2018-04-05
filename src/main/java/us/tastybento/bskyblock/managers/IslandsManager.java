@@ -146,6 +146,9 @@ public class IslandsManager {
      * @return - safe location, or null if none can be found
      */
     public Location bigScan(Location l, int i) {
+        if (l == null) {
+            return null;
+        }
         final int height;
         final int depth;
         if (i > 0) {
@@ -642,7 +645,6 @@ public class IslandsManager {
             }
         } catch (Exception e) {
             plugin.getLogger().severe(()->"Could not load islands to cache! " + e.getMessage());
-            e.printStackTrace();
         }
     }
 

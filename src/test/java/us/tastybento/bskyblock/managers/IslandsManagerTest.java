@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.managers;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -28,9 +29,10 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.generators.IslandWorld;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BSkyBlock.class })
+@PrepareForTest( { BSkyBlock.class, IslandsManager.class })
 public class IslandsManagerTest {
 
     @Mock
@@ -59,6 +61,7 @@ public class IslandsManagerTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
+        
     }
 
     @Test
@@ -99,6 +102,9 @@ public class IslandsManagerTest {
         // Happy path
         assertTrue(manager.isSafeLocation(location));
 
+        // null
+        assertFalse(manager.isSafeLocation(null));
+        
         // Try all different types of ground
         for (Material m : Material.values()) {
             when(ground.getType()).thenReturn(m);
@@ -174,4 +180,47 @@ public class IslandsManagerTest {
         when(settings.getAcidDamage()).thenReturn(0);
     }
 
+    @Test
+    public void testBigScan() throws Exception {
+        Settings settings = mock(Settings.class);
+
+        when(plugin.getSettings()).thenReturn(settings);
+
+        IslandWorld iwm = mock(IslandWorld.class);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        
+
+        IslandsManager manager = new IslandsManager(plugin);
+                
+        Location location = mock(Location.class);
+        when(location.getWorld()).thenReturn(world);
+        when(location.getBlockX()).thenReturn(0);
+        when(location.getBlockY()).thenReturn(0);
+        when(location.getBlockZ()).thenReturn(0);
+
+        Block space1 = mock(Block.class);
+        Block ground = mock(Block.class);
+        Block space2 = mock(Block.class);
+
+        when(location.getBlock()).thenReturn(space1);
+
+        when(ground.getType()).thenReturn(Material.GRASS);
+        when(space1.getType()).thenReturn(Material.AIR);
+        when(space2.getType()).thenReturn(Material.AIR);
+        when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
+        when(space1.getRelative(BlockFace.UP)).thenReturn(space2);
+
+        BlockState blockState = mock(BlockState.class);
+        when(ground.getState()).thenReturn(blockState);
+        
+        // Negative value = full island scan
+        // Null location should get a null response
+        assertNull(manager.bigScan(null, -1));
+        // No island here yet
+        assertNull(manager.bigScan(location, -1));
+        // Try null location, > 0 scan value
+        assertNull(manager.bigScan(null, 10));
+        
+    }
 }
