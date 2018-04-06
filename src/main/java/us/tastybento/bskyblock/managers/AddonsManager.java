@@ -14,6 +14,7 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.InvalidDescriptionException;
@@ -113,8 +114,9 @@ public final class AddonsManager {
                 // Open a reader to the jar
                 BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
                 // Grab the description in the addon.yml file
-                Map<String, String> data = data(reader);
-
+                //Map<String, String> data = data(reader);
+                YamlConfiguration data = new YamlConfiguration();
+                data.load(reader);
                 // Load the addon
                 AddonClassLoader loader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
                 // Add to the list of loaders
@@ -152,20 +154,6 @@ public final class AddonsManager {
             }
         }
 
-    }
-
-    private Map<String, String> data(BufferedReader reader) {
-        Map<String, String> map = new HashMap<>();
-        reader.lines().forEach(string -> {
-            if (DEBUG) {
-                Bukkit.getLogger().info("DEBUG: " + string);
-            }
-            String[] data = string.split("\\: ");
-            if (data.length > 1) {
-                map.put(data[0], data[1].substring(0, data[1].length()));
-            }
-        });
-        return map;
     }
 
     /**

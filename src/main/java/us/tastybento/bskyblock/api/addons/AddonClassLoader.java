@@ -7,7 +7,12 @@ import java.net.URLClassLoader;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
+import org.bukkit.util.permissions.DefaultPermissions;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.addons.AddonDescription.AddonDescriptionBuilder;
@@ -16,6 +21,7 @@ import us.tastybento.bskyblock.api.addons.exception.InvalidAddonInheritException
 import us.tastybento.bskyblock.managers.AddonsManager;
 
 /**
+ * Loads addons and sets up permissions
  * @author Tastybento, ComminQ
  */
 public class AddonClassLoader extends URLClassLoader {
@@ -24,7 +30,7 @@ public class AddonClassLoader extends URLClassLoader {
     private Addon addon;
     private AddonsManager loader;
 
-    public AddonClassLoader(AddonsManager addonsManager, Map<String, String>data, File path, ClassLoader parent)
+    public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File path, ClassLoader parent)
             throws InvalidAddonInheritException,
             MalformedURLException,
             InvalidAddonFormatException,
@@ -37,13 +43,9 @@ public class AddonClassLoader extends URLClassLoader {
 
         Class<?> javaClass = null;
         try {
-            //Bukkit.getLogger().info("data " + data.get("main"));
-            /*
-		    for (Entry<String, String> en : data.entrySet()) {
-		        Bukkit.getLogger().info(en.getKey() + " => " + en.getValue());
-		    }*/
-            javaClass = Class.forName(data.get("main"), true, this);
-            if(data.get("main").contains("us.tastybento")){
+            String mainClass = data.getString("main");
+            javaClass = Class.forName(mainClass, true, this);
+            if(mainClass.contains("us.tastybento")){
                 throw new InvalidAddonFormatException("Packages declaration cannot start with 'us.tastybento'");
             }
         } catch (ClassNotFoundException e) {
@@ -60,14 +62,31 @@ public class AddonClassLoader extends URLClassLoader {
 
         addon = addonClass.newInstance();
         addon.setDescription(asDescription(data));
+        // Set permissions
+        if (data.isConfigurationSection("permissions")) {
+            ConfigurationSection perms = data.getConfigurationSection("permissions");
+            perms.getKeys(true).forEach(perm -> {
+                if (perms.contains(perm + ".default") && perms.contains(perm + ".description")) {
+                    registerPermission(perms, perm);
+                }
+            });
+        }
     }
 
-    private AddonDescription asDescription(Map<String, String> data){
-        String[] authors = data.get("authors").split("\\,");
+    private void registerPermission(ConfigurationSection perms, String perm) {
+        PermissionDefault pd = PermissionDefault.getByName(perms.getString(perm + ".default"));
+        if (pd == null) {
+            Bukkit.getLogger().severe("Permission default is invalid : " + perms.getName());
+            return;
+        }
+        String desc = perms.getString(perm + ".description");
+        DefaultPermissions.registerPermission(perm, desc, pd);
+    }
 
-        return new AddonDescriptionBuilder(data.get("name"))
-                .withVersion(data.get("version"))
-                .withAuthor(authors).build();
+    private AddonDescription asDescription(YamlConfiguration data){
+        return new AddonDescriptionBuilder(data.getString("name"))
+                .withVersion(data.getString("version"))
+                .withAuthor(data.getString("authors")).build();
     }
 
 
