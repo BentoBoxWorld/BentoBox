@@ -204,6 +204,29 @@ public abstract class Addon implements AddonInterface {
     }
 
     /**
+     * Get the resource from Jar file
+     * @param jarResource
+     * @return resource or null if there is a problem
+     */
+    public InputStream getResource(String jarResource) {
+        if (jarResource == null || jarResource.equals("")) {
+            throw new IllegalArgumentException("ResourcePath cannot be null or empty");
+        }
+        
+        jarResource = jarResource.replace('\\', '/');
+        try (JarFile jar = new JarFile(file)) {
+            JarEntry jarConfig = jar.getJarEntry(jarResource);
+            if (jarConfig != null) {
+                try (InputStream in = jar.getInputStream(jarConfig)) {
+                    return in;
+                }
+            }
+        } catch (IOException e) {
+            Bukkit.getLogger().severe("Could not open from jar file. " + jarResource);
+        }
+        return null;
+    }
+    /**
      * Set the file that contains this addon
      *
      * @param f

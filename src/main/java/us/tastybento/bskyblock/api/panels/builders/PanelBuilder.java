@@ -91,6 +91,6 @@ public class PanelBuilder {
      * @return Panel
      */
     public Panel build() {
-        return new Panel(name, items, Math.max(size, items.lastKey()), user, listener);
+        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey()), user, listener);
     }
 }
