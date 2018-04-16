@@ -2,10 +2,10 @@ package us.tastybento.bskyblock.database.mysql;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
-import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDbSetup;
 import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
-public class MySQLDatabase extends BSBDatabase{
+public class MySQLDatabase extends BSBDbSetup{
 
     @Override
     public AbstractDatabaseHandler<?> getHandler(Class<?> type) {

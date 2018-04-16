@@ -2,9 +2,9 @@ package us.tastybento.bskyblock.database.flatfile;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
-import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDbSetup;
 
-public class FlatFileDatabase extends BSBDatabase{
+public class FlatFileDatabase extends BSBDbSetup{
 
     @Override
     public AbstractDatabaseHandler<?> getHandler(Class<?> type) {

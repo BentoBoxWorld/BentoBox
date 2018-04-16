@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.managers;
 
-import java.beans.IntrospectionException;
-import java.lang.reflect.InvocationTargetException;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -18,7 +16,6 @@ import org.bukkit.entity.Player;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
@@ -27,8 +24,7 @@ public class PlayersManager{
 
     private static final boolean DEBUG = false;
     private BSkyBlock plugin;
-    private BSBDatabase database;
-    private AbstractDatabaseHandler<Players> handler;
+    private BSBDatabase<Players> handler;
 
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
@@ -40,12 +36,10 @@ public class PlayersManager{
      *
      * @param plugin - BSkyBlock plugin object
      */
-    @SuppressWarnings("unchecked")
     public PlayersManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Players classes
-        handler = (AbstractDatabaseHandler<Players>) database.getHandler(Players.class);
+        handler = new BSBDatabase<>(plugin, Players.class);
         playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }
@@ -576,22 +570,7 @@ public class PlayersManager{
      */
     public void save(UUID playerUUID) {
         if (playerCache.containsKey(playerUUID)) {
-            final Players player = playerCache.get(playerUUID);
-            try {
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: saving player by uuid " + player.getPlayerName() + " " + playerUUID + " saved");
-                }
-                handler.saveObject(player);
-
-            } catch (IllegalAccessException | IllegalArgumentException
-                    | InvocationTargetException | SecurityException
-                    | IntrospectionException e) {
-                plugin.getLogger().severe("Could not save player to database: " + playerUUID + " " + e.getMessage());
-            }
-        } else {
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: " + playerUUID + " is not in the cache to save");
-            }
+            handler.saveObject(playerCache.get(playerUUID));
         }
     }
 

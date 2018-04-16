@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.database.BSBDatabase.DatabaseType;
+import us.tastybento.bskyblock.database.BSBDbSetup.DatabaseType;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter;
 

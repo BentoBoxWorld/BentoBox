@@ -5,7 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.sql.SQLException;
 
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
-import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDbSetup;
 import us.tastybento.bskyblock.database.flatfile.ConfigHandler;
 import us.tastybento.bskyblock.database.flatfile.FlatFileDatabase;
 
@@ -38,7 +38,7 @@ public interface ISettings<T> {
     @SuppressWarnings("unchecked")
     default T loadSettings() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, SQLException  {
         // See if this settings object already exists in the database
-        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDatabase.getDatabase().getHandler(getClass());
+        AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDbSetup.getDatabase().getHandler(getClass());
         T dbConfig = null;
         if (dbhandler.objectExists(this.getUniqueId())) {
             // Load it

@@ -2,10 +2,10 @@ package us.tastybento.bskyblock.database.mongodb;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
-import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDbSetup;
 import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
-public class MongoDBDatabase extends BSBDatabase{
+public class MongoDBDatabase extends BSBDbSetup{
 
     @Override
     public AbstractDatabaseHandler<?> getHandler(Class<?> type) {

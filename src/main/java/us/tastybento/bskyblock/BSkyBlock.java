@@ -7,7 +7,7 @@ import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
-import us.tastybento.bskyblock.database.BSBDatabase;
+import us.tastybento.bskyblock.database.BSBDbSetup;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
@@ -195,7 +195,7 @@ public class BSkyBlock extends JavaPlugin {
 
             @Override
             public String getValue() {
-                return BSBDatabase.getDatabase().toString();
+                return BSBDbSetup.getDatabase().toString();
             }
         });
     }

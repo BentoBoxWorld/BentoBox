@@ -23,7 +23,6 @@ import org.bukkit.util.Vector;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.island.IslandCache;
@@ -114,13 +113,12 @@ public class IslandsManager {
 
     private BSkyBlock plugin;
 
-    private BSBDatabase database;
-
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
      */
     private Island spawn;
-    private AbstractDatabaseHandler<Island> handler;
+
+    private BSBDatabase<Island> handler;
 
     private Location last;
     // Metrics data
@@ -129,12 +127,10 @@ public class IslandsManager {
     // Island Cache
     private IslandCache islandCache;
 
-    @SuppressWarnings("unchecked")
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
-        database = BSBDatabase.getDatabase();
         // Set up the database handler to store and retrieve Island classes
-        handler = (AbstractDatabaseHandler<Island>) database.getHandler(Island.class);
+        handler = new BSBDatabase<>(plugin, Island.class);
         islandCache = new IslandCache();
         spawn = null;
     }
@@ -253,11 +249,7 @@ public class IslandsManager {
             // Remove island from the cache
             islandCache.deleteIslandFromCache(island);
             // Remove the island from the database
-            try {
-                handler.deleteObject(island);
-            } catch (Exception e) {
-                plugin.getLogger().severe(()->"Could not delete island from database! " + e.getMessage());
-            }
+            handler.deleteObject(island);
             // Remove blocks from world
             new DeleteIslandChunks(plugin, island);
         }
@@ -294,10 +286,6 @@ public class IslandsManager {
 
     public int getCount(){
         return islandCache.size();
-    }
-
-    public AbstractDatabaseHandler<Island> getHandler() {
-        return handler;
     }
 
     /**
