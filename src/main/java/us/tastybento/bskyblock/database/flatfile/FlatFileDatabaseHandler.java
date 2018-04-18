@@ -311,13 +311,11 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Collections need special serialization
                 if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Maps need to have keys serialized
-                    //plugin.getLogger().info("DEBUG: Map for " + storageLocation);
                     if (value != null) {
                         Map<Object, Object> result = new HashMap<>();
                         for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
-                            // Serialize all key types
-                            // TODO: also need to serialize values?
-                            result.put(serialize(object.getKey()), object.getValue());
+                            // Serialize all key and values
+                            result.put(serialize(object.getKey()), serialize(object.getValue()));
                         }
                         // Save the list in the config file
                         config.set(storageLocation, result);
@@ -388,6 +386,18 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
             return Long.valueOf((Integer) value);
         }
+        if (clazz.equals(Integer.class) && value.getClass().equals(String.class)) {
+            return Integer.valueOf((String)value);
+        }
+        if (clazz.equals(Long.class) && value.getClass().equals(String.class)) {
+            return Long.valueOf((String)value);
+        }
+        if (clazz.equals(Double.class) && value.getClass().equals(String.class)) {
+            return Double.valueOf((String)value);
+        }
+        if (clazz.equals(Float.class) && value.getClass().equals(String.class)) {
+            return Float.valueOf((String)value);
+        } 
         if (clazz.equals(UUID.class)) {
             value = UUID.fromString((String)value);
         }
