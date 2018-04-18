@@ -56,7 +56,6 @@ public class Util {
      * @return Location
      */
     public static Location getLocationString(final String s) {
-        plugin.getLogger().info("DEBUG: getting location from string");
         if (s == null || s.trim().equals("")) {
             return null;
         }
@@ -73,7 +72,6 @@ public class Util {
             final float pitch = Float.intBitsToFloat(Integer.parseInt(parts[5]));
             return new Location(w, x, y, z, yaw, pitch);
         }
-        plugin.getLogger().info("DEBUG: not right length");
         return null;
     }
 
