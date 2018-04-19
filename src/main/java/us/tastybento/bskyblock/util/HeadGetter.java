@@ -66,7 +66,6 @@ public class HeadGetter {
             requester.setHead(panelItem);
         } else {
             // Get the name
-            //Bukkit.getLogger().info("DEBUG:Not in cache. Adding");
             headRequesters.putIfAbsent(panelItem.getName(), new HashSet<>());
             Set<HeadRequester> requesters = headRequesters.get(panelItem.getName());
             requesters.add(requester);

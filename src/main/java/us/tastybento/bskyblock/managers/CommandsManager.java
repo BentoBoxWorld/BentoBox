@@ -10,13 +10,9 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 
 public final class CommandsManager {
 
-    private static final boolean DEBUG = false;
     private HashMap<String, CompositeCommand> commands = new HashMap<>();
 
     public void registerCommand(CompositeCommand command) {
-        if (DEBUG) {
-            Bukkit.getLogger().info("DEBUG: registering command - " + command.getLabel());
-        }
         commands.put(command.getLabel(), command);
         // Use reflection to obtain the commandMap method in Bukkit's server. It used to be visible, but isn't anymore.
         try{

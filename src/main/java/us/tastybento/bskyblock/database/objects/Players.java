@@ -227,26 +227,21 @@ public class Players implements DataObject {
     public long getInviteCoolDownTime(Location location) {
         // Check the hashmap
         if (location != null && kickedList.containsKey(location)) {
-            // plugin.getLogger().info("DEBUG: Location is known");
             // The location is in the list
             // Check the date/time
             Date kickedDate = new Date(kickedList.get(location));
-            // plugin.getLogger().info("DEBUG: kicked date = " + kickedDate);
             Calendar coolDownTime = Calendar.getInstance();
             coolDownTime.setTime(kickedDate);
             // coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
             coolDownTime.add(Calendar.MINUTE, getPlugin().getSettings().getInviteWait());
             // Add the invite cooldown period
             Calendar timeNow = Calendar.getInstance();
-            // plugin.getLogger().info("DEBUG: date now = " + timeNow);
             if (coolDownTime.before(timeNow)) {
                 // The time has expired
                 kickedList.remove(location);
                 return 0;
             } else {
                 // Still not there yet
-                // long hours = (coolDownTime.getTimeInMillis() -
-                // timeNow.getTimeInMillis())/(1000 * 60 * 60);
                 // Temp minutes
                 return (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60);
             }

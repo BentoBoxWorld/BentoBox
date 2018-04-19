@@ -48,12 +48,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * the class that will be stored.
      * @param plugin - BSkyBlock plugin object
      * @param type - the type of class to be stored in the database. Must inherit DataObject
-     * @param databaseConnecter - authentication details for the database
+     * @param dbConnecter - authentication details for the database
      */
-    public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
-        super(plugin, type, databaseConnecter);
+    public MySQLDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter dbConnecter) {
+        super(plugin, type, dbConnecter);
         this.bskyblock = plugin;
-        connection = (Connection)databaseConnecter.createConnection();
+        connection = (Connection)dbConnecter.createConnection();
         // Check if the table exists in the database and if not, create it
         createSchema();
     }

@@ -315,7 +315,6 @@ public class Island implements DataObject {
         for (int x = getMinProtectedX() /16; x <= (getMinProtectedX() + getProtectionRange() - 1)/16; x++) {
             for (int z = getMinProtectedZ() /16; z <= (getMinProtectedZ() + getProtectionRange() - 1)/16; z++) {
                 for (BlockState holder : world.getChunkAt(x, z).getTileEntities()) {
-                    //plugin.getLogger().info("DEBUG: tile entity: " + holder.getType());
                     if (onIsland(holder.getLocation())) {
                         if (holder.getType() == material) {
                             result++;
@@ -339,7 +338,6 @@ public class Island implements DataObject {
                     }
                 }
                 for (Entity holder : world.getChunkAt(x, z).getEntities()) {
-                    //plugin.getLogger().info("DEBUG: entity: " + holder.getType());
                     if (holder.getType().toString().equals(material.toString()) && onIsland(holder.getLocation())) {
                         result++;
                     }

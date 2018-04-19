@@ -112,7 +112,6 @@ public class FireListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onTNTPrimed(EntityChangeBlockEvent e) {
-        //Bukkit.getLogger().info("DEBUG: " + e.getBlock().getType());
         return e.getBlock().getType().equals(Material.TNT) && checkFire(e, e.getBlock().getLocation(), Flags.FIRE);
     }
 

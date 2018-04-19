@@ -237,8 +237,8 @@ public class User {
      */
     public void notify(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty()) {
-            if (sender != null || !plugin.getNotifier().notify(this, message)) sendRawMessage(message);
+        if (!ChatColor.stripColor(message).trim().isEmpty() && (sender != null || !plugin.getNotifier().notify(this, message))) {
+            sendRawMessage(message);
         }
     }
 

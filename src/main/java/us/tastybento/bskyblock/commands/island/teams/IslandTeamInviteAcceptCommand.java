@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.commands.island.teams;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
@@ -29,8 +28,6 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
     @Override
     public boolean execute(User user, List<String> args) {
 
-        Bukkit.getLogger().info("DEBUG: accept - " + inviteList.toString());
-
         UUID playerUUID = user.getUniqueId();
         if(!inviteList.containsKey(playerUUID)) {
             return false;
@@ -52,9 +49,6 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             inviteList.remove(playerUUID);
             return false;
         }
-        if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: Invite is valid");
-        }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
@@ -67,9 +61,6 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             return true;
         }
         // Remove the invite
-        if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: Removing player from invite list");
-        }
         inviteList.remove(playerUUID);
         // Put player into Spectator mode
         user.setGameMode(GameMode.SPECTATOR);
@@ -105,9 +96,6 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", user.getName());
         }
         getIslands().save(false);
-        if (DEBUG) {
-            getPlugin().getLogger().info(() -> "DEBUG: After save " + getIslands().getIsland(prospectiveTeamLeaderUUID).getMemberSet().toString());
-        }
         return true;
     }
 

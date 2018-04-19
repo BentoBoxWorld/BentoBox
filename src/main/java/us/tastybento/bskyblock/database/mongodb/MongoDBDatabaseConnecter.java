@@ -34,8 +34,7 @@ public class MongoDBDatabaseConnecter implements DatabaseConnecter {
 
     @Override
     public MongoDatabase createConnection() {
-        MongoDatabase database = client.getDatabase(dbSettings.getDatabaseName());
-        return database;
+        return client.getDatabase(dbSettings.getDatabaseName());
     }
 
     @Override

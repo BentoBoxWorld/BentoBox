@@ -28,7 +28,6 @@ public class InventorySave {
      * @param player - the player
      */
     public void savePlayerInventory(Player player) {
-        //plugin.getLogger().info("DEBUG: Saving inventory");
         // Save the player's armor and things
         inventories.put(player.getUniqueId(),new InventoryStore(player.getInventory().getContents(), player.getInventory().getArmorContents()));
     }
@@ -38,7 +37,6 @@ public class InventorySave {
      * @param player - the player
      */
     public void clearSavedInventory(Player player) {
-        //plugin.getLogger().info("DEBUG: Clearing inventory");
         inventories.remove(player.getUniqueId());
     }
     /**
@@ -47,11 +45,9 @@ public class InventorySave {
      * @param player - the player
      */
     public void loadPlayerInventory(Player player) {
-        //plugin.getLogger().info("DEBUG: Loading inventory");
         // Get the info for this player
         if (inventories.containsKey(player.getUniqueId())) {
             InventoryStore inv = inventories.get(player.getUniqueId());
-            //plugin.getLogger().info("DEBUG: player is known");
             player.getInventory().setContents(inv.getInventory());
             player.getInventory().setArmorContents(inv.getArmor());
             inventories.remove(player.getUniqueId());

@@ -24,7 +24,6 @@ public class DeleteIslandChunks {
      * @param island
      */
     public DeleteIslandChunks(final BSkyBlock plugin, final Island island) {
-        //plugin.getLogger().info("DEBUG: deleting the island");
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
         if (event.isCancelled()) {

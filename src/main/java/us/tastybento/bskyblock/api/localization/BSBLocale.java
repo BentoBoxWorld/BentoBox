@@ -70,7 +70,6 @@ public class BSBLocale {
         YamlConfiguration toBeMerged = YamlConfiguration.loadConfiguration(language);
         for (String key : toBeMerged.getKeys(true)) {
             if (!config.contains(key)) {
-                //Bukkit.getLogger().info("Merging in key " + key );
                 config.set(key, toBeMerged.get(key));
             }
         }

@@ -20,7 +20,6 @@ public class LocalesManager {
     private BSkyBlock plugin;
     private HashMap<Locale, BSBLocale> languages = new HashMap<>();
     private static final String LOCALE_FOLDER = "locales";
-    private static final boolean DEBUG = false;
 
     public LocalesManager(BSkyBlock plugin) {
         this.plugin = plugin;
@@ -51,26 +50,17 @@ public class LocalesManager {
      * TODO: Make more robust. The file filter is fragile.
      */
     public void loadLocales(String parent) {
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: loading locale for " + parent);
-        }
         // Describe the filter - we only want files that are correctly named
         FilenameFilter ymlFilter = (dir, name) -> {
             // Files must be 9 chars long
             if (name.toLowerCase().endsWith(".yml") && name.length() == 9) {
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: bsb locale filename = " + name);
-                }
-                return true;
+                 return true;
             }
             return false;
         };
 
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: localeDir = " + localeDir.getAbsolutePath());
-        }
         // If the folder does not exist, then make it and fill with the locale files from the jar
         // If it does exist, then new files will NOT be written!
         if (!localeDir.exists()) {
@@ -82,9 +72,6 @@ public class LocalesManager {
                     // Get the last part of the name
                     int lastIndex = name.lastIndexOf('/');
                     File targetFile = new File(localeDir, name.substring(lastIndex >= 0 ? lastIndex : 0, name.length()));
-                    if (DEBUG) {
-                        plugin.getLogger().info("DEBUG: targetFile = " + targetFile.getAbsolutePath());
-                    }
                     copyFile(name, targetFile);
                 }
             } catch (IOException e) {
@@ -95,23 +82,11 @@ public class LocalesManager {
 
         // Store all the locales available
         for (File language : localeDir.listFiles(ymlFilter)) {
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: parent = " + parent + " language = " + language.getName().substring(0, language.getName().length() - 4));
-            }
             Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: locale country found = " + localeObject.getCountry());
-            }
             if (languages.containsKey(localeObject)) {
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: this locale is known");
-                }
                 // Merge into current language
                 languages.get(localeObject).merge(language);
             } else {
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: this locale is not known - new language");
-                }
                 // New language
                 languages.put(localeObject, new BSBLocale(localeObject, language));
             }

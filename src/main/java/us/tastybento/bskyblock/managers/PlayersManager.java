@@ -22,7 +22,6 @@ import us.tastybento.bskyblock.database.objects.Players;
 
 public class PlayersManager{
 
-    private static final boolean DEBUG = false;
     private BSkyBlock plugin;
     private BSBDatabase<Players> handler;
 
@@ -51,13 +50,7 @@ public class PlayersManager{
     public void load(){
         playerCache.clear();
         inTeleport.clear();
-        try {
-            for (Players player : handler.loadObjects()) {
-                playerCache.put(player.getPlayerUUID(), player);
-            }
-        } catch (Exception e) {
-            plugin.getLogger().severe("Could not load players from the database!" + e.getMessage());
-        }
+        handler.loadObjects().forEach(p -> playerCache.put(p.getPlayerUUID(), p));
     }
 
     /**
@@ -65,35 +58,12 @@ public class PlayersManager{
      * @param async - if true, save async
      */
     public void save(boolean async){
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: saving " + async);
-        }
         Collection<Players> set = Collections.unmodifiableCollection(playerCache.values());
-        if(async){
-            Runnable save = () -> {
-                for(Players player : set){
-                    if (DEBUG) {
-                        plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
-                    }
-                    try {
-                        handler.saveObject(player);
-                    } catch (Exception e) {
-                        plugin.getLogger().severe("Could not save player " + player.getPlayerName() + " "+ player.getUniqueId() + " " + e.getMessage());
-                    }
-                }
-            };
+        if(async) {
+            Runnable save = () -> set.forEach(handler::saveObject);
             plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
         } else {
-            for(Players player : set){
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: saving player " + player.getPlayerName() + " "+ player.getUniqueId());
-                }
-                try {
-                    handler.saveObject(player);
-                } catch (Exception e) {
-                    plugin.getLogger().severe("Could not save player " + player.getPlayerName() + " "+ player.getUniqueId() + " " + e.getMessage());
-                }
-            }
+            set.forEach(handler::saveObject);
         }
     }
 
@@ -122,36 +92,15 @@ public class PlayersManager{
         if (playerUUID == null) {
             return;
         }
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: adding player " + playerUUID);
-        }
         if (!playerCache.containsKey(playerUUID)) {
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: player not in cache");
-            }
             Players player = null;
             // If the player is in the database, load it, otherwise create a new player
             if (handler.objectExists(playerUUID.toString())) {
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: player in database");
-                }
-                try {
                     player = handler.loadObject(playerUUID.toString());
-                } catch (Exception e) {
-                    plugin.getLogger().severe("Could not load player " + playerUUID + " " + e.getMessage());
-                }
             } else {
-                if (DEBUG) {
-                    plugin.getLogger().info("DEBUG: new player");
-                }
                 player = new Players(plugin, playerUUID);
             }
             playerCache.put(playerUUID, player);
-            return;
-        } else {
-            if (DEBUG) {
-                plugin.getLogger().info("DEBUG: known player");
-            }
             return;
         }
     }
@@ -171,9 +120,7 @@ public class PlayersManager{
      * Saves all players on the server and clears the cache
      */
     public void removeAllPlayers() {
-        for (UUID pl : playerCache.keySet()) {
-            save(pl);
-        }
+        playerCache.keySet().forEach(this::save);
         playerCache.clear();
     }
 
@@ -244,7 +191,6 @@ public class PlayersManager{
     public void setHomeLocation(UUID playerUUID, Location location, int number) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,number);
-        //this.save(true);
     }
 
     /**
@@ -255,7 +201,6 @@ public class PlayersManager{
     public void setHomeLocation(UUID playerUUID, Location location) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setHomeLocation(location,1);
-        //this.save(true);
     }
 
     /**
@@ -319,9 +264,6 @@ public class PlayersManager{
      * @param user - the User
      */
     public void setPlayerName(User user) {
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: Setting player name to " + user.getName() + " for " + user.getUniqueId());
-        }
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
     }
@@ -334,16 +276,10 @@ public class PlayersManager{
      * @return String - playerName
      */
     public String getName(UUID playerUUID) {
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: Geting player name");
-        }
         if (playerUUID == null) {
             return "";
         }
         addPlayer(playerUUID);
-        if (DEBUG) {
-            plugin.getLogger().info("DEBUG: name is " + playerCache.get(playerUUID).getPlayerName());
-        }
         return playerCache.get(playerUUID).getPlayerName();
     }
 

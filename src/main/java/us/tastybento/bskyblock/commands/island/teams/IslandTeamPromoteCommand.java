@@ -2,8 +2,6 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.List;
 
-import org.bukkit.Bukkit;
-
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -57,10 +55,8 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
     private boolean change(User user, User target) {
         int currentRank = getIslands().getIsland(user.getUniqueId()).getRank(target);
-        Bukkit.getLogger().info("DEBUG: current rank = " + currentRank);
         if (this.getLabel().equals("promote")) {
             int nextRank = getPlugin().getRanksManager().getNextRankValue(currentRank);
-            Bukkit.getLogger().info("DEBUG: next rank = " + nextRank);
             if (nextRank > currentRank) {
                 getIslands().getIsland(user.getUniqueId()).setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
@@ -73,7 +69,6 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
         } else {
             // Demote
             int prevRank = getPlugin().getRanksManager().getPreviousRankValue(currentRank);
-            Bukkit.getLogger().info("DEBUG: Rev rank = " + prevRank);
             if (prevRank < currentRank) {
                 getIslands().getIsland(user.getUniqueId()).setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));

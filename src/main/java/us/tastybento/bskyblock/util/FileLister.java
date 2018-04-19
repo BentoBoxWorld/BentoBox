@@ -74,7 +74,6 @@ public class FileLister{
                     continue;
                 }
 
-                //plugin.getLogger().info("DEBUG: jar filename = " + entry.getName());
                 if (entry.getName().endsWith(".yml")) {
                     result.add(entry.getName());
                 }
@@ -119,7 +118,6 @@ public class FileLister{
                 continue;
             }
 
-            //plugin.getLogger().info("DEBUG: jar filename = " + entry.getName());
             if (entry.getName().endsWith(".yml")) {
                 result.add(entry.getName());
             }

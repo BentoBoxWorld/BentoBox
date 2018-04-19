@@ -114,7 +114,6 @@ public final class AddonsManager {
                 // Open a reader to the jar
                 BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
                 // Grab the description in the addon.yml file
-                //Map<String, String> data = data(reader);
                 YamlConfiguration data = new YamlConfiguration();
                 data.load(reader);
                 // Load the addon
@@ -256,7 +255,6 @@ public final class AddonsManager {
                 continue;
             }
 
-            //plugin.getLogger().info("DEBUG: jar filename = " + entry.getName());
             if (entry.getName().endsWith(".yml")) {
                 result.add(entry.getName());
             }

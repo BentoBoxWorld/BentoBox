@@ -48,7 +48,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     private MongoDatabase database = null;
     private MongoCollection<Document> collection;
-    private DatabaseConnecter databaseConnecter;
+    private DatabaseConnecter dbConnecter;
 
     private BSkyBlock bskyblock;
 
@@ -57,13 +57,13 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * the class that will be stored.
      * @param plugin - BSkyBlock plugin object
      * @param type - the type of class to be stored in the database. Must inherit DataObject
-     * @param databaseConnecter - authentication details for the database
+     * @param dbConnecter - authentication details for the database
      */
-    public MongoDBDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
-        super(plugin, type, databaseConnecter);
+    public MongoDBDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter dbConnecter) {
+        super(plugin, type, dbConnecter);
         this.bskyblock = plugin;
-        this.databaseConnecter = databaseConnecter;
-        database = (MongoDatabase)databaseConnecter.createConnection();
+        this.dbConnecter = dbConnecter;
+        database = (MongoDatabase)dbConnecter.createConnection();
         collection = database.getCollection(dataObject.getCanonicalName());
         IndexOptions indexOptions = new IndexOptions().unique(true);
         collection.createIndex(Indexes.text(UNIQUEID), indexOptions);       
@@ -160,7 +160,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     @Override
     public void close() {
-        databaseConnecter.closeConnection();
+        dbConnecter.closeConnection();
 
     }
 

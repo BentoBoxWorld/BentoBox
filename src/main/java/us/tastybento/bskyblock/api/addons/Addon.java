@@ -27,7 +27,6 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 public abstract class Addon implements AddonInterface {
 
     private static final String ADDON_CONFIG_FILENAME = "config.yml";
-    private static final boolean DEBUG = false;
     private boolean enabled;
     private AddonDescription description;
     private FileConfiguration config;
@@ -188,10 +187,6 @@ public abstract class Addon implements AddonInterface {
                     }
                     // Make any dirs that need to be made
                     outFile.getParentFile().mkdirs();
-                    if (DEBUG) {
-                        Bukkit.getLogger().info("DEBUG: outFile = " + outFile.getAbsolutePath());
-                        Bukkit.getLogger().info("DEBUG: outFile name = " + outFile.getName());
-                    }
                     if (!outFile.exists() || replace) {
                         java.nio.file.Files.copy(in, outFile.toPath());
                     }

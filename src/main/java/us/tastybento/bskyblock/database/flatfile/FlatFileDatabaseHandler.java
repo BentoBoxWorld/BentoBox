@@ -50,8 +50,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String DATABASE_FOLDER_NAME = "database";
     protected boolean configFlag;
 
-    public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
-        super(plugin, type, databaseConnecter);
+    public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter dbConnecter) {
+        super(plugin, type, dbConnecter);
     }
 
     /* (non-Javadoc)
@@ -351,7 +351,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (object == null) {
             return "null";
         }
-        //plugin.getLogger().info("DEBUG: serializing " + object.getClass().getTypeName());
         if (object instanceof UUID) {
             return ((UUID)object).toString();
         }
