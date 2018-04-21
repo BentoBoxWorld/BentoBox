@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.generators;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
@@ -124,5 +125,13 @@ public class IslandWorld {
         return endWorld;
     }
 
+    /**
+     * Checks if a player is in any of the island worlds
+     * @param loc - player to check
+     * @return true if in a world or false if not
+     */
+    public boolean inWorld(Location loc) {
+        return loc.getWorld() !=null && (loc.getWorld().equals(islandWorld) || loc.getWorld().equals(netherWorld) || loc.getWorld().equals(endWorld));
+    }
 
 }

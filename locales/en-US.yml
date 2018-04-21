@@ -4,7 +4,7 @@
 ###########################################################################################
 
 ### Credits ###
-# Tastybento: maintainer
+# tastybento: maintainer
 # Poslovitch: maintainer
 #
 # This translation is adapted to version : [alpha-2]
@@ -29,6 +29,8 @@ general:
     general: "&cThat command is not ready yet - contact admin"
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
+  tips:
+    changing-ob-to-lava: "Changing obsidian back into lava. Be careful!"
 
 commands:
   help:

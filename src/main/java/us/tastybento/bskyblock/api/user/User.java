@@ -75,7 +75,7 @@ public class User {
 
     // ----------------------------------------------------
 
-    private BSkyBlock plugin = BSkyBlock.getInstance();
+    private static BSkyBlock plugin = BSkyBlock.getInstance();
 
     private final Player player;
     private final UUID playerUUID;
@@ -104,8 +104,8 @@ public class User {
      * Used for testing
      * @param plugin
      */
-    public void setPlugin(BSkyBlock plugin) {
-        this.plugin = plugin;
+    public static void setPlugin(BSkyBlock p) {
+        plugin = p;
     }
 
     public Set<PermissionAttachmentInfo> getEffectivePermissions() {

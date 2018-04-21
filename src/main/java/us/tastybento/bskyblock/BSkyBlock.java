@@ -11,6 +11,7 @@ import us.tastybento.bskyblock.database.BSBDbSetup;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
+import us.tastybento.bskyblock.listeners.ObsidianToLava;
 import us.tastybento.bskyblock.listeners.PanelListenerManager;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
@@ -147,6 +148,8 @@ public class BSkyBlock extends JavaPlugin {
         manager.registerEvents(new PanelListenerManager(), this);
         // Nether portals
         manager.registerEvents(new NetherPortals(this), this);
+        // Obsidian to lava helper
+        manager.registerEvents(new ObsidianToLava(this), this);
     }
 
     @Override

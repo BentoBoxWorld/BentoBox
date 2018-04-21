@@ -117,8 +117,9 @@ public class FireListenerTest {
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
 
         // Users
-        User user = mock(User.class);
-        user.setPlugin(plugin);
+        //User user = mock(User.class);
+        ///user.setPlugin(plugin);
+        User.setPlugin(plugin);
         
         // Locales - final
         
