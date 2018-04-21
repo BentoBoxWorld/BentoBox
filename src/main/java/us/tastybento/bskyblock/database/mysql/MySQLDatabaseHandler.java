@@ -95,7 +95,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public List<T> loadObjects() {
         List<T> list = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT `json`  FROM `");
+        sb.append("SELECT `json` FROM `");
         sb.append(dataObject.getCanonicalName());
         sb.append("`");
         try (Statement preparedStatement = connection.createStatement()) {
@@ -115,11 +115,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public T loadObject(String uniqueId) {
         StringBuilder sb = new StringBuilder();
-        sb.append("SELECT `json`  FROM `");
+        sb.append("SELECT `json` FROM `");
         sb.append(dataObject.getCanonicalName());
         sb.append("` WHERE uniqueId = ? LIMIT 1");
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {
-            preparedStatement.setString(1, uniqueId);
+            // UniqueId needs to be placed in quotes
+            preparedStatement.setString(1, "\"" + uniqueId + "\"");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 while (resultSet.next()) {
                     // If there is a result, we only want/need the first one
