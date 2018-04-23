@@ -689,7 +689,7 @@ public class IslandsManager {
      * @return true if on valid island, false if not
      */
     public boolean playerIsOnIsland(User user) {
-        return getIslandAt(user.getLocation()).map(x -> x.onIsland(user.getLocation())).orElse(false);
+        return Optional.ofNullable(getIsland(user.getUniqueId())).map(i -> i.onIsland(user.getLocation())).orElse(false);
     }
 
 

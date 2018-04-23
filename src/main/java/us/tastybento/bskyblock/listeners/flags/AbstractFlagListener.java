@@ -182,7 +182,7 @@ public abstract class AbstractFlagListener implements Listener {
             }
         }
         // Check if the plugin is set in User (required for testing)
-        user.setPlugin(plugin);
+        User.setPlugin(plugin);
 
         if (island.isPresent()) {
             if (!island.get().isAllowed(user, flag)) {

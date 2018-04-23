@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.listeners;
 
 import java.util.UUID;
 
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -40,6 +41,13 @@ public class JoinLeaveListener implements Listener {
         if (plugin.getPlayers().isKnown(playerUUID)) {
             // Load player
             players.addPlayer(playerUUID);
+            // Sanity check a few things
+            for (Location loc : players.getHomeLocations(playerUUID).values()) {
+               if (!plugin.getIslands().locationIsOnIsland(event.getPlayer(), loc)) {
+                   players.clearHomeLocations(playerUUID);
+                   break;
+               }
+            }
             // Reset resets if the admin changes it to or from unlimited
             if (plugin.getSettings().getResetLimit() < players.getResetsLeft(playerUUID)  || (plugin.getSettings().getResetLimit() >= 0 && players.getResetsLeft(playerUUID) < 0)) {
                 players.setResetsLeft(playerUUID, plugin.getSettings().getResetLimit());
