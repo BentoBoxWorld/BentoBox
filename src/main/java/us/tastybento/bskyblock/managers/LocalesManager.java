@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.BSBLocale;
@@ -13,7 +15,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.FileLister;
 
 /**
- * @author Tastybento, Poslovitch
+ * @author tastybento, Poslovitch
  */
 public class LocalesManager {
 
@@ -101,7 +103,13 @@ public class LocalesManager {
         } catch (IOException e) {
             plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
         }
+    }
 
+    public Set<Locale> getAvailableLocales() {
+        return languages.keySet();
+    }
 
+    public Map<Locale, BSBLocale> getLanguages() {
+        return this.languages;
     }
 }

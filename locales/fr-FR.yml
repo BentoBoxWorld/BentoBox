@@ -9,6 +9,11 @@
 #
 # Cette traduction est adaptée pour la version : [alpha-1]
 
+banner:
+- "WHITE"
+- "STRIPE_BOTTOM:RED"
+- "STRIPE_TOP:BLUE"
+
 not-setup:
   header: |-
       Configuration nécessaire avant de pouvoir utiliser le plugin...

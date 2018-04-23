@@ -9,6 +9,12 @@
 #
 # This translation is adapted to version : [alpha-2]
 
+banner:
+- "WHITE"
+- "STRIPE_SMALL:RED"
+- "SQUARE_TOP_RIGHT:CYAN"
+- "SQUARE_TOP_RIGHT:BLUE"
+
 general:
   deaths: "Deaths"
   unlimited: "Unlimited"
@@ -42,7 +48,6 @@ commands:
   admin:
     help:
       description: "admin command"
-      parameters: ""
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
@@ -161,7 +166,6 @@ commands:
       description: "display island settings"
     language:
       description: "select language"
-      parameters: "<language>"
 
 ranks:
   owner: "Owner"

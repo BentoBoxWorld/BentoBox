@@ -9,6 +9,15 @@
 #
 # This translation is adapted to version : [alpha-1]
 
+banner:
+- "BLUE"
+- "STRIPE_DOWNLEFT:WHITE"
+- "STRIPE_DOWNRIGHT:WHITE"
+- "STRIPE_CENTER:WHITE"
+- "STRIPE_MIDDLE:WHITE"
+- "STRAIGHT_CROSS:RED"
+- "CROSS:RED"
+
 not-setup:
   header: |-
       More set up is required before the plugin can start...

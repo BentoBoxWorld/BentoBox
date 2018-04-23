@@ -53,7 +53,6 @@ public class IslandBuilder {
         world = island.getWorld();
     }
 
-
     /**
      * @param type the type to set
      */
@@ -77,7 +76,6 @@ public class IslandBuilder {
         return this;
     }
 
-
     /**
      * @param player - the player the player to set
      */
@@ -87,7 +85,6 @@ public class IslandBuilder {
         return this;
     }
 
-
     /**
      * @param list the default chestItems to set
      */
@@ -95,7 +92,6 @@ public class IslandBuilder {
         chestItems = list;
         return this;
     }
-
 
     public void build() {
         // Switch on island type

@@ -10,6 +10,11 @@
 #
 # This translation is adapted to version : [alpha-1]
 
+banner:
+- "RED"
+- "STRIPE_RIGHT:BLACK"
+- "STRIPE_LEFT:YELLOW"
+
 not-setup:
   header: |-
       Es werden weitere Einstellungen benötigt, bevor das Plugin genutzt werden kann...

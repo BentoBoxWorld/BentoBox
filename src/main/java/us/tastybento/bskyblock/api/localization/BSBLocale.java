@@ -1,21 +1,51 @@
 package us.tastybento.bskyblock.api.localization;
 
 import java.io.File;
+import java.util.List;
 import java.util.Locale;
 
+import org.bukkit.DyeColor;
+import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 
 /**
- * @author Poslovitch, Tastybento
+ * @author Poslovitch, tastybento
  */
 public class BSBLocale {
 
     private Locale locale;
     private YamlConfiguration config;
+    private ItemStack banner;
 
     public BSBLocale(Locale locale, File file) {
         this.locale = locale;
         config = YamlConfiguration.loadConfiguration(file);
+
+        // Load the banner from the configuration
+        List<String> bannerLayers = config.getStringList("banner");
+        if (bannerLayers != null && !bannerLayers.isEmpty()) {
+            banner = new ItemStack(Material.BANNER, 1);
+            BannerMeta meta = (BannerMeta) banner.getItemMeta();
+
+            meta.setBaseColor(DyeColor.valueOf(bannerLayers.get(0)));
+            bannerLayers.remove(0);
+
+            for (String s : bannerLayers) {
+                String[] pattern = s.split(":");
+                meta.addPattern(new Pattern(DyeColor.valueOf(pattern[1]), PatternType.valueOf(pattern[0])));
+            }
+
+            banner.setItemMeta(meta);
+        } else {
+            banner = new ItemStack(Material.BANNER, 1);
+            BannerMeta meta = (BannerMeta) banner.getItemMeta();
+            meta.setBaseColor(DyeColor.WHITE);
+            banner.setItemMeta(meta);
+        }
     }
 
     /**
@@ -60,6 +90,14 @@ public class BSBLocale {
      */
     public String toLanguageTag(){
         return locale.toLanguageTag();
+    }
+
+    /**
+     * Returns the banner ItemStack representing this locale
+     * @return the banner ItemStack
+     */
+    public ItemStack getBanner() {
+        return banner;
     }
 
     /**
