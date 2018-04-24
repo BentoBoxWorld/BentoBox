@@ -131,7 +131,7 @@ public class IslandsManager {
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Island classes
         handler = new BSBDatabase<>(plugin, Island.class);
-        islandCache = new IslandCache();
+        islandCache = new IslandCache(plugin);
         spawn = null;
     }
 
@@ -225,10 +225,14 @@ public class IslandsManager {
      * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
      * @param location - the location - location
      * @param owner - the island owner UUID
-     * @return Island
+     * @return Island or null if the island could not be created for some reason
      */
     public Island createIsland(Location location, UUID owner){
-        return islandCache.createIsland(new Island(location, owner, plugin.getSettings().getIslandProtectionRange()));
+        Island island = new Island(location, owner, plugin.getSettings().getIslandProtectionRange());
+        if (islandCache.addIsland(island)) {
+            return island;
+        }
+        return null;
     }
 
     /**

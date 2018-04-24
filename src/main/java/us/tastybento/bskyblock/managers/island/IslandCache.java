@@ -21,7 +21,7 @@ import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
 public class IslandCache {
-    private BSkyBlock plugin = BSkyBlock.getInstance();
+    private BSkyBlock plugin;
     private BiMap<Location, Island> islandsByLocation;
     /**
      * Every player who is associated with an island is in this map.
@@ -30,7 +30,8 @@ public class IslandCache {
     // 2D islandGrid of islands, x,z
     private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
 
-    public IslandCache() {
+    public IslandCache(BSkyBlock plugin) {
+        this.plugin = plugin;
         islandsByLocation = HashBiMap.create();
         islandsByUUID = new HashMap<>();
     }
@@ -38,16 +39,22 @@ public class IslandCache {
     /**
      * Adds an island to the grid
      * @param island
+     * @return true if successfully added, false if not
      */
-    public void addIsland(Island island) {
+    public boolean addIsland(Island island) {
         islandsByLocation.put(island.getCenter(), island);
         islandsByUUID.put(island.getOwner(), island);
         for (UUID member: island.getMemberSet()) {
             islandsByUUID.put(member, island);
         }
-        addToGrid(island);
+        return addToGrid(island);
     }
 
+    /**
+     * Adds a player's UUID to the look up for islands. Does no checking
+     * @param playerUUID
+     * @param teamIsland
+     */
     public void addPlayer(UUID playerUUID, Island teamIsland) {
         islandsByUUID.put(playerUUID, teamIsland);
     }
@@ -55,8 +62,9 @@ public class IslandCache {
     /**
      * Adds an island to the grid register
      * @param newIsland
+     * @return true if successfully added, false if not
      */
-    private void addToGrid(Island newIsland) {
+    private boolean addToGrid(Island newIsland) {
         if (islandGrid.containsKey(newIsland.getMinX())) {
             TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
             if (zEntry.containsKey(newIsland.getMinZ())) {
@@ -79,7 +87,7 @@ public class IslandCache {
                     plugin.getLogger().warning("Denied island is unowned and was just found in the islands folder. Skipping it...");
                 }
                 plugin.getLogger().warning("Recommend that the denied player file is deleted otherwise weird things can happen.");
-                return;
+                return false;
             } else {
                 // Add island
                 zEntry.put(newIsland.getMinZ(), newIsland);
@@ -91,6 +99,7 @@ public class IslandCache {
             zEntry.put(newIsland.getMinZ(), newIsland);
             islandGrid.put(newIsland.getMinX(), zEntry);
         }
+        return true;
     }
 
     public void clear() {
@@ -98,45 +107,20 @@ public class IslandCache {
         islandsByUUID.clear();
     }
 
-    public Island createIsland(Island island) {
-        islandsByLocation.put(island.getCenter(), island);
-        if (island.getOwner() != null) {
-            islandsByUUID.put(island.getOwner(), island);
-        }
-        addToGrid(island);
-        return island;
-    }
-
-    /**
-     * Create an island with no owner at location
-     * @param location - the location
-     */
-    public Island createIsland(Location location){
-        return createIsland(location, null);
-    }
-
-    /**
-     * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
-     * @param location - the location
-     * @param owner - the island owner UUID
-     */
-    public Island createIsland(Location location, UUID owner){
-        Island island = new Island(location, owner, plugin.getSettings().getIslandProtectionRange());
-        islandsByLocation.put(location, island);
-        if (owner != null) {
-            islandsByUUID.put(owner, island);
-        }
-        addToGrid(island);
-        return island;
-    }
-
     /**
      * Deletes an island from the database. Does not remove blocks
      * @param island
+     * @return true if successful, false if not
      */
-    public void deleteIslandFromCache(Island island) {
+    public boolean deleteIslandFromCache(Island island) {
         if (!islandsByLocation.remove(island.getCenter(), island)) {
+            if (plugin == null) 
+                System.out.println("plugin = null");
+            if (plugin.getLogger() == null) 
+                System.out.println("plugin.logger = null");
+            
             plugin.getLogger().severe("Could not remove island from cache!");
+            return false;
         }
         Iterator<Entry<UUID, Island>> it = islandsByUUID.entrySet().iterator();
         while (it.hasNext()) {
@@ -158,22 +142,24 @@ public class IslandCache {
                 }
             }
         }
+        return true;
     }
 
+    /**
+     * Get island based on the exact center location of the island
+     * @param location
+     * @return island or null if it does not exist
+     */
     public Island get(Location location) {
         return islandsByLocation.get(location);
     }
 
-    public Island get(UUID uuid) {
-        return islandsByUUID.get(uuid);
-    }
-
     /**
-     * Gets the island for this player. If they are in a team, the team island is returned
-     * @param uuid - UUID
-     * @return Island
+     * Returns island referenced by UUID
+     * @param uuid - uuid of player
+     * @return island or null if none
      */
-    public Island getIsland(UUID uuid){
+    public Island get(UUID uuid) {
         return islandsByUUID.get(uuid);
     }
 
@@ -227,7 +213,7 @@ public class IslandCache {
      */
     public Location getIslandLocation(UUID playerUUID) {
         if (hasIsland(playerUUID)) {
-            return getIsland(playerUUID).getCenter();
+            return get(playerUUID).getCenter();
         }
         return null;
     }

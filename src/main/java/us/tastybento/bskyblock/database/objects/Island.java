@@ -225,28 +225,28 @@ public class Island implements DataObject {
     /**
      * @return the minProtectedX
      */
-    public final int getMinProtectedX() {
+    public int getMinProtectedX() {
         return minProtectedX;
     }
 
     /**
      * @return the minProtectedZ
      */
-    public final int getMinProtectedZ() {
+    public int getMinProtectedZ() {
         return minProtectedZ;
     }
 
     /**
      * @return the minX
      */
-    public final int getMinX() {
+    public int getMinX() {
         return minX;
     }
 
     /**
      * @return the minZ
      */
-    public final int getMinZ() {
+    public int getMinZ() {
         return minZ;
     }
 

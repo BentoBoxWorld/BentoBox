@@ -34,6 +34,10 @@ public class Util {
     private static final DecimalFormat df = new DecimalFormat("#.###");
     private static String serverVersion = null;
     private static BSkyBlock plugin = BSkyBlock.getInstance();
+    
+    public static void setPlugin(BSkyBlock p) {
+        plugin = p;
+    }
 
     /**
      * Returns the server version
@@ -255,11 +259,6 @@ public class Util {
             }
         }
         return config;
-    }
-
-    public static void runCommand(final Player player, final String string) {
-        plugin.getServer().getScheduler().runTask(plugin, () -> player.performCommand(string));
-
     }
 
     /**
