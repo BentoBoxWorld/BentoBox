@@ -43,6 +43,10 @@ public class LocalesManager {
         if (languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
             return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
         }
+        // Or try in the en-US locale
+        if (languages.get(Locale.forLanguageTag("en-US")).contains(reference)) {
+            return languages.get(Locale.forLanguageTag("en-US")).get(reference);
+        }
         return null;
     }
 

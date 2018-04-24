@@ -259,10 +259,13 @@ protection:
         &7Allowed for: &f[rank]
     help-item:
       name: "&aNeed some help?"
-
-
   island:
     locked: "&cThis island is locked!"
+
+language:
+  panel-title: "Select your language"
+  selected: "&aCurrently selected."
+  edited: "&aEdited your language to &e[lang]&a."
 
 new-island:
   sign:

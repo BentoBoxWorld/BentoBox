@@ -18,25 +18,41 @@ public class LanguagePanel {
      */
     public static void openPanel(User user) {
         PanelBuilder panelBuilder = new PanelBuilder()
-                .name(user.getTranslation("languages.panel.title"));
+                .name(user.getTranslation("language.panel-title"));
 
         for (Locale locale : BSkyBlock.getInstance().getLocalesManager().getAvailableLocales()) {
             PanelItemBuilder localeIcon = new PanelItemBuilder().icon(BSkyBlock.getInstance().getLocalesManager().getLanguages().get(locale).getBanner())
-                    .name("languages." + locale.toLanguageTag() + ".name")
+                    .name(fancyLocaleDisplayName(user, locale))
                     .clickHandler((u, click) -> {
                         BSkyBlock.getInstance().getPlayers().setLocale(u.getUniqueId(), locale.toLanguageTag());
-                        u.sendMessage("language.changed");
-                        u.closeInventory();
+                        u.sendMessage("language.edited", "[lang]", fancyLocaleDisplayName(u, locale));
+                        openPanel(u);
                         return true;
                     });
 
             if (user.getLocale().toLanguageTag().equals(locale.toLanguageTag())) {
-                localeIcon.description("language.already-selected");
+                localeIcon.description(user.getTranslation("language.selected"));
             }
 
             panelBuilder.item(localeIcon.build());
         }
 
         panelBuilder.build().open(user);
+    }
+
+    /**
+     * Returns a properly capitalized String based on locale's display name from user's current locale.
+     * @param user - the User
+     * @param locale - the Locale to get the display name from
+     * @return properly capitalized String of the locale's display name in user's current locale
+     */
+    private static String fancyLocaleDisplayName(User user, Locale locale) {
+        // Get the display name of the locale based on current user's locale
+        String localeDisplayName = locale.getDisplayName(user.getLocale());
+
+        // Set the first letter to an uppercase, to make it nice and fancy :D
+        localeDisplayName = localeDisplayName.substring(0,1).toUpperCase() + localeDisplayName.substring(1);
+
+        return localeDisplayName;
     }
 }
