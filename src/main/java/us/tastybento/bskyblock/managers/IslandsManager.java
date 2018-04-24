@@ -318,7 +318,7 @@ public class IslandsManager {
      * This includes the full island space, not just the protected area
      *
      * @param location - the location
-     * @return Island object
+     * @return Optional Island object
      */
     public Optional<Island> getIslandAt(Location location) {
         if (location == null) {

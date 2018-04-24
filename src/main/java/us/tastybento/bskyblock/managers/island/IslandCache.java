@@ -114,12 +114,6 @@ public class IslandCache {
      */
     public boolean deleteIslandFromCache(Island island) {
         if (!islandsByLocation.remove(island.getCenter(), island)) {
-            if (plugin == null) 
-                System.out.println("plugin = null");
-            if (plugin.getLogger() == null) 
-                System.out.println("plugin.logger = null");
-            
-            plugin.getLogger().severe("Could not remove island from cache!");
             return false;
         }
         Iterator<Entry<UUID, Island>> it = islandsByUUID.entrySet().iterator();
@@ -205,20 +199,6 @@ public class IslandCache {
     }
 
     /**
-     * Returns the player's island location.
-     * Returns an island location OR a team island location
-     *
-     * @param playerUUID - the player's UUID
-     * @return Location of player's island or null if one does not exist
-     */
-    public Location getIslandLocation(UUID playerUUID) {
-        if (hasIsland(playerUUID)) {
-            return get(playerUUID).getCenter();
-        }
-        return null;
-    }
-
-    /**
      * Get name of the island owned by owner
      * @param owner - the island owner
      * @return Returns the name of owner's island, or the owner's name if there is none.
@@ -262,6 +242,11 @@ public class IslandCache {
                 && (islandsByUUID.get(playerUUID).getOwner().equals(playerUUID))) ? true : false;
     }
 
+    /**
+     * Removes a player from the cache. If the player has an island, the island owner is removed and membership cleared.
+     * The island is removed from the islandsByUUID map, but kept in the location map.
+     * @param playerUUID - player's UUID
+     */
     public void removePlayer(UUID playerUUID) {
         Island island = islandsByUUID.get(playerUUID);
         if (island != null) {
@@ -273,17 +258,27 @@ public class IslandCache {
             island.removeMember(playerUUID);
         }
         islandsByUUID.remove(playerUUID);
-
     }
 
-    public void setIslandName(UUID owner, String name) {
+    /**
+     * Sets the island name
+     * @param owner - owner of island
+     * @param name - new island name
+     * @return true if successfull, false if no island for owner
+     */
+    public boolean setIslandName(UUID owner, String name) {
         if (islandsByUUID.containsKey(owner)) {
             Island island = islandsByUUID.get(owner);
             island.setName(name);
+            return true;
         }
-
+        return false;
     }
 
+    /**
+     * Get the number of islands in the cache
+     * @return the number of islands 
+     */
     public int size() {
         return islandsByLocation.size();
     }
