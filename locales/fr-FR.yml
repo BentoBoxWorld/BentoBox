@@ -4,41 +4,271 @@
 ###########################################################################################
 
 ### Credits ###
-# MrSheepSheep: traduction originale
-# Poslovitch: maintien en 4.0
+# MrSheepSheep: translater
+# Poslovitch: maintainer
 #
-# Cette traduction est adaptée pour la version : [alpha-1]
+# Cette traduction est adaptée pour la version : [alpha-2]
 
 banner:
 - "WHITE"
 - "STRIPE_BOTTOM:RED"
 - "STRIPE_TOP:BLUE"
 
-not-setup:
-  header: |-
-      Configuration nécessaire avant de pouvoir utiliser le plugin...
-      Editez le fichier config.yml puis redémarrez le serveur.
-  distance: "Assurez vous d'avoir défini la distance entre les îles. Si vous avez mis à jour le plugin, conservez la même distance."
-  generator: |-
-      Le générateur n'est pas défini pour le monde des îles.
-      Les raisons potentielles sont:
-        1. Si vous configurez le monde des îles comme le seul monde du serveur,
-           assurez-vous d'avoir ajouté le nom du monde dans le fichier bukkit.yml.
-        2. Vous avez reload le serveur au lieu de le redémarrer.
-  generator-multiverse: "  3. Le plugin Multiverse n'est pas à jour. Installez la version la plus récente."
-  world-name: |-
-      Le nom du monde dans le fichier config.yml diffère de celui spécifié dans le fichier islands.yml.
-      Si ceci est intentionnel, nous en déduisons que vous réinitialisez votre serveur.
-      Dans ce cas, supprimez le fichier islands.yml et l'ancien monde.
-      Si ce n'est pas le cas, corrigez le nom du monde dans le fichier config.yml et redémarrez votre serveur. Ceci peut se produire lorsque vous mettez à jour le plugin.
-  config-outdated: |-
-      Le fichier config.yml semble être obsolète.
-      Assurez-vous d'avoir actualisé votre configuration après avoir mis à jour le plugin.
-      Si cette erreur persiste, vous avez probablement édité l'ancien config.yml plutôt que le nouveau.
-      Si c'est le cas, supprimez le fichier config.yml, travaillez sur le fichier config.new.yml puis renommez-le en config.yml.
-
-
 general:
-  success: "Succès!"
+  deaths: "morts"
+  unlimited: "Illimité"
+  success: "&aAction effectuée!"
   errors:
-    no-permission: "Vous n'avez pas la permission d'exécuter cette commande."
+    command-cancelled: "&cCommande annulée."
+    no-permission: "&cVous n'avez pas la permission d'utiliser cette commande."
+    use-in-game: "&cCette commande doit être exécutée en jeu."
+    no-team: "&cVous n'avez pas d'équipe!"
+    no-island: "&cVous n'avez pas d'île!"
+    player-has-no-island: "&cCe joueur n'a pas d'île!"
+    already-have-island: "&cVous possédez déjà une île!"
+    no-safe-location: "&cAucune position sécurisée n'a été trouvée sur cette île!"
+    not-leader: "&cVous n'êtes oas le leader de votre île!"
+    not-in-team: "&cCe joueur n'est pas dans votre équipe!"
+    offline-player: "&cCe joueur est déconnecté ou n'existe pas."
+    unknown-player: "&cCe joueur est inconnu."
+    general: "&cImpossible d'exécuter la commande. Contactez un administrateur."
+    warp-not-safe: "&cCe Warp n'est pas sécurisé."
+    wrong-world: "&cVous n'êtes pas de le bon monde pour effectuer cette action."
+  tips:
+    changing-ob-to-lava: "Transformation de l'obsidienne en lave. Faites attention!"
+
+commands:
+  help:
+    header: "&7=========== &c%bsb_plugin_name% &7==========="
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    end: "&7================================="
+    parameters: "[command]"
+    description: "help command"
+  admin:
+    help:
+      description: "admin command"
+    version:
+      description: "display %bsb_plugin_name% and addons versions"
+    setrange:
+      parameters: "[player] [range]"
+      description: "set the range of player's island"
+      range-updated: "Island range updated to [number]"
+    reload:
+      description: "reload the plugin"
+    tp:
+      parameters: "[player]"
+      description: "teleport to a player's island"
+      manual: "&cNo safe warp found! Manually tp near to &b[location] &cand check it out"
+  island:
+    about:
+      description: "display info about %bsb_plugin_name%"
+    go:
+      parameters: "<home number>"
+      description: "teleport you to your island"
+      teleport: "&aTeleporting you to your island. &b/[label] help &afor help."
+      teleported: "&aTeleported you to home &e#[number]."
+    help:
+      description: "The main island command"
+    spawn:
+      description: "teleport you to the spawn"
+    create:
+      description: "create an island"
+      unable-create-island: "Your island could not be generated, please contact an administrator."
+      creating-island: "Creating your island..."
+    info:
+      description: "display info about your island"
+    reset:
+      description: "restart your island and remove the old one"
+      must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
+    sethome:
+      description: "set your teleport point for /island"
+      must-be-on-your-island: "You must be on your island to set home!"
+      num-homes: "Homes can be 1 to [max]."
+      home-set: "Your island home has been set to your current location."
+      parameters: "<home number>"
+    setname:
+      description: "set a name for your island"
+      name-too-short: "&cToo short. Minimum size is [length] characters."
+      name-too-long: "&cToo long. Maximum size is [length] characters."
+      parameters: "<name>"
+    resetname:
+      description: "reset your island name"
+    team:
+      description: "manage your team"
+      info:
+        description: "display detailed info about your team"
+      invite:
+        description: "invite a player to join your island"
+        invitation-sent: "Invitation sent to [name]"
+        removing-invite: "Removing invite"
+        name-has-invited-you: "[name] has invited you to join their island."
+        to-accept-or-reject: "Do /island team accept to accept, or /island team reject to reject"
+        you-will-lose-your-island: "&cWARNING! You will lose your island if you accept!"
+        errors:
+          cannot-invite-self: "&cYou cannot invite yourself!"
+          cooldown: "&cYou cannot invite that person for another [time] seconds"
+          island-is-full: "&cYour island is full, you can't invite anyone else."
+          none-invited-you: "&cNo one invited you :c."
+          you-already-are-in-team: "&cYou are already on a team!"
+          already-on-team: "&cThat player is already on a team!"
+          invalid-invite: "&cThat invite is no longer valid, sorry."
+        parameters: "<player>"
+        you-can-invite: "You can invite [number] more players."
+        accept:
+          description: "accept an invitation"
+          you-joined-island: "&aYou joined an island! Use /[label] team info to see the other members."
+          name-joined-your-island: "&a[name] joined your island!"
+        reject:
+          description: "reject an invitation"
+          you-rejected-invite: "&aYou rejected the invitation to join an island."
+          name-rejected-your-invite: "&c[name] rejected your island invite!"
+        cancel:
+          description: "cancel the pending invite to join your island"
+      leave:
+        description: "leave your island"
+        type-again: "&cEnter the leave command again to confirm"
+        left-your-island: "&c[player] left your island"
+      kick:
+        description: "remove a member from your island"
+        parameters: "<player>"
+        type-again: "&cEnter the kick command again to confirm"
+        leader-kicked: "&cThe leader kicked you from the island!"
+      demote:
+        description: "demote a player on your island down a rank"
+        parameters: "<player>"
+        failure: "&cPlayer cannot be demoted any further!"
+        success: "Demoted [name] to [rank]"
+      promote:
+        description: "promote a player on your island up a rank"
+        parameters: "<player>"
+        failure: "&cPlayer cannot be promoted any further!"
+        success: "Promoted [name] to [rank]"
+      setowner:
+        description: "transfer your island ownership to a member"
+        errors:
+          cant-transfer-to-yourself: "&cYou can't transfer ownership to yourself! Well, infact, you could... But we don't want you to. 'Cause it's bad."
+          target-is-not-member: "&cThat player is not part of your island team!"
+        name-is-the-owner: "&a[name] is now the island owner!"
+        parameters: "<player>"
+        you-are-the-owner: "&aYou are now the island owner!"
+    ban:
+      description: "ban a player from your island"
+      parameters: "<player>"
+    unban:
+      description: "unban a player from your island"
+      parameters: "<player>"
+    banlist:
+      description: "list banned players"
+    lock:
+      description: "lock/unlock your island so visitors cannot enter it"
+    settings:
+      description: "display island settings"
+    language:
+      description: "select language"
+
+ranks:
+  owner: "Owner"
+  member: "Member"
+  coop: "Coop"
+  visitor: "Visitor"
+  banned: "Banned"
+
+protection:
+  protected: "&cIsland protected!"
+  flags:
+    ANVIL:
+      name: "Anvils"
+      description: "Toggle interaction with anvils"
+    ARMOR_STAND:
+      name: "Armor stands"
+      description: "Toggle interaction with armor stands"
+    BEACON:
+      name: "Beacons"
+      description: "Toggle interaction with beacons"
+    BED:
+      name: "Beds"
+      description: "Toggle interaction with beds"
+    BREAK_BLOCKS:
+      name: "Break blocks"
+      description: "Toggle block breaking"
+    BREEDING:
+      name: "Breed animals"
+      description: "Toggle animal breeding"
+    BREWING:
+      name: "Brewing stands"
+      description: "Toggle interaction with brewing stands"
+    BUCKET:
+      name: "Buckets"
+      description: "Toggle interaction with buckets"
+    COLLECT_WATER:
+      name: "Collect water"
+      description: |
+        Toggle collecting water using buckets
+        (override Buckets)
+    COLLECT_LAVA:
+      name: "Collect lava"
+      description: |
+        Toggle collecting lava using buckets
+        (override Buckets)
+    CHORUS_FRUIT:
+      name: "Chorus fruits"
+      description: "Toggle teleportation using Chorus fruits"
+    CRAFTING: "Use crafting table"
+    CROP_TRAMPLE: "Trample crops"
+    DOOR: "Use doors"
+    ELYTRA: "Use elytras"
+    ENCHANTING: "Use enchanting table"
+    ENTER_EXIT_MESSAGES: "Display entry and exit messages"
+    FIRE: "FIRE"
+    FIRE_EXTINGUISH: "FIRE_EXTINGUISH"
+    FIRE_SPREAD: "FIRE_SPREAD"
+    FURNACE: "FURNACE"
+    GATE: "GATE"
+    HURT_ANIMALS: "HURT_ANIMALS"
+    HURT_MONSTERS: "HURT_MONSTERS"
+    HURT_VILLAGERS: "HURT_VILLAGERS"
+    ITEM_DROP: "ITEM_DROP"
+    ITEM_PICKUP: "ITEM_PICKUP"
+    LEASH: "LEASH"
+    MILKING: "MILKING"
+    MOB_SPAWN: "MOB_SPAWN"
+    MONSTER_SPAWN: "MONSTER_SPAWN"
+    MOUNT_INVENTORY: "MOUNT_INVENTORY"
+    RIDING: "RIDING"
+    MUSIC: "MUSIC"
+    CHEST: "CHEST"
+    PLACE_BLOCKS: "PLACE_BLOCKS"
+    PORTAL: "PORTAL"
+    PRESSURE_PLATE: "PRESSURE_PLATE"
+    PVP_OVERWORLD: "PVP_OVERWORLD"
+    PVP_NETHER: "PVP_NETHER"
+    PVP_END: "PVP_END"
+    REDSTONE: "REDSTONE"
+    SPAWN_EGGS: "SPAWN_EGGS"
+    SHEARING: "SHEARING"
+    EGGS: "EGGS"
+    TRADING: "TRADING"
+  panel:
+    title: "Island flags"
+    flag-item:
+      name-layout: "&a[name]"
+      description-layout: |+
+        &a[description]
+
+        &7Allowed for: &f[rank]
+    help-item:
+      name: "&aNeed some help?"
+  island:
+    locked: "&cCette île est verrouillée!"
+
+language:
+  panel-title: "Choisissez votre langue"
+  selected: "&aActuellement sélectionné."
+  edited: "&aLangue modifiée en &e[lang]&a."
+
+new-island:
+  sign:
+    line0: "&1%bsb_plugin_name%"
+    line1: "[player]"
+    line2: "Ne tombez pas!"
+    line3: "Bon jeu! &c<3"
