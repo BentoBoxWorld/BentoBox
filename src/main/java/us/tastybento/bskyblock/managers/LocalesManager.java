@@ -59,10 +59,7 @@ public class LocalesManager {
         // Describe the filter - we only want files that are correctly named
         FilenameFilter ymlFilter = (dir, name) -> {
             // Files must be 9 chars long
-            if (name.toLowerCase().endsWith(".yml") && name.length() == 9) {
-                 return true;
-            }
-            return false;
+            return name.toLowerCase().endsWith(".yml") && name.length() == 9;
         };
 
         // Run through the files and store the locales

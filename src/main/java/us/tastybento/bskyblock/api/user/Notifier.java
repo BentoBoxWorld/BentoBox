@@ -16,7 +16,7 @@ public class Notifier {
     /**
      * Time in seconds before {@link #notificationCache} removes the entry related to the player.
      */
-    private final int NOTIFICATION_DELAY = 5;
+    private static final int NOTIFICATION_DELAY = 5;
 
     private final LoadingCache<User, Notification> notificationCache = CacheBuilder.newBuilder()
             .expireAfterAccess(NOTIFICATION_DELAY, TimeUnit.SECONDS)

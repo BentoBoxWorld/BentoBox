@@ -727,14 +727,12 @@ public class IslandsManager {
                     homeTeleport(player);
                 } else {
                     // Move player to spawn
-                    Island spawn = getSpawn();
                     if (spawn != null) {
                         // go to island spawn
                         player.teleport(plugin.getIslandWorldManager().getIslandWorld().getSpawnLocation());
                     } else {
                         if (!player.performCommand(Constants.SPAWNCOMMAND)) {
-                            plugin.getLogger().warning(()->
-                            "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
+                            plugin.getLogger().warning(()-> "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
                         }
                     }
                 }

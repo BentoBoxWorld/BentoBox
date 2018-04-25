@@ -99,10 +99,8 @@ public class Flag implements Comparable<Flag> {
         } else if (!id.equals(other.id)) {
             return false;
         }
-        if (type != other.type) {
-            return false;
-        }
-        return true;
+
+        return type == other.type;
     }
 
     public PanelItem toPanelItem(User user) {

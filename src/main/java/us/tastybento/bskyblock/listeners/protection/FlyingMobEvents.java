@@ -68,7 +68,7 @@ public class FlyingMobEvents implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void mobSpawn(CreatureSpawnEvent e) {
+    public void onMobSpawn(CreatureSpawnEvent e) {
         // Only cover withers in the island world
         if (!Util.inWorld(e.getEntity())) {
             return;
@@ -81,7 +81,7 @@ public class FlyingMobEvents implements Listener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void mobExplosion(EntityExplodeEvent e) {
+    public void onMobExplosion(EntityExplodeEvent e) {
         // Only cover in the island world
         if (e.getEntity() == null || !Util.inWorld(e.getEntity())) {
             return;
@@ -100,7 +100,7 @@ public class FlyingMobEvents implements Listener {
      * Deal with pre-explosions
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void witherExplode(ExplosionPrimeEvent e) {
+    public void onWitherExplode(ExplosionPrimeEvent e) {
         // Only cover withers in the island world
         if (!Util.inWorld(e.getEntity()) || e.getEntity() == null) {
             return;
@@ -115,7 +115,6 @@ public class FlyingMobEvents implements Listener {
                     e.setCancelled(true);
                 }
             }
-            // Testing only e.setCancelled(true);
         }
         if (e.getEntityType() == EntityType.WITHER_SKULL) {
             // Get shooter
@@ -140,7 +139,7 @@ public class FlyingMobEvents implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void witherChangeBlocks(EntityChangeBlockEvent e) {
+    public void onWitherChangeBlocks(EntityChangeBlockEvent e) {
         // Only cover withers in the island world
         if (e.getEntityType() != EntityType.WITHER || !Util.inWorld(e.getEntity()) ) {
             return;
@@ -158,7 +157,7 @@ public class FlyingMobEvents implements Listener {
      * Clean up the hashmap. It's probably not needed, but just in case.
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void mobDeath(EntityDeathEvent e) {
+    public void onMobDeath(EntityDeathEvent e) {
         mobSpawnInfo.remove(e.getEntity());
     }
 }

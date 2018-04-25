@@ -63,7 +63,6 @@ public class BSkyBlock extends JavaPlugin {
         settings = new Settings();
         // Load settings from config.yml. This will check if there are any issues with it too.
         try {
-            //settings.saveSettings();
             settings = settings.loadSettings();
         } catch (Exception e) {
             getLogger().severe("Settings could not be loaded " + e.getMessage());
@@ -281,8 +280,6 @@ public class BSkyBlock extends JavaPlugin {
     public Notifier getNotifier() {
         return notifier;
     }
-
-
 
     /**
      * @return the headGetter

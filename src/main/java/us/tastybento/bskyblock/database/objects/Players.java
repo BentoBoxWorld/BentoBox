@@ -232,7 +232,6 @@ public class Players implements DataObject {
             Date kickedDate = new Date(kickedList.get(location));
             Calendar coolDownTime = Calendar.getInstance();
             coolDownTime.setTime(kickedDate);
-            // coolDownTime.add(Calendar.HOUR_OF_DAY, Settings.inviteWait);
             coolDownTime.add(Calendar.MINUTE, getPlugin().getSettings().getInviteWait());
             // Add the invite cooldown period
             Calendar timeNow = Calendar.getInstance();

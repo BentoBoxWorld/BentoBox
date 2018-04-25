@@ -74,29 +74,24 @@ public class SafeSpotTeleport {
         checking = true;
 
         // Start a recurring task until done or cancelled
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, new Runnable() {
-
-            @Override
-            public void run() {
-                List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
-                if (checking) {
-                    Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
-                    if (!it.hasNext()) {
-                        // Nothing left
-                        tidyUp(entity, failureMessage);
-                        return;
-                    }
-                    // Add chunk snapshots to the list
-                    while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
-                        Pair<Integer, Integer> pair = it.next();
-                        chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
-                        it.remove();
-                    }
-                    // Move to next step
-                    checking = false;
-                    checkChunks(chunkSnapshot);
+        task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+            List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
+            if (checking) {
+                Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
+                if (!it.hasNext()) {
+                    // Nothing left
+                    tidyUp(entity, failureMessage);
+                    return;
                 }
-
+                // Add chunk snapshots to the list
+                while (it.hasNext() && chunkSnapshot.size() < MAX_CHUNKS) {
+                    Pair<Integer, Integer> pair = it.next();
+                    chunkSnapshot.add(location.getWorld().getChunkAt(pair.x, pair.z).getChunkSnapshot());
+                    it.remove();
+                }
+                // Move to next step
+                checking = false;
+                checkChunks(chunkSnapshot);
             }
         }, 0L, SPEED);
     }
@@ -119,8 +114,6 @@ public class SafeSpotTeleport {
 
     /**
      * Gets a set of chunk coords that will be scanned.
-     * @param entity
-     * @param location - the location
      * @return
      */
     private List<Pair<Integer, Integer>> getChunksToScan() {
