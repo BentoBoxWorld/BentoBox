@@ -21,6 +21,7 @@ public class BSBLocale {
     private YamlConfiguration config;
     private ItemStack banner;
 
+    @SuppressWarnings("deprecation")
     public BSBLocale(Locale locale, File file) {
         this.locale = locale;
         config = YamlConfiguration.loadConfiguration(file);

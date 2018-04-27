@@ -41,6 +41,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
@@ -382,6 +383,10 @@ public class FireListenerTest {
 
     @Test
     public void testOnTNTDamage() {
+        // Notifier
+        Notifier notifier = mock(Notifier.class);
+        when(plugin.getNotifier()).thenReturn(notifier);
+        
         // Island
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
@@ -440,6 +445,7 @@ public class FireListenerTest {
 
         // Fire arrow
         when(arrow.getFireTicks()).thenReturn(10);
+        
         
         // Break blocks not allowed, general flag should have no effect
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);

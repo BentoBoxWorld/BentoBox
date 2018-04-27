@@ -27,6 +27,14 @@ import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 public class User {
 
     private static Map<UUID, User> users = new HashMap<>();
+
+    /**
+     * Clears all users from the user list
+     */
+    public static void clearUsers() {
+        users.clear();
+    }
+
     /**
      * Get an instance of User from a CommandSender
      * @param sender
@@ -99,7 +107,7 @@ public class User {
         this.playerUUID = playerUUID;
         sender = null;
     }
-    
+
     /**
      * Used for testing
      * @param plugin
@@ -131,6 +139,9 @@ public class User {
         return player;
     }
 
+    /**
+     * @return true if this user is a player, false if not, e.g., console
+     */
     public boolean isPlayer() {
         return player != null;
     }
@@ -237,8 +248,8 @@ public class User {
      */
     public void notify(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty() && (sender != null || !plugin.getNotifier().notify(this, message))) {
-            sendRawMessage(message);
+        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+            plugin.getNotifier().notify(this, message);
         }
     }
 
@@ -294,17 +305,16 @@ public class User {
         player.updateInventory();
 
     }
-    
+
     /**
      * Performs a command as the player
      * @param cmd
      * @return true if the command was successful, otherwise false
      */
     public boolean performCommand(String cmd) {
-       return player.performCommand(cmd);
-        
+        return player.performCommand(cmd);
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
