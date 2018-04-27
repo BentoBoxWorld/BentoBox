@@ -29,7 +29,7 @@ import us.tastybento.bskyblock.api.events.addon.AddonEvent;
 /**
  * @author Tastybento, ComminQ
  */
-public final class AddonsManager {
+public class AddonsManager {
 
     private static final boolean DEBUG = false;
     private static final String LOCALE_FOLDER = "locales";

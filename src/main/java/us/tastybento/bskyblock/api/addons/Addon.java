@@ -45,7 +45,9 @@ public abstract class Addon implements AddonInterface {
      * @return the addon's default config file
      */
     public FileConfiguration getConfig() {
-        config = loadYamlFile(ADDON_CONFIG_FILENAME);
+        if (config == null) {
+            config = loadYamlFile(ADDON_CONFIG_FILENAME);
+        }
         return config;
     }
 
@@ -121,11 +123,11 @@ public abstract class Addon implements AddonInterface {
     }
 
     /**
-     * Saves the default config file
+     * Saves the FileConfiguration retrievable by getConfig().
      */
     public void saveConfig() {
         try {
-            config.save(new File(dataFolder, ADDON_CONFIG_FILENAME));
+            getConfig().save(new File(dataFolder, ADDON_CONFIG_FILENAME));
         } catch (IOException e) {
             Bukkit.getLogger().severe("Could not save config!");
         }
@@ -207,7 +209,7 @@ public abstract class Addon implements AddonInterface {
         if (jarResource == null || jarResource.equals("")) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
-        
+
         jarResource = jarResource.replace('\\', '/');
         try (JarFile jar = new JarFile(file)) {
             JarEntry jarConfig = jar.getJarEntry(jarResource);
@@ -257,7 +259,7 @@ public abstract class Addon implements AddonInterface {
     public void setEnabled(boolean enabled) {
         this.enabled = enabled;
     }
-    
+
     /**
      * Get Players Manager
      * @return Players manager
@@ -265,7 +267,7 @@ public abstract class Addon implements AddonInterface {
     public PlayersManager getPlayers() {
         return getBSkyBlock().getPlayers();
     }
-    
+
     /**
      * Get Islands Manager
      * @return Islands manager
@@ -273,7 +275,7 @@ public abstract class Addon implements AddonInterface {
     public IslandsManager getIslands() {
         return getBSkyBlock().getIslands();
     }
-    
+
     /**
      * Get the Addon By Name
      * @return Optional Addon

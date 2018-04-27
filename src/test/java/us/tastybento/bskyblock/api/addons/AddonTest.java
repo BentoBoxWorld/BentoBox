@@ -4,16 +4,22 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.junit.BeforeClass;
@@ -25,11 +31,14 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.managers.AddonsManager;
+import us.tastybento.bskyblock.managers.IslandsManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { BSkyBlock.class })
 public class AddonTest {
-    
+
     @Mock
     static BSkyBlock plugin;
     static JavaPlugin javaPlugin;
@@ -50,9 +59,16 @@ public class AddonTest {
         Bukkit.setServer(server);
 
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        
+
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+
+        // Mock item factory (for itemstacks)
+        ItemFactory itemFactory = mock(ItemFactory.class);
+        when(server.getItemFactory()).thenReturn(itemFactory);
+        ItemMeta itemMeta = mock(ItemMeta.class);
+        when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
+
     }
 
     class TestClass extends Addon {
@@ -141,65 +157,125 @@ public class AddonTest {
         test.registerListener(listener);
     }
 
-    /*
+
     @Test
     public void testSaveConfig() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        // This will wipe out the config.yml of BSB so I am commenting it out
+        //test.saveConfig();
     }
 
     @Test
     public void testSaveDefaultConfig() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        File jarFile = new File("addon.jar");
+        File dataFolder = new File("dataFolder");
+        test.setDataFolder(dataFolder);
+        test.setAddonFile(jarFile);
+        test.saveDefaultConfig();
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSaveResourceStringBoolean() {
+        TestClass test = new TestClass();
+        test.saveResource("", true);
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testSaveResourceStringBooleanNull() {
+        TestClass test = new TestClass();
+        test.saveResource(null, true);
     }
 
     @Test
-    public void testSaveResourceStringBoolean() {
-        fail("Not yet implemented"); // TODO
+    public void testSaveResourceStringBooleanNoFile() throws IOException {
+        TestClass test = new TestClass();
+        File jarFile = new File("addon.jar");
+        File dataFolder = new File("dataFolder");
+        test.setDataFolder(dataFolder);
+        test.setAddonFile(jarFile);
+        test.saveResource("no_such_file", true);
     }
 
     @Test
     public void testSaveResourceStringFileBooleanBoolean() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        File jarFile = new File("addon.jar");
+        File dataFolder = new File("dataFolder");
+        test.setDataFolder(dataFolder);
+        test.setAddonFile(jarFile);
+        test.saveResource("no_such_file", jarFile, false, false);
+        test.saveResource("no_such_file", jarFile, false, true);
+        test.saveResource("no_such_file", jarFile, true, false);
+        test.saveResource("no_such_file", jarFile, true, true);
+
     }
 
     @Test
     public void testGetResource() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        File jarFile = new File("addon.jar");
+        File dataFolder = new File("dataFolder");
+        test.setDataFolder(dataFolder);
+        test.setAddonFile(jarFile);
+        assertNull(test.getResource("nothing"));
     }
 
     @Test
     public void testSetAddonFile() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        File jarFile = new File("addon.jar");
+        test.setAddonFile(jarFile);
+        assertEquals(jarFile, test.getFile());
     }
 
     @Test
     public void testSetDataFolder() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        File dataFolder = new File("dataFolder");
+        test.setDataFolder(dataFolder);
+        assertEquals(dataFolder, test.getDataFolder());
     }
 
     @Test
     public void testSetDescription() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        AddonDescription desc = new AddonDescription();
+        test.setDescription(desc);
+        assertEquals(desc, test.getDescription());
     }
 
     @Test
     public void testSetEnabled() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        test.setEnabled(false);
+        assertFalse(test.isEnabled());
+        test.setEnabled(true);
+        assertTrue(test.isEnabled());
     }
 
     @Test
     public void testGetPlayers() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        PlayersManager pm = mock(PlayersManager.class);
+        when(plugin.getPlayers()).thenReturn(pm);
+        assertEquals(pm, test.getPlayers());
     }
 
     @Test
     public void testGetIslands() {
-        fail("Not yet implemented"); // TODO
+        TestClass test = new TestClass();
+        IslandsManager im = mock(IslandsManager.class);
+        when(plugin.getIslands()).thenReturn(im);
+        assertEquals(im, test.getIslands());
     }
 
     @Test
     public void testGetAddonByName() {
-        fail("Not yet implemented"); // TODO
+        AddonsManager am = new AddonsManager(plugin);
+        when(plugin.getAddonsManager()).thenReturn(am);
+        TestClass test = new TestClass();
+        assertEquals(Optional.empty(),test.getAddonByName("addon"));
     }
-*/
+
 }
