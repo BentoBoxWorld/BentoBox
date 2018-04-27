@@ -117,7 +117,7 @@ public abstract class Addon implements AddonInterface {
      * @param listener
      */
     public void registerListener(Listener listener) {
-        BSkyBlock.getInstance().getServer().getPluginManager().registerEvents(listener, BSkyBlock.getInstance());
+        Bukkit.getPluginManager().registerEvents(listener, BSkyBlock.getInstance());
     }
 
     /**
