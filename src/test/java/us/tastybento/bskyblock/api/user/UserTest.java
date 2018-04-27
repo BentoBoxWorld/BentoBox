@@ -1,9 +1,6 @@
 package us.tastybento.bskyblock.api.user;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -213,6 +210,11 @@ public class UserTest {
         User user = User.getInstance(player);
         assertEquals("mock translation [test]", user.getTranslation("a.reference"));
         assertEquals("mock translation variable", user.getTranslation("a.reference", "[test]", "variable"));
+    
+        // Test no translation found
+        when(lm.get(any(), any())).thenReturn(null);
+        assertEquals("a.reference", user.getTranslation("a.reference"));
+        
     }
 
     @Test
@@ -244,7 +246,24 @@ public class UserTest {
         
         User user = User.getInstance(pl);
         user.sendMessage("a.reference");
-        Mockito.verify(pl).sendMessage(translation);
+        Mockito.verify(pl).sendMessage(translation);        
+    }
+    
+    @Test
+    public void testSendMessageNullUser() {
+        BSkyBlock plugin = mock(BSkyBlock.class);
+        User.setPlugin(plugin);
+        // Locales - final        
+        LocalesManager lm = mock(LocalesManager.class);
+        when(plugin.getLocalesManager()).thenReturn(lm);
+        String translation = ChatColor.RED + "" + ChatColor.BOLD + "test translation";
+        when(lm.get(any(), any())).thenReturn(translation);
+        
+        Player pl = mock(Player.class);
+        
+        User user = User.getInstance(UUID.randomUUID());
+        user.sendMessage("a.reference");
+        Mockito.verify(pl, Mockito.never()).sendMessage(Mockito.anyString());
         
     }
     
@@ -299,6 +318,21 @@ public class UserTest {
         user.sendRawMessage(raw);
         Mockito.verify(pl).sendMessage(raw);
         
+
+    }
+    
+    @Test
+    public void testSendRawMessageNullUser() {
+        BSkyBlock plugin = mock(BSkyBlock.class);
+        User.setPlugin(plugin);
+        String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
+        
+        Player pl = mock(Player.class);
+        
+        User user = User.getInstance(UUID.randomUUID());
+        user.sendRawMessage(raw);
+        Mockito.verify(pl, Mockito.never()).sendMessage(Mockito.anyString());
+
     }
 
     @Test
@@ -422,15 +456,33 @@ public class UserTest {
         User user2 = User.getInstance(UUID.randomUUID());
         assertTrue(user1.equals(user1));
         assertFalse(user1.equals(user2));
+        assertFalse(user1.equals(null));
         assertFalse(user2.equals(user1));
+        assertFalse(user2.equals(null));
+        assertFalse(user2.equals("an string"));
+        
+        user1 = User.getInstance((UUID)null);
+        assertFalse(user1.equals(user2));
+        assertFalse(user2.equals(user1));
+        
+        user2 = User.getInstance((UUID)null);
+        assertTrue(user1.equals(user2));
+        assertTrue(user2.equals(user1));
     }
 
     @Test
-    public void testhashCode() {
+    public void testHashCode() {
         UUID uuid = UUID.randomUUID();
         User user1 = User.getInstance(uuid);
         User user2 = User.getInstance(uuid);
         assertEquals(user1, user2);
         assertTrue(user1.hashCode() == user2.hashCode());
     }
+    
+    @Test
+    public void testNullPlayer() {
+        User user = User.getInstance((Player)null);
+        assertNull(user);
+    }
+    
 }

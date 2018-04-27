@@ -63,7 +63,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 user.sendMessage("general.errors.offline-player");
                 return false;
             }
-            User invitedPlayer = User.getInstance(invitedPlayerUUID);
+            User invitedPlayer = User.getInstance(inviteList.get(invitedPlayerUUID));
             if (!invitedPlayer.isOnline()) {
                 user.sendMessage("general.errors.offline-player");
                 return false;
