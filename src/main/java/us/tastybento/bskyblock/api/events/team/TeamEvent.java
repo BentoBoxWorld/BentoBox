@@ -26,7 +26,7 @@ public class TeamEvent {
         DELETE,
         UNKNOWN,
         UNINVITE
-    };
+    }
 
     public static TeamEventBuilder builder() {
         return new TeamEventBuilder();

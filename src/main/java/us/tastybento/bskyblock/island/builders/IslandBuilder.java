@@ -40,12 +40,12 @@ public class IslandBuilder {
     private Island island;
     private World world;
     private IslandType type = IslandType.ISLAND;
-    //private List<String> companionNames = new ArrayList<>();
     private List<ItemStack> chestItems;
-    //private List<Entity> companions = new ArrayList<>();
     private UUID playerUUID;
     private String playerName;
     private BSkyBlock plugin;
+
+    //TODO support companions?
 
     public IslandBuilder(BSkyBlock plugin, Island island) {
         this.plugin = plugin;
@@ -208,8 +208,6 @@ public class IslandBuilder {
         // Add tree (natural)
         Location treeLoc = new Location(world, x, y + 5D, z);
         world.generateTree(treeLoc, TreeType.ACACIA);
-        // Place the cow
-        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
@@ -295,8 +293,6 @@ public class IslandBuilder {
         // Add tree (natural)
         Location treeLoc = new Location(world, x, y + 5D, z);
         world.generateTree(treeLoc, TreeType.TREE);
-        // Place the cow
-        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
@@ -373,18 +369,11 @@ public class IslandBuilder {
 
         // Add island items
         y = islandHeight;
-        // Add tree (natural)
-        Location treeLoc = new Location(world, x, y + 5D, z);
-        treeLoc.getBlock().getRelative(BlockFace.DOWN).setType(Material.DIRT);
-        world.generateTree(treeLoc, TreeType.TREE);
-        // Place the cow
-        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
         // Place the chest - no need to use the safe spawn function
-        // because we
-        // know what this island looks like
+        // because we know what this island looks like
         placeChest(x, islandHeight + 5, z + 1);
     }
 
@@ -456,12 +445,8 @@ public class IslandBuilder {
 
         // Add island items
         y = islandHeight;
-        // Add tree (natural)
-        Location treeLoc = new Location(world, x, y + 5D, z);
-        world.spawnEntity(treeLoc, EntityType.ENDER_CRYSTAL);
-        //world.generateTree(treeLoc, TreeType.TREE);
-        // Place the cow
-        //Location location = new Location(world, x, (islandHeight + 5), z - 2);
+        // Spawn an ender crystal
+        world.spawnEntity(new Location(world, x, y + 5D, z), EntityType.ENDER_CRYSTAL);
 
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);

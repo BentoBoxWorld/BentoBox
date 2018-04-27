@@ -8,7 +8,7 @@ public class FlatFileDatabase extends BSBDbSetup{
 
     @Override
     public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
-        return new FlatFileDatabaseHandler<>(BSkyBlock.getInstance(), type, new FlatFileDatabaseConnecter(BSkyBlock.getInstance(), null));
+        return new FlatFileDatabaseHandler<>(BSkyBlock.getInstance(), type, new FlatFileDatabaseConnecter(BSkyBlock.getInstance()));
     }
     
     /**
@@ -17,7 +17,7 @@ public class FlatFileDatabase extends BSBDbSetup{
      * @return - the config handler
      */
     public AbstractDatabaseHandler<?> getConfig(Class<?> type) {
-        return new ConfigHandler<>(BSkyBlock.getInstance(), type, new FlatFileDatabaseConnecter(BSkyBlock.getInstance(), null));
+        return new ConfigHandler<>(BSkyBlock.getInstance(), type, new FlatFileDatabaseConnecter(BSkyBlock.getInstance()));
     }
 
 }

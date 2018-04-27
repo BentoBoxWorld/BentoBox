@@ -28,7 +28,7 @@ public class IslandEvent {
         RESETTED,
         UNLOCK,
         UNKNOWN
-    };
+    }
 
     public static IslandEventBuilder builder() {
         return new IslandEventBuilder();

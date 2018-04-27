@@ -1,0 +1,275 @@
+###########################################################################################
+# Đây là 1 file YML, hãy cẩn thận khi chỉnh sửa, nên dùng trang web dể kiểm tra n         #
+# cái này http://yaml-online-parser.appspot.com                                           #
+###########################################################################################
+
+### Credits ###
+# tastybento: Người cung cấp bản YML gốc
+# Poslovitch: Người cung cấp bản YML gốc
+#
+# Banbeucmas: Người dịch bản YML gốc
+# This translation is adapted to version : [alpha-2]
+
+banner:
+- "RED"
+- "CREEPER:YELLOW"
+- "RHOMBUS_MIDDLE:YELLOW"
+- "TRIANGLES_BOTTOM:RED"
+- "SQUARE_BOTTOM_LEFT:RED"
+- "SQUARE_BOTTOM_RIGHT:RED"
+
+general:
+  deaths: "Chết"
+  unlimited: "Vô hạn"
+  success: "&aThành công!"
+  errors:
+    command-cancelled: "&cĐã hủy lệnh"
+    no-permission: "&cBạn không có quyền thực thi lệnh này."
+    use-in-game: "&cLệnh này chỉ dùng được trong game."
+    no-team: "&cBạn không ở trong 1 đội nào cả!"
+    no-island: "&cBạn không có đảo!"
+    player-has-no-island: "&cNgười chơi đó không có đảo!"
+    already-have-island: "&cBạn đã có đảo!"
+    no-safe-location: "&cKhông có địa điểm an toàn nào trên đảo!"
+    not-leader: "&cBạn không phải đội trưởng!"
+    not-in-team: "&cNgười chơi không có trong đội!"
+    offline-player: "&cNgười chơi đang offline hoặc không tồn tại."
+    unknown-player: "&cNgười chơi không tìm thấy!"
+    general: "&cLệnh chưa sẵn sàng - hãy liên hệ admin"
+    warp-not-safe: "&cCổng dịch chuyển không an toàn!"
+    wrong-world: "&cBạn đang không ở trong thế giới có thể làm được việc này!"
+  tips:
+    changing-ob-to-lava: "Đang chuyển Hắc Diện Thạch về Dung Nham, hãy cẩn thận"
+
+commands:
+  help:
+    header: "&7=========== &c%bsb_plugin_name% &7==========="
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    end: "&7================================="
+    parameters: "[command]"
+    description: "help command"
+  admin:
+    help:
+      description: "xem lệnh dành cho admin"
+      parameters: ""
+    version:
+      description: "Hiện phiên bản %bsb_plugin_name% và các bổ sung"
+    setrange:
+      parameters: "[player] [range]"
+      description: "Đặt giới hạn đảo người chơi"
+      range-updated: "Giới hạn đảo đã chuyển sang [number]"
+    reload:
+      description: "Nạp lại plugin"
+    tp:
+      parameters: "[player]"
+      description: "Dịch chuyển đến đảo người chơi"
+      manual: "&cKhông tìm thấy cổng dịch chuyển an toàn! Hãy tp tới địa điểm &b[location] &cvà kiểm tra"
+  island:
+    about:
+      description: "hiện thông tin về %bsb_plugin_name%"
+    go:
+      parameters: "<home number>"
+      description: "dịch chuyển tới đảo"
+      teleport: "&aĐang dịch chuyển. &b/[label] help &ađể được giúp đỡ."
+      teleported: "&aĐã dịch chuyển bạn tới khu vực nhà số &e#[number]."
+    help:
+      description: "Các lệnh chính"
+    spawn:
+      description: "dịch chuyển ra spawn"
+    create:
+      description: "tạo đảo"
+      unable-create-island: "Không thể khởi tạo đảo, hãy liên hệ admin."
+      creating-island: "Đang tạo đảo..."
+    info:
+      description: "hiện thông tin đảo của bạn"
+    reset:
+      description: "làm lại đảo của bạn"
+      must-remove-members: "Hãy đuổi toàn bộ thành viên trước khi khởi tạo lại đảo (/island kick <người chơi>)."
+    sethome:
+      description: "đặt bị trí dịch chuyển cho /island"
+      must-be-on-your-island: "Bạn phải ở trên đảo của bạn!"
+      num-homes: "Số nhà có thể đặt từ 1 đến [max]."
+      home-set: "Đã đặt vị trí nhà tại địa điểm hiện tại của bạn."
+      parameters: "<home number>"
+    setname:
+      description: "đặt tên đảo"
+      name-too-short: "&cQuá ngắn. Giới hạn thấp nhất là [length] kí tự."
+      name-too-long: "&cQuá dài. Giới hạn tối đa là [length] kí tự."
+      parameters: "<name>"
+    resetname:
+      description: "làm lại tên đảo"
+    team:
+      description: "quản lý đội"
+      info:
+        description: "hiện thông tin chi tiết về đội"
+      invite:
+        description: "mới người chơi đến đảo"
+        invitation-sent: "Đã gửi lời mời tới [name]"
+        removing-invite: "Đang bỏ lời bời"
+        name-has-invited-you: "[name] đã mời bạn vào đảo."
+        to-accept-or-reject: "Ghi /island team accept để chấp nhận, hay /island team reject để từ chối"
+        you-will-lose-your-island: "&cCẢNH BÁO! Bạn sẽ mất đảo nếu chấp nhận"
+        errors:
+          cannot-invite-self: "&cBạn không thể mới chính mình"
+          cooldown: "&cBạn không thế mời người khác trong [time] giây"
+          island-is-full: "&cĐảo đã đầy, không thể mời thêm"
+          none-invited-you: "&cKhông ai mời bạn :c."
+          you-already-are-in-team: "&cBạn đã ở trong 1 đội!"
+          already-on-team: "&cNgười chơi đó đã ở trong 1 đội!"
+          invalid-invite: "&cLời mời vô hiệu, xin lỗi."
+        parameters: "<player>"
+        you-can-invite: "Bạn có thể mời thêm [number] người."
+        accept:
+          description: "chấp nhận lời mời"
+          you-joined-island: "&aBạn đã tham gia đảo! Sử dụng /[label] team info để biết thêm thông tin."
+          name-joined-your-island: "&a[name] đã vào đảo của bạn!"
+        reject:
+          description: "từ chối lời mời"
+          you-rejected-invite: "&aBạn đã từ chối lời mời vào đảo."
+          name-rejected-your-invite: "&c[name] đã từ chối lời mời của bạn!"
+        cancel:
+          description: "hủy lời mời hiện tại"
+      leave:
+        description: "rời đảo"
+        type-again: "&cGõ lệnh rời đảo 1 lần nữa để xác nhận"
+        left-your-island: "&c[player] đã rời đảo"
+      kick:
+        description: "loại bỏ 1 người chơi khỏi đảo"
+        parameters: "<player>"
+        type-again: "&cHãy đánh lệnh loại bỏ 1 lần nữa để xác nhận"
+        leader-kicked: "&cĐội trưởng đã đuổi bạn ra khỏi đội!"
+      demote:
+        description: "hạ cấp bậc người chơi"
+        parameters: "<player>"
+        failure: "&cNgười chơi không thể hạ cấp thêm nữa"
+        success: "Đã hạ cấp [name] đến bậc [rank]"
+      promote:
+        description: "thăng chức người chơi"
+        parameters: "<player>"
+        failure: "&cKhông thể thăng chức nữa!"
+        success: "Đã thăng chức [name] lên bậc [rank]"
+      setowner:
+        description: "chuyển quyền sở hữu đảo"
+        errors:
+          cant-transfer-to-yourself: "&cBạn không thể chuyển quyền sở hữu cho chính mình"
+          target-is-not-member: "&cNgười chơi đó không phải là người trong đội!"
+        name-is-the-owner: "&a[name] giờ là chủ đảo!"
+        parameters: "<player>"
+        you-are-the-owner: "&aBạn giờ là chủ đảo!"
+    ban:
+      description: "cấm 1 người chơi khỏi đảo"
+      parameters: "<player>"
+    unban:
+      description: "bỏ cấm 1 người chơi khỏi đảo"
+      parameters: "<player>"
+    banlist:
+      description: "những người chơi bị cấm"
+    lock:
+      description: "khóa/bỏ khóa khả năng truy cập đảo của bạn"
+    settings:
+      description: "hiện cài đặt đảo"
+    language:
+      description: "chọn ngôn ngữ"
+      parameters: "<language>"
+
+ranks:
+  owner: "Chủ"
+  member: "Thành Viên"
+  coop: "Đối tác"
+  visitor: "Khách"
+  banned: "Bị cấm"
+
+protection:
+  protected: "&cĐã bảo vệ đảo!"
+  flags:
+    ANVIL:
+      name: "Đe"
+      description: "Tắt/bật tương tác với Đe"
+    ARMOR_STAND:
+      name: "Giá để giáp"
+      description: "Tắt/bật tương tác với giá để giáp"
+    BEACON:
+      name: "Beacons"
+      description: "Tắt/bật tương tác với beacons"
+    BED:
+      name: "Giường"
+      description: "Tắt/bật tương tác với giường"
+    BREAK_BLOCKS:
+      name: "Phá khối"
+      description: "Tắt/bật khả năng phá khối"
+    BREEDING:
+      name: "Giao phối"
+      description: "Tắt/bật khả năng giao phối của dộng vật"
+    BREWING:
+      name: "Brewing stands"
+      description: "Tắt/bật tương tác với brewing stands"
+    BUCKET:
+      name: "Xô"
+      description: "Tắt/bật tương tác với xô"
+    COLLECT_WATER:
+      name: "Lấy nước"
+      description: |
+        Tắt/bật khả năng lấy nước bằng xô
+    COLLECT_LAVA:
+      name: "Lấy dung nham"
+      description: |
+        Tắt/bật khả năng lấy nước bằng xô
+    CHORUS_FRUIT:
+      name: "Chorus fruits"
+      description: "Toggle teleportation using Chorus fruits"
+    CRAFTING: "Use crafting table"
+    CROP_TRAMPLE: "Trample crops"
+    DOOR: "Use doors"
+    ELYTRA: "Use elytras"
+    ENCHANTING: "Use enchanting table"
+    ENTER_EXIT_MESSAGES: "Display entry and exit messages"
+    FIRE: "FIRE"
+    FIRE_EXTINGUISH: "FIRE_EXTINGUISH"
+    FIRE_SPREAD: "FIRE_SPREAD"
+    FURNACE: "FURNACE"
+    GATE: "GATE"
+    HURT_ANIMALS: "HURT_ANIMALS"
+    HURT_MONSTERS: "HURT_MONSTERS"
+    HURT_VILLAGERS: "HURT_VILLAGERS"
+    ITEM_DROP: "ITEM_DROP"
+    ITEM_PICKUP: "ITEM_PICKUP"
+    LEASH: "LEASH"
+    MILKING: "MILKING"
+    MOB_SPAWN: "MOB_SPAWN"
+    MONSTER_SPAWN: "MONSTER_SPAWN"
+    MOUNT_INVENTORY: "MOUNT_INVENTORY"
+    RIDING: "RIDING"
+    MUSIC: "MUSIC"
+    CHEST: "CHEST"
+    PLACE_BLOCKS: "PLACE_BLOCKS"
+    PORTAL: "PORTAL"
+    PRESSURE_PLATE: "PRESSURE_PLATE"
+    PVP_OVERWORLD: "PVP_OVERWORLD"
+    PVP_NETHER: "PVP_NETHER"
+    PVP_END: "PVP_END"
+    REDSTONE: "REDSTONE"
+    SPAWN_EGGS: "SPAWN_EGGS"
+    SHEARING: "SHEARING"
+    EGGS: "EGGS"
+    TRADING: "TRADING"
+  panel:
+    title: "Island flags"
+    flag-item:
+      name-layout: "&a[name]"
+      description-layout: |+
+        &a[description]
+
+        &7Allowed for: &f[rank]
+    help-item:
+      name: "&aNeed some help?"
+
+
+  island:
+    locked: "&cThis island is locked!"
+
+new-island:
+  sign:
+    line0: "&1%bsb_plugin_name%"
+    line1: "[player]"
+    line2: "Đừng rơi"
+    line3: "Vui vẻ &c<3"

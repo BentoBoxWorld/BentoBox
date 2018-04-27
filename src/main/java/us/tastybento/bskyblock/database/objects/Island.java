@@ -195,13 +195,6 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return true if the island is locked, otherwise false
-     */
-    public boolean getLocked(){
-        return locked;
-    }
-
-    /**
      * @return the members
      */
     public Map<UUID, Integer> getMembers() {
@@ -294,13 +287,6 @@ public class Island implements DataObject {
         return members.getOrDefault(user.getUniqueId(), RanksManager.VISITOR_RANK);
     }
 
-    /**
-     * @return true if the island is the spawn otherwise false
-     */
-    public boolean getSpawn(){
-        return spawn;
-    }
-
     public Location getSpawnPoint() {
         return spawnPoint;
     }
@@ -326,10 +312,8 @@ public class Island implements DataObject {
                             if (holder.getType().equals(Material.BURNING_FURNACE)) {
                                 result++;
                             }
-                        } else if (material.toString().endsWith("BANNER")) {
-                            if (holder.getType().toString().endsWith("BANNER")) {
-                                result++;
-                            }
+                        } else if (material.toString().endsWith("BANNER") && holder.getType().toString().endsWith("BANNER")) {
+                            result++;
                         } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
                             if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
                                 result++;
@@ -519,9 +503,7 @@ public class Island implements DataObject {
      * Resets the flags to their default as set in config.yml for this island
      */
     public void setFlagsDefaults(){
-        /*for(SettingsFlag flag : SettingsFlag.values()){
-            this.flags.put(flag, Settings.defaultIslandSettings.get(flag));
-        }*/ //TODO default flags
+        //TODO default flags
     }
 
     /**
@@ -650,9 +632,7 @@ public class Island implements DataObject {
      * Resets the flags to their default as set in config.yml for the spawn
      */
     public void setSpawnFlagsDefaults(){
-        /*for(SettingsFlag flag : SettingsFlag.values()){
-            this.flags.put(flag, Settings.defaultSpawnSettings.get(flag));
-        }*/ //TODO default flags
+        //TODO default flags
     }
 
     public void setSpawnPoint(Location location) {

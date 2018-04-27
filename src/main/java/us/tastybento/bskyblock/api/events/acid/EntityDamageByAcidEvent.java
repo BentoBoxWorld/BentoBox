@@ -14,7 +14,7 @@ public class EntityDamageByAcidEvent extends IslandBaseEvent {
     private final Entity entity;
     private double damage;
 
-    public enum Acid { RAIN, WATER };
+    public enum Acid { RAIN, WATER }
     private final Acid cause;
 
     public EntityDamageByAcidEvent(Island island, Entity entity, double damage, Acid cause) {

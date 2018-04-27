@@ -27,7 +27,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
     private File dataFolder;
 
 
-    public FlatFileDatabaseConnecter(Plugin plugin, DatabaseConnectionSettingsImpl databaseConnectionSettingsImpl) {
+    public FlatFileDatabaseConnecter(Plugin plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }

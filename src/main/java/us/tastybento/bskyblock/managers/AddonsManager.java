@@ -117,12 +117,12 @@ public final class AddonsManager {
                 YamlConfiguration data = new YamlConfiguration();
                 data.load(reader);
                 // Load the addon
-                AddonClassLoader loader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+                AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
                 // Add to the list of loaders
-                this.loader.add(loader);
+                loader.add(addonClassLoader);
 
                 // Get the addon itself
-                addon = loader.getAddon();
+                addon = addonClassLoader.getAddon();
                 // Initialize some settings
                 addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
                 addon.setAddonFile(f);
@@ -163,12 +163,12 @@ public final class AddonsManager {
         addons.forEach(addon -> {
             addon.onDisable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-            System.out.println("Disabling " + addon.getDescription().getName() + "...");
+            plugin.getLogger().info("Disabling " + addon.getDescription().getName() + "...");
         });
 
-        loader.forEach(loader -> {
+        loader.forEach(l -> {
             try {
-                loader.close();
+                l.close();
             } catch (IOException e) {
                 // Do nothing
             }
@@ -187,7 +187,6 @@ public final class AddonsManager {
         this.loader = loader;
     }
 
-
     /**
      * Finds a class by name that has been loaded by this loader
      * Code copied from Bukkit JavaPluginLoader
@@ -200,9 +199,9 @@ public final class AddonsManager {
         if (cachedClass != null) {
             return cachedClass;
         } else {
-            for (AddonClassLoader loader : loader) {
+            for (AddonClassLoader l : loader) {
                 try {
-                    cachedClass = loader.findClass(name, false);
+                    cachedClass = l.findClass(name, false);
                 } catch (ClassNotFoundException cnfe) {}
                 if (cachedClass != null) {
                     return cachedClass;
@@ -237,7 +236,7 @@ public final class AddonsManager {
      * @return a list of files
       - if the file cannot be read
      */
-    public List<String> listJarYamlFiles(JarFile jar, String folderPath) throws IOException {
+    public List<String> listJarYamlFiles(JarFile jar, String folderPath) {
         List<String> result = new ArrayList<>();
 
         /**

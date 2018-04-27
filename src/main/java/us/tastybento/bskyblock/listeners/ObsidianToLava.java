@@ -16,6 +16,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Enables changing of obsidian back into lava
  * @author tastybento
@@ -25,14 +28,12 @@ public class ObsidianToLava implements Listener {
 
     private BSkyBlock plugin;
 
-
     /**
      * @param plugin
      */
     public ObsidianToLava(BSkyBlock plugin) {
         this.plugin = plugin;
     }
-
 
     /**
      * Enables changing of obsidian back into lava
@@ -54,18 +55,14 @@ public class ObsidianToLava implements Listener {
         if (plugin.getIslands().playerIsOnIsland(user)) {
             // Look around to see if this is a lone obsidian block
             Block b = e.getClickedBlock();
-            for (int x = -2; x <= 2; x++) {
-                for (int y = -2; y <= 2; y++) {
-                    for (int z = -2; z <= 2; z++) {
-                        Material testBlock = b.getWorld().getBlockAt(b.getX() + x, b.getY() + y, b.getZ() + z).getType();
-                        if ((x != 0 || y != 0 || z != 0) && testBlock.equals(Material.OBSIDIAN)) {
-                            // Do nothing special
-                            return false;
 
-                        }
-                    }
+            for (Block testBlock : getBlocksAround(b)) {
+                if (testBlock.getType().equals(Material.OBSIDIAN)) {
+                    // Do nothing special
+                    return false;
                 }
             }
+
             user.sendMessage("general.tips.changing-ob-to-lava");
             e.getItem().setType(Material.LAVA_BUCKET);
             e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
@@ -75,5 +72,21 @@ public class ObsidianToLava implements Listener {
         }
 
         return false;
+    }
+
+    private List<Block> getBlocksAround(Block b) {
+        List<Block> blocksAround = new ArrayList<>();
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -2; y <= 2; y++) {
+                for (int z = -2; z <= 2; z++) {
+                    blocksAround.add(b.getWorld().getBlockAt(b.getX() + x, b.getY() + y, b.getZ() + z));
+                }
+            }
+        }
+
+        // Remove the block at x = 0, y = 0 and z = 0 (which is the base block)
+        blocksAround.remove(b);
+
+        return blocksAround;
     }
 }

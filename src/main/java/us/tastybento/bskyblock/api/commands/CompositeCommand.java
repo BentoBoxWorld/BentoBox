@@ -404,7 +404,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (cmd.hasSubCommmands()) {
             // Check if subcommands are visible to this sender
             for (CompositeCommand subCommand: cmd.getSubCommands().values()) {
-                if ((sender instanceof Player)) {
+                if (sender instanceof Player) {
                     // Player
                     if (subCommand.getPermission().isEmpty() || sender.hasPermission(subCommand.getPermission())) {
                         // Permission is okay
@@ -419,7 +419,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 }
             }
         }
-        String lastArg = (args.length != 0 ? args[args.length - 1] : "");
+
+        String lastArg = args.length != 0 ? args[args.length - 1] : "";
 
         return Util.tabLimit(options, lastArg);
     }

@@ -22,6 +22,7 @@ import org.bukkit.potion.PotionEffect;
 
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.lists.Flags;
 
 /**
  * TODO: PVP is different to other flags - it's either allowed for everyone or not allowed for everyone. Currently owners can hit visitors.
@@ -42,11 +43,11 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
-            Flag flag = us.tastybento.bskyblock.lists.Flags.PVP_OVERWORLD;
+            Flag flag = Flags.PVP_OVERWORLD;
             if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = us.tastybento.bskyblock.lists.Flags.PVP_NETHER;
+                flag = Flags.PVP_NETHER;
             } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = us.tastybento.bskyblock.lists.Flags.PVP_END;
+                flag = Flags.PVP_END;
             }
             respond(e, e.getDamager(), flag);
         }
@@ -72,11 +73,11 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
         if (e.getCaught() != null && e.getCaught() instanceof Player) {
-            Flag flag = us.tastybento.bskyblock.lists.Flags.PVP_OVERWORLD;
+            Flag flag = Flags.PVP_OVERWORLD;
             if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = us.tastybento.bskyblock.lists.Flags.PVP_NETHER;
+                flag = Flags.PVP_NETHER;
             } else if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = us.tastybento.bskyblock.lists.Flags.PVP_END;
+                flag = Flags.PVP_END;
             }
             if (checkIsland(e, e.getCaught().getLocation(), flag)) {
                 e.getHook().remove();
@@ -91,11 +92,11 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Deduce the world
-        Flag flag = us.tastybento.bskyblock.lists.Flags.PVP_OVERWORLD;
+        Flag flag = Flags.PVP_OVERWORLD;
         if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-            flag = us.tastybento.bskyblock.lists.Flags.PVP_NETHER;
+            flag = Flags.PVP_NETHER;
         } else if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-            flag = us.tastybento.bskyblock.lists.Flags.PVP_END;
+            flag = Flags.PVP_END;
         }
 
         // Try to get the thrower
@@ -125,7 +126,7 @@ public class PVPListener extends AbstractFlagListener {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
-            UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
+            UUID uuid = ((Player) projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
             getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
@@ -140,11 +141,11 @@ public class PVPListener extends AbstractFlagListener {
 
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
             // Deduce the world
-            Flag flag = us.tastybento.bskyblock.lists.Flags.PVP_OVERWORLD;
+            Flag flag = Flags.PVP_OVERWORLD;
             if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = us.tastybento.bskyblock.lists.Flags.PVP_NETHER;
+                flag = Flags.PVP_NETHER;
             } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = us.tastybento.bskyblock.lists.Flags.PVP_END;
+                flag = Flags.PVP_END;
             }
 
             UUID attacker = thrownPotions.get(e.getDamager().getEntityId());

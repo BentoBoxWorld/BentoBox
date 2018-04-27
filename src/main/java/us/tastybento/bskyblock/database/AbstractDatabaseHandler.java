@@ -50,7 +50,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
      */
-    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
+    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
     /**
      * Creates a <T> filled with values from the corresponding
@@ -58,20 +58,20 @@ public abstract class AbstractDatabaseHandler<T> {
      * @param uniqueId - unique ID
      * @return <T>
      */
-    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
+    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException;
 
     /**
      * Save T into the corresponding database
      *
      * @param instance that should be inserted into the database
      */
-    public abstract void saveObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException ;
+    public abstract void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 
     /**
      * Deletes the object with the unique id from the database
      * @param instance
      */
-    public abstract void deleteObject(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException ;
+    public abstract void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 
     /**
      * Checks if a key exists or not

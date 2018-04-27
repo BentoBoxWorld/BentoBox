@@ -21,12 +21,12 @@ public class ConfigHandler<T> extends FlatFileDatabaseHandler<T> {
         super(plugin, type, databaseConnecter);
     }
 
-    public void saveSettings(T instance) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException, IntrospectionException {
+    public void saveSettings(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         configFlag = true;
         saveObject(instance);
     }
 
-    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
         if (dbConfig == null) {
             return loadObject(uniqueId);
         }
