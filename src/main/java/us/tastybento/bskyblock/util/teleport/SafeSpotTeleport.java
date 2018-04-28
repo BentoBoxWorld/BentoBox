@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -74,7 +75,7 @@ public class SafeSpotTeleport {
         checking = true;
 
         // Start a recurring task until done or cancelled
-        task = plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             List<ChunkSnapshot> chunkSnapshot = new ArrayList<>();
             if (checking) {
                 Iterator<Pair<Integer, Integer>> it = chunksToScan.iterator();
@@ -161,7 +162,7 @@ public class SafeSpotTeleport {
      */
     private void checkChunks(final List<ChunkSnapshot> chunkSnapshot) {
         // Run async task to scan chunks
-        plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
             for (ChunkSnapshot chunk: chunkSnapshot) {
                 if (scanChunk(chunk)) {
                     task.cancel();
@@ -201,7 +202,7 @@ public class SafeSpotTeleport {
     private void teleportEntity(final Location loc) {
         task.cancel();
         // Return to main thread and teleport the player
-        plugin.getServer().getScheduler().runTask(plugin, () -> {
+        Bukkit.getScheduler().runTask(plugin, () -> {
             if (!portal && entity instanceof Player) {
                 // Set home
                 plugin.getPlayers().setHomeLocation(entity.getUniqueId(), loc, homeNumber);

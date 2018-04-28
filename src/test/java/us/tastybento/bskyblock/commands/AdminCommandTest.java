@@ -33,7 +33,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.managers.CommandsManager;
 
 /**
- * @author ben
+ * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
