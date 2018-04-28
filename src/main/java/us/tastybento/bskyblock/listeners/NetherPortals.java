@@ -27,7 +27,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 public class NetherPortals implements Listener {
-    private static final String ERROR_NO_PERMISSION = "errors.general.no-permission";
+    private static final String ERROR_NO_PERMISSION = "general.errors.no-permission";
     private final BSkyBlock plugin;
     private World world;
     private World nether;

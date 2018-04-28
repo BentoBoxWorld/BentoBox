@@ -543,7 +543,7 @@ public class IslandsManager {
         if (number == 1) {
             user.sendMessage("commands.island.go.teleport", "[label]", Constants.ISLANDCOMMAND);
         } else {
-            user.sendMessage("commands.island.go.island.go.teleported", "[number]", String.valueOf(number));
+            user.sendMessage("commands.island.go.teleported", "[number]", String.valueOf(number));
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {

@@ -16,8 +16,6 @@ banner:
 - "SQUARE_TOP_RIGHT:BLUE"
 
 general:
-  deaths: "Deaths"
-  unlimited: "Unlimited"
   success: "&aSuccess!"
   errors:
     command-cancelled: "&cCommand cancelled"
@@ -37,7 +35,7 @@ general:
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
   tips:
-    changing-ob-to-lava: "Changing obsidian back into lava. Be careful!"
+    changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
 commands:
   help:
@@ -177,6 +175,7 @@ ranks:
   
 protection:
   protected: "&cIsland protected!"
+  locked: "&cThis island is locked!"
   flags:
     ANVIL:
       name: "Anvils"
@@ -260,8 +259,6 @@ protection:
         &7Allowed for: &f[rank]
     help-item:
       name: "&aNeed some help?"
-  island:
-    locked: "&cThis island is locked!"
 
 language:
   panel-title: "Select your language"

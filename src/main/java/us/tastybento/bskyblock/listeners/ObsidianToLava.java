@@ -63,7 +63,7 @@ public class ObsidianToLava implements Listener {
                 }
             }
 
-            user.sendMessage("general.tips.changing-ob-to-lava");
+            user.sendMessage("general.tips.changing-obsidian-to-lava");
             e.getItem().setType(Material.LAVA_BUCKET);
             e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.getClickedBlock().setType(Material.AIR);

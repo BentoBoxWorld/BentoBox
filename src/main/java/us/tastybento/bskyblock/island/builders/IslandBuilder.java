@@ -461,9 +461,13 @@ public class IslandBuilder {
         if (playerUUID != null) {
             Sign sign = (Sign) blockToChange.getState();
             User user = User.getInstance(playerUUID);
-            for (int i = 0; i < 4; i++) {
-                sign.setLine(i, user.getTranslation("new-island.sign.line" + i, "[player]", playerName));
-            }
+
+            // Sets the lines of the sign
+            sign.setLine(0, user.getTranslation("new-island.sign.line0", "[player]", playerName));
+            sign.setLine(1, user.getTranslation("new-island.sign.line1", "[player]", playerName));
+            sign.setLine(2, user.getTranslation("new-island.sign.line2", "[player]", playerName));
+            sign.setLine(3, user.getTranslation("new-island.sign.line3", "[player]", playerName));
+
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();
         }
