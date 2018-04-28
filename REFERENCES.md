@@ -4,6 +4,7 @@ This file contains a list of the hard-coded locale references in the source code
 
 ## References
 
+```
 commands.admin.setrange.range-updated
 commands.help.end
 commands.help.header
@@ -64,4 +65,4 @@ general.tips.changing-ob-to-lava
 language.edited
 locked.islandlocked
 protection.protected
-
+```
