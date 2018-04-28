@@ -83,7 +83,8 @@ commands:
       must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
-      confirm: "&cType [label] reset confirm within [seconds]s to confirm reset"
+      confirm: "&cType &b/[label] reset confirm&c within [seconds]s to confirm reset"
+      cancelled: "&bReset cancelled"
     sethome:
       description: "set your teleport point for /island"
       must-be-on-your-island: "You must be on your island to set home!"
