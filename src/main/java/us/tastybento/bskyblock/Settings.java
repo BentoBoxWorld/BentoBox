@@ -14,6 +14,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
 
 import us.tastybento.bskyblock.Constants.GameType;
+import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
@@ -78,6 +79,10 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "general.allow-obsidian-scooping")
     private boolean allowObsidianScooping = true;
+    
+    @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset")
+    @ConfigEntry(path = "general.confirmation-time")
+    private int confirmationTime = 20;
 
     // ---------------------------------------------
 
@@ -1241,6 +1246,18 @@ public class Settings implements ISettings<Settings> {
      */
     public void setFakePlayers(Set<String> fakePlayers) {
         this.fakePlayers = fakePlayers;
+    }
+    /**
+     * @return the confirmationTime
+     */
+    public int getConfirmationTime() {
+        return confirmationTime;
+    }
+    /**
+     * @param confirmationTime the confirmationTime to set
+     */
+    public void setConfirmationTime(int confirmationTime) {
+        this.confirmationTime = confirmationTime;
     }
 
 

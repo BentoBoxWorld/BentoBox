@@ -98,6 +98,9 @@ general:
     acid-blocked-commands:
     - home
 
+  # Time in seconds that players have to confirm sensitive commands, e.g. island reset
+  confimation-time: 20
+  
 ### World Settings ###
 world:
   # Name of the world - if it does not exist then it will be generated.

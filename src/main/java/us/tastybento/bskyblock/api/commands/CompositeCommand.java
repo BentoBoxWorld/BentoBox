@@ -127,7 +127,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         subCommandAliases = new LinkedHashMap<>();
         // Add aliases to the parent for this command
         for (String alias : aliases) {
-            parent.subCommandAliases.put(alias, this);
+            parent.getSubCommandAliases().put(alias, this);
         }
         setUsage("");
         setup();
@@ -433,5 +433,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     protected boolean showHelp(CompositeCommand command, User user) {
         return command.getSubCommand("help").map(helpCommand -> helpCommand.execute(user, new ArrayList<>())).orElse(false);
+    }
+
+    /**
+     * @return the subCommandAliases
+     */
+    public Map<String, CompositeCommand> getSubCommandAliases() {
+        return subCommandAliases;
     }
 }

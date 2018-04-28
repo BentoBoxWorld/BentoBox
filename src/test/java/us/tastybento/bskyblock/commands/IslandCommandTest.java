@@ -34,7 +34,7 @@ import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BSkyBlock.class })
+@PrepareForTest(BSkyBlock.class)
 public class IslandCommandTest {
 
     @Mock

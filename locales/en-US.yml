@@ -34,6 +34,7 @@ general:
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
+    you-must-wait: "&cYou must wait [seconds]s before you can do that command again"
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
@@ -80,6 +81,9 @@ commands:
     reset:
       description: "restart your island and remove the old one"
       must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
+      none-left: "&cYou have no more resets left!"
+      resets-left: "&cYou have [number] resets left"
+      confirm: "&cType [label] reset confirm within [seconds]s to confirm reset"
     sethome:
       description: "set your teleport point for /island"
       must-be-on-your-island: "You must be on your island to set home!"
