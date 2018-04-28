@@ -9,11 +9,14 @@ addons:
     organization: "tastybento-github"
     token:
       secure: $SONAR_TOKEN
-    branch.name: ${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}
+    branches:
+      - develop
+      - master
 jdk:
   - oraclejdk8
 script:
   - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
+  - echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
 cache:
   directories:
     - '$HOME/.m2/repository'
