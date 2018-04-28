@@ -30,9 +30,12 @@ public class AdminCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+        if (!args.isEmpty()) {
+            user.sendMessage("general.errors.unknown-command", "[label]", Constants.ADMINCOMMAND);
+            return false;
+        }
         // By default run the attached help command, if it exists (it should)
-        showHelp(this, user);
-        return false;
+        return showHelp(this, user);
     }
 
 }

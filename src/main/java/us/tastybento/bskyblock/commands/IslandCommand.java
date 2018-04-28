@@ -6,7 +6,15 @@ import java.util.List;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.commands.island.*;
+import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
+import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
+import us.tastybento.bskyblock.commands.island.IslandGoCommand;
+import us.tastybento.bskyblock.commands.island.IslandLanguageCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetCommand;
+import us.tastybento.bskyblock.commands.island.IslandResetnameCommand;
+import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
+import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
+import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
 
 public class IslandCommand extends CompositeCommand {
@@ -46,14 +54,18 @@ public class IslandCommand extends CompositeCommand {
         if (user == null) {
             return false;
         }
-        // If this player does not have an island, create one
-        if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
-            getSubCommand("create").ifPresent(createCmd -> createCmd.execute(user, new ArrayList<>()));
+        if (args.isEmpty()) {
+            // If this player does not have an island, create one
+            if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
+                return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
+            } else {
+                // Otherwise, currently, just go home
+                return getSubCommand("go").map(goCmd -> goCmd.execute(user, new ArrayList<>())).orElse(false);
+            }
+        } else {
+            user.sendMessage("general.errors.unknown-command", "[label]", Constants.ISLANDCOMMAND);
+            return false;
         }
-        // Otherwise, currently, just go home
-        else getSubCommand("go").ifPresent(goCmd -> goCmd.execute(user, new ArrayList<>()));
-
-        return true;
     }
 
 

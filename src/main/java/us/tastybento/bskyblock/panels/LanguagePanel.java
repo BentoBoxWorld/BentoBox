@@ -1,11 +1,11 @@
 package us.tastybento.bskyblock.panels;
 
+import java.util.Locale;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
-
-import java.util.Locale;
 
 /**
  * @author Poslovitch

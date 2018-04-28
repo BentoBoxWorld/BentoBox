@@ -429,8 +429,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * Show help
      * @param command
      * @param user - the User
+     * @return result of help command or false if no help defined
      */
-    protected void showHelp(CompositeCommand command, User user) {
-        command.getSubCommand("help").ifPresent(helpCommand -> helpCommand.execute(user, new ArrayList<>()));
+    protected boolean showHelp(CompositeCommand command, User user) {
+        return command.getSubCommand("help").map(helpCommand -> helpCommand.execute(user, new ArrayList<>())).orElse(false);
     }
 }

@@ -8,7 +8,7 @@ import org.bukkit.command.CommandMap;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 
-public final class CommandsManager {
+public class CommandsManager {
 
     private HashMap<String, CompositeCommand> commands = new HashMap<>();
 

@@ -33,6 +33,7 @@ general:
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&cUnknown player!"
     general: "&cThat command is not ready yet - contact admin"
+    unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
   tips:

@@ -3,6 +3,9 @@
  */
 package us.tastybento.bskyblock.listeners;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Sound;
@@ -15,9 +18,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Enables changing of obsidian back into lava
