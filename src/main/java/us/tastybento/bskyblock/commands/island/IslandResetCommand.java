@@ -46,18 +46,9 @@ public class IslandResetCommand extends CompositeCommand {
         player.setGameMode(GameMode.SPECTATOR);
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(player.getUniqueId());
-        if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: old island is at " + oldIsland.getCenter().getBlockX() + "," + oldIsland.getCenter().getBlockZ());
-        }
         // Remove them from this island (it still exists and will be deleted later)
         getIslands().removePlayer(player.getUniqueId());
-        if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: old island's owner is " + oldIsland.getOwner());
-        }
         // Create new island and then delete the old one
-        if (DEBUG) {
-            getPlugin().getLogger().info("DEBUG: making new island ");
-        }
         try {
             NewIsland.builder()
             .player(player)
@@ -65,7 +56,7 @@ public class IslandResetCommand extends CompositeCommand {
             .oldIsland(oldIsland)
             .build();
         } catch (IOException e) {
-            getPlugin().getLogger().severe("Could not create island for player. " + e.getMessage());
+            getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
         }
         return true;

@@ -40,7 +40,7 @@ public class PlaceholderHandler {
             apis.add(internal);
         } catch (Exception e){
             // Should never happen.
-            plugin.getLogger().severe("Failed to load default placeholder API");
+            plugin.logError("Failed to load default placeholder API");
         }
 
         // Load hooks
@@ -50,13 +50,13 @@ public class PlaceholderHandler {
                     Class<?> clazz = Class.forName(PACKAGE + hook + "PlaceholderImpl");
                     PlaceholderAPIInterface api = (PlaceholderAPIInterface)clazz.newInstance();
                     if(api.register(plugin)){
-                        plugin.getLogger().info(() -> "Hooked placeholders into " + hook); // since Java 8, we can use Supplier , which will be evaluated lazily
+                        plugin.log("Hooked placeholders into " + hook); // since Java 8, we can use Supplier , which will be evaluated lazily
                         apis.add(api);
                     } else {
-                        plugin.getLogger().info(() -> "Failed to hook placeholders into " + hook);
+                        plugin.log("Failed to hook placeholders into " + hook);
                     }
                 } catch (Exception e){
-                    plugin.getLogger().info(() -> "Failed to hook placeholders into " + hook);
+                    plugin.log("Failed to hook placeholders into " + hook);
                 }
             }
         }

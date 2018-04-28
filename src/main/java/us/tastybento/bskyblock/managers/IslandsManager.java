@@ -274,7 +274,7 @@ public class IslandsManager {
         if (island != null) {
             deleteIsland(island, removeBlocks);
         } else {
-            plugin.getLogger().severe(()->"Could not delete player: " + player.toString() + " island!");
+            plugin.logError("Could not delete player: " + player.toString() + " island!");
         }
     }
 
@@ -445,7 +445,7 @@ public class IslandsManager {
             }
         }
         if (l == null) {
-            plugin.getLogger().warning(()-> plugin.getPlayers().getName(playerUUID) + " player has no island!");
+            plugin.logWarning(plugin.getPlayers().getName(playerUUID) + " player has no island!");
             return null;
         }
         // If these island locations are not safe, then we need to get creative
@@ -636,7 +636,7 @@ public class IslandsManager {
                 islandCache.addIsland(island);
             }
         } catch (Exception e) {
-            plugin.getLogger().severe(()->"Could not load islands to cache! " + e.getMessage());
+            plugin.logError("Could not load islands to cache! " + e.getMessage());
         }
     }
 
@@ -732,7 +732,7 @@ public class IslandsManager {
                         player.teleport(plugin.getIslandWorldManager().getIslandWorld().getSpawnLocation());
                     } else {
                         if (!player.performCommand(Constants.SPAWNCOMMAND)) {
-                            plugin.getLogger().warning(()-> "During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
+                            plugin.logWarning("During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
                         }
                     }
                 }
@@ -752,7 +752,7 @@ public class IslandsManager {
                     try {
                         handler.saveObject(island);
                     } catch (Exception e) {
-                        plugin.getLogger().severe(()->"Could not save island to datavase when running async! " + e.getMessage());
+                        plugin.logError("Could not save island to datavase when running async! " + e.getMessage());
                     }
                 }
             };
@@ -762,7 +762,7 @@ public class IslandsManager {
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {
-                    plugin.getLogger().severe(()->"Could not save island to datavase when running sync! " + e.getMessage());
+                    plugin.logError("Could not save island to datavase when running sync! " + e.getMessage());
                 }
             }
         }

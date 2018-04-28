@@ -51,7 +51,7 @@ public class JoinLeaveListener implements Listener {
                 players.setPlayerName(user);
                 players.save(playerUUID);
             } else {
-                plugin.getLogger().warning("Player that just logged in has no name! " + playerUUID.toString());
+                plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
             }
             if (plugin.getSettings().isRemoveMobsOnLogin()) {
                 plugin.getIslands().removeMobs(user.getLocation());

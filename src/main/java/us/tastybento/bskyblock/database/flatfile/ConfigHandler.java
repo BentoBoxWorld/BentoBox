@@ -3,8 +3,7 @@ package us.tastybento.bskyblock.database.flatfile;
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
-import org.bukkit.plugin.Plugin;
-
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 /**
@@ -17,7 +16,7 @@ import us.tastybento.bskyblock.database.DatabaseConnecter;
 
 public class ConfigHandler<T> extends FlatFileDatabaseHandler<T> {
 
-    public ConfigHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
+    public ConfigHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         super(plugin, type, databaseConnecter);
     }
 

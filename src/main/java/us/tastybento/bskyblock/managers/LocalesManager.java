@@ -78,7 +78,7 @@ public class LocalesManager {
                     copyFile(name, targetFile);
                 }
             } catch (IOException e) {
-                plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
+                plugin.logError("Could not copy locale files from jar " + e.getMessage());
             }
 
         }
@@ -102,7 +102,7 @@ public class LocalesManager {
                 java.nio.file.Files.copy(initialStream, targetFile.toPath());
             }
         } catch (IOException e) {
-            plugin.getLogger().severe("Could not copy locale files from jar " + e.getMessage());
+            plugin.logError("Could not copy locale files from jar " + e.getMessage());
         }
     }
 

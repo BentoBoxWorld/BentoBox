@@ -70,7 +70,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         try (PreparedStatement pstmt = connection.prepareStatement(sql.toString())) {
             pstmt.executeUpdate();
         } catch (SQLException e) {
-            plugin.getLogger().severe(() -> "Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
+            plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
         }
     }
 
@@ -107,7 +107,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().severe(() -> "Could not load objects " + e.getMessage());
+            plugin.logError("Could not load objects " + e.getMessage());
         }
         return list;
     }
@@ -129,7 +129,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().severe(() -> "Could not load object " + uniqueId + " " + e.getMessage());
+            plugin.logError("Could not load object " + uniqueId + " " + e.getMessage());
         }
         return null;
     }
@@ -137,7 +137,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public void saveObject(T instance) {
         if (!(instance instanceof DataObject)) {
-            plugin.getLogger().severe(() -> "This class is not a DataObject: " + instance.getClass().getName());
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -154,14 +154,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             preparedStatement.setString(2, toStore);
             preparedStatement.execute(); 
         } catch (SQLException e) {
-            plugin.getLogger().severe(() -> "Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+            plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
         }
     }
 
     @Override
     public void deleteObject(T instance) {
         if (!(instance instanceof DataObject)) {
-            plugin.getLogger().severe(() -> "This class is not a DataObject: " + instance.getClass().getName());
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
         StringBuilder sb = new StringBuilder();
@@ -174,7 +174,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             preparedStatement.setString(1, uniqueId);
             preparedStatement.execute();
         } catch (Exception e) {
-            plugin.getLogger().severe(() -> "Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
+            plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }
     }
 
@@ -197,7 +197,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 }
             }
         } catch (SQLException e) {
-            plugin.getLogger().severe("Could not check if key exists in database! " + key + " " + e.getMessage());
+            plugin.logError("Could not check if key exists in database! " + key + " " + e.getMessage());
         }
         return false;
     }
@@ -208,7 +208,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             try {
                 connection.close();
             } catch (SQLException e) {
-                plugin.getLogger().severe("Could not close database for some reason");
+                plugin.logError("Could not close database for some reason");
             }
         }
     }

@@ -65,14 +65,14 @@ public class BSkyBlock extends JavaPlugin {
         try {
             settings = settings.loadSettings();
         } catch (Exception e) {
-            getLogger().severe("Settings could not be loaded " + e.getMessage());
+            logError("Settings could not be loaded " + e.getMessage());
         }
 
         // Save a backup of settings to the database so it can be checked next time
         try {
             settings.saveBackup();
         } catch (Exception e) {
-            getLogger().severe("Settings backup could not be saved" + e.getMessage());
+            logError("Settings backup could not be saved" + e.getMessage());
         }
 
         // Start Database managers
@@ -286,5 +286,17 @@ public class BSkyBlock extends JavaPlugin {
      */
     public HeadGetter getHeadGetter() {
         return headGetter;
+    }
+    
+    public void log(String string) {
+        getLogger().info(() -> string);
+    }
+    
+    public void logError(String error) {
+        getLogger().severe(() -> error);
+    }
+    
+    public void logWarning(String warning) {
+        getLogger().warning(warning);
     }
 }

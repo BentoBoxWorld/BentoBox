@@ -31,7 +31,7 @@ public class IslandWorld {
             return;
         }
         if (plugin.getServer().getWorld(plugin.getSettings().getWorldName()) == null) {
-            Bukkit.getLogger().info(CREATING + plugin.getName() + "'s Island World...");
+            plugin.log(CREATING + plugin.getName() + "'s Island World...");
         }
         // Create the world if it does not exist
         islandWorld = WorldCreator.name(plugin.getSettings().getWorldName()).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld(plugin))
@@ -39,7 +39,7 @@ public class IslandWorld {
         // Make the nether if it does not exist
         if (plugin.getSettings().isNetherGenerate()) {
             if (plugin.getServer().getWorld(plugin.getSettings().getWorldName() + NETHER) == null) {
-                Bukkit.getLogger().info(CREATING + plugin.getName() + "'s Nether...");
+                plugin.log(CREATING + plugin.getName() + "'s Nether...");
             }
             if (!plugin.getSettings().isNetherIslands()) {
                 netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
@@ -51,7 +51,7 @@ public class IslandWorld {
         // Make the end if it does not exist
         if (plugin.getSettings().isEndGenerate()) {
             if (plugin.getServer().getWorld(plugin.getSettings().getWorldName() + THE_END) == null) {
-                Bukkit.getLogger().info(CREATING + plugin.getName() + "'s End World...");
+                plugin.log(CREATING + plugin.getName() + "'s End World...");
             }
             if (!plugin.getSettings().isEndIslands()) {
                 endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.NORMAL).environment(World.Environment.THE_END).createWorld();
@@ -66,28 +66,30 @@ public class IslandWorld {
     private void fixMultiverse(BSkyBlock plugin) {
         // Multiverse configuration
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            Bukkit.getLogger().info("Trying to register generator with Multiverse ");
+            plugin.log("Trying to register generator with Multiverse ");
             try {
-                Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                        MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + " normal -g " + plugin.getName());
-                if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                        MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName())) {
-                    Bukkit.getLogger().severe("Multiverse is out of date! - Upgrade to latest version!");
-                }
+                Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                        MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + " normal -g " + plugin.getName()));
+                Bukkit.getScheduler().runTask(plugin, () -> {
+                    if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName())) {
+                        plugin.logError("Multiverse is out of date! - Upgrade to latest version!");
+                    }
+                });
                 if (netherWorld != null && plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + "_nether nether -g " + plugin.getName());
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName() + NETHER);
+                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + "_nether nether -g " + plugin.getName()));
+                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName() + NETHER));
                 }
                 if (endWorld != null && plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + "_the_end end -g " + plugin.getName());
-                    Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName() + THE_END);
+                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + "_the_end end -g " + plugin.getName()));
+                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName() + THE_END));
                 }
             } catch (Exception e) {
-                Bukkit.getLogger().severe("Not successfull! Disabling " + plugin.getName() + "!");
+                plugin.logError("Not successfull! Disabling " + plugin.getName() + "!");
                 Bukkit.getServer().getPluginManager().disablePlugin(plugin);
             }
         }

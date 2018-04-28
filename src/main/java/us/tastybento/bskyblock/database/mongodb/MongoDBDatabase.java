@@ -12,8 +12,8 @@ public class MongoDBDatabase extends BSBDbSetup{
         BSkyBlock plugin = BSkyBlock.getInstance();
         // Check if the MongoDB plugin exists
         if (plugin.getServer().getPluginManager().getPlugin("BsbMongo") == null) {
-            plugin.getLogger().severe("You must install BsbMongo plugin for MongoDB support!");
-            plugin.getLogger().severe("See: https://github.com/tastybento/bsbMongo/releases/");
+            plugin.logError("You must install BsbMongo plugin for MongoDB support!");
+            plugin.logError("See: https://github.com/tastybento/bsbMongo/releases/");
             plugin.getServer().getPluginManager().disablePlugin(plugin);
             return null;
         }

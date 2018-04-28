@@ -14,20 +14,19 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
-import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 
 public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
-    private Plugin plugin;
+    private BSkyBlock plugin;
     private File dataFolder;
 
 
-    public FlatFileDatabaseConnecter(Plugin plugin) {
+    public FlatFileDatabaseConnecter(BSkyBlock plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }
@@ -58,15 +57,15 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                Bukkit.getLogger().severe("Could not load yaml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                plugin.logError("Could not load yaml file from database " + tableName + " " + fileName + " " + e.getMessage());
             }
         } else {
             // Create the missing file
             config = new YamlConfiguration();
-            plugin.getLogger().info("No " + fileName + " found. Creating it...");
+            plugin.log("No " + fileName + " found. Creating it...");
             try {
                 if (plugin.getResource(fileName) != null) {
-                    plugin.getLogger().info("Using default found in jar file.");
+                    plugin.log("Using default found in jar file.");
                     plugin.saveResource(fileName, false);
                     config = new YamlConfiguration();
                     config.load(yamlFile);
@@ -74,7 +73,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
                     config.save(yamlFile);
                 }
             } catch (Exception e) {
-                plugin.getLogger().severe("Could not create the " + fileName + " file!");
+                plugin.logError("Could not create the " + fileName + " file!");
             }
         }
         return config;
@@ -96,7 +95,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         try {
             yamlConfig.save(file);
         } catch (Exception e) {
-            Bukkit.getLogger().severe("Could not save yaml file to database " + tableName + " " + fileName + " " + e.getMessage());
+            plugin.logError("Could not save yaml file to database " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
@@ -134,7 +133,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
             Files.write(commentedFile.toPath(), (Iterable<String>)newFile.stream()::iterator);
             Files.move(commentedFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
         } catch (IOException e1) {
-            plugin.getLogger().severe(() -> "Could not comment config file " + file.getName() + " " + e1.getMessage());
+            plugin.logError("Could not comment config file " + file.getName() + " " + e1.getMessage());
         } 
     }
 

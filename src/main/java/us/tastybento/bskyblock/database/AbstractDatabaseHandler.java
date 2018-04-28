@@ -4,7 +4,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
-import org.bukkit.plugin.Plugin;
+import us.tastybento.bskyblock.BSkyBlock;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -27,7 +27,7 @@ public abstract class AbstractDatabaseHandler<T> {
      */
     protected DatabaseConnecter     databaseConnecter;
 
-    protected Plugin plugin;
+    protected BSkyBlock plugin;
 
 
     /**
@@ -40,7 +40,7 @@ public abstract class AbstractDatabaseHandler<T> {
      *            Contains the settings to create a connection to the database
      *            like host/port/database/user/password
      */
-    protected AbstractDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
+    protected AbstractDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
         this.plugin = plugin;
         this.databaseConnecter = databaseConnecter;
         this.dataObject = type;

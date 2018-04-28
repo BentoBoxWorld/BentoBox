@@ -70,23 +70,23 @@ public class IslandCache {
             if (zEntry.containsKey(newIsland.getMinZ())) {
                 // Island already exists
                 Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
-                plugin.getLogger().warning("*** Duplicate or overlapping islands! ***");
-                plugin.getLogger().warning(
+                plugin.logWarning("*** Duplicate or overlapping islands! ***");
+                plugin.logWarning(
                         "Island at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
                                 + conflict.getCenter().getBlockX() + ", " + conflict.getCenter().getBlockZ() + ")");
                 if (conflict.getOwner() != null) {
-                    plugin.getLogger().warning("Accepted island is owned by " + plugin.getPlayers().getName(conflict.getOwner()));
-                    plugin.getLogger().warning(conflict.getOwner().toString() + ".yml");
+                    plugin.logWarning("Accepted island is owned by " + plugin.getPlayers().getName(conflict.getOwner()));
+                    plugin.logWarning(conflict.getOwner().toString() + ".yml");
                 } else {
-                    plugin.getLogger().warning("Accepted island is unowned.");
+                    plugin.logWarning("Accepted island is unowned.");
                 }
                 if (newIsland.getOwner() != null) {
-                    plugin.getLogger().warning("Denied island is owned by " + plugin.getPlayers().getName(newIsland.getOwner()));
-                    plugin.getLogger().warning(newIsland.getOwner().toString() + ".yml");
+                    plugin.logWarning("Denied island is owned by " + plugin.getPlayers().getName(newIsland.getOwner()));
+                    plugin.logWarning(newIsland.getOwner().toString() + ".yml");
                 } else {
-                    plugin.getLogger().warning("Denied island is unowned and was just found in the islands folder. Skipping it...");
+                    plugin.logWarning("Denied island is unowned and was just found in the islands folder. Skipping it...");
                 }
-                plugin.getLogger().warning("Recommend that the denied player file is deleted otherwise weird things can happen.");
+                plugin.logWarning("Recommend that the denied player file is deleted otherwise weird things can happen.");
                 return false;
             } else {
                 // Add island

@@ -44,7 +44,7 @@ public class RanksManager {
     public void loadCustomRanks() {
         for (Entry<String, Integer> en : plugin.getSettings().getCustomRanks().entrySet()) {
             if (!addRank(en.getKey(),en.getValue())) {
-                plugin.getLogger().severe("Error loading custom rank: " + en.getKey() + " " + en.getValue() + " skipping...");
+                plugin.logError("Error loading custom rank: " + en.getKey() + " " + en.getValue() + " skipping...");
             }
         }
     }

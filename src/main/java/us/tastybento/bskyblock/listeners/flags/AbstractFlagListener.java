@@ -6,7 +6,6 @@ package us.tastybento.bskyblock.listeners.flags;
 import java.lang.reflect.Method;
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -177,7 +176,7 @@ public abstract class AbstractFlagListener implements Listener {
             if (!createEventUser(e)) {
                 // The user is not set, and the event does not hold a getPlayer, so return false
                 // TODO: is this the correct handling here?
-                Bukkit.getLogger().severe("Check island had no associated user! " + e.getEventName());
+                plugin.logError("Check island had no associated user! " + e.getEventName());
                 return false;
             }
         }

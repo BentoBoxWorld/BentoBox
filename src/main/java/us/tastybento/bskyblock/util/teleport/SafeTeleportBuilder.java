@@ -88,11 +88,11 @@ public class SafeTeleportBuilder {
     public SafeSpotTeleport build() {      
         // Error checking
         if (entity == null) {
-            plugin.getLogger().severe("Attempt to safe teleport a null entity!");
+            plugin.logError("Attempt to safe teleport a null entity!");
             return null;
         }
         if (location == null) {
-            plugin.getLogger().severe("Attempt to safe teleport to a null location!");
+            plugin.logError("Attempt to safe teleport to a null location!");
             return null;
         }
         if (failureMessage.isEmpty() && entity instanceof Player) {

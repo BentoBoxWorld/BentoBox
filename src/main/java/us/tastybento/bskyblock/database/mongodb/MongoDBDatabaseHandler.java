@@ -115,7 +115,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public void saveObject(T instance) {
         if (!(instance instanceof DataObject)) {
-            plugin.getLogger().severe(() -> "This class is not a DataObject: " + instance.getClass().getName());
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
         DataObject dataObj = (DataObject)instance;
@@ -133,20 +133,20 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Do the deed
             collection.findOneAndReplace(filter, document, options);
         } catch (Exception e) {
-            plugin.getLogger().severe(() -> "Could not save object " + instance.getClass().getName() + " " + e.getMessage());
+            plugin.logError("Could not save object " + instance.getClass().getName() + " " + e.getMessage());
         }
     }
 
     @Override
     public void deleteObject(T instance) {
         if (!(instance instanceof DataObject)) {
-            plugin.getLogger().severe(() -> "This class is not a DataObject: " + instance.getClass().getName());
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
         try {
             collection.findOneAndDelete(new Document(MONGO_ID, ((DataObject)instance).getUniqueId()));
         } catch (Exception e) {
-            plugin.getLogger().severe(() -> "Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
+            plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }
     }
 

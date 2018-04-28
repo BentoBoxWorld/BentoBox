@@ -60,7 +60,7 @@ public class IslandCreateCommand extends CompositeCommand {
             .reason(Reason.CREATE)
             .build();
         } catch (IOException e) {
-            getPlugin().getLogger().severe("Could not create island for player. " + e.getMessage());
+            getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
         }
     }

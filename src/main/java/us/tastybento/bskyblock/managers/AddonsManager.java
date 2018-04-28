@@ -56,7 +56,7 @@ public class AddonsManager {
                         try {
                             loadAddon(file);
                         } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
-                            plugin.getLogger().severe("Could not load addon " + file.getName() + " : " + e.getMessage());
+                            plugin.logError("Could not load addon " + file.getName() + " : " + e.getMessage());
                         }
                     }
                 }
@@ -65,7 +65,7 @@ public class AddonsManager {
             try {
                 f.mkdir();
             } catch (SecurityException e) {
-                Bukkit.getLogger().severe("Cannot create folder 'addons' (Permission ?)");
+                plugin.logError("Cannot create folder 'addons' (Permission ?)");
             }
         }
 
@@ -73,7 +73,7 @@ public class AddonsManager {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
-            plugin.getLogger().info("Enabling " + addon.getDescription().getName() + "...");
+            plugin.log("Enabling " + addon.getDescription().getName() + "...");
         });
 
     }
@@ -144,12 +144,12 @@ public class AddonsManager {
                 addon.onLoad();
 
                 // Inform the console
-                plugin.getLogger().info("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
+                plugin.log("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
             }
 
         } catch (Exception e) {
             if (DEBUG) {
-                plugin.getLogger().info(f.getName() + "is not a jarfile, ignoring...");
+                plugin.log(f.getName() + "is not a jarfile, ignoring...");
             }
         }
 
@@ -163,7 +163,7 @@ public class AddonsManager {
         addons.forEach(addon -> {
             addon.onDisable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-            plugin.getLogger().info("Disabling " + addon.getDescription().getName() + "...");
+            plugin.log("Disabling " + addon.getDescription().getName() + "...");
         });
 
         loader.forEach(l -> {

@@ -49,7 +49,7 @@ public class AddonClassLoader extends URLClassLoader {
                 throw new InvalidAddonFormatException("Packages declaration cannot start with 'us.tastybento'");
             }
         } catch (ClassNotFoundException e) {
-            BSkyBlock.getInstance().getLogger().severe("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - invalid addon.yml");
+            BSkyBlock.getInstance().logError("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - invalid addon.yml");
             throw new InvalidDescriptionException("Invalid addon.yml");
         }
 

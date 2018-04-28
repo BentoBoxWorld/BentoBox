@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.util;
 
-import java.io.File;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
@@ -14,11 +13,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
-import org.bukkit.plugin.Plugin;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
@@ -222,46 +219,6 @@ public class Util {
     }
 
     /**
-     * Loads a YAML file and if it does not exist it is looked for in the JAR
-     *
-     * @param file
-     * @return Yaml Config
-     */
-    public static YamlConfiguration loadYamlFile(Plugin plugin, String file) {
-        File dataFolder = plugin.getDataFolder();
-        File yamlFile = new File(dataFolder, file);
-
-        YamlConfiguration config = null;
-        if (yamlFile.exists()) {
-            try {
-                config = new YamlConfiguration();
-                config.load(yamlFile);
-            } catch (Exception e) {
-                plugin.getLogger().severe("Could not load yml file " + e.getMessage());
-            }
-        } else {
-            // Create the missing file
-            config = new YamlConfiguration();
-            if (!file.startsWith("players")) {
-                plugin.getLogger().info("No " + file + " found. Creating it...");
-            }
-            try {
-                if (plugin.getResource(file) != null) {
-                    plugin.getLogger().info("Using default found in jar file.");
-                    plugin.saveResource(file, false);
-                    config = new YamlConfiguration();
-                    config.load(yamlFile);
-                } else {
-                    config.save(yamlFile);
-                }
-            } catch (Exception e) {
-                plugin.getLogger().severe("Could not create the " + file + " file!");
-            }
-        }
-        return config;
-    }
-
-    /**
      * Get the maximum value of a numerical perm setting
      * @param player - the player - the player to check
      * @param perm - the start of the perm, e.g., bskyblock.maxhomes
@@ -278,7 +235,7 @@ public class Util {
                     String[] spl = perms.getPermission().split(perm + ".");
                     if (spl.length > 1) {
                         if (!NumberUtils.isDigits(spl[1])) {
-                            plugin.getLogger().severe("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
+                            plugin.logError("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
 
                         } else {
                             permValue = Math.max(permValue, Integer.valueOf(spl[1]));

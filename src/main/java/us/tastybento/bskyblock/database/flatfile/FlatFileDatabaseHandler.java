@@ -23,8 +23,8 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.Plugin;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
@@ -50,7 +50,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String DATABASE_FOLDER_NAME = "database";
     protected boolean configFlag;
 
-    public FlatFileDatabaseHandler(Plugin plugin, Class<T> type, DatabaseConnecter dbConnecter) {
+    public FlatFileDatabaseHandler(BSkyBlock plugin, Class<T> type, DatabaseConnecter dbConnecter) {
         super(plugin, type, dbConnecter);
     }
 
@@ -287,7 +287,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     try {
                         config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
                     } catch (InstantiationException e) {
-                        plugin.getLogger().severe(() -> "Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
+                        plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                     }
                     // We are done here
                     continue fields;
@@ -419,14 +419,14 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
                 // Show what is available and pick one at random
-                plugin.getLogger().severe("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
-                plugin.getLogger().severe("Options are : ");
+                plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
+                plugin.logError("Options are : ");
                 boolean isSet = false;
                 for (Field fields : enumClass.getFields()) {
-                    plugin.getLogger().severe(fields.getName());
+                    plugin.logError(fields.getName());
                     if (!isSet && !((String)value).isEmpty() && fields.getName().substring(0, 1).equals(((String)value).substring(0, 1))) {
                         value = Enum.valueOf(enumClass, fields.getName());
-                        plugin.getLogger().severe("Setting to " + fields.getName() + " because it starts with the same letter");
+                        plugin.logError("Setting to " + fields.getName() + " because it starts with the same letter");
                         isSet = true;
                     }
                 }
@@ -452,7 +452,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                plugin.getLogger().severe(() -> "Could not delete yaml database object! " + file.getName() + " - " + e.getMessage());
+                plugin.logError("Could not delete yaml database object! " + file.getName() + " - " + e.getMessage());
             }
         }
     }

@@ -92,8 +92,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
                 target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                getPlugin().getLogger().info(
-                        "Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
+                getPlugin().log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
                                 + range + " for " + user.getName() + " due to permission.");
             }
             island.setProtectionRange(range);
