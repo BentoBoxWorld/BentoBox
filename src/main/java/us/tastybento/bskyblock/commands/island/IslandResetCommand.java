@@ -64,52 +64,62 @@ public class IslandResetCommand extends CompositeCommand {
             }
         }
         // Check for non-confirm command
-        if (args.size() > 0 && !(confirm.containsKey(user.getUniqueId()) && args.get(0).equalsIgnoreCase("confirm"))) {
+        if (!args.isEmpty() && !(confirm.containsKey(user.getUniqueId()) && args.get(0).equalsIgnoreCase("confirm"))) {
             showHelp(this, user);
             return false;
         }
 
         // Check confirmation or reset immediately if no confirmation required
         if (!getSettings().isResetConfirmation() || (confirm.containsKey(user.getUniqueId()) && args.size() == 1 && args.get(0).equalsIgnoreCase("confirm"))) {
-            // Remove the confirmation
-            confirm.remove(user.getUniqueId());
-            // Reset the island
-            Player player = user.getPlayer();
-            player.setGameMode(GameMode.SPECTATOR);
-            // Get the player's old island
-            Island oldIsland = getIslands().getIsland(player.getUniqueId());
-            // Remove them from this island (it still exists and will be deleted later)
-            getIslands().removePlayer(player.getUniqueId());
-            // Create new island and then delete the old one
-            try {
-                NewIsland.builder()
-                .player(player)
-                .reason(Reason.RESET)
-                .oldIsland(oldIsland)
-                .build();
-            } catch (IOException e) {
-                getPlugin().logError("Could not create island for player. " + e.getMessage());
-                user.sendMessage("commands.island.create.unable-create-island");
-            }
-            setCooldown(user);
-            return true;
+            return resetIsland(user);
         }
         
         // Confirmation required        
         if (!confirm.containsKey(user.getUniqueId())) {
-            user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
-            // Require confirmation          
-            confirm.put(user.getUniqueId(), System.currentTimeMillis() + getSettings().getConfirmationTime() * 1000L);
-            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-                if (confirm.containsKey(user.getUniqueId())) {
-                    user.sendMessage("commands.island.reset.cancelled");
-                    confirm.remove(user.getUniqueId());
-                }
-            }, getSettings().getConfirmationTime() * 20L);
+            requestConfirmation(user);
         } else {
+            // Show how many seconds left to confirm
             int time = (int)((confirm.get(user.getUniqueId()) - System.currentTimeMillis()) / 1000D);
             user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, "[seconds]", String.valueOf(time));
         }
+        return true;
+    }
+
+    private void requestConfirmation(User user) {
+        user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
+        // Require confirmation          
+        confirm.put(user.getUniqueId(), System.currentTimeMillis() + getSettings().getConfirmationTime() * 1000L);
+        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
+            if (confirm.containsKey(user.getUniqueId())) {
+                user.sendMessage("commands.island.reset.cancelled");
+                confirm.remove(user.getUniqueId());
+            }
+        }, getSettings().getConfirmationTime() * 20L);       
+    }
+
+    private boolean resetIsland(User user) {
+        // Remove the confirmation
+        confirm.remove(user.getUniqueId());
+        // Reset the island
+        Player player = user.getPlayer();
+        player.setGameMode(GameMode.SPECTATOR);
+        // Get the player's old island
+        Island oldIsland = getIslands().getIsland(player.getUniqueId());
+        // Remove them from this island (it still exists and will be deleted later)
+        getIslands().removePlayer(player.getUniqueId());
+        // Create new island and then delete the old one
+        try {
+            NewIsland.builder()
+            .player(player)
+            .reason(Reason.RESET)
+            .oldIsland(oldIsland)
+            .build();
+        } catch (IOException e) {
+            getPlugin().logError("Could not create island for player. " + e.getMessage());
+            user.sendMessage("commands.island.create.unable-create-island");
+            return false;
+        }
+        setCooldown(user);
         return true;
     }
 
@@ -117,7 +127,7 @@ public class IslandResetCommand extends CompositeCommand {
         if (!cooldown.containsKey(user.getUniqueId())) {
             return 0;
         }
-        return (int) ((System.currentTimeMillis() - cooldown.get(user.getUniqueId()) / 1000));
+        return (int) (System.currentTimeMillis() - cooldown.get(user.getUniqueId()) / 1000);
     }
 
     private void setCooldown(User user) {

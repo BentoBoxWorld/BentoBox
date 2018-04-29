@@ -35,6 +35,7 @@ general:
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
     you-must-wait: "&cYou must wait [seconds]s before you can do that command again"
+    you-need: "&cYou need [permission]"
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
@@ -163,9 +164,13 @@ commands:
       cannot-ban: "&cThat player cannot be banned."
       cannot-ban-member: "&cKick the team member first, then ban."
       player-already-banned: "&cPlayer is already banned"
+      you-are-banned: "&b[owner]&c banned you from their island!"
     unban:
       description: "unban a player from your island"
       parameters: "<player>"
+      cannot-unban-yourself: "&cYou cannot unban yourself!"
+      player-not-banned: "&cPlayer is not banned"
+      you-are-unbanned: "&b[owner]&a unbanned you from their island!"
     banlist:
       description: "list banned players"
     lock:

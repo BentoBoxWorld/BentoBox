@@ -1,11 +1,19 @@
 package us.tastybento.bskyblock.commands.island;
 
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.util.Util;
 
 public class IslandBanCommand extends CompositeCommand {
 
@@ -17,16 +25,17 @@ public class IslandBanCommand extends CompositeCommand {
     public void setup() {
         setPermission(Constants.PERMPREFIX + "island.ban");
         setOnlyPlayer(true);
-        setParameters("command.island.ban.parameters");
+        setParameters("commands.island.ban.parameters");
         setDescription("commands.island.ban.description");
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
         if (args.size() != 1) {
+            // Show help
             showHelp(this, user);
             return false;
-        }
+        } 
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
         if (!getIslands().hasIsland(playerUUID)) {
@@ -37,54 +46,61 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
-        if (args.isEmpty() || args.size() > 1) {
-            // Show help
-            showHelp(this, user);
+        // Get target player
+        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        if (targetUUID == null) {
+            user.sendMessage("general.errors.unknown-player");
             return false;
-        } else  {
-            // Get target player
-            UUID targetUUID = getPlayers().getUUID(args.get(0));
-            if (targetUUID == null) {
-                user.sendMessage("general.errors.unknown-player");
-                return false;
-            }
-            // Player cannot ban themselves
-            if (playerUUID.equals(targetUUID)) {
-                user.sendMessage("commands.island.ban.cannot-ban-yourself");
-                return false;
-            }
-            if (getIslands().getMembers(user.getUniqueId()).contains(targetUUID)) {
-                user.sendMessage("commands.island.ban.cannot-ban-member");
-                return false; 
-            }
-            if (getIslands().getIsland(playerUUID).isBanned(targetUUID)) {
-                user.sendMessage("commands.island.ban.player-already-banned");
-                return false; 
-            }
-            User target = User.getInstance(targetUUID);
-            // Cannot ban ops
-            if (!target.isPlayer() || target.isOp()) {
-                user.sendMessage("commands.island.ban.cannot-ban");
-                return false; 
-            }
-            
-            User targetUser = User.getInstance(targetUUID);
-            // Finished error checking - start the banning
-            if (getIslands().getIsland(playerUUID).addToBanList(targetUUID)) {
-                user.sendMessage("general.success");
-                targetUser.sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
-                if (target.isOnline()) {
-                    // Remove from island
-                    if (getPlayers().hasIsland(targetUUID)) {
-                        getIslands().homeTeleport(target.getPlayer());
-                    }
-                    // TODO else if there is a spawn, send them there
-                }
-                return true;
-            }
-            // Banning was blocked, maybe due to an event cancellation. Fail silently.
         }
+        // Player cannot ban themselves
+        if (playerUUID.equals(targetUUID)) {
+            user.sendMessage("commands.island.ban.cannot-ban-yourself");
+            return false;
+        }
+        if (getIslands().getMembers(user.getUniqueId()).contains(targetUUID)) {
+            user.sendMessage("commands.island.ban.cannot-ban-member");
+            return false; 
+        }
+        if (getIslands().getIsland(playerUUID).isBanned(targetUUID)) {
+            user.sendMessage("commands.island.ban.player-already-banned");
+            return false; 
+        }
+        User target = User.getInstance(targetUUID);
+        // Cannot ban ops
+        if (!target.isPlayer() || target.isOp()) {
+            user.sendMessage("commands.island.ban.cannot-ban");
+            return false; 
+        }
+        // Finished error checking - start the banning
+        return ban(user, target);
+    }
+
+    private boolean ban(User user, User targetUser) {
+        if (getIslands().getIsland(user.getUniqueId()).addToBanList(targetUser.getUniqueId())) {
+            user.sendMessage("general.success");
+            targetUser.sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
+            if (targetUser.isOnline() && getPlayers().hasIsland(targetUser.getUniqueId())) {
+                getIslands().homeTeleport(targetUser.getPlayer());
+            }
+            return true;
+        }
+        // Banning was blocked, maybe due to an event cancellation. Fail silently.
         return false;
     }
 
+    @Override
+    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
+        if (args.isEmpty()) {
+            // Don't show every player on the server. Require at least the first letter
+            return Optional.empty();
+        }
+        Island island = getIslands().getIsland(user.getUniqueId());
+        List<String> options = Bukkit.getOnlinePlayers().stream()
+                .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
+                .filter(p -> !island.isBanned(p.getUniqueId()))
+                .filter(p -> user.getPlayer().canSee(p))
+                .map(Player::getName).collect(Collectors.toList());
+        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        return Optional.of(Util.tabLimit(options, lastArg));
+    }
 }

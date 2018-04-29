@@ -168,8 +168,6 @@ public class NewIsland {
         while (plugin.getIslands().isIsland(next)) {
             next = nextGridLocation(next);
         }
-        // Make the last next, last
-        last = next.clone();
         return next;
     }
 

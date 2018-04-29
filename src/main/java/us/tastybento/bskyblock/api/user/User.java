@@ -105,7 +105,7 @@ public class User {
     private User(UUID playerUUID) {
         player = Bukkit.getPlayer(playerUUID);
         this.playerUUID = playerUUID;
-        sender = null;
+        sender = player;
     }
     
     /**

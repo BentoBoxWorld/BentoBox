@@ -279,4 +279,41 @@ public class IslandResetCommandTest {
         Mockito.verify(builder).build();
 
     }
+    
+    @Test
+    public void testNewIslandError() throws IOException {
+        IslandResetCommand irc = new IslandResetCommand(ic);
+        // Now has island, but is not the leader
+        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        // Now is owner, but still has team
+        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        // Now has no team
+        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        // Give the user some resets
+        when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+        
+        // Old island mock
+        Island oldIsland = mock(Island.class);
+        when(im.getIsland(Mockito.eq(uuid))).thenReturn(oldIsland);
+        
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(Mockito.any())).thenReturn(builder);
+        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
+        when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.build()).thenThrow(new IOException());
+        PowerMockito.mockStatic(NewIsland.class);
+        when(NewIsland.builder()).thenReturn(builder);
+
+        // Require no confirmation
+        when(s.isResetConfirmation()).thenReturn(false);
+        
+        // Reset
+        assertFalse(irc.execute(user, new ArrayList<>()));
+        Mockito.verify(user).sendMessage("commands.island.create.unable-create-island");
+        
+
+    }
 }

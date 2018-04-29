@@ -12,8 +12,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -22,6 +27,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -122,14 +129,11 @@ public class IslandBanCommandTest {
     // Ban self
     // Ban team mate
     // Ban someone you have already banned
-    // Unban someone not banned
     // Ban an Op
 
     // *** Working conditions ***
     // Ban offline user
     // Ban online user
-    // Unban offline user
-    // Unban online user
 
     @Test
     public void testNoArgs() {
@@ -279,4 +283,105 @@ public class IslandBanCommandTest {
         Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
     }
     
+    @Test
+    public void testTabComplete() {
+        
+        String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
+        Map<UUID, String> online = new HashMap<>();
+        
+        Set<UUID> banned = new HashSet<>();
+        Set<Player> onlinePlayers = new HashSet<>();
+        for (int j = 0; j < names.length; j++) {
+            Player p = mock(Player.class);
+            UUID uuid = UUID.randomUUID();
+            when(p.getUniqueId()).thenReturn(uuid);
+            when(p.getName()).thenReturn(names[j]);
+            online.put(uuid, names[j]);
+            // Ban the first 3 players
+            if (j < 3) {
+                banned.add(uuid);
+            }
+            onlinePlayers.add(p);
+        }
+        
+        when(island.isBanned(Mockito.any(UUID.class))).thenAnswer(new Answer<Boolean>() {
+
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                return banned.contains(invocation.getArgumentAt(0, UUID.class));
+            }
+            
+        });
+        // Create the names
+        when(pm.getName(Mockito.any(UUID.class))).then(new Answer<String>() {
+
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                return online.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento");
+            }
+            
+        });
+        
+        // Return a set of online players
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getOnlinePlayers()).then(new Answer<Set<Player>>() {
+
+            @Override
+            public Set<Player> answer(InvocationOnMock invocation) throws Throwable {
+                return onlinePlayers;
+            }
+            
+        });
+        
+        IslandBanCommand ibc = new IslandBanCommand(ic);
+        // Set up the user
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        Player player = mock(Player.class);
+        // Player can see every other player except Ian
+        when(player.canSee(Mockito.any(Player.class))).thenAnswer(new Answer<Boolean>() {
+
+            @Override
+            public Boolean answer(InvocationOnMock invocation) throws Throwable {
+                Player p = invocation.getArgumentAt(0, Player.class);
+                return p.getName().equals("ian") ? false : true;
+            }
+
+        });
+        when(user.getPlayer()).thenReturn(player);
+        
+        // Get the tab-complete list with no argument
+        Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
+        assertFalse(result.isPresent());
+        
+        // Get the tab-complete list with one argument
+        LinkedList<String> args = new LinkedList<>();
+        args.add("");
+        result = ibc.tabComplete(user, "", args);
+        assertTrue(result.isPresent());
+        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        // Compare the expected with the actual
+        String[] expectedNames = {"dave", "ed", "frank", "freddy", "george", "harry", "joe"};
+        assertTrue(Arrays.equals(expectedNames, r.toArray()));
+        
+        // Get the tab-complete list with one letter argument
+        args = new LinkedList<>();
+        args.add("d");
+        result = ibc.tabComplete(user, "", args);
+        assertTrue(result.isPresent());
+        r = result.get().stream().sorted().collect(Collectors.toList());
+        // Compare the expected with the actual
+        String[] expectedName = {"dave"};
+        assertTrue(Arrays.equals(expectedName, r.toArray()));
+        
+        // Get the tab-complete list with one letter argument
+        args = new LinkedList<>();
+        args.add("fr");
+        result = ibc.tabComplete(user, "", args);
+        assertTrue(result.isPresent());
+        r = result.get().stream().sorted().collect(Collectors.toList());
+        // Compare the expected with the actual
+        String[] expected = {"frank", "freddy"};
+        assertTrue(Arrays.equals(expected, r.toArray()));
+    }
 }
