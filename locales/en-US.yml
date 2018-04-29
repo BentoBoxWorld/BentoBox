@@ -173,6 +173,9 @@ commands:
       you-are-unbanned: "&b[owner]&a unbanned you from their island!"
     banlist:
       description: "list banned players"
+      noone: "&aNo one is banned on this island"
+      the-following: "&bThe following players are banned:"
+      names: "&c[line]"
     lock:
       description: "lock/unlock your island so visitors cannot enter it"
     settings:

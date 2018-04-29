@@ -8,6 +8,7 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
 import us.tastybento.bskyblock.commands.island.IslandBanCommand;
+import us.tastybento.bskyblock.commands.island.IslandBanlistCommand;
 import us.tastybento.bskyblock.commands.island.IslandCreateCommand;
 import us.tastybento.bskyblock.commands.island.IslandGoCommand;
 import us.tastybento.bskyblock.commands.island.IslandLanguageCommand;
@@ -46,6 +47,7 @@ public class IslandCommand extends CompositeCommand {
         new IslandLanguageCommand(this);
         new IslandBanCommand(this);
         new IslandUnbanCommand(this);
+        new IslandBanlistCommand(this);
         // Team commands
         new IslandTeamCommand(this);
     }
