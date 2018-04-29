@@ -159,6 +159,10 @@ commands:
     ban:
       description: "ban a player from your island"
       parameters: "<player>"
+      cannot-ban-yourself: "&cYou cannot ban yourself!"
+      cannot-ban: "&cThat player cannot be banned."
+      cannot-ban-member: "&cKick the team member first, then ban."
+      player-already-banned: "&cPlayer is already banned"
     unban:
       description: "unban a player from your island"
       parameters: "<player>"

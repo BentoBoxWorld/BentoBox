@@ -160,7 +160,7 @@ public class AddonTest {
 
     @Test
     public void testSaveConfig() {
-        TestClass test = new TestClass();
+        //TestClass test = new TestClass();
         // This will wipe out the config.yml of BSB so I am commenting it out
         //test.saveConfig();
     }

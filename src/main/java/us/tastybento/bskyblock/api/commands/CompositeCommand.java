@@ -294,7 +294,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Convenience method to obtain the user's team leader
      * @param user - the User
-     * @return UUID of player's team leader
+     * @return UUID of player's team leader or null if user has no island
      */
     protected UUID getTeamLeader(User user) {
         return plugin.getIslands().getTeamLeader(user.getUniqueId());
