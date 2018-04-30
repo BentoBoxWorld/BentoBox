@@ -182,7 +182,7 @@ public class IslandBanEnforcerTest {
         // Should not be cancelled
         assertFalse(e.isCancelled());
         // User should see no message from this class
-        Mockito.verify(notifier, Mockito.never());
+        Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.any());
     }
     
     @Test
@@ -201,7 +201,7 @@ public class IslandBanEnforcerTest {
         // Should be cancelled
         assertTrue(e.isCancelled());
         // Player should see a message
-        Mockito.verify(notifier);
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.any());
     }
 
     @Test
@@ -248,7 +248,7 @@ public class IslandBanEnforcerTest {
         ibe.onPlayerMove(e);
         assertFalse(e.isCancelled());
         // Confirm no check is done on the island
-        Mockito.verify(im, Mockito.never());
+        Mockito.verify(im, Mockito.never()).getProtectedIslandAt(Mockito.any());
     }
     
     @Test
@@ -274,7 +274,7 @@ public class IslandBanEnforcerTest {
         // Move vehicle
         ibe.onVehicleMove(new VehicleMoveEvent(vehicle, from, to));
         // Confirm no check is done on the island
-        Mockito.verify(im, Mockito.never());
+        Mockito.verify(im, Mockito.never()).getProtectedIslandAt(Mockito.any());
     }
     
     @Test

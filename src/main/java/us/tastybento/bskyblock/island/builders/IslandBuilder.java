@@ -367,9 +367,6 @@ public class IslandBuilder {
         b = world.getBlockAt(x, y, z + 1);
         b.setType(Material.MAGMA);
 
-        // Add island items
-        y = islandHeight;
-
         // Place a helpful sign in front of player
         placeSign(x, islandHeight + 5, z + 3);
         // Place the chest - no need to use the safe spawn function
