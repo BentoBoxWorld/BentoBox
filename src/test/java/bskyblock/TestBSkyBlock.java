@@ -46,6 +46,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
@@ -66,9 +67,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-//@SuppressStaticInitializationFor("us.tastybento.BSkyBlock")
-//@PrepareForTest( { Bukkit.class })
-@PrepareForTest( { Flags.class })
+@PrepareForTest({ BSkyBlock.class, Flags.class})
 public class TestBSkyBlock {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
@@ -85,6 +84,10 @@ public class TestBSkyBlock {
     
     @BeforeClass
     public static void setUp() {
+        // Set up plugin
+        plugin = mock(BSkyBlock.class);
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+
         Server server = mock(Server.class);
         World world = mock(World.class);
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -108,7 +111,6 @@ public class TestBSkyBlock {
 
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        //when(Bukkit.getServer()).thenReturn(server);
         
         sender = mock(CommandSender.class);
         player = mock(Player.class);
@@ -116,8 +118,6 @@ public class TestBSkyBlock {
         visitorToIsland = mock(Player.class);
         Mockito.when(player.hasPermission(Constants.PERMPREFIX + "default.permission")).thenReturn(true);
 
-
-        //Mockito.when(plugin.getServer()).thenReturn(server);
 
         location = mock(Location.class);
         Mockito.when(location.getWorld()).thenReturn(world);
@@ -148,9 +148,6 @@ public class TestBSkyBlock {
         Mockito.when(iwm.getNetherWorld()).thenReturn(world);
         Mockito.when(iwm.getEndWorld()).thenReturn(world);
 
-        // User
-        //User user = Mockito.mock(User.class);
-        //Mockito.when(user.getName()).thenReturn("tastybento");
 
         // Islands
         IslandsManager im = mock(IslandsManager.class);

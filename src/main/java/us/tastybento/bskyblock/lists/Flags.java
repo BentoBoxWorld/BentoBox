@@ -21,12 +21,14 @@ import us.tastybento.bskyblock.listeners.flags.HurtingListener;
 import us.tastybento.bskyblock.listeners.flags.InventoryListener;
 import us.tastybento.bskyblock.listeners.flags.ItemDropPickUpListener;
 import us.tastybento.bskyblock.listeners.flags.LeashListener;
+import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
 import us.tastybento.bskyblock.listeners.flags.PVPListener;
 import us.tastybento.bskyblock.listeners.flags.PhysicalInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
+import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flags {
 
@@ -116,6 +118,9 @@ public class Flags {
     public static final Flag ITEM_DROP = new FlagBuilder().id("ITEM_DROP").icon(Material.BEETROOT_SOUP).allowedByDefault(true).listener(new ItemDropPickUpListener()).build();
     public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
 
+    // Island lock
+    public static final Flag LOCK = new FlagBuilder().id("LOCK").icon(Material.TRIPWIRE_HOOK).type(Type.PROTECTION).allowedByDefault(true).defaultRank(RanksManager.VISITOR_RANK).listener(new LockAndBanListener()).build();
+
     /*
      * Settings flags (not protection flags)
      */
@@ -128,7 +133,7 @@ public class Flags {
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
-
+    
     /**
      * @return List of all the flags in this class
      */

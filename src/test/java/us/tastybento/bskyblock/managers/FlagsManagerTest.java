@@ -27,6 +27,7 @@ import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
@@ -35,12 +36,22 @@ import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.lists.Flags;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Flags.class} )
+@PrepareForTest( {BSkyBlock.class, Flags.class} )
 public class FlagsManagerTest {
     
 
+    private static BSkyBlock plugin;
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
+        // Set up plugin
+        plugin = mock(BSkyBlock.class);
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        
+        IslandsManager im = mock(IslandsManager.class);
+        when(plugin.getIslands()).thenReturn(im);
+
+
         Server server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -65,13 +76,11 @@ public class FlagsManagerTest {
 
     @Test
     public void testFlagsManager() {
-        BSkyBlock plugin = mock(BSkyBlock.class);
         assertNotNull(new FlagsManager(plugin));
     }
 
     @Test
     public void testRegisterFlag() {
-        BSkyBlock plugin = mock(BSkyBlock.class);
         FlagsManager fm = new FlagsManager(plugin);
         // Try to register every single flag - it should fail every time
         Flags.values().forEach(dupe -> assertFalse(fm.registerFlag(dupe)));
@@ -90,14 +99,12 @@ public class FlagsManagerTest {
 
     @Test
     public void testGetFlags() {
-        BSkyBlock plugin = mock(BSkyBlock.class);
         FlagsManager fm = new FlagsManager(plugin);
         assertThat(fm.getFlags(), is(Flags.values()));
     }
 
     @Test
     public void testGetFlagByID() {
-        BSkyBlock plugin = mock(BSkyBlock.class);
         FlagsManager fm = new FlagsManager(plugin);
         // Test in forward and reverse order so that any duplicates are caught
         Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlagByID(flag.getID())));

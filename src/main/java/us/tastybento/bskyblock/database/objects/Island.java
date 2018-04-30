@@ -87,8 +87,6 @@ public class Island implements DataObject {
 
     //// State ////
     @Expose
-    private boolean locked = false;
-    @Expose
     private boolean spawn = false;
     @Expose
     private boolean purgeProtected = false;
@@ -174,9 +172,9 @@ public class Island implements DataObject {
     public int getFlag(Flag flag){
         if(flags.containsKey(flag)) {
             return flags.get(flag);
-        } else {
-            flags.put(flag, RanksManager.MEMBER_RANK);
-            return RanksManager.MEMBER_RANK;
+        } else {            
+            flags.put(flag, flag.getDefaultRank());
+            return flag.getDefaultRank();
         }
     }
 
@@ -195,7 +193,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return the members
+     * @return the members - key is the UUID, value is the RanksManager enum, e.g. RanksManager.MEMBER_RANK
      */
     public Map<UUID, Integer> getMembers() {
         return members;
@@ -427,13 +425,6 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return true if island is locked, false if not
-     */
-    public boolean isLocked() {
-        return locked;
-    }
-
-    /**
      * @return spawn
      */
     public boolean isSpawn() {
@@ -486,7 +477,7 @@ public class Island implements DataObject {
     /**
      * Set the Island Guard flag rank
      * @param flag
-     * @param value - rank value. If the flag applies to the island, a positive number = true, negative = false
+     * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
      */
     public void setFlag(Flag flag, int value){
         flags.put(flag, value);
@@ -511,14 +502,6 @@ public class Island implements DataObject {
      */
     public void setLevelHandicap(int levelHandicap) {
         this.levelHandicap = levelHandicap;
-    }
-
-    /**
-     * Locks/Unlocks the island.
-     * @param locked - the lock state to set
-     */
-    public void setLocked(boolean locked){
-        this.locked = locked;
     }
 
     /**

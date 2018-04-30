@@ -22,13 +22,15 @@ public class Flag implements Comparable<Flag> {
     private final Listener listener;
     private final Type type;
     private boolean defaultSetting;
+    private final int defaultRank;
 
-    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type) {
+    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
         this.defaultSetting = defaultSetting;
         this.type = type;
+        this.defaultRank = defaultRank;
     }
 
     public String getID() {
@@ -63,6 +65,13 @@ public class Flag implements Comparable<Flag> {
      */
     public Type getType() {
         return type;
+    }
+
+    /**
+     * @return the defaultRank
+     */
+    public int getDefaultRank() {
+        return defaultRank;
     }
 
     /* (non-Javadoc)
@@ -129,4 +138,5 @@ public class Flag implements Comparable<Flag> {
     public int compareTo(Flag o) {
         return getID().compareTo(o.getID());
     }
+
 }

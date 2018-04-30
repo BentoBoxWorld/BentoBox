@@ -7,6 +7,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.Constants;
@@ -76,12 +77,15 @@ public class IslandBanCommand extends CompositeCommand {
     }
 
     private boolean ban(User user, User targetUser) {
-        if (getIslands().getIsland(user.getUniqueId()).addToBanList(targetUser.getUniqueId())) {
+        Island island = getIslands().getIsland(user.getUniqueId());
+        if (island.addToBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
             targetUser.sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
-            if (targetUser.isOnline() && getPlayers().hasIsland(targetUser.getUniqueId())) {
+            // If the player is online, has an island and on the banned island, move them home immediately
+            if (targetUser.isOnline() && getPlayers().hasIsland(targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
                 getIslands().homeTeleport(targetUser.getPlayer());
-            }
+                island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+            }            
             return true;
         }
         // Banning was blocked, maybe due to an event cancellation. Fail silently.

@@ -9,7 +9,6 @@ import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDbSetup;
 import us.tastybento.bskyblock.generators.IslandWorld;
-import us.tastybento.bskyblock.listeners.IslandBanEnforcer;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.ObsidianToLava;
@@ -150,8 +149,6 @@ public class BSkyBlock extends JavaPlugin {
         manager.registerEvents(new NetherPortals(this), this);
         // Obsidian to lava helper
         manager.registerEvents(new ObsidianToLava(this), this);
-        // Island ban enforcer
-        manager.registerEvents(new IslandBanEnforcer(this), this);
     }
 
     @Override

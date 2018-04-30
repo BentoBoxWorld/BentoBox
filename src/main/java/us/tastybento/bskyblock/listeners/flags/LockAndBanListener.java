@@ -1,13 +1,11 @@
 /**
  * 
  */
-package us.tastybento.bskyblock.listeners;
+package us.tastybento.bskyblock.listeners.flags;
 
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
-
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -19,42 +17,37 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.IslandsManager;
 
 /**
- * Enforces island bans. Checks for teleporting, entry via flying and due to logging in
+ * Listener for the lock flag
+ * Also handles ban protection
+ * 
  * @author tastybento
  *
  */
-
-public class IslandBanEnforcer implements Listener {
+public class LockAndBanListener implements Listener {
 
     private IslandsManager im;
-    private Set<UUID> inTeleport;
+    private enum CheckResult {
+        BANNED,
+        LOCKED,
+        OPEN
+    }
 
     /**
-     * Enforces island bans
+     * Enforces island bans and locks
      * @param plugin
      */
-    public IslandBanEnforcer(BSkyBlock plugin) {
-        this.im = plugin.getIslands();
-        inTeleport = new HashSet<>();
+    public LockAndBanListener() {
+        this.im = BSkyBlock.getInstance().getIslands();
     }
 
     // Teleport check
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        // Ignore players who are being ejected
-        if (inTeleport.contains(e.getPlayer().getUniqueId())) {
-            // Remove them
-            inTeleport.remove(e.getPlayer().getUniqueId());
-            return;
-        }
-        e.setCancelled(checkAndNotify(e.getPlayer(), e.getTo()));
-        // Check from - just in case the player is inside the island
-        if (check(e.getPlayer(), e.getFrom())) {
-            eject(e.getPlayer());
-        }
+        e.setCancelled(checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN) ? false : true);
     }
 
     // Movement check
@@ -64,10 +57,14 @@ public class IslandBanEnforcer implements Listener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        e.setCancelled(checkAndNotify(e.getPlayer(), e.getTo()));
+        e.setCancelled(checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN) ? false : true);
+        if (e.isCancelled()) {
+            e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+        }
         // Check from - just in case the player is inside the island
-        if (check(e.getPlayer(), e.getFrom())) {
-            eject(e.getPlayer());
+        if (!check(e.getPlayer(), e.getFrom()).equals(CheckResult.OPEN)) {
+            // Has to be done 1 tick later otherwise it doesn't happen for some reason...
+            Bukkit.getScheduler().runTask(BSkyBlock.getInstance(), () -> eject(e.getPlayer()));
         }
     }
 
@@ -80,9 +77,10 @@ public class IslandBanEnforcer implements Listener {
         }
         // For each Player in the vehicle
         e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p -> {
-            if (checkAndNotify(p, e.getTo())) {
+            if (!checkAndNotify(p, e.getTo()).equals(CheckResult.OPEN)) {
                 p.leaveVehicle();
-                p.teleport(e.getFrom());
+                p.teleport(e.getFrom());                
+                e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                 eject(p);
             }
         });
@@ -91,34 +89,45 @@ public class IslandBanEnforcer implements Listener {
     // Login check
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerLogin(PlayerJoinEvent e) {
-        if (checkAndNotify(e.getPlayer(), e.getPlayer().getLocation())) {
+        if (!checkAndNotify(e.getPlayer(), e.getPlayer().getLocation()).equals(CheckResult.OPEN)) {
             eject(e.getPlayer());
         }
     }
 
     /**
-     * Check if a player is banned from this location
+     * Check if a player is banned or the island is locked
      * @param player - player
      * @param loc - location to check
-     * @return true if banned
+     * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
-    private boolean check(Player player, Location loc) {
-        // See if player is banned
-        return im.getProtectedIslandAt(loc).map(is -> is.isBanned(player.getUniqueId())).orElse(false);
+    private CheckResult check(Player player, Location loc) {
+        // See if the island is locked to non-members or player is banned
+        return im.getProtectedIslandAt(loc)
+                .map(is -> !is.isAllowed(User.getInstance(player), Flags.LOCK) ? CheckResult.LOCKED 
+                        : is.isBanned(player.getUniqueId()) ? CheckResult.BANNED
+                                : CheckResult.OPEN)
+                .orElse(CheckResult.OPEN);
     }
-    
+
     /**
      * Checks if a player is banned from this location and notifies them if so
      * @param player - player
      * @param loc - location to check
      * @return true if banned
      */
-    private boolean checkAndNotify(Player player, Location loc) {
-        if (check(player, loc)) {
+    private CheckResult checkAndNotify(Player player, Location loc) {
+        CheckResult r = check(player,loc);
+        switch (r) {
+        case BANNED:
             User.getInstance(player).notify("commands.island.ban.you-are-banned");
-            return true;
+            break;
+        case LOCKED:
+            User.getInstance(player).notify("protection.locked");
+            break;
+        default:
+            break;
         }
-        return false;
+        return r;
     }
 
     /**
@@ -127,7 +136,6 @@ public class IslandBanEnforcer implements Listener {
      */
     private void eject(Player player) {
         // Teleport player to their home
-        inTeleport.add(player.getUniqueId());
         if (im.hasIsland(player.getUniqueId())) {
             im.homeTeleport(player);
         } // else, TODO: teleport somewhere else?   

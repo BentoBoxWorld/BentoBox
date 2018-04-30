@@ -31,6 +31,7 @@ import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -40,7 +41,7 @@ import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Flags.class })
+@PrepareForTest( {BSkyBlock.class, Flags.class })
 public class MobSpawnListenerTest {
 
     private static Location location;
@@ -52,6 +53,13 @@ public class MobSpawnListenerTest {
 
     @BeforeClass
     public static void setUp() {
+        // Set up plugin
+        plugin = mock(BSkyBlock.class);
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        
+        IslandsManager im = mock(IslandsManager.class);
+        when(plugin.getIslands()).thenReturn(im);
+
         Server server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -77,7 +85,6 @@ public class MobSpawnListenerTest {
         when(location.getBlockZ()).thenReturn(0);
         PowerMockito.mockStatic(Flags.class);
 
-        plugin = Mockito.mock(BSkyBlock.class);
         flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 

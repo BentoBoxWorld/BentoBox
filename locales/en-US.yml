@@ -177,8 +177,6 @@ commands:
       noone: "&aNo one is banned on this island"
       the-following: "&bThe following players are banned:"
       names: "&c[line]"
-    lock:
-      description: "lock/unlock your island so visitors cannot enter it"
     settings:
       description: "display island settings"
     language:
@@ -249,6 +247,10 @@ protection:
     ITEM_DROP: "ITEM_DROP"
     ITEM_PICKUP: "ITEM_PICKUP"
     LEASH: "LEASH"
+    LOCK:
+      name: "Lock island"
+      description: |
+        Toggle island lock
     MILKING: "MILKING"
     MOB_SPAWN: "MOB_SPAWN"
     MONSTER_SPAWN: "MONSTER_SPAWN"

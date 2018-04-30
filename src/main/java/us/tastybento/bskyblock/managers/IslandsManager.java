@@ -25,6 +25,7 @@ import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.island.IslandCache;
 import us.tastybento.bskyblock.util.DeleteIslandChunks;
 import us.tastybento.bskyblock.util.Util;
@@ -246,7 +247,7 @@ public class IslandsManager {
         }
         // Set the owner of the island to no one.
         island.setOwner(null);
-        island.setLocked(false);
+        island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         if (removeBlocks) {
             // Remove players from island
             removePlayersFromIsland(island);

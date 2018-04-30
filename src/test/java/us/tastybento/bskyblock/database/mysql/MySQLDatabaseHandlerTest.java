@@ -129,7 +129,6 @@ public class MySQLDatabaseHandlerTest {
         }
         island.setFlags(flags);
         island.setLevelHandicap(10);
-        island.setLocked(true);
         Map<UUID, Integer> members = new HashMap<>();
         for (int i = 0; i < 10; i++) {
             members.put(UUID.randomUUID(), i);

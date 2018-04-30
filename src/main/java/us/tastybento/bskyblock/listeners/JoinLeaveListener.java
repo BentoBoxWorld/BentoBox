@@ -9,9 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
 public class JoinLeaveListener implements Listener {
@@ -54,15 +52,6 @@ public class JoinLeaveListener implements Listener {
             }
             if (plugin.getSettings().isRemoveMobsOnLogin()) {
                 plugin.getIslands().removeMobs(user.getLocation());
-            }
-
-            // Check if they logged in to a locked island and expel them or if they are banned
-            Island currentIsland = plugin.getIslands().getIslandAt(user.getLocation()).orElse(null);
-            if (currentIsland != null && (currentIsland.isLocked() || plugin.getPlayers().isBanned(currentIsland.getOwner(),user.getUniqueId()))) {
-                if (!currentIsland.getMemberSet().contains(playerUUID) && !user.hasPermission(Constants.PERMPREFIX + "mod.bypassprotect")) {
-                    user.sendMessage("protection.locked");
-                    plugin.getIslands().homeTeleport(user.getPlayer());
-                }
             }
         }
     }
