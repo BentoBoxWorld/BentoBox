@@ -164,7 +164,8 @@ commands:
       cannot-ban: "&cThat player cannot be banned."
       cannot-ban-member: "&cKick the team member first, then ban."
       player-already-banned: "&cPlayer is already banned"
-      you-are-banned: "&b[owner]&c banned you from their island!"
+      owner-banned-you: "&b[owner]&c banned you from their island!"
+      you-are-banned: "&bYou are banned from this island!"
     unban:
       description: "unban a player from your island"
       parameters: "<player>"

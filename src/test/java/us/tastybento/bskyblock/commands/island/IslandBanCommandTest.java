@@ -238,7 +238,7 @@ public class IslandBanCommandTest {
         
         assertTrue(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.success");
-        Mockito.verify(targetUser).sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
+        Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
     }
 
     @Test
@@ -259,7 +259,7 @@ public class IslandBanCommandTest {
 
         assertTrue(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.success");
-        Mockito.verify(targetUser).sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
+        Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
     }
     
     @Test
@@ -280,7 +280,7 @@ public class IslandBanCommandTest {
 
         assertFalse(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user, Mockito.never()).sendMessage("general.success");
-        Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
+        Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
     }
     
     @Test

@@ -128,7 +128,7 @@ public class ObsidianToLavaTest {
         // Set as survival
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
         
-        // Locales - final        
+        // Locales      
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");

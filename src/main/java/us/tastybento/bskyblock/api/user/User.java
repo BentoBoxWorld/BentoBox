@@ -10,6 +10,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -166,8 +167,21 @@ public class User {
         return player != null && player.isOnline();
     }
 
+    /**
+     * Checks if user is Op
+     * @return true if user is Op
+     */
     public boolean isOp() {
-        return sender.isOp();
+        if (sender != null) {
+            return sender.isOp();
+        }
+        if (playerUUID != null) {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
+            if (offlinePlayer != null) {
+                return offlinePlayer.isOp();
+            }
+        }
+        return false;
     }
 
     /**

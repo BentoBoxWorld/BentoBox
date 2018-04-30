@@ -64,10 +64,10 @@ public class IslandBanCommand extends CompositeCommand {
         if (getIslands().getIsland(playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false; 
-        }
+        }        
         User target = User.getInstance(targetUUID);
         // Cannot ban ops
-        if (!target.isPlayer() || target.isOp()) {
+        if (target.isOp()) {
             user.sendMessage("commands.island.ban.cannot-ban");
             return false; 
         }
@@ -78,7 +78,7 @@ public class IslandBanCommand extends CompositeCommand {
     private boolean ban(User user, User targetUser) {
         if (getIslands().getIsland(user.getUniqueId()).addToBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.ban.you-are-banned", "[owner]", user.getName());
+            targetUser.sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
             if (targetUser.isOnline() && getPlayers().hasIsland(targetUser.getUniqueId())) {
                 getIslands().homeTeleport(targetUser.getPlayer());
             }

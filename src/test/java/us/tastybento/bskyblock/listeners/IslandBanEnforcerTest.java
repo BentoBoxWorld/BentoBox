@@ -1,0 +1,367 @@
+/**
+ * 
+ */
+package us.tastybento.bskyblock.listeners;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Vehicle;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
+
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.user.Notifier;
+import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.IslandsManager;
+import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
+
+/**
+ * @author tastybento
+ *
+ */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
+public class IslandBanEnforcerTest {
+
+    private static final Integer PROTECTION_RANGE = 200;
+    private static final Integer X = 600;
+    private static final Integer Y = 120;
+    private static final Integer Z = 10000;
+    private BSkyBlock plugin;
+    private UUID uuid;
+    private User user;
+    private Settings s;
+    private IslandsManager im;
+    private PlayersManager pm;
+    private Island island;
+    private World world;
+    private IslandBanEnforcer ibe;
+    private Location loc;
+    private Location outside;
+    private Location inside;
+    private Notifier notifier;
+    private Location inside2;
+
+    /**
+     * @throws java.lang.Exception
+     */
+    @Before
+    public void setUp() throws Exception {
+        
+        // Set up plugin
+        plugin = mock(BSkyBlock.class);
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+
+        // World
+        world = mock(World.class);
+        
+        // Settings
+        s = mock(Settings.class);
+        when(s.getResetWait()).thenReturn(0L);
+        when(s.getResetLimit()).thenReturn(3);
+        when(plugin.getSettings()).thenReturn(s);
+
+        // Player
+        Player p = mock(Player.class);
+        // Sometimes use Mockito.withSettings().verboseLogging()
+        user = mock(User.class);
+        User.setPlugin(plugin);
+        when(user.isOp()).thenReturn(false);
+        uuid = UUID.randomUUID();
+        when(user.getUniqueId()).thenReturn(uuid);
+        when(user.getPlayer()).thenReturn(p);
+        when(user.getName()).thenReturn("tastybento");
+
+        // No island for player to begin with (set it later in the tests)
+        im = mock(IslandsManager.class);
+        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(plugin.getIslands()).thenReturn(im);
+
+        // Has team
+        pm = mock(PlayersManager.class);
+        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(plugin.getPlayers()).thenReturn(pm);
+
+        // Server & Scheduler
+        BukkitScheduler sch = mock(BukkitScheduler.class);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getScheduler()).thenReturn(sch);
+        
+        // Locales      
+        LocalesManager lm = mock(LocalesManager.class);
+        when(plugin.getLocalesManager()).thenReturn(lm);
+        when(lm.get(any(), any())).thenReturn("mock translation");
+        
+        // Notifier
+        notifier = mock(Notifier.class);
+        when(plugin.getNotifier()).thenReturn(notifier);
+
+
+        // Island Banned list initialization
+        island = mock(Island.class);
+        when(island.getBanned()).thenReturn(new HashSet<>());
+        when(island.isBanned(Mockito.any())).thenReturn(false);
+        loc = mock(Location.class);
+        when(loc.getWorld()).thenReturn(world);
+        when(loc.getBlockX()).thenReturn(X);
+        when(loc.getBlockY()).thenReturn(Y);
+        when(loc.getBlockZ()).thenReturn(Z);
+        when(island.getCenter()).thenReturn(loc);
+        when(island.getProtectionRange()).thenReturn(PROTECTION_RANGE);
+        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(island);
+        
+        
+
+        ibe = new IslandBanEnforcer(plugin);
+        
+        // Common from to's
+        outside = mock(Location.class);
+        when(outside.getWorld()).thenReturn(world);
+        when(outside.getBlockX()).thenReturn(X + PROTECTION_RANGE + 1);
+        when(outside.getBlockY()).thenReturn(Y);
+        when(outside.getBlockZ()).thenReturn(Z);
+        
+        inside = mock(Location.class);
+        when(inside.getWorld()).thenReturn(world);
+        when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
+        when(inside.getBlockY()).thenReturn(Y);
+        when(inside.getBlockZ()).thenReturn(Z);
+        
+        inside2 = mock(Location.class);
+        when(inside.getWorld()).thenReturn(world);
+        when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
+        when(inside.getBlockY()).thenReturn(Y);
+        when(inside.getBlockZ()).thenReturn(Z);
+        
+        Optional<Island> opIsland = Optional.ofNullable(island);
+        when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
+        when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
+        }
+    
+    @Test
+    public void testTeleportToNotBannedIsland() {
+        // Setup location outside island, one inside banned island
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Simulate a teleport into an island
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
+        // Pass to event listener
+        ibe.onPlayerTeleport(e);
+        // Should not be cancelled
+        assertFalse(e.isCancelled());
+        // User should see no message from this class
+        Mockito.verify(notifier, Mockito.never());
+    }
+    
+    @Test
+    public void testTeleportToBannedIsland() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+
+        // Add player to the ban list
+        when(island.isBanned(Mockito.eq(uuid))).thenReturn(true);
+        
+        // Simulate a teleport into an island
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, outside, inside);
+        // Pass to event listener
+        ibe.onPlayerTeleport(e);
+        // Should be cancelled
+        assertTrue(e.isCancelled());
+        // Player should see a message
+        Mockito.verify(notifier);
+    }
+
+    @Test
+    public void testLoginToBannedIsland() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(uuid)).thenReturn(true);
+        // Place the player on the island
+        when(player.getLocation()).thenReturn(inside);
+        
+        // Add player to the ban list
+        when(island.isBanned(Mockito.eq(uuid))).thenReturn(true);
+        
+        // Log them in
+        ibe.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        // User should see a message
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
+        // User should be teleported somewhere 
+        Mockito.verify(im).homeTeleport(Mockito.eq(player));
+        // Call teleport event
+        PlayerTeleportEvent e = new PlayerTeleportEvent(player, inside, outside);
+        // Pass to event listener
+        ibe.onPlayerTeleport(e);
+        // Should not be cancelled
+        assertFalse(e.isCancelled());
+    }
+    
+    @Test
+    public void testVerticalMoveOnly() {
+        // Move vertically only
+        Location from = mock(Location.class);
+        when(from.getWorld()).thenReturn(world);
+        when(from.getBlockX()).thenReturn(X);
+        when(from.getBlockY()).thenReturn(50);
+        when(from.getBlockZ()).thenReturn(Z);
+        Location to = mock(Location.class);
+        when(to.getWorld()).thenReturn(world);
+        when(to.getBlockX()).thenReturn(X);
+        when(to.getBlockY()).thenReturn(55);
+        when(to.getBlockZ()).thenReturn(Z);
+        PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), from, to);
+        ibe.onPlayerMove(e);
+        assertFalse(e.isCancelled());
+        // Confirm no check is done on the island
+        Mockito.verify(im, Mockito.never());
+    }
+    
+    @Test
+    public void testVerticalVehicleMoveOnly() {
+        // Move vertically only
+        Location from = mock(Location.class);
+        when(from.getWorld()).thenReturn(world);
+        when(from.getBlockX()).thenReturn(X);
+        when(from.getBlockY()).thenReturn(50);
+        when(from.getBlockZ()).thenReturn(Z);
+        Location to = mock(Location.class);
+        when(to.getWorld()).thenReturn(world);
+        when(to.getBlockX()).thenReturn(X);
+        when(to.getBlockY()).thenReturn(55);
+        when(to.getBlockZ()).thenReturn(Z);
+        // Create vehicle and put two players in it.
+        Vehicle vehicle = mock(Vehicle.class);
+        Player player2 = mock(Player.class);
+        List<Entity> passengers = new ArrayList<>();
+        passengers.add(user.getPlayer());
+        passengers.add(player2);
+        when(vehicle.getPassengers()).thenReturn(passengers);
+        // Move vehicle
+        ibe.onVehicleMove(new VehicleMoveEvent(vehicle, from, to));
+        // Confirm no check is done on the island
+        Mockito.verify(im, Mockito.never());
+    }
+    
+    @Test
+    public void testPlayerMoveIntoBannedIsland() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(uuid)).thenReturn(true);
+        // Place the player just outside island
+        when(player.getLocation()).thenReturn(outside);
+        
+        // Add player to the ban list
+        when(island.isBanned(Mockito.eq(uuid))).thenReturn(true);
+
+        // Move player
+        PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
+        ibe.onPlayerMove(e);
+        assertTrue(e.isCancelled());
+        // Player should see a message
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
+        // User should NOT be teleported somewhere
+        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.eq(player));
+    }
+    
+    @Test
+    public void testPlayerMoveInsideBannedIsland() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(uuid)).thenReturn(true);
+        // Place the player inside island
+        when(player.getLocation()).thenReturn(inside);
+        
+        // Add player to the ban list
+        when(island.isBanned(Mockito.eq(uuid))).thenReturn(true);        
+        // Move player
+        PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
+        ibe.onPlayerMove(e);
+        assertTrue(e.isCancelled());
+        // Player should see a message
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
+        // User should be teleported somewhere
+        Mockito.verify(im).homeTeleport(Mockito.eq(player));
+        // Call teleport event
+        PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
+        // Pass to event listener
+        ibe.onPlayerTeleport(ev);
+        // Should not be cancelled
+        assertFalse(ev.isCancelled());
+    }
+ 
+    @Test
+    public void testVehicleMoveIntoBannedIsland() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(uuid)).thenReturn(true);
+        
+        // Add player to the ban list
+        when(island.isBanned(Mockito.eq(uuid))).thenReturn(true);
+
+        // Add the user to the ban list
+        when(island.isBanned(Mockito.eq(uuid))).thenReturn(true);
+        
+        // Create vehicle and put two players in it. One is banned, the other is not
+        Vehicle vehicle = mock(Vehicle.class);
+        Player player2 = mock(Player.class);
+        List<Entity> passengers = new ArrayList<>();
+        passengers.add(player);
+        passengers.add(player2);
+        when(vehicle.getPassengers()).thenReturn(passengers);
+        // Move vehicle
+        ibe.onVehicleMove(new VehicleMoveEvent(vehicle, outside, inside));
+        // Player should see a message and nothing should be sent to Player 2
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.anyString());
+        // User should be teleported somewhere
+        Mockito.verify(im).homeTeleport(Mockito.eq(player));
+        // Player 2 should not be teleported
+        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.eq(player2));
+        // Call teleport event
+        PlayerTeleportEvent ev = new PlayerTeleportEvent(player, inside, outside);
+        // Pass to event listener
+        ibe.onPlayerTeleport(ev);
+        // Should not be cancelled
+        assertFalse(ev.isCancelled());
+    }
+}
