@@ -81,13 +81,13 @@ public class IslandResetCommand extends CompositeCommand {
         } else {
             // Show how many seconds left to confirm
             int time = (int)((confirm.get(user.getUniqueId()) - System.currentTimeMillis()) / 1000D);
-            user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, "SECONDS_PLACEHOLDER", String.valueOf(time));
+            user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, SECONDS_PLACEHOLDER, String.valueOf(time));
         }
         return true;
     }
 
     private void requestConfirmation(User user) {
-        user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, "SECONDS_PLACEHOLDER", String.valueOf(getSettings().getConfirmationTime()));
+        user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, SECONDS_PLACEHOLDER, String.valueOf(getSettings().getConfirmationTime()));
         // Require confirmation          
         confirm.put(user.getUniqueId(), System.currentTimeMillis() + getSettings().getConfirmationTime() * 1000L);
         Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
