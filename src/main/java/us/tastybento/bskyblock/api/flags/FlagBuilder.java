@@ -4,6 +4,8 @@ import org.bukkit.Material;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.api.flags.Flag.Type;
+import us.tastybento.bskyblock.api.panels.PanelItem;
+import us.tastybento.bskyblock.listeners.flags.UpDownClick;
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class FlagBuilder {
@@ -14,9 +16,12 @@ public class FlagBuilder {
     private boolean defaultSetting;
     private Type type = Type.PROTECTION;
     private int defaultRank = RanksManager.MEMBER_RANK;
+    private PanelItem.ClickHandler onClick;
 
     public FlagBuilder id(String string) {
         id = string;
+        // Set the default click operation to UpDownClick
+        onClick = new UpDownClick(id);
         return this;
     }
 
@@ -31,7 +36,7 @@ public class FlagBuilder {
     }
 
     public Flag build() {
-        return new Flag(id, icon, listener, defaultSetting, type, defaultRank);
+        return new Flag(id, icon, listener, defaultSetting, type, defaultRank, onClick);
     }
 
     /**
@@ -71,6 +76,17 @@ public class FlagBuilder {
      */
     public FlagBuilder defaultRank(int rank) {
         this.defaultRank = rank;
+        return this;
+    }
+    
+    /**
+     * Adds a listener for clicks on this flag when it is a panel item. Default is
+     * {@link us.tastybento.bskyblock.listeners.flags.UpDownClick.UpDownClick}
+     * @param onClickListener - the listener for clicks. Must use the ClickOn interface
+     * @return FlagBuilder
+     */
+    public FlagBuilder onClick(PanelItem.ClickHandler onClickListener) {
+        this.onClick = onClickListener;
         return this;
     }
 }

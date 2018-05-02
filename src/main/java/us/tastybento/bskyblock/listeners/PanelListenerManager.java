@@ -12,7 +12,6 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
-import us.tastybento.bskyblock.api.panels.ClickType;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -36,11 +35,9 @@ public class PanelListenerManager implements Listener {
                 // Check that they clicked on a specific item
                 for (int slot : panel.getItems().keySet()) {
                     if (slot == event.getRawSlot()) {
-                        // Check that they left clicked on it
-                        // TODO: in the future, we may want to support right clicking
                         panel.getItems().get(slot).getClickHandler().ifPresent(handler ->
                             // Execute the handler's onClick method and optionally cancel the event if the handler returns true
-                            event.setCancelled(handler.onClick(user, ClickType.LEFT))
+                            event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot()))
                         );
                     }
                 }

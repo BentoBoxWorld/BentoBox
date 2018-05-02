@@ -520,6 +520,8 @@ public class IslandsManager {
     @SuppressWarnings("deprecation")
     public void homeTeleport(final Player player, int number) {
         Location home = getSafeHomeLocation(player.getUniqueId(), number);
+        // Stop any gliding
+        player.setGliding(false);
         // Check if the player is a passenger in a boat
         if (player.isInsideVehicle()) {
             Entity boat = player.getVehicle();

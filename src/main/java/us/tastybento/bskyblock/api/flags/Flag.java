@@ -6,9 +6,12 @@ import org.bukkit.Material;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flag implements Comparable<Flag> {
 
@@ -23,14 +26,16 @@ public class Flag implements Comparable<Flag> {
     private final Type type;
     private boolean defaultSetting;
     private final int defaultRank;
+    private final PanelItem.ClickHandler clickHandler;
 
-    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank) {
+    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank, PanelItem.ClickHandler clickListener) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
         this.defaultSetting = defaultSetting;
         this.type = type;
         this.defaultRank = defaultRank;
+        this.clickHandler = clickListener;
     }
 
     public String getID() {
@@ -112,26 +117,38 @@ public class Flag implements Comparable<Flag> {
         return type == other.type;
     }
 
-    public PanelItem toPanelItem(User user) {
+    /**
+     * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
+     * The panel item may reflect their island settings, the island they are on, or the world in general.
+     * @param user - user that will see this flag
+     * @return - PanelItem for this flag
+     */
+    public PanelItem toPanelItem(BSkyBlock plugin, User user) {
+        // Get the island this user is on or their own
+        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getUniqueId()));
+        String rank = RanksManager.OWNER_RANK_REF;
+        if (island != null) {
+            // TODO: Get the world settings - the player has no island and is not in an island location
+            rank = plugin.getRanksManager().getRank(island.getFlag(this));
+        }
         return new PanelItemBuilder()
                 .icon(new ItemStack(icon))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", "[name]", user.getTranslation("protection.flags." + id + ".name")))
                 .description(user.getTranslation("protection.panel.flag-item.description-layout",
                         "[description]", user.getTranslation("protection.flags." + id + ".description"),
-                        "[rank]", "Owner"))
-                .clickHandler((clicker, click) -> {
-                    clicker.sendRawMessage("You clicked on : " + id);
-                    return true;
-                })
+                        "[rank]", user.getTranslation(rank)))
+                .clickHandler(clickHandler)
                 .build();
     }
+    
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "Flag [id=" + id + ", icon=" + icon + ", type=" + type + ", defaultSetting=" + defaultSetting + "]";
+        return "Flag [id=" + id + ", icon=" + icon + ", listener=" + listener + ", type=" + type + ", defaultSetting="
+                + defaultSetting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + "]";
     }
 
     @Override

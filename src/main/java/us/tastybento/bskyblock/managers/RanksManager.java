@@ -10,10 +10,14 @@ import us.tastybento.bskyblock.BSkyBlock;
 public class RanksManager {
 
     // Constants that define the hard coded rank values
+    public static final String ADMIN_RANK_REF = "ranks.admin";
+    public static final String MOD_RANK_REF = "ranks.mod";
     public static final String OWNER_RANK_REF = "ranks.owner";
     public static final String MEMBER_RANK_REF = "ranks.member";
     public static final String VISITOR_RANK_REF = "ranks.visitor";
     public static final String BANNED_RANK_REF = "ranks.banned";
+    public static final int ADMIN_RANK = 10000;
+    public static final int MOD_RANK = 5000;
     public static final int OWNER_RANK = 1000;
     public static final int MEMBER_RANK = 900;
     public static final int VISITOR_RANK = 0;
@@ -31,6 +35,8 @@ public class RanksManager {
         super();
         this.plugin = plugin;
         // Hard coded ranks
+        ranksPut(ADMIN_RANK_REF, ADMIN_RANK);
+        ranksPut(MOD_RANK_REF, MOD_RANK);
         ranksPut(OWNER_RANK_REF, OWNER_RANK);
         ranksPut(MEMBER_RANK_REF, MEMBER_RANK);
         ranksPut(VISITOR_RANK_REF, VISITOR_RANK);
@@ -59,11 +65,13 @@ public class RanksManager {
         if (reference.equalsIgnoreCase(OWNER_RANK_REF)
                 || reference.equalsIgnoreCase(MEMBER_RANK_REF)
                 || reference.equalsIgnoreCase(VISITOR_RANK_REF)
-                || reference.equalsIgnoreCase(BANNED_RANK_REF)) {
+                || reference.equalsIgnoreCase(BANNED_RANK_REF)
+                || reference.equalsIgnoreCase(ADMIN_RANK_REF)
+                || reference.equalsIgnoreCase(MOD_RANK_REF)) {
             return false;
         }
         ranksPut(reference, value);
-        
+
         return true;
     }
 
@@ -85,7 +93,9 @@ public class RanksManager {
         if (reference.equalsIgnoreCase(OWNER_RANK_REF)
                 || reference.equalsIgnoreCase(MEMBER_RANK_REF)
                 || reference.equalsIgnoreCase(VISITOR_RANK_REF)
-                || reference.equalsIgnoreCase(BANNED_RANK_REF)) {
+                || reference.equalsIgnoreCase(BANNED_RANK_REF)
+                || reference.equalsIgnoreCase(ADMIN_RANK_REF)
+                || reference.equalsIgnoreCase(MOD_RANK_REF)) {
             return false;
         }
 
@@ -111,11 +121,11 @@ public class RanksManager {
 
 
     /**
-     * Gets the next rank value above the current rank, excluding the owner rank
+     * Gets the next rank value above the current rank. Highest is {@link RanksManager.OWNER_RANK}
      * @param currentRank
      * @return Optional rank value
      */
-    public int getNextRankValue(int currentRank) {
+    public int getRankUpValue(int currentRank) {
         return getRanks().values().stream().mapToInt(x -> {
             if (x > currentRank) {
                 return x;
@@ -123,18 +133,18 @@ public class RanksManager {
             return OWNER_RANK;
         }).min().orElse(currentRank);  
     }
-    
+
     /**
-     * Gets the previous rank value below the current rank
+     * Gets the previous rank value below the current rank. Lowest is {@link RanksManager.VISITOR_RANK}
      * @param currentRank
      * @return Optional rank value
      */
-    public int getPreviousRankValue(int currentRank) {
+    public int getRankDownValue(int currentRank) {
         return getRanks().values().stream().mapToInt(x -> {
             if (x < currentRank) {
                 return x;
             }
-            return BANNED_RANK;
+            return VISITOR_RANK;
         }).max().orElse(currentRank);       
     }
 

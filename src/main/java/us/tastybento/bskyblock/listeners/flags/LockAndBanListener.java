@@ -4,6 +4,7 @@
 package us.tastybento.bskyblock.listeners.flags;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
@@ -14,6 +15,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.vehicle.VehicleMoveEvent;
+import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
@@ -57,9 +59,11 @@ public class LockAndBanListener implements Listener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        e.setCancelled(checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN) ? false : true);
-        if (e.isCancelled()) {
+        if (checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN) ? false : true) {
+            e.setCancelled(true);
             e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
+            e.getPlayer().setVelocity(new Vector(0,0,0));
+            e.getPlayer().setGliding(false);
         }
         // Check from - just in case the player is inside the island
         if (!check(e.getPlayer(), e.getFrom()).equals(CheckResult.OPEN)) {
@@ -101,6 +105,7 @@ public class LockAndBanListener implements Listener {
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
     private CheckResult check(Player player, Location loc) {
+        
         // See if the island is locked to non-members or player is banned
         return im.getProtectedIslandAt(loc)
                 .map(is -> !is.isAllowed(User.getInstance(player), Flags.LOCK) ? CheckResult.LOCKED 
@@ -135,6 +140,7 @@ public class LockAndBanListener implements Listener {
      * @param player
      */
     private void eject(Player player) {
+        player.setGameMode(GameMode.SPECTATOR);
         // Teleport player to their home
         if (im.hasIsland(player.getUniqueId())) {
             im.homeTeleport(player);

@@ -119,7 +119,10 @@ public class Flags {
     public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
 
     // Island lock
-    public static final Flag LOCK = new FlagBuilder().id("LOCK").icon(Material.TRIPWIRE_HOOK).type(Type.PROTECTION).allowedByDefault(true).defaultRank(RanksManager.VISITOR_RANK).listener(new LockAndBanListener()).build();
+    public static final Flag LOCK = new FlagBuilder().id("LOCK")
+            .icon(Material.TRIPWIRE_HOOK).type(Type.PROTECTION).allowedByDefault(true)
+            .defaultRank(RanksManager.VISITOR_RANK).listener(new LockAndBanListener())
+            .build();
 
     /*
      * Settings flags (not protection flags)

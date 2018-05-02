@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.bukkit.enchantments.Enchantment;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -102,11 +103,13 @@ public class PanelItem {
     public interface ClickHandler {
         /**
          * This is executed when the icon is clicked
+         * @param panel - the panel that is being clicked
          * @param user - the User
-         * @param click
+         * @param clickType - the click type
+         * @param slot - the slot that was clicked
          * @return true if the click event should be cancelled
          */
-        boolean onClick(User user, ClickType click);
+        boolean onClick(Panel panel, User user, ClickType clickType, int slot);
     }
 
     public void setHead(ItemStack itemStack) {

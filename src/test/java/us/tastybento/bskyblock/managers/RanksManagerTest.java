@@ -83,27 +83,28 @@ public class RanksManagerTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.managers.RanksManager#getNextRankValue(int)}.
+     * Test method for {@link us.tastybento.bskyblock.managers.RanksManager#getRankUpValue(int)}.
      */
     @Test
     public void testGetNextRankValue() {
-        assertEquals(RanksManager.BANNED_RANK, ranksManager.getNextRankValue(-20));
-        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getNextRankValue(RanksManager.BANNED_RANK));
-        assertEquals(RanksManager.MEMBER_RANK, ranksManager.getNextRankValue(RanksManager.VISITOR_RANK));
-        assertEquals(RanksManager.OWNER_RANK, ranksManager.getNextRankValue(RanksManager.MEMBER_RANK));
-        assertEquals(RanksManager.OWNER_RANK, ranksManager.getNextRankValue(RanksManager.OWNER_RANK));
-        assertEquals(RanksManager.OWNER_RANK, ranksManager.getNextRankValue(2000));
+        assertEquals(RanksManager.BANNED_RANK, ranksManager.getRankUpValue(-20));
+        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankUpValue(RanksManager.BANNED_RANK));
+        assertEquals(RanksManager.MEMBER_RANK, ranksManager.getRankUpValue(RanksManager.VISITOR_RANK));
+        assertEquals(RanksManager.OWNER_RANK, ranksManager.getRankUpValue(RanksManager.MEMBER_RANK));
+        assertEquals(RanksManager.OWNER_RANK, ranksManager.getRankUpValue(RanksManager.OWNER_RANK));
+        assertEquals(RanksManager.OWNER_RANK, ranksManager.getRankUpValue(2000));
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.managers.RanksManager#getPreviousRankValue(int)}.
+     * Test method for {@link us.tastybento.bskyblock.managers.RanksManager#getRankDownValue(int)}.
      */
     @Test
     public void testGetPreviousRankValue() {
-        assertEquals(RanksManager.BANNED_RANK, ranksManager.getPreviousRankValue(-20));
-        assertEquals(RanksManager.BANNED_RANK, ranksManager.getPreviousRankValue(RanksManager.VISITOR_RANK));
-        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getPreviousRankValue(RanksManager.MEMBER_RANK));
-        assertEquals(RanksManager.MEMBER_RANK, ranksManager.getPreviousRankValue(RanksManager.OWNER_RANK));
+        // Lowest rank is Visitor
+        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankDownValue(-20));
+        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankDownValue(RanksManager.VISITOR_RANK));
+        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankDownValue(RanksManager.MEMBER_RANK));
+        assertEquals(RanksManager.MEMBER_RANK, ranksManager.getRankDownValue(RanksManager.OWNER_RANK));
     }
 
     /**

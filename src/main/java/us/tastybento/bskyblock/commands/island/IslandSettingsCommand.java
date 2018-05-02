@@ -32,7 +32,7 @@ public class IslandSettingsCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        SettingsPanel.openPanel(user);
+        SettingsPanel.openPanel(getPlugin(), user);
         return true;
     }
 }

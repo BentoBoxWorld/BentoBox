@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -28,7 +29,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.powermock.modules.junit4.PowerMockRunner;
 
-import us.tastybento.bskyblock.api.panels.ClickType;
+import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -141,7 +142,7 @@ public class PanelItemBuilderTest {
         
         item = builder.clickHandler(new Clicker()).build();
         assertTrue(item.getClickHandler().isPresent());
-        assertTrue(item.getClickHandler().map(x -> x.onClick(null, ClickType.LEFT)).orElse(false));
+        assertTrue(item.getClickHandler().map(x -> x.onClick(null, null, ClickType.LEFT, 0)).orElse(false));
     }
 
     @Test
@@ -159,7 +160,7 @@ public class PanelItemBuilderTest {
     public class Clicker implements PanelItem.ClickHandler {
 
         @Override
-        public boolean onClick(User user, ClickType click) {
+        public boolean onClick(Panel panel, User user, ClickType click, int slot) {
             
             return true;
         }
