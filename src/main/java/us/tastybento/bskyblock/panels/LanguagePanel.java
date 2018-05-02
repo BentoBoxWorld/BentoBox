@@ -11,6 +11,8 @@ import us.tastybento.bskyblock.api.user.User;
  * @author Poslovitch
  */
 public class LanguagePanel {
+    
+    private LanguagePanel() {}
 
     /**
      * Dynamically creates the panel.

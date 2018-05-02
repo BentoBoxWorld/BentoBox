@@ -37,6 +37,8 @@ public class IslandBuilder {
         END
     }
 
+    private static final String PLAYER_PLACEHOLDER = "[player]";
+
     private Island island;
     private World world;
     private IslandType type = IslandType.ISLAND;
@@ -460,10 +462,10 @@ public class IslandBuilder {
             User user = User.getInstance(playerUUID);
 
             // Sets the lines of the sign
-            sign.setLine(0, user.getTranslation("new-island.sign.line0", "[player]", playerName));
-            sign.setLine(1, user.getTranslation("new-island.sign.line1", "[player]", playerName));
-            sign.setLine(2, user.getTranslation("new-island.sign.line2", "[player]", playerName));
-            sign.setLine(3, user.getTranslation("new-island.sign.line3", "[player]", playerName));
+            sign.setLine(0, user.getTranslation("new-island.sign.line0", PLAYER_PLACEHOLDER, playerName));
+            sign.setLine(1, user.getTranslation("new-island.sign.line1", PLAYER_PLACEHOLDER, playerName));
+            sign.setLine(2, user.getTranslation("new-island.sign.line2", PLAYER_PLACEHOLDER, playerName));
+            sign.setLine(3, user.getTranslation("new-island.sign.line3", PLAYER_PLACEHOLDER, playerName));
 
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();

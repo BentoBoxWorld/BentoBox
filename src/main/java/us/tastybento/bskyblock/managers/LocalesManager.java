@@ -53,14 +53,12 @@ public class LocalesManager {
     /**
      * Loads all the locales available. If the locale folder does not exist, one will be created and
      * filled with locale files from the jar.
-     * TODO: Make more robust. The file filter is fragile.
      */
     public void loadLocales(String parent) {
         // Describe the filter - we only want files that are correctly named
-        FilenameFilter ymlFilter = (dir, name) -> {
-            // Files must be 9 chars long
-            return name.toLowerCase().endsWith(".yml") && name.length() == 9;
-        };
+        // Files must be 9 chars long
+        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase().endsWith(".yml") && name.length() == 9;
+
 
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);

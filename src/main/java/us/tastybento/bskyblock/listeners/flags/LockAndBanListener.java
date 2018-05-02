@@ -105,13 +105,18 @@ public class LockAndBanListener implements Listener {
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
     private CheckResult check(Player player, Location loc) {
-        
+
         // See if the island is locked to non-members or player is banned
         return im.getProtectedIslandAt(loc)
-                .map(is -> !is.isAllowed(User.getInstance(player), Flags.LOCK) ? CheckResult.LOCKED 
-                        : is.isBanned(player.getUniqueId()) ? CheckResult.BANNED
-                                : CheckResult.OPEN)
-                .orElse(CheckResult.OPEN);
+                .map(is -> {
+                    if (is.isBanned(player.getUniqueId())) {
+                        return CheckResult.BANNED;
+                    }
+                    if (!is.isAllowed(User.getInstance(player), Flags.LOCK)) {
+                        return CheckResult.LOCKED;
+                    }
+                    return CheckResult.OPEN;
+                }).orElse(CheckResult.OPEN);
     }
 
     /**
