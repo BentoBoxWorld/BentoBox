@@ -377,12 +377,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public Command setUsage(String usage) {
         // Go up the chain
         CompositeCommand parentCommand = getParent();
-        this.usage = getLabel() + " " + usage;
+        StringBuilder u = new StringBuilder().append(getLabel()).append(" ").append(usage);
         while (parentCommand != null) {
-            this.usage = parentCommand.getLabel() + " " + this.usage;
+            u.insert(0, " ");
+            u.insert(0, parentCommand.getLabel());
             parentCommand = parentCommand.getParent();
         }
-        this.usage = this.usage.trim();
+        this.usage = u.toString().trim();
         return this;
     }
 
