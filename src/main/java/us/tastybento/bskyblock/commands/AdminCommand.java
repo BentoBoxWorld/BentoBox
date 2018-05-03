@@ -5,7 +5,10 @@ import java.util.List;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.commands.admin.AdminGetRankCommand;
+import us.tastybento.bskyblock.commands.admin.AdminInfoCommand;
 import us.tastybento.bskyblock.commands.admin.AdminReloadCommand;
+import us.tastybento.bskyblock.commands.admin.AdminSetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminTeleportCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
 
@@ -26,6 +29,9 @@ public class AdminCommand extends CompositeCommand {
         new AdminTeleportCommand(this, "tp");
         new AdminTeleportCommand(this, "tpnether");
         new AdminTeleportCommand(this, "tpend");
+        new AdminGetRankCommand(this);
+        new AdminSetRankCommand(this);
+        new AdminInfoCommand(this);
     }
 
     @Override

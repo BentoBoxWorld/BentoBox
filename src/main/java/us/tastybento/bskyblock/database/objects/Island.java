@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.database.objects;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -12,6 +13,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
+import org.bukkit.util.Vector;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
@@ -376,7 +378,7 @@ public class Island implements DataObject {
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
-         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
+        return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
 
     public boolean inIslandSpace(Location location) {
@@ -640,5 +642,40 @@ public class Island implements DataObject {
      */
     public void setWorld(World world) {
         this.world = world;
+    }
+    
+    /**
+     * Show info on the island
+     * @param plugin
+     * @param user - the user who is receiving the info
+     * @return true always
+     */
+    public boolean showInfo(BSkyBlock plugin, User user) {
+        // TODO show ranks
+        user.sendMessage("commands.admin.info.title");
+        user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
+        Date d = new Date(plugin.getServer().getOfflinePlayer(owner).getLastPlayed());
+        user.sendMessage("commands.admin.info.last-login","[date]", d.toString());
+        user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(owner)));
+        String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
+        String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
+        user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+        user.sendMessage("commands.admin.info.team-members-title");
+        user.sendMessage("commands.admin.info.owner-suffix");
+        user.sendMessage("commands.admin.info.player-prefix");
+        String location = center.toVector().toString();
+        user.sendMessage("commands.admin.info.island-location", "[xyz]", location);
+        String from = center.toVector().subtract(new Vector(range, 0, range)).toString();
+        String to = center.toVector().add(new Vector(range, 0, range)).toString();
+        user.sendMessage("commands.admin.info.island-coords", "[xz1]", from, "[xz2]", to);
+        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(range));
+        String pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).toString();
+        String pto = center.toVector().add(new Vector(protectionRange, 0, protectionRange)).toString();
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", pfrom, "[xz2]", pto);
+        user.sendMessage("commands.admin.info.is-spawn");
+        user.sendMessage("commands.admin.info.is-locked");
+        user.sendMessage("commands.admin.info.is-unlocked");
+        user.sendMessage("commands.admin.info.banned-players");
+        return true;
     }
 }

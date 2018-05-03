@@ -49,6 +49,26 @@ commands:
   admin:
     help:
       description: "admin command"
+    info:
+      parameters: "<player>"
+      description: "get info on where you are or player's island"
+      no-island: "&cYou are not in an island right now..."
+      title: "========== Island Info ============"
+      owner: "Owner: [owner] ([uuid])"
+      last-login: "Last login: [date]"
+      deaths: "Deaths: [number]"
+      resets-left: "Resets left: [number]/[total]"
+      team-members-title: "Team members:"
+      owner-suffix: "(Owner)"
+      player-prefix: "&b"
+      island-location: "Island location: [xyz]"
+      island-coords: "Island coordinates: [xz1] to [xz2]"
+      protection-range: "Protection range: [range]"
+      protection-coords: "Protection coordinates: [xz1] to [xz2]"
+      is-spawn: "Island is a spawn island"
+      is-locked: "Island is locked"
+      is-unlocked: "Island is unlocked"
+      banned-players: "Banned players:"     
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
@@ -61,6 +81,15 @@ commands:
       parameters: "[player]"
       description: "teleport to a player's island"
       manual: "&cNo safe warp found! Manually tp near to &b[location] &cand check it out"
+    getrank:
+      parameters: "[player]"
+      description: "get a player's rank on their island"
+      rank-is: "&aRank is [rank] on their island."
+    setrank:
+      parameters: "[player] [rank]"
+      description: "set a player's rank on their island"
+      unknown-rank: "&cUnknown rank!"
+      rank-set: "&aRank set from [from] to [to]."
   island:
     about:
       description: "display info about %bsb_plugin_name%"
@@ -188,6 +217,8 @@ ranks:
   coop: "Coop"
   visitor: "Visitor"
   banned: "Banned"
+  admin: "Admin"
+  mod: "Mod"
   
 protection:
   protected: "&cIsland protected!"

@@ -36,7 +36,7 @@ public class IslandBanCommand extends CompositeCommand {
             // Show help
             showHelp(this, user);
             return false;
-        } 
+        }
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
         if (!getIslands().hasIsland(playerUUID)) {
