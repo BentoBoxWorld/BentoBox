@@ -30,7 +30,7 @@ public class IslandSethomeCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getPlugin().getIslands().playerIsOnIsland(user)) {
+        if (!getPlugin().getIslands().userIsOnIsland(user)) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return false;
         }

@@ -52,7 +52,7 @@ public class ObsidianToLava implements Listener {
             return false;
         }
         User user = User.getInstance(e.getPlayer());
-        if (plugin.getIslands().playerIsOnIsland(user)) {
+        if (plugin.getIslands().userIsOnIsland(user)) {
             // Look around to see if this is a lone obsidian block
             Block b = e.getClickedBlock();
 

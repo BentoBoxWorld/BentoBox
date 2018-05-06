@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -49,13 +50,13 @@ public class IslandsManager {
      *            - Location to be checked
      * @return true if safe, otherwise false
      */
-    public boolean isSafeLocation(final Location l) {
+    public boolean isSafeLocation(Location l) {
         if (l == null) {
             return false;
         }
-        final Block ground = l.getBlock().getRelative(BlockFace.DOWN);
-        final Block space1 = l.getBlock();
-        final Block space2 = l.getBlock().getRelative(BlockFace.UP);
+        Block ground = l.getBlock().getRelative(BlockFace.DOWN);
+        Block space1 = l.getBlock();
+        Block space2 = l.getBlock().getRelative(BlockFace.UP);
 
         // Ground must be solid
         if (!ground.getType().isSolid()) {
@@ -93,8 +94,8 @@ public class IslandsManager {
                 return false;
             }
         }
-        if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().equals(Material.FENCE)
-                || ground.getType().equals(Material.NETHER_FENCE) || ground.getType().equals(Material.SIGN_POST) || ground.getType().equals(Material.WALL_SIGN)) {
+        if (ground.getType().equals(Material.CACTUS) || ground.getType().equals(Material.BOAT) || ground.getType().toString().contains("FENCE")
+                || ground.getType().equals(Material.SIGN_POST) || ground.getType().equals(Material.WALL_SIGN)) {
             return false;
         }
         // Check that the space is not solid
@@ -128,6 +129,10 @@ public class IslandsManager {
     // Island Cache
     private IslandCache islandCache;
 
+    /**
+     * Islands Manager
+     * @param plugin
+     */
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Island classes
@@ -385,8 +390,7 @@ public class IslandsManager {
         if (spawn != null && spawn.onIsland(location)) {
             return Optional.of(spawn);
         }
-        Optional<Island> island = getIslandAt(location);
-        return island.map(x->x.onIsland(location) ? island.get() : null);
+        return getIslandAt(location).filter(i -> i.onIsland(location));
     }
 
     /**
@@ -397,7 +401,7 @@ public class IslandsManager {
      * @param number - a number - starting home location e.g., 1
      * @return Location of a safe teleport spot or null if one cannot be found
      */
-    public Location getSafeHomeLocation(final UUID playerUUID, int number) {
+    public Location getSafeHomeLocation(UUID playerUUID, int number) {
         // Try the numbered home location first
         Location l = plugin.getPlayers().getHomeLocation(playerUUID, number);
         if (l == null) {
@@ -569,13 +573,20 @@ public class IslandsManager {
     }
 
     /**
+     * @param spawn the spawn to set
+     */
+    public void setSpawn(Island spawn) {
+        this.spawn = spawn;
+    }
+
+    /**
      * Checks if there is an island or blocks at this location
      * @param location - the location
      * @return true if island found
      */
     public boolean isIsland(Location location){
         if (location == null) {
-            return true;
+            return false;
         }
         location = getClosestIsland(location);
         if (islandCache.getIslandAt(location) != null) {
@@ -589,7 +600,6 @@ public class IslandsManager {
                 return true;
             }
             // Look around
-
             for (int x = -5; x <= 5; x++) {
                 for (int y = 10; y <= 255; y++) {
                     for (int z = -5; z <= 5; z++) {
@@ -617,6 +627,9 @@ public class IslandsManager {
         long z = Math.round((double) location.getBlockZ() / plugin.getSettings().getIslandDistance())
                 * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandZOffset();
         long y = plugin.getSettings().getIslandHeight();
+        if (location.getBlockX() == x && location.getBlockZ() == z) {
+            return location;
+        }
         return new Location(location.getWorld(), x, y, z);
     }
 
@@ -655,29 +668,9 @@ public class IslandsManager {
         if (player == null) {
             return false;
         }
-        // Get the player's island from the grid if it exists
-        Optional<Island> island = getIslandAt(loc);
-        if (island.isPresent()) {
-            // Return whether the location is within the protected zone and the player is on the list of acceptable players
-            return island.get().onIsland(loc) && island.get().getMemberSet().contains(player.getUniqueId());
-        }
-        // Not in the grid, so do it the old way
-        // Make a list of test locations and test them
-        Set<Location> islandTestLocations = new HashSet<>();
-        if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
-            islandTestLocations.add(getIslandLocation(player.getUniqueId()));
-        }
-        // TODO: Check any coop locations
-        // Run through all the locations
-        for (Location islandTestLocation : islandTestLocations) {
-            if (loc.getWorld().equals(islandTestLocation.getWorld())) {
-                return loc.getX() >= islandTestLocation.getX() - plugin.getSettings().getIslandProtectionRange()
-                        && loc.getX() < islandTestLocation.getX() + plugin.getSettings().getIslandProtectionRange()
-                        && loc.getZ() >= islandTestLocation.getZ() - plugin.getSettings().getIslandProtectionRange()
-                        && loc.getZ() < islandTestLocation.getZ() + plugin.getSettings().getIslandProtectionRange();
-            }
-        }
-        return false;
+        // Get the player's island
+        Optional<Island> ii = getIslandAt(loc);
+        return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.getMemberSet().contains(player.getUniqueId())).orElse(false);
     }
 
     public int metrics_getCreatedCount(){
@@ -695,7 +688,10 @@ public class IslandsManager {
      * @param user - the User
      * @return true if on valid island, false if not
      */
-    public boolean playerIsOnIsland(User user) {
+    public boolean userIsOnIsland(User user) {
+        if (user == null) {
+            return false;
+        }
         return Optional.ofNullable(getIsland(user.getUniqueId())).map(i -> i.onIsland(user.getLocation())).orElse(false);
     }
 
@@ -723,7 +719,7 @@ public class IslandsManager {
      */
     public void removePlayersFromIsland(final Island island) {
         // Teleport players away
-        for (Player player : plugin.getServer().getOnlinePlayers()) {
+        for (Player player : Bukkit.getOnlinePlayers()) {
             if (island.inIslandSpace(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
                 // Teleport island players to their island home
                 if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {

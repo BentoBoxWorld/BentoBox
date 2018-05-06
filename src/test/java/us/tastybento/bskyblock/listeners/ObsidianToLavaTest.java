@@ -124,7 +124,7 @@ public class ObsidianToLavaTest {
         // Put player in world
         when(iwm.inWorld(Mockito.any())).thenReturn(true);
         // Put player on island
-        when(im.playerIsOnIsland(Mockito.any())).thenReturn(true);
+        when(im.userIsOnIsland(Mockito.any())).thenReturn(true);
         // Set as survival
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
         
@@ -186,7 +186,7 @@ public class ObsidianToLavaTest {
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
 
         // Test when player is not on island
-        when(im.playerIsOnIsland(Mockito.any())).thenReturn(false);
+        when(im.userIsOnIsland(Mockito.any())).thenReturn(false);
         assertFalse(listener.onPlayerInteract(event));
         
 
