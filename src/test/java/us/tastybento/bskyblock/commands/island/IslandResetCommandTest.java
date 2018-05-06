@@ -92,7 +92,7 @@ public class IslandResetCommandTest {
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -143,7 +143,7 @@ public class IslandResetCommandTest {
         // Now is owner, but still has team
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         
         // Block based on no resets left
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(0);
@@ -160,7 +160,7 @@ public class IslandResetCommandTest {
         // Now is owner, but still has team
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         
@@ -176,7 +176,7 @@ public class IslandResetCommandTest {
         // Now is owner, but still has team
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -210,7 +210,7 @@ public class IslandResetCommandTest {
         // Now is owner, but still has team
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -247,7 +247,7 @@ public class IslandResetCommandTest {
         // Now is owner, but still has team
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -288,7 +288,7 @@ public class IslandResetCommandTest {
         // Now is owner, but still has team
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required

@@ -89,7 +89,7 @@ public class IslandTeamLeaveCommandTest {
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -104,7 +104,7 @@ public class IslandTeamLeaveCommandTest {
      */
     @Test
     public void testExecuteNoTeam() {
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));

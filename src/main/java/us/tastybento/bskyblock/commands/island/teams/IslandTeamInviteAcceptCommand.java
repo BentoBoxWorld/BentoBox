@@ -39,7 +39,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             return false;
         }
         // Check if player is already in a team
-        if (getPlayers().inTeam(playerUUID)) {
+        if (getIslands().inTeam(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
             return false;
         }

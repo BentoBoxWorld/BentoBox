@@ -29,7 +29,7 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getPlayers().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }       

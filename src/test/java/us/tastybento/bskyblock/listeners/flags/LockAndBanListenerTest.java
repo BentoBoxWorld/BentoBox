@@ -106,7 +106,7 @@ public class LockAndBanListenerTest {
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler

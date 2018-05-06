@@ -82,11 +82,12 @@ public class DefaultHelpCommandTest {
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        // Has team
+        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
-        // Has team
-        pm = mock(PlayersManager.class);
-        when(pm.inTeam(Mockito.eq(uuid))).thenReturn(true);
+
+        pm = mock(PlayersManager.class);  
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler

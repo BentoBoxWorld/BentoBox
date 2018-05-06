@@ -40,7 +40,7 @@ public class IslandCreateCommand extends CompositeCommand {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
-        if (getPlayers().inTeam(user.getUniqueId())) {
+        if (getIslands().inTeam(user.getUniqueId())) {
             return false;
         }
         user.sendMessage("commands.island.create.creating-island");

@@ -427,7 +427,7 @@ public class IslandsManager {
         }
         // Home location either isn't safe, or does not exist so try the island
         // location
-        if (plugin.getPlayers().inTeam(playerUUID)) {
+        if (plugin.getIslands().inTeam(playerUUID)) {
             l = plugin.getIslands().getIslandLocation(playerUUID);
             if (isSafeLocation(l)) {
                 plugin.getPlayers().setHomeLocation(playerUUID, l, number);
@@ -721,7 +721,7 @@ public class IslandsManager {
         for (Player player : Bukkit.getOnlinePlayers()) {
             if (island.inIslandSpace(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
                 // Teleport island players to their island home
-                if (plugin.getPlayers().hasIsland(player.getUniqueId()) || plugin.getPlayers().inTeam(player.getUniqueId())) {
+                if (hasIsland(player.getUniqueId()) || plugin.getIslands().inTeam(player.getUniqueId())) {
                     homeTeleport(player);
                 } else {
                     // Move player to spawn
@@ -807,5 +807,14 @@ public class IslandsManager {
         save(false);
         islandCache.clear();
         handler.close();
+    }
+
+    /**
+     * Checks if a player is in a team
+     * @param playerUUID - player's UUID
+     * @return true if in team, false if not
+     */
+    public boolean inTeam(UUID playerUUID) {
+        return getMembers(playerUUID).size() > 1;
     }
 }

@@ -51,7 +51,7 @@ public class IslandResetCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
-        if (getPlayers().inTeam(user.getUniqueId())) {
+        if (getIslands().inTeam(user.getUniqueId())) {
             user.sendMessage("commands.island.reset.must-remove-members");
             return false;
         }

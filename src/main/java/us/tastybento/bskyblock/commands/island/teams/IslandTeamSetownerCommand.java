@@ -32,7 +32,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
-        boolean inTeam = getPlugin().getPlayers().inTeam(playerUUID);
+        boolean inTeam = getPlugin().getIslands().inTeam(playerUUID);
         UUID teamLeaderUUID = getTeamLeader(user);
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
@@ -48,7 +48,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlayers().inTeam(playerUUID)) {
+        if (!getIslands().inTeam(playerUUID)) {
             user.sendMessage("general.errors.no-team");
             return false;
         }

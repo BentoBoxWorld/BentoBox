@@ -35,11 +35,11 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        UUID teamLeaderUUID = getTeamLeader(user);
-        if (teamLeaderUUID == null) {
+        if (!getIslands().hasIsland(user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
+        UUID teamLeaderUUID = getTeamLeader(user);
         if (!(teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
             return false;
@@ -79,7 +79,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
                 return false;
             }
             // Player cannot invite someone already on a team
-            if (getPlayers().inTeam(invitedPlayerUUID)) {
+            if (getIslands().inTeam(invitedPlayerUUID)) {
                 user.sendMessage("commands.island.team.invite.already-on-team");
                 return false;
             }
@@ -115,7 +115,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             // Send message to online player
             invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
             invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
-            if (getPlayers().hasIsland(invitedPlayer.getUniqueId())) {
+            if (getIslands().hasIsland(invitedPlayer.getUniqueId())) {
                 invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
             }
             return true;

@@ -691,7 +691,7 @@ public class Island implements DataObject {
      * @param user - user who is requesting
      */
     public void showMembers(BSkyBlock plugin, User user) {
-        if (plugin.getPlayers().inTeam(user.getUniqueId())) {
+        if (plugin.getIslands().inTeam(user.getUniqueId())) {
             user.sendMessage("commands.admin.info.team-members-title");
             members.forEach((u, i) -> {
                 if (owner.equals(u)) {

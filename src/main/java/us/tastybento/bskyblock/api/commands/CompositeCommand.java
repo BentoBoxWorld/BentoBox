@@ -329,7 +329,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if player is in a team
      */
     protected boolean inTeam(User user) {
-        return plugin.getPlayers().inTeam(user.getUniqueId());
+        return plugin.getIslands().inTeam(user.getUniqueId());
     }
 
     /**

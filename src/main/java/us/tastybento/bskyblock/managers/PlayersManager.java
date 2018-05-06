@@ -160,29 +160,6 @@ public class PlayersManager{
     }
 
     /**
-     * Checks if player has an island.
-     *
-     * @param playerUUID - the player's UUID
-     *            - string name of player
-     * @return true if player has island
-     */
-    public boolean hasIsland(final UUID playerUUID) {
-        addPlayer(playerUUID);
-        return plugin.getIslands().hasIsland(playerUUID);
-    }
-
-    /**
-     * Checks if player is in a Team from cache if available
-     *
-     * @param playerUUID - the player's UUID
-     * @return true if player in a team
-     */
-    public boolean inTeam(UUID playerUUID) {
-        addPlayer(playerUUID);
-        return plugin.getIslands().getMembers(playerUUID).size() > 1;
-    }
-
-    /**
      * Sets the home location for the player
      * @param playerUUID - the player's UUID
      * @param location - the location

@@ -41,7 +41,7 @@ public class AdminTeleportCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         } else {
-            if (getPlayers().hasIsland(targetUUID) || getPlayers().inTeam(targetUUID)) {
+            if (getIslands().hasIsland(targetUUID) || getIslands().inTeam(targetUUID)) {
                 Location warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getIslandWorld());
                 if (getLabel().equals("tpnether")) {
                     warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getNetherWorld());

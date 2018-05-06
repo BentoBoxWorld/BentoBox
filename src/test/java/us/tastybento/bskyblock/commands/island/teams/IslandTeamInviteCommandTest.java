@@ -4,15 +4,12 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -42,7 +39,7 @@ import us.tastybento.bskyblock.managers.PlayersManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
-public class IslandTeamKickCommandTest {
+public class IslandTeamInviteCommandTest {
 
     private BSkyBlock plugin;
     private IslandCommand ic;
@@ -99,9 +96,11 @@ public class IslandTeamKickCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team 
-        pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
         
+        // Player Manager
+        pm = mock(PlayersManager.class);
+
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -116,113 +115,95 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
-    public void testExecuteNoTeam() {
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+    public void testExecuteNoIsland() {
+        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
     }
-    
+        
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNotTeamLeader() {
         when(im.getTeamLeader(Mockito.any())).thenReturn(notUUID);
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         // Show help
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
         assertFalse(itl.execute(user, Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
     
+    
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
-    public void testExecuteSamePlayer() {
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+    public void testExecuteOfflinePlayer() {
+        PowerMockito.mockStatic(User.class);
+        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(user.isOnline()).thenReturn(false);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(uuid);
         assertFalse(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.kick.cannot-kick"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.offline-player"));
     }
-    
-    
+
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
-    public void testExecuteDifferentPlayerNotInTeam() {
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+    public void testExecuteSamePlayer() {
+        PowerMockito.mockStatic(User.class);
+        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(user.isOnline()).thenReturn(true);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(new HashSet<>());
+        when(pm.getUUID(Mockito.any())).thenReturn(uuid);
         assertFalse(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
-    }
-       
-    /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
-     */
-    @Test
-    public void testExecuteNoConfirmation() {
-        when(s.isKickConfirmation()).thenReturn(false);
-        
-        String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(members);
-        
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(im).removePlayer(notUUID);
-        Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.cannot-invite-self"));
     }
     
+    
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
-    public void testExecuteWithConfirmation() {
-        when(s.isKickConfirmation()).thenReturn(true);
-        
+    public void testExecuteDifferentPlayerInTeam() {
+        PowerMockito.mockStatic(User.class);
+        when(User.getInstance(Mockito.any(UUID.class))).thenReturn(user);
+        when(user.isOnline()).thenReturn(true);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        
-        Set<UUID> members = new HashSet<>();
-        members.add(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(members);
-        
-        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        when(im.inTeam(Mockito.any())).thenReturn(true);
         assertFalse(itl.execute(user, Arrays.asList(name)));
-        // Confirmation required
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.kick.type-again"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.already-on-team"));
     }
 
 }
