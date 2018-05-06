@@ -68,24 +68,6 @@ public class IslandsManagerTest {
     private Location location;
     private BlockState blockState;
 
-    /*
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        Server server = mock(Server.class);
-        world = mock(World.class);
-        when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        when(server.getWorld("world")).thenReturn(world);
-        when(server.getVersion()).thenReturn("BSB_Mocking");
-        PluginManager pluginManager = mock(PluginManager.class);
-        when(server.getPluginManager()).thenReturn(pluginManager);
-        Bukkit.setServer(server);
-        when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        // Set up plugin
-        plugin = mock(BSkyBlock.class);
-        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
-    }
-     */
-
     /**
      * @throws java.lang.Exception
      */

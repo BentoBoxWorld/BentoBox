@@ -4,14 +4,15 @@ import java.util.List;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
 
-    public IslandTeamInviteRejectCommand(IslandTeamInviteCommand islandTeamInviteCommand) {
-        super(islandTeamInviteCommand, "reject");
+    public IslandTeamInviteRejectCommand(CompositeCommand islandTeamCommand) {
+        super(islandTeamCommand, "reject");
     }
 
     @Override

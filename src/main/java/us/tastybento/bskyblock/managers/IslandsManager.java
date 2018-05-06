@@ -669,7 +669,6 @@ public class IslandsManager {
             return false;
         }
         // Get the player's island
-        Optional<Island> ii = getIslandAt(loc);
         return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.getMemberSet().contains(player.getUniqueId())).orElse(false);
     }
 
@@ -809,5 +808,4 @@ public class IslandsManager {
         islandCache.clear();
         handler.close();
     }
-
 }

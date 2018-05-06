@@ -8,13 +8,14 @@ import java.util.UUID;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
     Set<UUID> leaveSet;
 
-    public IslandTeamLeaveCommand(IslandTeamCommand islandTeamCommand) {
+    public IslandTeamLeaveCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "leave");
     }
 
@@ -31,8 +32,12 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
         if (!getPlayers().inTeam(user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
+        }       
+        if (getIslands().hasIsland(user.getUniqueId())) {
+            user.sendMessage("commands.island.team.leave.cannot-leave");
+            return false;
         }
-        if (!getSettings().isKickConfirmation() || leaveSet.contains(user.getUniqueId())) {
+        if (!getSettings().isLeaveConfirmation() || leaveSet.contains(user.getUniqueId())) {
             leaveSet.remove(user.getUniqueId());
             UUID leaderUUID = getIslands().getTeamLeader(user.getUniqueId());
             if (leaderUUID != null) {
@@ -53,7 +58,7 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
                         user.sendMessage("general.errors.command-cancelled");
                     }
                 }}.runTaskLater(getPlugin(), getSettings().getLeaveWait() * 20);
-                return false;
+            return false;
         }
     }
 

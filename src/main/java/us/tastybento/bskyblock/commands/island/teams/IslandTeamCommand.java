@@ -29,6 +29,8 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
         //new IslandTeamPromoteCommand(this, "demote");
         new IslandTeamSetownerCommand(this);
         new IslandTeamKickCommand(this);
+        new IslandTeamInviteAcceptCommand(this);
+        new IslandTeamInviteRejectCommand(this);
     }
 
     @Override
@@ -55,6 +57,8 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
                 user.sendMessage("commands.island.team.invite.errors.island-is-full");
             }
         }
+        // Show members of island
+        getIslands().getIsland(playerUUID).showMembers(getPlugin(), user);
         return true;
     }
 

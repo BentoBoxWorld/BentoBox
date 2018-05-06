@@ -59,16 +59,15 @@ commands:
       deaths: "Deaths: [number]"
       resets-left: "Resets left: [number]/[total]"
       team-members-title: "Team members:"
-      owner-suffix: "(Owner)"
-      player-prefix: "&b"
+      team-owner-format: "&a[name] [rank]"
+      team-member-format: "&b[name] [rank]"
       island-location: "Island location: [xyz]"
       island-coords: "Island coordinates: [xz1] to [xz2]"
       protection-range: "Protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
       is-spawn: "Island is a spawn island"
-      is-locked: "Island is locked"
-      is-unlocked: "Island is unlocked"
-      banned-players: "Banned players:"     
+      banned-players: "Banned players:"
+      banned-format: "&c[name]"
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
@@ -160,6 +159,7 @@ commands:
         cancel:
           description: "cancel the pending invite to join your island"
       leave:
+        cannot-leave: "&cTeamleaders cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         type-again: "&cEnter the leave command again to confirm"
         left-your-island: "&c[player] left your island"
@@ -168,6 +168,7 @@ commands:
         parameters: "<player>"
         type-again: "&cEnter the kick command again to confirm"
         leader-kicked: "&cThe leader kicked you from the island!"
+        cannot-kick: "&cYou cannot kick yourself!"
       demote:
         description: "demote a player on your island down a rank"
         parameters: "<player>"

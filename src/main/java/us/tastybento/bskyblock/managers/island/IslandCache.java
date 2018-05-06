@@ -84,7 +84,7 @@ public class IslandCache {
                     plugin.logWarning("Denied island is owned by " + plugin.getPlayers().getName(newIsland.getOwner()));
                     plugin.logWarning(newIsland.getOwner().toString() + ".yml");
                 } else {
-                    plugin.logWarning("Denied island is unowned and was just found in the islands folder. Skipping it...");
+                    plugin.logWarning("Denied island is unowned and is a database duplicate. Skipping it...");
                 }
                 plugin.logWarning("Recommend that the denied player file is deleted otherwise weird things can happen.");
                 return false;

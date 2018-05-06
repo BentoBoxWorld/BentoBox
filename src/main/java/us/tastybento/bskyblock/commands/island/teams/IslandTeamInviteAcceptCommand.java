@@ -7,6 +7,7 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
@@ -14,8 +15,8 @@ import us.tastybento.bskyblock.database.objects.Island;
 
 public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
 
-    public IslandTeamInviteAcceptCommand(IslandTeamInviteCommand islandTeamInviteCommand) {
-        super(islandTeamInviteCommand, "accept");
+    public IslandTeamInviteAcceptCommand(CompositeCommand islandTeamCommand) {
+        super(islandTeamCommand, "accept");
     }
 
     @Override

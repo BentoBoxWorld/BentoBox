@@ -10,6 +10,7 @@ import java.util.UUID;
 import org.bukkit.OfflinePlayer;
 
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
@@ -19,8 +20,8 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
 
     private static final String NAME_PLACEHOLDER = "[name]";
 
-    public IslandTeamInviteCommand(IslandTeamCommand islandTeamCommand) {
-        super(islandTeamCommand, "invite");
+    public IslandTeamInviteCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "invite");
     }
 
     @Override
@@ -28,9 +29,6 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
         setPermission(Constants.PERMPREFIX + "island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
-
-        new IslandTeamInviteAcceptCommand(this);
-        new IslandTeamInviteRejectCommand(this);
     }
 
     @Override
@@ -60,10 +58,10 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             // Only online players can be invited
             UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
             if (invitedPlayerUUID == null) {
-                user.sendMessage("general.errors.offline-player");
+                user.sendMessage("general.errors.unknown-player");
                 return false;
             }
-            User invitedPlayer = User.getInstance(inviteList.get(invitedPlayerUUID));
+            User invitedPlayer = User.getInstance(invitedPlayerUUID);
             if (!invitedPlayer.isOnline()) {
                 user.sendMessage("general.errors.offline-player");
                 return false;

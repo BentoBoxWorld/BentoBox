@@ -3,11 +3,12 @@ package us.tastybento.bskyblock.commands.island.teams;
 import java.util.List;
 
 import us.tastybento.bskyblock.Constants;
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
-    public IslandTeamPromoteCommand(IslandTeamCommand islandTeamCommand, String string) {
+    public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
         super(islandTeamCommand, string);
     }
 

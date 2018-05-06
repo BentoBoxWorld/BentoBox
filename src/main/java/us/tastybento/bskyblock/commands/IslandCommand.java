@@ -19,6 +19,7 @@ import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.IslandUnbanCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
+import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand;
 
 public class IslandCommand extends CompositeCommand {
 
@@ -50,6 +51,8 @@ public class IslandCommand extends CompositeCommand {
         new IslandBanlistCommand(this);
         // Team commands
         new IslandTeamCommand(this);
+        new IslandTeamInviteCommand(this);
+
     }
 
     /* (non-Javadoc)

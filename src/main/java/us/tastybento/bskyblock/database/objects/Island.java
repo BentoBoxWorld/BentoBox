@@ -643,7 +643,7 @@ public class Island implements DataObject {
     public void setWorld(World world) {
         this.world = world;
     }
-    
+
     /**
      * Show info on the island
      * @param plugin
@@ -651,7 +651,6 @@ public class Island implements DataObject {
      * @return true always
      */
     public boolean showInfo(BSkyBlock plugin, User user) {
-        // TODO show ranks
         user.sendMessage("commands.admin.info.title");
         user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
         Date d = new Date(plugin.getServer().getOfflinePlayer(owner).getLastPlayed());
@@ -660,22 +659,51 @@ public class Island implements DataObject {
         String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
         String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
         user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-        user.sendMessage("commands.admin.info.team-members-title");
-        user.sendMessage("commands.admin.info.owner-suffix");
-        user.sendMessage("commands.admin.info.player-prefix");
-        String location = center.toVector().toString();
-        user.sendMessage("commands.admin.info.island-location", "[xyz]", location);
-        String from = center.toVector().subtract(new Vector(range, 0, range)).toString();
-        String to = center.toVector().add(new Vector(range, 0, range)).toString();
-        user.sendMessage("commands.admin.info.island-coords", "[xz1]", from, "[xz2]", to);
+        // Show team members
+        showMembers(plugin, user);
+        Vector location = center.toVector();
+        user.sendMessage("commands.admin.info.island-location", "[xyz]", xyz(location));
+        Vector from = center.toVector().subtract(new Vector(range, 0, range)).setY(0);
+        Vector to = center.toVector().add(new Vector(range-1, 0, range-1)).setY(center.getWorld().getMaxHeight());
+        user.sendMessage("commands.admin.info.island-coords", "[xz1]", xyz(from), "[xz2]", xyz(to));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(range));
-        String pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).toString();
-        String pto = center.toVector().add(new Vector(protectionRange, 0, protectionRange)).toString();
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", pfrom, "[xz2]", pto);
-        user.sendMessage("commands.admin.info.is-spawn");
-        user.sendMessage("commands.admin.info.is-locked");
-        user.sendMessage("commands.admin.info.is-unlocked");
-        user.sendMessage("commands.admin.info.banned-players");
+        Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
+        Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());;
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", xyz(pfrom), "[xz2]", xyz(pto));
+        if (spawn) {
+            user.sendMessage("commands.admin.info.is-spawn");
+        }
+        Set<UUID> banned = getBanned();
+        if (!banned.isEmpty()) {
+            user.sendMessage("commands.admin.info.banned-players");
+            banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", "[name]", plugin.getPlayers().getName(u)));
+        }
         return true;
+    }
+    
+    private String xyz(Vector location) {
+        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+    }
+    
+    /**
+     * Shows the members of this island
+     * @param plugin
+     * @param user - user who is requesting
+     */
+    public void showMembers(BSkyBlock plugin, User user) {
+        if (plugin.getPlayers().inTeam(user.getUniqueId())) {
+            user.sendMessage("commands.admin.info.team-members-title");
+            members.forEach((u, i) -> {
+                if (owner.equals(u)) {
+                    user.sendMessage("commands.admin.info.team-owner-format", "[name]", plugin.getPlayers().getName(u)
+                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i))); 
+                } else if (i > RanksManager.VISITOR_RANK){
+                    user.sendMessage("commands.admin.info.team-member-format", "[name]", plugin.getPlayers().getName(u)
+                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i))); 
+                }
+            });
+        }
+
+        
     }
 }
