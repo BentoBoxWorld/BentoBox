@@ -63,9 +63,9 @@ permissions:
           bskyblock.island.reset:
             description: Player can use the island reset or restart command
             default: true  
-      bskyblock.team:
-          description: Let a player use team commands
-          default: true
+          bskyblock.island.team:
+            description: Let a player use team commands
+            default: true
       bskyblock.mod.*:
         children:
           bskyblock.mod.info:
