@@ -704,7 +704,7 @@ public class IslandsManager {
     }
 
     /**
-     * Removes this player from any and all islands
+     * Removes this player from any and all islands.
      * @param playerUUID - the player's UUID
      */
     public void removePlayer(UUID playerUUID) {

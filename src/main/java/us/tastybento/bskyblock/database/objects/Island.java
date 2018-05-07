@@ -195,6 +195,7 @@ public class Island implements DataObject {
     }
 
     /**
+     * Get the team members of the island. If this is empty or cleared, there is no team.
      * @return the members - key is the UUID, value is the RanksManager enum, e.g. RanksManager.MEMBER_RANK
      */
     public Map<UUID, Integer> getMembers() {
@@ -458,6 +459,10 @@ public class Island implements DataObject {
         return true;
     }
 
+    /**
+     * Removes a player from the team member map. Do not call this directly. Use {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(UUID)}
+     * @param playerUUID
+     */
     public void removeMember(UUID playerUUID) {
         members.remove(playerUUID);
     }

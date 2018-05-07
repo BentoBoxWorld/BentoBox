@@ -49,6 +49,12 @@ commands:
   admin:
     help:
       description: "admin command"
+    team:
+      kick:
+        parameters: "[team player]"
+        description: "kick a player from a team"
+        cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
+        admin-kicked: "&cThe admin kicked you from the team."
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"

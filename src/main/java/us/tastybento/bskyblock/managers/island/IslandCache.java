@@ -254,8 +254,10 @@ public class IslandCache {
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);
+            } else {
+                // Remove player from the island membership
+                island.removeMember(playerUUID);
             }
-            island.removeMember(playerUUID);
         }
         islandsByUUID.remove(playerUUID);
     }
