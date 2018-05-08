@@ -30,6 +30,7 @@ general:
     not-in-team: "&cThat player is not in your team!"
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&cUnknown player!"
+    unknown-player-name: "&c[name] is an unknown player!"
     general: "&cThat command is not ready yet - contact admin"
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
@@ -50,6 +51,16 @@ commands:
     help:
       description: "admin command"
     team:
+      add:
+        parameters: "[leader] [player]"
+        description: "add player to leader's team"
+        name-not-leader: "&c[name] is not the leader"
+        name-has-island: "&c[name] has an island. Unregister or delete them first!"
+      disband:
+        parameters: "[team leader]"
+        description: "disband team leader's team"
+        user-disband-leader: "&cNot leader! Use disband [leader]"
+        disbanded: "&cAdmin disbanded your team!"
       kick:
         parameters: "[team player]"
         description: "kick a player from a team"

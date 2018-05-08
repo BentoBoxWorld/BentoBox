@@ -1,4 +1,4 @@
 package us.tastybento.bskyblock.commands.admin.teams;
 
-public class AdminTeamCommand {
+public class AdminTeamMakeLeaderCommand {
 }

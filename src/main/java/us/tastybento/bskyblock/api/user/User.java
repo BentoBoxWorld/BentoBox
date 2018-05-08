@@ -122,15 +122,15 @@ public class User {
     }
 
     public PlayerInventory getInventory() {
-        return player.getInventory();
+        return player != null ? player.getInventory() : null;
     }
 
     public Location getLocation() {
-        return player.getLocation();
+        return player != null ? player.getLocation() : null;
     }
 
     public String getName() {
-        return player.getName();
+        return player != null ? player.getName() : playerUUID.toString();
     }
 
     /**

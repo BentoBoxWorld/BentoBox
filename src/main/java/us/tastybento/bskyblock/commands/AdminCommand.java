@@ -11,6 +11,9 @@ import us.tastybento.bskyblock.commands.admin.AdminReloadCommand;
 import us.tastybento.bskyblock.commands.admin.AdminSetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminTeleportCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
+import us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand;
+import us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand;
+import us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand;
 
 public class AdminCommand extends CompositeCommand {
 
@@ -32,6 +35,10 @@ public class AdminCommand extends CompositeCommand {
         new AdminGetRankCommand(this);
         new AdminSetRankCommand(this);
         new AdminInfoCommand(this);
+        // Team commands
+        new AdminTeamAddCommand(this);
+        new AdminTeamKickCommand(this);
+        new AdminTeamDisbandCommand(this);
     }
 
     @Override
