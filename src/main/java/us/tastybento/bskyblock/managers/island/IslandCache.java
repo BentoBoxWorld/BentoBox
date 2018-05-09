@@ -284,5 +284,16 @@ public class IslandCache {
     public int size() {
         return islandsByLocation.size();
     }
+
+    /**
+     * Sets an island owner. Clears out any other owner
+     * @param island - island
+     * @param newOwnerUUID - new owner
+     */
+    public void setOwner(Island island, UUID newOwnerUUID) {
+        island.setOwner(newOwnerUUID);
+        islandsByUUID.put(newOwnerUUID, island);
+        islandsByLocation.put(island.getCenter(), island);        
+    }
     
 }

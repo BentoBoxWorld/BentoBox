@@ -817,6 +817,10 @@ public class IslandsManager {
     public boolean inTeam(UUID playerUUID) {
         return getMembers(playerUUID).size() > 1;
     }
+    
+    private int getMaxRangeSize(User user) {
+        return Util.getPermValue(user.getPlayer(), "island.range.", plugin.getSettings().getIslandProtectionRange());
+    }
 
     /**
      * Makes a new leader for an island
@@ -824,9 +828,18 @@ public class IslandsManager {
      * @param targetUUID - the current island member who is going to become the leader
      */
     public void makeLeader(User user, UUID targetUUID) {
-        // target is the new leader
-        Island island = getIsland(user.getUniqueId());
-        island.setOwner(targetUUID);
+        makeLeader(user, targetUUID, getIsland(targetUUID));
+    }
+    
+    /**
+     * Makes a new leader for an island
+     * @param user - requester
+     * @param targetUUID - new leader
+     * @param island - island to register
+     */
+    public void makeLeader(User user, UUID targetUUID, Island island) {
+        islandCache.setOwner(island, targetUUID);
+        
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
 
         // Check if online
@@ -845,10 +858,7 @@ public class IslandsManager {
             island.setProtectionRange(range);
 
         }
-    }
-    
-    private int getMaxRangeSize(User user) {
-        return Util.getPermValue(user.getPlayer(), "island.range.", plugin.getSettings().getIslandProtectionRange());
+        
     }
 
 }
