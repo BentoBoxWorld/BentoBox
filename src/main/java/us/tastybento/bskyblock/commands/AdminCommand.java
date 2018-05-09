@@ -14,6 +14,7 @@ import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
 import us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand;
 import us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand;
 import us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand;
+import us.tastybento.bskyblock.commands.admin.teams.AdminTeamMakeLeaderCommand;
 
 public class AdminCommand extends CompositeCommand {
 
@@ -39,6 +40,7 @@ public class AdminCommand extends CompositeCommand {
         new AdminTeamAddCommand(this);
         new AdminTeamKickCommand(this);
         new AdminTeamDisbandCommand(this);
+        new AdminTeamMakeLeaderCommand(this);
     }
 
     @Override

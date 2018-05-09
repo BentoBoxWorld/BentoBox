@@ -66,6 +66,10 @@ commands:
         description: "kick a player from a team"
         cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
         admin-kicked: "&cThe admin kicked you from the team."
+      makeleader:
+        parameters: "[player]"
+        description: "make player the team's leader"
+        already-leader: "&cPlayer is already the leader!"
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"

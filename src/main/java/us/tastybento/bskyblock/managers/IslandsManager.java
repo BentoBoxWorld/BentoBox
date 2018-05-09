@@ -66,7 +66,7 @@ public class IslandsManager {
         if (space1.isLiquid() && space2.isLiquid()) {
             return false;
         }
-        
+
         // Portals are not "safe"
         if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
                 || space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
@@ -817,4 +817,38 @@ public class IslandsManager {
     public boolean inTeam(UUID playerUUID) {
         return getMembers(playerUUID).size() > 1;
     }
+
+    /**
+     * Makes a new leader for an island
+     * @param user - the user who is issuing the command
+     * @param targetUUID - the current island member who is going to become the leader
+     */
+    public void makeLeader(User user, UUID targetUUID) {
+        // target is the new leader
+        Island island = getIsland(user.getUniqueId());
+        island.setOwner(targetUUID);
+        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
+
+        // Check if online
+        User target = User.getInstance(targetUUID);
+        target.sendMessage("commands.island.team.setowner.you-are-the-owner");
+        if (target.isOnline()) {
+            // Check if new leader has a different range permission than the island size
+            int range = getMaxRangeSize(target);
+            // Range can go up or down
+            if (range != island.getProtectionRange()) {
+                user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
+                target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
+                plugin.log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
+                        + range + " for " + user.getName() + " due to permission.");
+            }
+            island.setProtectionRange(range);
+
+        }
+    }
+    
+    private int getMaxRangeSize(User user) {
+        return Util.getPermValue(user.getPlayer(), "island.range.", plugin.getSettings().getIslandProtectionRange());
+    }
+
 }

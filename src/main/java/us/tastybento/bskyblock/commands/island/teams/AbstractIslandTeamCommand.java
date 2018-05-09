@@ -45,8 +45,4 @@ public abstract class AbstractIslandTeamCommand extends CompositeCommand {
     protected int getMaxTeamSize(User user) {
         return Util.getPermValue(user.getPlayer(), "team.maxsize.", getSettings().getMaxTeamSize());
     }
-    
-    protected int getMaxRangeSize(User user) {
-        return Util.getPermValue(user.getPlayer(), "island.range.", getSettings().getIslandProtectionRange());
-    }
 }

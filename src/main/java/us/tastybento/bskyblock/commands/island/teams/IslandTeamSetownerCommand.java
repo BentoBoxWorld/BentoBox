@@ -11,7 +11,6 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
 public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
@@ -71,35 +70,11 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         if (event.isCancelled()) {
             return false;
         }
-        makeLeader(user, targetUUID);
-
+        getIslands().makeLeader(user, targetUUID);
         getIslands().save(true);
         return true;
     }
 
-    private void makeLeader(User user, UUID targetUUID) {
-        // target is the new leader
-        Island island = getIslands().getIsland(user.getUniqueId());
-        island.setOwner(targetUUID);
-        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", getPlayers().getName(targetUUID));
-
-        // Check if online
-        User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.setowner.you-are-the-owner");
-        if (target.isOnline()) {
-            // Check if new leader has a lower range permission than the island size
-            int range = getMaxRangeSize(user);
-            // Range can go up or down
-            if (range != island.getProtectionRange()) {
-                user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                getPlugin().log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
-                                + range + " for " + user.getName() + " due to permission.");
-            }
-            island.setProtectionRange(range);
-
-        }
-    }
 
     @Override
     public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
