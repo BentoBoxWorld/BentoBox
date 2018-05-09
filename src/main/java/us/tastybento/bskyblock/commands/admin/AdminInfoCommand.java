@@ -42,12 +42,12 @@ public class AdminInfoCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(targetUUID)) {
+        if (!getIslands().hasIsland(targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         // Show info for this player    
-        getPlugin().getIslands().getIsland(targetUUID).showInfo(getPlugin(), user);       
+        getIslands().getIsland(targetUUID).showInfo(getPlugin(), user);       
         return true;
     }
 }
