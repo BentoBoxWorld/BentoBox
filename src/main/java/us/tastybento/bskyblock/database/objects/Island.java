@@ -667,14 +667,14 @@ public class Island implements DataObject {
         // Show team members
         showMembers(plugin, user);
         Vector location = center.toVector();
-        user.sendMessage("commands.admin.info.island-location", "[xyz]", xyz(location));
+        user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
         Vector from = center.toVector().subtract(new Vector(range, 0, range)).setY(0);
         Vector to = center.toVector().add(new Vector(range-1, 0, range-1)).setY(center.getWorld().getMaxHeight());
-        user.sendMessage("commands.admin.info.island-coords", "[xz1]", xyz(from), "[xz2]", xyz(to));
+        user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(range));
         Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
         Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());;
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", xyz(pfrom), "[xz2]", xyz(pto));
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));
         if (spawn) {
             user.sendMessage("commands.admin.info.is-spawn");
         }
@@ -685,11 +685,7 @@ public class Island implements DataObject {
         }
         return true;
     }
-    
-    private String xyz(Vector location) {
-        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
-    }
-    
+   
     /**
      * Shows the members of this island
      * @param plugin

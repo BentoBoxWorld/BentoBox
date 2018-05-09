@@ -16,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
@@ -249,6 +250,10 @@ public class Util {
             }
         }
         return permValue;
+    }
+
+    public static String xyz(Vector location) {
+        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
 
 }

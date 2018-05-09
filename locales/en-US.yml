@@ -70,6 +70,10 @@ commands:
         parameters: "[player]"
         description: "make player the team's leader"
         already-leader: "&cPlayer is already the leader!"
+      unregister:
+        parameters: "[owner]"
+        description: "unregister owner from island, but keep island blocks"
+        unregistered-island: "&aUnregistered player from island at [xyz]."
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"
