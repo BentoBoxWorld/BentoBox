@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -342,9 +341,9 @@ public class TestBSkyBlock {
         }
 
         @Override
-        public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
+        public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
             List<String> options = new ArrayList<>();
-            String lastArg = (!args.isEmpty() ? args.getLast() : "");
+            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             options.addAll(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }

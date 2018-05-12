@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -77,9 +76,9 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
 
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         for (UUID member : getPlugin().getIslands().getMembers(user.getUniqueId())) {
             options.add(getPlugin().getServer().getOfflinePlayer(member).getName());
         }

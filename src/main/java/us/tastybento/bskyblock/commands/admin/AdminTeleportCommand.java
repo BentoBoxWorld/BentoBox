@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock.commands.admin;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -63,9 +62,9 @@ public class AdminTeleportCommand extends CompositeCommand {
     }
     
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();

@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.api.commands;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -35,7 +34,7 @@ public interface BSBCommand {
      * @param args
      * @return List of strings that could be used to complete this command.
      */
-    default Optional<List<String>> tabComplete(User user, String alias, LinkedList<String> args) {
+    default Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         return Optional.empty();
     }
 

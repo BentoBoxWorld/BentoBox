@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.WeakHashMap;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -29,7 +30,7 @@ import us.tastybento.bskyblock.util.Util;
  *
  */
 public class FlyingMobEvents implements Listener {
-    private final BSkyBlock plugin;
+    private BSkyBlock plugin;
     private WeakHashMap<Entity, Island> mobSpawnInfo;
 
     /**
@@ -39,7 +40,7 @@ public class FlyingMobEvents implements Listener {
         this.plugin = plugin;
         mobSpawnInfo = new WeakHashMap<>();
 
-        plugin.getServer().getScheduler().runTaskTimer(plugin, () -> {
+        Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             Iterator<Entry<Entity, Island>> it = mobSpawnInfo.entrySet().iterator();
             while (it.hasNext()) {
                 Entry<Entity, Island> entry = it.next();
@@ -70,67 +71,65 @@ public class FlyingMobEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(CreatureSpawnEvent e) {
         // Only cover withers in the island world
-        if (!Util.inWorld(e.getEntity())) {
-            return;
-        }
-        if (!e.getEntityType().equals(EntityType.WITHER) && !e.getEntityType().equals(EntityType.BLAZE) && !e.getEntityType().equals(EntityType.GHAST)) {
+        if (!Util.inWorld(e.getEntity()) || !(e.getEntityType().equals(EntityType.WITHER) 
+                || e.getEntityType().equals(EntityType.BLAZE) 
+                || e.getEntityType().equals(EntityType.GHAST))) {
             return;
         }
         // Store where this mob originated
         plugin.getIslands().getIslandAt(e.getLocation()).ifPresent(island->mobSpawnInfo.put(e.getEntity(),island));
     }
 
+    /**
+     * Protects entities exploding. However, I am not sure if this will ever be called as pre-explosions should prevent it.
+     * @param e
+     * @return true if cancelled
+     */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onMobExplosion(EntityExplodeEvent e) {
+    public boolean onMobExplosion(EntityExplodeEvent e) {
         // Only cover in the island world
         if (e.getEntity() == null || !Util.inWorld(e.getEntity())) {
-            return;
+            return false;
         }
-        if (mobSpawnInfo.containsKey(e.getEntity())) {
-            // We know about this mob
-            if (!mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getLocation())) {
-                // Cancel the explosion and block damage
-                e.blockList().clear();
-                e.setCancelled(true);
-            }
+        if (mobSpawnInfo.containsKey(e.getEntity()) && !mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getLocation())) {
+            // Cancel the explosion and block damage
+            e.blockList().clear();
+            e.setCancelled(true);
+            return true;
         }
+        return false;
     }
 
     /**
      * Deal with pre-explosions
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onWitherExplode(ExplosionPrimeEvent e) {
+    public boolean onWitherExplode(ExplosionPrimeEvent e) {
         // Only cover withers in the island world
         if (!Util.inWorld(e.getEntity()) || e.getEntity() == null) {
-            return;
+            return false;
         }
         // The wither or wither skulls can both blow up
-        if (e.getEntityType() == EntityType.WITHER) {
-            // Check the location
-            if (mobSpawnInfo.containsKey(e.getEntity())) {
-                // We know about this wither
-                if (!mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getEntity().getLocation())) {
-                    // Cancel the explosion
-                    e.setCancelled(true);
-                }
-            }
-        }
-        if (e.getEntityType() == EntityType.WITHER_SKULL) {
+        if (e.getEntityType() == EntityType.WITHER 
+                && mobSpawnInfo.containsKey(e.getEntity()) 
+                && !mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getEntity().getLocation())) {
+            // Cancel the explosion
+            e.setCancelled(true);
+            return true;
+        } else if (e.getEntityType() == EntityType.WITHER_SKULL) {
             // Get shooter
             Projectile projectile = (Projectile)e.getEntity();
             if (projectile.getShooter() instanceof Wither) {
                 Wither wither = (Wither)projectile.getShooter();
                 // Check the location
-                if (mobSpawnInfo.containsKey(wither)) {
-                    // We know about this wither
-                   if (!mobSpawnInfo.get(wither).inIslandSpace(e.getEntity().getLocation())) {
-                        // Cancel the explosion
-                        e.setCancelled(true);
-                    }
+                if (mobSpawnInfo.containsKey(wither) && !mobSpawnInfo.get(wither).inIslandSpace(e.getEntity().getLocation())) {
+                    // Cancel the explosion
+                    e.setCancelled(true);
+                    return true;
                 }
             }
         }
+        return false;
     }
 
     /**
@@ -157,7 +156,7 @@ public class FlyingMobEvents implements Listener {
      * Clean up the hashmap. It's probably not needed, but just in case.
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onMobDeath(EntityDeathEvent e) {
-        mobSpawnInfo.remove(e.getEntity());
+    public Island onMobDeath(EntityDeathEvent e) {
+        return mobSpawnInfo.remove(e.getEntity());
     }
 }

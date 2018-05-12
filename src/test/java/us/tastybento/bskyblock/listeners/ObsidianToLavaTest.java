@@ -24,7 +24,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -41,10 +40,6 @@ import us.tastybento.bskyblock.managers.LocalesManager;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PlayerEvent.class, PlayerInteractEvent.class})
 public class ObsidianToLavaTest {
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
 
     private static World world;
 

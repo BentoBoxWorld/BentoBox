@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -74,10 +73,10 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {       
         Island island = getIslands().getIsland(user.getUniqueId());
         List<String> options = island.getBanned().stream().map(getPlayers()::getName).collect(Collectors.toList());
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 }

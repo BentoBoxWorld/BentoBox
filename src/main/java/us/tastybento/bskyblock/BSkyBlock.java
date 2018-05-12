@@ -13,6 +13,7 @@ import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.ObsidianToLava;
 import us.tastybento.bskyblock.listeners.PanelListenerManager;
+import us.tastybento.bskyblock.listeners.protection.FlyingMobEvents;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
@@ -149,6 +150,8 @@ public class BSkyBlock extends JavaPlugin {
         manager.registerEvents(new NetherPortals(this), this);
         // Obsidian to lava helper
         manager.registerEvents(new ObsidianToLava(this), this);
+        // Flying mobs protection
+        manager.registerEvents(new FlyingMobEvents(this), this);
     }
 
     @Override

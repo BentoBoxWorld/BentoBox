@@ -3,7 +3,6 @@
  */
 package us.tastybento.bskyblock.commands.admin;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -69,7 +68,7 @@ public class AdminGetRankCommand extends CompositeCommand {
     }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         return Optional.of(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
     }
 }
