@@ -5,25 +5,23 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.objects.Names;
 import us.tastybento.bskyblock.database.objects.Players;
 
-public class PlayersManager{
+public class PlayersManager {
 
     private BSkyBlock plugin;
     private BSBDatabase<Players> handler;
+    private BSBDatabase<Names> names;
 
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
@@ -39,6 +37,8 @@ public class PlayersManager{
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Players classes
         handler = new BSBDatabase<>(plugin, Players.class);
+        // Set up the names database
+        names = new BSBDatabase<>(plugin, Names.class);
         playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }
@@ -61,7 +61,7 @@ public class PlayersManager{
         Collection<Players> set = Collections.unmodifiableCollection(playerCache.values());
         if(async) {
             Runnable save = () -> set.forEach(handler::saveObject);
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, save);
         } else {
             set.forEach(handler::saveObject);
         }
@@ -73,6 +73,11 @@ public class PlayersManager{
         handler.close();
     }
 
+    /**
+     * Get player by UUID. Adds player to cache if not in there already
+     * @param uuid of player
+     * @return player object or null if it does not exist
+     */
     public Players getPlayer(UUID uuid){
         if (!playerCache.containsKey(uuid)) {
             addPlayer(uuid);
@@ -85,10 +90,10 @@ public class PlayersManager{
      */
 
     /**
-     * Adds a player to the cache
+     * Adds a player to the cache. If the UUID does not exist, a new player is made
      * @param playerUUID - the player's UUID
      */
-    public void addPlayer(final UUID playerUUID) {
+    public void addPlayer(UUID playerUUID) {
         if (playerUUID == null) {
             return;
         }
@@ -96,7 +101,7 @@ public class PlayersManager{
             Players player = null;
             // If the player is in the database, load it, otherwise create a new player
             if (handler.objectExists(playerUUID.toString())) {
-                    player = handler.loadObject(playerUUID.toString());
+                player = handler.loadObject(playerUUID.toString());
             } else {
                 player = new Players(plugin, playerUUID);
             }
@@ -108,12 +113,12 @@ public class PlayersManager{
     /**
      * Stores the player's info and removes the player from the cache
      *
-     * @param player - the player - UUID of player
+     * @param playerUUID - the player - UUID of player
      *
      */
-    public void removeOnlinePlayer(final UUID player) {
-        save(player);
-        playerCache.remove(player);
+    public void removeOnlinePlayer(UUID playerUUID) {
+        save(playerUUID);
+        playerCache.remove(playerUUID);
     }
 
     /**
@@ -134,7 +139,7 @@ public class PlayersManager{
      * @param uniqueID - unique ID
      * @return true if player is know, otherwise false
      */
-    public boolean isKnown(final UUID uniqueID) {
+    public boolean isKnown(UUID uniqueID) {
         if (uniqueID == null) {
             return false;
         }
@@ -145,18 +150,6 @@ public class PlayersManager{
             // Get from the database - do not add to cache yet
             return handler.objectExists(uniqueID.toString());
         }
-    }
-
-    /**
-     * Returns the player object for the named player
-     *
-     * @param playerUUID - the player's UUID
-     *            - String name of player
-     * @return - player object
-     */
-    public Players get(UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID);
     }
 
     /**
@@ -229,11 +222,19 @@ public class PlayersManager{
     @SuppressWarnings("deprecation")
     public UUID getUUID(String string) {
         // See if this is a UUID
-        try {
-            return UUID.fromString(string);
-        } catch (Exception e) {}
-        // Look in the name cache
-        return Bukkit.getOfflinePlayer(string).getUniqueId();
+        // example: 5988eecd-1dcd-4080-a843-785b62419abb
+        if (string.length() == 36 && string.contains("-")) {
+            try {
+                return UUID.fromString(string);
+            } catch (Exception e) {}
+        }
+        // Look in the name cache, then the data base and finally Bukkit blocking request
+        return playerCache.values().stream()
+                .filter(p -> p.getPlayerName().equalsIgnoreCase(string)).findFirst()
+                .map(p -> UUID.fromString(p.getUniqueId()))
+                .orElse(names.objectExists(string) 
+                        ? names.loadObject(string).getUuid() 
+                                : Bukkit.getOfflinePlayer(string).getUniqueId());
     }
 
     /**
@@ -243,6 +244,8 @@ public class PlayersManager{
     public void setPlayerName(User user) {
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
+        // Add to names database
+        names.saveObject(new Names(user.getName(), user.getUniqueId()));
     }
 
     /**
@@ -258,21 +261,6 @@ public class PlayersManager{
         }
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getPlayerName();
-    }
-
-    /**
-     * Reverse lookup - returns the owner of an island from the location
-     *
-     * @param loc - location
-     * @return UUID of owner of island
-     */
-    public UUID getPlayerFromIslandLocation(Location loc) {
-        if (loc == null) {
-            return null;
-        }
-        // Look in the grid
-        Optional<Island> island = plugin.getIslands().getIslandAt(loc);
-        return island.map(Island::getOwner).orElse(null);
     }
 
     /**
@@ -347,75 +335,6 @@ public class PlayersManager{
     }
 
     /**
-     * Ban target from a player's island. Ban may be blocked by event being cancelled.
-     * @param playerUUID - the player's UUID
-     * @param targetUUID - the target's UUID
-     * @return true if banned, false if not
-     */
-    public boolean ban(UUID playerUUID, UUID targetUUID) {
-        addPlayer(playerUUID);
-        addPlayer(targetUUID);
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island != null) {
-            // Player has island
-            return island.addToBanList(targetUUID);
-        }
-        return false;
-    }
-
-    /**
-     * Unban target from player's island
-     * @param playerUUID - the player's UUID
-     * @param targetUUID - the target's UUID
-     * @return true if target sucessfully unbanned
-     */
-    public boolean unban(UUID playerUUID, UUID targetUUID) {
-        addPlayer(playerUUID);
-        addPlayer(targetUUID);
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island != null) {
-            // Player has island
-            return island.removeFromBanList(targetUUID);
-        }
-        return false;
-    }
-
-    /**
-     * @param playerUUID - the player's UUID
-     * @param targetUUID - the target's UUID
-     * @return true if target is banned from player's island
-     */
-    public boolean isBanned(UUID playerUUID, UUID targetUUID) {
-        if (playerUUID == null || targetUUID == null) {
-            // If the island is unowned, then playerUUID could be null
-            return false;
-        }
-        addPlayer(playerUUID);
-        addPlayer(targetUUID);
-        // Check if the target player has a permission bypass (admin.noban)
-        Player target = plugin.getServer().getPlayer(targetUUID);
-        if (target != null && target.hasPermission(Constants.PERMPREFIX + "admin.noban")) {
-            return false;
-        }
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island != null) {
-            // Player has island
-            return island.isBanned(targetUUID);
-        }
-        return false;
-    }
-
-    /**
-     * Clears resets for online players or players in the cache
-     * @param resetLimit
-     */
-    public void clearResets(int resetLimit) {
-        for (Players player : playerCache.values()) {
-            player.setResetsLeft(resetLimit);
-        }
-    }
-
-    /**
      * Add death to player
      * @param playerUUID - the player's UUID
      */
@@ -469,15 +388,6 @@ public class PlayersManager{
     }
 
     /**
-     * Resets everything to do with a player that needs to be reset
-     * @param player - the player
-     */
-    public void resetPlayer(Player player) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
      * Saves the player to the database
      * @param playerUUID - the player's UUID
      */
@@ -486,7 +396,6 @@ public class PlayersManager{
             handler.saveObject(playerCache.get(playerUUID));
         }
     }
-
 
     /**
      * Tries to get the user from this name

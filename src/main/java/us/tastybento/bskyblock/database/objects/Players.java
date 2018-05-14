@@ -46,17 +46,13 @@ public class Players implements DataObject {
      *            Constructor - initializes the state variables
      *
      */
-    public Players(BSkyBlock plugin, final UUID uniqueId) {
+    public Players(BSkyBlock plugin, UUID uniqueId) {
         this.uniqueId = uniqueId.toString();
         homeLocations = new HashMap<>();
-        playerName = "";
         resetsLeft = plugin.getSettings().getResetLimit();
         locale = "";
         kickedList = new HashMap<>();
-        playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
-        if (playerName == null) {
-            playerName = uniqueId.toString();
-        }
+        this.playerName = uniqueId.toString(); // To start, until it is set later
     }
 
     /**
@@ -201,19 +197,15 @@ public class Players implements DataObject {
      * @param deaths the deaths to set
      */
     public void setDeaths(int deaths) {
-        this.deaths = deaths;
-        if (this.deaths > getPlugin().getSettings().getDeathsMax()) {
-            this.deaths = getPlugin().getSettings().getDeathsMax();
-        }
+        this.deaths = deaths > getPlugin().getSettings().getDeathsMax() ? getPlugin().getSettings().getDeathsMax() : deaths;
     }
 
     /**
      * Add death
      */
     public void addDeath() {
-        deaths++;
-        if (deaths > getPlugin().getSettings().getDeathsMax()) {
-            deaths = getPlugin().getSettings().getDeathsMax();
+        if (deaths < getPlugin().getSettings().getDeathsMax()) {
+            deaths++;
         }
     }
 
@@ -241,8 +233,8 @@ public class Players implements DataObject {
                 return 0;
             } else {
                 // Still not there yet
-                // Temp minutes
-                return (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60);
+                // Time in minutes
+                return (long) Math.ceil((coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60D));
             }
         }
         return 0;

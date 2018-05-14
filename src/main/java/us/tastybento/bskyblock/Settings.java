@@ -399,6 +399,7 @@ public class Settings implements ISettings<Settings> {
         return this;
     }
     /**
+     * Number of minutes to wait
      * @return the inviteWait
      */
     public int getInviteWait() {
