@@ -83,13 +83,13 @@ public class IslandTeamLeaveCommandTest {
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -104,7 +104,7 @@ public class IslandTeamLeaveCommandTest {
      */
     @Test
     public void testExecuteNoTeam() {
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
@@ -126,14 +126,14 @@ public class IslandTeamLeaveCommandTest {
     @Test
     public void testExecuteNoConfirmation() {
         when(s.isLeaveConfirmation()).thenReturn(false);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team leader - null
-        when(im.getTeamLeader(Mockito.any())).thenReturn(null);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, new ArrayList<>()));
-        Mockito.verify(im).removePlayer(uuid);
+        Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(uuid));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
     
@@ -145,10 +145,10 @@ public class IslandTeamLeaveCommandTest {
         when(s.isLeaveConfirmation()).thenReturn(true);
         // 3 second timeout
         when(s.getLeaveWait()).thenReturn(3L);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team leader - null
-        when(im.getTeamLeader(Mockito.any())).thenReturn(null);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));

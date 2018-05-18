@@ -9,6 +9,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.Constants;
@@ -43,6 +44,9 @@ public class AdminGetRankCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
+        // TODO: fix world
+        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+
         if (args.size() != 1) {
             // Show help
             showHelp(this, user);
@@ -54,14 +58,14 @@ public class AdminGetRankCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(targetUUID)) {
+        if (!getPlugin().getIslands().hasIsland(world, targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         // Get rank
         RanksManager rm = getPlugin().getRanksManager();
         User target = User.getInstance(targetUUID);     
-        Island island = getPlugin().getIslands().getIsland(targetUUID);       
+        Island island = getPlugin().getIslands().getIsland(world, targetUUID);       
         int currentRank = island.getRank(target);
         user.sendMessage("commands.admin.getrank.rank-is", "[rank]", user.getTranslation(rm.getRank(currentRank)));
         return true;

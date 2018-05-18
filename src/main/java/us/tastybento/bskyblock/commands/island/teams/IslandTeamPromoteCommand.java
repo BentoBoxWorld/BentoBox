@@ -27,11 +27,11 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return true;
         }
-        if (!getTeamLeader(user).equals(user.getUniqueId())) {
+        if (!getTeamLeader(user.getWorld(), user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return true;
         }
@@ -46,7 +46,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
             user.sendMessage("general.errors.unknown-player");
             return true;
         }
-        if (!inTeam(target) || !getTeamLeader(user).equals(getTeamLeader(target))) {
+        if (!inTeam(user.getWorld(), target) || !getTeamLeader(user.getWorld(), user).equals(getTeamLeader(user.getWorld(), target))) {
             user.sendMessage("general.errors.not-in-team");
             return true;
         }
@@ -55,11 +55,11 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
     }
 
     private boolean change(User user, User target) {
-        int currentRank = getIslands().getIsland(user.getUniqueId()).getRank(target);
+        int currentRank = getIslands().getIsland(user.getWorld(), user.getUniqueId()).getRank(target);
         if (this.getLabel().equals("promote")) {
             int nextRank = getPlugin().getRanksManager().getRankUpValue(currentRank);
             if (nextRank > currentRank) {
-                getIslands().getIsland(user.getUniqueId()).setRank(target, nextRank);
+                getIslands().getIsland(user.getWorld(), user.getUniqueId()).setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
                 user.sendMessage("commands.island.team.promote.success", "[name]", target.getName(), "[rank]", rankName);
                 return true;
@@ -71,7 +71,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
             // Demote
             int prevRank = getPlugin().getRanksManager().getRankDownValue(currentRank);
             if (prevRank < currentRank) {
-                getIslands().getIsland(user.getUniqueId()).setRank(target, prevRank);
+                getIslands().getIsland(user.getWorld(), user.getUniqueId()).setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
                 user.sendMessage("commands.island.team.demote.success", "[name]", target.getName(), "[rank]", rankName);
                 return true;

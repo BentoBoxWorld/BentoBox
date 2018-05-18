@@ -12,6 +12,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
@@ -28,6 +29,7 @@ import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
@@ -88,17 +90,25 @@ public class AdminTeamMakeLeaderCommandTest {
         ac = mock(AdminCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
 
+        // Island World Manager
+        IslandWorld iwm = mock(IslandWorld.class);
+        World world = mock(World.class);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+
+
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team 
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
-        
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+       
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -143,7 +153,7 @@ public class AdminTeamMakeLeaderCommandTest {
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(new HashSet<>());
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
         assertFalse(itl.execute(user, Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
@@ -153,13 +163,13 @@ public class AdminTeamMakeLeaderCommandTest {
      */
     @Test
     public void testExecuteMakeLeaderAlreadyLeader() {
-        when(im.inTeam(Mockito.any())).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
-        when(im.getIsland(Mockito.any())).thenReturn(is);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         
-        when(im.getTeamLeader(notUUID)).thenReturn(notUUID);
+        when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
         
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertFalse(itl.execute(user, Arrays.asList(name)));
@@ -171,24 +181,24 @@ public class AdminTeamMakeLeaderCommandTest {
      */
     @Test
     public void testExecuteSuccess() {
-        when(im.inTeam(Mockito.any())).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
-        when(im.getIsland(Mockito.any())).thenReturn(is);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         // Leader
-        when(im.getTeamLeader(notUUID)).thenReturn(uuid);
+        when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
         when(pm.getName(Mockito.eq(uuid))).thenReturn("leader");
         // Members
         Set<UUID> members = new HashSet<>();
         members.add(uuid);
         members.add(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(members);
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertTrue(itl.execute(user, Arrays.asList(name)));
         // Add other verifications
-        Mockito.verify(im).makeLeader(user, notUUID);
+        Mockito.verify(im).makeLeader(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
     

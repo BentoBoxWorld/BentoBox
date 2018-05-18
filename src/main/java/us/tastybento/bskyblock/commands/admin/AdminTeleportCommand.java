@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -29,6 +30,9 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+        // TODO: fix world
+        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+
         if (args.isEmpty()) {
             this.showHelp(this, user);
             return true;
@@ -40,12 +44,12 @@ public class AdminTeleportCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         } else {
-            if (getIslands().hasIsland(targetUUID) || getIslands().inTeam(targetUUID)) {
-                Location warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getIslandWorld());
+            if (getIslands().hasIsland(world, targetUUID) || getIslands().inTeam(world, targetUUID)) {
+                Location warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getIslandWorld());
                 if (getLabel().equals("tpnether")) {
-                    warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getNetherWorld());
+                    warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getNetherWorld());
                 } else if (getLabel().equals("tpend")) {
-                    warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getEndWorld());
+                    warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getEndWorld());
                 }
                 // Other wise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "

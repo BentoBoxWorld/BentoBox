@@ -40,12 +40,12 @@ public class IslandSetnameCommand extends CompositeCommand {
         Player player = user.getPlayer();
         UUID playerUUID = player.getUniqueId();
 
-        if (!getIslands().hasIsland(playerUUID)) {
+        if (!getIslands().hasIsland(user.getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
 
-        if (!getIslands().isOwner(playerUUID)) {
+        if (!getIslands().isOwner(user.getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -70,9 +70,9 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Set the name
         if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format")) {
-            getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
+            getIslands().getIsland(user.getWorld(), player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
         } else {
-            getIslands().getIsland(playerUUID).setName(name);
+            getIslands().getIsland(user.getWorld(), playerUUID).setName(name);
         }
 
         user.sendMessage("general.success");

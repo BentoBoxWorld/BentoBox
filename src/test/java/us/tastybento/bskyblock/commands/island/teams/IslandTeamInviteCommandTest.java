@@ -90,13 +90,13 @@ public class IslandTeamInviteCommandTest {
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team 
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         
         // Player Manager
         pm = mock(PlayersManager.class);
@@ -119,7 +119,7 @@ public class IslandTeamInviteCommandTest {
      */
     @Test
     public void testExecuteNoIsland() {
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
@@ -130,7 +130,7 @@ public class IslandTeamInviteCommandTest {
      */
     @Test
     public void testExecuteNotTeamLeader() {
-        when(im.getTeamLeader(Mockito.any())).thenReturn(notUUID);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
@@ -201,7 +201,7 @@ public class IslandTeamInviteCommandTest {
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.inTeam(Mockito.any())).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         assertFalse(itl.execute(user, Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.already-on-team"));
     }

@@ -101,13 +101,13 @@ public class UpDownClickTest {
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -140,7 +140,7 @@ public class UpDownClickTest {
         // Island owner is user by default
         when(island.getOwner()).thenReturn(uuid);
 
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
         // Common from to's
         outside = mock(Location.class);
@@ -235,7 +235,7 @@ public class UpDownClickTest {
     
     @Test
     public void testNullIsland() {
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(null);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
         Mockito.verify(plugin, Mockito.never()).getRanksManager();  
     }
 

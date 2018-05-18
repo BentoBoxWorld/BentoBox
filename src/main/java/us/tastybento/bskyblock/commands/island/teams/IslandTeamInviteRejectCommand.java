@@ -30,7 +30,7 @@ public class IslandTeamInviteRejectCommand extends AbstractIslandTeamCommand {
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
-                            .getIsland(inviteList.get(playerUUID)))
+                            .getIsland(user.getWorld(), inviteList.get(playerUUID)))
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();

@@ -30,11 +30,11 @@ public class IslandBanlistCommand extends CompositeCommand {
             return false;
         } 
         // Player issuing the command must have an island       
-        if (!getIslands().hasIsland(user.getUniqueId())) {
+        if (!getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false; 
         }
-        Island island = getIslands().getIsland(user.getUniqueId());
+        Island island = getIslands().getIsland(user.getWorld(), user.getUniqueId());
         // Show all the players banned on the island
         if (island.getBanned().isEmpty()) {
             user.sendMessage("commands.island.banlist.noone");

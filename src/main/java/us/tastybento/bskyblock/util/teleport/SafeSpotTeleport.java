@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Pair;
 
@@ -205,7 +206,7 @@ public class SafeSpotTeleport {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!portal && entity instanceof Player) {
                 // Set home
-                plugin.getPlayers().setHomeLocation(entity.getUniqueId(), loc, homeNumber);
+                plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
             }
             Vector velocity = entity.getVelocity();
             entity.teleport(loc);

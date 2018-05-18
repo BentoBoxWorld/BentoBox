@@ -30,11 +30,11 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        if (!getTeamLeader(user).equals(user.getUniqueId())) {
+        if (!getTeamLeader(user.getWorld(), user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -53,14 +53,14 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
             user.sendMessage("commands.island.kick.cannot-kick");
             return false;
         }
-        if (!getIslands().getMembers(user.getUniqueId()).contains(targetUUID)) {
+        if (!getIslands().getMembers(user.getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
         if (!getSettings().isKickConfirmation() || kickSet.contains(targetUUID)) {
             kickSet.remove(targetUUID);
             User.getInstance(targetUUID).sendMessage("commands.island.team.kick.leader-kicked");
-            getIslands().removePlayer(targetUUID);
+            getIslands().removePlayer(user.getWorld(), targetUUID);
             user.sendMessage("general.success");
             return true;
         } else {

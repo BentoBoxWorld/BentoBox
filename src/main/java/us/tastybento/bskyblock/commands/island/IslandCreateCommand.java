@@ -6,6 +6,8 @@ package us.tastybento.bskyblock.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import org.bukkit.World;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
@@ -36,32 +38,31 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        if (getIslands().hasIsland(user.getUniqueId())) {
+        // TODO: fix world
+        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+        if (!args.isEmpty()) {
+            // Get game types
+            // TODO
+        }
+        if (getIslands().hasIsland(world, user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
-        if (getIslands().inTeam(user.getUniqueId())) {
+        if (getIslands().inTeam(world, user.getUniqueId())) {
             return false;
         }
         user.sendMessage("commands.island.create.creating-island");
-        createIsland(user);
-        return true;
-    }
-
-    /**
-     * Creates an island for player
-     *
-     * @param user - the User
-     */
-    protected void createIsland(User user) {
         try {
             NewIsland.builder()
-            .player(user.getPlayer())
+            .player(user)
+            .world(world)
             .reason(Reason.CREATE)
             .build();
+            return true;
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
+            return false;
         }
     }
 }

@@ -117,9 +117,9 @@ public class NetherPortalsTest {
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -307,17 +307,17 @@ public class NetherPortalsTest {
         // Player has no island
         Player player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());
-        when(im.hasIsland(Mockito.any())).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         // Right cause, end exists, right world
         PlayerPortalEvent e = new PlayerPortalEvent(player, from, null, null, TeleportCause.END_PORTAL);
         when(s.isEndGenerate()).thenReturn(true);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled()); 
         // Give player an island
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         np.onEndIslandPortal(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(im).homeTeleport(Mockito.eq(player));
+        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
     }
 
     /**
@@ -606,7 +606,7 @@ public class NetherPortalsTest {
         assertTrue(e.isCancelled());
         // If regular nether, then to = island location
         Mockito.verify(from, Mockito.never()).toVector();
-        Mockito.verify(im).getIslandLocation(Mockito.any());
+        Mockito.verify(im).getIslandLocation(Mockito.any(), Mockito.any());
     }
     
     /**
@@ -627,7 +627,7 @@ public class NetherPortalsTest {
         assertTrue(e.isCancelled());
         // If regular nether, then to = island location
         Mockito.verify(from).toVector();
-        Mockito.verify(im, Mockito.never()).getIslandLocation(Mockito.any());
+        Mockito.verify(im, Mockito.never()).getIslandLocation(Mockito.any(), Mockito.any());
     }
     
     /**

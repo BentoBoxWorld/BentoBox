@@ -3,6 +3,8 @@ package us.tastybento.bskyblock.commands.admin;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.World;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -23,6 +25,9 @@ public class AdminInfoCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+        // TODO: fix world
+        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+
         if (args.size() > 1 || (args.isEmpty() && !user.isPlayer())) {
             // Show help
             showHelp(this, user);
@@ -42,12 +47,12 @@ public class AdminInfoCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().hasIsland(targetUUID)) {
+        if (!getIslands().hasIsland(world, targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         // Show info for this player    
-        getIslands().getIsland(targetUUID).showInfo(getPlugin(), user);       
+        getIslands().getIsland(world, targetUUID).showInfo(getPlugin(), user);       
         return true;
     }
 }

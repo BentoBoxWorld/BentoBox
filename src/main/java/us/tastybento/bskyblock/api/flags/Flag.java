@@ -125,7 +125,7 @@ public class Flag implements Comparable<Flag> {
      */
     public PanelItem toPanelItem(BSkyBlock plugin, User user) {
         // Get the island this user is on or their own
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getUniqueId()));
+        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         String rank = RanksManager.OWNER_RANK_REF;
         if (island != null) {
             // TODO: Get the world settings - the player has no island and is not in an island location

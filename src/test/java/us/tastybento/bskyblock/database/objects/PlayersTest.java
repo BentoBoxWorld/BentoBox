@@ -11,6 +11,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -52,11 +53,14 @@ public class PlayersTest {
     public void testSetHomeLocationLocation() {
         Players p = new Players(plugin, UUID.randomUUID());
         Location l = mock(Location.class);
+        World w = mock(World.class);
+        when(w.getName()).thenReturn("world");
+        when(l.getWorld()).thenReturn(w);
         p.setHomeLocation(l, 5);
-        assertEquals(l, p.getHomeLocation(5));
-        assertNotEquals(l, p.getHomeLocation(0));
-        p.setHomeLocation(null);
-        assertTrue(p.getHomeLocations().isEmpty());
+        assertEquals(l, p.getHomeLocation(w, 5));
+        assertNotEquals(l, p.getHomeLocation(w, 0));
+        p.clearHomeLocations(w);
+        assertTrue(p.getHomeLocations(w).isEmpty());
     }
 
     @Test

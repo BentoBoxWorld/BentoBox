@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
 
+import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
@@ -225,11 +226,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to obtain team members
+     * @param world - world to check
      * @param user - the User
      * @return set of UUIDs of all team members
      */
-    protected Set<UUID> getMembers(User user) {
-        return plugin.getIslands().getMembers(user.getUniqueId());
+    protected Set<UUID> getMembers(World world, User user) {
+        return plugin.getIslands().getMembers(world, user.getUniqueId());
     }
 
     public String getParameters() {
@@ -293,11 +295,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to obtain the user's team leader
+     * @param world - world to check
      * @param user - the User
      * @return UUID of player's team leader or null if user has no island
      */
-    protected UUID getTeamLeader(User user) {
-        return plugin.getIslands().getTeamLeader(user.getUniqueId());
+    protected UUID getTeamLeader(World world, User user) {
+        return plugin.getIslands().getTeamLeader(world, user.getUniqueId());
     }
 
     @Override
@@ -325,11 +328,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Convenience method to check if a user has a team
+     * @param world - the world to check
      * @param user - the User
      * @return true if player is in a team
      */
-    protected boolean inTeam(User user) {
-        return plugin.getIslands().inTeam(user.getUniqueId());
+    protected boolean inTeam(World world, User user) {
+        return plugin.getIslands().inTeam(world, user.getUniqueId());
     }
 
     /**

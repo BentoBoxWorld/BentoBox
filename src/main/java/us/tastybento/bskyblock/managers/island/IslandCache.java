@@ -5,35 +5,34 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeMap;
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
 public class IslandCache {
-    private BSkyBlock plugin;
     private BiMap<Location, Island> islandsByLocation;
     /**
      * Every player who is associated with an island is in this map.
      */
-    private HashMap<UUID, Island> islandsByUUID;
-    // 2D islandGrid of islands, x,z
-    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
+    private Map<World, Map<UUID, Island>> islandsByUUID;
+    private Map<World, IslandGrid> grids;
+    private IslandGrid defaultGrid;
 
-    public IslandCache(BSkyBlock plugin) {
-        this.plugin = plugin;
+    public IslandCache() {
         islandsByLocation = HashBiMap.create();
         islandsByUUID = new HashMap<>();
+        grids = new HashMap<>();
+        defaultGrid = new IslandGrid();
     }
 
     /**
@@ -43,20 +42,22 @@ public class IslandCache {
      */
     public boolean addIsland(Island island) {
         islandsByLocation.put(island.getCenter(), island);
-        islandsByUUID.put(island.getOwner(), island);
+        islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
+        islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
         for (UUID member: island.getMemberSet()) {
-            islandsByUUID.put(member, island);
+            islandsByUUID.get(island.getWorld()).put(member, island);
         }
         return addToGrid(island);
     }
 
     /**
      * Adds a player's UUID to the look up for islands. Does no checking
-     * @param playerUUID
-     * @param teamIsland
+     * @param uuid - player's uuid
+     * @param island - island to associate with this uuid. Only one island can be associated per world.
      */
-    public void addPlayer(UUID playerUUID, Island teamIsland) {
-        islandsByUUID.put(playerUUID, teamIsland);
+    public void addPlayer(UUID uuid, Island island) {
+        islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
+        islandsByUUID.get(island.getWorld()).put(uuid, island);
     }
 
     /**
@@ -65,41 +66,7 @@ public class IslandCache {
      * @return true if successfully added, false if not
      */
     private boolean addToGrid(Island newIsland) {
-        if (islandGrid.containsKey(newIsland.getMinX())) {
-            TreeMap<Integer, Island> zEntry = islandGrid.get(newIsland.getMinX());
-            if (zEntry.containsKey(newIsland.getMinZ())) {
-                // Island already exists
-                Island conflict = islandGrid.get(newIsland.getMinX()).get(newIsland.getMinZ());
-                plugin.logWarning("*** Duplicate or overlapping islands! ***");
-                plugin.logWarning(
-                        "Island at (" + newIsland.getCenter().getBlockX() + ", " + newIsland.getCenter().getBlockZ() + ") conflicts with ("
-                                + conflict.getCenter().getBlockX() + ", " + conflict.getCenter().getBlockZ() + ")");
-                if (conflict.getOwner() != null) {
-                    plugin.logWarning("Accepted island is owned by " + plugin.getPlayers().getName(conflict.getOwner()));
-                    plugin.logWarning(conflict.getOwner().toString() + ".yml");
-                } else {
-                    plugin.logWarning("Accepted island is unowned.");
-                }
-                if (newIsland.getOwner() != null) {
-                    plugin.logWarning("Denied island is owned by " + plugin.getPlayers().getName(newIsland.getOwner()));
-                    plugin.logWarning(newIsland.getOwner().toString() + ".yml");
-                } else {
-                    plugin.logWarning("Denied island is unowned and is a database duplicate. Skipping it...");
-                }
-                plugin.logWarning("Recommend that the denied player file is deleted otherwise weird things can happen.");
-                return false;
-            } else {
-                // Add island
-                zEntry.put(newIsland.getMinZ(), newIsland);
-                islandGrid.put(newIsland.getMinX(), zEntry);
-            }
-        } else {
-            // Add island
-            TreeMap<Integer, Island> zEntry = new TreeMap<>();
-            zEntry.put(newIsland.getMinZ(), newIsland);
-            islandGrid.put(newIsland.getMinX(), zEntry);
-        }
-        return true;
+        return grids.getOrDefault(newIsland.getWorld(), defaultGrid).addToGrid(newIsland);
     }
 
     public void clear() {
@@ -113,10 +80,10 @@ public class IslandCache {
      * @return true if successful, false if not
      */
     public boolean deleteIslandFromCache(Island island) {
-        if (!islandsByLocation.remove(island.getCenter(), island)) {
+        if (!islandsByLocation.remove(island.getCenter(), island) || !islandsByUUID.containsKey(island.getWorld())) {         
             return false;
         }
-        Iterator<Entry<UUID, Island>> it = islandsByUUID.entrySet().iterator();
+        Iterator<Entry<UUID, Island>> it = islandsByUUID.get(island.getWorld()).entrySet().iterator();
         while (it.hasNext()) {
             Entry<UUID, Island> en = it.next();
             if (en.getValue().equals(island)) {
@@ -124,19 +91,7 @@ public class IslandCache {
             }
         }
         // Remove from grid
-        if (island != null) {
-            int x = island.getMinX();
-            int z = island.getMinZ();
-            if (islandGrid.containsKey(x)) {
-                TreeMap<Integer, Island> zEntry = islandGrid.get(x);
-                if (zEntry.containsKey(z)) {
-                    // Island exists - delete it
-                    zEntry.remove(z);
-                    islandGrid.put(x, zEntry);
-                }
-            }
-        }
-        return true;
+        return grids.getOrDefault(island.getWorld(), defaultGrid).removeFromGrid(island);
     }
 
     /**
@@ -150,34 +105,12 @@ public class IslandCache {
 
     /**
      * Returns island referenced by UUID
-     * @param uuid - uuid of player
+     * @param world - world to check
+     * @param uuid - player
      * @return island or null if none
      */
-    public Island get(UUID uuid) {
-        return islandsByUUID.get(uuid);
-    }
-
-    /**
-     * Returns the island at the x,z location or null if there is none.
-     * This includes the full island space, not just the protected area.
-     *
-     * @param x - x coordinate
-     * @param z - z coordinate
-     * @return Island or null
-     */
-    public Island getIslandAt(int x, int z) {
-        Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
-        if (en != null) {
-            Entry<Integer, Island> ent = en.getValue().floorEntry(z);
-            if (ent != null) {
-                // Check if in the island range
-                Island island = ent.getValue();
-                if (island.inIslandSpace(x, z)) {
-                    return island;
-                }
-            }
-        }
-        return null;
+    public Island get(World world, UUID uuid) {
+        return islandsByUUID.containsKey(world) ? islandsByUUID.get(world).get(uuid) : null;
     }
 
     /**
@@ -195,51 +128,53 @@ public class IslandCache {
         if (!Util.inWorld(location)) {
             return null;
         }
-        return getIslandAt(location.getBlockX(), location.getBlockZ());
+        return grids.getOrDefault(location.getWorld(), defaultGrid).getIslandAt(location.getBlockX(), location.getBlockZ());
     }
-
-    /**
-     * Get name of the island owned by owner
-     * @param owner - the island owner
-     * @return Returns the name of owner's island, or the owner's name if there is none.
-     */
-    public String getIslandName(UUID owner) {
-        String result = plugin.getPlayers().getName(owner);
-        if (islandsByUUID.containsKey(owner)) {
-            Island island = islandsByUUID.get(owner);
-            if (island.getName() != null && !island.getName().isEmpty()) {
-                result = island.getName();
-            }
-        }
-        return ChatColor.translateAlternateColorCodes('&', result) + ChatColor.RESET;
-    }
-
+    
     public Collection<Island> getIslands() {
         return Collections.unmodifiableCollection(islandsByLocation.values());
     }
 
-    public Set<UUID> getMembers(UUID playerUUID) {
-        Island island = islandsByUUID.get(playerUUID);
+    /**
+     * @param world - world to check
+     * @param uuid - uuid of player to check
+     * @return set of UUID's of island members. If there is no island, this set will be empty
+     */
+    public Set<UUID> getMembers(World world, UUID uuid) {
+        islandsByUUID.putIfAbsent(world, new HashMap<>());
+        Island island = islandsByUUID.get(world).get(uuid);
         if (island != null) {
             return island.getMemberSet();
         }
         return new HashSet<>(0);
     }
 
-    public UUID getTeamLeader(UUID playerUUID) {
-        if (islandsByUUID.containsKey(playerUUID)) {
-            return islandsByUUID.get(playerUUID).getOwner();
+    /**
+     * @param world - the world to check
+     * @param uuid - player's uuid
+     * @return team leader's UUID, the player UUID if they are not in a team, or null if there is no island
+     */
+    public UUID getTeamLeader(World world, UUID uuid) {
+        islandsByUUID.putIfAbsent(world, new HashMap<>());
+        Island island = islandsByUUID.get(world).get(uuid);
+        if (island != null) {
+            return island.getOwner();
         }
         return null;
     }
 
     /**
-     * @param playerUUID - the player's UUID
+     * @param world - the world to check
+     * @param uuid - the player
      * @return true if player has island and owns it
      */
-    public boolean hasIsland(UUID playerUUID) {
-        return (islandsByUUID.containsKey(playerUUID) && islandsByUUID.get(playerUUID).getOwner() != null 
-                && (islandsByUUID.get(playerUUID).getOwner().equals(playerUUID))) ? true : false;
+    public boolean hasIsland(World world, UUID uuid) {
+        islandsByUUID.putIfAbsent(world, new HashMap<>());
+        Island island = islandsByUUID.get(world).get(uuid);
+        if (island != null) {
+            return island.getOwner().equals(uuid);
+        }
+        return false;
     }
 
     /**
@@ -247,34 +182,20 @@ public class IslandCache {
      * The island is removed from the islandsByUUID map, but kept in the location map.
      * @param playerUUID - player's UUID
      */
-    public void removePlayer(UUID playerUUID) {
-        Island island = islandsByUUID.get(playerUUID);
+    public void removePlayer(World world, UUID uuid) {
+        islandsByUUID.putIfAbsent(world, new HashMap<>());
+        Island island = islandsByUUID.get(world).get(uuid);
         if (island != null) {
-            if (island.getOwner() != null && island.getOwner().equals(playerUUID)) {
+            if (island.getOwner() != null && island.getOwner().equals(uuid)) {
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);
             } else {
                 // Remove player from the island membership
-                island.removeMember(playerUUID);
+                island.removeMember(uuid);
             }
         }
-        islandsByUUID.remove(playerUUID);
-    }
-
-    /**
-     * Sets the island name
-     * @param owner - owner of island
-     * @param name - new island name
-     * @return true if successfull, false if no island for owner
-     */
-    public boolean setIslandName(UUID owner, String name) {
-        if (islandsByUUID.containsKey(owner)) {
-            Island island = islandsByUUID.get(owner);
-            island.setName(name);
-            return true;
-        }
-        return false;
+        islandsByUUID.get(world).remove(uuid);
     }
 
     /**
@@ -292,7 +213,8 @@ public class IslandCache {
      */
     public void setOwner(Island island, UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
-        islandsByUUID.put(newOwnerUUID, island);
+        islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
+        islandsByUUID.get(island.getWorld()).put(newOwnerUUID, island);
         islandsByLocation.put(island.getCenter(), island);        
     }
     

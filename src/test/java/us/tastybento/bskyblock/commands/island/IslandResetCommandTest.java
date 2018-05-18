@@ -86,13 +86,13 @@ public class IslandResetCommandTest {
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -119,7 +119,7 @@ public class IslandResetCommandTest {
     public void testNotLeader() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertFalse(irc.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage("general.errors.not-leader");
     }
@@ -128,9 +128,9 @@ public class IslandResetCommandTest {
     public void testHasTeam() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertFalse(irc.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.reset.must-remove-members");
     }
@@ -139,11 +139,11 @@ public class IslandResetCommandTest {
     public void testNoResetsLeft() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         
         // Block based on no resets left
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(0);
@@ -156,11 +156,11 @@ public class IslandResetCommandTest {
     public void testConfirmBeforeReset() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         
@@ -172,11 +172,11 @@ public class IslandResetCommandTest {
     public void testNoConfirmationRequired() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -184,7 +184,7 @@ public class IslandResetCommandTest {
         
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
         
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
@@ -206,11 +206,11 @@ public class IslandResetCommandTest {
     public void testUnlimitedResets() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -218,7 +218,7 @@ public class IslandResetCommandTest {
         
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
         
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
@@ -243,11 +243,11 @@ public class IslandResetCommandTest {
     public void testConfirmationRequired() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -255,7 +255,7 @@ public class IslandResetCommandTest {
         
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
         
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
@@ -284,11 +284,11 @@ public class IslandResetCommandTest {
     public void testNewIslandError() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
@@ -296,7 +296,7 @@ public class IslandResetCommandTest {
         
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
         
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);

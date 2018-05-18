@@ -12,6 +12,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
@@ -29,6 +30,7 @@ import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
@@ -90,16 +92,24 @@ public class AdminUnregisterCommandTest {
         ac = mock(AdminCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
 
+        // Island World Manager
+        IslandWorld iwm = mock(IslandWorld.class);
+        World world = mock(World.class);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+
+
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team 
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
 
@@ -145,7 +155,7 @@ public class AdminUnregisterCommandTest {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.hasIsland(Mockito.any())).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         assertFalse(itl.execute(user, Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
     }
@@ -155,7 +165,7 @@ public class AdminUnregisterCommandTest {
      */
     @Test
     public void testExecuteInTeam() {
-        when(im.inTeam(Mockito.any())).thenReturn(true);
+        when(im.inTeam(Mockito.any(),Mockito.any())).thenReturn(true);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
@@ -168,12 +178,12 @@ public class AdminUnregisterCommandTest {
      */
     @Test
     public void testExecuteSuccess() {
-        when(im.inTeam(Mockito.any())).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));
         when(is.getCenter()).thenReturn(loc);
-        when(im.getIsland(Mockito.any())).thenReturn(is);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 

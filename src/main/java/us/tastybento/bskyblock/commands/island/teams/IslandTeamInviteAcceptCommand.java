@@ -39,13 +39,13 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             return false;
         }
         // Check if player is already in a team
-        if (getIslands().inTeam(playerUUID)) {
+        if (getIslands().inTeam(user.getWorld(), playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
             return false;
         }
         // Get the team leader
         UUID prospectiveTeamLeaderUUID = inviteList.get(playerUUID);
-        if (!getIslands().hasIsland(prospectiveTeamLeaderUUID)) {
+        if (!getIslands().hasIsland(user.getWorld(), prospectiveTeamLeaderUUID)) {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
             inviteList.remove(playerUUID);
             return false;
@@ -53,7 +53,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                        .getIsland(prospectiveTeamLeaderUUID))
+                        .getIsland(user.getWorld(), prospectiveTeamLeaderUUID))
                 .reason(TeamEvent.Reason.JOIN)
                 .involvedPlayer(playerUUID)
                 .build();
@@ -66,16 +66,17 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         // Put player into Spectator mode
         user.setGameMode(GameMode.SPECTATOR);
         // Get the player's island - may be null if the player has no island
-        Island island = getIslands().getIsland(playerUUID);
+        Island island = getIslands().getIsland(user.getWorld(), playerUUID);
         // Get the team's island
-        Island teamIsland = getIslands().getIsland(prospectiveTeamLeaderUUID);
+        Island teamIsland = getIslands().getIsland(user.getWorld(), prospectiveTeamLeaderUUID);
         // Clear the player's inventory
         user.getInventory().clear();
         // Move player to team's island
-        Location newHome = getIslands().getSafeHomeLocation(prospectiveTeamLeaderUUID, 1);
+        User prospectiveTeamLeader = User.getInstance(prospectiveTeamLeaderUUID);
+        Location newHome = getIslands().getSafeHomeLocation(user.getWorld(), prospectiveTeamLeader, 1);
         user.teleport(newHome);
         // Remove player as owner of the old island
-        getIslands().removePlayer(playerUUID);
+        getIslands().removePlayer(user.getWorld(), playerUUID);
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, playerUUID);
         // Set the player's home

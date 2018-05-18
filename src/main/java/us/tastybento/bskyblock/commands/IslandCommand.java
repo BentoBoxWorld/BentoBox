@@ -63,9 +63,10 @@ public class IslandCommand extends CompositeCommand {
         if (user == null) {
             return false;
         }
+        // TODO: set up different games
         if (args.isEmpty()) {
             // If this player does not have an island, create one
-            if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
+            if (!getPlugin().getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
                 return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
             } else {
                 // Otherwise, currently, just go home

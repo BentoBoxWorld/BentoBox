@@ -36,7 +36,7 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         // Player issuing the command must have an island
-        UUID teamLeaderUUID = getTeamLeader(user);
+        UUID teamLeaderUUID = getTeamLeader(user.getWorld(), user);
         if (teamLeaderUUID == null) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -44,11 +44,11 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
 
         UUID playerUUID = user.getUniqueId();
         // Fire event so add-ons can run commands, etc.
-        if (fireEvent(playerUUID)) {
+        if (fireEvent(user)) {
             // Cancelled
             return false;
         }
-        Set<UUID> teamMembers = getMembers(user);
+        Set<UUID> teamMembers = getMembers(user.getWorld(), user);
         if (teamLeaderUUID.equals(playerUUID)) {
             int maxSize = getMaxTeamSize(user);
             if (teamMembers.size() < maxSize) {
@@ -58,17 +58,17 @@ public class IslandTeamCommand extends AbstractIslandTeamCommand {
             }
         }
         // Show members of island
-        getIslands().getIsland(playerUUID).showMembers(getPlugin(), user);
+        getIslands().getIsland(user.getWorld(), playerUUID).showMembers(getPlugin(), user);
         return true;
     }
 
 
-    private boolean fireEvent(UUID playerUUID) {
+    private boolean fireEvent(User user) {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                .getIsland(playerUUID))
+                .getIsland(user.getWorld(), user.getUniqueId()))
                 .reason(TeamEvent.Reason.INFO)
-                .involvedPlayer(playerUUID)
+                .involvedPlayer(user.getUniqueId())
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
         return event.isCancelled();

@@ -91,13 +91,13 @@ public class IslandBanlistCommandTest {
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -109,7 +109,7 @@ public class IslandBanlistCommandTest {
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
     }
 
@@ -133,7 +133,7 @@ public class IslandBanlistCommandTest {
     @Test
     public void testBanlistNooneBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertTrue(iubc.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.banlist.noone");
     }
@@ -141,7 +141,7 @@ public class IslandBanlistCommandTest {
     @Test
     public void testBanlistBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Make a ban list
         String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};        
         Set<UUID> banned = new HashSet<>();

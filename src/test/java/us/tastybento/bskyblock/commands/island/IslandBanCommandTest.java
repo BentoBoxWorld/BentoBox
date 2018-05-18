@@ -95,13 +95,13 @@ public class IslandBanCommandTest {
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -113,7 +113,7 @@ public class IslandBanCommandTest {
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
     }
 
@@ -151,7 +151,7 @@ public class IslandBanCommandTest {
     @Test
     public void testNotOwner() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertFalse(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.not-leader");
     }
@@ -159,8 +159,8 @@ public class IslandBanCommandTest {
     @Test
     public void testUnknownUser() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
         assertFalse(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.unknown-player");
@@ -169,8 +169,8 @@ public class IslandBanCommandTest {
     @Test
     public void testBanSelf() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
         assertFalse(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban-yourself");
@@ -179,14 +179,14 @@ public class IslandBanCommandTest {
     @Test
     public void testBanTeamMate() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID teamMate = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(teamMate);
         Set<UUID> members = new HashSet<>();
         members.add(uuid);
         members.add(teamMate);
-        when(im.getMembers(Mockito.any())).thenReturn(members);
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         assertFalse(ibc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban-member");
     }
@@ -194,8 +194,8 @@ public class IslandBanCommandTest {
     @Test
     public void testBanAlreadyBanned() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(bannedUser);
         when(island.isBanned(Mockito.eq(bannedUser))).thenReturn(true);
@@ -206,8 +206,8 @@ public class IslandBanCommandTest {
     @Test
     public void testBanOp() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID op = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(op);
         PowerMockito.mockStatic(User.class);
@@ -222,8 +222,8 @@ public class IslandBanCommandTest {
     @Test
     public void testBanOfflineUser() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID targetUuid = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(targetUuid);        
         PowerMockito.mockStatic(User.class);
@@ -244,8 +244,8 @@ public class IslandBanCommandTest {
     @Test
     public void testBanOnlineUser() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID op = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(op);
         PowerMockito.mockStatic(User.class);
@@ -265,8 +265,8 @@ public class IslandBanCommandTest {
     @Test
     public void testCancelledBan() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID op = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(op);
         PowerMockito.mockStatic(User.class);

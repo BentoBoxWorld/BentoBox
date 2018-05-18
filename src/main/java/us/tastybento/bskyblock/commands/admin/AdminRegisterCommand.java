@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.World;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -26,6 +28,9 @@ public class AdminRegisterCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+        // TODO: fix world
+        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
@@ -37,11 +42,11 @@ public class AdminRegisterCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (getIslands().hasIsland(targetUUID)) {
+        if (getIslands().hasIsland(world, targetUUID)) {
             user.sendMessage("general.errors.player-has-island");
             return false;
         }
-        if (getIslands().inTeam(targetUUID)) {
+        if (getIslands().inTeam(world, targetUUID)) {
             user.sendMessage("commands.admin.register.cannot-register-team-player");
             return false;
         }

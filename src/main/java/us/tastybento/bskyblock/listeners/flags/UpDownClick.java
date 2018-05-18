@@ -37,7 +37,7 @@ public class UpDownClick implements PanelItem.ClickHandler {
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
         // Get the user's island
-        Island island = plugin.getIslands().getIsland(user.getUniqueId());
+        Island island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
         if (island != null && island.getOwner().equals(user.getUniqueId())) {
             RanksManager rm = plugin.getRanksManager();
             Flag flag = plugin.getFlagsManager().getFlagByID(id);

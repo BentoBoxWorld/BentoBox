@@ -112,9 +112,9 @@ public class NetherPortals implements Listener {
         }
         // If entering a portal in the end, teleport home if you have one, else do nothing
         if (e.getFrom().getWorld().equals(theEnd)) {
-            if (plugin.getIslands().hasIsland(e.getPlayer().getUniqueId())) {
+            if (plugin.getIslands().hasIsland(e.getPlayer().getWorld(), e.getPlayer().getUniqueId())) {
                 e.setCancelled(true);
-                plugin.getIslands().homeTeleport(e.getPlayer());
+                plugin.getIslands().homeTeleport(e.getPlayer().getWorld(), e.getPlayer());
             } 
             return;
         }
@@ -185,7 +185,7 @@ public class NetherPortals implements Listener {
         // If entering a portal in the nether, teleport to portal in overworld if there is one
         if (e.getFrom().getWorld().equals(nether)) {
             // If this is from the island nether, then go to the same vector, otherwise try island home location
-            Location to = plugin.getSettings().isNetherIslands() ? e.getFrom().toVector().toLocation(world) : plugin.getIslands().getIslandLocation(e.getPlayer().getUniqueId());
+            Location to = plugin.getSettings().isNetherIslands() ? e.getFrom().toVector().toLocation(world) : plugin.getIslands().getIslandLocation(e.getPlayer().getWorld(), e.getPlayer().getUniqueId());
             e.setCancelled(true);
             // Else other worlds teleport to the nether
             new SafeTeleportBuilder(plugin)

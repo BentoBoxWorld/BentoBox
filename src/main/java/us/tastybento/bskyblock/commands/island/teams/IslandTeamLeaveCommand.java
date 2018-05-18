@@ -29,21 +29,21 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }       
-        if (getIslands().hasIsland(user.getUniqueId())) {
+        if (getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("commands.island.team.leave.cannot-leave");
             return false;
         }
         if (!getSettings().isLeaveConfirmation() || leaveSet.contains(user.getUniqueId())) {
             leaveSet.remove(user.getUniqueId());
-            UUID leaderUUID = getIslands().getTeamLeader(user.getUniqueId());
+            UUID leaderUUID = getIslands().getTeamLeader(user.getWorld(), user.getUniqueId());
             if (leaderUUID != null) {
                 User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", "[player]", user.getName());
             }
-            getIslands().removePlayer(user.getUniqueId());
+            getIslands().removePlayer(user.getWorld(), user.getUniqueId());
             user.sendMessage("general.success");
             return true;
         } else {

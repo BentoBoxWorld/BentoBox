@@ -96,9 +96,9 @@ public class FlyingMobEventsTest {
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         when(plugin.getPlayers()).thenReturn(pm);

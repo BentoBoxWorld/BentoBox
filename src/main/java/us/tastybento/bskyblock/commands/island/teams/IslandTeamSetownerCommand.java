@@ -30,8 +30,8 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
-        boolean inTeam = getPlugin().getIslands().inTeam(playerUUID);
-        UUID teamLeaderUUID = getTeamLeader(user);
+        boolean inTeam = getPlugin().getIslands().inTeam(user.getWorld(), playerUUID);
+        UUID teamLeaderUUID = getTeamLeader(user.getWorld(), user);
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
             return false;
@@ -46,7 +46,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().inTeam(playerUUID)) {
+        if (!getIslands().inTeam(user.getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
@@ -54,14 +54,14 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return false;
         }
-        if (!getPlugin().getIslands().getMembers(playerUUID).contains(targetUUID)) {
+        if (!getPlugin().getIslands().getMembers(user.getWorld(), playerUUID).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                        .getIsland(playerUUID))
+                        .getIsland(user.getWorld(), playerUUID))
                 .reason(TeamEvent.Reason.MAKELEADER)
                 .involvedPlayer(targetUUID)
                 .build();
@@ -69,7 +69,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         if (event.isCancelled()) {
             return false;
         }
-        getIslands().makeLeader(user, targetUUID);
+        getIslands().makeLeader(user.getWorld(), user, targetUUID);
         getIslands().save(true);
         return true;
     }
@@ -79,7 +79,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        for (UUID member : getPlugin().getIslands().getMembers(user.getUniqueId())) {
+        for (UUID member : getPlugin().getIslands().getMembers(user.getWorld(), user.getUniqueId())) {
             options.add(getPlugin().getServer().getOfflinePlayer(member).getName());
         }
         return Optional.of(Util.tabLimit(options, lastArg));

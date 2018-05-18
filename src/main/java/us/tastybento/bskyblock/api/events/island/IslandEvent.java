@@ -2,9 +2,9 @@ package us.tastybento.bskyblock.api.events.island;
 
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -151,47 +151,47 @@ public class IslandEvent {
             switch (reason) {
             case CREATE:
                 IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(create);
+                Bukkit.getServer().getPluginManager().callEvent(create);
                 return create;
             case CREATED:
                 IslandCreatedEvent created = new IslandCreatedEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(created);
+                Bukkit.getServer().getPluginManager().callEvent(created);
                 return created;
             case DELETE:
                 IslandDeleteEvent delete = new IslandDeleteEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(delete);
+                Bukkit.getServer().getPluginManager().callEvent(delete);
                 return delete;
             case DELETED:
                 IslandDeletedEvent deleted = new IslandDeletedEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(deleted);
+                Bukkit.getServer().getPluginManager().callEvent(deleted);
                 return deleted;
             case ENTER:
                 IslandEnterEvent enter = new IslandEnterEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(enter);
+                Bukkit.getServer().getPluginManager().callEvent(enter);
                 return enter;
             case EXIT:
                 IslandExitEvent exit = new IslandExitEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(exit);
+                Bukkit.getServer().getPluginManager().callEvent(exit);
                 return exit;
             case LOCK:
                 IslandLockEvent lock = new IslandLockEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(lock);
+                Bukkit.getServer().getPluginManager().callEvent(lock);
                 return lock;
             case RESET:
                 IslandResetEvent reset = new IslandResetEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(reset);
+                Bukkit.getServer().getPluginManager().callEvent(reset);
                 return reset;
             case RESETTED:
                 IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(resetted);
+                Bukkit.getServer().getPluginManager().callEvent(resetted);
                 return resetted;
             case UNLOCK:
                 IslandUnlockEvent unlock = new IslandUnlockEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(unlock);
+                Bukkit.getServer().getPluginManager().callEvent(unlock);
                 return unlock;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
-                BSkyBlock.getInstance().getServer().getPluginManager().callEvent(general);
+                Bukkit.getServer().getPluginManager().callEvent(general);
                 return general;
             }
 

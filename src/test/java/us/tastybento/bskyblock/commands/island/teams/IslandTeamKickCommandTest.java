@@ -93,14 +93,14 @@ public class IslandTeamKickCommandTest {
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team 
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         
         when(plugin.getPlayers()).thenReturn(pm);
 
@@ -120,7 +120,7 @@ public class IslandTeamKickCommandTest {
      */
     @Test
     public void testExecuteNoTeam() {
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
@@ -131,7 +131,7 @@ public class IslandTeamKickCommandTest {
      */
     @Test
     public void testExecuteNotTeamLeader() {
-        when(im.getTeamLeader(Mockito.any())).thenReturn(notUUID);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
@@ -180,7 +180,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(new HashSet<>());
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
         assertFalse(itl.execute(user, Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
@@ -197,11 +197,11 @@ public class IslandTeamKickCommandTest {
         
         Set<UUID> members = new HashSet<>();
         members.add(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(members);
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(im).removePlayer(notUUID);
+        Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
     
@@ -217,7 +217,7 @@ public class IslandTeamKickCommandTest {
         
         Set<UUID> members = new HashSet<>();
         members.add(notUUID);
-        when(im.getMembers(Mockito.any())).thenReturn(members);
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, Arrays.asList(name)));

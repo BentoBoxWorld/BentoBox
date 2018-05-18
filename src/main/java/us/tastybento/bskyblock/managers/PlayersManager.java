@@ -10,6 +10,7 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
@@ -154,6 +155,17 @@ public class PlayersManager {
 
     /**
      * Sets the home location for the player
+     * @param user - the player
+     * @param location - the location
+     * @param number - a number - 1 is default. Can be any number.
+     */
+    public void setHomeLocation(User user, Location location, int number) {
+        addPlayer(user.getUniqueId());
+        playerCache.get(user.getUniqueId()).setHomeLocation(location,number);
+    }
+    
+    /**
+     * Sets the home location for the player
      * @param playerUUID - the player's UUID
      * @param location - the location
      * @param number - a number - 1 is default. Can be any number.
@@ -175,23 +187,38 @@ public class PlayersManager {
 
     /**
      * Clears any home locations for player
+     * @param world 
      * @param playerUUID - the player's UUID
      */
-    public void clearHomeLocations(UUID playerUUID) {
+    public void clearHomeLocations(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        playerCache.get(playerUUID).clearHomeLocations();
+        playerCache.get(playerUUID).clearHomeLocations(world);
     }
 
     /**
      * Returns the home location, or null if none
+     * @param world 
+     *
+     * @param user - the player
+     * @param number - a number
+     * @return Home location or null if none
+     */
+    public Location getHomeLocation(World world, User user, int number) {
+        addPlayer(user.getUniqueId());
+        return playerCache.get(user.getUniqueId()).getHomeLocation(world, number);
+    }
+    
+    /**
+     * Returns the home location, or null if none
+     * @param world 
      *
      * @param playerUUID - the player's UUID
      * @param number - a number
      * @return Home location or null if none
      */
-    public Location getHomeLocation(UUID playerUUID, int number) {
+    public Location getHomeLocation(World world, UUID playerUUID, int number) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocation(number);
+        return playerCache.get(playerUUID).getHomeLocation(world, number);
     }
 
     /**
@@ -199,9 +226,9 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      * @return Home location or null if none
      */
-    public Location getHomeLocation(UUID playerUUID) {
+    public Location getHomeLocation(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocation(1);
+        return playerCache.get(playerUUID).getHomeLocation(world, 1);
     }
 
     /**
@@ -209,9 +236,9 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      * @return List of home locations
      */
-    public Map<Integer, Location> getHomeLocations(UUID playerUUID) {
+    public Map<Location, Integer> getHomeLocations(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocations();
+        return playerCache.get(playerUUID).getHomeLocations(world);
     }
 
     /**

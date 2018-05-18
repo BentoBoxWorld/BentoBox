@@ -34,11 +34,11 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getIslands().hasIsland(user.getUniqueId())) {
+        if (!getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        UUID teamLeaderUUID = getTeamLeader(user);
+        UUID teamLeaderUUID = getTeamLeader(user.getWorld(), user);
         if (!(teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
             return false;
@@ -72,13 +72,13 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             }
             // Check if this player can be invited to this island, or
             // whether they are still on cooldown
-            long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(playerUUID));
+            long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(user.getWorld(), playerUUID));
             if (time > 0 && !user.isOp()) {
                 user.sendMessage("commands.island.team.invite.cooldown", "[time]", String.valueOf(time));
                 return false;
             }
             // Player cannot invite someone already on a team
-            if (getIslands().inTeam(invitedPlayerUUID)) {
+            if (getIslands().inTeam(user.getWorld(), invitedPlayerUUID)) {
                 user.sendMessage("commands.island.team.invite.already-on-team");
                 return false;
             }
@@ -87,7 +87,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
     }
 
     private boolean invite(User user, User invitedPlayer) {
-        Set<UUID> teamMembers = getMembers(user);
+        Set<UUID> teamMembers = getMembers(user.getWorld(), user);
         // Check if player has space on their team
         int maxSize = getMaxTeamSize(user);
         if (teamMembers.size() < maxSize) {
@@ -99,7 +99,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             }
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
-                    .island(getIslands().getIsland(user.getUniqueId()))
+                    .island(getIslands().getIsland(user.getWorld(), user.getUniqueId()))
                     .reason(TeamEvent.Reason.INVITE)
                     .involvedPlayer(invitedPlayer.getUniqueId())
                     .build();
@@ -114,7 +114,7 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
             // Send message to online player
             invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
             invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
-            if (getIslands().hasIsland(invitedPlayer.getUniqueId())) {
+            if (getIslands().hasIsland(user.getWorld(), invitedPlayer.getUniqueId())) {
                 invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
             }
             return true;

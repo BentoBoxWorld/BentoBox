@@ -11,7 +11,6 @@ import static org.mockito.Mockito.when;
 
 import java.util.UUID;
 
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.junit.Before;
@@ -27,7 +26,6 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.IslandsManager;
-import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -61,6 +59,7 @@ public class IslandCacheTest {
 
 
         island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
         location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
@@ -80,52 +79,52 @@ public class IslandCacheTest {
 
     @Test
     public void testIslandCache() {
-        assertNotNull(new IslandCache(plugin));
+        assertNotNull(new IslandCache());
     }
 
     @Test
     public void testAddIsland() {
-        IslandCache ic = new IslandCache(plugin);
+        IslandCache ic = new IslandCache();
         assertTrue(ic.addIsland(island));
         // Check if they are added
-        assertEquals(island, ic.get(owner)); 
+        assertEquals(island, ic.get(world, owner)); 
         assertEquals(island, ic.get(location));
     }
 
     @Test
     public void testAddPlayer() {
-        IslandCache ic = new IslandCache(plugin);
+        IslandCache ic = new IslandCache();
         UUID playerUUID = UUID.randomUUID();
         ic.addPlayer(playerUUID, island);
         // Check if they are added
-        assertEquals(island, ic.get(playerUUID));
-        assertNotSame(island, ic.get(UUID.randomUUID()));
+        assertEquals(island, ic.get(world, playerUUID));
+        assertNotSame(island, ic.get(world, UUID.randomUUID()));
 
     }
 
     @Test
     public void testClear() {
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(owner)); 
+        assertEquals(island, ic.get(world, owner)); 
         assertEquals(island, ic.get(location));
         ic.clear();
-        assertNull(ic.get(owner)); 
+        assertNull(ic.get(world, owner)); 
         assertNull(ic.get(location));
     }
 
     @Test
     public void testDeleteIslandFromCache() {
 
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(owner)); 
+        assertEquals(island, ic.get(world, owner)); 
         assertEquals(island, ic.get(location));
         boolean result = ic.deleteIslandFromCache(island);
         assertTrue(result);
-        assertNull(ic.get(owner)); 
+        assertNull(ic.get(world, owner)); 
         assertNull(ic.get(location));
 
         // Test removing an island that is not in the cache
@@ -152,7 +151,7 @@ public class IslandCacheTest {
 
     @Test
     public void testGetLocation() {
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
         // Check if they are added
         assertEquals(island, ic.get(location));
@@ -161,20 +160,10 @@ public class IslandCacheTest {
 
     @Test
     public void testGetUUID() {
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(owner)); 
-    }
-
-    @Test
-    public void testGetIslandAtIntInt() {
-        IslandCache ic = new IslandCache(plugin);        
-        ic.addIsland(island);
-        when(island.inIslandSpace(Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(true);
-        // Check if they are added
-        assertEquals(island, ic.getIslandAt(0,0));
-        assertNull(ic.getIslandAt(-2000,-2000));
+        assertEquals(island, ic.get(world, owner)); 
     }
 
     @Test
@@ -184,7 +173,7 @@ public class IslandCacheTest {
         // Set plugin
         Util.setPlugin(plugin);
         // New cache
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
         // Check islands is in world
         assertTrue(Util.inWorld(island.getCenter()));
@@ -204,41 +193,6 @@ public class IslandCacheTest {
         assertNull(ic.getIslandAt(location2));
     }
 
-    @Test
-    public void testGetIslandName() {
-        PlayersManager pm = mock(PlayersManager.class);
-        when(plugin.getPlayers()).thenReturn(pm);
-
-        // New cache
-        IslandCache ic = new IslandCache(plugin);        
-        ic.addIsland(island);
-        // Test with empty name
-        when(island.getName()).thenReturn("");
-        // Random player
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
-        assertEquals("tastybento" + ChatColor.RESET, ic.getIslandName(UUID.randomUUID()));
-        // Island owner
-        when(pm.getName(owner)).thenReturn("ownersname");
-        assertEquals("ownersname" + ChatColor.RESET, ic.getIslandName(island.getOwner()));
-
-        // Test with null name
-        when(island.getName()).thenReturn(null);
-        // Random player
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
-        assertEquals("tastybento" + ChatColor.RESET, ic.getIslandName(UUID.randomUUID()));
-        // Island owner
-        when(pm.getName(owner)).thenReturn("ownersname");
-        assertEquals("ownersname" + ChatColor.RESET, ic.getIslandName(island.getOwner()));
-
-        // Test with island name set
-        when(island.getName()).thenReturn("islandnameset");
-        // Random player
-        when(pm.getName(Mockito.any())).thenReturn("tastybento");
-        assertEquals("tastybento" + ChatColor.RESET, ic.getIslandName(UUID.randomUUID()));
-        // Island owner
-        when(pm.getName(owner)).thenReturn("ownersname");
-        assertEquals("islandnameset" + ChatColor.RESET, ic.getIslandName(island.getOwner()));
-    }
     /*
     @Test
     public void testGetIslands() {
@@ -246,26 +200,26 @@ public class IslandCacheTest {
     }
      */
     @Test
-    public void testGetMembers() {
+    public void testgetMembers() {
         // New cache
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
 
-        assertTrue(ic.getMembers(null).isEmpty());
-        assertTrue(ic.getMembers(UUID.randomUUID()).isEmpty());
-        assertFalse(ic.getMembers(island.getOwner()).isEmpty());
-        assertEquals(3, ic.getMembers(island.getOwner()).size());
+        assertTrue(ic.getMembers(world, null).isEmpty());
+        assertTrue(ic.getMembers(world, UUID.randomUUID()).isEmpty());
+        assertFalse(ic.getMembers(world, island.getOwner()).isEmpty());
+        assertEquals(3, ic.getMembers(world, island.getOwner()).size());
 
     }
     @Test
     public void testGetTeamLeader() {
         // New cache
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
 
-        assertEquals(owner, ic.getTeamLeader(owner));
-        assertNull(ic.getTeamLeader(null));
-        assertNull(ic.getTeamLeader(UUID.randomUUID()));
+        assertEquals(owner, ic.getTeamLeader(world, owner));
+        assertNull(ic.getTeamLeader(world, null));
+        assertNull(ic.getTeamLeader(world, UUID.randomUUID()));
 
 
     }
@@ -273,43 +227,33 @@ public class IslandCacheTest {
     @Test
     public void testHasIsland() {
         // New cache
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
 
-        assertTrue(ic.hasIsland(owner));
-        assertFalse(ic.hasIsland(UUID.randomUUID()));
-        assertFalse(ic.hasIsland(null));
+        assertTrue(ic.hasIsland(world, owner));
+        assertFalse(ic.hasIsland(world, UUID.randomUUID()));
+        assertFalse(ic.hasIsland(world, null));
     }
 
     @Test
     public void testRemovePlayer() {
         // New cache
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
 
-        assertTrue(ic.hasIsland(owner));
-        ic.removePlayer(null);
-        assertTrue(ic.hasIsland(owner));
-        ic.removePlayer(UUID.randomUUID());
-        assertTrue(ic.hasIsland(owner));
-        ic.removePlayer(owner);
-        assertFalse(ic.hasIsland(owner));
-    }
-
-    @Test
-    public void testSetIslandName() {
-        // New cache
-        IslandCache ic = new IslandCache(plugin);        
-        ic.addIsland(island);
-        assertTrue(ic.setIslandName(owner, "test tes test"));
-        assertFalse(ic.setIslandName(UUID.randomUUID(), "sadfas"));
-        assertFalse(ic.setIslandName(null, "sadfas"));
+        assertTrue(ic.hasIsland(world, owner));
+        ic.removePlayer(world, null);
+        assertTrue(ic.hasIsland(world, owner));
+        ic.removePlayer(world, UUID.randomUUID());
+        assertTrue(ic.hasIsland(world, owner));
+        ic.removePlayer(world, owner);
+        assertFalse(ic.hasIsland(world, owner));
     }
 
     @Test
     public void testSize() {
         // New cache
-        IslandCache ic = new IslandCache(plugin);        
+        IslandCache ic = new IslandCache();        
         ic.addIsland(island);
         assertEquals(1, ic.size());
     }

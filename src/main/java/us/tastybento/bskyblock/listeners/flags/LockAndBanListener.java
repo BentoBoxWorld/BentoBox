@@ -147,8 +147,8 @@ public class LockAndBanListener implements Listener {
     private void eject(Player player) {
         player.setGameMode(GameMode.SPECTATOR);
         // Teleport player to their home
-        if (im.hasIsland(player.getUniqueId())) {
-            im.homeTeleport(player);
+        if (im.hasIsland(player.getWorld(), player.getUniqueId())) {
+            im.homeTeleport(player.getWorld(), player);
         } // else, TODO: teleport somewhere else?   
     }
 

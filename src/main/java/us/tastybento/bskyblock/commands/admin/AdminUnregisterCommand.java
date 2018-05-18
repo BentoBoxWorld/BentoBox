@@ -3,6 +3,8 @@ package us.tastybento.bskyblock.commands.admin;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.World;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -23,6 +25,9 @@ public class AdminUnregisterCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
+        // TODO: fix world
+        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
@@ -34,17 +39,17 @@ public class AdminUnregisterCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().hasIsland(targetUUID)) {
+        if (!getIslands().hasIsland(world, targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        if (getIslands().inTeam(targetUUID)) {
+        if (getIslands().inTeam(world, targetUUID)) {
             user.sendMessage("commands.admin.unregister.cannot-unregister-team-player");
             return false;
         }
         // Unregister island
-        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(getIslands().getIsland(targetUUID).getCenter().toVector()));
-        getIslands().removePlayer(targetUUID);
+        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(getIslands().getIsland(world, targetUUID).getCenter().toVector()));
+        getIslands().removePlayer(world, targetUUID);
         user.sendMessage("general.success");
         return true;
     }

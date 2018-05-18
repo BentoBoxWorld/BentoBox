@@ -43,15 +43,15 @@ public class IslandResetCommand extends CompositeCommand {
             user.sendMessage("general.errors.you-must-wait", SECONDS_PLACEHOLDER, String.valueOf(onRestartWaitTime(user)));
             return false;
         }
-        if (!getIslands().hasIsland(user.getUniqueId())) {
+        if (!getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(user.getUniqueId())) {
+        if (!getIslands().isOwner(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
-        if (getIslands().inTeam(user.getUniqueId())) {
+        if (getIslands().inTeam(user.getWorld(), user.getUniqueId())) {
             user.sendMessage("commands.island.reset.must-remove-members");
             return false;
         }
@@ -105,13 +105,13 @@ public class IslandResetCommand extends CompositeCommand {
         Player player = user.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
         // Get the player's old island
-        Island oldIsland = getIslands().getIsland(player.getUniqueId());
+        Island oldIsland = getIslands().getIsland(user.getWorld(), player.getUniqueId());
         // Remove them from this island (it still exists and will be deleted later)
-        getIslands().removePlayer(player.getUniqueId());
+        getIslands().removePlayer(user.getWorld(), player.getUniqueId());
         // Create new island and then delete the old one
         try {
             NewIsland.builder()
-            .player(player)
+            .player(user)
             .reason(Reason.RESET)
             .oldIsland(oldIsland)
             .build();

@@ -26,11 +26,11 @@ public class IslandSethomeCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Check island
-        if (getPlugin().getIslands().getIsland(user.getUniqueId()) == null) {
+        if (getPlugin().getIslands().getIsland(user.getWorld(), user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getPlugin().getIslands().userIsOnIsland(user)) {
+        if (!getPlugin().getIslands().userIsOnIsland(user.getWorld(), user)) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return false;
         }
@@ -50,7 +50,7 @@ public class IslandSethomeCommand extends CompositeCommand {
                         user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
                         return false;
                     } else {
-                        getPlugin().getPlayers().setHomeLocation(playerUUID, user.getLocation(), number);
+                        getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
                         user.sendMessage("commands.island.sethome.home-set");
                     }
                 } catch (Exception e) {

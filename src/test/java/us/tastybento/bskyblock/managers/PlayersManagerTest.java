@@ -76,8 +76,11 @@ public class PlayersManagerTest {
         // island world mgr
         iwm = mock(IslandWorld.class);
         world = mock(World.class);
+        when(world.getName()).thenReturn("world");
         nether = mock(World.class);
+        when(nether.getName()).thenReturn("world_nether");
         end = mock(World.class);
+        when(end.getName()).thenReturn("world_the_end");
         when(iwm.getEndWorld()).thenReturn(end);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(nether);
@@ -110,9 +113,9 @@ public class PlayersManagerTest {
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any())).thenReturn(true);
-        when(im.isOwner(Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any())).thenReturn(uuid);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
 
@@ -270,10 +273,10 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.managers.PlayersManager#setHomeLocation(java.util.UUID, org.bukkit.Location, int)}.
+     * Test method for {@link us.tastybento.bskyblock.managers.PlayersManager#setHomeLocation(User, org.bukkit.Location, int)}.
      */
     @Test
-    public void testSetAndGetHomeLocationUUIDLocationInt() {
+    public void testSetAndGetHomeLocationUserLocationInt() {
         PlayersManager pm = new PlayersManager(plugin);
         Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
@@ -282,15 +285,19 @@ public class PlayersManagerTest {
         when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         Location l = mock(Location.class);
+        when(l.getWorld()).thenReturn(world);
         Location l2 = mock(Location.class);
+        when(l2.getWorld()).thenReturn(nether);
         Location l3 = mock(Location.class);
+        when(l3.getWorld()).thenReturn(end);
+
         pm.setHomeLocation(uuid, l, 1);
         pm.setHomeLocation(uuid, l2, 0);
         pm.setHomeLocation(uuid, l3, 10);
-        assertEquals(l, pm.getHomeLocation(uuid));
-        assertEquals(l2, pm.getHomeLocation(uuid, 0));
-        assertEquals(l3, pm.getHomeLocation(uuid, 10));
-        assertNotEquals(l, pm.getHomeLocation(uuid, 20));
+        assertEquals(l, pm.getHomeLocation(world, uuid));
+        assertEquals(l2, pm.getHomeLocation(world, uuid, 0));
+        assertEquals(l3, pm.getHomeLocation(world, uuid, 10));
+        assertNotEquals(l, pm.getHomeLocation(world, uuid, 20));
     }
 
     /**
@@ -306,14 +313,17 @@ public class PlayersManagerTest {
         when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         Location l = mock(Location.class);
+        when(l.getWorld()).thenReturn(world);
         Location l2 = mock(Location.class);
+        when(l2.getWorld()).thenReturn(nether);
         Location l3 = mock(Location.class);
+        when(l3.getWorld()).thenReturn(end);
         pm.setHomeLocation(uuid, l, 1);
         pm.setHomeLocation(uuid, l2, 0);
         pm.setHomeLocation(uuid, l3, 10);
-        assertFalse(pm.getHomeLocations(uuid).isEmpty());
-        pm.clearHomeLocations(uuid);
-        assertTrue(pm.getHomeLocations(uuid).isEmpty());
+        assertFalse(pm.getHomeLocations(world, uuid).isEmpty());
+        pm.clearHomeLocations(world, uuid);
+        assertTrue(pm.getHomeLocations(world, uuid).isEmpty());
     }
 
     /**

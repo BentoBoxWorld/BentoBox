@@ -5,9 +5,11 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.google.gson.annotations.Expose;
@@ -21,7 +23,7 @@ import us.tastybento.bskyblock.BSkyBlock;
  */
 public class Players implements DataObject {
     @Expose
-    private Map<Integer, Location> homeLocations = new HashMap<>();
+    private Map<Location, Integer> homeLocations = new HashMap<>();
     @Expose
     private String uniqueId;
     @Expose
@@ -57,28 +59,48 @@ public class Players implements DataObject {
 
     /**
      * Gets the default home location.
-     * @return Location
+     * @param world - world to check
+     * @return Location - home location in world
      */
-    public Location getHomeLocation() {
-        return getHomeLocation(1); // Default
+    public Location getHomeLocation(World world) {
+        return getHomeLocation(world, 1); // Default
     }
 
     /**
-     * Gets the home location by number.
+     * Gets the home location by number for world
+     * @param world - includes world and any related nether or end worlds
      * @param number - a number
      * @return Location of this home or null if not available
      */
-    public Location getHomeLocation(int number) {
-        return homeLocations.get(number);
+    public Location getHomeLocation(World world, int number) {
+        return homeLocations.entrySet().stream()
+                .filter(en -> sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
+                .map(en -> en.getKey())
+                .findFirst()
+                .orElse(null);
     }
 
     /**
+     * @param world 
      * @return List of home locations
      */
-    public Map<Integer,Location> getHomeLocations() {
-        return homeLocations;
+    public Map<Location, Integer> getHomeLocations(World world) {
+        return homeLocations.entrySet().stream().filter(e -> sameWorld(e.getKey().getWorld(),world))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-
+    
+    /**
+     * Checks is world = world2 irrespective of the world type
+     * @param world
+     * @param world2
+     * @return true if the same
+     */
+    private boolean sameWorld(World world, World world2) {
+        String worldName = world.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
+        String world2Name = world2.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
+        return worldName.equalsIgnoreCase(world2Name);
+    }
+    
     /**
      * @return the kickedList
      */
@@ -96,7 +118,7 @@ public class Players implements DataObject {
     /**
      * @param homeLocations the homeLocations to set
      */
-    public void setHomeLocations(Map<Integer, Location> homeLocations) {
+    public void setHomeLocations(Map<Location, Integer> homeLocations) {
         this.homeLocations = homeLocations;
     }
 
@@ -149,12 +171,8 @@ public class Players implements DataObject {
      * @param location - the location
      * @param number - a number
      */
-    public void setHomeLocation(final Location location, int number) {
-        if (location == null) {
-            homeLocations.clear();
-        } else {
-            homeLocations.put(number, location);
-        }
+    public void setHomeLocation(Location location, int number) {
+        homeLocations.put(location, number);
     }
 
     /**
@@ -166,10 +184,11 @@ public class Players implements DataObject {
     }
 
     /**
-     * Clears all home Locations
+     * Clears all home Locations in world
+     * @param world 
      */
-    public void clearHomeLocations() {
-        homeLocations.clear();
+    public void clearHomeLocations(World world) {
+        homeLocations.keySet().removeIf(l -> sameWorld(l.getWorld(), world));
     }
 
     /**

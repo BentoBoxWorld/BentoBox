@@ -145,7 +145,8 @@ public class FlagTest {
         when(user.getTranslation(Mockito.anyString())).thenReturn("translation");
         when(user.getTranslation(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn("long translation");
         
-        when(im.getIsland(Mockito.any())).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
         Optional<Island> oL = Optional.ofNullable(island);
         when(im.getIslandAt(Mockito.any(Location.class))).thenReturn(oL);
         when(plugin.getIslands()).thenReturn(im);
