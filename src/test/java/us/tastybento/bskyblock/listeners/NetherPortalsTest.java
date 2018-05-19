@@ -6,6 +6,7 @@ package us.tastybento.bskyblock.listeners;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -88,6 +89,7 @@ public class NetherPortalsTest {
         when(iwm.getEndWorld()).thenReturn(end);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(nether);
+        when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         
         // Settings
@@ -136,10 +138,6 @@ public class NetherPortalsTest {
         
         // Normally in world
         Util.setPlugin(plugin);
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
-        when(Util.inWorld(Mockito.any(Block.class))).thenReturn(true);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
     }
 
     /**
@@ -287,7 +285,7 @@ public class NetherPortalsTest {
         
         // Right cause, end exists, wrong world
         when(loc.getWorld()).thenReturn(mock(World.class)); 
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(false);
         PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
         when(s.isEndGenerate()).thenReturn(true);
         np.onEndIslandPortal(e);
@@ -330,12 +328,12 @@ public class NetherPortalsTest {
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
         // Not in world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(false);
         EntityPortalEvent e = new EntityPortalEvent(ent, from, null, null);
         np.onEntityPortal(e);
         assertFalse(e.isCancelled());
         // In world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
+        when(iwm.inWorld(any())).thenReturn(true);
         e = new EntityPortalEvent(ent, from, null, null);
         np.onEntityPortal(e);
         assertTrue(e.isCancelled());
@@ -362,7 +360,7 @@ public class NetherPortalsTest {
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
         // Not in world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(false);
 
         EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
         
@@ -387,8 +385,6 @@ public class NetherPortalsTest {
         
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
-        // In world, not nether or end
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
         EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
         assertFalse(np.onExplosion(e));
     }
@@ -408,9 +404,7 @@ public class NetherPortalsTest {
         List<Block> affectedBlocks = new ArrayList<>();
         affectedBlocks.add(block);
         
-        Location from = mock(Location.class);        
-         // In world, not nether or end
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
+        Location from = mock(Location.class);
         
         // In world, in nether, nether islands
         when(from.getWorld()).thenReturn(nether);
@@ -438,9 +432,7 @@ public class NetherPortalsTest {
         List<Block> affectedBlocks = new ArrayList<>();
         affectedBlocks.add(block);
         
-        Location from = mock(Location.class);
-        // In world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);        
+        Location from = mock(Location.class);     
         // In world, in nether, nether islands
         when(from.getWorld()).thenReturn(nether);
         when(s.isNetherIslands()).thenReturn(false);        
@@ -464,8 +456,6 @@ public class NetherPortalsTest {
         affectedBlocks.add(block);
         
         Location from = mock(Location.class);        
-        // In world, not nether or end
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
               
         // In world, in nether, standard nether, null entity
         when(from.getWorld()).thenReturn(nether);
@@ -495,13 +485,6 @@ public class NetherPortalsTest {
         
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
-        // Not in world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
-
-        
-        
-        // In world, not nether or end
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);       
         // In world, in nether, standard nether, null entity
         when(from.getWorld()).thenReturn(nether);
         when(s.isNetherIslands()).thenReturn(false);
@@ -538,7 +521,7 @@ public class NetherPortalsTest {
         NetherPortals np = new NetherPortals(plugin);
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(false);
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
         assertFalse(np.onNetherPortal(e));
     }

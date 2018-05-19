@@ -14,7 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Cow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
@@ -23,6 +22,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -50,9 +50,11 @@ public class MobSpawnListenerTest {
     private static Zombie zombie;
     private static Slime slime;
     private static Cow cow;
+    private static IslandWorld iwm;
+    private static World world;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
@@ -61,7 +63,7 @@ public class MobSpawnListenerTest {
         when(plugin.getIslands()).thenReturn(im);
 
         Server server = mock(Server.class);
-        World world = mock(World.class);
+        world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -88,18 +90,6 @@ public class MobSpawnListenerTest {
         flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
-
-        // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
-        when(iwm.getIslandWorld()).thenReturn(world);
-        when(iwm.getNetherWorld()).thenReturn(world);
-        when(iwm.getEndWorld()).thenReturn(world);
-
-        MobSpawnListener listener = mock(MobSpawnListener.class);        
-        when(listener.inWorld(any(Location.class))).thenReturn(true);
-        when(listener.inWorld(any(Entity.class))).thenReturn(true);
-
         // Monsters and animals
         zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
@@ -109,10 +99,24 @@ public class MobSpawnListenerTest {
         when(cow.getLocation()).thenReturn(location);
 
     }
+    
+    @Before
+    public void setUp() {
+        // Worlds
+        iwm = mock(IslandWorld.class);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getNetherWorld()).thenReturn(world);
+        when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+
+    }
 
    
     @Test
     public void testNotInWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);

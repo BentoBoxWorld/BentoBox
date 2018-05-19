@@ -146,6 +146,7 @@ public class TestBSkyBlock {
         Mockito.when(iwm.getIslandWorld()).thenReturn(world);
         Mockito.when(iwm.getNetherWorld()).thenReturn(world);
         Mockito.when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.inWorld(any())).thenReturn(true);
 
 
         // Islands

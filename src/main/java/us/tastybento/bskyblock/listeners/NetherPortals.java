@@ -24,7 +24,6 @@ import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 public class NetherPortals implements Listener {
@@ -107,7 +106,7 @@ public class NetherPortals implements Listener {
         if (!e.getCause().equals(TeleportCause.END_PORTAL) || !plugin.getSettings().isEndGenerate()) {
             return;
         }
-        if (!Util.inWorld(e.getFrom())) {
+        if (!plugin.getIslandWorldManager().inWorld(e.getFrom())) {
             return;
         }
         // If entering a portal in the end, teleport home if you have one, else do nothing
@@ -137,7 +136,7 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityPortal(EntityPortalEvent e) {
-        if (Util.inWorld(e.getFrom())) {
+        if (plugin.getIslandWorldManager().inWorld(e.getFrom())) {
             // Disable entity portal transfer due to dupe glitching
             e.setCancelled(true);
         }
@@ -150,7 +149,7 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onExplosion(EntityExplodeEvent e) {
-        if (!Util.inWorld(e.getLocation())) {
+        if (!plugin.getIslandWorldManager().inWorld(e.getLocation())) {
             return false;
         }
         if ((e.getLocation().getWorld().equals(nether) && plugin.getSettings().isNetherIslands())
@@ -179,7 +178,7 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNetherPortal(PlayerPortalEvent e) {
-        if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !Util.inWorld(e.getFrom())) {
+        if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !plugin.getIslandWorldManager().inWorld(e.getFrom())) {
             return false;
         }
         // If entering a portal in the nether, teleport to portal in overworld if there is one

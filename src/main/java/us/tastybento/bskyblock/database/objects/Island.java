@@ -383,7 +383,7 @@ public class Island implements DataObject {
     }
 
     public boolean inIslandSpace(Location location) {
-        if (Util.inWorld(location)) {
+        if (Util.sameWorld(world, location.getWorld())) {
             return inIslandSpace(location.getBlockX(), location.getBlockZ());
         }
         return false;
@@ -441,11 +441,10 @@ public class Island implements DataObject {
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
-        if (center != null && center.getWorld() != null) {
+        if (Util.sameWorld(world, target.getWorld())) {
             return target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2)
                     && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
         }
-
         return false;
     }
 

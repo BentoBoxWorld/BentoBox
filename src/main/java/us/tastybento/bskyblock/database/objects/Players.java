@@ -15,6 +15,7 @@ import org.bukkit.entity.Player;
 import com.google.gson.annotations.Expose;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Tracks the following info on the player
@@ -74,7 +75,7 @@ public class Players implements DataObject {
      */
     public Location getHomeLocation(World world, int number) {
         return homeLocations.entrySet().stream()
-                .filter(en -> sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
+                .filter(en -> Util.sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
                 .map(en -> en.getKey())
                 .findFirst()
                 .orElse(null);
@@ -85,20 +86,8 @@ public class Players implements DataObject {
      * @return List of home locations
      */
     public Map<Location, Integer> getHomeLocations(World world) {
-        return homeLocations.entrySet().stream().filter(e -> sameWorld(e.getKey().getWorld(),world))
+        return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(),world))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
-    }
-    
-    /**
-     * Checks is world = world2 irrespective of the world type
-     * @param world
-     * @param world2
-     * @return true if the same
-     */
-    private boolean sameWorld(World world, World world2) {
-        String worldName = world.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
-        String world2Name = world2.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
-        return worldName.equalsIgnoreCase(world2Name);
     }
     
     /**
@@ -188,7 +177,7 @@ public class Players implements DataObject {
      * @param world 
      */
     public void clearHomeLocations(World world) {
-        homeLocations.keySet().removeIf(l -> sameWorld(l.getWorld(), world));
+        homeLocations.keySet().removeIf(l -> Util.sameWorld(l.getWorld(), world));
     }
 
     /**

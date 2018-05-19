@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
@@ -47,28 +48,27 @@ public class AddonsManager {
     /**
      * Loads all the addons from the addons folder
      */
-    public void enableAddons() {
+    public void loadAddons() {
+        plugin.log("Loading addons...");
         File f = new File(plugin.getDataFolder(), "addons");
-        if (f.exists()) {
-            if (f.isDirectory()) {
-                for (File file : f.listFiles()) {
-                    if (!file.isDirectory()) {
-                        try {
-                            loadAddon(file);
-                        } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
-                            plugin.logError("Could not load addon " + file.getName() + " : " + e.getMessage());
-                        }
-                    }
-                }
-            }
-        } else {
-            try {
-                f.mkdir();
-            } catch (SecurityException e) {
-                plugin.logError("Cannot create folder 'addons' (Permission ?)");
-            }
+        if (!f.exists()) {
+            f.mkdirs();
         }
+        Arrays.asList(f.listFiles()).stream().filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(t -> {
+            plugin.log("Loading " + t.getName());
+            try {
+                loadAddon(t);
+            } catch (Exception e) {
+                plugin.logError("Could not load addon " + t.getName() + " : " + e.getMessage());
+            }
+        });
+        addons.forEach(Addon::onLoad);
+    }
 
+    /**
+     * Enables all the addons
+     */
+    public void enableAddons() {
         addons.forEach(addon -> {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());

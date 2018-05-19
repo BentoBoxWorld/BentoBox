@@ -21,7 +21,6 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.util.Util;
 
 /**
  * This class manages flying mobs. If they exist the spawned island's limits they will be removed.
@@ -71,7 +70,7 @@ public class FlyingMobEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(CreatureSpawnEvent e) {
         // Only cover withers in the island world
-        if (!Util.inWorld(e.getEntity()) || !(e.getEntityType().equals(EntityType.WITHER) 
+        if (!plugin.getIslandWorldManager().inWorld(e.getEntity().getLocation()) || !(e.getEntityType().equals(EntityType.WITHER) 
                 || e.getEntityType().equals(EntityType.BLAZE) 
                 || e.getEntityType().equals(EntityType.GHAST))) {
             return;
@@ -88,7 +87,7 @@ public class FlyingMobEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onMobExplosion(EntityExplodeEvent e) {
         // Only cover in the island world
-        if (e.getEntity() == null || !Util.inWorld(e.getEntity())) {
+        if (e.getEntity() == null || !plugin.getIslandWorldManager().inWorld(e.getEntity().getLocation())) {
             return false;
         }
         if (mobSpawnInfo.containsKey(e.getEntity()) && !mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getLocation())) {
@@ -106,7 +105,7 @@ public class FlyingMobEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onWitherExplode(ExplosionPrimeEvent e) {
         // Only cover withers in the island world
-        if (!Util.inWorld(e.getEntity()) || e.getEntity() == null) {
+        if (!plugin.getIslandWorldManager().inWorld(e.getEntity().getLocation()) || e.getEntity() == null) {
             return false;
         }
         // The wither or wither skulls can both blow up
@@ -140,7 +139,7 @@ public class FlyingMobEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onWitherChangeBlocks(EntityChangeBlockEvent e) {
         // Only cover withers in the island world
-        if (e.getEntityType() != EntityType.WITHER || !Util.inWorld(e.getEntity()) ) {
+        if (e.getEntityType() != EntityType.WITHER || !plugin.getIslandWorldManager().inWorld(e.getEntity().getLocation()) ) {
             return;
         }
         if (mobSpawnInfo.containsKey(e.getEntity())) {

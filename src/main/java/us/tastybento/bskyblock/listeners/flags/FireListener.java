@@ -39,7 +39,7 @@ public class FireListener extends AbstractFlagListener {
      */
     public boolean checkFire(Cancellable e, Location l, Flag flag) {
         // Check world
-        if (!inWorld(l)) {
+        if (!getIslandWorldManager().inWorld(l)) {
             return false;
         }
         // Check if the island exists and if fire is allowed
@@ -123,7 +123,7 @@ public class FireListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public boolean onTNTDamage(EntityChangeBlockEvent e) {
         // Check world
-        if (!e.getBlock().getType().equals(Material.TNT) || !inWorld(e.getBlock().getLocation())) {
+        if (!e.getBlock().getType().equals(Material.TNT) || !getIslandWorldManager().inWorld(e.getBlock().getLocation())) {
             return false;
         }
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow

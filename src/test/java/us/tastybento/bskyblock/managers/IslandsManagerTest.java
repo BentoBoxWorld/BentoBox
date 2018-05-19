@@ -66,6 +66,7 @@ public class IslandsManagerTest {
     private Block space2;
     private Location location;
     private BlockState blockState;
+    private IslandWorld iwm;
 
     /**
      * @throws java.lang.Exception
@@ -148,6 +149,14 @@ public class IslandsManagerTest {
             }
 
         });
+        
+        // Worlds
+        iwm = mock(IslandWorld.class);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getNetherWorld()).thenReturn(world);
+        when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.inWorld(any())).thenReturn(true);
     }
 
 
@@ -482,9 +491,6 @@ public class IslandsManagerTest {
         when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         IslandsManager im = new IslandsManager(plugin);
         // In world, correct island
         Optional<Island> oi = Optional.ofNullable(is);
@@ -495,7 +501,7 @@ public class IslandsManagerTest {
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
 
         // not in world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(true);
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
         assertEquals(Optional.empty(), im.getIslandAt(location));
 
@@ -557,9 +563,6 @@ public class IslandsManagerTest {
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         // In world
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         IslandsManager im = new IslandsManager(plugin);
         Optional<Island> oi = Optional.ofNullable(is);
         // In world, correct island
@@ -654,9 +657,6 @@ public class IslandsManagerTest {
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         // In world
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.isIsland(null));
         im.createIsland(location);
@@ -770,9 +770,6 @@ public class IslandsManagerTest {
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         // In world
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         when(is.onIsland(Mockito.any())).thenReturn(true);
         
         Builder<UUID> members = new ImmutableSet.Builder<>();

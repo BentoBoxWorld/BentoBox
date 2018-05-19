@@ -8,6 +8,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,8 +19,6 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.Server;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
@@ -84,6 +83,7 @@ public class PlayersManagerTest {
         when(iwm.getEndWorld()).thenReturn(end);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(nether);
+        when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         
         // Settings
@@ -131,10 +131,6 @@ public class PlayersManagerTest {
         
         // Normally in world
         Util.setPlugin(plugin);
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
-        when(Util.inWorld(Mockito.any(Block.class))).thenReturn(true);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
               
         // Mock database
         db = mock(BSBDatabase.class);

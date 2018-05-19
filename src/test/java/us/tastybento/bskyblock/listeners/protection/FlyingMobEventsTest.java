@@ -6,6 +6,7 @@ package us.tastybento.bskyblock.listeners.protection;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +45,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -65,6 +67,7 @@ public class FlyingMobEventsTest {
     private PlayersManager pm;
     private UUID notUUID;
     private BukkitScheduler sch;
+    private IslandWorld iwm;
 
     /**
      * @throws java.lang.Exception
@@ -115,10 +118,11 @@ public class FlyingMobEventsTest {
         
         // Normally in world
         Util.setPlugin(plugin);
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
-        when(Util.inWorld(Mockito.any(Block.class))).thenReturn(true);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
+        
+        // Worlds
+        iwm = mock(IslandWorld.class);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(iwm.inWorld(any())).thenReturn(true);
     }
     
     /**
@@ -140,7 +144,7 @@ public class FlyingMobEventsTest {
         LivingEntity le = mock(LivingEntity.class);
         CreatureSpawnEvent e = new CreatureSpawnEvent(le, SpawnReason.BUILD_WITHER);
         // Not in world
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(false);
         fme.onMobSpawn(e);
         Mockito.verify(im, Mockito.never()).getIslandAt(Mockito.any(Location.class));       
     }
@@ -198,12 +202,12 @@ public class FlyingMobEventsTest {
         
         // Not in world
         Entity ent = mock(Entity.class);
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(false);
         e = new EntityExplodeEvent(ent, null, null, 0);
         assertFalse(fme.onMobExplosion(e));
         
         // Unknown entity (not in the list)
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
+        when(iwm.inWorld(any())).thenReturn(true);
         assertFalse(fme.onMobExplosion(e));
     }
     
@@ -233,8 +237,6 @@ public class FlyingMobEventsTest {
         affectedBlocks.add(block);
         // Create event
         EntityExplodeEvent e = new EntityExplodeEvent(le, mock(Location.class), affectedBlocks, 0);   
-        // In world
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
         // Nothing blocked
         assertFalse(fme.onMobExplosion(e));
         assertFalse(e.isCancelled());
@@ -267,8 +269,6 @@ public class FlyingMobEventsTest {
         affectedBlocks.add(block);
         // Create event
         EntityExplodeEvent e = new EntityExplodeEvent(le, mock(Location.class), affectedBlocks, 0);   
-        // In world
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
         // Blocked
         assertTrue(fme.onMobExplosion(e));
         assertTrue(e.isCancelled());
@@ -296,8 +296,6 @@ public class FlyingMobEventsTest {
         // Make the wither explode
         // Create event
         ExplosionPrimeEvent e = new ExplosionPrimeEvent(le, 0, false);   
-        // In world
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
         // Blocked
         assertTrue(fme.onWitherExplode(e));
         assertTrue(e.isCancelled());
@@ -328,8 +326,6 @@ public class FlyingMobEventsTest {
         
         // Create event
         ExplosionPrimeEvent e = new ExplosionPrimeEvent(skull, 0, false);   
-        // In world
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
         // Blocked
         assertTrue(fme.onWitherExplode(e));
         assertTrue(e.isCancelled());
@@ -364,8 +360,6 @@ public class FlyingMobEventsTest {
         */
         @SuppressWarnings("deprecation")
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(wither, mock(Block.class), Material.AIR, (byte) 0);
-        // In world
-        when(Util.inWorld(Mockito.any(Entity.class))).thenReturn(true);
         // Blocked
         fme.onWitherChangeBlocks(e);
         assertTrue(e.isCancelled());

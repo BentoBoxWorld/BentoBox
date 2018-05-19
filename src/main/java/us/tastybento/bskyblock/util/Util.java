@@ -12,8 +12,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
@@ -32,7 +30,7 @@ public class Util {
     private static final DecimalFormat df = new DecimalFormat("#.###");
     private static String serverVersion = null;
     private static BSkyBlock plugin = BSkyBlock.getInstance();
-    
+
     public static void setPlugin(BSkyBlock p) {
         plugin = p;
     }
@@ -143,46 +141,6 @@ public class Util {
     }
 
     /**
-     * Determines if a location is in the island world or not or
-     * in the new nether if it is activated
-     * @param loc - location
-     * @return true if in the island world
-     */
-    public static boolean inWorld(Location loc) {
-        if (loc != null) {
-            if (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())) {
-                return true;
-            }
-            if (plugin.getSettings().isNetherIslands() && loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())) {
-                return true;
-            }
-            if (plugin.getSettings().isEndIslands() && loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Determines if an entity is in the island world or not or
-     * in the new nether if it is activated
-     * @param entity
-     * @return true if in world
-     */
-    public static boolean inWorld(Entity entity) {
-        return inWorld(entity.getLocation());
-    }
-
-    /**
-     * Determines if a block is in the island world or not
-     * @param block
-     * @return true if in the island world
-     */
-    public static boolean inWorld(Block block) {
-        return inWorld(block.getLocation());
-    }
-
-    /**
      * Return a list of online players this player can see, i.e. are not invisible
      * @param user - the User - if null, all player names on the server are shown
      * @return a list of online players this player can see
@@ -255,5 +213,19 @@ public class Util {
     public static String xyz(Vector location) {
         return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
+
+
+    /**
+     * Checks is world = world2 irrespective of the world type
+     * @param world
+     * @param world2
+     * @return true if the same
+     */
+    public static boolean sameWorld(World world, World world2) {
+        String worldName = world.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
+        String world2Name = world2.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
+        return worldName.equalsIgnoreCase(world2Name);
+    }
+
 
 }

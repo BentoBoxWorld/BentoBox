@@ -7,7 +7,6 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -18,6 +17,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.IslandsManager;
 
 /**
@@ -105,36 +105,6 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Check if loc is in the island worlds.
-     * (If you are here because of an NPE in your test, then you need to do setPlugin(plugin) for your listener)
-     * @param loc - location
-     * @return true if the location is in the island worlds
-     */
-    public boolean inWorld(Location loc) {
-        return loc != null && (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())
-                || loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())
-                || loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld()));
-    }
-
-    /**
-     * Check if the entity is in the island worlds
-     * @param entity - the entity
-     * @return true if in world
-     */
-    public boolean inWorld(Entity entity) {
-        return inWorld(entity.getLocation());
-    }
-
-    /**
-     * Check if user is in the island worlds
-     * @param user - the User - a user
-     * @return true if in world
-     */
-    public boolean inWorld(User user) {
-        return inWorld(user.getLocation());
-    }
-
-    /**
      * Generic flag checker
      * @param e - event
      * @param loc - location
@@ -145,8 +115,6 @@ public abstract class AbstractFlagListener implements Listener {
         return checkIsland(e, loc, breakBlocks, false);
     }
 
-
-
     /**
      * Check if flag is allowed
      * @param e - event
@@ -156,7 +124,7 @@ public abstract class AbstractFlagListener implements Listener {
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If this is not an Island World, skip
-        if (!inWorld(loc)) {
+        if (!plugin.getIslandWorldManager().inWorld(loc)) {
             return true;
         }
 
@@ -220,5 +188,13 @@ public abstract class AbstractFlagListener implements Listener {
      */
     protected IslandsManager getIslands() {
         return plugin.getIslands();
+    }
+    
+    /**
+     * Get the island world manager
+     * @return Island World Manager
+     */
+    protected IslandWorld getIslandWorldManager() {
+        return plugin.getIslandWorldManager();
     }
 }

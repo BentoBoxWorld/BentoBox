@@ -6,6 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,6 +52,7 @@ public class IslandCacheTest {
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.inWorld(any())).thenReturn(true);
 
         // Mock up IslandsManager
         IslandsManager im = mock(IslandsManager.class);
@@ -175,8 +177,7 @@ public class IslandCacheTest {
         // New cache
         IslandCache ic = new IslandCache();        
         ic.addIsland(island);
-        // Check islands is in world
-        assertTrue(Util.inWorld(island.getCenter()));
+
         // Check exact match for location
         assertEquals(island, ic.getIslandAt(island.getCenter()));
 

@@ -17,7 +17,6 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.util.Util;
 
 public class IslandCache {
     private BiMap<Location, Island> islandsByLocation;
@@ -122,10 +121,6 @@ public class IslandCache {
      */
     public Island getIslandAt(Location location) {
         if (location == null) {
-            return null;
-        }
-        // World check
-        if (!Util.inWorld(location)) {
             return null;
         }
         return grids.getOrDefault(location.getWorld(), defaultGrid).getIslandAt(location.getBlockX(), location.getBlockZ());

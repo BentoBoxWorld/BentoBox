@@ -32,7 +32,7 @@ public class MobSpawnListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNaturalMobSpawn(CreatureSpawnEvent e) {
         // If not in the right world, return
-        if (!inWorld(e.getEntity())) {
+        if (!getIslandWorldManager().inWorld(e.getEntity().getLocation())) {
             return false;
         }
         // Deal with natural spawning

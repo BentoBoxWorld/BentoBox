@@ -1,5 +1,8 @@
 package us.tastybento.bskyblock.generators;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,12 +23,14 @@ public class IslandWorld {
     private World islandWorld;
     private World netherWorld;
     private World endWorld;
+    private Set<World> worlds;
 
     /**
      * Generates the Skyblock worlds.
      */
     public IslandWorld(BSkyBlock plugin) {
         this.plugin = plugin;
+        worlds = new HashSet<>();
         if (plugin.getSettings().isUseOwnGenerator()) {
             // Do nothing
             return;
@@ -128,12 +133,17 @@ public class IslandWorld {
     }
 
     /**
-     * Checks if a player is in any of the island worlds
-     * @param loc - player to check
+     * Checks if a location is in any of the island worlds
+     * @param loc - location
      * @return true if in a world or false if not
      */
     public boolean inWorld(Location loc) {
         return loc.getWorld() !=null && (loc.getWorld().equals(islandWorld) || loc.getWorld().equals(netherWorld) || loc.getWorld().equals(endWorld));
+    }
+
+    public void addWorld(World world) {
+        worlds.add(world);
+        
     }
 
 }

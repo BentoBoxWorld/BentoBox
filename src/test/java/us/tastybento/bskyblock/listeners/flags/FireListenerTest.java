@@ -18,7 +18,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Cow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.WitherSkeleton;
@@ -61,6 +60,7 @@ public class FireListenerTest {
     private static Zombie zombie;
     private static Slime slime;
     private static Cow cow;
+    private static IslandWorld iwm;
 
     @BeforeClass
     public static void setUp() {
@@ -98,16 +98,14 @@ public class FireListenerTest {
 
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorld.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
-
-        MobSpawnListener listener = mock(MobSpawnListener.class);        
-        when(listener.inWorld(any(Location.class))).thenReturn(true);
-        when(listener.inWorld(any(Entity.class))).thenReturn(true);
-
+        when(iwm.inWorld(any())).thenReturn(true);
+        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        
         // Monsters and animals
         zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
@@ -349,7 +347,7 @@ public class FireListenerTest {
         // Obsidian is not TNT
         assertFalse(listener.onTNTPrimed(e));
         // Out of world
-        when(block.getLocation()).thenReturn(null);
+        when(iwm.inWorld(any())).thenReturn(false);
         assertFalse(listener.onTNTPrimed(e));
         
         // Now set to TNT
@@ -357,7 +355,7 @@ public class FireListenerTest {
         assertFalse(listener.onTNTPrimed(e));
         
         // Back in world
-        when(block.getLocation()).thenReturn(location);
+        when(iwm.inWorld(any())).thenReturn(true);
 
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);

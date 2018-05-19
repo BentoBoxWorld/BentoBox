@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock;
 
+import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -106,7 +107,7 @@ public class BSkyBlock extends JavaPlugin {
         getServer().getScheduler().runTask(this, () -> {
             // Create the world if it does not exist
             islandWorldManager = new IslandWorld(instance);
-
+            
             getServer().getScheduler().runTask(instance, () -> {
 
                 // Load Flags
@@ -123,6 +124,8 @@ public class BSkyBlock extends JavaPlugin {
 
                 // Load addons
                 addonsManager = new AddonsManager(instance);
+                addonsManager.loadAddons();
+                // Enable addons
                 addonsManager.enableAddons();
 
                 // Save islands & players data asynchronously every X minutes
@@ -302,4 +305,15 @@ public class BSkyBlock extends JavaPlugin {
     public void logWarning(String warning) {
         getLogger().warning(warning);
     }
+
+
+
+    /**
+     * Registers a world as a world to be covered by this plugin
+     * @param world - world
+     */
+    public void registerWorld(World world) {
+        islandWorldManager.addWorld(world);
+    }
+    
 }
