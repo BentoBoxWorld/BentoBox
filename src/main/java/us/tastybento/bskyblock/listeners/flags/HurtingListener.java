@@ -67,7 +67,7 @@ public class HurtingListener extends AbstractFlagListener {
      * @param damager
      * @param hurtMobs
      */
-    private void respond(Event event, Entity damager, Flag hurtMobs) {
+    private void respond(EntityDamageByEntityEvent event, Entity damager, Flag hurtMobs) {
         // Get the attacker
         if (damager instanceof Player) {
             setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), hurtMobs);
@@ -76,12 +76,11 @@ public class HurtingListener extends AbstractFlagListener {
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
                 if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), hurtMobs)) {
-                    damager.setFireTicks(0);
+                    event.getEntity().setFireTicks(0);
                     damager.remove();
                 }
             }
         }
-
     }
 
     /**
