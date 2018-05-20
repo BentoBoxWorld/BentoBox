@@ -29,8 +29,8 @@ import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -115,7 +115,7 @@ public class AdminTeamAddCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
         
         // Island World Manager
-        IslandWorld iwm = mock(IslandWorld.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         World world = mock(World.class);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);

@@ -25,7 +25,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.util.Util;
 
@@ -47,7 +47,7 @@ public class IslandCacheTest {
         world = mock(World.class);
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);

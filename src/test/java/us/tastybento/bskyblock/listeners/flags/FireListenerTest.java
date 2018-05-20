@@ -44,9 +44,9 @@ import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
@@ -60,7 +60,7 @@ public class FireListenerTest {
     private static Zombie zombie;
     private static Slime slime;
     private static Cow cow;
-    private static IslandWorld iwm;
+    private static IslandWorldManager iwm;
 
     @BeforeClass
     public static void setUp() {
@@ -98,7 +98,7 @@ public class FireListenerTest {
 
 
         // Worlds
-        iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);

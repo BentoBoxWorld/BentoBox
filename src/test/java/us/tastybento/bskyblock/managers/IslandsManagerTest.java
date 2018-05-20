@@ -45,7 +45,6 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.island.IslandCache;
 import us.tastybento.bskyblock.util.Util;
 
@@ -66,7 +65,7 @@ public class IslandsManagerTest {
     private Block space2;
     private Location location;
     private BlockState blockState;
-    private IslandWorld iwm;
+    private IslandWorldManager iwm;
 
     /**
      * @throws java.lang.Exception
@@ -151,7 +150,7 @@ public class IslandsManagerTest {
         });
         
         // Worlds
-        iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
@@ -378,7 +377,7 @@ public class IslandsManagerTest {
 
         when(plugin.getSettings()).thenReturn(settings);
 
-        IslandWorld iwm = mock(IslandWorld.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
 

@@ -33,7 +33,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
@@ -95,7 +95,7 @@ public class ObsidianToLavaTest {
         when(who.getLocation()).thenReturn(location);
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);

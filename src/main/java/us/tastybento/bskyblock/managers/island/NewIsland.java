@@ -55,7 +55,7 @@ public class NewIsland {
     }
 
     /**
-     * Build a new island for a player using a schematic
+     * Build a new island for a player
      * @author tastybento
      *
      */
@@ -169,7 +169,7 @@ public class NewIsland {
     private Location getNextIsland() {
         Location last = plugin.getIslands().getLast(world);
         if (last == null) {
-            last = new Location(plugin.getIslandWorldManager().getIslandWorld(), plugin.getSettings().getIslandXOffset() + plugin.getSettings().getIslandStartX(),
+            last = new Location(world, plugin.getSettings().getIslandXOffset() + plugin.getSettings().getIslandStartX(),
                     plugin.getSettings().getIslandHeight(), plugin.getSettings().getIslandZOffset() + plugin.getSettings().getIslandStartZ());
         }
         Location next = last.clone();

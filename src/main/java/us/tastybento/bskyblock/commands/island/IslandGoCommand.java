@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
+import org.bukkit.World;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
@@ -39,7 +40,24 @@ public class IslandGoCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
+        World world = user.getWorld();
+        if (!args.isEmpty() && !NumberUtils.isDigits(args.get(0))) {
+            // World?
+            if (getPlugin().getIslandWorldManager().isOverWorld(args.get(0))) {
+                world = getPlugin().getIslandWorldManager().getWorld(args.get(0));
+            } else {
+                // Make a list of worlds
+                StringBuilder worlds = new StringBuilder();
+                getPlugin().getIslandWorldManager().getOverWorldNames().forEach(w -> { 
+                    worlds.append(w);
+                    worlds.append(", ");
+                });
+                worlds.setLength(worlds.length() - 2);
+                user.sendMessage("commands.island.create.pick-world", "[worlds]", worlds.toString());
+                return false;
+            }
+        }
+        if (!getIslands().hasIsland(world, user.getUniqueId())) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return false;
         }
@@ -47,11 +65,11 @@ public class IslandGoCommand extends CompositeCommand {
             int homeValue = Integer.valueOf(args.get(0));
             int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
             if (homeValue > 1  && homeValue <= maxHomes) {
-                getIslands().homeTeleport(user.getWorld(), user.getPlayer(), homeValue);
+                getIslands().homeTeleport(world, user.getPlayer(), homeValue);
                 return true;
             }
         }
-        getIslands().homeTeleport(user.getWorld(), user.getPlayer());
+        getIslands().homeTeleport(world, user.getPlayer());
         return true;
     }
 

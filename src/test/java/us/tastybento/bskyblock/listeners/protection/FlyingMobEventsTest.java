@@ -45,7 +45,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -67,7 +67,7 @@ public class FlyingMobEventsTest {
     private PlayersManager pm;
     private UUID notUUID;
     private BukkitScheduler sch;
-    private IslandWorld iwm;
+    private IslandWorldManager iwm;
 
     /**
      * @throws java.lang.Exception
@@ -120,7 +120,7 @@ public class FlyingMobEventsTest {
         Util.setPlugin(plugin);
         
         // Worlds
-        iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.inWorld(any())).thenReturn(true);
     }

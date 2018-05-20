@@ -5,6 +5,7 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.World;
 
@@ -38,17 +39,36 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        // TODO: fix world
-        World world = getPlugin().getIslandWorldManager().getIslandWorld();
-        if (!args.isEmpty()) {
-            // Get game types
-            // TODO
+        World world = null;
+        if (args.size() == 1 && getPlugin().getIslandWorldManager().isOverWorld(args.get(0))) {
+            world = getPlugin().getIslandWorldManager().getWorld(args.get(0));
+        }
+        if (world == null) {
+            // See which worlds are available
+            Set<String> worldNames = getPlugin().getIslandWorldManager().getFreeOverWorldNames(user);
+            if (!worldNames.isEmpty()) {
+                // Make a list of worlds
+                StringBuilder worlds = new StringBuilder();
+                // Filter out ones that player already has
+                worldNames.forEach(w -> { 
+                    worlds.append(w);
+                    worlds.append(", ");
+                });
+                if (worlds.length() > 2) {
+                    worlds.setLength(worlds.length() - 2);
+                }
+                user.sendMessage("commands.island.create.pick-world", "[worlds]", worlds.toString());
+                return false;
+            } else {
+                world = getPlugin().getIslandWorldManager().getIslandWorld();
+            }
         }
         if (getIslands().hasIsland(world, user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
         if (getIslands().inTeam(world, user.getUniqueId())) {
+            user.sendMessage("general.errors.already-have-island");
             return false;
         }
         user.sendMessage("commands.island.create.creating-island");

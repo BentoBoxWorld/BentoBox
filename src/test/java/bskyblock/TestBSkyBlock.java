@@ -57,10 +57,10 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
@@ -141,7 +141,7 @@ public class TestBSkyBlock {
         block = Mockito.mock(Block.class);
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         Mockito.when(plugin.getIslandWorldManager()).thenReturn(iwm);
         Mockito.when(iwm.getIslandWorld()).thenReturn(world);
         Mockito.when(iwm.getNetherWorld()).thenReturn(world);

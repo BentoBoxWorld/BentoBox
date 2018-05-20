@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.island.builders;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -45,12 +46,10 @@ public class IslandBuilder {
     private List<ItemStack> chestItems;
     private UUID playerUUID;
     private String playerName;
-    private BSkyBlock plugin;
 
     //TODO support companions?
 
     public IslandBuilder(BSkyBlock plugin, Island island) {
-        this.plugin = plugin;
         this.island = island;
         world = island.getWorld();
     }
@@ -60,21 +59,6 @@ public class IslandBuilder {
      */
     public IslandBuilder setType(IslandType type) {
         this.type = type;
-        switch(type) {
-        case END:
-            world = plugin.getIslandWorldManager().getEndWorld();
-            break;
-        case ISLAND:
-            world = plugin.getIslandWorldManager().getIslandWorld();
-            break;
-        case NETHER:
-            world = plugin.getIslandWorldManager().getNetherWorld();
-            break;
-        default:
-            world = island.getWorld();
-            break;
-
-        }
         return this;
     }
 
@@ -98,14 +82,23 @@ public class IslandBuilder {
     public void build() {
         // Switch on island type
         if (type == IslandType.ISLAND) {
+            world = island.getWorld();
             if (Constants.GAMETYPE == GameType.ACIDISLAND) {
                 generateAcidIslandBlocks();
             } else {
                 generateIslandBlocks();
             }
-        } else if (type == IslandType.NETHER){
+        } else if (type == IslandType.NETHER) {
+            world = Bukkit.getWorld(island.getWorld().getName() + "_nether");
+            if (world == null) {
+                return;
+            }
             generateNetherBlocks();
-        } else if (type == IslandType.END){
+        } else if (type == IslandType.END) {
+            world = Bukkit.getWorld(island.getWorld().getName() + "_the_end");
+            if (world == null) {
+                return;
+            }
             generateEndBlocks();
         }
         // Do other stuff

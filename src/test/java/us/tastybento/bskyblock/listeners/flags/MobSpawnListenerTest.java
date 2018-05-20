@@ -35,9 +35,9 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 
 @RunWith(PowerMockRunner.class)
@@ -50,7 +50,7 @@ public class MobSpawnListenerTest {
     private static Zombie zombie;
     private static Slime slime;
     private static Cow cow;
-    private static IslandWorld iwm;
+    private static IslandWorldManager iwm;
     private static World world;
 
     @BeforeClass
@@ -103,7 +103,7 @@ public class MobSpawnListenerTest {
     @Before
     public void setUp() {
         // Worlds
-        iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorldManager.class);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);

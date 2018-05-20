@@ -1,17 +1,22 @@
-package us.tastybento.bskyblock.generators;
+package us.tastybento.bskyblock.managers;
 
-import java.util.HashSet;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.generators.ChunkGeneratorWorld;
 
-public class IslandWorld {
+public class IslandWorldManager {
 
     private static final String MULTIVERSE_SET_GENERATOR = "mv modify set generator ";
     private static final String MULTIVERSE_IMPORT = "mv import ";
@@ -23,14 +28,14 @@ public class IslandWorld {
     private World islandWorld;
     private World netherWorld;
     private World endWorld;
-    private Set<World> worlds;
+    private Map<World, String> worlds;
 
     /**
      * Generates the Skyblock worlds.
      */
-    public IslandWorld(BSkyBlock plugin) {
+    public IslandWorldManager(BSkyBlock plugin) {
         this.plugin = plugin;
-        worlds = new HashSet<>();
+        worlds = new HashMap<>();
         if (plugin.getSettings().isUseOwnGenerator()) {
             // Do nothing
             return;
@@ -41,6 +46,7 @@ public class IslandWorld {
         // Create the world if it does not exist
         islandWorld = WorldCreator.name(plugin.getSettings().getWorldName()).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld(plugin))
                 .createWorld();
+        addWorld("bsb", islandWorld);
         // Make the nether if it does not exist
         if (plugin.getSettings().isNetherGenerate()) {
             if (plugin.getServer().getWorld(plugin.getSettings().getWorldName() + NETHER) == null) {
@@ -52,6 +58,7 @@ public class IslandWorld {
                 netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
                         .environment(World.Environment.NETHER).createWorld();
             }
+            addWorld("bsb_nether", netherWorld);
         }
         // Make the end if it does not exist
         if (plugin.getSettings().isEndGenerate()) {
@@ -64,42 +71,21 @@ public class IslandWorld {
                 endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
                         .environment(World.Environment.THE_END).createWorld();
             }
+            addWorld("bsb_end", endWorld);
         }
-        fixMultiverse(plugin);
     }
 
-    private void fixMultiverse(BSkyBlock plugin) {
-        // Multiverse configuration
+    private void multiverseReg(World world) {
         if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            plugin.log("Trying to register generator with Multiverse ");
-            try {
-                Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                        MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + " normal -g " + plugin.getName()));
-                Bukkit.getScheduler().runTask(plugin, () -> {
-                    if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName())) {
-                        plugin.logError("Multiverse is out of date! - Upgrade to latest version!");
-                    }
-                });
-                if (netherWorld != null && plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + "_nether nether -g " + plugin.getName()));
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName() + NETHER));
+            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                    MULTIVERSE_IMPORT + world.getName() + " normal -g " + plugin.getName()));
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                        MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + world.getName())) {
+                    plugin.logError("Multiverse is out of date! - Upgrade to latest version!");
                 }
-                if (endWorld != null && plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_IMPORT + plugin.getSettings().getWorldName() + "_the_end end -g " + plugin.getName()));
-                    Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + plugin.getSettings().getWorldName() + THE_END));
-                }
-            } catch (Exception e) {
-                plugin.logError("Not successfull! Disabling " + plugin.getName() + "!");
-                Bukkit.getServer().getPluginManager().disablePlugin(plugin);
-            }
+            });
         }
-
-
     }
 
     /**
@@ -138,12 +124,62 @@ public class IslandWorld {
      * @return true if in a world or false if not
      */
     public boolean inWorld(Location loc) {
-        return loc.getWorld() !=null && (loc.getWorld().equals(islandWorld) || loc.getWorld().equals(netherWorld) || loc.getWorld().equals(endWorld));
+        return worlds.containsKey(loc.getWorld());
     }
 
-    public void addWorld(World world) {
-        worlds.add(world);
-        
+    /**
+     * @return Set of over worlds
+     */
+    public Set<World> getOverWorlds() {
+        return worlds.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL)).collect(Collectors.toSet());
+    }
+
+    /**
+     * Get friendly names of all the over worlds
+     * @return Set of world names
+     */
+    public Set<String> getOverWorldNames() {
+        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL)).map(w -> w.getValue()).collect(Collectors.toSet());
+    }
+
+    /**
+     * Get a set of world names that user does not already have an island in
+     * @param user - user
+     * @return set of world names, or empty set
+     */
+    public Set<String> getFreeOverWorldNames(User user) {
+        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
+                .filter(w -> !plugin.getIslands().hasIsland(w.getKey(), user))
+                .map(w -> w.getValue()).collect(Collectors.toSet());
+    }
+    
+    /**
+     * Check if a name is a known friendly world name, ignores case
+     * @param name - world name
+     * @return true if name is a known world name
+     */
+    public boolean isOverWorld(String name) {
+        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL)).anyMatch(w -> w.getValue().equalsIgnoreCase(name));
+    }
+
+    /**
+     * Add world to the list of known worlds along with a friendly name that will be used in commands
+     * @param friendlyName - string
+     * @param world - world
+     */
+    public void addWorld(String friendlyName, World world) {
+        plugin.log("Adding world " + friendlyName);
+        worlds.put(world, friendlyName);
+        multiverseReg(world);
+    }
+
+    /**
+     * Get the world based on friendly name.
+     * @param friendlyName - friendly name of world
+     * @return world, or null if it does not exist
+     */
+    public World getWorld(String friendlyName) {
+        return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName)).map(e -> e.getKey()).findFirst().orElse(null);
     }
 
 }

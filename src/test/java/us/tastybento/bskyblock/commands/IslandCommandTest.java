@@ -19,6 +19,7 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -37,8 +38,8 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.IslandEventBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.managers.island.NewIsland;
@@ -56,6 +57,7 @@ public class IslandCommandTest {
     public static void setUpBeforeClass() throws Exception {
         Server server = mock(Server.class);
         world = mock(World.class);
+        when(world.getName()).thenReturn("BSkyBlock_test_world");
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -69,10 +71,14 @@ public class IslandCommandTest {
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
+    }
+    
+    @Before
+    public void setup() {
         // Island World Manager
-        IslandWorld iwm = mock(IslandWorld.class);
-        World world = mock(World.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getWorld(Mockito.anyString())).thenReturn(world);
         when(plugin.getIslandWorldManager()).thenReturn(iwm);
     }
 
@@ -140,8 +146,9 @@ public class IslandCommandTest {
         // User has an island - so go there!
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertTrue(ic.execute(user, new ArrayList<>()));
+        when(user.getWorld()).thenReturn(world);
 
-        //Island island = mock(Island.class);
+
         Location location = mock(Location.class);
         when(island.getCenter()).thenReturn(location);
         // No island yet, one will be created

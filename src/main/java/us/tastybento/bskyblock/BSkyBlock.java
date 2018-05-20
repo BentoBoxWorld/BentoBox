@@ -9,7 +9,6 @@ import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDbSetup;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.ObsidianToLava;
@@ -18,6 +17,7 @@ import us.tastybento.bskyblock.listeners.protection.FlyingMobEvents;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -45,7 +45,7 @@ public class BSkyBlock extends JavaPlugin {
     private LocalesManager localesManager;
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
-    private IslandWorld islandWorldManager;
+    private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
 
     // Settings
@@ -106,7 +106,7 @@ public class BSkyBlock extends JavaPlugin {
         // at this point. Therefore, the 1 tick scheduler is required.
         getServer().getScheduler().runTask(this, () -> {
             // Create the world if it does not exist
-            islandWorldManager = new IslandWorld(instance);
+            islandWorldManager = new IslandWorldManager(instance);
             
             getServer().getScheduler().runTask(instance, () -> {
 
@@ -269,7 +269,7 @@ public class BSkyBlock extends JavaPlugin {
     /**
      * @return the Island World Manager
      */
-    public IslandWorld getIslandWorldManager() {
+    public IslandWorldManager getIslandWorldManager() {
         return islandWorldManager;
     }
 
@@ -312,8 +312,8 @@ public class BSkyBlock extends JavaPlugin {
      * Registers a world as a world to be covered by this plugin
      * @param world - world
      */
-    public void registerWorld(World world) {
-        islandWorldManager.addWorld(world);
+    public void registerWorld(String name, World world) {
+        islandWorldManager.addWorld(name, world);
     }
     
 }

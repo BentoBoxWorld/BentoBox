@@ -39,7 +39,6 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.BSBDatabase;
 import us.tastybento.bskyblock.database.objects.Names;
 import us.tastybento.bskyblock.database.objects.Players;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -57,7 +56,7 @@ public class PlayersManagerTest {
     private IslandsManager im;
     private UUID notUUID;
     private BukkitScheduler sch;
-    private IslandWorld iwm;
+    private IslandWorldManager iwm;
     private World world;
     private World nether;
     private World end;
@@ -73,7 +72,7 @@ public class PlayersManagerTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
         // island world mgr
-        iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorldManager.class);
         world = mock(World.class);
         when(world.getName()).thenReturn("world");
         nether = mock(World.class);

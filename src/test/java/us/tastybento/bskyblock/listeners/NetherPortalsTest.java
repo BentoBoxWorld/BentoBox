@@ -45,7 +45,7 @@ import org.powermock.reflect.Whitebox;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -67,7 +67,7 @@ public class NetherPortalsTest {
     private PlayersManager pm;
     private UUID notUUID;
     private BukkitScheduler sch;
-    private IslandWorld iwm;
+    private IslandWorldManager iwm;
     private World world;
     private World nether;
     private World end;
@@ -82,7 +82,7 @@ public class NetherPortalsTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
         // island world mgr
-        iwm = mock(IslandWorld.class);
+        iwm = mock(IslandWorldManager.class);
         world = mock(World.class);
         nether = mock(World.class);
         end = mock(World.class);

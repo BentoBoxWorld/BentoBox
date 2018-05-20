@@ -3,6 +3,8 @@ package us.tastybento.bskyblock.commands;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.World;
+
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -63,19 +65,27 @@ public class IslandCommand extends CompositeCommand {
         if (user == null) {
             return false;
         }
-        // TODO: set up different games
         if (args.isEmpty()) {
-            // If this player does not have an island, create one
-            if (!getPlugin().getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
-                return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
-            } else {
-                // Otherwise, currently, just go home
+            // If in world, go
+            if (getPlugin().getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
                 return getSubCommand("go").map(goCmd -> goCmd.execute(user, new ArrayList<>())).orElse(false);
             }
-        } else {
-            user.sendMessage("general.errors.unknown-command", "[label]", Constants.ISLANDCOMMAND);
-            return false;
-        }
+            // No islands currently
+            return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
+        } else if (args.size() == 1) {
+            // Argument should be a world
+            if (getPlugin().getIslandWorldManager().isOverWorld(args.get(0))) {
+                World world = getPlugin().getIslandWorldManager().getWorld(args.get(0));
+                if (getPlugin().getIslands().hasIsland(world, user.getUniqueId())) {
+                    return getSubCommand("go").map(goCmd -> goCmd.execute(user, args)).orElse(false);
+                }
+                // No islands currently
+                return getSubCommand("create").map(createCmd -> createCmd.execute(user, args)).orElse(false);
+            }
+        } 
+        user.sendMessage("general.errors.unknown-command", "[label]", Constants.ISLANDCOMMAND);
+        return false;
+
     }
 
 

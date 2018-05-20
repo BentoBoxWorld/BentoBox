@@ -17,7 +17,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 
 /**
@@ -194,7 +194,7 @@ public abstract class AbstractFlagListener implements Listener {
      * Get the island world manager
      * @return Island World Manager
      */
-    protected IslandWorld getIslandWorldManager() {
+    protected IslandWorldManager getIslandWorldManager() {
         return plugin.getIslandWorldManager();
     }
 }
