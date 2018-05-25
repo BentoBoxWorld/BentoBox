@@ -18,6 +18,7 @@ import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDbSetup.DatabaseType;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
@@ -28,7 +29,7 @@ import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter
  * @author Tastybento
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
-public class Settings implements ISettings<Settings> {
+public class Settings implements ISettings<Settings>, WorldSettings {
 
     private String uniqueId = "config";
 
@@ -87,8 +88,11 @@ public class Settings implements ISettings<Settings> {
     // ---------------------------------------------
 
     /*      WORLD       */
+    @ConfigEntry(path = "world.friendly-name", needsReset = true)
+    private String friendlyName = "BSkyBlock";
+    
     @ConfigEntry(path = "world.world-name", needsReset = true)
-    private String worldName = "BSkyBlock";
+    private String worldName = "BSkyBlock-world";
 
     @ConfigEntry(path = "world.distance-between-islands", needsReset = true)
     private int islandDistance = 200;
@@ -136,16 +140,21 @@ public class Settings implements ISettings<Settings> {
 
     @ConfigEntry(path = "world.end.islands", needsReset = true)
     private boolean endIslands = true;
+    
+    @ConfigEntry(path = "world.end.dragon-spawn")
+    private boolean dragonSpawn = false;
+    
 
+    // ---------------------------------------------
+
+    /*      ISLAND      */
     // Entities
     @ConfigEntry(path = "island.limits.entities")
     private Map<EntityType, Integer> entityLimits = new EnumMap<>(EntityType.class);
     @ConfigEntry(path = "island.limits.tile-entities")
     private Map<String, Integer> tileEntityLimits = new HashMap<>();
 
-    // ---------------------------------------------
-
-    /*      ISLAND      */
+    
     @ConfigEntry(path = "island.max-team-size")
     private int maxTeamSize = 4;
     @ConfigEntry(path = "island.max-homes")
@@ -685,12 +694,14 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the netherGenerate
      */
+    @Override
     public boolean isNetherGenerate() {
         return netherGenerate;
     }
     /**
      * @return the netherIslands
      */
+    @Override
     public boolean isNetherIslands() {
         return netherIslands;
     }
@@ -703,6 +714,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the netherTrees
      */
+    @Override
     public boolean isNetherTrees() {
         return netherTrees;
     }
@@ -1259,6 +1271,33 @@ public class Settings implements ISettings<Settings> {
      */
     public void setConfirmationTime(int confirmationTime) {
         this.confirmationTime = confirmationTime;
+    }
+    
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.api.configuration.WorldSettings#getFriendlyName()
+     */
+    @Override
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+    
+    /**
+     * @param friendlyName the friendlyName to set
+     */
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+    /**
+     * @return the dragonSpawn
+     */
+    public boolean isDragonSpawn() {
+        return dragonSpawn;
+    }
+    /**
+     * @param dragonSpawn the dragonSpawn to set
+     */
+    public void setDragonSpawn(boolean dragonSpawn) {
+        this.dragonSpawn = dragonSpawn;
     }
 
 

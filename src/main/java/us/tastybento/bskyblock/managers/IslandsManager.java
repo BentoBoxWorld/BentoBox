@@ -237,7 +237,7 @@ public class IslandsManager {
      * @return Island or null if the island could not be created for some reason
      */
     public Island createIsland(Location location, UUID owner){
-        Island island = new Island(location, owner, plugin.getSettings().getIslandProtectionRange());
+        Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         if (islandCache.addIsland(island)) {
             return island;
         }
@@ -596,11 +596,10 @@ public class IslandsManager {
      * @return Location of closest island
      */
     public Location getClosestIsland(Location location) {
-        long x = Math.round((double) location.getBlockX() / plugin.getSettings().getIslandDistance())
-                * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandXOffset();
-        long z = Math.round((double) location.getBlockZ() / plugin.getSettings().getIslandDistance())
-                * plugin.getSettings().getIslandDistance() + plugin.getSettings().getIslandZOffset();
-        long y = plugin.getSettings().getIslandHeight();
+        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
+        long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
+        long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
+        long y = plugin.getIWM().getIslandHeight(location.getWorld());
         if (location.getBlockX() == x && location.getBlockZ() == z) {
             return location;
         }

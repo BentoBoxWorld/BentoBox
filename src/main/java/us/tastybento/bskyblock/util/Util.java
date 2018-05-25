@@ -12,6 +12,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
@@ -225,6 +226,15 @@ public class Util {
         String worldName = world.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
         String world2Name = world2.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
         return worldName.equalsIgnoreCase(world2Name);
+    }
+
+    /**
+     * Convert world to an overworld
+     * @param world - world
+     * @return over world
+     */
+    public static World getWorld(World world) {
+        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll("_nether", "").replaceAll("_the_end", ""));
     }
 
 

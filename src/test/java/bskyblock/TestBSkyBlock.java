@@ -66,7 +66,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BSkyBlock.class, Flags.class})
+@PrepareForTest({ BSkyBlock.class, Flags.class, Util.class})
 public class TestBSkyBlock {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
@@ -142,12 +142,13 @@ public class TestBSkyBlock {
 
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        Mockito.when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        Mockito.when(plugin.getIWM()).thenReturn(iwm);
         Mockito.when(iwm.getIslandWorld()).thenReturn(world);
         Mockito.when(iwm.getNetherWorld()).thenReturn(world);
         Mockito.when(iwm.getEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
-
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(world);
 
         // Islands
         IslandsManager im = mock(IslandsManager.class);

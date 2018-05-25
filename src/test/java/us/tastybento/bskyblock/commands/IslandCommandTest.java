@@ -79,7 +79,7 @@ public class IslandCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getWorld(Mockito.anyString())).thenReturn(world);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
     }
 
     @Test

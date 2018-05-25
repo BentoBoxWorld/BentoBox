@@ -124,10 +124,9 @@ public abstract class AbstractFlagListener implements Listener {
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If this is not an Island World, skip
-        if (!plugin.getIslandWorldManager().inWorld(loc)) {
+        if (!plugin.getIWM().inWorld(loc)) {
             return true;
         }
-
         // Get the island and if present
         Optional<Island> island = getIslands().getIslandAt(loc);
         // Handle Settings Flag
@@ -137,7 +136,6 @@ public abstract class AbstractFlagListener implements Listener {
         }
 
         // Protection flag
-
         // If the user is not set already, try to get it from the event
         if (user == null) {
             // Set the user associated with this event
@@ -195,6 +193,6 @@ public abstract class AbstractFlagListener implements Listener {
      * @return Island World Manager
      */
     protected IslandWorldManager getIslandWorldManager() {
-        return plugin.getIslandWorldManager();
+        return plugin.getIWM();
     }
 }

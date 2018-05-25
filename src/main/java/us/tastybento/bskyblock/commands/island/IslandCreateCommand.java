@@ -40,12 +40,12 @@ public class IslandCreateCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         World world = null;
-        if (args.size() == 1 && getPlugin().getIslandWorldManager().isOverWorld(args.get(0))) {
-            world = getPlugin().getIslandWorldManager().getWorld(args.get(0));
+        if (args.size() == 1 && getPlugin().getIWM().isOverWorld(args.get(0))) {
+            world = getPlugin().getIWM().getWorld(args.get(0));
         }
         if (world == null) {
             // See which worlds are available
-            Set<String> worldNames = getPlugin().getIslandWorldManager().getFreeOverWorldNames(user);
+            Set<String> worldNames = getPlugin().getIWM().getFreeOverWorldNames(user);
             if (!worldNames.isEmpty()) {
                 // Make a list of worlds
                 StringBuilder worlds = new StringBuilder();
@@ -60,7 +60,7 @@ public class IslandCreateCommand extends CompositeCommand {
                 user.sendMessage("commands.island.create.pick-world", "[worlds]", worlds.toString());
                 return false;
             } else {
-                world = getPlugin().getIslandWorldManager().getIslandWorld();
+                world = getPlugin().getIWM().getIslandWorld();
             }
         }
         if (getIslands().hasIsland(world, user.getUniqueId())) {

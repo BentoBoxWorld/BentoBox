@@ -83,7 +83,7 @@ public class PlayersManagerTest {
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(nether);
         when(iwm.inWorld(any())).thenReturn(true);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         
         // Settings
         s = mock(Settings.class);

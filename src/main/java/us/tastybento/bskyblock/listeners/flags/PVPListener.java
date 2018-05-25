@@ -44,9 +44,9 @@ public class PVPListener extends AbstractFlagListener {
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
             Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
+            if (e.getEntity().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
                 flag = Flags.PVP_NETHER;
-            } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
+            } else if (e.getEntity().getWorld().equals(getPlugin().getIWM().getEndWorld())) {
                 flag = Flags.PVP_END;
             }
             respond(e, e.getDamager(), flag);
@@ -74,9 +74,9 @@ public class PVPListener extends AbstractFlagListener {
     public void onFishing(PlayerFishEvent e) {
         if (e.getCaught() != null && e.getCaught() instanceof Player) {
             Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
+            if (e.getCaught().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
                 flag = Flags.PVP_NETHER;
-            } else if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
+            } else if (e.getCaught().getWorld().equals(getPlugin().getIWM().getEndWorld())) {
                 flag = Flags.PVP_END;
             }
             if (checkIsland(e, e.getCaught().getLocation(), flag)) {
@@ -93,9 +93,9 @@ public class PVPListener extends AbstractFlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Deduce the world
         Flag flag = Flags.PVP_OVERWORLD;
-        if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
+        if (e.getPotion().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
             flag = Flags.PVP_NETHER;
-        } else if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
+        } else if (e.getPotion().getWorld().equals(getPlugin().getIWM().getEndWorld())) {
             flag = Flags.PVP_END;
         }
 
@@ -142,9 +142,9 @@ public class PVPListener extends AbstractFlagListener {
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
             // Deduce the world
             Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
+            if (e.getEntity().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
                 flag = Flags.PVP_NETHER;
-            } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
+            } else if (e.getEntity().getWorld().equals(getPlugin().getIWM().getEndWorld())) {
                 flag = Flags.PVP_END;
             }
 

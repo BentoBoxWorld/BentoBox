@@ -121,7 +121,7 @@ public class FlyingMobEventsTest {
         
         // Worlds
         iwm = mock(IslandWorldManager.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any())).thenReturn(true);
     }
     

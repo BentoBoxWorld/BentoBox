@@ -9,13 +9,21 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.EntityType;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.generators.ChunkGeneratorWorld;
+import us.tastybento.bskyblock.util.Util;
 
+/**
+ * Handles registration and management of worlds
+ * @author tastybento
+ *
+ */
 public class IslandWorldManager {
 
     private static final String MULTIVERSE_SET_GENERATOR = "mv modify set generator ";
@@ -29,6 +37,7 @@ public class IslandWorldManager {
     private World netherWorld;
     private World endWorld;
     private Map<World, String> worlds;
+    private Map<World, WorldSettings> worldSettings;
 
     /**
      * Generates the Skyblock worlds.
@@ -36,6 +45,7 @@ public class IslandWorldManager {
     public IslandWorldManager(BSkyBlock plugin) {
         this.plugin = plugin;
         worlds = new HashMap<>();
+        worldSettings = new HashMap<>();
         if (plugin.getSettings().isUseOwnGenerator()) {
             // Do nothing
             return;
@@ -46,7 +56,7 @@ public class IslandWorldManager {
         // Create the world if it does not exist
         islandWorld = WorldCreator.name(plugin.getSettings().getWorldName()).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld(plugin))
                 .createWorld();
-        addWorld("bsb", islandWorld);
+        addWorld(islandWorld, plugin.getSettings());
         // Make the nether if it does not exist
         if (plugin.getSettings().isNetherGenerate()) {
             if (plugin.getServer().getWorld(plugin.getSettings().getWorldName() + NETHER) == null) {
@@ -58,7 +68,6 @@ public class IslandWorldManager {
                 netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
                         .environment(World.Environment.NETHER).createWorld();
             }
-            addWorld("bsb_nether", netherWorld);
         }
         // Make the end if it does not exist
         if (plugin.getSettings().isEndGenerate()) {
@@ -71,7 +80,6 @@ public class IslandWorldManager {
                 endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
                         .environment(World.Environment.THE_END).createWorld();
             }
-            addWorld("bsb_end", endWorld);
         }
     }
 
@@ -124,7 +132,7 @@ public class IslandWorldManager {
      * @return true if in a world or false if not
      */
     public boolean inWorld(Location loc) {
-        return worlds.containsKey(loc.getWorld());
+        return worlds.containsKey(Util.getWorld(loc.getWorld()));
     }
 
     /**
@@ -164,13 +172,23 @@ public class IslandWorldManager {
 
     /**
      * Add world to the list of known worlds along with a friendly name that will be used in commands
-     * @param friendlyName - string
      * @param world - world
      */
-    public void addWorld(String friendlyName, World world) {
+    public void addWorld(World world, WorldSettings settings) {
+        String friendlyName = settings.getFriendlyName().isEmpty() ? world.getName() : settings.getFriendlyName();
         plugin.log("Adding world " + friendlyName);
         worlds.put(world, friendlyName);
+        worldSettings.put(world, settings);
         multiverseReg(world);
+    }
+    
+    /**
+     * Get the settings for this world or sub-worlds (nether, end)
+     * @param world - world
+     * @return world settings, or null if world is unknown
+     */
+    public WorldSettings getWorldSettings(World world) {
+        return worldSettings.get(Util.getWorld(world));
     }
 
     /**
@@ -182,4 +200,201 @@ public class IslandWorldManager {
         return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName)).map(e -> e.getKey()).findFirst().orElse(null);
     }
 
+    /**
+     * @return the entityLimits
+     */
+    public Map<EntityType, Integer> getEntityLimits(World world) {
+        return worldSettings.get(Util.getWorld(world)).getEntityLimits();
+    }
+    
+    /**
+     * @return the islandDistance
+     */
+    public int getIslandDistance(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandDistance();
+    }
+
+    /**
+     * @return the islandHeight
+     */
+    public int getIslandHeight(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandHeight();
+    }
+    
+    /**
+     * @return the islandProtectionRange
+     */
+    public int getIslandProtectionRange(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandProtectionRange();
+    }
+    
+    /**
+     * @return the islandStartX
+     */
+    public int getIslandStartX(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandStartX();
+    }
+    
+    /**
+     * @return the islandStartZ
+     */
+    public int getIslandStartZ(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandStartZ();
+    }
+    
+    /**
+     * @return the islandXOffset
+     */
+    public int getIslandXOffset(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandXOffset();
+    }
+    
+    /**
+     * @return the islandZOffset
+     */
+    public int getIslandZOffset(World world) {
+        return worldSettings.get(Util.getWorld(world)).getIslandZOffset();
+    }
+    
+    /**
+     * @return the maxIslands
+     */
+    public int getMaxIslands(World world) {
+        return worldSettings.get(Util.getWorld(world)).getMaxIslands();
+    }
+    
+    /**
+     * @return the netherSpawnRadius
+     */
+    public int getNetherSpawnRadius(World world) {
+        return worldSettings.get(Util.getWorld(world)).getNetherSpawnRadius();
+    }
+    
+    /**
+     * @return the seaHeight
+     */
+    public int getSeaHeight(World world) {
+        return worldSettings.get(Util.getWorld(world)).getSeaHeight();
+    }
+    
+    /**
+     * @return the tileEntityLimits
+     */
+    public Map<String, Integer> getTileEntityLimits(World world) {
+        return worldSettings.get(Util.getWorld(world)).getTileEntityLimits();
+    }
+    
+    /**
+     * @return the worldName
+     */
+    public String getWorldName(World world) {
+        return worldSettings.get(Util.getWorld(world)).getWorldName();
+    }
+    
+    /**
+     * @return the endGenerate
+     */
+    public boolean isEndGenerate(World world) {
+        return worldSettings.get(Util.getWorld(world)).isEndGenerate();
+    }
+    
+    /**
+     * @return the endIslands
+     */
+    public boolean isEndIslands(World world) {
+        return worldSettings.get(Util.getWorld(world)).isEndIslands();
+    }
+    
+    /**
+     * @return the netherGenerate
+     */
+    public boolean isNetherGenerate(World world) {
+        return worldSettings.get(Util.getWorld(world)).isNetherGenerate();
+    }
+    
+    /**
+     * @return the netherIslands
+     */
+    public boolean isNetherIslands(World world) {
+        return worldSettings.get(Util.getWorld(world)).isNetherIslands();
+    }
+
+    /**
+     * Checks if a world is a known nether world
+     * @param world - world
+     * @return true if world is a known and valid nether world
+     */
+    public boolean isNether(World world) {
+        World w = Util.getWorld(world);
+        return (worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate()) ? true : false;
+    }
+    
+    /**
+     * Checks if a world is a known island nether world
+     * @param world - world
+     * @return true if world is a known and valid nether world
+     */
+    public boolean isIslandNether(World world) {
+        World w = Util.getWorld(world);
+        return (worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate() && worldSettings.get(w).isNetherIslands()) ? true : false;
+    }
+
+    /**
+     * Checks if a world is a known end world
+     * @param world - world
+     * @return true if world is a known and valid nether world
+     */
+    public boolean isEnd(World world) {
+        World w = Util.getWorld(world);
+        return (worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate()) ? true : false;
+    }
+    
+    /**
+     * Checks if a world is a known island end world
+     * @param world - world
+     * @return true if world is a known and valid nether world
+     */
+    public boolean isIslandEnd(World world) {
+        World w = Util.getWorld(world);
+        return (worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate() && worldSettings.get(w).isEndIslands()) ? true : false;
+    }
+
+    /**
+     * Get the nether world of this overWorld
+     * @param overWorld - overworld
+     * @return nether world, or null if it does not exist
+     */
+    public World getNetherWorld(World overWorld) {
+        return Bukkit.getWorld(overWorld.getName() + "_nether");
+    }
+
+    /**
+     * Get the end world of this overWorld
+     * @param overWorld - overworld
+     * @return end world, or null if it does not exist
+     */
+    public World getEndWorld(World overWorld) {
+        return Bukkit.getWorld(overWorld.getName() + "_the_end");
+    }
+
+    /**
+     * Check if nether trees should be created in the nether or not
+     * @param world - world
+     * @return true or false
+     */
+    public boolean isNetherTrees(World world) {
+        World w = Util.getWorld(world);
+        return (worldSettings.containsKey(w) && worldSettings.get(w).isNetherTrees()) ? true : false;
+    }
+
+    /**
+     * Whether the End Dragon can spawn or not in this world
+     * @param world - world
+     * @return true (default) if it can spawn or not
+     */
+    public boolean isDragonSpawn(World world) {
+        World w = Util.getWorld(world);
+        return (worldSettings.containsKey(w) && !worldSettings.get(w).isDragonSpawn()) ? false : true;
+    }
+    
 }

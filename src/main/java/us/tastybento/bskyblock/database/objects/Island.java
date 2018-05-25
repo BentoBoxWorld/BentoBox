@@ -110,7 +110,7 @@ public class Island implements DataObject {
         updatedDate = System.currentTimeMillis();
         world = location.getWorld();
         center = location;
-        range = BSkyBlock.getInstance().getSettings().getIslandDistance();
+        range = BSkyBlock.getInstance().getIWM().getIslandDistance(world);
         minX = center.getBlockX() - range;
         minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;

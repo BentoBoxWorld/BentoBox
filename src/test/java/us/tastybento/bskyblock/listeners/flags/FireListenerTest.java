@@ -49,9 +49,10 @@ import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BSkyBlock.class, Flags.class} )
+@PrepareForTest( {BSkyBlock.class, Flags.class, Util.class} )
 public class FireListenerTest {
 
     private static Location location;
@@ -99,12 +100,15 @@ public class FireListenerTest {
 
         // Worlds
         iwm = mock(IslandWorldManager.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
+        
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(world);
         
         // Monsters and animals
         zombie = mock(Zombie.class);

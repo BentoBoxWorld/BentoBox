@@ -122,7 +122,7 @@ public class SafeSpotTeleport {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
         // Get island if available
         Optional<Island> island = plugin.getIslands().getIslandAt(location);
-        int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getSettings().getIslandProtectionRange());
+        int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         maxRadius = maxRadius > MAX_RADIUS ? MAX_RADIUS : maxRadius;
 
         int x = location.getBlockX();

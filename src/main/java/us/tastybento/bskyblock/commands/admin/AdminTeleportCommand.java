@@ -31,7 +31,7 @@ public class AdminTeleportCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         // TODO: fix world
-        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+        World world = getPlugin().getIWM().getIslandWorld();
 
         if (args.isEmpty()) {
             this.showHelp(this, user);
@@ -45,11 +45,11 @@ public class AdminTeleportCommand extends CompositeCommand {
             return false;
         } else {
             if (getIslands().hasIsland(world, targetUUID) || getIslands().inTeam(world, targetUUID)) {
-                Location warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getIslandWorld());
+                Location warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIWM().getIslandWorld());
                 if (getLabel().equals("tpnether")) {
-                    warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getNetherWorld());
+                    warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIWM().getNetherWorld());
                 } else if (getLabel().equals("tpend")) {
-                    warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getEndWorld());
+                    warpSpot = getIslands().getIslandLocation(world, targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld());
                 }
                 // Other wise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "

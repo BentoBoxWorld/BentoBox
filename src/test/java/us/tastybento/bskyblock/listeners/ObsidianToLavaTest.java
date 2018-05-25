@@ -96,7 +96,7 @@ public class ObsidianToLavaTest {
 
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);

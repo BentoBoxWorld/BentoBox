@@ -97,7 +97,7 @@ public class AdminTeamKickCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         World world = mock(World.class);
         when(iwm.getIslandWorld()).thenReturn(world);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
 
 
         // Player has island to begin with 

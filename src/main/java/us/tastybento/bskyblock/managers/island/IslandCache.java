@@ -17,6 +17,7 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.util.Util;
 
 public class IslandCache {
     private BiMap<Location, Island> islandsByLocation;
@@ -25,13 +26,11 @@ public class IslandCache {
      */
     private Map<World, Map<UUID, Island>> islandsByUUID;
     private Map<World, IslandGrid> grids;
-    private IslandGrid defaultGrid;
 
     public IslandCache() {
         islandsByLocation = HashBiMap.create();
         islandsByUUID = new HashMap<>();
         grids = new HashMap<>();
-        defaultGrid = new IslandGrid();
     }
 
     /**
@@ -65,7 +64,8 @@ public class IslandCache {
      * @return true if successfully added, false if not
      */
     private boolean addToGrid(Island newIsland) {
-        return grids.getOrDefault(newIsland.getWorld(), defaultGrid).addToGrid(newIsland);
+        grids.putIfAbsent(newIsland.getWorld(), new IslandGrid());
+        return grids.get(newIsland.getWorld()).addToGrid(newIsland);
     }
 
     public void clear() {
@@ -90,7 +90,8 @@ public class IslandCache {
             }
         }
         // Remove from grid
-        return grids.getOrDefault(island.getWorld(), defaultGrid).removeFromGrid(island);
+        grids.putIfAbsent(island.getWorld(), new IslandGrid());
+        return grids.get(island.getWorld()).removeFromGrid(island);
     }
 
     /**
@@ -109,7 +110,7 @@ public class IslandCache {
      * @return island or null if none
      */
     public Island get(World world, UUID uuid) {
-        return islandsByUUID.containsKey(world) ? islandsByUUID.get(world).get(uuid) : null;
+        return islandsByUUID.containsKey(Util.getWorld(world)) ? islandsByUUID.get(Util.getWorld(world)).get(uuid) : null;
     }
 
     /**
@@ -120,10 +121,10 @@ public class IslandCache {
      * @return Island object
      */
     public Island getIslandAt(Location location) {
-        if (location == null) {
+        if (location == null || !grids.containsKey(Util.getWorld(location.getWorld()))) {
             return null;
         }
-        return grids.getOrDefault(location.getWorld(), defaultGrid).getIslandAt(location.getBlockX(), location.getBlockZ());
+        return grids.get(Util.getWorld(location.getWorld())).getIslandAt(location.getBlockX(), location.getBlockZ());
     }
     
     public Collection<Island> getIslands() {
@@ -136,8 +137,8 @@ public class IslandCache {
      * @return set of UUID's of island members. If there is no island, this set will be empty
      */
     public Set<UUID> getMembers(World world, UUID uuid) {
-        islandsByUUID.putIfAbsent(world, new HashMap<>());
-        Island island = islandsByUUID.get(world).get(uuid);
+        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
+        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {
             return island.getMemberSet();
         }
@@ -150,8 +151,8 @@ public class IslandCache {
      * @return team leader's UUID, the player UUID if they are not in a team, or null if there is no island
      */
     public UUID getTeamLeader(World world, UUID uuid) {
-        islandsByUUID.putIfAbsent(world, new HashMap<>());
-        Island island = islandsByUUID.get(world).get(uuid);
+        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
+        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {
             return island.getOwner();
         }
@@ -164,8 +165,8 @@ public class IslandCache {
      * @return true if player has island and owns it
      */
     public boolean hasIsland(World world, UUID uuid) {
-        islandsByUUID.putIfAbsent(world, new HashMap<>());
-        Island island = islandsByUUID.get(world).get(uuid);
+        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
+        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {
             return island.getOwner().equals(uuid);
         }
@@ -178,8 +179,8 @@ public class IslandCache {
      * @param playerUUID - player's UUID
      */
     public void removePlayer(World world, UUID uuid) {
-        islandsByUUID.putIfAbsent(world, new HashMap<>());
-        Island island = islandsByUUID.get(world).get(uuid);
+        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
+        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {
             if (island.getOwner() != null && island.getOwner().equals(uuid)) {
                 // Clear ownership and members
@@ -190,7 +191,7 @@ public class IslandCache {
                 island.removeMember(uuid);
             }
         }
-        islandsByUUID.get(world).remove(uuid);
+        islandsByUUID.get(Util.getWorld(world)).remove(uuid);
     }
 
     /**
@@ -208,8 +209,8 @@ public class IslandCache {
      */
     public void setOwner(Island island, UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
-        islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
-        islandsByUUID.get(island.getWorld()).put(newOwnerUUID, island);
+        islandsByUUID.putIfAbsent(Util.getWorld(island.getWorld()), new HashMap<>());
+        islandsByUUID.get(Util.getWorld(island.getWorld())).put(newOwnerUUID, island);
         islandsByLocation.put(island.getCenter(), island);        
     }
     

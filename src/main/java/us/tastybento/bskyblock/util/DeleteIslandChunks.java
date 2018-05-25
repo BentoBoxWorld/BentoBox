@@ -41,11 +41,11 @@ public class DeleteIslandChunks {
             for (int z = minZChunk; z<=maxZChunk; z++) {
                 world.regenerateChunk(x, z);
                 if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
-                    plugin.getIslandWorldManager().getNetherWorld().regenerateChunk(x, z);
+                    plugin.getIWM().getNetherWorld().regenerateChunk(x, z);
 
                 }
                 if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
-                    plugin.getIslandWorldManager().getEndWorld().regenerateChunk(x, z);
+                    plugin.getIWM().getEndWorld().regenerateChunk(x, z);
                 }
             }
         }

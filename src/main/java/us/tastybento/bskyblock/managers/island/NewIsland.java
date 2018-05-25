@@ -125,14 +125,14 @@ public class NewIsland {
             .setChestItems(plugin.getSettings().getChestItems())
             .setType(IslandType.ISLAND)
             .build();
-            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIslandWorldManager().getNetherWorld() != null) {
+            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
                 new IslandBuilder(plugin,island)
                 .setPlayer(user.getPlayer())
                 .setChestItems(plugin.getSettings().getChestItems())
                 .setType(IslandType.NETHER)
                 .build();
             }
-            if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIslandWorldManager().getEndWorld() != null) {
+            if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
                 new IslandBuilder(plugin,island)
                 .setPlayer(user.getPlayer())
                 .setChestItems(plugin.getSettings().getChestItems())
@@ -169,8 +169,8 @@ public class NewIsland {
     private Location getNextIsland() {
         Location last = plugin.getIslands().getLast(world);
         if (last == null) {
-            last = new Location(world, plugin.getSettings().getIslandXOffset() + plugin.getSettings().getIslandStartX(),
-                    plugin.getSettings().getIslandHeight(), plugin.getSettings().getIslandZOffset() + plugin.getSettings().getIslandStartZ());
+            last = new Location(world, plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
+                    plugin.getIWM().getIslandHeight(world), plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
         }
         Location next = last.clone();
         while (plugin.getIslands().isIsland(next)) {
@@ -189,28 +189,29 @@ public class NewIsland {
     private Location nextGridLocation(final Location lastIsland) {
         int x = lastIsland.getBlockX();
         int z = lastIsland.getBlockZ();
+        int d = plugin.getIWM().getIslandDistance(lastIsland.getWorld()) * 2;
         Location nextPos = lastIsland;
         if (x < z) {
             if (-1 * x < z) {
-                nextPos.setX(nextPos.getX() + plugin.getSettings().getIslandDistance()*2);
+                nextPos.setX(nextPos.getX() + d);
                 return nextPos;
             }
-            nextPos.setZ(nextPos.getZ() + plugin.getSettings().getIslandDistance()*2);
+            nextPos.setZ(nextPos.getZ() + d);
             return nextPos;
         }
         if (x > z) {
             if (-1 * x >= z) {
-                nextPos.setX(nextPos.getX() - plugin.getSettings().getIslandDistance()*2);
+                nextPos.setX(nextPos.getX() - d);
                 return nextPos;
             }
-            nextPos.setZ(nextPos.getZ() - plugin.getSettings().getIslandDistance()*2);
+            nextPos.setZ(nextPos.getZ() - d);
             return nextPos;
         }
         if (x <= 0) {
-            nextPos.setZ(nextPos.getZ() + plugin.getSettings().getIslandDistance()*2);
+            nextPos.setZ(nextPos.getZ() + d);
             return nextPos;
         }
-        nextPos.setZ(nextPos.getZ() - plugin.getSettings().getIslandDistance()*2);
+        nextPos.setZ(nextPos.getZ() - d);
         return nextPos;
     }
 }

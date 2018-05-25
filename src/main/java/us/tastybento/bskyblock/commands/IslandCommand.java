@@ -2,6 +2,8 @@ package us.tastybento.bskyblock.commands;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bukkit.World;
 
@@ -22,6 +24,7 @@ import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.IslandUnbanCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand;
+import us.tastybento.bskyblock.util.Util;
 
 public class IslandCommand extends CompositeCommand {
 
@@ -74,8 +77,8 @@ public class IslandCommand extends CompositeCommand {
             return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
         } else if (args.size() == 1) {
             // Argument should be a world
-            if (getPlugin().getIslandWorldManager().isOverWorld(args.get(0))) {
-                World world = getPlugin().getIslandWorldManager().getWorld(args.get(0));
+            if (getPlugin().getIWM().isOverWorld(args.get(0))) {
+                World world = getPlugin().getIWM().getWorld(args.get(0));
                 if (getPlugin().getIslands().hasIsland(world, user.getUniqueId())) {
                     return getSubCommand("go").map(goCmd -> goCmd.execute(user, args)).orElse(false);
                 }
@@ -88,5 +91,11 @@ public class IslandCommand extends CompositeCommand {
 
     }
 
-
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {       
+        List<String> options = getPlugin().getIWM().getOverWorldNames().stream().collect(Collectors.toList());
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        return Optional.of(Util.tabLimit(options, lastArg));
+    }
+    
 }

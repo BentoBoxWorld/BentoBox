@@ -68,6 +68,9 @@ public class User {
      * @return user
      */
     public static User getInstance(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }

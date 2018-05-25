@@ -43,12 +43,12 @@ public class IslandGoCommand extends CompositeCommand {
         World world = user.getWorld();
         if (!args.isEmpty() && !NumberUtils.isDigits(args.get(0))) {
             // World?
-            if (getPlugin().getIslandWorldManager().isOverWorld(args.get(0))) {
-                world = getPlugin().getIslandWorldManager().getWorld(args.get(0));
+            if (getPlugin().getIWM().isOverWorld(args.get(0))) {
+                world = getPlugin().getIWM().getWorld(args.get(0));
             } else {
                 // Make a list of worlds
                 StringBuilder worlds = new StringBuilder();
-                getPlugin().getIslandWorldManager().getOverWorldNames().forEach(w -> { 
+                getPlugin().getIWM().getOverWorldNames().forEach(w -> { 
                     worlds.append(w);
                     worlds.append(", ");
                 });

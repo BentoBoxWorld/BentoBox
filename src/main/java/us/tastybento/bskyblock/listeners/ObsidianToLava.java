@@ -44,7 +44,7 @@ public class ObsidianToLava implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public boolean onPlayerInteract(final PlayerInteractEvent e) {
         if (!plugin.getSettings().isAllowObsidianScooping() 
-                || !plugin.getIslandWorldManager().inWorld(e.getPlayer().getLocation())
+                || !plugin.getIWM().inWorld(e.getPlayer().getLocation())
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
                 || !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || !(e.getItem() != null && e.getItem().getType().equals(Material.BUCKET))

@@ -104,12 +104,12 @@ public class MobSpawnListenerTest {
     public void setUp() {
         // Worlds
         iwm = mock(IslandWorldManager.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
 
     }
 

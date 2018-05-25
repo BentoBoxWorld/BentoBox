@@ -151,11 +151,14 @@ public class IslandsManagerTest {
         
         // Worlds
         iwm = mock(IslandWorldManager.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
+        
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(world);
     }
 
 
@@ -378,7 +381,7 @@ public class IslandsManagerTest {
         when(plugin.getSettings()).thenReturn(settings);
 
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
 
 
@@ -700,10 +703,10 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetClosestIsland() throws Exception {
-        when(s.getIslandDistance()).thenReturn(100);
-        when(s.getIslandXOffset()).thenReturn(0);
-        when(s.getIslandZOffset()).thenReturn(0);
-        when(s.getIslandHeight()).thenReturn(120);
+        when(iwm.getIslandDistance(world)).thenReturn(100);
+        when(iwm.getIslandXOffset(world)).thenReturn(0);
+        when(iwm.getIslandZOffset(world)).thenReturn(0);
+        when(iwm.getIslandHeight(world)).thenReturn(120);
         IslandsManager im = new IslandsManager(plugin);
         when(location.getBlockX()).thenReturn(456);
         when(location.getBlockZ()).thenReturn(456);

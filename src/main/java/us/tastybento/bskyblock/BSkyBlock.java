@@ -4,11 +4,13 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDbSetup;
+import us.tastybento.bskyblock.listeners.BlockEndDragon;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.ObsidianToLava;
@@ -155,6 +157,8 @@ public class BSkyBlock extends JavaPlugin {
         manager.registerEvents(new ObsidianToLava(this), this);
         // Flying mobs protection
         manager.registerEvents(new FlyingMobEvents(this), this);
+        // End dragon blocking
+        manager.registerEvents(new BlockEndDragon(this), this);
     }
 
     @Override
@@ -269,7 +273,7 @@ public class BSkyBlock extends JavaPlugin {
     /**
      * @return the Island World Manager
      */
-    public IslandWorldManager getIslandWorldManager() {
+    public IslandWorldManager getIWM() {
         return islandWorldManager;
     }
 
@@ -310,10 +314,11 @@ public class BSkyBlock extends JavaPlugin {
 
     /**
      * Registers a world as a world to be covered by this plugin
-     * @param world - world
+     * @param world - Bukkit over world
+     * @param worldSettings - settings for this world
      */
-    public void registerWorld(String name, World world) {
-        islandWorldManager.addWorld(name, world);
+    public void registerWorld(World world, WorldSettings worldSettings) {
+        islandWorldManager.addWorld(world, worldSettings);
     }
     
 }

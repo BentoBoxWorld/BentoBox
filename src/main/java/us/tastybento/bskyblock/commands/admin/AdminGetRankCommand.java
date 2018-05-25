@@ -45,7 +45,7 @@ public class AdminGetRankCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         // TODO: fix world
-        World world = getPlugin().getIslandWorldManager().getIslandWorld();
+        World world = getPlugin().getIWM().getIslandWorld();
 
         if (args.size() != 1) {
             // Show help
