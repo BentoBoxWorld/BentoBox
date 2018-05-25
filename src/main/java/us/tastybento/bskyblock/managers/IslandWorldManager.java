@@ -396,5 +396,17 @@ public class IslandWorldManager {
         World w = Util.getWorld(world);
         return (worldSettings.containsKey(w) && !worldSettings.get(w).isDragonSpawn()) ? false : true;
     }
+
+    /**
+     * @return a comma separated string of friendly world names
+     */
+    public String getFriendlyNames() {
+        StringBuilder r = new StringBuilder();
+        worlds.values().forEach(n -> r.append(n).append(", "));
+        if (r.length() > 0) {
+            r.setLength(r.length() - 2);
+        }
+        return r.toString();
+    }
     
 }

@@ -21,6 +21,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.util.Util;
@@ -263,6 +264,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return plugin;
     }
 
+    /**
+     * Get the island worlds manager
+     * @return island worlds manager
+     */
+    public IslandWorldManager getIWM() {
+        return plugin.getIWM();
+    }
     /**
      * @return Settings object
      */

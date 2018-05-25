@@ -69,6 +69,11 @@ public class IslandCommand extends CompositeCommand {
             return false;
         }
         if (args.isEmpty()) {
+            // Check if not in world. If multiple worlds, then tell user to pick one
+            if (!getIWM().inWorld(user.getLocation()) && getIWM().getOverWorlds().size() > 1) {
+                user.sendMessage("commands.island.help.pick-world", "[worlds]", getIWM().getFriendlyNames());
+                return false;
+            }
             // If in world, go
             if (getPlugin().getIslands().hasIsland(user.getWorld(), user.getUniqueId())) {
                 return getSubCommand("go").map(goCmd -> goCmd.execute(user, new ArrayList<>())).orElse(false);
