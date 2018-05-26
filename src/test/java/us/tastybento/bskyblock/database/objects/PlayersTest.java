@@ -11,10 +11,14 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -40,6 +44,14 @@ public class PlayersTest {
         when(s.getResetLimit()).thenReturn(3);
         when(s.getDeathsMax()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
+        
+        Server server = mock(Server.class);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        OfflinePlayer olp = mock(OfflinePlayer.class);
+        when(olp.getName()).thenReturn("tasty");
+        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+
     }
     
     private BSkyBlock plugin;

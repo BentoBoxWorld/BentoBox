@@ -49,6 +49,7 @@ import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -128,12 +129,17 @@ public class FireListenerTest {
         ///user.setPlugin(plugin);
         User.setPlugin(plugin);
         
+        
         // Locales - final
         
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
         
+        // Player name
+        PlayersManager pm = mock(PlayersManager.class);
+        when(pm.getName(Mockito.any())).thenReturn("tastybento");
+        when(plugin.getPlayers()).thenReturn(pm);
     }
 
     @Test

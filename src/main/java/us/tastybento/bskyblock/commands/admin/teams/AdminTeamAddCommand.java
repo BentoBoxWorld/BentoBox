@@ -63,7 +63,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
         // Success
         User target = User.getInstance(targetUUID);
         User leader = User.getInstance(leaderUUID);
-        leader.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", target.getName());
+        leader.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", getPlugin().getPlayers().getName(targetUUID));
         target.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", Constants.ISLANDCOMMAND);
         getIslands().getIsland(world, leaderUUID).addMember(targetUUID);
         user.sendMessage("general.success");

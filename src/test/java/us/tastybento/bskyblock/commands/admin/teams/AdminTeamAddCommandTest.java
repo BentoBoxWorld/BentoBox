@@ -276,7 +276,7 @@ public class AdminTeamAddCommandTest {
     @Test
     public void testExecuteSuccess() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
-        String[] name = {"tastybento", "poslovich"};
+        String[] name = {"tastybento", "poslovich"};       
         
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
@@ -292,6 +292,10 @@ public class AdminTeamAddCommandTest {
         Island island = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
 
+        // Player name
+        when(pm.getName(Mockito.eq(uuid))).thenReturn("tastybento");
+        when(pm.getName(Mockito.eq(notUUID))).thenReturn("poslovich");
+        when(plugin.getPlayers()).thenReturn(pm);
         
         // Success
         assertTrue(itl.execute(user, Arrays.asList(name)));

@@ -185,7 +185,7 @@ public class PlayersManagerTest {
         when(olp.getName()).thenReturn("tasty");
         when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
         Players player = pm.getPlayer(uuid);
-        assertEquals(uuid.toString(), player.getPlayerName());
+        assertEquals("tasty", player.getPlayerName());
         assertEquals(uuid.toString(), player.getUniqueId());
     }
 
@@ -358,9 +358,15 @@ public class PlayersManagerTest {
     @Test
     public void testSetandGetPlayerName() {
         PlayersManager pm = new PlayersManager(plugin);
+        Server server = mock(Server.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        OfflinePlayer olp = mock(OfflinePlayer.class);
+        when(olp.getName()).thenReturn("tasty");
+        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+
         // Add a player
         pm.addPlayer(uuid);
-        assertEquals(uuid.toString(), pm.getName(user.getUniqueId()));
+        assertEquals("tasty", pm.getName(user.getUniqueId()));
         pm.setPlayerName(user);
         assertEquals(user.getName(), pm.getName(user.getUniqueId()));
     }
@@ -371,6 +377,12 @@ public class PlayersManagerTest {
     @Test
     public void testGetSetResetsLeft() {
         PlayersManager pm = new PlayersManager(plugin);
+        Server server = mock(Server.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        OfflinePlayer olp = mock(OfflinePlayer.class);
+        when(olp.getName()).thenReturn("tasty");
+        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+
         // Add a player
         pm.addPlayer(uuid);
         assertEquals(0, pm.getResetsLeft(uuid));
@@ -384,6 +396,12 @@ public class PlayersManagerTest {
     @Test
     public void testSaveUUID() {
         PlayersManager pm = new PlayersManager(plugin);
+        Server server = mock(Server.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        OfflinePlayer olp = mock(OfflinePlayer.class);
+        when(olp.getName()).thenReturn("tasty");
+        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+
         // Add a player
         pm.addPlayer(uuid);
         pm.save(uuid);

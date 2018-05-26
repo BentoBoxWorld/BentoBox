@@ -133,12 +133,7 @@ public class User {
     }
 
     public String getName() {
-        player = Bukkit.getPlayer(playerUUID);
-        if (player != null) {
-            return player.getName();
-        }
-        // Try and get name from database
-        return plugin.getPlayers().getName(playerUUID);
+        return player != null ? player.getName() : plugin.getPlayers().getName(playerUUID);
     }
 
     /**
