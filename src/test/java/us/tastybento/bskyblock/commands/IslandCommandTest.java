@@ -143,7 +143,7 @@ public class IslandCommandTest {
         when(plugin.getSettings()).thenReturn(settings);
 
         // User has an island - so go there!
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
         assertTrue(ic.execute(user, new ArrayList<>()));
         when(user.getWorld()).thenReturn(world);
 
