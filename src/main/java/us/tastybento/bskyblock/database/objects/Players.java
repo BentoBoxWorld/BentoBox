@@ -55,7 +55,8 @@ public class Players implements DataObject {
         resetsLeft = plugin.getSettings().getResetLimit();
         locale = "";
         kickedList = new HashMap<>();
-        this.playerName = uniqueId.toString(); // To start, until it is set later
+        // Try to get player's name
+        this.playerName = Bukkit.getOfflinePlayer(uniqueId).getName();
     }
 
     /**

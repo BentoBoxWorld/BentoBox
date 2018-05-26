@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.managers;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -9,9 +10,9 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.WorldCreator;
 import org.bukkit.WorldType;
+import org.bukkit.entity.EntityType;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
@@ -136,10 +137,10 @@ public class IslandWorldManager {
     }
 
     /**
-     * @return Set of over worlds
+     * @return List of over worlds
      */
-    public Set<World> getOverWorlds() {
-        return worlds.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL)).collect(Collectors.toSet());
+    public List<World> getOverWorlds() {
+        return worlds.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL)).collect(Collectors.toList());
     }
 
     /**
@@ -407,6 +408,15 @@ public class IslandWorldManager {
             r.setLength(r.length() - 2);
         }
         return r.toString();
+    }
+
+    /**
+     * Gets world from friendly name
+     * @param friendlyWorldName
+     * @return world, or null if not known
+     */
+    public World getIslandWorld(String friendlyWorldName) {
+        return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst().map(en -> en.getKey()).orElse(null);
     }
     
 }

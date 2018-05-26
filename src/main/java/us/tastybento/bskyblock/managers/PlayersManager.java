@@ -284,7 +284,7 @@ public class PlayersManager {
      */
     public String getName(UUID playerUUID) {
         if (playerUUID == null) {
-            return "";
+            return null;
         }
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getPlayerName();
