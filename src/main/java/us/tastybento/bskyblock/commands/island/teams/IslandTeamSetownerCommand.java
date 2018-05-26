@@ -29,8 +29,8 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
-        boolean inTeam = getPlugin().getIslands().inTeam(user.getWorld(), playerUUID);
-        UUID teamLeaderUUID = getTeamLeader(user.getWorld(), user);
+        boolean inTeam = getPlugin().getIslands().inTeam(getWorld(), playerUUID);
+        UUID teamLeaderUUID = getTeamLeader(getWorld(), user);
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
             return false;
@@ -45,7 +45,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().inTeam(user.getWorld(), playerUUID)) {
+        if (!getIslands().inTeam(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
@@ -53,14 +53,14 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return false;
         }
-        if (!getPlugin().getIslands().getMembers(user.getWorld(), playerUUID).contains(targetUUID)) {
+        if (!getPlugin().getIslands().getMembers(getWorld(), playerUUID).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                        .getIsland(user.getWorld(), playerUUID))
+                        .getIsland(getWorld(), playerUUID))
                 .reason(TeamEvent.Reason.MAKELEADER)
                 .involvedPlayer(targetUUID)
                 .build();
@@ -68,7 +68,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         if (event.isCancelled()) {
             return false;
         }
-        getIslands().makeLeader(user.getWorld(), user, targetUUID);
+        getIslands().makeLeader(getWorld(), user, targetUUID);
         getIslands().save(true);
         return true;
     }
@@ -78,7 +78,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        for (UUID member : getPlugin().getIslands().getMembers(user.getWorld(), user.getUniqueId())) {
+        for (UUID member : getPlugin().getIslands().getMembers(getWorld(), user.getUniqueId())) {
             options.add(getPlugin().getServer().getOfflinePlayer(member).getName());
         }
         return Optional.of(Util.tabLimit(options, lastArg));

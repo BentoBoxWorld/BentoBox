@@ -427,5 +427,14 @@ public class IslandWorldManager {
     public int getMaxTeamSize(World world) {
         return worldSettings.get(Util.getWorld(world)).getMaxTeamSize();
     }
+
+    /**
+     * Get max homes for world
+     * @param world
+     * @return max homes
+     */
+    public int getMaxHomes(World world) {
+        return worldSettings.get(Util.getWorld(world)).getMaxHomes();
+    }
     
 }

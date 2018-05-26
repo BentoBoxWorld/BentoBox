@@ -477,6 +477,7 @@ public class Settings implements ISettings<Settings>, WorldSettings {
     /**
      * @return the maxHomes
      */
+    @Override
     public int getMaxHomes() {
         return maxHomes;
     }

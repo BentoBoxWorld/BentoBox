@@ -37,11 +37,11 @@ public class IslandBanCommand extends CompositeCommand {
         }
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getIslands().hasIsland(user.getWorld(), playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(user.getWorld(), playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -56,11 +56,11 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-yourself");
             return false;
         }
-        if (getIslands().getMembers(user.getWorld(), user.getUniqueId()).contains(targetUUID)) {
+        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false; 
         }
-        if (getIslands().getIsland(user.getWorld(), playerUUID).isBanned(targetUUID)) {
+        if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false; 
         }        
@@ -75,13 +75,13 @@ public class IslandBanCommand extends CompositeCommand {
     }
 
     private boolean ban(User user, User targetUser) {
-        Island island = getIslands().getIsland(user.getWorld(), user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island.addToBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
             targetUser.sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
             // If the player is online, has an island and on the banned island, move them home immediately
-            if (targetUser.isOnline() && getIslands().hasIsland(user.getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
-                getIslands().homeTeleport(user.getWorld(), targetUser.getPlayer());
+            if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
+                getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
                 island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
             }            
             return true;
@@ -96,7 +96,7 @@ public class IslandBanCommand extends CompositeCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        Island island = getIslands().getIsland(user.getWorld(), user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         List<String> options = Bukkit.getOnlinePlayers().stream()
                 .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
                 .filter(p -> !island.isBanned(p.getUniqueId()))

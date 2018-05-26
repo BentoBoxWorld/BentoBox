@@ -34,17 +34,17 @@ public class IslandResetnameCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
 
-        if (!getIslands().hasIsland(user.getWorld(), playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
 
-        if (!getIslands().isOwner(user.getWorld(), playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
         // Resets the island name
-        getIslands().getIsland(user.getWorld(), playerUUID).setName(null);
+        getIslands().getIsland(getWorld(), playerUUID).setName(null);
 
         user.sendMessage("general.success");
         return true;

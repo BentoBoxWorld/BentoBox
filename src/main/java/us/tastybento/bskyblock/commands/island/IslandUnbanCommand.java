@@ -33,11 +33,11 @@ public class IslandUnbanCommand extends CompositeCommand {
         } 
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getIslands().hasIsland(user.getWorld(), playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(user.getWorld(), playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -52,7 +52,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             user.sendMessage("commands.island.unban.cannot-unban-yourself");
             return false;
         }
-        if (!getIslands().getIsland(user.getWorld(), playerUUID).isBanned(targetUUID)) {
+        if (!getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.unban.player-not-banned");
             return false; 
         }
@@ -62,7 +62,7 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     private boolean unban(User user, User targetUser) {
-        if (getIslands().getIsland(user.getWorld(), user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
+        if (getIslands().getIsland(getWorld(), user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
             targetUser.sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
             return true;
@@ -73,7 +73,7 @@ public class IslandUnbanCommand extends CompositeCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {       
-        Island island = getIslands().getIsland(user.getWorld(), user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         List<String> options = island.getBanned().stream().map(getPlayers()::getName).collect(Collectors.toList());
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         return Optional.of(Util.tabLimit(options, lastArg));

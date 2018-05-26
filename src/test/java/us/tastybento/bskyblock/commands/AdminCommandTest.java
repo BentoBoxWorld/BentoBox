@@ -30,6 +30,7 @@ import org.powermock.reflect.Whitebox;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 
 /**
  * @author tastybento
@@ -60,6 +61,10 @@ public class AdminCommandTest {
 
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(plugin.getIWM()).thenReturn(iwm);
         
     }
     

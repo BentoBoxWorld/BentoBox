@@ -8,8 +8,6 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import org.bukkit.World;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -41,9 +39,6 @@ public class AdminSetRankCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        // TODO: fix world
-        World world = getPlugin().getIWM().getIslandWorld();
-
         if (args.size() != 2) {
             // Show help
             showHelp(this, user);
@@ -55,7 +50,7 @@ public class AdminSetRankCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(world, targetUUID)) {
+        if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
@@ -70,7 +65,7 @@ public class AdminSetRankCommand extends CompositeCommand {
         }
         User target = User.getInstance(targetUUID);
         
-        Island island = getPlugin().getIslands().getIsland(world, targetUUID);       
+        Island island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);       
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
         user.sendMessage("commands.admin.setrank.rank-set", "[from]", user.getTranslation(rm.getRank(currentRank)), "[to]", user.getTranslation(rm.getRank(rankValue)));

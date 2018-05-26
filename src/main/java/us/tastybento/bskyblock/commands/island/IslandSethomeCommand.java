@@ -11,6 +11,7 @@ public class IslandSethomeCommand extends CompositeCommand {
 
     public IslandSethomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "sethome");
+        new CustomIslandMultiHomeHelp(this);
     }
 
     @Override
@@ -18,18 +19,17 @@ public class IslandSethomeCommand extends CompositeCommand {
         setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");
-        new CustomIslandMultiHomeHelp(this);
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Check island
-        if (getPlugin().getIslands().getIsland(user.getWorld(), user.getUniqueId()) == null) {
+        if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getPlugin().getIslands().userIsOnIsland(user.getWorld(), user)) {
+        if (!getPlugin().getIslands().userIsOnIsland(getWorld(), user)) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return false;
         }

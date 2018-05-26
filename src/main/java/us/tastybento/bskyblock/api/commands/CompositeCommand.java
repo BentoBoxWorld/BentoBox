@@ -73,6 +73,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The prefix to be used in this command
      */
     private String permissionPrefix = "";
+    
+    /**
+     * The world that this command operates in. This is an overworld and will cover any associated nether or end
+     * If the world value does not exist, then the command is general across worlds
+     */
+    private World world;
 
     /**
      * Used only for testing....
@@ -142,8 +148,10 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
-        // Set permission prefix
+        // Inherit permission prefix
         this.permissionPrefix = parent.getPermissionPrefix();
+        // Inherit world
+        this.world = parent.getWorld();
     }
 
     /*
@@ -481,6 +489,20 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public void setPermissionPrefix(String permissionPrefix) {
         this.permissionPrefix = permissionPrefix + ".";
+    }
+
+    /**
+     * @return the world
+     */
+    public World getWorld() {
+        return world;
+    }
+
+    /**
+     * @param world the world to set
+     */
+    public void setWorld(World world) {
+        this.world = world;
     }
     
 }

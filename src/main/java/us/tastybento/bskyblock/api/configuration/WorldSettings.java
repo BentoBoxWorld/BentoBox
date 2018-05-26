@@ -115,5 +115,10 @@ public interface WorldSettings {
      * @return the max team size for this world
      */
     public int getMaxTeamSize();
+
+    /**
+     * @return the max homes
+     */
+    public int getMaxHomes();
     
 }

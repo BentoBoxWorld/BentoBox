@@ -5,14 +5,10 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
-
-import org.bukkit.World;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.managers.island.NewIsland;
 
 /**
@@ -22,8 +18,12 @@ import us.tastybento.bskyblock.managers.island.NewIsland;
  */
 public class IslandCreateCommand extends CompositeCommand {
 
-    public IslandCreateCommand(IslandCommand islandCommand) {
-        super(islandCommand, "create", "auto");
+    /**
+     * Command to create an island
+     * @param islandCommand
+     */
+    public IslandCreateCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "create");
     }
 
     @Override
@@ -38,35 +38,11 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        World world = null;
-        if (args.size() == 1 && getPlugin().getIWM().isOverWorld(args.get(0))) {
-            world = getPlugin().getIWM().getWorld(args.get(0));
-        }
-        if (world == null) {
-            // See which worlds are available
-            Set<String> worldNames = getPlugin().getIWM().getFreeOverWorldNames(user);
-            if (!worldNames.isEmpty()) {
-                // Make a list of worlds
-                StringBuilder worlds = new StringBuilder();
-                // Filter out ones that player already has
-                worldNames.forEach(w -> { 
-                    worlds.append(w);
-                    worlds.append(", ");
-                });
-                if (worlds.length() > 2) {
-                    worlds.setLength(worlds.length() - 2);
-                }
-                user.sendMessage("commands.island.create.pick-world", "[worlds]", worlds.toString());
-                return false;
-            } else {
-                world = getPlugin().getIWM().getIslandWorld();
-            }
-        }
-        if (getIslands().hasIsland(world, user.getUniqueId())) {
+        if (getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
-        if (getIslands().inTeam(world, user.getUniqueId())) {
+        if (getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
@@ -74,7 +50,7 @@ public class IslandCreateCommand extends CompositeCommand {
         try {
             NewIsland.builder()
             .player(user)
-            .world(world)
+            .world(getWorld())
             .reason(Reason.CREATE)
             .build();
             return true;

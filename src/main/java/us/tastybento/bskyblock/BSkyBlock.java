@@ -98,10 +98,8 @@ public class BSkyBlock extends JavaPlugin {
         // Load Notifier
         notifier = new Notifier();
 
-        // Set up commands
+        // Set up command manager
         commandsManager = new CommandsManager();
-        new IslandCommand();
-        new AdminCommand();
 
         // These items have to be loaded when the server has done 1 tick.
         // Note Worlds are not loaded this early, so any Locations or World reference will be null
@@ -109,6 +107,11 @@ public class BSkyBlock extends JavaPlugin {
         getServer().getScheduler().runTask(this, () -> {
             // Create the world if it does not exist
             islandWorldManager = new IslandWorldManager(instance);
+            
+            // Set up commands
+            new IslandCommand();
+            new AdminCommand();
+
             
             getServer().getScheduler().runTask(instance, () -> {
 

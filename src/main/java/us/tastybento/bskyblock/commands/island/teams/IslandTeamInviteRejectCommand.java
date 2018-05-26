@@ -32,7 +32,7 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
             // Fire event so add-ons can run commands, etc.
             IslandBaseEvent event = TeamEvent.builder()
                     .island(getIslands()
-                            .getIsland(user.getWorld(), itc.getInviteCommand().getInviteList().get(playerUUID)))
+                            .getIsland(getWorld(), itc.getInviteCommand().getInviteList().get(playerUUID)))
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();

@@ -29,11 +29,11 @@ public class IslandTeamKickCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getWorld(), user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        if (!getTeamLeader(user.getWorld(), user).equals(user.getUniqueId())) {
+        if (!getTeamLeader(getWorld(), user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -52,14 +52,14 @@ public class IslandTeamKickCommand extends CompositeCommand {
             user.sendMessage("commands.island.kick.cannot-kick");
             return false;
         }
-        if (!getIslands().getMembers(user.getWorld(), user.getUniqueId()).contains(targetUUID)) {
+        if (!getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
         if (!getSettings().isKickConfirmation() || kickSet.contains(targetUUID)) {
             kickSet.remove(targetUUID);
             User.getInstance(targetUUID).sendMessage("commands.island.team.kick.leader-kicked");
-            getIslands().removePlayer(user.getWorld(), targetUUID);
+            getIslands().removePlayer(getWorld(), targetUUID);
             user.sendMessage("general.success");
             return true;
         } else {

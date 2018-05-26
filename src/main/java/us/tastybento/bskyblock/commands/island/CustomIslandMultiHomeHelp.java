@@ -47,7 +47,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
     private void showPrettyHelp(User user, String usage, String params, String desc) {
         // Player. Check perms
         if (user.hasPermission(getPermission())) {
-            int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getSettings().getMaxHomes());
+            int maxHomes = Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (maxHomes > 1) {
                 params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
             }

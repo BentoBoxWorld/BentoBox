@@ -21,15 +21,7 @@ public class AdminCommand extends CompositeCommand {
 
     public AdminCommand() {
         super(Constants.ADMINCOMMAND, "bsb");
-    }
-
-    @Override
-    public void setup() {
-        setPermissionPrefix("bskyblock");
-        setPermission("admin.*");
-        setOnlyPlayer(false);
-        setParameters("commands.admin.help.parameters");
-        setDescription("commands.admin.help.description");
+        setWorld(getPlugin().getIWM().getIslandWorld());
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
         new AdminTeleportCommand(this, "tp");
@@ -45,6 +37,15 @@ public class AdminCommand extends CompositeCommand {
         new AdminTeamMakeLeaderCommand(this);
         // Schems
         new AdminSchemCommand(this);
+    }
+
+    @Override
+    public void setup() {
+        setPermissionPrefix("bskyblock");
+        setPermission("admin.*");
+        setOnlyPlayer(false);
+        setParameters("commands.admin.help.parameters");
+        setDescription("commands.admin.help.description");
     }
 
     @Override

@@ -4,7 +4,6 @@ import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.panels.SettingsPanel;
 
 /**
@@ -12,7 +11,7 @@ import us.tastybento.bskyblock.panels.SettingsPanel;
  */
 public class IslandSettingsCommand extends CompositeCommand {
 
-    public IslandSettingsCommand(IslandCommand islandCommand) {
+    public IslandSettingsCommand(CompositeCommand islandCommand) {
         super(islandCommand, "settings", "flags");
     }
 

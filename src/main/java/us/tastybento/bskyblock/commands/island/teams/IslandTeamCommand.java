@@ -15,6 +15,14 @@ public class IslandTeamCommand extends CompositeCommand {
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
+        // Register commands
+        inviteCommand = new IslandTeamInviteCommand(this);
+        new IslandTeamLeaveCommand(this);
+        new IslandTeamSetownerCommand(this);
+        new IslandTeamKickCommand(this);
+        new IslandTeamInviteAcceptCommand(this);
+        new IslandTeamInviteRejectCommand(this);
+
     }
 
     @Override
@@ -22,19 +30,12 @@ public class IslandTeamCommand extends CompositeCommand {
         setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.description");
-
-        inviteCommand = new IslandTeamInviteCommand(this);
-        new IslandTeamLeaveCommand(this);
-        new IslandTeamSetownerCommand(this);
-        new IslandTeamKickCommand(this);
-        new IslandTeamInviteAcceptCommand(this);
-        new IslandTeamInviteRejectCommand(this);
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
         // Player issuing the command must have an island
-        UUID teamLeaderUUID = getTeamLeader(user.getWorld(), user);
+        UUID teamLeaderUUID = getTeamLeader(getWorld(), user);
         if (teamLeaderUUID == null) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -46,7 +47,7 @@ public class IslandTeamCommand extends CompositeCommand {
             // Cancelled
             return false;
         }
-        Set<UUID> teamMembers = getMembers(user.getWorld(), user);
+        Set<UUID> teamMembers = getMembers(getWorld(), user);
         if (teamLeaderUUID.equals(playerUUID)) {
             int maxSize = inviteCommand.getMaxTeamSize(user);
             if (teamMembers.size() < maxSize) {
@@ -56,7 +57,7 @@ public class IslandTeamCommand extends CompositeCommand {
             }
         }
         // Show members of island
-        getIslands().getIsland(user.getWorld(), playerUUID).showMembers(getPlugin(), user);
+        getIslands().getIsland(getWorld(), playerUUID).showMembers(getPlugin(), user);
         return true;
     }
 
@@ -64,7 +65,7 @@ public class IslandTeamCommand extends CompositeCommand {
     private boolean fireEvent(User user) {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                .getIsland(user.getWorld(), user.getUniqueId()))
+                .getIsland(getWorld(), user.getUniqueId()))
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId())
                 .build();
