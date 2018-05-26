@@ -9,7 +9,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -23,7 +22,7 @@ public class IslandBanCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.ban");
+        setPermission("island.ban");
         setOnlyPlayer(true);
         setParameters("commands.island.ban.parameters");
         setDescription("commands.island.ban.description");

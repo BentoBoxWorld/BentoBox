@@ -5,14 +5,13 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
-public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
+public class IslandTeamSetownerCommand extends CompositeCommand {
 
     public IslandTeamSetownerCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "setleader");
@@ -20,7 +19,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setParameters("commands.island.team.setowner.parameters");
         setDescription("commands.island.team.setowner.description");

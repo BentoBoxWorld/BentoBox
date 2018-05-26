@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
@@ -29,7 +28,7 @@ public class IslandCreateCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.create");
+        setPermission("island.create");
         setOnlyPlayer(true);
         setDescription("commands.island.create.description");
     }

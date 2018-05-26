@@ -40,7 +40,8 @@ public class IslandCommand extends CompositeCommand {
         setDescription("commands.island.help.description");
         setOnlyPlayer(true);
         // Permission
-        setPermission(Constants.PERMPREFIX + "island");
+        setPermissionPrefix("bskyblock");
+        setPermission("island");
         // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);
@@ -56,7 +57,6 @@ public class IslandCommand extends CompositeCommand {
         new IslandBanlistCommand(this);
         // Team commands
         new IslandTeamCommand(this);
-        new IslandTeamInviteCommand(this);
 
     }
 

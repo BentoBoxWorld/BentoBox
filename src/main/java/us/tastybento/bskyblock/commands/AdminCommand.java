@@ -25,7 +25,8 @@ public class AdminCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.*");
+        setPermissionPrefix("bskyblock");
+        setPermission("admin.*");
         setOnlyPlayer(false);
         setParameters("commands.admin.help.parameters");
         setDescription("commands.admin.help.description");

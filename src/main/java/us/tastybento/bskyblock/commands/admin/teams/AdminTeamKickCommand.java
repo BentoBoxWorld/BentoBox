@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -18,7 +17,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.team");
+        setPermission("admin.team");
         setParameters("commands.admin.team.kick.parameters");
         setDescription("commands.admin.team.kick.description");
     }

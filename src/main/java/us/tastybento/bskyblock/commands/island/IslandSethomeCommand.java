@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.commands.island;
 import java.util.List;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
@@ -16,7 +15,7 @@ public class IslandSethomeCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.sethome");
+        setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");
         new CustomIslandMultiHomeHelp(this);
@@ -40,7 +39,7 @@ public class IslandSethomeCommand extends CompositeCommand {
             user.sendMessage("commands.island.sethome.home-set");
         } else {
             // Dynamic home sizes with permissions
-            int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
+            int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getSettings().getMaxHomes());
             if (maxHomes > 1) {
                 // Check the number given is a number
                 int number = 0;

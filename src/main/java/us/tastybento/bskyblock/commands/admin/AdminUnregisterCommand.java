@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
@@ -18,7 +17,7 @@ public class AdminUnregisterCommand extends CompositeCommand {
     
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.unregister");
+        setPermission("admin.unregister");
         setParameters("commands.admin.unregister.parameters");
         setDescription("commands.admin.unregister.description");
     }

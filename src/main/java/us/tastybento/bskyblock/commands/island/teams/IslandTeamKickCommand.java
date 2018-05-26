@@ -7,11 +7,10 @@ import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
-public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
+public class IslandTeamKickCommand extends CompositeCommand {
 
     Set<UUID> kickSet;
 
@@ -21,7 +20,7 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setParameters("commands.island.team.kick.parameters");
         setDescription("commands.island.team.kick.description");

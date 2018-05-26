@@ -68,6 +68,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * The command chain from the very top, e.g., island team promote
      */
     private String usage;
+    
+    /**
+     * The prefix to be used in this command
+     */
+    private String permissionPrefix = "";
 
     /**
      * Used only for testing....
@@ -137,6 +142,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
+        // Set permission prefix
+        this.permissionPrefix = parent.getPermissionPrefix();
     }
 
     /*
@@ -377,9 +384,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.parameters = parameters;
     }
 
+    /* (non-Javadoc)
+     * @see org.bukkit.command.Command#setPermission(java.lang.String)
+     */
     @Override
     public void setPermission(String permission) {
-        this.permission = permission;
+        this.permission = permissionPrefix + permission;
     }
 
     /**
@@ -454,4 +464,23 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public Map<String, CompositeCommand> getSubCommandAliases() {
         return subCommandAliases;
     }
+
+    /**
+     * If the permission prefix has been set, will return the prefix plus a trailing dot.
+     * @return the permissionPrefix
+     */
+    public String getPermissionPrefix() {
+        return permissionPrefix;
+    }
+
+    /**
+     * Set the permission prefix. This will be added automatically to the permission 
+     * and will apply to any sub commands too.
+     * Do not put a dot on the end of it.
+     * @param permissionPrefix the permissionPrefix to set
+     */
+    public void setPermissionPrefix(String permissionPrefix) {
+        this.permissionPrefix = permissionPrefix + ".";
+    }
+    
 }

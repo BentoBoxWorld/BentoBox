@@ -31,7 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent;
@@ -99,7 +98,7 @@ public class IslandCommandTest {
         assertEquals("commands.island.help.description", ic.getDescription());
         assertTrue(ic.isOnlyPlayer());
         // Permission
-        assertEquals(Constants.PERMPREFIX + "island", ic.getPermission());
+        assertEquals("bskyblock.island", ic.getPermission());
 
     }
 

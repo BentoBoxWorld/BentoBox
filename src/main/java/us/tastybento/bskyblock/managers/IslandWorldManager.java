@@ -418,5 +418,14 @@ public class IslandWorldManager {
     public World getIslandWorld(String friendlyWorldName) {
         return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst().map(en -> en.getKey()).orElse(null);
     }
+
+    /**
+     * Get max team size for this world
+     * @param world
+     * @return max team size
+     */
+    public int getMaxTeamSize(World world) {
+        return worldSettings.get(Util.getWorld(world)).getMaxTeamSize();
+    }
     
 }

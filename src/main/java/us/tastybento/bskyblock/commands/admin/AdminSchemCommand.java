@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.island.builders.Clipboard;
@@ -20,7 +19,7 @@ public class AdminSchemCommand extends CompositeCommand {
     }
 
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.schem");
+        setPermission("admin.schem");
         setParameters("commands.admin.schem.parameters");
         setDescription("commands.admin.schem.description");
         setOnlyPlayer(true);

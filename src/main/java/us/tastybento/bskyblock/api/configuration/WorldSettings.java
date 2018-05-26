@@ -110,5 +110,10 @@ public interface WorldSettings {
      * @return the dragonSpawn
      */
     public boolean isDragonSpawn();
+
+    /**
+     * @return the max team size for this world
+     */
+    public int getMaxTeamSize();
     
 }

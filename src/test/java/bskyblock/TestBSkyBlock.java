@@ -48,7 +48,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
@@ -115,7 +114,7 @@ public class TestBSkyBlock {
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
         visitorToIsland = mock(Player.class);
-        Mockito.when(player.hasPermission(Constants.PERMPREFIX + "default.permission")).thenReturn(true);
+        Mockito.when(player.hasPermission("default.permission")).thenReturn(true);
 
 
         location = mock(Location.class);
@@ -191,7 +190,7 @@ public class TestBSkyBlock {
         User user = User.getInstance(playerUUID);
         CompositeCommand testCommand = new TestCommand();
         testCommand.setOnlyPlayer(true);
-        testCommand.setPermission(Constants.PERMPREFIX + "default.permission");
+        testCommand.setPermission("default.permission");
         // Test basic execution
         assertTrue(testCommand.execute(user, new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
@@ -199,7 +198,7 @@ public class TestBSkyBlock {
         assertEquals("t", testCommand.getAliases().get(0));
         assertTrue(testCommand.isOnlyPlayer());
         assertNull(testCommand.getParent());
-        assertEquals(Constants.PERMPREFIX + "default.permission", testCommand.getPermission());
+        assertEquals("default.permission", testCommand.getPermission());
         // Check commands and aliases match to correct class
         for (Entry<String, CompositeCommand> command : testCommand.getSubCommands().entrySet()) {
             assertEquals(testCommand.getSubCommand(command.getKey()), Optional.of(command.getValue()));
@@ -233,7 +232,7 @@ public class TestBSkyBlock {
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
-        argCmd.setPermission(Constants.PERMPREFIX + "default.permission");
+        argCmd.setPermission("default.permission");
         assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));

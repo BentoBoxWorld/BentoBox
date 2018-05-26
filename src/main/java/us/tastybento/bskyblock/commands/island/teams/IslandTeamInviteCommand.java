@@ -8,16 +8,19 @@ import java.util.UUID;
 
 import org.bukkit.OfflinePlayer;
 
-import us.tastybento.bskyblock.Constants;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
-public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
+public class IslandTeamInviteCommand extends CompositeCommand {
 
     private static final String NAME_PLACEHOLDER = "[name]";
+    private BiMap<UUID, UUID> inviteList;
 
     public IslandTeamInviteCommand(CompositeCommand islandCommand) {
         super(islandCommand, "invite");
@@ -25,9 +28,10 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
+        inviteList = HashBiMap.create();
     }
 
     @Override
@@ -135,5 +139,22 @@ public class IslandTeamInviteCommand extends AbstractIslandTeamCommand {
         options.addAll(Util.getOnlinePlayerList(user));
         return Optional.of(Util.tabLimit(options, lastArg));
     }
+
+    /**
+     * Order is Invited, Inviter
+     * @return the inviteList
+     */
+    public BiMap<UUID, UUID> getInviteList() {
+        return inviteList;
+    }
+    
+    /**
+    * Gets the maximum team size for this player in this game based on the permission or the world's setting
+    * @param user
+    * @return max team size
+    */
+   public int getMaxTeamSize(User user) {
+       return Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "team.maxsize.", getIWM().getMaxTeamSize(user.getWorld()));
+   }
 
 }

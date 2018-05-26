@@ -9,7 +9,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
@@ -29,7 +28,7 @@ public class IslandGoCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.home");
+        setPermission("island.home");
         setOnlyPlayer(true);
         setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
@@ -63,7 +62,7 @@ public class IslandGoCommand extends CompositeCommand {
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.valueOf(args.get(0));
-            int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
+            int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getSettings().getMaxHomes());
             if (homeValue > 1  && homeValue <= maxHomes) {
                 getIslands().homeTeleport(world, user.getPlayer(), homeValue);
                 return true;

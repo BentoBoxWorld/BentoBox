@@ -7,11 +7,10 @@ import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
-public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
+public class IslandTeamLeaveCommand extends CompositeCommand {
 
     Set<UUID> leaveSet;
 
@@ -21,7 +20,7 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.leave.description");
         leaveSet = new HashSet<>();

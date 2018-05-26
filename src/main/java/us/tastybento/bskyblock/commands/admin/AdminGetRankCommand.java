@@ -12,7 +12,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -33,7 +32,7 @@ public class AdminGetRankCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.setrank");
+        setPermission("admin.setrank");
         setOnlyPlayer(false);
         setParameters("commands.admin.getrank.parameters");
         setDescription("commands.admin.getrank.description");

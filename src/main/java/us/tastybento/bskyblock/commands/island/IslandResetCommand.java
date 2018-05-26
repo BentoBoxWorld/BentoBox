@@ -31,7 +31,7 @@ public class IslandResetCommand extends CompositeCommand {
     public void setup() {
         cooldown = new HashMap<>();
         confirm = new HashMap<>();
-        setPermission(Constants.PERMPREFIX + "island.create");
+        setPermission("island.create");
         setOnlyPlayer(true);
         setDescription("commands.island.reset.description");
     }

@@ -28,7 +28,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.managers.CommandsManager;
 
@@ -85,7 +84,7 @@ public class AdminCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
         AdminCommand ac = new AdminCommand();
         ac.setup();
-        assertEquals(Constants.PERMPREFIX + "admin.*", ac.getPermission());
+        assertEquals("bskyblock.admin.*", ac.getPermission());
         assertFalse(ac.isOnlyPlayer());
         assertEquals("commands.admin.help.parameters", ac.getParameters());
         assertEquals("commands.admin.help.description", ac.getDescription());

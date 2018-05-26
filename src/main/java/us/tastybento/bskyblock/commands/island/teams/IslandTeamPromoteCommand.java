@@ -2,11 +2,10 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
-public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
+public class IslandTeamPromoteCommand extends CompositeCommand {
 
     public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
         super(islandTeamCommand, string);
@@ -14,7 +13,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         if (this.getLabel().equals("promote")) {
             setParameters("commands.island.team.promote.parameters");

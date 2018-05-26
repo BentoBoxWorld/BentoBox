@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -17,7 +16,7 @@ public class AdminInfoCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.info");
+        setPermission("admin.info");
         setOnlyPlayer(false);
         setParameters("commands.admin.info.parameters");
         setDescription("commands.admin.info.description");

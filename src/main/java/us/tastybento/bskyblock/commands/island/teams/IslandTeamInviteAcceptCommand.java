@@ -13,15 +13,18 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 
-public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
+public class IslandTeamInviteAcceptCommand extends CompositeCommand {
+    
+    private IslandTeamCommand itc;
 
-    public IslandTeamInviteAcceptCommand(CompositeCommand islandTeamCommand) {
+    public IslandTeamInviteAcceptCommand(IslandTeamCommand islandTeamCommand) {
         super(islandTeamCommand, "accept");
+        this.itc = islandTeamCommand;
     }
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.accept.description");
     }
@@ -30,11 +33,8 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
 
         UUID playerUUID = user.getUniqueId();
-        if(!inviteList.containsKey(playerUUID)) {
-            return false;
-        }
         // Check if player has been invited
-        if (!inviteList.containsKey(playerUUID)) {
+        if (!itc.getInviteCommand().getInviteList().containsKey(playerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.none-invited-you");
             return false;
         }
@@ -44,10 +44,10 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             return false;
         }
         // Get the team leader
-        UUID prospectiveTeamLeaderUUID = inviteList.get(playerUUID);
+        UUID prospectiveTeamLeaderUUID = itc.getInviteCommand().getInviteList().get(playerUUID);
         if (!getIslands().hasIsland(user.getWorld(), prospectiveTeamLeaderUUID)) {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
-            inviteList.remove(playerUUID);
+            itc.getInviteCommand().getInviteList().remove(playerUUID);
             return false;
         }
         // Fire event so add-ons can run commands, etc.
@@ -62,7 +62,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
             return true;
         }
         // Remove the invite
-        inviteList.remove(playerUUID);
+        itc.getInviteCommand().getInviteList().remove(playerUUID);
         // Put player into Spectator mode
         user.setGameMode(GameMode.SPECTATOR);
         // Get the player's island - may be null if the player has no island
@@ -83,8 +83,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         getPlayers().setHomeLocation(playerUUID, user.getLocation());
         // Delete the old island
         getIslands().deleteIsland(island, true);
-        // Set the cooldown
-        setResetWaitTime(user.getPlayer());
+        // TODO Set the cooldown
         // Reset deaths
         if (getSettings().isTeamJoinDeathReset()) {
             getPlayers().setDeaths(playerUUID, 0);
@@ -93,7 +92,7 @@ public class IslandTeamInviteAcceptCommand extends AbstractIslandTeamCommand {
         user.setGameMode(GameMode.SURVIVAL);
 
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", Constants.ISLANDCOMMAND);
-        User inviter = User.getInstance(inviteList.get(playerUUID));
+        User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
         if (inviter != null) {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", user.getName());
         }

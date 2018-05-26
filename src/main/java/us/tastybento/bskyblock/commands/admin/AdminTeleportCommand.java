@@ -8,7 +8,6 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
@@ -22,7 +21,8 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.tp");
+        // Permission
+        setPermission(getPermissionPrefix() + "admin.tp");
         setOnlyPlayer(true);
         setParameters("commands.admin.tp.parameters");
         setDescription("commands.admin.tp.description");
