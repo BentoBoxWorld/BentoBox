@@ -53,7 +53,7 @@ public class AdminRegisterCommand extends CompositeCommand {
         // Register island if it exists
         return island.map(i -> {
             // Island exists
-            getIslands().makeLeader(user, targetUUID, i);
+            getIslands().makeLeader(user, targetUUID, i, getPermissionPrefix());
             user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
             user.sendMessage("general.success");
             return true;

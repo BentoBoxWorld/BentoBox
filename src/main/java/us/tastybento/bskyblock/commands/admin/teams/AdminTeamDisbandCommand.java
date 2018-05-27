@@ -3,8 +3,6 @@ package us.tastybento.bskyblock.commands.admin.teams;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.World;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -23,9 +21,6 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        // TODO: fix world
-        World world = getPlugin().getIWM().getIslandWorld();
-
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
@@ -37,24 +32,24 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().hasIsland(world, targetUUID)) {
+        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().inTeam(world, targetUUID)) {
+        if (!getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-        if (!getIslands().getTeamLeader(world, targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", getPlayers().getName(getIslands().getTeamLeader(world, targetUUID)));
+        if (!getIslands().getTeamLeader(getWorld(), targetUUID).equals(targetUUID)) {
+            user.sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", getPlayers().getName(getIslands().getTeamLeader(getWorld(), targetUUID)));
             return false;
         }
         // Disband team
-        getIslands().getMembers(world, targetUUID).forEach(m -> {
+        getIslands().getMembers(getWorld(), targetUUID).forEach(m -> {
             User.getInstance(m).sendMessage("commands.admin.team.disband.disbanded");
             // The leader gets to keep the island
             if (!m.equals(targetUUID)) {
-                getIslands().setLeaveTeam(world, m);
+                getIslands().setLeaveTeam(getWorld(), m);
             }
         });
         user.sendMessage("general.success");

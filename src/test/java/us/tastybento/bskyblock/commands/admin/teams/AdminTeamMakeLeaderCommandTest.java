@@ -199,7 +199,7 @@ public class AdminTeamMakeLeaderCommandTest {
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertTrue(itl.execute(user, Arrays.asList(name)));
         // Add other verifications
-        Mockito.verify(im).makeLeader(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID));
+        Mockito.verify(im).makeLeader(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID), Mockito.any());
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
     

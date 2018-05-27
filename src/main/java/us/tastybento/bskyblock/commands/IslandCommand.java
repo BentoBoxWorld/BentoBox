@@ -2,8 +2,6 @@ package us.tastybento.bskyblock.commands;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -20,7 +18,6 @@ import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.IslandUnbanCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
-import us.tastybento.bskyblock.util.Util;
 
 public class IslandCommand extends CompositeCommand {
 
@@ -65,8 +62,7 @@ public class IslandCommand extends CompositeCommand {
             return false;
         }        
         if (args.isEmpty()) {
-            // If in world, go
-            
+            // If user has an island, go
             if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) != null) {
                 return getSubCommand("go").map(goCmd -> goCmd.execute(user, new ArrayList<>())).orElse(false);
             }
@@ -76,13 +72,6 @@ public class IslandCommand extends CompositeCommand {
         user.sendMessage("general.errors.unknown-command", "[label]", getTopLabel());
         return false;
 
-    }
-
-    @Override
-    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {       
-        List<String> options = getPlugin().getIWM().getOverWorldNames().stream().collect(Collectors.toList());
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        return Optional.of(Util.tabLimit(options, lastArg));
     }
 
 }

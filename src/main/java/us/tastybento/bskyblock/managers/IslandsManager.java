@@ -794,9 +794,6 @@ public class IslandsManager {
         return getMembers(world, playerUUID).size() > 1;
     }
     
-    private int getMaxRangeSize(User user) {
-        return Util.getPermValue(user.getPlayer(), "island.range.", plugin.getSettings().getIslandProtectionRange());
-    }
 
     /**
      * Makes a new leader for an island
@@ -804,8 +801,8 @@ public class IslandsManager {
      * @param user - the user who is issuing the command
      * @param targetUUID - the current island member who is going to become the leader
      */
-    public void makeLeader(World world, User user, UUID targetUUID) {
-        makeLeader(user, targetUUID, getIsland(world, targetUUID));
+    public void makeLeader(World world, User user, UUID targetUUID, String permPrefix) {
+        makeLeader(user, targetUUID, getIsland(world, targetUUID), permPrefix);
     }
     
     /**
@@ -814,7 +811,7 @@ public class IslandsManager {
      * @param targetUUID - new leader
      * @param island - island to register
      */
-    public void makeLeader(User user, UUID targetUUID, Island island) {
+    public void makeLeader(User user, UUID targetUUID, Island island, String permPrefix) {
         islandCache.setOwner(island, targetUUID);
         
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
@@ -824,7 +821,7 @@ public class IslandsManager {
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
         if (target.isOnline()) {
             // Check if new leader has a different range permission than the island size
-            int range = getMaxRangeSize(target);
+            int range = Util.getPermValue(target.getPlayer(), permPrefix + "island.range.", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
             // Range can go up or down
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));

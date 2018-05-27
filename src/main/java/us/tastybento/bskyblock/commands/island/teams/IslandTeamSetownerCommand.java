@@ -68,7 +68,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         if (event.isCancelled()) {
             return false;
         }
-        getIslands().makeLeader(getWorld(), user, targetUUID);
+        getIslands().makeLeader(getWorld(), user, targetUUID, getPermissionPrefix());
         getIslands().save(true);
         return true;
     }

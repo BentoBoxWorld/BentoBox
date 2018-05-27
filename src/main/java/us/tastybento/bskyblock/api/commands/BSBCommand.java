@@ -14,7 +14,7 @@ public interface BSBCommand {
 
     /**
      * Anything that needs to be set up for this command.
-     * Do not register subcommands in this section. Put them after the super in the constructor
+     * Register subcommands in this section.
      */
     void setup();
 

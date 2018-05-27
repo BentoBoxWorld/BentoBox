@@ -3,8 +3,6 @@ package us.tastybento.bskyblock.commands.admin.teams;
 import java.util.List;
 import java.util.UUID;
 
-import org.bukkit.World;
-
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -24,9 +22,6 @@ public class AdminTeamKickCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        // TODO: fix world
-        World world = getPlugin().getIWM().getIslandWorld();
-
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
@@ -38,21 +33,21 @@ public class AdminTeamKickCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().hasIsland(world, targetUUID)) {
+        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().inTeam(world, targetUUID)) {
+        if (!getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-        if (getIslands().getTeamLeader(world, targetUUID).equals(targetUUID)) {
+        if (getIslands().getTeamLeader(getWorld(), targetUUID).equals(targetUUID)) {
             user.sendMessage("commands.admin.team.kick.cannot-kick-leader");
-            getIslands().getIsland(world, targetUUID).showMembers(getPlugin(), user);
+            getIslands().getIsland(getWorld(), targetUUID).showMembers(getPlugin(), user);
             return false;
         }
         User.getInstance(targetUUID).sendMessage("commands.admin.team.kick.admin-kicked");
-        getIslands().removePlayer(world, targetUUID);
+        getIslands().removePlayer(getWorld(), targetUUID);
         user.sendMessage("general.success");
         return true;
 
