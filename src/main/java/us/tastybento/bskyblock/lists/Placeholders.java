@@ -21,7 +21,7 @@ public class Placeholders {
      * @return List of all the flags in this class
      */
     public static List<Placeholder> values() {
-        return Arrays.asList(Placeholders.class.getFields()).stream().map(field -> {
+        return Arrays.stream(Placeholders.class.getFields()).map(field -> {
             try {
                 return (Placeholder)field.get(null);
             } catch (IllegalArgumentException | IllegalAccessException e) {

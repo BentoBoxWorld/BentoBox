@@ -54,7 +54,7 @@ public class AddonsManager {
         if (!f.exists()) {
             f.mkdirs();
         }
-        Arrays.asList(f.listFiles()).stream().filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(t -> {
+        Arrays.stream(f.listFiles()).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(t -> {
             plugin.log("Loading " + t.getName());
             try {
                 loadAddon(t);

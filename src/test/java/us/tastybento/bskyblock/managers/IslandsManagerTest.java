@@ -316,7 +316,7 @@ public class IslandsManagerTest {
     @Test
     public void testBadBlocks() {
         // Fences
-        Arrays.asList(Material.values()).stream().filter(m -> m.toString().contains("FENCE")).forEach(m -> {
+        Arrays.stream(Material.values()).filter(m -> m.toString().contains("FENCE")).forEach(m -> {
             when(ground.getType()).thenReturn(m);
             assertFalse("Fence :" + m.toString(), manager.isSafeLocation(location));
         });

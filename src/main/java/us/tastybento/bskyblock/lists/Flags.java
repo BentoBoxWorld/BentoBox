@@ -141,7 +141,7 @@ public class Flags {
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
-        return Arrays.asList(Flags.class.getFields()).stream().map(field -> {
+        return Arrays.stream(Flags.class.getFields()).map(field -> {
             try {
                 return (Flag)field.get(null);
             } catch (IllegalArgumentException | IllegalAccessException e) {
