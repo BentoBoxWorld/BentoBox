@@ -43,7 +43,7 @@ general:
 
 commands:
   help:
-    header: "&7=========== &c%bsb_plugin_name% &7==========="
+    header: "&7=========== &c[label] help &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
@@ -122,12 +122,13 @@ commands:
       rank-set: "&aRank set from [from] to [to]."
   island:
     about:
-      description: "display info about %bsb_plugin_name%"
+      description: "display copyright and license info"
     go:
       parameters: "<home number>"
       description: "teleport you to your island"
-      teleport: "&aTeleporting you to your island. &b/[label] help &afor help."
+      teleport: "&aTeleporting you to your island."
       teleported: "&aTeleported you to home &e#[number]."
+      tip: "&bType /[label] help &afor help."
     help:
       description: "The main island command"
       pick-world: "&cSpecify world from [worlds]"

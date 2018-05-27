@@ -29,6 +29,7 @@ import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -112,6 +113,11 @@ public class IslandTeamInviteCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
+        
+        // IWM friendly name
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
     }
 
     /**

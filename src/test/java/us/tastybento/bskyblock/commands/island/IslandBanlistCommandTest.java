@@ -36,6 +36,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
@@ -88,6 +89,7 @@ public class IslandBanlistCommandTest {
         // Parent command has no aliases
         ic = mock(IslandCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ic.getTopLabel()).thenReturn("island");
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
@@ -110,6 +112,11 @@ public class IslandBanlistCommandTest {
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+
+        // IWM friendly name
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
 
     }
 

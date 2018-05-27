@@ -36,6 +36,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
@@ -111,6 +112,10 @@ public class IslandUnbanCommandTest {
         when(island.isBanned(Mockito.any())).thenReturn(false);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
+        // IWM friendly name
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
     }
 
     /**

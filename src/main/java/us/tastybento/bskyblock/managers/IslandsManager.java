@@ -522,7 +522,7 @@ public class IslandsManager {
         }
         player.teleport(home);
         if (number == 1) {
-            user.sendMessage("commands.island.go.teleport", "[label]", Constants.ISLANDCOMMAND);
+            user.sendMessage("commands.island.go.teleport");
         } else {
             user.sendMessage("commands.island.go.teleported", "[number]", String.valueOf(number));
         }

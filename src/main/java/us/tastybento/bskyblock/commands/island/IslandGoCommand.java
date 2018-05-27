@@ -19,7 +19,6 @@ public class IslandGoCommand extends CompositeCommand {
 
     public IslandGoCommand(CompositeCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
-        new CustomIslandMultiHomeHelp(this);
     }
 
     /* (non-Javadoc)
@@ -29,7 +28,8 @@ public class IslandGoCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.home");
         setOnlyPlayer(true);
-        setDescription("commands.island.go.description");  
+        setDescription("commands.island.go.description");
+        new CustomIslandMultiHomeHelp(this);
     }
 
     /* (non-Javadoc)
@@ -47,6 +47,7 @@ public class IslandGoCommand extends CompositeCommand {
             int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getSettings().getMaxHomes());
             if (homeValue > 1  && homeValue <= maxHomes) {
                 getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
+                user.sendMessage("commands.island.go.tip", "[label]", getTopLabel());
                 return true;
             }
         }

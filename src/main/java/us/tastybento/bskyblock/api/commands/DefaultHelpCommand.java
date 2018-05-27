@@ -51,7 +51,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             }
         }
         if (depth == 0) {
-            user.sendMessage("commands.help.header");
+            user.sendMessage("commands.help.header", "[label]", getIWM().getFriendlyName(getWorld()));
         }
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {

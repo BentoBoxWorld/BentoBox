@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.World;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -64,7 +63,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);
         User leader = User.getInstance(leaderUUID);
         leader.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", getPlugin().getPlayers().getName(targetUUID));
-        target.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", Constants.ISLANDCOMMAND);
+        target.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", getTopLabel());
         getIslands().getIsland(world, leaderUUID).addMember(targetUUID);
         user.sendMessage("general.success");
         return true;

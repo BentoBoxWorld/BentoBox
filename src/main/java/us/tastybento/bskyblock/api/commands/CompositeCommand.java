@@ -19,6 +19,7 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
@@ -79,6 +80,16 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * If the world value does not exist, then the command is general across worlds
      */
     private World world;
+    
+    /**
+     * The addon creating this command, if any
+     */
+    private Addon addon;
+    
+    /**
+     * The top level label
+     */
+    private String topLabel = "";
 
     /**
      * Used only for testing....
@@ -99,12 +110,40 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
+     * Top level command
+     * @param addon - addon creating the command
+     * @param label - string for this command
+     * @param aliases - aliases
+     */
+    public CompositeCommand(Addon addon, String label, String... aliases) {
+        super(label);
+        this.topLabel = label;
+        this.addon = addon;
+        this.plugin = BSkyBlock.getInstance();
+        setAliases(new ArrayList<>(Arrays.asList(aliases)));
+        parent = null;
+        setUsage("");
+        subCommandLevel = 0; // Top level
+        subCommands = new LinkedHashMap<>();
+        subCommandAliases = new LinkedHashMap<>();
+        // Register command if it is not already registered
+        if (plugin.getCommand(label) == null) {
+            plugin.getCommandsManager().registerCommand(this);
+        }
+        setup();
+        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
+            new DefaultHelpCommand(this);
+        }
+    }
+    
+    /**
      * This is the top-level command constructor for commands that have no parent.
      * @param label - string for this command
      * @param aliases - aliases for this command
      */
     public CompositeCommand(String label, String... aliases) {
         super(label);
+        this.topLabel = label;
         this.plugin = BSkyBlock.getInstance();
         setAliases(new ArrayList<>(Arrays.asList(aliases)));
         parent = null;
@@ -130,6 +169,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
         super(label);
+        this.topLabel = parent.getTopLabel();
         this.plugin = BSkyBlock.getInstance();
         this.parent = parent;
         subCommandLevel = parent.getLevel() + 1;
@@ -143,17 +183,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             parent.getSubCommandAliases().put(alias, this);
         }
         setUsage("");
+        // Inherit permission prefix
+        this.permissionPrefix = parent.getPermissionPrefix();
+        // Inherit world
+        this.world = parent.getWorld();
         setup();
         // If this command does not define its own help class, then use the default help command
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
-        // Inherit permission prefix
-        this.permissionPrefix = parent.getPermissionPrefix();
-        // Inherit world
-        this.world = parent.getWorld();
-    }
 
+    }
     /*
      * This method deals with the command execution. It traverses the tree of
      * subcommands until it finds the right object and then runs execute on it.
@@ -504,5 +544,18 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public void setWorld(World world) {
         this.world = world;
     }
+
+    /**
+     * @return the addon
+     */
+    public Addon getAddon() {
+        return addon;
+    }
     
+    /**
+     * @return top level label, e.g., island
+     */
+    public String getTopLabel() {
+        return topLabel;
+    }
 }

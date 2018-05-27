@@ -27,12 +27,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.managers.island.NewIsland;
@@ -74,6 +74,7 @@ public class IslandResetCommandTest {
         
         // Player
         Player p = mock(Player.class);
+        // User, sometime use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
@@ -83,12 +84,14 @@ public class IslandResetCommandTest {
         // Parent command has no aliases
         ic = mock(IslandCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ic.getTopLabel()).thenReturn("island");
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
+        
 
         // Has team
         pm = mock(PlayersManager.class);
@@ -99,6 +102,12 @@ public class IslandResetCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        
+        // IWM friendly name
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
+        
 
     }
 
@@ -272,7 +281,7 @@ public class IslandResetCommandTest {
         
         // Reset
         assertTrue(irc.execute(user, new ArrayList<>()));
-        Mockito.verify(user).sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, "[seconds]", String.valueOf(s.getConfirmationTime()));
+        Mockito.verify(user).sendMessage("commands.island.reset.confirm", "[label]", "island", "[seconds]", String.valueOf(s.getConfirmationTime()));
         
         // Reset confirm
         assertTrue(irc.execute(user, Arrays.asList("confirm")));

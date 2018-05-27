@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.commands;
 
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.admin.AdminGetRankCommand;
@@ -20,7 +19,16 @@ import us.tastybento.bskyblock.commands.admin.teams.AdminTeamMakeLeaderCommand;
 public class AdminCommand extends CompositeCommand {
 
     public AdminCommand() {
-        super(Constants.ADMINCOMMAND, "bsb");
+        super("bsbadmin", "bsb");
+    }
+
+    @Override
+    public void setup() {
+        setPermissionPrefix("bskyblock");
+        setPermission("admin.*");
+        setOnlyPlayer(false);
+        setParameters("commands.admin.help.parameters");
+        setDescription("commands.admin.help.description");
         setWorld(getPlugin().getIWM().getIslandWorld());
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
@@ -40,18 +48,9 @@ public class AdminCommand extends CompositeCommand {
     }
 
     @Override
-    public void setup() {
-        setPermissionPrefix("bskyblock");
-        setPermission("admin.*");
-        setOnlyPlayer(false);
-        setParameters("commands.admin.help.parameters");
-        setDescription("commands.admin.help.description");
-    }
-
-    @Override
     public boolean execute(User user, List<String> args) {
         if (!args.isEmpty()) {
-            user.sendMessage("general.errors.unknown-command", "[label]", Constants.ADMINCOMMAND);
+            user.sendMessage("general.errors.unknown-command", "[label]", getTopLabel());
             return false;
         }
         // By default run the attached help command, if it exists (it should)

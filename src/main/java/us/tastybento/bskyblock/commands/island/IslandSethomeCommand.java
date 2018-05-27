@@ -11,7 +11,6 @@ public class IslandSethomeCommand extends CompositeCommand {
 
     public IslandSethomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "sethome");
-        new CustomIslandMultiHomeHelp(this);
     }
 
     @Override
@@ -19,6 +18,7 @@ public class IslandSethomeCommand extends CompositeCommand {
         setPermission("island.sethome");
         setOnlyPlayer(true);
         setDescription("commands.island.sethome.description");
+        new CustomIslandMultiHomeHelp(this);
     }
 
     @Override

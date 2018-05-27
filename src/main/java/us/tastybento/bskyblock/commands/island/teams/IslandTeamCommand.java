@@ -15,14 +15,6 @@ public class IslandTeamCommand extends CompositeCommand {
 
     public IslandTeamCommand(CompositeCommand parent) {
         super(parent, "team");
-        // Register commands
-        inviteCommand = new IslandTeamInviteCommand(this);
-        new IslandTeamLeaveCommand(this);
-        new IslandTeamSetownerCommand(this);
-        new IslandTeamKickCommand(this);
-        new IslandTeamInviteAcceptCommand(this);
-        new IslandTeamInviteRejectCommand(this);
-
     }
 
     @Override
@@ -30,6 +22,13 @@ public class IslandTeamCommand extends CompositeCommand {
         setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.description");
+        // Register commands
+        inviteCommand = new IslandTeamInviteCommand(this);
+        new IslandTeamLeaveCommand(this);
+        new IslandTeamSetownerCommand(this);
+        new IslandTeamKickCommand(this);
+        new IslandTeamInviteAcceptCommand(this);
+        new IslandTeamInviteRejectCommand(this);
     }
 
     @Override

@@ -89,6 +89,7 @@ public class AdminTeamAddCommandTest {
         // Parent command has no aliases
         ac = mock(AdminCommand.class);
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ac.getTopLabel()).thenReturn("bsb");
 
         // Player has island to begin with 
         im = mock(IslandsManager.class);
@@ -118,6 +119,7 @@ public class AdminTeamAddCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         World world = mock(World.class);
         when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
     }
 

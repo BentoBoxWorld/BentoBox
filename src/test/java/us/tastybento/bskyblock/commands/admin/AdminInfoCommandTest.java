@@ -96,6 +96,7 @@ public class AdminInfoCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         World world = mock(World.class);
         when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
 

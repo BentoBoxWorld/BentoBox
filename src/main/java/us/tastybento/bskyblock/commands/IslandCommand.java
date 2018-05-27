@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
@@ -26,7 +25,19 @@ import us.tastybento.bskyblock.util.Util;
 public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
-        super(Constants.ISLANDCOMMAND, "is");
+        super("island", "is");
+    }
+
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.api.commands.CompositeCommand#setup()
+     */
+    @Override
+    public void setup() {
+        setDescription("commands.island.help.description");
+        setOnlyPlayer(true);
+        // Permission
+        setPermissionPrefix("bskyblock");
+        setPermission("island");
         setWorld(getPlugin().getIWM().getIslandWorld());
         // Set up subcommands
         new IslandAboutCommand(this);
@@ -46,18 +57,6 @@ public class IslandCommand extends CompositeCommand {
     }
 
     /* (non-Javadoc)
-     * @see us.tastybento.bskyblock.api.commands.CompositeCommand#setup()
-     */
-    @Override
-    public void setup() {
-        setDescription("commands.island.help.description");
-        setOnlyPlayer(true);
-        // Permission
-        setPermissionPrefix("bskyblock");
-        setPermission("island");
-    }
-
-    /* (non-Javadoc)
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
@@ -74,7 +73,7 @@ public class IslandCommand extends CompositeCommand {
             // No islands currently
             return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
         }
-        user.sendMessage("general.errors.unknown-command", "[label]", Constants.ISLANDCOMMAND);
+        user.sendMessage("general.errors.unknown-command", "[label]", getTopLabel());
         return false;
 
     }

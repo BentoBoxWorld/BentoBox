@@ -27,6 +27,7 @@ import us.tastybento.bskyblock.api.events.command.CommandEvent;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
@@ -94,6 +95,11 @@ public class DefaultHelpCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        
+        // IWM friendly name
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
 
     }
     
@@ -146,7 +152,7 @@ public class DefaultHelpCommandTest {
         when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         dhc.execute(user, new ArrayList<>());
-        Mockito.verify(user).sendMessage("commands.help.header");
+        Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
         Mockito.verify(user).getTranslation("island");
         Mockito.verify(user).getTranslation("parameters");
         Mockito.verify(user).getTranslation("description");

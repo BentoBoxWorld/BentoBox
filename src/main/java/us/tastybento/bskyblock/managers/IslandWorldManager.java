@@ -421,7 +421,7 @@ public class IslandWorldManager {
 
     /**
      * Get max team size for this world
-     * @param world
+     * @param world - world
      * @return max team size
      */
     public int getMaxTeamSize(World world) {
@@ -430,11 +430,19 @@ public class IslandWorldManager {
 
     /**
      * Get max homes for world
-     * @param world
+     * @param world - world
      * @return max homes
      */
     public int getMaxHomes(World world) {
         return worldSettings.get(Util.getWorld(world)).getMaxHomes();
     }
     
+    /**
+     * Get the friendly name for world or related nether or end
+     * @param world - world
+     * @return Friendly name
+     */
+    public String getFriendlyName(World world) {
+        return worldSettings.get(Util.getWorld(world)).getFriendlyName();
+    }
 }

@@ -6,7 +6,6 @@ import java.util.UUID;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
@@ -91,7 +90,7 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
         // Put player back into normal mode
         user.setGameMode(GameMode.SURVIVAL);
 
-        user.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", Constants.ISLANDCOMMAND);
+        user.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", getTopLabel());
         User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
         if (inviter != null) {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", user.getName());

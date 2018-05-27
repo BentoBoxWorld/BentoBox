@@ -141,10 +141,7 @@ public class AddonsManager {
                 addons.add(addon);
 
                 // Inform the console
-                plugin.log("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
-                
-                // Run the onLoad() method
-                addon.onLoad();
+                plugin.log("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");               
             }
 
         } catch (Exception e) {
