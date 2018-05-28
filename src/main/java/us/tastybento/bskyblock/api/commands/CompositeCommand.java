@@ -535,6 +535,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return the world
      */
     public World getWorld() {
+        if (world == null) {
+            plugin.logError(getLabel() + " did not setWorld in setup!");
+        }
         return world;
     }
 

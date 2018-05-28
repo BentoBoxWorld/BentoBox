@@ -53,6 +53,8 @@ public class Clipboard {
         UP
     }
 
+    private static final String ATTACHED = "attached";
+
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
     private Location pos2;
@@ -127,8 +129,8 @@ public class Clipboard {
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
         Material m = Material.getMaterial(s.getString("type"));
         Block block = location.getWorld().getBlockAt(x, y, z);
-        if (s.getBoolean("attached")) {
-            plugin.getLogger().info("Setting 1 tick later for " + m.toString());
+        if (s.getBoolean(ATTACHED)) {
+            plugin.log("Setting 1 tick later for " + m.toString());
             plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(block, s, m));
         } else {
             setBlock(block, s, m);
@@ -139,7 +141,7 @@ public class Clipboard {
     private void setBlock(Block block, ConfigurationSection s, Material m) {
      // Block state
         
-        if (s.getBoolean("attached") && m.toString().contains("TORCH")) {
+        if (s.getBoolean(ATTACHED) && m.toString().contains("TORCH")) {
             TorchDir d = TorchDir.valueOf(s.getString("facing"));
 
             Block rel = block.getRelative(BlockFace.DOWN);
@@ -271,7 +273,7 @@ public class Clipboard {
             Attachable facing = (Attachable)md;
             s.set("facing", facing.getFacing().name());
             s.set("attached-face", facing.getAttachedFace().name());
-            s.set("attached", true);
+            s.set(ATTACHED, true);
         }
         if (md instanceof Colorable) {
             Bukkit.getLogger().info("Colorable");
@@ -366,20 +368,14 @@ public class Clipboard {
     /**
      * Save the clipboard to a file
      * @param file
+     * @throws IOException 
      */
-    public void save(File file) {
-        try {
+    public void save(File file) throws IOException {
             getBlockConfig().save(file);
             zip(file);
-
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-
     }
     
-    private void zip(File targetFile) {
+    private void zip(File targetFile) throws IOException {
 
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
@@ -392,11 +388,10 @@ public class Clipboard {
                 }
                 inputStream.close();
                 zipOutputStream.close();
-                targetFile.delete();
+                if (!targetFile.delete()) {
+                    throw new IOException("Could not delete temp file");
+                }
             }
-        } catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
         }
     }
     

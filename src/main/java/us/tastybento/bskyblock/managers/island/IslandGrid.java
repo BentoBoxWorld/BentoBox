@@ -11,7 +11,7 @@ import us.tastybento.bskyblock.database.objects.Island;
  *
  */
 public class IslandGrid {
-    private TreeMap<Integer, TreeMap<Integer, Island>> islandGrid = new TreeMap<>();
+    private TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
 
     /**
      * Adds island to grid
@@ -19,20 +19,20 @@ public class IslandGrid {
      * @return true if successfully added, false if island already exists, or there is an overlap
      */
     public boolean addToGrid(Island island) {
-        if (islandGrid.containsKey(island.getMinX())) {
-            TreeMap<Integer, Island> zEntry = islandGrid.get(island.getMinX());
+        if (grid.containsKey(island.getMinX())) {
+            TreeMap<Integer, Island> zEntry = grid.get(island.getMinX());
             if (zEntry.containsKey(island.getMinZ())) {
                 return false;
             } else {
                 // Add island
                 zEntry.put(island.getMinZ(), island);
-                islandGrid.put(island.getMinX(), zEntry);
+                grid.put(island.getMinX(), zEntry);
             }
         } else {
             // Add island
             TreeMap<Integer, Island> zEntry = new TreeMap<>();
             zEntry.put(island.getMinZ(), island);
-            islandGrid.put(island.getMinX(), zEntry);
+            grid.put(island.getMinX(), zEntry);
         }
         return true;
     }
@@ -47,12 +47,12 @@ public class IslandGrid {
         if (island != null) {
             int x = island.getMinX();
             int z = island.getMinZ();
-            if (islandGrid.containsKey(x)) {
-                TreeMap<Integer, Island> zEntry = islandGrid.get(x);
+            if (grid.containsKey(x)) {
+                TreeMap<Integer, Island> zEntry = grid.get(x);
                 if (zEntry.containsKey(z)) {
                     // Island exists - delete it
                     zEntry.remove(z);
-                    islandGrid.put(x, zEntry);
+                    grid.put(x, zEntry);
                     return true;
                 }
             }
@@ -69,7 +69,7 @@ public class IslandGrid {
      * @return Island or null
      */
     public Island getIslandAt(int x, int z) {
-        Entry<Integer, TreeMap<Integer, Island>> en = islandGrid.floorEntry(x);
+        Entry<Integer, TreeMap<Integer, Island>> en = grid.floorEntry(x);
         if (en != null) {
             Entry<Integer, Island> ent = en.getValue().floorEntry(z);
             if (ent != null) {

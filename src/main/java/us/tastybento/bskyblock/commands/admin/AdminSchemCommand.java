@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.commands.admin;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -57,7 +58,6 @@ public class AdminSchemCommand extends CompositeCommand {
                         return true;
                     } catch (Exception e) {
                         user.sendMessage("commands.admin.schem.could-not-load");
-                        e.printStackTrace();
                         return false;
                     }  
                 } else {
@@ -79,7 +79,12 @@ public class AdminSchemCommand extends CompositeCommand {
                 if (args.size() == 2) {
                     File file = new File(schemFolder, args.get(1)); 
                     user.sendMessage("general.success");
-                    cb.save(file);
+                    try {
+                        cb.save(file);
+                    } catch (IOException e) {
+                        user.sendRawMessage("Could not save!");
+                        return false;
+                    }
                     return true;
                 } else {
                     showHelp(this, user);

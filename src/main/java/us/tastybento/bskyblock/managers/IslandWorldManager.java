@@ -148,7 +148,7 @@ public class IslandWorldManager {
      * @return Set of world names
      */
     public Set<String> getOverWorldNames() {
-        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL)).map(w -> w.getValue()).collect(Collectors.toSet());
+        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL)).map(Map.Entry::getValue).collect(Collectors.toSet());
     }
 
     /**
@@ -159,7 +159,7 @@ public class IslandWorldManager {
     public Set<String> getFreeOverWorldNames(User user) {
         return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
                 .filter(w -> !plugin.getIslands().hasIsland(w.getKey(), user))
-                .map(w -> w.getValue()).collect(Collectors.toSet());
+                .map(Map.Entry::getValue).collect(Collectors.toSet());
     }
     
     /**
@@ -198,7 +198,7 @@ public class IslandWorldManager {
      * @return world, or null if it does not exist
      */
     public World getWorld(String friendlyName) {
-        return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName)).map(e -> e.getKey()).findFirst().orElse(null);
+        return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName)).map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
     /**
@@ -366,7 +366,7 @@ public class IslandWorldManager {
      * @return nether world, or null if it does not exist
      */
     public World getNetherWorld(World overWorld) {
-        return Bukkit.getWorld(overWorld.getName() + "_nether");
+        return Bukkit.getWorld(overWorld.getName() + NETHER);
     }
 
     /**
@@ -375,7 +375,7 @@ public class IslandWorldManager {
      * @return end world, or null if it does not exist
      */
     public World getEndWorld(World overWorld) {
-        return Bukkit.getWorld(overWorld.getName() + "_the_end");
+        return Bukkit.getWorld(overWorld.getName() + THE_END);
     }
 
     /**
@@ -416,7 +416,7 @@ public class IslandWorldManager {
      * @return world, or null if not known
      */
     public World getIslandWorld(String friendlyWorldName) {
-        return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst().map(en -> en.getKey()).orElse(null);
+        return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst().map(Map.Entry::getKey).orElse(null);
     }
 
     /**

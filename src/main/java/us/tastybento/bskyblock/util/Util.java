@@ -23,12 +23,14 @@ import us.tastybento.bskyblock.api.user.User;
 /**
  * A set of utility methods
  *
- * @author Tastybento
+ * @author tastybento
  * @author Poslovitch
  */
 public class Util {
 
     private static final DecimalFormat df = new DecimalFormat("#.###");
+    private static final String NETHER = "_nether";
+    private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BSkyBlock plugin = BSkyBlock.getInstance();
 
@@ -223,8 +225,8 @@ public class Util {
      * @return true if the same
      */
     public static boolean sameWorld(World world, World world2) {
-        String worldName = world.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
-        String world2Name = world2.getName().replaceAll("_nether", "").replaceAll("_the_end", "");
+        String worldName = world.getName().replaceAll(NETHER, "").replaceAll(THE_END, "");
+        String world2Name = world2.getName().replaceAll(NETHER, "").replaceAll(THE_END, "");
         return worldName.equalsIgnoreCase(world2Name);
     }
 
@@ -234,7 +236,7 @@ public class Util {
      * @return over world
      */
     public static World getWorld(World world) {
-        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll("_nether", "").replaceAll("_the_end", ""));
+        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
     }
 
 

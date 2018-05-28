@@ -18,7 +18,6 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.user.User;
@@ -49,7 +48,7 @@ public class IslandBuilder {
 
     //TODO support companions?
 
-    public IslandBuilder(BSkyBlock plugin, Island island) {
+    public IslandBuilder(Island island) {
         this.island = island;
         world = island.getWorld();
     }

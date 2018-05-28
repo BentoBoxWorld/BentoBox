@@ -82,11 +82,7 @@ public class PanelItem {
 
     public void setGlow(boolean glow) {
         this.glow = glow;
-        if (glow) {
-            meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, true);
-        } else {
-            meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, false);
-        }
+        meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, glow);
     }
 
     /**
