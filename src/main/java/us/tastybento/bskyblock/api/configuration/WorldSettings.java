@@ -120,5 +120,10 @@ public interface WorldSettings {
      * @return the max homes
      */
     public int getMaxHomes();
+
+    /**
+     * @return the permission prefix
+     */
+    public String getPermissionPrefix();
     
 }

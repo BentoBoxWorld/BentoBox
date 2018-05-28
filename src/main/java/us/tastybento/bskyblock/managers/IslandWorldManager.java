@@ -445,4 +445,13 @@ public class IslandWorldManager {
     public String getFriendlyName(World world) {
         return worldSettings.get(Util.getWorld(world)).getFriendlyName();
     }
+
+    /**
+     * Get the permission prefix for this world
+     * @param world
+     */
+    public String getPermissionPrefix(World world) {
+        return worldSettings.get(Util.getWorld(world)).getPermissionPrefix();
+        
+    }
 }

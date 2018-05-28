@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
@@ -313,8 +314,6 @@ public class BSkyBlock extends JavaPlugin {
         getLogger().warning(warning);
     }
 
-
-
     /**
      * Registers a world as a world to be covered by this plugin
      * @param world - Bukkit over world
@@ -323,5 +322,5 @@ public class BSkyBlock extends JavaPlugin {
     public void registerWorld(World world, WorldSettings worldSettings) {
         islandWorldManager.addWorld(world, worldSettings);
     }
-    
+
 }

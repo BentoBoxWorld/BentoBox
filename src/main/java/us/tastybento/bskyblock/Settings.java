@@ -1300,6 +1300,11 @@ public class Settings implements ISettings<Settings>, WorldSettings {
     public void setDragonSpawn(boolean dragonSpawn) {
         this.dragonSpawn = dragonSpawn;
     }
+    
+    @Override
+    public String getPermissionPrefix() {
+        return "bskyblock";
+    }
 
 
 }

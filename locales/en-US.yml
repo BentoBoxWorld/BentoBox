@@ -42,6 +42,7 @@ general:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
 commands:
+  # Parameters in <> are required, parameters in [] are optional
   help:
     header: "&7=========== &c[label] help &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
@@ -53,31 +54,31 @@ commands:
       description: "admin command"
     team:
       add:
-        parameters: "[leader] [player]"
+        parameters: "<leader> <player>"
         description: "add player to leader's team"
         name-not-leader: "&c[name] is not the leader"
         name-has-island: "&c[name] has an island. Unregister or delete them first!"
       disband:
-        parameters: "[team leader]"
+        parameters: "<team leader>"
         description: "disband team leader's team"
         user-disband-leader: "&cNot leader! Use disband [leader]"
         disbanded: "&cAdmin disbanded your team!"
       kick:
-        parameters: "[team player]"
+        parameters: "<team player>"
         description: "kick a player from a team"
         cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
         admin-kicked: "&cThe admin kicked you from the team."
       makeleader:
-        parameters: "[player]"
+        parameters: "<player>"
         description: "make player the team's leader"
         already-leader: "&cPlayer is already the leader!"
       register:
-        parameters: "[player]"
+        parameters: "<player>"
         description: "register player to unowned island you are on"
         registered-island: "&aRegistered player to island at [xyz]."
         already-owned: "&cIsland is already owned by another player!"
       unregister:
-        parameters: "[owner]"
+        parameters: "<owner>"
         description: "unregister owner from island, but keep island blocks"
         unregistered-island: "&aUnregistered player from island at [xyz]."
     info:
@@ -102,21 +103,21 @@ commands:
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
-      parameters: "[player] [range]"
+      parameters: "<player> <range>"
       description: "set the range of player's island"
       range-updated: "Island range updated to [number]"
     reload:
       description: "reload the plugin"
     tp:
-      parameters: "[player]"
+      parameters: "<player>"
       description: "teleport to a player's island"
       manual: "&cNo safe warp found! Manually tp near to &b[location] &cand check it out"
     getrank:
-      parameters: "[player]"
+      parameters: "<player>"
       description: "get a player's rank on their island"
       rank-is: "&aRank is [rank] on their island."
     setrank:
-      parameters: "[player] [rank]"
+      parameters: "<player> <rank>"
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
@@ -124,7 +125,7 @@ commands:
     about:
       description: "display copyright and license info"
     go:
-      parameters: "<home number>"
+      parameters: "[home number]"
       description: "teleport you to your island"
       teleport: "&aTeleporting you to your island."
       teleported: "&aTeleported you to home &e#[number]."
@@ -153,7 +154,7 @@ commands:
       must-be-on-your-island: "You must be on your island to set home!"
       num-homes: "Homes can be 1 to [max]."
       home-set: "Your island home has been set to your current location."
-      parameters: "<home number>"
+      parameters: "[home number]"
     setname:
       description: "set a name for your island"
       name-too-short: "&cToo short. Minimum size is [length] characters."
