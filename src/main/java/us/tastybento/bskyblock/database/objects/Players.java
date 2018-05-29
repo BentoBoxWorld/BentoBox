@@ -165,6 +165,8 @@ public class Players implements DataObject {
      * @param number - a number
      */
     public void setHomeLocation(Location location, int number) {
+        // Remove any home locations in the same world with the same number
+        homeLocations.entrySet().removeIf(e -> Util.sameWorld(location.getWorld(), e.getKey().getWorld()) && e.getValue().equals(number));
         homeLocations.put(location, number);
     }
 
