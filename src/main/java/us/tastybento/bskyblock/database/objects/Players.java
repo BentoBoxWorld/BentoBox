@@ -95,6 +95,13 @@ public class Players implements DataObject {
     }
     
     /**
+     * @return the homeLocations
+     */
+    public Map<Location, Integer> getHomeLocations() {
+        return homeLocations;
+    }
+
+    /**
      * @return the kickedList
      */
     public Map<Location, Long> getKickedList() {
