@@ -39,12 +39,10 @@ public class IslandCache {
      * @return true if successfully added, false if not
      */
     public boolean addIsland(Island island) {
-        islandsByLocation.put(island.getCenter(), island);
+        islandsByLocation.put(island.getCenter(), island);       
         islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
         islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
-        for (UUID member: island.getMemberSet()) {
-            islandsByUUID.get(island.getWorld()).put(member, island);
-        }
+        island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
         return addToGrid(island);
     }
 

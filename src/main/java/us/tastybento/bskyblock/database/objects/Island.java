@@ -470,6 +470,9 @@ public class Island implements DataObject {
      * @param center the center to set
      */
     public void setCenter(Location center) {
+        if (center != null) {
+            this.world = center.getWorld();
+        }
         this.center = center;
     }
 
@@ -684,7 +687,7 @@ public class Island implements DataObject {
         }
         return true;
     }
-   
+
     /**
      * Shows the members of this island
      * @param plugin
@@ -704,6 +707,6 @@ public class Island implements DataObject {
             });
         }
 
-        
+
     }
 }

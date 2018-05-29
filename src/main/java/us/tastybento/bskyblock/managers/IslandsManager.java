@@ -281,7 +281,7 @@ public class IslandsManager {
     public Island getIsland(World world, User user){
         return islandCache.get(world, user.getUniqueId());
     }
-    
+
     /**
      * Gets the island for this player. If they are in a team, the team island is returned
      * @param world - world to check
@@ -467,7 +467,7 @@ public class IslandsManager {
     public boolean hasIsland(World world, User user) {
         return islandCache.hasIsland(world, user.getUniqueId());
     }
-    
+
     /**
      * Checks if a player has an island in the world
      * @param world - world to check
@@ -477,7 +477,7 @@ public class IslandsManager {
     public boolean hasIsland(World world, UUID uuid) {
         return islandCache.hasIsland(world, uuid);
     }
-        
+
     /**
      * This teleports player to their island. If not safe place can be found
      * then the player is sent to spawn via /spawn command
@@ -619,14 +619,7 @@ public class IslandsManager {
      */
     public void load(){
         islandCache.clear();
-        spawn = null;
-        try {
-            for (Island island : handler.loadObjects()) {
-                islandCache.addIsland(island);
-            }
-        } catch (Exception e) {
-            plugin.logError("Could not load islands to cache! " + e.getMessage());
-        }
+        handler.loadObjects().forEach(islandCache::addIsland);
     }
 
     /**
@@ -684,7 +677,7 @@ public class IslandsManager {
     public void removePlayer(World world, User user) {
         islandCache.removePlayer(world, user.getUniqueId());
     }
-    
+
     /**
      * Removes this player from any and all islands in world
      * @param world - world
@@ -793,7 +786,7 @@ public class IslandsManager {
     public boolean inTeam(World world, UUID playerUUID) {
         return getMembers(world, playerUUID).size() > 1;
     }
-    
+
 
     /**
      * Makes a new leader for an island
@@ -804,7 +797,7 @@ public class IslandsManager {
     public void makeLeader(World world, User user, UUID targetUUID, String permPrefix) {
         makeLeader(user, targetUUID, getIsland(world, targetUUID), permPrefix);
     }
-    
+
     /**
      * Makes a new leader for an island
      * @param user - requester
@@ -813,7 +806,7 @@ public class IslandsManager {
      */
     public void makeLeader(User user, UUID targetUUID, Island island, String permPrefix) {
         islandCache.setOwner(island, targetUUID);
-        
+
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
 
         // Check if online
@@ -832,7 +825,7 @@ public class IslandsManager {
             island.setProtectionRange(range);
 
         }
-        
+
     }
 
 }

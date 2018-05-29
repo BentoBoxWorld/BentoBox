@@ -4,7 +4,6 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
@@ -112,28 +111,27 @@ public class BSkyBlock extends JavaPlugin {
             // Set up commands
             new IslandCommand();
             new AdminCommand();
-
             
+            // Locales manager must be loaded before addons
+            localesManager = new LocalesManager(instance);
+            PlaceholderHandler.register(instance);
+            
+            // Load addons. Addons may load worlds, so they must go before islands are loaded.
+            addonsManager = new AddonsManager(instance);
+            addonsManager.loadAddons();
+            // Enable addons
+            addonsManager.enableAddons();
+           
             getServer().getScheduler().runTask(instance, () -> {
-
                 // Load Flags
                 flagsManager = new FlagsManager(instance);
-
-                // Load islands from database
-                islandsManager.load();
-
-                localesManager = new LocalesManager(instance);
-                PlaceholderHandler.register(instance);
 
                 // Register Listeners
                 registerListeners();
 
-                // Load addons
-                addonsManager = new AddonsManager(instance);
-                addonsManager.loadAddons();
-                // Enable addons
-                addonsManager.enableAddons();
-
+                // Load islands from database - need to wait until all the worlds are loaded
+                islandsManager.load();
+                
                 // Save islands & players data asynchronously every X minutes
                 getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
                 instance.getServer().getScheduler().runTaskTimer(instance, () -> {

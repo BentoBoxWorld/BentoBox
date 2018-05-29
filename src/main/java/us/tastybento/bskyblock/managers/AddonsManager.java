@@ -16,8 +16,6 @@ import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
 import org.bukkit.plugin.InvalidDescriptionException;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -84,16 +82,7 @@ public class AddonsManager {
      * @return Optional addon object
      */
     public Optional<Addon> getAddonByName(String name){
-        if(name.equals("")) {
-            return Optional.empty();
-        }
-
-        for(Addon addon  : addons){
-            if(addon.getDescription().getName().contains(name)) {
-                return Optional.of(addon);
-            }
-        }
-        return Optional.empty();
+        return Optional.ofNullable(addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst().orElse(null));
     }
 
     private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException, InvalidDescriptionException {
@@ -101,10 +90,9 @@ public class AddonsManager {
             Addon addon = null;
             // Check that this is a jar
             if (!f.getName().endsWith(".jar")) {
-                return;
+                throw new IOException("Filename must end in .jar. Name is '" + f.getName() + "'");
             }
             try (JarFile jar = new JarFile(f)) {
-
                 // Obtain the addon.yml file
                 JarEntry entry = jar.getJarEntry("addon.yml");
                 if (entry == null) {
@@ -133,15 +121,13 @@ public class AddonsManager {
                     addon.saveResource(localeFile, localeDir, false, true);
                 }
                 plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
-
                 // Fire the load event
                 Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-
                 // Add it to the list of addons
                 addons.add(addon);
 
                 // Inform the console
-                plugin.log("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");               
+                plugin.log("Loaded BSkyBlock addon " + addon.getDescription().getName() + "...");               
             }
 
         } catch (Exception e) {
@@ -149,7 +135,6 @@ public class AddonsManager {
                 plugin.log(f.getName() + "is not a jarfile, ignoring...");
             }
         }
-
     }
 
     /**
@@ -166,9 +151,7 @@ public class AddonsManager {
         loader.forEach(l -> {
             try {
                 l.close();
-            } catch (IOException e) {
-                // Do nothing
-            }
+            } catch (IOException ignore) {}
         });
     }
 
@@ -190,22 +173,8 @@ public class AddonsManager {
      * @param name - name of the class
      * @return Class - the class
      */
-    public Class<?> getClassByName(final String name) {
-        Class<?> cachedClass = classes.get(name);
-
-        if (cachedClass != null) {
-            return cachedClass;
-        } else {
-            for (AddonClassLoader l : loader) {
-                try {
-                    cachedClass = l.findClass(name, false);
-                } catch (ClassNotFoundException cnfe) {}
-                if (cachedClass != null) {
-                    return cachedClass;
-                }
-            }
-        }
-        return null;
+    public Class<?> getClassByName(final String name) {        
+        return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(c -> c != null).findFirst().orElse(null));
     }
 
     /**
@@ -216,14 +185,16 @@ public class AddonsManager {
      * @param clazz - the class
      */
     public void setClass(final String name, final Class<?> clazz) {
+        classes.putIfAbsent(name, clazz);
+        /*
         if (!classes.containsKey(name)) {
             classes.put(name, clazz);
-
+            
             if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
                 Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
                 ConfigurationSerialization.registerClass(serializable);
             }
-        }
+        }*/
     }
 
     /**

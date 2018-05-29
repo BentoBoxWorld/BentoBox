@@ -104,9 +104,9 @@ public class AddonClassLoader extends URLClassLoader {
      * @param checkGlobal
      * @return Class
      */
-    public Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
+    public Class<?> findClass(String name, boolean checkGlobal) {
         if (name.startsWith("us.tastybento.")) {
-            throw new ClassNotFoundException(name);
+            return null;
         }
         Class<?> result = classes.get(name);
         if (result == null) {
@@ -114,7 +114,11 @@ public class AddonClassLoader extends URLClassLoader {
                 result = loader.getClassByName(name);
             }
             if (result == null) {
-                result = super.findClass(name);
+                try {
+                    result = super.findClass(name);
+                } catch (ClassNotFoundException e) {
+                    return null;
+                }
                 if (result != null) {
                     loader.setClass(name, result);
                 }
