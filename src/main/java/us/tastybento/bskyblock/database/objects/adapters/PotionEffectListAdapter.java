@@ -10,7 +10,6 @@ public class PotionEffectListAdapter implements AdapterInterface<List<PotionEffe
     @SuppressWarnings("unchecked")
     @Override
     public List<PotionEffectType> deserialize(Object from) {
-        System.out.println("DEBUG: Deserializing ");
         List<PotionEffectType> result = new ArrayList<>();
         if (from instanceof ArrayList) {
             for (String type: (ArrayList<String>)from) {
