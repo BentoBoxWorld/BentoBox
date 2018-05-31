@@ -20,7 +20,7 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<Flag, Integer> serialize(Object object) {
+    public Map<Flag, Integer> deserialize(Object object) {
         Map<Flag, Integer> result = new HashMap<>();
         if (object == null) {
             return result;
@@ -41,7 +41,7 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
 
     @SuppressWarnings("unchecked")
     @Override
-    public Map<String, Integer> deserialize(Object object) {
+    public Map<String, Integer> serialize(Object object) {
         Map<String, Integer> result = new HashMap<>();
         if (object == null) {
             return result;

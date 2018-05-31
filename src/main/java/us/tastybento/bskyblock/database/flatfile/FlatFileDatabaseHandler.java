@@ -138,11 +138,14 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Adapter adapterNotation = field.getAnnotation(Adapter.class);
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
                 // A conversion adapter has been defined
+                // Get the original value
                 Object value = config.get(storageLocation);
-                method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value));
+                method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
+                /*
+                 * I don't know what this part is for...
                 if (value != null && !value.getClass().equals(MemorySection.class)) {
                     method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
-                }
+                }*/
                 // We are done here
                 continue;
             }
@@ -285,7 +288,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
                     // A conversion adapter has been defined
                     try {
-                        config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
+                        config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value));
                     } catch (InstantiationException e) {
                         plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                     }

@@ -9,7 +9,8 @@ public class PotionEffectListAdapter implements AdapterInterface<List<PotionEffe
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<PotionEffectType> serialize(Object from) {
+    public List<PotionEffectType> deserialize(Object from) {
+        System.out.println("DEBUG: Deserializing ");
         List<PotionEffectType> result = new ArrayList<>();
         if (from instanceof ArrayList) {
             for (String type: (ArrayList<String>)from) {
@@ -21,7 +22,7 @@ public class PotionEffectListAdapter implements AdapterInterface<List<PotionEffe
 
     @SuppressWarnings("unchecked")
     @Override
-    public List<String> deserialize(Object to) {
+    public List<String> serialize(Object to) {
         List<String> result = new ArrayList<>();
         if (to instanceof ArrayList) {
             for (PotionEffectType type: (ArrayList<PotionEffectType>)to) {

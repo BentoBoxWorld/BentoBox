@@ -15,12 +15,12 @@ public interface AdapterInterface<S,V> {
      * @param object - object
      * @return serialized object
      */
-    S serialize(Object object);
+    S deserialize(Object object);
 
     /**
      * Deserialize object
      * @param object
      * @return deserialized object
      */
-    V deserialize(Object object);
+    V serialize(Object object);
 }
