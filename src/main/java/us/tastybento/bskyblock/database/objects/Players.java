@@ -80,7 +80,7 @@ public class Players implements DataObject {
     public Location getHomeLocation(World world, int number) {
         return homeLocations.entrySet().stream()
                 .filter(en -> Util.sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
-                .map(en -> en.getKey())
+                .map(Map.Entry::getKey)
                 .findFirst()
                 .orElse(null);
     }

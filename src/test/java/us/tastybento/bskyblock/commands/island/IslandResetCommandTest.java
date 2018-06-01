@@ -45,7 +45,6 @@ import us.tastybento.bskyblock.managers.island.NewIsland;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, NewIsland.class })
 public class IslandResetCommandTest {
 
-    private BSkyBlock plugin;
     private IslandCommand ic;
     private UUID uuid;
     private User user;
@@ -59,7 +58,7 @@ public class IslandResetCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
         // Command manager

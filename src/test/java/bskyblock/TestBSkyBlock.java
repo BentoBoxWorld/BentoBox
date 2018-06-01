@@ -13,6 +13,7 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -168,7 +169,7 @@ public class TestBSkyBlock {
 
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
     }
 
@@ -215,11 +216,11 @@ public class TestBSkyBlock {
         args[0] = "d";
         assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "sub1";
-        assertEquals(Arrays.asList(), testCommand.tabComplete(player, "test", args));
+        assertEquals(Collections.emptyList(), testCommand.tabComplete(player, "test", args));
         String[] args2 = {"sub2",""};
         assertEquals(Arrays.asList("subsub", "help"), testCommand.tabComplete(player, "test", args2));
         args2[1] = "s";
-        assertEquals(Arrays.asList("subsub"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Collections.singletonList("subsub"), testCommand.tabComplete(player, "test", args2));
         String[] args3 = {"sub2","subsub", ""};
         assertEquals(Arrays.asList("subsubsub", "help"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
@@ -343,9 +344,8 @@ public class TestBSkyBlock {
 
         @Override
         public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-            List<String> options = new ArrayList<>();
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-            options.addAll(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
+            List<String> options = new ArrayList<>(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }
     }

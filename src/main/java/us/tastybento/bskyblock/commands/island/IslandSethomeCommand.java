@@ -42,7 +42,7 @@ public class IslandSethomeCommand extends CompositeCommand {
             int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getSettings().getMaxHomes());
             if (maxHomes > 1) {
                 // Check the number given is a number
-                int number = 0;
+                int number;
                 try {
                     number = Integer.valueOf(args.get(0));
                     if (number < 1 || number > maxHomes) {

@@ -39,7 +39,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     /**
      * Connection to the database
      */
-    private Connection connection = null;
+    private Connection connection;
 
     private BSkyBlock bskyblock;
 
@@ -62,12 +62,11 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * Creates the table in the database if it doesn't exist already
      */
     private void createSchema() {
-        StringBuilder sql = new StringBuilder();
-        sql.append("CREATE TABLE IF NOT EXISTS `");
-        sql.append(dataObject.getCanonicalName());
-        sql.append("` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )");
+        String sql = "CREATE TABLE IF NOT EXISTS `" +
+                dataObject.getCanonicalName() +
+                "` (json JSON, uniqueId VARCHAR(255) GENERATED ALWAYS AS (json->\"$.uniqueId\"), UNIQUE INDEX i (uniqueId) )";
         // Prepare and execute the database statements
-        try (PreparedStatement pstmt = connection.prepareStatement(sql.toString())) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.executeUpdate();
         } catch (SQLException e) {
             plugin.logError("Problem trying to create schema for data object " + dataObject.getCanonicalName() + " " + e.getMessage());
@@ -114,15 +113,14 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     @Override
     public T loadObject(String uniqueId) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT `json` FROM `");
-        sb.append(dataObject.getCanonicalName());
-        sb.append("` WHERE uniqueId = ? LIMIT 1");
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {
+        String sb = "SELECT `json` FROM `" +
+                dataObject.getCanonicalName() +
+                "` WHERE uniqueId = ? LIMIT 1";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
-                while (resultSet.next()) {
+                if (resultSet.next()) {
                     // If there is a result, we only want/need the first one
                     Gson gson = getGSON();
                     return gson.fromJson(resultSet.getString("json"), dataObject);
@@ -140,14 +138,13 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        StringBuilder sb = new StringBuilder();
+        String sb = "INSERT INTO " +
+                "`" +
+                dataObject.getCanonicalName() +
+                "` (json) VALUES (?) ON DUPLICATE KEY UPDATE json = ?";
         // Replace into is used so that any data in the table will be replaced with updated data
-        sb.append("INSERT INTO ");
-        sb.append("`");
         // The table name is the canonical name, so that add-ons can be sure of a unique table in the database
-        sb.append(dataObject.getCanonicalName());
-        sb.append("` (json) VALUES (?) ON DUPLICATE KEY UPDATE json = ?");
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             Gson gson = getGSON();
             String toStore = gson.toJson(instance);
             preparedStatement.setString(1, toStore);
@@ -164,11 +161,10 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        StringBuilder sb = new StringBuilder();
-        sb.append("DELETE FROM `");
-        sb.append(dataObject.getCanonicalName());
-        sb.append("` WHERE uniqueId = ?");
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb.toString())) {
+        String sb = "DELETE FROM `" +
+                dataObject.getCanonicalName() +
+                "` WHERE uniqueId = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             Method getUniqueId = dataObject.getMethod("getUniqueId");
             String uniqueId = (String) getUniqueId.invoke(instance);
             preparedStatement.setString(1, uniqueId);
@@ -184,12 +180,11 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public boolean objectExists(String key) {
         // Create the query to see if this key exists
-        StringBuilder query = new StringBuilder();
-        query.append("SELECT IF ( EXISTS( SELECT * FROM `");
-        query.append(dataObject.getCanonicalName());
-        query.append("` WHERE `uniqueId` = ?), 1, 0)");
+        String query = "SELECT IF ( EXISTS( SELECT * FROM `" +
+                dataObject.getCanonicalName() +
+                "` WHERE `uniqueId` = ?), 1, 0)";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(query.toString())) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
             preparedStatement.setString(1, key);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {

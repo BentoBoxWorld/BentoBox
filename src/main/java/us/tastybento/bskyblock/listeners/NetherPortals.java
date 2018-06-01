@@ -1,12 +1,9 @@
 package us.tastybento.bskyblock.listeners;
 
-import java.util.Iterator;
-
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -43,11 +40,11 @@ public class NetherPortals implements Listener {
      * @param location - the location
      * @return true if in the spawn area, false if not
      */
-    private boolean awayFromSpawn(Location location) {
+    private boolean atSpawn(Location location) {
         Vector p = location.toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
         int radiusSquared = plugin.getIWM().getNetherSpawnRadius(location.getWorld()) ^ 2;
-        return (spawn.distanceSquared(p) < radiusSquared) ? false : true;
+        return (spawn.distanceSquared(p) < radiusSquared);
     } 
 
     /**
@@ -63,8 +60,8 @@ public class NetherPortals implements Listener {
             return true;
         }
         // Player is in an island world and in a nether or end
-        return (player.getWorld().getEnvironment().equals(Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld())) 
-                || (player.getWorld().getEnvironment().equals(Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld())) ? true: false;
+        return (player.getWorld().getEnvironment().equals(Environment.NETHER) && plugin.getIWM().isNetherIslands(player.getWorld()))
+                || (player.getWorld().getEnvironment().equals(Environment.THE_END) && plugin.getIWM().isEndIslands(player.getWorld()));
     }
 
     /**
@@ -77,7 +74,7 @@ public class NetherPortals implements Listener {
         if (noAction(e.getPlayer())) {
             return;
         }
-        if (!awayFromSpawn(e.getBlock().getLocation())) {
+        if (atSpawn(e.getBlock().getLocation())) {
             User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
             e.setCancelled(true);
         }
@@ -92,7 +89,7 @@ public class NetherPortals implements Listener {
         if (noAction(e.getPlayer())) {
             return;
         }
-        if (!awayFromSpawn(e.getBlockClicked().getLocation())) {
+        if (atSpawn(e.getBlockClicked().getLocation())) {
             User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
             e.setCancelled(true);
         }
@@ -126,7 +123,6 @@ public class NetherPortals implements Listener {
             .location(e.getFrom().toVector().toLocation(endWorld))
             .build();
         }
-        return;
     }
 
     /**
@@ -161,13 +157,7 @@ public class NetherPortals implements Listener {
         if (expl == null) {
             return false;
         }
-        Iterator<Block> it = e.blockList().iterator();
-        while (it.hasNext()) {
-            Block b = it.next();
-            if (!awayFromSpawn(b.getLocation())) {
-                it.remove();
-            }
-        }
+        e.blockList().removeIf(b -> atSpawn(b.getLocation()));
         return true;
     }
 
@@ -222,7 +212,7 @@ public class NetherPortals implements Listener {
         if (noAction(e.getPlayer())) {
             return;
         }
-        if (!awayFromSpawn(e.getBlock().getLocation())) {
+        if (atSpawn(e.getBlock().getLocation())) {
             User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
             e.setCancelled(true);
         }

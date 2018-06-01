@@ -46,7 +46,6 @@ public class MobSpawnListenerTest {
 
     private static Location location;
     private static BSkyBlock plugin;
-    private static FlagsManager flagsManager;
     private static Zombie zombie;
     private static Slime slime;
     private static Cow cow;
@@ -87,7 +86,7 @@ public class MobSpawnListenerTest {
         when(location.getBlockZ()).thenReturn(0);
         PowerMockito.mockStatic(Flags.class);
 
-        flagsManager = new FlagsManager(plugin);
+        FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
         // Monsters and animals

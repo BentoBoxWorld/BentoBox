@@ -383,10 +383,7 @@ public class Island implements DataObject {
     }
 
     public boolean inIslandSpace(Location location) {
-        if (Util.sameWorld(world, location.getWorld())) {
-            return inIslandSpace(location.getBlockX(), location.getBlockZ());
-        }
-        return false;
+        return Util.sameWorld(world, location.getWorld()) && inIslandSpace(location.getBlockX(), location.getBlockZ());
     }
 
     /**
@@ -441,11 +438,7 @@ public class Island implements DataObject {
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
-        if (Util.sameWorld(world, target.getWorld())) {
-            return target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
-        }
-        return false;
+        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2) && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
     }
 
     /**
@@ -459,7 +452,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * Removes a player from the team member map. Do not call this directly. Use {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(UUID)}
+     * Removes a player from the team member map. Do not call this directly. Use {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(World, UUID)}
      * @param playerUUID
      */
     public void removeMember(UUID playerUUID) {
@@ -675,7 +668,7 @@ public class Island implements DataObject {
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(range));
         Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
-        Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());;
+        Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));
         if (spawn) {
             user.sendMessage("commands.admin.info.is-spawn");

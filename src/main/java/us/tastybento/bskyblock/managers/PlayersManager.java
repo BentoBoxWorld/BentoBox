@@ -99,7 +99,7 @@ public class PlayersManager {
             return;
         }
         if (!playerCache.containsKey(playerUUID)) {
-            Players player = null;
+            Players player;
             // If the player is in the database, load it, otherwise create a new player
             if (handler.objectExists(playerUUID.toString())) {
                 player = handler.loadObject(playerUUID.toString());
@@ -107,7 +107,6 @@ public class PlayersManager {
                 player = new Players(plugin, playerUUID);
             }
             playerCache.put(playerUUID, player);
-            return;
         }
     }
 
@@ -145,12 +144,8 @@ public class PlayersManager {
             return false;
         }
         // Try cache
-        if (playerCache.containsKey(uniqueID)) {
-            return true;
-        } else {
-            // Get from the database - do not add to cache yet
-            return handler.objectExists(uniqueID.toString());
-        }
+        return playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString());
+// Get from the database - do not add to cache yet
     }
 
     /**
@@ -253,7 +248,7 @@ public class PlayersManager {
         if (string.length() == 36 && string.contains("-")) {
             try {
                 return UUID.fromString(string);
-            } catch (Exception e) {}
+            } catch (Exception ignored) {}
         }
         // Look in the name cache, then the data base and finally Bukkit blocking request
         return playerCache.values().stream()

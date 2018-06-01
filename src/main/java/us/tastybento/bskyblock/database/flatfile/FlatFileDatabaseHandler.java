@@ -16,6 +16,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
@@ -94,7 +95,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Nothing there...
             tableFolder.mkdirs();
         }
-        for (File file: tableFolder.listFiles(ymlFilter)) {
+        for (File file: Objects.requireNonNull(tableFolder.listFiles(ymlFilter))) {
             String fileName = file.getName();
             if (storeAt != null) {
                 fileName = storeAt.filename();
@@ -248,100 +249,99 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
 
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
-        fields:
-            for (Field field : dataObject.getDeclaredFields()) {
+        for (Field field : dataObject.getDeclaredFields()) {
 
-                // Get the property descriptor for this field
-                PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
-                // Get the read method, i.e., getXXXX();
-                Method method = propertyDescriptor.getReadMethod();
-                // Invoke the read method to get the value. We have no idea what type of value it is.
-                Object value = method.invoke(instance);
-                String storageLocation = field.getName();
-                // Check if there is an annotation on the field
-                ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
-                // If there is a config path annotation then do something
-                if (configEntry != null) {
-                    if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Constants.GAMETYPE)) {
-                        continue fields;
-                    }
-                    if (!configEntry.path().isEmpty()) {
-                        storageLocation = configEntry.path();
-                    }
-                    // TODO: add in game-specific saving
+            // Get the property descriptor for this field
+            PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
+            // Get the read method, i.e., getXXXX();
+            Method method = propertyDescriptor.getReadMethod();
+            // Invoke the read method to get the value. We have no idea what type of value it is.
+            Object value = method.invoke(instance);
+            String storageLocation = field.getName();
+            // Check if there is an annotation on the field
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+            // If there is a config path annotation then do something
+            if (configEntry != null) {
+                if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Constants.GAMETYPE)) {
+                    continue;
+                }
+                if (!configEntry.path().isEmpty()) {
+                    storageLocation = configEntry.path();
+                }
+                // TODO: add in game-specific saving
 
-                }
-                
-                // Comments          
-                ConfigComment comment = field.getAnnotation(ConfigComment.class);
-                if (comment != null) {
-                    // Create a random placeholder string
-                    String random = "comment-" + UUID.randomUUID().toString();
-                    // Store placeholder
-                    config.set(random, " ");
-                    // Create comment
-                    yamlComments.put(random, "# " + comment.value());
-                }
+            }
 
-                // Adapter
-                Adapter adapterNotation = field.getAnnotation(Adapter.class);
-                if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
-                    // A conversion adapter has been defined
-                    try {
-                        config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value));
-                    } catch (InstantiationException e) {
-                        plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
-                    }
-                    // We are done here
-                    continue fields;
+            // Comments          
+            ConfigComment comment = field.getAnnotation(ConfigComment.class);
+            if (comment != null) {
+                // Create a random placeholder string
+                String random = "comment-" + UUID.randomUUID().toString();
+                // Store placeholder
+                config.set(random, " ");
+                // Create comment
+                yamlComments.put(random, "# " + comment.value());
+            }
+
+            // Adapter
+            Adapter adapterNotation = field.getAnnotation(Adapter.class);
+            if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
+                // A conversion adapter has been defined
+                try {
+                    config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value));
+                } catch (InstantiationException e) {
+                    plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                 }
-                
-                // Depending on the vale type, it'll need serializing differently
-                // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
-                if (method.getName().equals("getUniqueId")) {
-                    // If the object does not have a unique name assigned to it already, one is created at random
-                    String id = (String)value;
-                    if (value == null || id.isEmpty()) {
-                        id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
-                        // Set it in the class so that it will be used next time
-                        propertyDescriptor.getWriteMethod().invoke(instance, id);
-                    }
-                    // Save the name for when the file is saved
-                    if (filename.isEmpty()) {
-                        filename = id;
-                    }
+                // We are done here
+                continue;
+            }
+
+            // Depending on the vale type, it'll need serializing differently
+            // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
+            if (method.getName().equals("getUniqueId")) {
+                // If the object does not have a unique name assigned to it already, one is created at random
+                String id = (String)value;
+                if (value == null || id.isEmpty()) {
+                    id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
+                    // Set it in the class so that it will be used next time
+                    propertyDescriptor.getWriteMethod().invoke(instance, id);
                 }
-                // Collections need special serialization
-                if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                    // Maps need to have keys serialized
-                    if (value != null) {
-                        Map<Object, Object> result = new HashMap<>();
-                        for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
-                            // Serialize all key and values
-                            result.put(serialize(object.getKey()), serialize(object.getValue()));
-                        }
-                        // Save the list in the config file
-                        config.set(storageLocation, result);
-                    }
-                } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                    // Sets need to be serialized as string lists
-                    if (value != null) {
-                        List<Object> list = new ArrayList<>();
-                        for (Object object : (Set<Object>)value) {
-                            list.add(serialize(object));
-                        }
-                        // Save the list in the config file
-                        config.set(storageLocation, list);
-                    }
-                } else {
-                    // For all other data that doesn't need special serialization
-                    config.set(storageLocation, serialize(value));
+                // Save the name for when the file is saved
+                if (filename.isEmpty()) {
+                    filename = id;
                 }
             }
+            // Collections need special serialization
+            if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                // Maps need to have keys serialized
+                if (value != null) {
+                    Map<Object, Object> result = new HashMap<>();
+                    for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
+                        // Serialize all key and values
+                        result.put(serialize(object.getKey()), serialize(object.getValue()));
+                    }
+                    // Save the list in the config file
+                    config.set(storageLocation, result);
+                }
+            } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                // Sets need to be serialized as string lists
+                if (value != null) {
+                    List<Object> list = new ArrayList<>();
+                    for (Object object : (Set<Object>)value) {
+                        list.add(serialize(object));
+                    }
+                    // Save the list in the config file
+                    config.set(storageLocation, list);
+                }
+            } else {
+                // For all other data that doesn't need special serialization
+                config.set(storageLocation, serialize(value));
+            }
+        }
         if (filename.isEmpty()) {
             throw new IllegalArgumentException("No uniqueId in class");
         }
-        
+
         databaseConnecter.saveYamlFile(config, path, filename, yamlComments);
     }
 
@@ -371,7 +371,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
-    private Object deserialize(Object value, Class<? extends Object> clazz) {
+    private Object deserialize(Object value, Class<?> clazz) {
         // If value is already null, then it can be nothing else
         if (value == null) {
             return null;
@@ -463,7 +463,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public void close() {
         // Not used
-        
+
     }
 
 }

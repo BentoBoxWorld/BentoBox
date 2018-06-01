@@ -16,7 +16,7 @@ import us.tastybento.bskyblock.api.panels.PanelItem;
 
 public class HeadGetter {
     private static Map<String,ItemStack> cachedHeads = new HashMap<>();
-    private static Map<String, PanelItem> names = new HashMap<>();
+    private static final Map<String, PanelItem> names = new HashMap<>();
     private BSkyBlock plugin;
     private static Map<String,Set<HeadRequester>> headRequesters = new HashMap<>();
 

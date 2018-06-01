@@ -40,13 +40,11 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
 public class IslandTeamLeaveCommandTest {
 
-    private BSkyBlock plugin;
     private IslandCommand ic;
     private UUID uuid;
     private User user;
     private Settings s;
     private IslandsManager im;
-    private PlayersManager pm;
 
     /**
      * @throws java.lang.Exception
@@ -54,7 +52,7 @@ public class IslandTeamLeaveCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Command manager
@@ -88,7 +86,7 @@ public class IslandTeamLeaveCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
+        PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 

@@ -31,7 +31,7 @@ public class SafeSpotTeleport {
     private static final int MAX_CHUNKS = 200;
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 200;
-    private boolean checking = true;
+    private boolean checking;
     private BukkitTask task;
 
     // Parameters

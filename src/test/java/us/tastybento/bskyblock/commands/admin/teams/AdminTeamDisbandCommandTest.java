@@ -44,11 +44,9 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
 public class AdminTeamDisbandCommandTest {
 
-    private BSkyBlock plugin;
     private AdminCommand ac;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
@@ -59,7 +57,7 @@ public class AdminTeamDisbandCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Command manager
@@ -67,7 +65,7 @@ public class AdminTeamDisbandCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);

@@ -45,7 +45,6 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
 public class IslandTeamKickCommandTest {
 
-    private BSkyBlock plugin;
     private IslandCommand ic;
     private UUID uuid;
     private User user;
@@ -60,7 +59,7 @@ public class IslandTeamKickCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Command manager

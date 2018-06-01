@@ -114,7 +114,7 @@ public class User {
 
     /**
      * Used for testing
-     * @param plugin
+     * @param p - BSkyBlock plugin
      */
     public static void setPlugin(BSkyBlock p) {
         plugin = p;
@@ -359,12 +359,7 @@ public class User {
         }
         User other = (User) obj;
         if (playerUUID == null) {
-            if (other.playerUUID != null) {
-                return false;
-            }
-        } else if (!playerUUID.equals(other.playerUUID)) {
-            return false;
-        }
-        return true;
+            return other.playerUUID == null;
+        } else return playerUUID.equals(other.playerUUID);
     }
 }

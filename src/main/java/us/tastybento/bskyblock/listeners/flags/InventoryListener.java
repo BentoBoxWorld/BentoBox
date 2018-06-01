@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.listeners.flags;
 
 import org.bukkit.block.Beacon;

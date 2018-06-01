@@ -301,9 +301,7 @@ public class Clipboard {
             Bukkit.getLogger().info("Banner");
             Banner banner = (Banner)bs;
             s.set("baseColor", banner.getBaseColor().toString());
-            banner.getPatterns().forEach(p -> {
-                s.set("pattern." + p.getPattern().toString(), p.getColor().toString());
-            });
+            banner.getPatterns().forEach(p -> s.set("pattern." + p.getPattern().toString(), p.getColor().toString()));
         }
         if (bs instanceof InventoryHolder) {
             Bukkit.getLogger().info("Inventory holder");
@@ -357,7 +355,7 @@ public class Clipboard {
 
         try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
             byte[] bytesIn = new byte[1024];
-            int read = 0;
+            int read;
             while ((read = zipInputStream.read(bytesIn)) != -1) {
                 bos.write(bytesIn, 0, read);
             }

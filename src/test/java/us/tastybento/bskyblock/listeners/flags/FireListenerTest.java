@@ -58,10 +58,6 @@ public class FireListenerTest {
 
     private static Location location;
     private static BSkyBlock plugin;
-    private static FlagsManager flagsManager;
-    private static Zombie zombie;
-    private static Slime slime;
-    private static Cow cow;
     private static IslandWorldManager iwm;
 
     @BeforeClass
@@ -95,7 +91,7 @@ public class FireListenerTest {
         when(location.getBlockZ()).thenReturn(0);
         PowerMockito.mockStatic(Flags.class);
 
-        flagsManager = new FlagsManager(plugin);
+        FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
 
@@ -112,11 +108,11 @@ public class FireListenerTest {
         when(Util.getWorld(Mockito.any())).thenReturn(world);
         
         // Monsters and animals
-        zombie = mock(Zombie.class);
+        Zombie zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
-        slime = mock(Slime.class);
+        Slime slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
-        cow = mock(Cow.class);
+        Cow cow = mock(Cow.class);
         when(cow.getLocation()).thenReturn(location);
 
         // Fake players

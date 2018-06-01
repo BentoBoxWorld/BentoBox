@@ -1,6 +1,6 @@
 package us.tastybento.bskyblock.api.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,9 +81,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             if (!subCommand.getLabel().equals(HELP)) {
                 // Every command should have help because every command has a default help
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
-                if (sub.isPresent()) {
-                    sub.get().execute(user, Arrays.asList(String.valueOf(newDepth)));
-                }
+                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, Collections.singletonList(String.valueOf(newDepth))));
             }
         }        
     }

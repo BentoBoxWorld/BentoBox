@@ -81,7 +81,7 @@ public class FlagBuilder {
     
     /**
      * Adds a listener for clicks on this flag when it is a panel item. Default is
-     * {@link us.tastybento.bskyblock.listeners.flags.UpDownClick.UpDownClick}
+     * {@link us.tastybento.bskyblock.listeners.flags.UpDownClick}
      * @param onClickListener - the listener for clicks. Must use the ClickOn interface
      * @return FlagBuilder
      */

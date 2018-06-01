@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;

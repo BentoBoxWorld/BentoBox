@@ -10,19 +10,18 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.plugin.InvalidDescriptionException;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.addons.AddonClassLoader;
 import us.tastybento.bskyblock.api.addons.exception.InvalidAddonFormatException;
-import us.tastybento.bskyblock.api.addons.exception.InvalidAddonInheritException;
 import us.tastybento.bskyblock.api.events.addon.AddonEvent;
 
 /**
@@ -52,7 +51,7 @@ public class AddonsManager {
         if (!f.exists()) {
             f.mkdirs();
         }
-        Arrays.stream(f.listFiles()).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(t -> {
+        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(t -> {
             plugin.log("Loading " + t.getName());
             try {
                 loadAddon(t);
@@ -82,12 +81,12 @@ public class AddonsManager {
      * @return Optional addon object
      */
     public Optional<Addon> getAddonByName(String name){
-        return Optional.ofNullable(addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst().orElse(null));
+        return addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst();
     }
 
-    private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException, InvalidDescriptionException {
+    private void loadAddon(File f) {
         try {
-            Addon addon = null;
+            Addon addon;
             // Check that this is a jar
             if (!f.getName().endsWith(".jar")) {
                 throw new IOException("Filename must end in .jar. Name is '" + f.getName() + "'");
@@ -174,7 +173,7 @@ public class AddonsManager {
      * @return Class - the class
      */
     public Class<?> getClassByName(final String name) {        
-        return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(c -> c != null).findFirst().orElse(null));
+        return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
     /**
@@ -207,17 +206,11 @@ public class AddonsManager {
     public List<String> listJarYamlFiles(JarFile jar, String folderPath) {
         List<String> result = new ArrayList<>();
 
-        /**
-         * Loop through all the entries.
-         */
         Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String path = entry.getName();
 
-            /**
-             * Not in the folder.
-             */
             if (!path.startsWith(folderPath)) {
                 continue;
             }

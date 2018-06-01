@@ -52,16 +52,12 @@ public class LockAndBanListenerTest {
     private static final Integer X = 600;
     private static final Integer Y = 120;
     private static final Integer Z = 10000;
-    private BSkyBlock plugin;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
-    private PlayersManager pm;
     private Island island;
     private World world;
     private LockAndBanListener listener;
-    private Location loc;
     private Location outside;
     private Location inside;
     private Notifier notifier;
@@ -75,14 +71,14 @@ public class LockAndBanListenerTest {
     public void setUp() throws Exception {
         
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // World
         world = mock(World.class);
         
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
@@ -105,7 +101,7 @@ public class LockAndBanListenerTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
+        PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
@@ -127,7 +123,7 @@ public class LockAndBanListenerTest {
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
-        loc = mock(Location.class);
+        Location loc = mock(Location.class);
         when(loc.getWorld()).thenReturn(world);
         when(loc.getBlockX()).thenReturn(X);
         when(loc.getBlockY()).thenReturn(Y);
@@ -551,7 +547,7 @@ public class LockAndBanListenerTest {
 
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgumentAt(0, User.class).getUniqueId().equals(uuid2) ? true : false;
+                return invocation.getArgumentAt(0, User.class).getUniqueId().equals(uuid2);
             }
             
         });

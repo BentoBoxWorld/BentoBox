@@ -52,11 +52,7 @@ public class PlayersManagerTest {
     private BSkyBlock plugin;
     private UUID uuid;
     private User user;
-    private Settings s;
-    private IslandsManager im;
     private UUID notUUID;
-    private BukkitScheduler sch;
-    private IslandWorldManager iwm;
     private World world;
     private World nether;
     private World end;
@@ -72,7 +68,7 @@ public class PlayersManagerTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
         // island world mgr
-        iwm = mock(IslandWorldManager.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         world = mock(World.class);
         when(world.getName()).thenReturn("world");
         nether = mock(World.class);
@@ -86,7 +82,7 @@ public class PlayersManagerTest {
         when(plugin.getIWM()).thenReturn(iwm);
         
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
         
         // Set up spawn
@@ -111,7 +107,7 @@ public class PlayersManagerTest {
         User.setPlugin(plugin);
 
         // Player has island to begin with 
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
@@ -119,7 +115,7 @@ public class PlayersManagerTest {
 
 
         // Server & Scheduler
-        sch = mock(BukkitScheduler.class);
+        BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 

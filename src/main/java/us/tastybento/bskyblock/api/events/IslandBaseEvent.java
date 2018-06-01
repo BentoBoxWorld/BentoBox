@@ -53,7 +53,7 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
      * @return the owner of the island
      */
     public UUID getOwner() {
-        return getOwner();
+        return island.getOwner();
     }
 
     /**

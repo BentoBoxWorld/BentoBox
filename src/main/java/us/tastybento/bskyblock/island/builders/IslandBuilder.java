@@ -80,25 +80,29 @@ public class IslandBuilder {
 
     public void build() {
         // Switch on island type
-        if (type == IslandType.ISLAND) {
-            world = island.getWorld();
-            if (Constants.GAMETYPE == GameType.ACIDISLAND) {
-                generateAcidIslandBlocks();
-            } else {
-                generateIslandBlocks();
-            }
-        } else if (type == IslandType.NETHER) {
-            world = Bukkit.getWorld(island.getWorld().getName() + "_nether");
-            if (world == null) {
-                return;
-            }
-            generateNetherBlocks();
-        } else if (type == IslandType.END) {
-            world = Bukkit.getWorld(island.getWorld().getName() + "_the_end");
-            if (world == null) {
-                return;
-            }
-            generateEndBlocks();
+        switch (type) {
+            case ISLAND:
+                world = island.getWorld();
+                if (Constants.GAMETYPE == GameType.ACIDISLAND) {
+                    generateAcidIslandBlocks();
+                } else {
+                    generateIslandBlocks();
+                }
+                break;
+            case NETHER:
+                world = Bukkit.getWorld(island.getWorld().getName() + "_nether");
+                if (world == null) {
+                    return;
+                }
+                generateNetherBlocks();
+                break;
+            case END:
+                world = Bukkit.getWorld(island.getWorld().getName() + "_the_end");
+                if (world == null) {
+                    return;
+                }
+                generateEndBlocks();
+                break;
         }
         // Do other stuff
     }
@@ -221,7 +225,7 @@ public class IslandBuilder {
         int islandHeight = island.getCenter().getBlockY();
 
         World world = island.getCenter().getWorld();
-        int y = 0;
+        int y;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 3; x_space <= x + 3; x_space++) {
@@ -302,7 +306,7 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        int y = 0;
+        int y;
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 3; x_space <= x + 3; x_space++) {
                 for (int z_space = z - 3; z_space <= z + 3; z_space++) {
@@ -374,7 +378,7 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        int y = 0;
+        int y;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 3; x_space <= x + 3; x_space++) {

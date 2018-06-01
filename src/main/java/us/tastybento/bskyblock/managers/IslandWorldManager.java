@@ -327,7 +327,7 @@ public class IslandWorldManager {
      */
     public boolean isNether(World world) {
         World w = Util.getWorld(world);
-        return (worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate()) ? true : false;
+        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate();
     }
     
     /**
@@ -337,7 +337,7 @@ public class IslandWorldManager {
      */
     public boolean isIslandNether(World world) {
         World w = Util.getWorld(world);
-        return (worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate() && worldSettings.get(w).isNetherIslands()) ? true : false;
+        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate() && worldSettings.get(w).isNetherIslands();
     }
 
     /**
@@ -347,7 +347,7 @@ public class IslandWorldManager {
      */
     public boolean isEnd(World world) {
         World w = Util.getWorld(world);
-        return (worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate()) ? true : false;
+        return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate();
     }
     
     /**
@@ -357,7 +357,7 @@ public class IslandWorldManager {
      */
     public boolean isIslandEnd(World world) {
         World w = Util.getWorld(world);
-        return (worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate() && worldSettings.get(w).isEndIslands()) ? true : false;
+        return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate() && worldSettings.get(w).isEndIslands();
     }
 
     /**
@@ -385,7 +385,7 @@ public class IslandWorldManager {
      */
     public boolean isNetherTrees(World world) {
         World w = Util.getWorld(world);
-        return (worldSettings.containsKey(w) && worldSettings.get(w).isNetherTrees()) ? true : false;
+        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherTrees();
     }
 
     /**
@@ -395,7 +395,7 @@ public class IslandWorldManager {
      */
     public boolean isDragonSpawn(World world) {
         World w = Util.getWorld(world);
-        return (worldSettings.containsKey(w) && !worldSettings.get(w).isDragonSpawn()) ? false : true;
+        return !worldSettings.containsKey(w) || worldSettings.get(w).isDragonSpawn();
     }
 
     /**

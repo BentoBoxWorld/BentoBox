@@ -190,28 +190,27 @@ public class NewIsland {
         int x = lastIsland.getBlockX();
         int z = lastIsland.getBlockZ();
         int d = plugin.getIWM().getIslandDistance(lastIsland.getWorld()) * 2;
-        Location nextPos = lastIsland;
         if (x < z) {
             if (-1 * x < z) {
-                nextPos.setX(nextPos.getX() + d);
-                return nextPos;
+                lastIsland.setX(lastIsland.getX() + d);
+                return lastIsland;
             }
-            nextPos.setZ(nextPos.getZ() + d);
-            return nextPos;
+            lastIsland.setZ(lastIsland.getZ() + d);
+            return lastIsland;
         }
         if (x > z) {
             if (-1 * x >= z) {
-                nextPos.setX(nextPos.getX() - d);
-                return nextPos;
+                lastIsland.setX(lastIsland.getX() - d);
+                return lastIsland;
             }
-            nextPos.setZ(nextPos.getZ() - d);
-            return nextPos;
+            lastIsland.setZ(lastIsland.getZ() - d);
+            return lastIsland;
         }
         if (x <= 0) {
-            nextPos.setZ(nextPos.getZ() + d);
-            return nextPos;
+            lastIsland.setZ(lastIsland.getZ() + d);
+            return lastIsland;
         }
-        nextPos.setZ(nextPos.getZ() - d);
-        return nextPos;
+        lastIsland.setZ(lastIsland.getZ() - d);
+        return lastIsland;
     }
 }

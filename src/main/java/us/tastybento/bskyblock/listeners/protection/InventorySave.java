@@ -51,7 +51,6 @@ public class InventorySave {
             player.getInventory().setContents(inv.getInventory());
             player.getInventory().setArmorContents(inv.getArmor());
             inventories.remove(player.getUniqueId());
-            return;
         }
     }
 

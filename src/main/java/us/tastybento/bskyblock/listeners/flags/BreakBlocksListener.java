@@ -67,7 +67,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
                     return;
                 }
             }
-        } catch (Exception ex) {}
+        } catch (Exception ignored) {}
 
         switch (e.getClickedBlock().getType()) {
         case CAKE_BLOCK:
@@ -101,7 +101,6 @@ public class BreakBlocksListener extends AbstractFlagListener {
                     e.setCancelled(true);
                     user.sendMessage("protection.protected");
                 }
-                return;
             });
 
             // The player is in the world, but not on an island, so general world settings apply

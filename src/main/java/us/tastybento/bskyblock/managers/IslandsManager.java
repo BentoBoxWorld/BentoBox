@@ -63,7 +63,7 @@ public class IslandsManager {
         // Ground must be solid
         if (!ground.getType().isSolid()) {
             return false;
-        } 
+        }
         // Cannot be submerged
         if (space1.isLiquid() && space2.isLiquid()) {
             return false;
@@ -88,7 +88,7 @@ public class IslandsManager {
         MaterialData md = ground.getState().getData();
         if (md instanceof SimpleAttachableMaterialData) {
             if (md instanceof TrapDoor) {
-                TrapDoor trapDoor = (TrapDoor)md;
+                TrapDoor trapDoor = (TrapDoor) md;
                 if (trapDoor.isOpen()) {
                     return false;
                 }
@@ -105,14 +105,7 @@ public class IslandsManager {
         // check
         // a few other items
         // isSolid thinks that PLATEs and SIGNS are solid, but they are not
-        if (space1.getType().isSolid() && !space1.getType().equals(Material.SIGN_POST) && !space1.getType().equals(Material.WALL_SIGN)) {
-            return false;
-        }
-        if (space2.getType().isSolid()&& !space2.getType().equals(Material.SIGN_POST) && !space2.getType().equals(Material.WALL_SIGN)) {
-            return false;
-        }
-        // Safe
-        return true;
+        return (!space1.getType().isSolid() || space1.getType().equals(Material.SIGN_POST) || space1.getType().equals(Material.WALL_SIGN)) && (!space2.getType().isSolid() || space2.getType().equals(Material.SIGN_POST) || space2.getType().equals(Material.WALL_SIGN));
     }
 
     private BSkyBlock plugin;
@@ -369,13 +362,11 @@ public class IslandsManager {
             // To cover slabs, stairs and other half blocks, try one block above
             Location lPlusOne = l.clone();
             lPlusOne.add(new Vector(0, 1, 0));
-            if (lPlusOne != null) {
                 if (isSafeLocation(lPlusOne)) {
                     // Adjust the home location accordingly
                     plugin.getPlayers().setHomeLocation(user, lPlusOne, number);
                     return lPlusOne;
                 }
-            }
         }
         // Home location either isn't safe, or does not exist so try the island
         // location
@@ -451,7 +442,7 @@ public class IslandsManager {
     /**
      * Provides UUID of this player's team leader or null if it does not exist
      * @param world - world to check
-     * @param playerUUID - the player's UUID
+     * @param leaderUUID - the leader's UUID
      * @return UUID of leader or null if player has no island
      */
     public UUID getTeamLeader(World world, UUID leaderUUID) {
@@ -530,7 +521,6 @@ public class IslandsManager {
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(GameMode.SURVIVAL);
         }
-        return;
     }
 
     /**
@@ -540,10 +530,7 @@ public class IslandsManager {
      * @return true if they are, false if they are not, or spawn does not exist
      */
     public boolean isAtSpawn(Location playerLoc) {
-        if (!spawn.containsKey(playerLoc.getWorld())) {
-            return false;
-        }
-        return spawn.get(playerLoc.getWorld()).onIsland(playerLoc);
+        return spawn.containsKey(playerLoc.getWorld()) && spawn.get(playerLoc.getWorld()).onIsland(playerLoc);
     }
 
     /**
@@ -611,7 +598,7 @@ public class IslandsManager {
      * @return true if the player is the owner of their island, i.e., owner or team leader
      */
     public boolean isOwner(World world, UUID uniqueId) {
-        return hasIsland(world, uniqueId) ? getIsland(world, uniqueId).getOwner().equals(uniqueId) : false;
+        return hasIsland(world, uniqueId) && getIsland(world, uniqueId).getOwner().equals(uniqueId);
     }
 
     /**
@@ -747,14 +734,13 @@ public class IslandsManager {
      * @param playerUUID - the player's UUID
      * @return true if successful, false if not
      */
-    public boolean setJoinTeam(Island teamIsland, UUID playerUUID) {
+    public void setJoinTeam(Island teamIsland, UUID playerUUID) {
         // Add player to new island
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
         // Save the database
         save(false);
 
-        return true;
     }
 
     public void setLast(Location last) {

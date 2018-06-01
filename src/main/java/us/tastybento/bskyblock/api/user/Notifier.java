@@ -24,7 +24,7 @@ public class Notifier {
             .build(
                     new CacheLoader<User, Notification>() {
                         @Override
-                        public Notification load(User user) throws Exception {
+                        public Notification load(User user) {
                             return new Notification(null, 0);
                         }
                     }

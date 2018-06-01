@@ -61,13 +61,8 @@ import us.tastybento.bskyblock.util.Util;
 public class NetherPortalsTest {
 
     private BSkyBlock plugin;
-    private UUID uuid;
-    private User user;
-    private Settings s;
     private IslandsManager im;
     private PlayersManager pm;
-    private UUID notUUID;
-    private BukkitScheduler sch;
     private IslandWorldManager iwm;
     private World world;
     private World nether;
@@ -102,7 +97,7 @@ public class NetherPortalsTest {
         when(Util.getWorld(Mockito.any())).thenReturn(world);
        
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
         
         // Set up spawn
@@ -113,10 +108,10 @@ public class NetherPortalsTest {
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
+        User user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
+        UUID notUUID = UUID.randomUUID();
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
@@ -135,7 +130,7 @@ public class NetherPortalsTest {
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
-        sch = mock(BukkitScheduler.class);
+        BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 

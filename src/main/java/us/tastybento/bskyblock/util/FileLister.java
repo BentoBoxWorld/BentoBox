@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -40,14 +41,11 @@ public class FileLister{
         File localeDir = new File(plugin.getDataFolder(), folderPath);
         if (localeDir.exists()) {
             FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase().endsWith(".yml");
-            return Arrays.asList(localeDir.list(ymlFilter));
+            return Arrays.asList(Objects.requireNonNull(localeDir.list(ymlFilter)));
         } else if (checkJar) {
             // Else look in the JAR
             File jarfile;
 
-            /**
-             * Get the jar file from the plugin.
-             */
             try {
                 Method method = JavaPlugin.class.getDeclaredMethod("getFile");
                 method.setAccessible(true);
@@ -59,17 +57,11 @@ public class FileLister{
 
             JarFile jar = new JarFile(jarfile);
 
-            /**
-             * Loop through all the entries.
-             */
             Enumeration<JarEntry> entries = jar.entries();
             while (entries.hasMoreElements()) {
                 JarEntry entry = entries.nextElement();
                 String path = entry.getName();
 
-                /**
-                 * Not in the folder.
-                 */
                 if (!path.startsWith(folderPath)) {
                     continue;
                 }
@@ -89,9 +81,6 @@ public class FileLister{
         // Look in the JAR
         File jarfile;
 
-        /**
-         * Get the jar file from the plugin.
-         */
         try {
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
@@ -103,17 +92,11 @@ public class FileLister{
 
         JarFile jar = new JarFile(jarfile);
 
-        /**
-         * Loop through all the entries.
-         */
         Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String path = entry.getName();
 
-            /**
-             * Not in the folder.
-             */
             if (!path.startsWith(folderPath)) {
                 continue;
             }

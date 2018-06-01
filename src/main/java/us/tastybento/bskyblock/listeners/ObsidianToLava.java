@@ -1,6 +1,3 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.listeners;
 
 import java.util.ArrayList;

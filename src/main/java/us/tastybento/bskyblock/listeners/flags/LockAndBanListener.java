@@ -1,6 +1,3 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.listeners.flags;
 
 import org.bukkit.Bukkit;
@@ -40,7 +37,6 @@ public class LockAndBanListener implements Listener {
 
     /**
      * Enforces island bans and locks
-     * @param plugin
      */
     public LockAndBanListener() {
         this.im = BSkyBlock.getInstance().getIslands();
@@ -49,7 +45,7 @@ public class LockAndBanListener implements Listener {
     // Teleport check
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
-        e.setCancelled(checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN) ? false : true);
+        e.setCancelled(!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN));
     }
 
     // Movement check
@@ -59,7 +55,7 @@ public class LockAndBanListener implements Listener {
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
             return;
         }
-        if (checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN) ? false : true) {
+        if (!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN)) {
             e.setCancelled(true);
             e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
             e.getPlayer().setVelocity(new Vector(0,0,0));

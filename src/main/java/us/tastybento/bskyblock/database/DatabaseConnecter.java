@@ -55,7 +55,7 @@ public interface DatabaseConnecter {
 
     /**
      * Save the Yaml Config
-     * @param yamlFile - the YAML config
+     * @param yamlConfig - the YAML config
      * @param tableName - analogous to a table in a database
      * @param fileName - the name of the record. Must be unique.
      * @param commentMap - map of comments, may be empty

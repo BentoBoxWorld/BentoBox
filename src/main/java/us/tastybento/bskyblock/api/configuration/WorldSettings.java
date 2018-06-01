@@ -14,116 +14,116 @@ public interface WorldSettings {
     /**
      * @return the friendly name of the world. Used in player commands
      */
-    public String getFriendlyName();
+    String getFriendlyName();
 
     /**
      * @return the entityLimits
      */
-    public Map<EntityType, Integer> getEntityLimits();
+    Map<EntityType, Integer> getEntityLimits();
     
     /**
      * @return the islandDistance
      */
-    public int getIslandDistance();
+    int getIslandDistance();
 
     /**
      * @return the islandHeight
      */
-    public int getIslandHeight();
+    int getIslandHeight();
     
     /**
      * @return the islandProtectionRange
      */
-    public int getIslandProtectionRange();
+    int getIslandProtectionRange();
     
     /**
      * @return the islandStartX
      */
-    public int getIslandStartX();
+    int getIslandStartX();
     
     /**
      * @return the islandStartZ
      */
-    public int getIslandStartZ();
+    int getIslandStartZ();
     
     /**
      * @return the islandXOffset
      */
-    public int getIslandXOffset();
+    int getIslandXOffset();
     
     /**
      * @return the islandZOffset
      */
-    public int getIslandZOffset();
+    int getIslandZOffset();
     
     /**
      * @return the maxIslands
      */
-    public int getMaxIslands();
+    int getMaxIslands();
     
     /**
      * @return the netherSpawnRadius
      */
-    public int getNetherSpawnRadius();
+    int getNetherSpawnRadius();
     
     /**
      * @return the seaHeight
      */
-    public int getSeaHeight();
+    int getSeaHeight();
     
     /**
      * @return the tileEntityLimits
      */
-    public Map<String, Integer> getTileEntityLimits();
+    Map<String, Integer> getTileEntityLimits();
     
     /**
      * @return the worldName
      */
-    public String getWorldName();
+    String getWorldName();
     
     /**
      * @return the endGenerate
      */
-    public boolean isEndGenerate();
+    boolean isEndGenerate();
     
     /**
      * @return the endIslands
      */
-    public boolean isEndIslands();
+    boolean isEndIslands();
     
     /**
      * @return the netherGenerate
      */
-    public boolean isNetherGenerate();
+    boolean isNetherGenerate();
     
     /**
      * @return the netherIslands
      */
-    public boolean isNetherIslands();
+    boolean isNetherIslands();
     
     /**
      * @return the netherTrees
      */
-    public boolean isNetherTrees();
+    boolean isNetherTrees();
 
     /**
      * @return the dragonSpawn
      */
-    public boolean isDragonSpawn();
+    boolean isDragonSpawn();
 
     /**
      * @return the max team size for this world
      */
-    public int getMaxTeamSize();
+    int getMaxTeamSize();
 
     /**
      * @return the max homes
      */
-    public int getMaxHomes();
+    int getMaxHomes();
 
     /**
      * @return the permission prefix
      */
-    public String getPermissionPrefix();
+    String getPermissionPrefix();
     
 }

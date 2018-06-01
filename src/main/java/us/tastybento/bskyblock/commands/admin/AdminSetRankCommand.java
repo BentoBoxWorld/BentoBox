@@ -1,9 +1,7 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.commands.admin;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -58,7 +56,7 @@ public class AdminSetRankCommand extends CompositeCommand {
         RanksManager rm = getPlugin().getRanksManager();
         int rankValue = rm.getRanks().entrySet().stream()
                 .filter(r -> user.getTranslation(r.getKey()).equalsIgnoreCase(args.get(1))).findFirst()
-                .map(r -> r.getValue()).orElse(-999);
+                .map(Map.Entry::getValue).orElse(-999);
         if (rankValue < RanksManager.BANNED_RANK) {
             user.sendMessage("commands.admin.setrank.unknown-rank");
             return false;

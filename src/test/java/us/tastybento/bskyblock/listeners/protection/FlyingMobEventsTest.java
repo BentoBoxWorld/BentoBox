@@ -60,12 +60,8 @@ import us.tastybento.bskyblock.util.Util;
 public class FlyingMobEventsTest {
 
     private BSkyBlock plugin;
-    private UUID uuid;
-    private User user;
-    private Settings s;
     private IslandsManager im;
     private PlayersManager pm;
-    private UUID notUUID;
     private BukkitScheduler sch;
     private IslandWorldManager iwm;
 
@@ -79,16 +75,16 @@ public class FlyingMobEventsTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
+        User user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
+        UUID notUUID = UUID.randomUUID();
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }

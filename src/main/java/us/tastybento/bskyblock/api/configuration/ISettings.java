@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.api.configuration;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
-import java.sql.SQLException;
 
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.BSBDbSetup;
@@ -20,14 +19,14 @@ public interface ISettings<T> {
 
     // ----------------Saver-------------------
     @SuppressWarnings("unchecked")
-    default void saveSettings() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveSettings() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Get the handler
         ConfigHandler<T> settingsHandler = (ConfigHandler<T>) new FlatFileDatabase().getConfig(getInstance().getClass());
         // Load every field in the config class
         settingsHandler.saveSettings(getInstance());
     }
 
-    default void saveBackup() throws IllegalAccessException, InvocationTargetException, InstantiationException, NoSuchMethodException, IntrospectionException, SQLException {
+    default void saveBackup() throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Save backup
         @SuppressWarnings("unchecked")
         AbstractDatabaseHandler<T> backupHandler =  (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(getInstance().getClass());
@@ -36,7 +35,7 @@ public interface ISettings<T> {
 
     // --------------- Loader ------------------
     @SuppressWarnings("unchecked")
-    default T loadSettings() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, SQLException  {
+    default T loadSettings() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
         // See if this settings object already exists in the database
         AbstractDatabaseHandler<T> dbhandler =  (AbstractDatabaseHandler<T>) BSBDbSetup.getDatabase().getHandler(getClass());
         T dbConfig = null;

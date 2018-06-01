@@ -50,7 +50,6 @@ public class AdminTeamKickCommandTest {
     private AdminCommand ac;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
@@ -69,7 +68,7 @@ public class AdminTeamKickCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);

@@ -53,19 +53,9 @@ public class UpDownClickTest {
     private BSkyBlock plugin;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
-    private PlayersManager pm;
     private Island island;
-    private World world;
-    private Location loc;
-    private Location outside;
-    private Location inside;
-    private Notifier notifier;
-    private Location inside2;
-    private BukkitScheduler sch;
     private Flag flag;
-    private PanelItem panelItem;
     private Panel panel;
     private Inventory inv;
 
@@ -80,10 +70,10 @@ public class UpDownClickTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // World
-        world = mock(World.class);
+        World world = mock(World.class);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
@@ -107,12 +97,12 @@ public class UpDownClickTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
+        PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
-        sch = mock(BukkitScheduler.class);
+        BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
@@ -122,14 +112,14 @@ public class UpDownClickTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
 
         // Notifier
-        notifier = mock(Notifier.class);
+        Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island Banned list initialization
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
-        loc = mock(Location.class);
+        Location loc = mock(Location.class);
         when(loc.getWorld()).thenReturn(world);
         when(loc.getBlockX()).thenReturn(X);
         when(loc.getBlockY()).thenReturn(Y);
@@ -144,19 +134,19 @@ public class UpDownClickTest {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
         // Common from to's
-        outside = mock(Location.class);
+        Location outside = mock(Location.class);
         when(outside.getWorld()).thenReturn(world);
         when(outside.getBlockX()).thenReturn(X + PROTECTION_RANGE + 1);
         when(outside.getBlockY()).thenReturn(Y);
         when(outside.getBlockZ()).thenReturn(Z);
 
-        inside = mock(Location.class);
+        Location inside = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
         when(inside.getBlockY()).thenReturn(Y);
         when(inside.getBlockZ()).thenReturn(Z);
 
-        inside2 = mock(Location.class);
+        Location inside2 = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
         when(inside.getBlockY()).thenReturn(Y);
@@ -167,7 +157,7 @@ public class UpDownClickTest {
         when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
 
-        panelItem = mock(PanelItem.class);
+        PanelItem panelItem = mock(PanelItem.class);
         flag = mock(Flag.class);
         when(flag.toPanelItem(Mockito.any(), Mockito.any())).thenReturn(panelItem);
         when(panelItem.getItem()).thenReturn(mock(ItemStack.class));

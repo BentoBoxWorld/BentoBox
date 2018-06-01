@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import us.tastybento.bskyblock.BSkyBlock;
@@ -82,7 +83,7 @@ public class LocalesManager {
         }
 
         // Store all the locales available
-        for (File language : localeDir.listFiles(ymlFilter)) {
+        for (File language : Objects.requireNonNull(localeDir.listFiles(ymlFilter))) {
             Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
             if (languages.containsKey(localeObject)) {
                 // Merge into current language

@@ -4,9 +4,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
@@ -80,13 +78,7 @@ public class IslandCache {
         if (!islandsByLocation.remove(island.getCenter(), island) || !islandsByUUID.containsKey(island.getWorld())) {         
             return false;
         }
-        Iterator<Entry<UUID, Island>> it = islandsByUUID.get(island.getWorld()).entrySet().iterator();
-        while (it.hasNext()) {
-            Entry<UUID, Island> en = it.next();
-            if (en.getValue().equals(island)) {
-                it.remove();
-            }
-        }
+        islandsByUUID.get(island.getWorld()).entrySet().removeIf(en -> en.getValue().equals(island));
         // Remove from grid
         grids.putIfAbsent(island.getWorld(), new IslandGrid());
         return grids.get(island.getWorld()).removeFromGrid(island);
@@ -165,16 +157,14 @@ public class IslandCache {
     public boolean hasIsland(World world, UUID uuid) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
         Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
-        if (island != null) {
-            return island.getOwner().equals(uuid);
-        }
-        return false;
+        return island != null && island.getOwner().equals(uuid);
     }
 
     /**
      * Removes a player from the cache. If the player has an island, the island owner is removed and membership cleared.
      * The island is removed from the islandsByUUID map, but kept in the location map.
-     * @param playerUUID - player's UUID
+     * @param world - world
+     * @param uuid - player's UUID
      */
     public void removePlayer(World world, UUID uuid) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());

@@ -35,14 +35,7 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, CommandEvent.class})
 public class DefaultHelpCommandTest {
 
-    private BSkyBlock plugin;
-    private IslandCommand ic;
-    private UUID uuid;
     private User user;
-    private Settings s;
-    private IslandsManager im;
-    private PlayersManager pm;
-    private Player player;
 
     /**
      * @throws java.lang.Exception
@@ -50,7 +43,7 @@ public class DefaultHelpCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
         // Command manager
@@ -58,17 +51,17 @@ public class DefaultHelpCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
         
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
         
         // Player
-        player = mock(Player.class);
+        Player player = mock(Player.class);
         // Sometimes use: Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         User.setPlugin(plugin);
@@ -76,11 +69,11 @@ public class DefaultHelpCommandTest {
         User.getInstance(player);
         
         // Parent command has no aliases
-        ic = mock(IslandCommand.class);
+        IslandCommand ic = mock(IslandCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
         // No island for player to begin with (set it later in the tests)
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Has team
@@ -88,7 +81,7 @@ public class DefaultHelpCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
 
-        pm = mock(PlayersManager.class);  
+        PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler

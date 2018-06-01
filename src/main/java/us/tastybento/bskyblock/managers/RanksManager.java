@@ -90,16 +90,13 @@ public class RanksManager {
      * @return true if removed
      */
     public boolean removeRank(String reference) {
-        if (reference.equalsIgnoreCase(OWNER_RANK_REF)
-                || reference.equalsIgnoreCase(MEMBER_RANK_REF)
-                || reference.equalsIgnoreCase(VISITOR_RANK_REF)
-                || reference.equalsIgnoreCase(BANNED_RANK_REF)
-                || reference.equalsIgnoreCase(ADMIN_RANK_REF)
-                || reference.equalsIgnoreCase(MOD_RANK_REF)) {
-            return false;
-        }
+        return !reference.equalsIgnoreCase(OWNER_RANK_REF)
+                && !reference.equalsIgnoreCase(MEMBER_RANK_REF)
+                && !reference.equalsIgnoreCase(VISITOR_RANK_REF)
+                && !reference.equalsIgnoreCase(BANNED_RANK_REF)
+                && !reference.equalsIgnoreCase(ADMIN_RANK_REF)
+                && !reference.equalsIgnoreCase(MOD_RANK_REF) && (ranks.remove(reference) != null);
 
-        return ranks.remove(reference) == null ? false : true;
     }
 
     /**

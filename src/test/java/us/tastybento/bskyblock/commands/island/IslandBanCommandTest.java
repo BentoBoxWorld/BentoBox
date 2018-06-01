@@ -52,11 +52,9 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
 public class IslandBanCommandTest {
 
-    private BSkyBlock plugin;
     private IslandCommand ic;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
     private PlayersManager pm;
     private Island island;
@@ -67,7 +65,7 @@ public class IslandBanCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Command manager
@@ -75,7 +73,7 @@ public class IslandBanCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
@@ -350,7 +348,7 @@ public class IslandBanCommandTest {
             @Override
             public Boolean answer(InvocationOnMock invocation) throws Throwable {
                 Player p = invocation.getArgumentAt(0, Player.class);
-                return p.getName().equals("ian") ? false : true;
+                return !p.getName().equals("ian");
             }
 
         });

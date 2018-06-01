@@ -41,7 +41,7 @@ public class AddonClassLoader extends URLClassLoader {
 
         loader = addonsManager;
 
-        Class<?> javaClass = null;
+        Class<?> javaClass;
         try {
             String mainClass = data.getString("main");
             javaClass = Class.forName(mainClass, true, this);
@@ -94,7 +94,7 @@ public class AddonClassLoader extends URLClassLoader {
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) {
         return findClass(name, true);
     }
 
