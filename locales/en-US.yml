@@ -297,7 +297,9 @@ protection:
     CHORUS_FRUIT:
       name: "Chorus fruits"
       description: "Toggle teleportation using Chorus fruits"
-    CRAFTING: "Use crafting table"
+    CRAFTING:
+      name: "Workbenches"
+      description: "Toggle interaction with workbenches"
     CROP_TRAMPLE: "Trample crops"
     DOOR: "Use doors"
     ELYTRA: "Use elytras"
@@ -316,8 +318,7 @@ protection:
     LEASH: "LEASH"
     LOCK:
       name: "Lock island"
-      description: |
-        Toggle island lock
+      description: "Toggle island lock"
     MILKING: "MILKING"
     MOB_SPAWN: "MOB_SPAWN"
     MONSTER_SPAWN: "MONSTER_SPAWN"
@@ -347,8 +348,6 @@ protection:
       allowed_rank: "&3- &a"
       blocked_rank: "&3- &c"
       minimal_rank: "&3- &2"
-    help-item:
-      name: "&aNeed some help?"
 
 language:
   panel-title: "Select your language"
