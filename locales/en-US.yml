@@ -343,7 +343,10 @@ protection:
       description-layout: |+
         &a[description]
 
-        &7Allowed for: &f[rank]
+        &7Allowed for:
+      allowed_rank: "&3- &a"
+      blocked_rank: "&3- &c"
+      minimal_rank: "&3- &2"
     help-item:
       name: "&aNeed some help?"
 

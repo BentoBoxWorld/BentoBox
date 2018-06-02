@@ -16,7 +16,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
  * @author tastybento
  *
  */
-public class UpDownClick implements PanelItem.ClickHandler {
+public class CycleClick implements PanelItem.ClickHandler {
 
     private BSkyBlock plugin = BSkyBlock.getInstance();
     private final String id;
@@ -25,7 +25,7 @@ public class UpDownClick implements PanelItem.ClickHandler {
     /**
      * @param id - the flag id that will be adjusted by this click
      */
-    public UpDownClick(String id) {
+    public CycleClick(String id) {
         this.id = id;
     }
 
@@ -40,13 +40,12 @@ public class UpDownClick implements PanelItem.ClickHandler {
             Flag flag = plugin.getFlagsManager().getFlagByID(id);
             int currentRank = island.getFlag(flag);
             if (click.equals(ClickType.LEFT)) {
-                int nextRank = rm.getRankUpValue(currentRank);
-                island.setFlag(flag, nextRank);
+                if (currentRank == RanksManager.OWNER_RANK) {
+                    island.setFlag(flag, RanksManager.VISITOR_RANK);
+                } else {
+                    island.setFlag(flag, rm.getRankUpValue(currentRank));
+                }
                 user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-            } else if (click.equals(ClickType.RIGHT)) {
-                int nextRank = rm.getRankDownValue(currentRank);
-                island.setFlag(flag, nextRank);
-                user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());

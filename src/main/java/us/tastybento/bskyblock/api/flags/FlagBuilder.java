@@ -5,7 +5,7 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.listeners.flags.UpDownClick;
+import us.tastybento.bskyblock.listeners.flags.CycleClick;
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class FlagBuilder {
@@ -21,7 +21,7 @@ public class FlagBuilder {
     public FlagBuilder id(String string) {
         id = string;
         // Set the default click operation to UpDownClick
-        onClick = new UpDownClick(id);
+        onClick = new CycleClick(id);
         return this;
     }
 
@@ -81,7 +81,7 @@ public class FlagBuilder {
     
     /**
      * Adds a listener for clicks on this flag when it is a panel item. Default is
-     * {@link us.tastybento.bskyblock.listeners.flags.UpDownClick}
+     * {@link us.tastybento.bskyblock.listeners.flags.CycleClick}
      * @param onClickListener - the listener for clicks. Must use the ClickOn interface
      * @return FlagBuilder
      */

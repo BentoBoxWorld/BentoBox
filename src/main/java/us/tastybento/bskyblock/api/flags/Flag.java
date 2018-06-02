@@ -124,23 +124,31 @@ public class Flag implements Comparable<Flag> {
      * @return - PanelItem for this flag
      */
     public PanelItem toPanelItem(BSkyBlock plugin, User user) {
-        // Get the island this user is on or their own
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
-        String rank = RanksManager.OWNER_RANK_REF;
-        if (island != null) {
-            // TODO: Get the world settings - the player has no island and is not in an island location
-            rank = plugin.getRanksManager().getRank(island.getFlag(this));
-        }
-        return new PanelItemBuilder()
+        // Start the flag conversion
+        PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(new ItemStack(icon))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", "[name]", user.getTranslation("protection.flags." + id + ".name")))
-                .description(user.getTranslation("protection.panel.flag-item.description-layout",
-                        "[description]", user.getTranslation("protection.flags." + id + ".description"),
-                        "[rank]", user.getTranslation(rank)))
-                .clickHandler(clickHandler)
-                .build();
+                .clickHandler(clickHandler);
+        pib.description(user.getTranslation("protection.panel.flag-item.description-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")));
+
+        // Get the island this user is on or their own
+        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+        if (island != null) {
+            // TODO: Get the world settings - the player has no island and is not in an island location
+            // Dynamic rank list
+            plugin.getRanksManager().getRanks().forEach((reference, score) -> {
+                if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
+                    pib.description(user.getTranslation("protection.panel.flag-item.blocked_rank") + user.getTranslation(reference));
+                } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
+                    pib.description(user.getTranslation("protection.panel.flag-item.allowed_rank") + user.getTranslation(reference));
+                } else if (score == island.getFlag(this)) {
+                    pib.description(user.getTranslation("protection.panel.flag-item.minimal_rank") + user.getTranslation(reference));
+                }
+            });
+        }
+        return pib.build();
     }
-    
+
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

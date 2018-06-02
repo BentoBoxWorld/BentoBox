@@ -44,7 +44,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
-public class UpDownClickTest {
+public class CycleClickTest {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -183,32 +183,41 @@ public class UpDownClickTest {
 
     @Test
     public void testUpDownClick() {
-        UpDownClick udc = new UpDownClick("LOCK");
+        CycleClick udc = new CycleClick("LOCK");
         assertNotNull(udc);
     }
 
     @Test
     public void testOnLeftClick() {
-        UpDownClick udc = new UpDownClick("LOCK");
+        final int SLOT = 5;
+        CycleClick udc = new CycleClick("LOCK");
+        // Rank starts at member
         // Click left
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
         Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
         Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
-        Mockito.verify(inv).setItem(Mockito.eq(5), Mockito.any());        
+        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        // Check rollover
+        // Clicking when Owner should go to Visitor
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
+        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
     }
 
     @Test
     public void testOnRightClick() {
-        UpDownClick udc = new UpDownClick("LOCK");
-        // Right click
+        CycleClick udc = new CycleClick("LOCK");
+        // Right click - should do nothing
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, 0));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
+        Mockito.verify(island, Mockito.never()).setFlag(Mockito.eq(flag), Mockito.anyInt());
     }
     
     @Test
     public void testAllClicks() {
         // Test all possible click types
-        UpDownClick udc = new UpDownClick("LOCK");
+        CycleClick udc = new CycleClick("LOCK");
         Arrays.asList(ClickType.values()).forEach(c -> assertTrue(udc.onClick(panel, user, c, 0)));
     }
     
