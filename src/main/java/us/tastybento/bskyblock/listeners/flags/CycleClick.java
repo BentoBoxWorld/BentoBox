@@ -21,7 +21,6 @@ public class CycleClick implements PanelItem.ClickHandler {
     private BSkyBlock plugin = BSkyBlock.getInstance();
     private final String id;
 
-
     /**
      * @param id - the flag id that will be adjusted by this click
      */
@@ -44,6 +43,13 @@ public class CycleClick implements PanelItem.ClickHandler {
                     island.setFlag(flag, RanksManager.VISITOR_RANK);
                 } else {
                     island.setFlag(flag, rm.getRankUpValue(currentRank));
+                }
+                user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+            } else if (click.equals(ClickType.RIGHT)) {
+                if (currentRank == RanksManager.VISITOR_RANK) {
+                    island.setFlag(flag, RanksManager.OWNER_RANK);
+                } else {
+                    island.setFlag(flag, rm.getRankDownValue(currentRank));
                 }
                 user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             }

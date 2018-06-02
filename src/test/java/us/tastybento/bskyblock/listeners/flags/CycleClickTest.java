@@ -208,10 +208,21 @@ public class CycleClickTest {
 
     @Test
     public void testOnRightClick() {
+        final int SLOT = 5;
         CycleClick udc = new CycleClick("LOCK");
-        // Right click - should do nothing
-        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, 0));
-        Mockito.verify(island, Mockito.never()).setFlag(Mockito.eq(flag), Mockito.anyInt());
+        // Rank starts at member
+        // Right click
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
+        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        // Check rollover
+        // Clicking when Visitor should go to Owner
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
+        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
     }
     
     @Test
