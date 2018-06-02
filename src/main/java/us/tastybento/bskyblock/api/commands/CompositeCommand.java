@@ -439,6 +439,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public void setPermission(String permission) {
         this.permission = permissionPrefix + permission;
     }
+    
+    /**
+     * Inherits the permission from parent command
+     */
+    public void inheritPermission() {
+        this.permission = parent.getPermission();
+    } 
 
     /**
      * This creates the full linking chain of commands

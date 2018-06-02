@@ -32,7 +32,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         // Set the usage to what the parent's command is
         setParameters(parent.getParameters());
         setDescription(parent.getDescription());
-        setPermission(parent.getPermission());
+        inheritPermission();
     }
 
     @Override

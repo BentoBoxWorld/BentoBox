@@ -26,7 +26,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
         // Inherit parameters from the respective parent class - in this case, only /island go and /island sethome
         setParameters(parent.getParameters());
         setDescription(parent.getDescription());
-        setPermission(parent.getPermission());
+        inheritPermission();
     }
 
     @Override

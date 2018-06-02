@@ -127,6 +127,7 @@ public class DefaultHelpCommandTest {
         CompositeCommand cc = mock(CompositeCommand.class);
         DefaultHelpCommand dhc = new DefaultHelpCommand(cc);
         assertNotNull(dhc);
+        // Verify that parent's parameters and permission is used
         Mockito.verify(cc).getParameters();
         Mockito.verify(cc).getDescription();
         Mockito.verify(cc).getPermission();
