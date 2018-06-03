@@ -28,6 +28,7 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -280,7 +281,7 @@ public class IslandResetCommandTest {
         
         // Reset
         assertTrue(irc.execute(user, new ArrayList<>()));
-        Mockito.verify(user).sendMessage("commands.island.reset.confirm", "[label]", "island", "[seconds]", String.valueOf(s.getConfirmationTime()));
+        Mockito.verify(user).sendMessage("commands.island.reset.confirm", TextVariables.LABEL, "island", TextVariables.NUMBER, String.valueOf(s.getConfirmationTime()));
         
         // Reset confirm
         assertTrue(irc.execute(user, Arrays.asList("confirm")));

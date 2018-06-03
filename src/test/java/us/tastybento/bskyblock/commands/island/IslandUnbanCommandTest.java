@@ -32,6 +32,7 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -205,7 +206,7 @@ public class IslandUnbanCommandTest {
 
         assertTrue(iubc.execute(user, Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.success");
-        Mockito.verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
+        Mockito.verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
     }
 
     @Test
