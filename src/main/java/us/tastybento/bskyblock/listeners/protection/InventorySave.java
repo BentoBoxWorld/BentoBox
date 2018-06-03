@@ -14,13 +14,13 @@ import us.tastybento.bskyblock.BSkyBlock;
  *
  */
 public class InventorySave {
-    private static InventorySave instance = new InventorySave(BSkyBlock.getInstance());
+    private static InventorySave instance = new InventorySave();
     private HashMap<UUID, InventoryStore> inventories;
 
     /**
      * Saves the inventory of a player
      */
-    public InventorySave(BSkyBlock plugin) {
+    public InventorySave() {
         inventories = new HashMap<>();
     }
 
