@@ -130,6 +130,7 @@ commands:
       copy-first: "&cCopy a schem first!"
       no-such-file: "&cNo such file!"
       could-not-load: "&cCould not load that file!"
+      could-not-save: "&Hmm, something went wrong saving that file: [message]"
       set-pos1: "&aPosition 1 set at [vector]"
       set-pos2: "&aPosition 2 set at [vector]"
       need-pos1-pos2: "&cSet pos1 and pos2 first!"

@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.commands.admin;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -10,10 +8,10 @@ import java.util.UUID;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.island.builders.Clipboard;
+import us.tastybento.bskyblock.util.Util;
 
 public class AdminSchemCommand extends CompositeCommand {
     private Map<UUID, Clipboard> clipboards;
-    private File schemFolder;
 
     public AdminSchemCommand(CompositeCommand parent) {
         super(parent, "schem");
@@ -25,10 +23,6 @@ public class AdminSchemCommand extends CompositeCommand {
         setDescription("commands.admin.schem.description");
         setOnlyPlayer(true);
         clipboards = new HashMap<>();
-        schemFolder = new File(getPlugin().getDataFolder(), "schems");
-        if (!schemFolder.exists()) {
-            schemFolder.mkdirs();
-        }
     }
 
     public boolean execute(User user, List<String> args) {
@@ -51,26 +45,15 @@ public class AdminSchemCommand extends CompositeCommand {
 
         if (args.get(0).equalsIgnoreCase("load")) {
             if (args.size() == 2) {
-                File file = new File(schemFolder, args.get(1)); 
-                if (file.exists()) {
-                    try {
-                        cb.load(file);
-                        user.sendMessage("general.success");
-                        clipboards.put(user.getUniqueId(), cb);
-                        return true;
-                    } catch (Exception e) {
-                        user.sendMessage("commands.admin.schem.could-not-load");
-                        e.printStackTrace();
-                        return false;
-                    }  
-                } else {
-                    user.sendMessage("commands.admin.schem.no-such-file");
-                    return false;
+                if (cb.load(user, args.get(1))) {
+                    clipboards.put(user.getUniqueId(), cb);
+                    return true;
                 }
             } else {
                 showHelp(this, user);
                 return false;
             }
+            return false;
         }
 
         if (args.get(0).equalsIgnoreCase("copy")) {
@@ -80,15 +63,7 @@ public class AdminSchemCommand extends CompositeCommand {
         if (args.get(0).equalsIgnoreCase("save")) {
             if (cb.isFull()) {
                 if (args.size() == 2) {
-                    File file = new File(schemFolder, args.get(1)); 
-                    user.sendMessage("general.success");
-                    try {
-                        cb.save(file);
-                    } catch (IOException e) {
-                        user.sendRawMessage("Could not save!");
-                        return false;
-                    }
-                    return true;
+                    return cb.save(user, args.get(1));
                 } else {
                     showHelp(this, user);
                     return false;
@@ -101,14 +76,14 @@ public class AdminSchemCommand extends CompositeCommand {
 
         if (args.get(0).equalsIgnoreCase("pos1")) {
             cb.setPos1(user.getLocation());
-            user.sendMessage("commands.admin.schem.set-pos1", "[vector]", user.getLocation().toVector().toString());
+            user.sendMessage("commands.admin.schem.set-pos1", "[vector]", Util.xyz(user.getLocation().toVector()));
             clipboards.put(user.getUniqueId(), cb);
             return true;
         }
 
         if (args.get(0).equalsIgnoreCase("pos2")) {
             cb.setPos2(user.getLocation());
-            user.sendMessage("commands.admin.schem.set-pos2", "[vector]", user.getLocation().toVector().toString());
+            user.sendMessage("commands.admin.schem.set-pos2", "[vector]", Util.xyz(user.getLocation().toVector()));
             clipboards.put(user.getUniqueId(), cb);
             return true;
         }

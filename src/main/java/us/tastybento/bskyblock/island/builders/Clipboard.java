@@ -63,9 +63,15 @@ public class Clipboard {
     private BSkyBlock plugin;
     private boolean copied;
 
+    private File schemFolder;
+
     public Clipboard(BSkyBlock plugin) {
         super();
         this.plugin = plugin;
+        schemFolder = new File(plugin.getDataFolder(), "schems");
+        if (!schemFolder.exists()) {
+            schemFolder.mkdirs();
+        }
     }
     /**
      * @return the pos1
@@ -225,7 +231,7 @@ public class Clipboard {
         }
 
         bs.update(true, false);
-        
+
         if (bs instanceof InventoryHolder) {
             Bukkit.getLogger().info("Inventory holder " + s.getCurrentPath());
             Inventory ih = ((InventoryHolder)bs).getInventory();
@@ -316,7 +322,7 @@ public class Clipboard {
         }
 
     }
-        
+
     /**
      * @return the blockConfig
      */
@@ -324,24 +330,10 @@ public class Clipboard {
         return blockConfig;
     }
 
-    /**
-     * Load a file to clipboard
-     * @param file
-     * @throws IOException 
-     * @throws InvalidConfigurationException 
-     */
-    public void load(File file) throws IOException, InvalidConfigurationException {
-        unzip(file.getAbsolutePath());
-        blockConfig = new YamlConfiguration();
-        blockConfig.load(file);
-        copied = true;
-        Files.delete(file.toPath());
-    }
-
     private void unzip(final String zipFilePath) throws IOException {
         Path path = Paths.get(zipFilePath);
         if (!(path.toFile().exists())) {
-            return;
+            throw new IOException("No file exists!");
         }
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
             ZipEntry entry = zipInputStream.getNextEntry();
@@ -371,18 +363,8 @@ public class Clipboard {
 
     }
 
-    /**
-     * Save the clipboard to a file
-     * @param file
-     * @throws IOException 
-     */
-    public void save(File file) throws IOException {
-        getBlockConfig().save(file);
-        zip(file);
-    }
-
     private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".zip"))) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];
@@ -401,5 +383,74 @@ public class Clipboard {
 
     public boolean isFull() {
         return copied;
+    }
+
+    /**
+     * Load a file to clipboard
+     * @param file
+     * @throws IOException 
+     * @throws InvalidConfigurationException 
+     */
+    public boolean load(User user, String string) {
+        File zipFile = new File(schemFolder, string + ".schem"); 
+        if (!zipFile.exists()) {
+            user.sendMessage("commands.admin.schem.no-such-file");
+            return false; 
+        }
+        try {
+            unzip(zipFile.getAbsolutePath());
+        } catch (IOException e) {
+            user.sendMessage("commands.admin.schem.could-not-load");
+            plugin.logError("Could not load schems file - could not unzip : " + zipFile.getName());
+            return false; 
+        }
+        File file = new File(schemFolder, string);
+        if (!file.exists()) {
+            user.sendMessage("commands.admin.schem.could-not-load");
+            plugin.logError("Could not load schems file - does not exist : " + file.getName());
+            return false; 
+        }
+        blockConfig = new YamlConfiguration();
+        try {
+            blockConfig.load(file);
+        } catch (Exception e) {
+            user.sendMessage("commands.admin.schem.could-not-load");
+            plugin.logError("Could not load schems file - YAML error : " + file.getName());
+            return false; 
+        }
+        copied = true;
+        try {
+            Files.delete(file.toPath());
+        } catch (IOException e) {
+            plugin.logError("Could not delete temporary schems file: " + file.getName());
+        }
+        user.sendMessage("general.success");
+        return true;
+    }
+
+    /**
+     * Save the clipboard to a file
+     * @param user
+     * @param string
+     * @return
+     */
+    public boolean save(User user, String string) {
+        File file = new File(schemFolder, string); 
+        try {
+            getBlockConfig().save(file);
+        } catch (IOException e) {
+            user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not save temp schems file.");
+            plugin.logError("Could not save temporary schems file: " + file.getName());
+            return false;
+        }
+        try {
+            zip(file);
+        } catch (IOException e) {
+            user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not zip temp schems file.");
+            plugin.logError("Could not zip temporary schems file: " + file.getName());
+            return false;
+        }
+        user.sendMessage("general.success");
+        return true;
     }
 }
