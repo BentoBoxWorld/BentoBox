@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.listeners.flags;
 
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -10,6 +11,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -82,8 +84,10 @@ public class PlaceBlocksListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {
         if (e.getNewState().getType().equals(Material.FROSTED_ICE)) {
-            // Silently check
-            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS, true);
+            if (e.getEntity() instanceof Player) {
+                this.setUser(User.getInstance((Player)e.getEntity()));
+                checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
+            }  
         }
     }
 
