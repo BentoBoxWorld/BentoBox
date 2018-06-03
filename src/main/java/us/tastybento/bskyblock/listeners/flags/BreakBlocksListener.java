@@ -128,13 +128,10 @@ public class BreakBlocksListener extends AbstractFlagListener {
         } else if (e.getDamager() instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
-            if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
-                    e.getEntity().setFireTicks(0);
-                    e.getDamager().remove();
-                }
+            if (p.getShooter() instanceof Player && !setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
+                e.getEntity().setFireTicks(0);
+                e.getDamager().remove();
             }
         }
     }
-
 }

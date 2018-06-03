@@ -142,12 +142,10 @@ public class FlyingMobEvents implements Listener {
         if (e.getEntityType() != EntityType.WITHER || !plugin.getIWM().inWorld(e.getEntity().getLocation()) ) {
             return;
         }
-        if (mobSpawnInfo.containsKey(e.getEntity())) {
+        if (mobSpawnInfo.containsKey(e.getEntity()) && !mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getEntity().getLocation())) {
             // We know about this wither
-            if (!mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getEntity().getLocation())) {
-                // Cancel the block changes
-                e.setCancelled(true);
-            }
+            // Cancel the block changes
+            e.setCancelled(true);
         }
     }
 

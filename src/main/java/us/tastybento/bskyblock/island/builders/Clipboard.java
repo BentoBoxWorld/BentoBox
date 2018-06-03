@@ -378,14 +378,11 @@ public class Clipboard {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
-
                 final byte[] buffer = new byte[1024];
                 int length;
                 while((length = inputStream.read(buffer)) >= 0) {
                     zipOutputStream.write(buffer, 0, length);
                 }
-                inputStream.close();
-                zipOutputStream.close();
                 try {
                     Files.delete(targetFile.toPath());
                 } catch (Exception e) {

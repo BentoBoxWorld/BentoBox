@@ -378,11 +378,9 @@ public class IslandsManager {
             } else {
                 // try team leader's home
                 Location tlh = plugin.getPlayers().getHomeLocation(world, plugin.getIslands().getTeamLeader(world, user.getUniqueId()));
-                if (tlh != null) {
-                    if (isSafeLocation(tlh)) {
-                        plugin.getPlayers().setHomeLocation(user, tlh, number);
-                        return tlh;
-                    }
+                if (tlh != null && isSafeLocation(tlh)) {
+                    plugin.getPlayers().setHomeLocation(user, tlh, number);
+                    return tlh;
                 }
             }
         } else {

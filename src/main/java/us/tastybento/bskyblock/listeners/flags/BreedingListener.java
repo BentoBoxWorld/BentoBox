@@ -34,7 +34,7 @@ public class BreedingListener extends AbstractFlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
-        if (e.getRightClicked() != null && e.getRightClicked() instanceof Animals) {
+        if (e.getRightClicked() instanceof Animals) {
             ItemStack inHand = e.getPlayer().getInventory().getItemInMainHand();
             if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
                 inHand = e.getPlayer().getInventory().getItemInOffHand();

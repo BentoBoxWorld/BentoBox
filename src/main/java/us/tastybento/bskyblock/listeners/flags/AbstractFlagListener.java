@@ -134,15 +134,14 @@ public abstract class AbstractFlagListener implements Listener {
 
         // Protection flag
         // If the user is not set already, try to get it from the event
-        if (user == null) {
-            // Set the user associated with this event
-            if (!createEventUser(e)) {
-                // The user is not set, and the event does not hold a getPlayer, so return false
-                // TODO: is this the correct handling here?
-                plugin.logError("Check island had no associated user! " + e.getEventName());
-                return false;
-            }
+        // Set the user associated with this event
+        // The user is not set, and the event does not hold a getPlayer, so return false
+        // TODO: is this the correct handling here?
+        if (user == null && !createEventUser(e)) {
+            plugin.logError("Check island had no associated user! " + e.getEventName());
+            return false;
         }
+
         // Check if the plugin is set in User (required for testing)
         User.setPlugin(plugin);
 

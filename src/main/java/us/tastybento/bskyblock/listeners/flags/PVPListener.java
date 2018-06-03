@@ -69,7 +69,7 @@ public class PVPListener extends AbstractFlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
-        if (e.getCaught() != null && e.getCaught() instanceof Player) {
+        if (e.getCaught() instanceof Player) {
             Flag flag = Flags.PVP_OVERWORLD;
             if (e.getCaught().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
                 flag = Flags.PVP_NETHER;
@@ -98,7 +98,7 @@ public class PVPListener extends AbstractFlagListener {
 
         // Try to get the thrower
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
@@ -122,7 +122,7 @@ public class PVPListener extends AbstractFlagListener {
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player) projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);

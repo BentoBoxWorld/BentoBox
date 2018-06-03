@@ -315,10 +315,9 @@ public class Island implements DataObject {
                             }
                         } else if (material.toString().endsWith("BANNER") && holder.getType().toString().endsWith("BANNER")) {
                             result++;
-                        } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
-                            if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
-                                result++;
-                            }
+                        } else if ((material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST))
+                                && (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST))) {
+                            result++;
                         }
                     }
                 }

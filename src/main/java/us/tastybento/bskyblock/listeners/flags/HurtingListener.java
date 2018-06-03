@@ -118,7 +118,7 @@ public class HurtingListener extends AbstractFlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
@@ -162,7 +162,7 @@ public class HurtingListener extends AbstractFlagListener {
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
