@@ -5,8 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.BSkyBlock;
-
 /**
  * Stashes inventories when required for a player
  *

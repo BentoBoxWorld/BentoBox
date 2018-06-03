@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
@@ -63,38 +62,14 @@ public class IslandResetCommand extends CompositeCommand {
                 user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(getPlayers().getResetsLeft(user.getUniqueId())));
             }
         }
-        // Check for non-confirm command
-        if (!args.isEmpty() && !(confirm.containsKey(user.getUniqueId()) && args.get(0).equalsIgnoreCase("confirm"))) {
-            showHelp(this, user);
-            return false;
-        }
-
-        // Check confirmation or reset immediately if no confirmation required
-        if (!getSettings().isResetConfirmation() || (confirm.containsKey(user.getUniqueId()) && args.size() == 1 && args.get(0).equalsIgnoreCase("confirm"))) {
+        // Request confirmation
+        if (getSettings().isResetConfirmation()) {
+            this.askConfirmation(user, () -> resetIsland(user));
+            return true;
+        } else {
             return resetIsland(user);
         }
-        
-        // Confirmation required        
-        if (!confirm.containsKey(user.getUniqueId())) {
-            requestConfirmation(user);
-        } else {
-            // Show how many seconds left to confirm
-            int time = (int)((confirm.get(user.getUniqueId()) - System.currentTimeMillis()) / 1000D);
-            user.sendMessage("commands.island.reset.confirm", TextVariables.LABEL, getTopLabel(), TextVariables.NUMBER, String.valueOf(time));
-        }
-        return true;
-    }
 
-    private void requestConfirmation(User user) {
-        user.sendMessage("commands.island.reset.confirm", TextVariables.LABEL, getTopLabel(), TextVariables.NUMBER, String.valueOf(getSettings().getConfirmationTime()));
-        // Require confirmation          
-        confirm.put(user.getUniqueId(), System.currentTimeMillis() + getSettings().getConfirmationTime() * 1000L);
-        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            if (confirm.containsKey(user.getUniqueId())) {
-                user.sendMessage("commands.island.reset.cancelled");
-                confirm.remove(user.getUniqueId());
-            }
-        }, getSettings().getConfirmationTime() * 20L);       
     }
 
     private boolean resetIsland(User user) {

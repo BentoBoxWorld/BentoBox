@@ -10,8 +10,6 @@ import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
-import javax.xml.soap.Text;
-
 public class IslandTeamCommand extends CompositeCommand {
 
     private IslandTeamInviteCommand inviteCommand;

@@ -14,8 +14,6 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
 
-import javax.xml.soap.Text;
-
 public class Flag implements Comparable<Flag> {
 
     public enum Type {
