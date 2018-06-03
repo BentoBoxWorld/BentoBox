@@ -1,9 +1,7 @@
 package us.tastybento.bskyblock.panels;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
-import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 
 /**

@@ -48,17 +48,11 @@ public class AddonsManager {
     public void loadAddons() {
         plugin.log("Loading addons...");
         File f = new File(plugin.getDataFolder(), "addons");
-        if (!f.exists()) {
-            f.mkdirs();
+        if (!f.exists() && !f.mkdirs()) {
+            plugin.logError("Cannot make addons folder!");
+            return;
         }
-        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(t -> {
-            plugin.log("Loading " + t.getName());
-            try {
-                loadAddon(t);
-            } catch (Exception e) {
-                plugin.logError("Could not load addon " + t.getName() + " : " + e.getMessage());
-            }
-        });
+        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         addons.forEach(Addon::onLoad);
     }
 
@@ -150,7 +144,9 @@ public class AddonsManager {
         loader.forEach(l -> {
             try {
                 l.close();
-            } catch (IOException ignore) {}
+            } catch (IOException ignore) {
+                // Ignore
+            }
         });
     }
 
@@ -168,7 +164,6 @@ public class AddonsManager {
 
     /**
      * Finds a class by name that has been loaded by this loader
-     * Code copied from Bukkit JavaPluginLoader
      * @param name - name of the class
      * @return Class - the class
      */
@@ -178,22 +173,12 @@ public class AddonsManager {
 
     /**
      * Sets a class that this loader should know about
-     * Code copied from Bukkit JavaPluginLoader
      *
      * @param name - name of the class
      * @param clazz - the class
      */
     public void setClass(final String name, final Class<?> clazz) {
         classes.putIfAbsent(name, clazz);
-        /*
-        if (!classes.containsKey(name)) {
-            classes.put(name, clazz);
-            
-            if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
-                Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
-                ConfigurationSerialization.registerClass(serializable);
-            }
-        }*/
     }
 
     /**

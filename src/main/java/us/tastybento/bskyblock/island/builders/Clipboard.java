@@ -139,8 +139,8 @@ public class Clipboard {
 
     @SuppressWarnings("deprecation")
     private void setBlock(Block block, ConfigurationSection s, Material m) {
-     // Block state
-        
+        // Block state
+
         if (s.getBoolean(ATTACHED) && m.toString().contains("TORCH")) {
             TorchDir d = TorchDir.valueOf(s.getString("facing"));
 
@@ -163,7 +163,7 @@ public class Clipboard {
         } 
 
         block.setType(m);
-        
+
         BlockState bs = block.getState();
 
         byte data = (byte)s.getInt("data");
@@ -219,11 +219,11 @@ public class Clipboard {
                 }
             }
         }
-        
+
         bs.update(true, false);
         if (bs instanceof InventoryHolder) {
             Bukkit.getLogger().info("Inventory holder " + s.getCurrentPath());
-            
+
             InventoryHolder ih = (InventoryHolder)bs;
             @SuppressWarnings("unchecked")
             List<ItemStack> items = (List<ItemStack>) s.get("inventory");
@@ -233,7 +233,7 @@ public class Clipboard {
         }
 
     }
-    
+
     @SuppressWarnings("deprecation")
     private void copyBlock(Block block, Location origin) {
         if (block.getType().equals(Material.AIR)) {
@@ -324,15 +324,15 @@ public class Clipboard {
      * @throws InvalidConfigurationException 
      */
     public void load(File file) throws IOException, InvalidConfigurationException {
-            unzip(file.getAbsolutePath());
-            blockConfig.load(file);
-            copied = true;
-            Files.delete(file.toPath());
+        unzip(file.getAbsolutePath());
+        blockConfig.load(file);
+        copied = true;
+        Files.delete(file.toPath());
     }
-    
+
     private void unzip(final String zipFilePath) throws IOException {
         Path path = Paths.get(zipFilePath);
-        if (!(Files.exists(path))) {
+        if (!(path.toFile().exists())) {
             return;
         }
         try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
@@ -362,19 +362,18 @@ public class Clipboard {
         }
 
     }
-    
+
     /**
      * Save the clipboard to a file
      * @param file
      * @throws IOException 
      */
     public void save(File file) throws IOException {
-            getBlockConfig().save(file);
-            zip(file);
+        getBlockConfig().save(file);
+        zip(file);
     }
-    
-    private void zip(File targetFile) throws IOException {
 
+    private void zip(File targetFile) throws IOException {
         try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
@@ -386,13 +385,15 @@ public class Clipboard {
                 }
                 inputStream.close();
                 zipOutputStream.close();
-                if (!targetFile.delete()) {
-                    throw new IOException("Could not delete temp file");
+                try {
+                    Files.delete(targetFile.toPath());
+                } catch (Exception e) {
+                    plugin.logError(e.getMessage());
                 }
             }
         }
     }
-    
+
     public boolean isFull() {
         return copied;
     }
