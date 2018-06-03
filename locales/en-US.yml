@@ -17,6 +17,9 @@ banner:
 
 general:
   success: "&aSuccess!"
+  request-cancelled: "&cConfirmation timeout - &brequest cancelled"
+  previous-request-cancelled: "&6Previous confirmation request cancelled"
+  confirm: "&cType command again within &b[seconds]s&c to confirm"
   errors:
     command-cancelled: "&cCommand cancelled"
     no-permission: "&cYou don't have permission to execute this command."
@@ -121,6 +124,16 @@ commands:
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
+    schem:
+      parameters: "<load><copy><paste><pos1><pos2><save>"
+      description: "manipulate schems"
+      copy-first: "&cCopy a schem first!"
+      no-such-file: "&cNo such file!"
+      could-not-load: "&cCould not load that file!"
+      set-pos1: "&aPosition 1 set at [vector]"
+      set-pos2: "&aPosition 2 set at [vector]"
+      need-pos1-pos2: "&cSet pos1 and pos2 first!"
+      copied-blocks: "&bCopied [number] blocks to clipboard"
   island:
     about:
       description: "display copyright and license info"
@@ -147,8 +160,6 @@ commands:
       must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
-      confirm: "&cType &b/[label] reset confirm&c within [seconds]s to confirm reset"
-      cancelled: "&bReset cancelled"
     sethome:
       description: "set your teleport point for /island"
       must-be-on-your-island: "You must be on your island to set home!"

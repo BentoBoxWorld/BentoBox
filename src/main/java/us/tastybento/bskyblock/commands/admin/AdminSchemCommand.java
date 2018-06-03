@@ -51,13 +51,16 @@ public class AdminSchemCommand extends CompositeCommand {
 
         if (args.get(0).equalsIgnoreCase("load")) {
             if (args.size() == 2) {
-                File file = new File(schemFolder, args.get(1) + ".schem"); 
+                File file = new File(schemFolder, args.get(1)); 
                 if (file.exists()) {
                     try {
                         cb.load(file);
+                        user.sendMessage("general.success");
+                        clipboards.put(user.getUniqueId(), cb);
                         return true;
                     } catch (Exception e) {
                         user.sendMessage("commands.admin.schem.could-not-load");
+                        e.printStackTrace();
                         return false;
                     }  
                 } else {

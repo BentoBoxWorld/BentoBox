@@ -28,6 +28,7 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
@@ -100,6 +101,8 @@ public class Clipboard {
             user.sendMessage("commands.admin.schem.need-pos1-pos2");
             return false;
         }
+        // Clear the clipboard
+        blockConfig = new YamlConfiguration();
         int count = 0;
         for (int x = Math.min(pos1.getBlockX(), pos2.getBlockX()); x <= Math.max(pos1.getBlockX(),pos2.getBlockX()); x++) {
             for (int y = Math.min(pos1.getBlockY(), pos2.getBlockY()); y <= Math.max(pos1.getBlockY(),pos2.getBlockY()); y++) {
@@ -221,15 +224,12 @@ public class Clipboard {
         }
 
         bs.update(true, false);
+        
         if (bs instanceof InventoryHolder) {
             Bukkit.getLogger().info("Inventory holder " + s.getCurrentPath());
-
-            InventoryHolder ih = (InventoryHolder)bs;
-            @SuppressWarnings("unchecked")
-            List<ItemStack> items = (List<ItemStack>) s.get("inventory");
-            for (int i = 0; i < ih.getInventory().getSize(); i++) {
-                ih.getInventory().setItem(i, items.get(i));
-            }
+            Inventory ih = ((InventoryHolder)bs).getInventory();
+            ConfigurationSection inv = s.getConfigurationSection("inventory");
+            inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
         }
 
     }
@@ -306,10 +306,20 @@ public class Clipboard {
         if (bs instanceof InventoryHolder) {
             Bukkit.getLogger().info("Inventory holder");
             InventoryHolder ih = (InventoryHolder)bs;
-            s.set("inventory", ih.getInventory().getContents());
+            for (int index = 0; index < ih.getInventory().getSize(); index++) {
+                ItemStack i = ih.getInventory().getItem(index);
+                if (i != null) {
+                    s.set("inventory." + index, i);
+                }
+            }
         }
 
     }
+    
+    private void set(ItemStack i) {
+        
+    }
+    
     /**
      * @return the blockConfig
      */
@@ -325,6 +335,7 @@ public class Clipboard {
      */
     public void load(File file) throws IOException, InvalidConfigurationException {
         unzip(file.getAbsolutePath());
+        blockConfig = new YamlConfiguration();
         blockConfig.load(file);
         copied = true;
         Files.delete(file.toPath());
@@ -374,7 +385,7 @@ public class Clipboard {
     }
 
     private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".zip"))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
 
