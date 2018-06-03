@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.commands.island.teams;
 import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamPromoteCommand extends CompositeCommand {
@@ -60,7 +61,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             if (nextRank > currentRank) {
                 getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
-                user.sendMessage("commands.island.team.promote.success", "[name]", target.getName(), "[rank]", rankName);
+                user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
                 return true;
             } else {
                 user.sendMessage("commands.island.team.promote.failure");
@@ -72,7 +73,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             if (prevRank < currentRank) {
                 getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
-                user.sendMessage("commands.island.team.demote.success", "[name]", target.getName(), "[rank]", rankName);
+                user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
                 return true;
             } else {
                 user.sendMessage("commands.island.team.demote.failure");

@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 public class AdminTeamAddCommand extends CompositeCommand {
@@ -30,12 +31,12 @@ public class AdminTeamAddCommand extends CompositeCommand {
         // Get leader and target
         UUID leaderUUID = getPlayers().getUUID(args.get(0));
         if (leaderUUID == null) {
-            user.sendMessage("general.errors.unknown-player-name", "[name]", args.get(0));
+            user.sendMessage("general.errors.unknown-player-name", TextVariables.NAME, args.get(0));
             return false;
         }
         UUID targetUUID = getPlayers().getUUID(args.get(1));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player-name", "[name]", args.get(1));
+            user.sendMessage("general.errors.unknown-player-name", TextVariables.NAME, args.get(1));
             return false;
         }
         if (!getIslands().hasIsland(getWorld(), leaderUUID)) {
@@ -43,7 +44,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
             return false;
         }
         if (getIslands().inTeam(getWorld(), leaderUUID) && !getIslands().getTeamLeader(getWorld(), leaderUUID).equals(leaderUUID)) {
-            user.sendMessage("commands.admin.team.add.name-not-leader", "[name]", args.get(0));
+            user.sendMessage("commands.admin.team.add.name-not-leader", TextVariables.NAME, args.get(0));
             getIslands().getIsland(getWorld(), leaderUUID).showMembers(getPlugin(), user);
             return false;
         }
@@ -52,14 +53,14 @@ public class AdminTeamAddCommand extends CompositeCommand {
             return false;
         }
         if (getIslands().hasIsland(getWorld(), targetUUID)) {
-            user.sendMessage("commands.admin.team.add.name-has-island", "[name]", args.get(1));
+            user.sendMessage("commands.admin.team.add.name-has-island", TextVariables.NAME, args.get(1));
             return false;
         }
         // Success
         User target = User.getInstance(targetUUID);
         User leader = User.getInstance(leaderUUID);
-        leader.sendMessage("commands.island.team.invite.accept.name-joined-your-island", "[name]", getPlugin().getPlayers().getName(targetUUID));
-        target.sendMessage("commands.island.team.invite.accept.you-joined-island", "[label]", getTopLabel());
+        leader.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, getPlugin().getPlayers().getName(targetUUID));
+        target.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         getIslands().getIsland(getWorld(), leaderUUID).addMember(targetUUID);
         user.sendMessage("general.success");
         return true;

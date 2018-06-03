@@ -8,6 +8,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 /**
@@ -56,11 +57,11 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength()) {
-            user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(getSettings().getNameMinLength()));
+            user.sendMessage("commands.island.setname.too-short", TextVariables.NUMBER,  String.valueOf(getSettings().getNameMinLength()));
             return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
-            user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(getSettings().getNameMaxLength()));
+            user.sendMessage("commands.island.setname.too-long", TextVariables.NUMBER, String.valueOf(getSettings().getNameMaxLength()));
             return false;
         }
 

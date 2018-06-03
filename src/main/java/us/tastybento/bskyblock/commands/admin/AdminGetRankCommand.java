@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
@@ -59,7 +60,7 @@ public class AdminGetRankCommand extends CompositeCommand {
         User target = User.getInstance(targetUUID);     
         Island island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);       
         int currentRank = island.getRank(target);
-        user.sendMessage("commands.admin.getrank.rank-is", "[rank]", user.getTranslation(rm.getRank(currentRank)));
+        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK, user.getTranslation(rm.getRank(currentRank)));
         return true;
     }
 

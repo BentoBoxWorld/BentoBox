@@ -40,6 +40,7 @@ import org.bukkit.material.Openable;
 import org.bukkit.material.Redstone;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 public class Clipboard {
@@ -109,7 +110,7 @@ public class Clipboard {
                 }
             }
         }
-        user.sendMessage("commands.admin.schem.copied-blocks", "[number]", String.valueOf(count));
+        user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
         copied = true;
         return true;
     }

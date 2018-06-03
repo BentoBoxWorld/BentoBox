@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamLeaveCommand extends CompositeCommand {
@@ -40,7 +41,7 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
             leaveSet.remove(user.getUniqueId());
             UUID leaderUUID = getIslands().getTeamLeader(getWorld(), user.getUniqueId());
             if (leaderUUID != null) {
-                User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", "[player]", user.getName());
+                User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
             }
             getIslands().removePlayer(getWorld(), user.getUniqueId());
             user.sendMessage("general.success");

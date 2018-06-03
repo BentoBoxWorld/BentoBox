@@ -7,7 +7,10 @@ import java.util.UUID;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
+
+import javax.xml.soap.Text;
 
 public class IslandTeamCommand extends CompositeCommand {
 
@@ -50,7 +53,7 @@ public class IslandTeamCommand extends CompositeCommand {
         if (teamLeaderUUID.equals(playerUUID)) {
             int maxSize = inviteCommand.getMaxTeamSize(user);
             if (teamMembers.size() < maxSize) {
-                user.sendMessage("commands.island.team.invite.you-can-invite", "[number]", String.valueOf(maxSize - teamMembers.size()));
+                user.sendMessage("commands.island.team.invite.you-can-invite", TextVariables.NUMBER, String.valueOf(maxSize - teamMembers.size()));
             } else {
                 user.sendMessage("commands.island.team.invite.errors.island-is-full");
             }

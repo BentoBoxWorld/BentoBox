@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 /**
@@ -51,7 +52,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             }
         }
         if (depth == 0) {
-            user.sendMessage("commands.help.header", "[label]", getIWM().getFriendlyName(getWorld()));
+            user.sendMessage("commands.help.header", TextVariables.LABEL, getIWM().getFriendlyName(getWorld()));
         }
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {

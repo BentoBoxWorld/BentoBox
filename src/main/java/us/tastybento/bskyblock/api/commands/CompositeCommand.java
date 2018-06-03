@@ -21,6 +21,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.events.command.CommandEvent;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
@@ -211,7 +212,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Check perms, but only if this isn't the console
         if ((sender instanceof Player) && !sender.isOp() && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
             user.sendMessage("general.errors.no-permission");
-            user.sendMessage("general.errors.you-need", "[permission]", cmd.getPermission());
+            user.sendMessage("general.errors.you-need", TextVariables.PERMISSION, cmd.getPermission());
             return true;
         }
         // Fire an event to see if this command should be cancelled

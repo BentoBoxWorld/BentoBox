@@ -7,11 +7,14 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
+
+import javax.xml.soap.Text;
 
 public class Flag implements Comparable<Flag> {
 
@@ -127,7 +130,7 @@ public class Flag implements Comparable<Flag> {
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(new ItemStack(icon))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", "[name]", user.getTranslation("protection.flags." + id + ".name")))
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation("protection.flags." + id + ".name")))
                 .clickHandler(clickHandler);
         pib.description(user.getTranslation("protection.panel.flag-item.description-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")));
 

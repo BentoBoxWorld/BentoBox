@@ -36,7 +36,7 @@ general:
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
-    you-must-wait: "&cYou must wait [seconds]s before you can do that command again"
+    you-must-wait: "&cYou must wait [number]s before you can do that command again"
     you-need: "&cYou need [permission]"
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
@@ -147,18 +147,18 @@ commands:
       must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
-      confirm: "&cType &b/[label] reset confirm&c within [seconds]s to confirm reset"
+      confirm: "&cType &b/[label] reset confirm&c within [number]s to confirm reset"
       cancelled: "&bReset cancelled"
     sethome:
       description: "set your teleport point for /island"
       must-be-on-your-island: "You must be on your island to set home!"
-      num-homes: "Homes can be 1 to [max]."
+      num-homes: "Homes can be 1 to [number]."
       home-set: "Your island home has been set to your current location."
       parameters: "[home number]"
     setname:
       description: "set a name for your island"
-      name-too-short: "&cToo short. Minimum size is [length] characters."
-      name-too-long: "&cToo long. Maximum size is [length] characters."
+      name-too-short: "&cToo short. Minimum size is [number] characters."
+      name-too-long: "&cToo long. Maximum size is [number] characters."
       parameters: "<name>"
     resetname:
       description: "reset your island name"
@@ -175,7 +175,7 @@ commands:
         you-will-lose-your-island: "&cWARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&cYou cannot invite yourself!"
-          cooldown: "&cYou cannot invite that person for another [time] seconds"
+          cooldown: "&cYou cannot invite that person for another [number] seconds"
           island-is-full: "&cYour island is full, you can't invite anyone else."
           none-invited-you: "&cNo one invited you :c."
           you-already-are-in-team: "&cYou are already on a team!"
@@ -197,7 +197,7 @@ commands:
         cannot-leave: "&cTeamleaders cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         type-again: "&cEnter the leave command again to confirm"
-        left-your-island: "&c[player] left your island"
+        left-your-island: "&c[name] left your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
@@ -229,14 +229,14 @@ commands:
       cannot-ban: "&cThat player cannot be banned."
       cannot-ban-member: "&cKick the team member first, then ban."
       player-already-banned: "&cPlayer is already banned"
-      owner-banned-you: "&b[owner]&c banned you from their island!"
+      owner-banned-you: "&b[name]&c banned you from their island!"
       you-are-banned: "&bYou are banned from this island!"
     unban:
       description: "unban a player from your island"
       parameters: "<player>"
       cannot-unban-yourself: "&cYou cannot unban yourself!"
       player-not-banned: "&cPlayer is not banned"
-      you-are-unbanned: "&b[owner]&a unbanned you from their island!"
+      you-are-unbanned: "&b[name]&a unbanned you from their island!"
     banlist:
       description: "list banned players"
       noone: "&aNo one is banned on this island"
@@ -357,6 +357,6 @@ language:
 new-island:
   sign:
     line0: "&1%bsb_plugin_name%"
-    line1: "[player]"
+    line1: "[name]"
     line2: "Don't fall!"
     line3: "Have fun! &c<3"

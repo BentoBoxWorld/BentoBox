@@ -6,6 +6,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -64,7 +65,7 @@ public class IslandUnbanCommand extends CompositeCommand {
     private boolean unban(User user, User targetUser) {
         if (getIslands().getIsland(getWorld(), user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
+            targetUser.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
             return true;
         }
         // Unbanning was blocked, maybe due to an event cancellation. Fail silently.

@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.commands;
 import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.admin.AdminGetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminInfoCommand;
@@ -50,7 +51,7 @@ public class AdminCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         if (!args.isEmpty()) {
-            user.sendMessage("general.errors.unknown-command", "[label]", getTopLabel());
+            user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
             return false;
         }
         // By default run the attached help command, if it exists (it should)

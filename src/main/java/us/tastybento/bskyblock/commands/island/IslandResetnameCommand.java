@@ -21,7 +21,6 @@ public class IslandResetnameCommand extends CompositeCommand {
         setPermission("island.name");
         setOnlyPlayer(true);
         setDescription("commands.island.resetname.description");
-
     }
 
     /* (non-Javadoc)

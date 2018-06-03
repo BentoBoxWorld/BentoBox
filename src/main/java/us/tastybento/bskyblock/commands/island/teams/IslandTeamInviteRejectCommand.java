@@ -6,6 +6,7 @@ import java.util.UUID;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamInviteRejectCommand extends CompositeCommand {
@@ -46,7 +47,7 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.reject.you-rejected-invite");
 
             User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
-            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", "[name]", user.getName());
+            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName());
         } else {
             // Someone typed /island reject and had not been invited
             // TODO: make the error nicer if there are invites in other worlds

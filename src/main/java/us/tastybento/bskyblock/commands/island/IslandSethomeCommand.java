@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.UUID;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
@@ -46,14 +47,14 @@ public class IslandSethomeCommand extends CompositeCommand {
                 try {
                     number = Integer.valueOf(args.get(0));
                     if (number < 1 || number > maxHomes) {
-                        user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
+                        user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
                         return false;
                     } else {
                         getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
                         user.sendMessage("commands.island.sethome.home-set");
                     }
                 } catch (Exception e) {
-                    user.sendMessage("commands.island.sethome.num-homes", "[max]", String.valueOf(maxHomes));
+                    user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
                     return false;
                 }
             } else {

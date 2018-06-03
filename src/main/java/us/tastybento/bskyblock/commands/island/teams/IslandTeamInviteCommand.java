@@ -14,12 +14,12 @@ import com.google.common.collect.HashBiMap;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
 public class IslandTeamInviteCommand extends CompositeCommand {
 
-    private static final String NAME_PLACEHOLDER = "[name]";
     private BiMap<UUID, UUID> inviteList;
 
     public IslandTeamInviteCommand(CompositeCommand islandCommand) {
@@ -51,7 +51,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
                 OfflinePlayer inviter = getPlugin().getServer().getOfflinePlayer(inviteList.get(playerUUID));
-                user.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, inviter.getName());
+                user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, inviter.getName());
                 return true;
             }
             // Show help
@@ -78,7 +78,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             // whether they are still on cooldown
             long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(getWorld(), playerUUID));
             if (time > 0 && !user.isOp()) {
-                user.sendMessage("commands.island.team.invite.cooldown", "[time]", String.valueOf(time));
+                user.sendMessage("commands.island.team.invite.cooldown", TextVariables.NUMBER, String.valueOf(time));
                 return false;
             }
             // Player cannot invite someone already on a team
@@ -114,10 +114,10 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             // Put the invited player (key) onto the list with inviter (value)
             // If someone else has invited a player, then this invite will overwrite the previous invite!
             inviteList.put(invitedPlayer.getUniqueId(), user.getUniqueId());
-            user.sendMessage("commands.island.team.invite.invitation-sent", NAME_PLACEHOLDER, invitedPlayer.getName());
+            user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
             // Send message to online player
-            invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", NAME_PLACEHOLDER, user.getName());
-            invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", "[label]", getLabel());
+            invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());
+            invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getLabel());
             if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
                 invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
             }

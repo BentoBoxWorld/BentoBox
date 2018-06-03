@@ -10,6 +10,7 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -78,7 +79,7 @@ public class IslandBanCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island.addToBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
+            targetUser.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
             // If the player is online, has an island and on the banned island, move them home immediately
             if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
                 getIslands().homeTeleport(getWorld(), targetUser.getPlayer());

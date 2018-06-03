@@ -12,13 +12,13 @@ import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.island.NewIsland;
 
 public class IslandResetCommand extends CompositeCommand {
 
-    private static final String SECONDS_PLACEHOLDER = "[seconds]";
     private Map<UUID, Long> cooldown;
     private Map<UUID, Long> confirm;
 
@@ -39,7 +39,7 @@ public class IslandResetCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         // Check cooldown
         if (getSettings().getResetWait() > 0 && onRestartWaitTime(user) > 0 && !user.isOp()) {
-            user.sendMessage("general.errors.you-must-wait", SECONDS_PLACEHOLDER, String.valueOf(onRestartWaitTime(user)));
+            user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(onRestartWaitTime(user)));
             return false;
         }
         if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
@@ -60,7 +60,7 @@ public class IslandResetCommand extends CompositeCommand {
                 return false;
             } else {
                 // Notify how many resets are left
-                user.sendMessage("commands.island.reset.resets-left", "[number]", String.valueOf(getPlayers().getResetsLeft(user.getUniqueId()))); 
+                user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(getPlayers().getResetsLeft(user.getUniqueId())));
             }
         }
         // Check for non-confirm command
@@ -80,13 +80,13 @@ public class IslandResetCommand extends CompositeCommand {
         } else {
             // Show how many seconds left to confirm
             int time = (int)((confirm.get(user.getUniqueId()) - System.currentTimeMillis()) / 1000D);
-            user.sendMessage("commands.island.reset.confirm", "[label]", getTopLabel(), SECONDS_PLACEHOLDER, String.valueOf(time));
+            user.sendMessage("commands.island.reset.confirm", TextVariables.LABEL, getTopLabel(), TextVariables.NUMBER, String.valueOf(time));
         }
         return true;
     }
 
     private void requestConfirmation(User user) {
-        user.sendMessage("commands.island.reset.confirm", "[label]", getTopLabel(), SECONDS_PLACEHOLDER, String.valueOf(getSettings().getConfirmationTime()));
+        user.sendMessage("commands.island.reset.confirm", TextVariables.LABEL, getTopLabel(), TextVariables.NUMBER, String.valueOf(getSettings().getConfirmationTime()));
         // Require confirmation          
         confirm.put(user.getUniqueId(), System.currentTimeMillis() + getSettings().getConfirmationTime() * 1000L);
         Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {

@@ -20,6 +20,7 @@ import org.bukkit.material.Chest;
 
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Constants.GameType;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -36,8 +37,6 @@ public class IslandBuilder {
         NETHER,
         END
     }
-
-    private static final String PLAYER_PLACEHOLDER = "[player]";
 
     private Island island;
     private World world;
@@ -458,10 +457,10 @@ public class IslandBuilder {
             User user = User.getInstance(playerUUID);
 
             // Sets the lines of the sign
-            sign.setLine(0, user.getTranslation("new-island.sign.line0", PLAYER_PLACEHOLDER, playerName));
-            sign.setLine(1, user.getTranslation("new-island.sign.line1", PLAYER_PLACEHOLDER, playerName));
-            sign.setLine(2, user.getTranslation("new-island.sign.line2", PLAYER_PLACEHOLDER, playerName));
-            sign.setLine(3, user.getTranslation("new-island.sign.line3", PLAYER_PLACEHOLDER, playerName));
+            sign.setLine(0, user.getTranslation("new-island.sign.line0", TextVariables.NAME, playerName));
+            sign.setLine(1, user.getTranslation("new-island.sign.line1", TextVariables.NAME, playerName));
+            sign.setLine(2, user.getTranslation("new-island.sign.line2", TextVariables.NAME, playerName));
+            sign.setLine(3, user.getTranslation("new-island.sign.line3", TextVariables.NAME, playerName));
 
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();

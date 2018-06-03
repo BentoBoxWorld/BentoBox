@@ -6,6 +6,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
@@ -44,7 +45,7 @@ public class IslandGoCommand extends CompositeCommand {
             int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1  && homeValue <= maxHomes) {
                 getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
-                user.sendMessage("commands.island.go.tip", "[label]", getTopLabel());
+                user.sendMessage("commands.island.go.tip", TextVariables.LABEL, getTopLabel());
                 return true;
             }
         }

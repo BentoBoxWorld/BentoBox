@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
 import us.tastybento.bskyblock.commands.island.IslandBanCommand;
@@ -69,7 +70,7 @@ public class IslandCommand extends CompositeCommand {
             // No islands currently
             return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
         }
-        user.sendMessage("general.errors.unknown-command", "[label]", getTopLabel());
+        user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
         return false;
 
     }
