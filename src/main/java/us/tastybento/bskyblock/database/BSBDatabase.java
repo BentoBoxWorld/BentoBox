@@ -55,15 +55,14 @@ public class BSBDatabase<T> {
      * @return the object or null if it cannot be loaded
      */
     public T loadObject(String uniqueId) {
-
+        T result = null;
         try {
-            return handler.loadObject(uniqueId);
+            result = handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | ClassNotFoundException | IntrospectionException e) {
             logger.severe(() -> "Could not load object from database! " + e.getMessage());
         }
-
-        return null;
+        return result;
     }
 
     /**
