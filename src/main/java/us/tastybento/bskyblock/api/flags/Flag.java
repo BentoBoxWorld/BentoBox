@@ -1,8 +1,11 @@
 package us.tastybento.bskyblock.api.flags;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
@@ -13,6 +16,7 @@ import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.util.Util;
 
 public class Flag implements Comparable<Flag> {
 
@@ -25,7 +29,8 @@ public class Flag implements Comparable<Flag> {
     private final Material icon;
     private final Listener listener;
     private final Type type;
-    private boolean defaultSetting;
+    private Map<World, Boolean> worldSettings = new HashMap<>();
+    private boolean setting;
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
 
@@ -33,7 +38,7 @@ public class Flag implements Comparable<Flag> {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
-        this.defaultSetting = defaultSetting;
+        this.setting = defaultSetting;
         this.type = type;
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
@@ -52,10 +57,21 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * @return - true means it is allowed. false means it is not allowed
+     * Check if a setting is set in this world
+     * @param world - world
+     * @return world setting, or default system setting if a specific world setting is not set
      */
-    public boolean isDefaultSetting() {
-        return defaultSetting;
+    public boolean isSet(World world) {
+        return worldSettings.getOrDefault(Util.getWorld(world), setting);
+    }
+    
+    /**
+     * Set the default or global setting for this world
+     * @param world - world
+     * @param setting - true or false
+     */
+    public void setSetting(World world, boolean setting) {
+        worldSettings.put(Util.getWorld(world), setting);
     }
 
     /**
@@ -63,7 +79,7 @@ public class Flag implements Comparable<Flag> {
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(boolean defaultSetting) {
-        this.defaultSetting = defaultSetting;
+        this.setting = defaultSetting;
     }
 
     /**
@@ -130,6 +146,16 @@ public class Flag implements Comparable<Flag> {
                 .icon(new ItemStack(icon))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation("protection.flags." + id + ".name")))
                 .clickHandler(clickHandler);
+
+        // Check if this is a setting
+        if (this.getType().equals(Type.SETTING)) {
+            String setting = this.isSet(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+                    : user.getTranslation("protection.panel.flag-item.setting-disabled");
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")
+                    , "[setting]", setting));
+            return pib.build();
+        }
+        // Protection flag
         pib.description(user.getTranslation("protection.panel.flag-item.description-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")));
 
         // Get the island this user is on or their own
@@ -157,7 +183,7 @@ public class Flag implements Comparable<Flag> {
     @Override
     public String toString() {
         return "Flag [id=" + id + ", icon=" + icon + ", listener=" + listener + ", type=" + type + ", defaultSetting="
-                + defaultSetting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + "]";
+                + setting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + "]";
     }
 
     @Override

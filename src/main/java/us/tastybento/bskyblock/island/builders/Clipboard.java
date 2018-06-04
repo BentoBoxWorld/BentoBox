@@ -387,7 +387,6 @@ public class Clipboard {
 
     /**
      * Load a file to clipboard
-     * @param file
      * @throws IOException 
      * @throws InvalidConfigurationException 
      */

@@ -29,6 +29,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -61,7 +62,7 @@ public class FireListenerTest {
     private static IslandWorldManager iwm;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUpClass() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
@@ -103,10 +104,7 @@ public class FireListenerTest {
         when(iwm.getEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-        
-        PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(world);
-        
+                
         // Monsters and animals
         Zombie zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
@@ -136,6 +134,12 @@ public class FireListenerTest {
         PlayersManager pm = mock(PlayersManager.class);
         when(pm.getName(Mockito.any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
+    }
+    
+    @Before
+    public void setUp() {
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
     }
 
     @Test

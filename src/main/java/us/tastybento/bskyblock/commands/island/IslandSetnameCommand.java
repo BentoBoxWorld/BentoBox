@@ -5,7 +5,6 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.localization.TextVariables;
@@ -34,8 +33,7 @@ public class IslandSetnameCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        Player player = user.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        UUID playerUUID = user.getUniqueId();
 
         if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
@@ -66,8 +64,8 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
 
         // Set the name
-        if (!player.hasPermission("island.name.format")) {
-            getIslands().getIsland(getWorld(), player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
+        if (user.isOp() || user.hasPermission(this.getPermissionPrefix() + ".island.name.format")) {
+            getIslands().getIsland(getWorld(), playerUUID).setName(ChatColor.translateAlternateColorCodes('&', name));
         } else {
             getIslands().getIsland(getWorld(), playerUUID).setName(name);
         }

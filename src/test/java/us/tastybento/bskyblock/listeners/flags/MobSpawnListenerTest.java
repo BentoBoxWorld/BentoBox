@@ -39,9 +39,10 @@ import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BSkyBlock.class, Flags.class })
+@PrepareForTest( {BSkyBlock.class, Flags.class, Util.class })
 public class MobSpawnListenerTest {
 
     private static Location location;
@@ -96,7 +97,7 @@ public class MobSpawnListenerTest {
         when(slime.getLocation()).thenReturn(location);
         cow = mock(Cow.class);
         when(cow.getLocation()).thenReturn(location);
-
+        
     }
     
     @Before
@@ -109,6 +110,10 @@ public class MobSpawnListenerTest {
         when(iwm.getEndWorld()).thenReturn(world);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
+        
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+
 
     }
 

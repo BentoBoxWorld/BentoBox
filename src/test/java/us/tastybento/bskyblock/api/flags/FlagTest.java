@@ -13,6 +13,7 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
@@ -31,9 +32,10 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Flag.class })
+@PrepareForTest({ Flag.class, Util.class })
 public class FlagTest {
 
     @BeforeClass
@@ -42,6 +44,8 @@ public class FlagTest {
 
     @Before
     public void setUp() throws Exception {
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
     }
 
     @Test
@@ -81,19 +85,19 @@ public class FlagTest {
     @Test
     public void testIsDefaultSetting() {
         Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
-        assertFalse(id.isDefaultSetting());
+        assertFalse(id.isSet(mock(World.class)));
         id = new Flag("id", Material.ACACIA_DOOR, null, true, null, 0, null);
-        assertTrue(id.isDefaultSetting());
+        assertTrue(id.isSet(mock(World.class)));
     }
 
     @Test
     public void testSetDefaultSetting() {
         Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
-        assertFalse(id.isDefaultSetting());
+        assertFalse(id.isSet(mock(World.class)));
         id.setDefaultSetting(true);
-        assertTrue(id.isDefaultSetting());
+        assertTrue(id.isSet(mock(World.class)));
         id.setDefaultSetting(false);
-        assertFalse(id.isDefaultSetting());
+        assertFalse(id.isSet(mock(World.class)));
         
     }
 

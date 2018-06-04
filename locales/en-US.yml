@@ -316,7 +316,12 @@ protection:
     DOOR: "Use doors"
     ELYTRA: "Use elytras"
     ENCHANTING: "Use enchanting table"
-    ENTER_EXIT_MESSAGES: "Display entry and exit messages"
+    ENTER_EXIT_MESSAGES:
+      name: "Enter/Exit messages"
+      description: "Display entry and exit messages"
+      now-leaving: "Now leaving [name]"
+      now-entering: "Now entering [name]"
+      island: "[name]'s island"
     FIRE: "FIRE"
     FIRE_EXTINGUISH: "FIRE_EXTINGUISH"
     FIRE_SPREAD: "FIRE_SPREAD"
@@ -360,6 +365,12 @@ protection:
       allowed_rank: "&3- &a"
       blocked_rank: "&3- &c"
       minimal_rank: "&3- &2"
+      setting-layout: |+
+        &a[description]
+        
+        &7Current setting: [setting]
+      setting-active: "&aActive"
+      setting-disabled: "&cDisabled"
 
 language:
   panel-title: "Select your language"

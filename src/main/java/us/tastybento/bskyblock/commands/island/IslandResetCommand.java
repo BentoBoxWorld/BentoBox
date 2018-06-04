@@ -19,7 +19,6 @@ import us.tastybento.bskyblock.managers.island.NewIsland;
 public class IslandResetCommand extends CompositeCommand {
 
     private Map<UUID, Long> cooldown;
-    private Map<UUID, Long> confirm;
 
     public IslandResetCommand(CompositeCommand islandCommand) {
         super(islandCommand, "reset", "restart");
@@ -28,7 +27,6 @@ public class IslandResetCommand extends CompositeCommand {
     @Override
     public void setup() {
         cooldown = new HashMap<>();
-        confirm = new HashMap<>();
         setPermission("island.create");
         setOnlyPlayer(true);
         setDescription("commands.island.reset.description");
@@ -73,8 +71,6 @@ public class IslandResetCommand extends CompositeCommand {
     }
 
     private boolean resetIsland(User user) {
-        // Remove the confirmation
-        confirm.remove(user.getUniqueId());
         // Reset the island
         Player player = user.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);

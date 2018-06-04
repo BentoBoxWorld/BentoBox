@@ -544,6 +544,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
+     * The the world that this command applies to.
      * @return the world
      */
     public World getWorld() {

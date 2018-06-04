@@ -1306,5 +1306,4 @@ public class Settings implements ISettings<Settings>, WorldSettings {
         return "bskyblock";
     }
 
-
 }

@@ -13,7 +13,7 @@ public class FlagBuilder {
     private String id;
     private Material icon;
     private Listener listener;
-    private boolean defaultSetting;
+    private boolean setting;
     private Type type = Type.PROTECTION;
     private int defaultRank = RanksManager.MEMBER_RANK;
     private PanelItem.ClickHandler onClick;
@@ -25,18 +25,25 @@ public class FlagBuilder {
         return this;
     }
 
+    /**
+     * The material that will become the icon for this flag
+     * @param icon
+     */
     public FlagBuilder icon(Material icon) {
         this.icon = icon;
         return this;
     }
 
+    /**
+     * @param listener - the Bukkit listener that will be registered to handle this flag
+     */
     public FlagBuilder listener(Listener listener) {
         this.listener = listener;
         return this;
     }
 
     public Flag build() {
-        return new Flag(id, icon, listener, defaultSetting, type, defaultRank, onClick);
+        return new Flag(id, icon, listener, setting, type, defaultRank, onClick);
     }
 
     /**
@@ -45,7 +52,7 @@ public class FlagBuilder {
      * @return FlagBuilder
      */
     public FlagBuilder allowedByDefault(boolean setting) {
-        defaultSetting = setting;
+        this.setting = setting;
         return this;
     }
 
@@ -89,4 +96,5 @@ public class FlagBuilder {
         this.onClick = onClickListener;
         return this;
     }
+    
 }

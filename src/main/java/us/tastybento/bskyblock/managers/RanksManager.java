@@ -118,7 +118,7 @@ public class RanksManager {
 
 
     /**
-     * Gets the next rank value above the current rank. Highest is {@link RanksManager.OWNER_RANK}
+     * Gets the next rank value above the current rank. Highest is {@link RanksManager#OWNER_RANK}
      * @param currentRank
      * @return Optional rank value
      */
@@ -132,7 +132,7 @@ public class RanksManager {
     }
 
     /**
-     * Gets the previous rank value below the current rank. Lowest is {@link RanksManager.VISITOR_RANK}
+     * Gets the previous rank value below the current rank. Lowest is {@link RanksManager#VISITOR_RANK}
      * @param currentRank
      * @return Optional rank value
      */

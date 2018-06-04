@@ -102,20 +102,21 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     /**
-     * Generic flag checker
+     * Check if flag is allowed at location
      * @param e - event
      * @param loc - location
-     * @param breakBlocks
-     * @return true if the check is okay, false if it was disallowed
+     * @param flag - flag {@link us.tastybento.bskyblock.lists.Flags}
+     * @return true if allowed, false if not
      */
-    public boolean checkIsland(Event e, Location loc, Flag breakBlocks) {
-        return checkIsland(e, loc, breakBlocks, false);
+    public boolean checkIsland(Event e, Location loc, Flag flag) {
+        return checkIsland(e, loc, flag, false);
     }
 
     /**
-     * Check if flag is allowed
+     * Check if flag is allowed at location
      * @param e - event
      * @param loc - location
+     * @param flag - flag {@link us.tastybento.bskyblock.lists.Flags}
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
@@ -129,7 +130,7 @@ public abstract class AbstractFlagListener implements Listener {
         // Handle Settings Flag
         if (flag.getType().equals(Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
-            return island.map(x -> x.isAllowed(flag)).orElse(flag.isDefaultSetting());
+            return island.map(x -> x.isAllowed(flag)).orElse(flag.isSet(loc.getWorld()));
         }
 
         // Protection flag
@@ -157,7 +158,7 @@ public abstract class AbstractFlagListener implements Listener {
             }
         }
         // The player is in the world, but not on an island, so general world settings apply
-        if (!flag.isDefaultSetting()) {
+        if (!flag.isSet(loc.getWorld())) {
             noGo(e, silent);
             user = null;
             return false;
