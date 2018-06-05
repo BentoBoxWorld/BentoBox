@@ -240,12 +240,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Map<String, String> yamlComments = new HashMap<>();
 
         // Only allow storing in an arbitrary place if it is a config object. Otherwise it is in the database
-        if (configFlag) {
-            StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
-            if (storeAt != null) {
-                path = storeAt.path();
-                filename = storeAt.filename();
-            }
+        StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
+        if (storeAt != null) {
+            path = storeAt.path();
+            filename = storeAt.filename();
         }
 
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
@@ -272,15 +270,22 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
             }
 
-            // Comments          
+            // Get path for comments
+            String parent = "";
+            if (storageLocation.contains(".")) {
+                parent = storageLocation.substring(0, storageLocation.lastIndexOf(".")) + ".";                
+            }
+            // See if there are multiple comments
+            ConfigComment.Line comments = field.getAnnotation(ConfigComment.Line.class);
+            if (comments != null) {
+                for (ConfigComment comment : comments.value()) {
+                    setComment(comment, config, yamlComments, parent);
+                }
+            }
+            // Handle single line comments
             ConfigComment comment = field.getAnnotation(ConfigComment.class);
             if (comment != null) {
-                // Create a random placeholder string
-                String random = "comment-" + UUID.randomUUID().toString();
-                // Store placeholder
-                config.set(random, " ");
-                // Create comment
-                yamlComments.put(random, "# " + comment.value());
+                setComment(comment, config, yamlComments, parent);
             }
 
             // Adapter
@@ -343,6 +348,14 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
 
         databaseConnecter.saveYamlFile(config, path, filename, yamlComments);
+    }
+
+    private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
+        String random = "comment-" + UUID.randomUUID().toString();
+        // Store placeholder
+        config.set(parent + random, " ");
+        // Create comment
+        yamlComments.put(random, "# " + comment.value());     
     }
 
     /**
@@ -465,5 +478,4 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Not used
 
     }
-
 }

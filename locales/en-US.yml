@@ -332,6 +332,8 @@ protection:
     HURT_VILLAGERS: "HURT_VILLAGERS"
     ITEM_DROP: "ITEM_DROP"
     ITEM_PICKUP: "ITEM_PICKUP"
+    INVINCIBLE_VISITORS:
+      name: "Invincible Visitors"
     LEASH: "LEASH"
     LOCK:
       name: "Lock island"

@@ -4,6 +4,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.configuration.BSBConfig;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
@@ -64,21 +65,8 @@ public class BSkyBlock extends JavaPlugin {
         saveDefaultConfig();
         setInstance(this);
 
-        settings = new Settings();
         // Load settings from config.yml. This will check if there are any issues with it too.
-        try {
-            settings = settings.loadSettings();
-        } catch (Exception e) {
-            logError("Settings could not be loaded " + e.getMessage());
-        }
-
-        // Save a backup of settings to the database so it can be checked next time
-        try {
-            settings.saveBackup();
-        } catch (Exception e) {
-            logError("Settings backup could not be saved" + e.getMessage());
-        }
-
+        settings = new BSBConfig<>(this, Settings.class).loadConfigObject("");
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
@@ -133,7 +121,6 @@ public class BSkyBlock extends JavaPlugin {
                 islandsManager.load();
                 
                 // Save islands & players data asynchronously every X minutes
-                getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
                 instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                     playersManager.save(true);
                     islandsManager.save(true);
@@ -175,6 +162,8 @@ public class BSkyBlock extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
+        // Save settings
+        new BSBConfig<>(this, Settings.class).saveConfigObject(settings);
     }
 
     private void registerCustomCharts(){

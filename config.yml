@@ -1,8 +1,6 @@
-############################################################################
 # Config for BSkyBlock V${version}
-#
+
 # Created and maintained by Tastybento with the help of Poslovitch
-############################################################################
 
 ### General Settings ###
 general:
@@ -324,42 +322,33 @@ protection:
   # Includes blaze and ghast. 
   restrict-flying-mobs: true
   
-  # Invincible visitors - Prevent players from killing them (intentionally or by accident)
-  # If they fall to the void, they get TP'd to their island.
+  # Invincible visitors. List of damages that will not affect visitors.
+  # Make list blank if visitors should receive all damages
   invincible-visitors:
-    # Toggle the invincibility
-    use: true
-
-    # This allow you to customize what kind of damage visitors should not receive
-    # If you want visitors to receive a listed damage, put a "#" at the start of the line
-    # See this for more info about options : https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
-    options:
-    - BLOCK_EXPLOSION
-    - CONTACT
-    - CUSTOM
-    - DROWNING
-    - ENTITY_ATTACK
-    - ENTITY_EXPLOSION
-    - FALL
-    - FALLING_BLOCK
-    - FIRE
-    - FIRE_TICK
-    - LAVA
-    - LIGHTNING
-    - MAGIC
-    - POISON
-    - PROJECTILE
-    - STARVATION
-    - SUFFOCATION
-    - THORNS
-    - WITHER
-    # 1.9+ only
-    - DRAGON_BREATH
-    - FLY_INTO_WALL
-    # 1.10+ only
-    - HOT_FLOOR
-    # 1.11+ only
-    - CRAMMING
+  - BLOCK_EXPLOSION
+  - CONTACT
+  - CUSTOM
+  - DROWNING
+  - ENTITY_ATTACK
+  - ENTITY_EXPLOSION
+  - FALL
+  - FALLING_BLOCK
+  - FIRE
+  - FIRE_TICK
+  - LAVA
+  - LIGHTNING
+  - MAGIC
+  - POISON
+  - PROJECTILE
+  - STARVATION
+  - SUFFOCATION
+  - THORNS
+  - WITHER
+  - DRAGON_BREATH
+  - FLY_INTO_WALL
+  - HOT_FLOOR
+  - CRAMMING
+  - VOID
 
   # Visitor banned commands: Visitors to islands cannot use these commands
   visitor-banned-commands:

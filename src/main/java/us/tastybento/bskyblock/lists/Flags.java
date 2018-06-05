@@ -20,6 +20,7 @@ import us.tastybento.bskyblock.listeners.flags.EntityInteractListener;
 import us.tastybento.bskyblock.listeners.flags.FireListener;
 import us.tastybento.bskyblock.listeners.flags.HurtingListener;
 import us.tastybento.bskyblock.listeners.flags.InventoryListener;
+import us.tastybento.bskyblock.listeners.flags.InvincibleVisitorsListener;
 import us.tastybento.bskyblock.listeners.flags.ItemDropPickUpListener;
 import us.tastybento.bskyblock.listeners.flags.LeashListener;
 import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
@@ -147,7 +148,9 @@ public class Flags {
             .listener(new PistonPushListener())
             .onClick(new SettingsToggleClickListener("PISTON_PUSH"))
             .build();
-
+    static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
+    public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.SETTING)
+            .listener(ilv).onClick(ilv).build();
     
     /**
      * @return List of all the flags in this class
