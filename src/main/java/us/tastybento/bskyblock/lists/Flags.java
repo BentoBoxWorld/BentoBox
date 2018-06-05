@@ -25,6 +25,7 @@ import us.tastybento.bskyblock.listeners.flags.LeashListener;
 import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
 import us.tastybento.bskyblock.listeners.flags.PVPListener;
 import us.tastybento.bskyblock.listeners.flags.PhysicalInteractionListener;
+import us.tastybento.bskyblock.listeners.flags.PistonPushListener;
 import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
 import us.tastybento.bskyblock.listeners.flags.SettingsToggleClickListener;
@@ -134,13 +135,19 @@ public class Flags {
     public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING).build();
     public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING).build();
     // Others
+    public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
+    // Global flags (apply to every island)
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.SETTING)
             .listener(new EnterExitListener())
             .onClick(new SettingsToggleClickListener("ENTER_EXIT_MESSAGES"))
             .build();
-    public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
-    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
-    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
+    public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON_BASE).allowedByDefault(true).type(Type.SETTING)
+            .listener(new PistonPushListener())
+            .onClick(new SettingsToggleClickListener("PISTON_PUSH"))
+            .build();
+
     
     /**
      * @return List of all the flags in this class

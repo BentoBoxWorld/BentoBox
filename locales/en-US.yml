@@ -343,6 +343,11 @@ protection:
     RIDING: "RIDING"
     MUSIC: "MUSIC"
     CHEST: "CHEST"
+    PISTON_PUSH:
+      name: "Piston Push"
+      description: |
+        &aAllow pistons to push
+        &ablocks outside island
     PLACE_BLOCKS: "PLACE_BLOCKS"
     PORTAL: "PORTAL"
     PRESSURE_PLATE: "PRESSURE_PLATE"

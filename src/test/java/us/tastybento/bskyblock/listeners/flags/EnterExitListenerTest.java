@@ -100,7 +100,7 @@ public class EnterExitListenerTest {
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
-        // Island Banned list initialization
+        // Island initialization
         island = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.getWorld()).thenReturn(world);
