@@ -85,19 +85,19 @@ public class FlagTest {
     @Test
     public void testIsDefaultSetting() {
         Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
-        assertFalse(id.isSet(mock(World.class)));
+        assertFalse(id.isSetForWorld(mock(World.class)));
         id = new Flag("id", Material.ACACIA_DOOR, null, true, null, 0, null);
-        assertTrue(id.isSet(mock(World.class)));
+        assertTrue(id.isSetForWorld(mock(World.class)));
     }
 
     @Test
     public void testSetDefaultSetting() {
         Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
-        assertFalse(id.isSet(mock(World.class)));
+        assertFalse(id.isSetForWorld(mock(World.class)));
         id.setDefaultSetting(true);
-        assertTrue(id.isSet(mock(World.class)));
+        assertTrue(id.isSetForWorld(mock(World.class)));
         id.setDefaultSetting(false);
-        assertFalse(id.isSet(mock(World.class)));
+        assertFalse(id.isSetForWorld(mock(World.class)));
         
     }
 

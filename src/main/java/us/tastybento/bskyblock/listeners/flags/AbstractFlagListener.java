@@ -130,7 +130,7 @@ public abstract class AbstractFlagListener implements Listener {
         // Handle Settings Flag
         if (flag.getType().equals(Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
-            return island.map(x -> x.isAllowed(flag)).orElse(flag.isSet(loc.getWorld()));
+            return island.map(x -> x.isAllowed(flag)).orElse(flag.isSetForWorld(loc.getWorld()));
         }
 
         // Protection flag
@@ -158,7 +158,7 @@ public abstract class AbstractFlagListener implements Listener {
             }
         }
         // The player is in the world, but not on an island, so general world settings apply
-        if (!flag.isSet(loc.getWorld())) {
+        if (!flag.isSetForWorld(loc.getWorld())) {
             noGo(e, silent);
             user = null;
             return false;

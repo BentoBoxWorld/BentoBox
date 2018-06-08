@@ -334,6 +334,9 @@ protection:
     ITEM_PICKUP: "ITEM_PICKUP"
     INVINCIBLE_VISITORS:
       name: "Invincible Visitors"
+      description: |
+        Configure invincible visitor
+        settings.
     LEASH: "LEASH"
     LOCK:
       name: "Lock island"
@@ -353,9 +356,21 @@ protection:
     PLACE_BLOCKS: "PLACE_BLOCKS"
     PORTAL: "PORTAL"
     PRESSURE_PLATE: "PRESSURE_PLATE"
-    PVP_OVERWORLD: "PVP_OVERWORLD"
-    PVP_NETHER: "PVP_NETHER"
-    PVP_END: "PVP_END"
+    PVP_OVERWORLD:
+      name: "Overworld PVP"
+      description: |
+        Enable/Disable PVP
+        on island.
+    PVP_NETHER:
+      name: "Nether PVP"
+      description: |
+        Enable/Disable PVP
+        in nether.
+    PVP_END:
+      name: "End PVP"
+      description: |
+        Enable/Disable PVP
+        in the End.
     REDSTONE: "REDSTONE"
     SPAWN_EGGS: "SPAWN_EGGS"
     SHEARING: "SHEARING"

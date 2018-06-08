@@ -22,6 +22,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.util.Util;
@@ -31,7 +32,7 @@ import us.tastybento.bskyblock.util.Util;
 public class SettingsToggleClickListenerTest {
 
     private IslandWorldManager iwm;
-    private SettingsToggleClickListener listener;
+    private WorldToggleClickListener listener;
     private Panel panel;
     private User user;
     private Flag flag;
@@ -52,7 +53,7 @@ public class SettingsToggleClickListenerTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         
-        listener = new SettingsToggleClickListener("test");
+        listener = new WorldToggleClickListener("test");
 
         panel = mock(Panel.class);
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
@@ -65,7 +66,7 @@ public class SettingsToggleClickListenerTest {
         
         FlagsManager fm = mock(FlagsManager.class);
         flag = mock(Flag.class);
-        when(flag.isSet(Mockito.any())).thenReturn(false);
+        when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
         when(flag.toPanelItem(Mockito.any(), Mockito.eq(user))).thenReturn(item);

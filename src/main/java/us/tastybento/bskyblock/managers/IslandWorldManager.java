@@ -449,10 +449,20 @@ public class IslandWorldManager {
     /**
      * Get the permission prefix for this world
      * @param world
+     * @return permission prefix for this world
      */
     public String getPermissionPrefix(World world) {
         return worldSettings.get(Util.getWorld(world)).getPermissionPrefix();
         
+    }
+
+    /**
+     * Get the invincible visitor settings for this world
+     * @param world
+     * @return invisible visitor settings
+     */
+    public List<String> getIvSettings(World world) {
+        return worldSettings.get(world).getIvSettings();
     }
 
 }

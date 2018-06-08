@@ -104,7 +104,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             });
 
             // The player is in the world, but not on an island, so general world settings apply
-            if (!Flags.BREAK_BLOCKS.isSet(e.getVehicle().getWorld())) {
+            if (!Flags.BREAK_BLOCKS.isSetForWorld(e.getVehicle().getWorld())) {
                 e.setCancelled(true);
                 user.sendMessage("protection.protected");
             }

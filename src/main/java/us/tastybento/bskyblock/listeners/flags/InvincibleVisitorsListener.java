@@ -5,7 +5,12 @@ package us.tastybento.bskyblock.listeners.flags;
 
 import java.util.Arrays;
 
+import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
@@ -16,6 +21,7 @@ import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
+import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 /**
  * @author tastybento
@@ -62,7 +68,34 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
             pb.item(pib.build());
         });
         pb.build();
-        
+
+    }
+
+    /**
+     * Prevents visitors from getting damage if a particular damage type is listed in the config
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onVisitorGetDamage(EntityDamageEvent e) {
+        World world = e.getEntity().getWorld();
+        if (!getPlugin().getIWM().getIvSettings(world).contains(e.getCause().name())
+                || !(e.getEntity() instanceof Player) 
+                || e.getCause().equals(DamageCause.ENTITY_ATTACK)
+                || !getPlugin().getIWM().inWorld(e.getEntity().getLocation())
+                || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))) {
+            return;
+        }
+        // Player is a visitor and should be protected from damage
+        e.setCancelled(true);
+        Player p = (Player) e.getEntity();
+        // Handle the void - teleport player back to island in a safe spot
+        if(e.getCause().equals(DamageCause.VOID)) {
+            // Will be set back after the teleport
+            p.setGameMode(GameMode.SPECTATOR);
+            getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
+                new SafeTeleportBuilder(getPlugin()).entity(p).island(i).build();
+            });
+        }
     }
 
 

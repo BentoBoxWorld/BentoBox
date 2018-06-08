@@ -633,10 +633,11 @@ public class IslandsManager {
 
     /**
      * Checks if an online player is in the protected area of their island, a team island or a
-     * coop island
+     * coop island in the specific world in the arguments. Note that the user 
      *
-     * @param user - the User
-     * @return true if on valid island, false if not
+     * @param world - the world to check
+     * @param user - the user
+     * @return true if on their island in world, false if not
      */
     public boolean userIsOnIsland(World world, User user) {
         if (user == null) {

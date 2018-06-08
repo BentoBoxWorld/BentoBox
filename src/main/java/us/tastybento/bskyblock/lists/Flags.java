@@ -29,9 +29,10 @@ import us.tastybento.bskyblock.listeners.flags.PhysicalInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.PistonPushListener;
 import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
-import us.tastybento.bskyblock.listeners.flags.SettingsToggleClickListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
+import us.tastybento.bskyblock.listeners.flags.clicklisteners.IslandToggleClickListener;
+import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flags {
@@ -132,24 +133,27 @@ public class Flags {
      * Settings flags (not protection flags)
      */
     // PVP
-    public static final Flag PVP_OVERWORLD = new FlagBuilder().id("PVP_OVERWORLD").icon(Material.ARROW).type(Type.SETTING).listener(new PVPListener()).build();
-    public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING).build();
-    public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING).build();
+    public static final Flag PVP_OVERWORLD = new FlagBuilder().id("PVP_OVERWORLD").icon(Material.ARROW).type(Type.SETTING)
+            .listener(new PVPListener()).onClick(new IslandToggleClickListener("PVP_OVERWORLD")).build();
+    public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING)
+            .onClick(new IslandToggleClickListener("PVP_NETHER")).build();
+    public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING)
+            .onClick(new IslandToggleClickListener("PVP_END")).build();
     // Others
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
     // Global flags (apply to every island)
-    public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.SETTING)
+    public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
-            .onClick(new SettingsToggleClickListener("ENTER_EXIT_MESSAGES"))
+            .onClick(new WorldToggleClickListener("ENTER_EXIT_MESSAGES"))
             .build();
-    public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON_BASE).allowedByDefault(true).type(Type.SETTING)
+    public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON_BASE).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new PistonPushListener())
-            .onClick(new SettingsToggleClickListener("PISTON_PUSH"))
+            .onClick(new WorldToggleClickListener("PISTON_PUSH"))
             .build();
     static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
-    public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.SETTING)
+    public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.SUB_MENU)
             .listener(ilv).onClick(ilv).build();
     
     /**

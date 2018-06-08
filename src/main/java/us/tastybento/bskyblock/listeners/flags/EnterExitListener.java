@@ -26,7 +26,7 @@ public class EnterExitListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
         // Only process if Enter Exit flags are active, we are in the right world and there is a change in X or Z coords
-        if (!Flags.ENTER_EXIT_MESSAGES.isSet(e.getFrom().getWorld())
+        if (!Flags.ENTER_EXIT_MESSAGES.isSetForWorld(e.getFrom().getWorld())
                 || e.getFrom().toVector().multiply(XZ).equals(e.getTo().toVector().multiply(XZ)) 
                 || !getIslandWorldManager().inWorld(e.getFrom())) {
             return;
@@ -47,9 +47,13 @@ public class EnterExitListener extends AbstractFlagListener {
             return;
         }
         User user = User.getInstance(e.getPlayer());
-        from.ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", "[name]", !i.getName().isEmpty() ? i.getName() :
+        // Send message if island is owned by someone
+        from.filter(i -> i.getOwner() != null).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", "[name]", !i.getName().isEmpty() ? i.getName() :
                 user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", "[name]", getPlugin().getPlayers().getName(i.getOwner()))));
-        to.ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", "[name]", !i.getName().isEmpty() ? i.getName() :
+        to.filter(i -> i.getOwner() != null).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", "[name]", !i.getName().isEmpty() ? i.getName() :
             user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", "[name]", getPlugin().getPlayers().getName(i.getOwner()))));
+        // Send message if island is unowned, but has a name
+        from.filter(i -> i.getOwner() == null && !i.getName().isEmpty()).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", "[name]", i.getName()));
+        to.filter(i -> i.getOwner() == null && !i.getName().isEmpty()).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", "[name]", i.getName()));
     }
 }

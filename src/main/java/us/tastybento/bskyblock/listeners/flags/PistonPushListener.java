@@ -19,7 +19,7 @@ public class PistonPushListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPistonExtend(BlockPistonExtendEvent e) {
         // Only process if flag is active
-        if (Flags.PISTON_PUSH.isSet(e.getBlock().getWorld())) {
+        if (Flags.PISTON_PUSH.isSetForWorld(e.getBlock().getWorld())) {
             getIslands().getProtectedIslandAt(e.getBlock().getLocation()).ifPresent(i -> 
             e.setCancelled(
                     // Run through the location of all the relative blocks and see if they are outside the island

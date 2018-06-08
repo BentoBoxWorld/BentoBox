@@ -167,17 +167,15 @@ public class Island implements DataObject {
         return createdDate;
     }
     /**
-     * Gets the rank needed to bypass this Island Guard flag
+     * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the 
+     * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
+     * setting is allowed.
      * @param flag
-     * @return the rank needed to bypass this flag. Players must have at least this rank to bypass this flag.
+     * @return flag value
      */
-    public int getFlag(Flag flag){
-        if(flags.containsKey(flag)) {
-            return flags.get(flag);
-        } else {            
-            flags.put(flag, flag.getDefaultRank());
-            return flag.getDefaultRank();
-        }
+    public int getFlag(Flag flag) {
+        flags.putIfAbsent(flag, flag.getDefaultRank());
+        return flags.get(flag);
     }
 
     /**
@@ -396,11 +394,12 @@ public class Island implements DataObject {
 
     /**
      * Check if the flag is allowed or not
-     * For flags that are for the island in general and not related to rank
+     * For flags that are for the island in general and not related to rank.
      * @param flag
      * @return true if allowed, false if not
      */
     public boolean isAllowed(Flag flag) {
+        // A negative value means not allowed
         return getFlag(flag) >= 0;
     }
 
@@ -701,4 +700,27 @@ public class Island implements DataObject {
 
 
     }
+
+    /**
+     * Toggles a settings flag
+     * @param flag
+     */
+    public void toggleFlag(Flag flag) {
+        if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
+            setSettingsFlag(flag, !isAllowed(flag));
+        }
+    }
+
+    /**
+     * Sets the state of a settings flag
+     * @param flag
+     * @param state
+     */
+    public void setSettingsFlag(Flag flag, boolean state) {
+        if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
+            flags.put(flag, state ? 1 : -1);
+        }
+    }
+
+
 }

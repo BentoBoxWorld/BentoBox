@@ -275,11 +275,11 @@ public class PlayersManager {
      * Player must have logged into the game before
      *
      * @param playerUUID - the player's UUID
-     * @return String - playerName
+     * @return String - playerName, empty string if UUID is null
      */
     public String getName(UUID playerUUID) {
         if (playerUUID == null) {
-            return null;
+            return "";
         }
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getPlayerName();

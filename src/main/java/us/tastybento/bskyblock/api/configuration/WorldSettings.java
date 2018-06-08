@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.api.configuration;
 
+import java.util.List;
 import java.util.Map;
 
 import org.bukkit.entity.EntityType;
@@ -125,5 +126,10 @@ public interface WorldSettings {
      * @return the permission prefix
      */
     String getPermissionPrefix();
+
+    /**
+     * @return Invincible Visitor setting list
+     */
+    List<String> getIvSettings();
     
 }

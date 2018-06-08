@@ -39,26 +39,40 @@ public class PVPListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
+        // Check PVP
         if (e.getEntity() instanceof Player) {
+            // Protect visitors
+            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) 
+                    && getPlugin().getIWM().getIvSettings(e.getEntity().getWorld()).contains(DamageCause.ENTITY_ATTACK.name())
+                    && !getIslands().userIsOnIsland(e.getEntity().getWorld(), User.getInstance(e.getEntity()))) {
+                e.setCancelled(true);
+                return;
+            }
             Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getEntity().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
+            if (e.getEntity().getWorld().equals(getPlugin().getIWM().getNetherWorld(e.getEntity().getWorld()))) {
                 flag = Flags.PVP_NETHER;
-            } else if (e.getEntity().getWorld().equals(getPlugin().getIWM().getEndWorld())) {
+            } else if (e.getEntity().getWorld().equals(getPlugin().getIWM().getEndWorld(e.getEntity().getWorld()))) {
                 flag = Flags.PVP_END;
             }
             respond(e, e.getDamager(), flag);
         }
     }
 
-    private void respond(Event event, Entity damager, Flag flag) {
+    /**
+     * Checks how to respond to an attack
+     * @param e
+     * @param damager
+     * @param flag
+     */
+    private void respond(Event e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), flag);
+            setUser(User.getInstance(damager)).checkIsland(e, damager.getLocation(), flag);
         } else if (damager instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), flag)) {
+                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     damager.remove();
                 }
@@ -70,6 +84,12 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
         if (e.getCaught() instanceof Player) {
+            // Protect visitors
+            if (getPlugin().getIWM().getIvSettings(e.getPlayer().getWorld()).contains(DamageCause.ENTITY_ATTACK.name())
+                    && !getIslands().userIsOnIsland(e.getPlayer().getWorld(), User.getInstance(e.getCaught()))) {
+                e.setCancelled(true);
+                return;
+            }
             Flag flag = Flags.PVP_OVERWORLD;
             if (e.getCaught().getWorld().equals(getPlugin().getIWM().getNetherWorld())) {
                 flag = Flags.PVP_NETHER;
@@ -108,6 +128,12 @@ public class PVPListener extends AbstractFlagListener {
                 }
                 // PVP?
                 if (entity instanceof Player) {
+                    // Protect visitors
+                    if (getPlugin().getIWM().getIvSettings(entity.getWorld()).contains(DamageCause.ENTITY_ATTACK.name())
+                            && !getIslands().userIsOnIsland(entity.getWorld(), User.getInstance(entity))) {
+                        e.setCancelled(true);
+                        return;
+                    }
                     if (!setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), flag)) {
                         for (PotionEffect effect : e.getPotion().getEffects()) {
                             entity.removePotionEffect(effect.getType());
@@ -153,6 +179,12 @@ public class PVPListener extends AbstractFlagListener {
             Entity entity = e.getEntity();
             // PVP?
             if (entity instanceof Player) {
+                // Protect visitors
+                if (getPlugin().getIWM().getIvSettings(entity.getWorld()).contains(DamageCause.ENTITY_ATTACK.name())
+                        && !getIslands().userIsOnIsland(entity.getWorld(), User.getInstance(entity))) {
+                    e.setCancelled(true);
+                    return;
+                }
                 checkIsland(e, entity.getLocation(), flag);
             }
         }

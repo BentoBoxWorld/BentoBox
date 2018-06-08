@@ -1,7 +1,7 @@
 /**
  * 
  */
-package us.tastybento.bskyblock.listeners.flags;
+package us.tastybento.bskyblock.listeners.flags.clicklisteners;
 
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
@@ -14,10 +14,11 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
 /**
+ * Toggles a worldwide setting on/off
  * @author tastybento
  *
  */
-public class SettingsToggleClickListener implements ClickHandler {
+public class WorldToggleClickListener implements ClickHandler {
     
     private BSkyBlock plugin = BSkyBlock.getInstance();
     private String id;
@@ -25,7 +26,7 @@ public class SettingsToggleClickListener implements ClickHandler {
     /**
      * @param id
      */
-    public SettingsToggleClickListener(String id) {
+    public WorldToggleClickListener(String id) {
         this.id = id;
     }
 
@@ -49,7 +50,7 @@ public class SettingsToggleClickListener implements ClickHandler {
         // Get flag
         Flag flag = plugin.getFlagsManager().getFlagByID(id);
         // Toggle flag
-        flag.setSetting(user.getWorld(), !flag.isSet(user.getWorld()));
+        flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
         user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
         // Apply change to panel
         panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());

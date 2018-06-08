@@ -1494,8 +1494,10 @@ public class Settings implements DataObject, WorldSettings {
     }
 
     /**
+     * Invincible visitor settings
      * @return the ivSettings
      */
+    @Override
     public List<String> getIvSettings() {
         return ivSettings;
     }
