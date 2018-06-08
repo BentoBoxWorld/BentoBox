@@ -190,7 +190,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // The island owner needs to be checked
-        Mockito.verify(island).getOwner();
+        Mockito.verify(island, Mockito.times(3)).getOwner();
     }
     
     /**
@@ -204,7 +204,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // No owner check
-        Mockito.verify(island, Mockito.never()).getOwner();
+        Mockito.verify(island, Mockito.times(2)).getOwner();
         Mockito.verify(island, Mockito.times(2)).getName();
     }
 
@@ -219,7 +219,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // The island owner needs to be checked
-        Mockito.verify(island).getOwner();
+        Mockito.verify(island, Mockito.times(3)).getOwner();
     }
     
     /**
@@ -233,7 +233,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // No owner check
-        Mockito.verify(island, Mockito.never()).getOwner();
+        Mockito.verify(island, Mockito.times(2)).getOwner();
         Mockito.verify(island, Mockito.times(2)).getName();
     }
 
