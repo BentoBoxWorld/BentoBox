@@ -27,7 +27,7 @@ public class FlagBuilder {
 
     /**
      * The material that will become the icon for this flag
-     * @param icon
+     * @param icon - material
      */
     public FlagBuilder icon(Material icon) {
         this.icon = icon;
@@ -48,7 +48,7 @@ public class FlagBuilder {
 
     /**
      * Sets the default setting for this flag in the world
-     * @param setting
+     * @param setting - true or false
      * @return FlagBuilder
      */
     public FlagBuilder allowedByDefault(boolean setting) {
@@ -68,7 +68,7 @@ public class FlagBuilder {
 
     /**
      * Set the id of this flag to the name of this enum value
-     * @param flag
+     * @param flag - flag
      * @return FlagBuilder
      */
     public FlagBuilder id(Enum<?> flag) {
@@ -78,7 +78,7 @@ public class FlagBuilder {
     
     /**
      * Set a default rank for this flag. If not set, the value of RanksManager.MEMBER_RANK will be used
-     * @param rank
+     * @param rank - rank value
      * @return FlagBuilder
      */
     public FlagBuilder defaultRank(int rank) {

@@ -18,17 +18,17 @@ public class BlockEndDragon implements Listener {
     /**
      * This handles end dragon spawning prevention
      * 
-     * @param event
+     * @param e - event
      * @return true if dragon can spawn, false if not
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public boolean onDragonSpawn(CreatureSpawnEvent event) {
-        if (!event.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getIWM().isDragonSpawn(event.getEntity().getWorld())) {
+    public boolean onDragonSpawn(CreatureSpawnEvent e) {
+        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getIWM().isDragonSpawn(e.getEntity().getWorld())) {
             return true;
         }
-        event.getEntity().setHealth(0);
-        event.getEntity().remove();
-        event.setCancelled(true);
+        e.getEntity().setHealth(0);
+        e.getEntity().remove();
+        e.setCancelled(true);
         return false;
     }
 

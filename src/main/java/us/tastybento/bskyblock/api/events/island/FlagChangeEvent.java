@@ -20,10 +20,10 @@ public class FlagChangeEvent extends IslandBaseEvent {
     private final boolean setTo;
 
     /**
-     * @param island
+     * @param island - island
      * @param player - the player
-     * @param editedFlag
-     * @param setTo
+     * @param editedFlag - flag edited
+     * @param setTo - new value
      */
     public FlagChangeEvent(Island island, UUID player, Flag editedFlag, boolean setTo) {
         super(island);

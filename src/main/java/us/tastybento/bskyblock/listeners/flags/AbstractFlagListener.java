@@ -170,7 +170,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Get the flag for this ID
-     * @param id
+     * @param id - the flag ID
      * @return Flag denoted by the id
      */
     protected Flag id(String id) {

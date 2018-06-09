@@ -19,7 +19,7 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
 
     /**
      * Class for MySQL database connections using the settings provided
-     * @param dbSettings
+     * @param dbSettings - database settings
      */
     public MySQLDatabaseConnecter(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;

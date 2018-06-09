@@ -29,7 +29,7 @@ public class FileLister{
     /**
      * Returns a list of yml files in the folder given. If the folder does not exist in the file system
      * it can check the plugin jar instead.
-     * @param folderPath
+     * @param folderPath - folder path
      * @param checkJar - if true, the jar will be checked
      * @return List of file names
      

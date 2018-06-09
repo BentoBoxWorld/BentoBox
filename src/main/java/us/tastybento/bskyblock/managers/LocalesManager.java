@@ -32,7 +32,7 @@ public class LocalesManager {
     /**
      * Gets the reference from the locale file for this user
      * @param user - the User
-     * @param reference
+     * @param reference - a reference that can be found in a locale file
      * @return the translated string, or if the translation does not exist, the default language version, or if that does not exist null
      */
     public String get(User user, String reference) {

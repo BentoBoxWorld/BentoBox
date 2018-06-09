@@ -412,7 +412,7 @@ public class IslandWorldManager {
 
     /**
      * Gets world from friendly name
-     * @param friendlyWorldName
+     * @param friendlyWorldName - friendly world name. Used for commands.
      * @return world, or null if not known
      */
     public World getIslandWorld(String friendlyWorldName) {
@@ -448,7 +448,7 @@ public class IslandWorldManager {
 
     /**
      * Get the permission prefix for this world
-     * @param world
+     * @param world - world
      * @return permission prefix for this world
      */
     public String getPermissionPrefix(World world) {
@@ -458,7 +458,7 @@ public class IslandWorldManager {
 
     /**
      * Get the invincible visitor settings for this world
-     * @param world
+     * @param world - world
      * @return invisible visitor settings
      */
     public List<String> getIvSettings(World world) {

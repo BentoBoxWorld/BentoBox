@@ -86,7 +86,7 @@ public class Players implements DataObject {
     }
 
     /**
-     * @param world 
+     * @param world - world
      * @return List of home locations
      */
     public Map<Location, Integer> getHomeLocations(World world) {
@@ -187,7 +187,7 @@ public class Players implements DataObject {
 
     /**
      * Clears all home Locations in world
-     * @param world 
+     * @param world - world
      */
     public void clearHomeLocations(World world) {
         homeLocations.keySet().removeIf(l -> Util.sameWorld(l.getWorld(), world));

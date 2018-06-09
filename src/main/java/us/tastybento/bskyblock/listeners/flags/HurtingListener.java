@@ -59,20 +59,20 @@ public class HurtingListener extends AbstractFlagListener {
 
     /**
      * Finds the true attacker, even if the attack was via a projectile
-     * @param event
-     * @param damager
-     * @param hurtMobs
+     * @param e - event
+     * @param damager - damager
+     * @param flag - flag
      */
-    private void respond(EntityDamageByEntityEvent event, Entity damager, Flag hurtMobs) {
+    private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), hurtMobs);
+            setUser(User.getInstance(damager)).checkIsland(e, damager.getLocation(), flag);
         } else if (damager instanceof Projectile) {
             // Find out who fired the projectile
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), hurtMobs)) {
-                    event.getEntity().setFireTicks(0);
+                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, damager.getLocation(), flag)) {
+                    e.getEntity().setFireTicks(0);
                     damager.remove();
                 }
             }

@@ -21,7 +21,7 @@ public interface BSBCommand {
     /**
      * What will be executed when this command is run
      * @param user - the User
-     * @param args
+     * @param args - command arguments
      * @return true or false - true if the command executed successfully
      */
     boolean execute(User user, List<String> args);
@@ -30,8 +30,8 @@ public interface BSBCommand {
      * Tab Completer for CompositeCommands. Note that any registered sub-commands will be automatically
      * added to the list must not be manually added. Use this to add tab-complete for things like names.
      * @param user - the User
-     * @param alias
-     * @param args
+     * @param alias - alias for command
+     * @param args - command arguments
      * @return List of strings that could be used to complete this command.
      */
     default Optional<List<String>> tabComplete(User user, String alias, List<String> args) {

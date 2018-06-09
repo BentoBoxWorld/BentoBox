@@ -85,7 +85,7 @@ public class Panel implements HeadRequester {
 
     /**
      * Open the inventory panel
-     * @param users
+     * @param users - users that should see the panel
      */
     public void open(User... users) {
         for (User u : users) {

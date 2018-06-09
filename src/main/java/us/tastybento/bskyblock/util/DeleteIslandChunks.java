@@ -21,7 +21,7 @@ public class DeleteIslandChunks {
     /**
      * Deletes the island
      * @param plugin - BSkyBlock plugin object
-     * @param island
+     * @param island - island to delete
      */
     public DeleteIslandChunks(final BSkyBlock plugin, final Island island) {
         // Fire event

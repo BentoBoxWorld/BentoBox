@@ -178,21 +178,21 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExists(java.lang.String)
      */
     @Override
-    public boolean objectExists(String key) {
+    public boolean objectExists(String uniqueId) {
         // Create the query to see if this key exists
         String query = "SELECT IF ( EXISTS( SELECT * FROM `" +
                 dataObject.getCanonicalName() +
                 "` WHERE `uniqueId` = ?), 1, 0)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, key);
+            preparedStatement.setString(1, uniqueId);
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
                     return resultSet.getBoolean(1);
                 }
             }
         } catch (SQLException e) {
-            plugin.logError("Could not check if key exists in database! " + key + " " + e.getMessage());
+            plugin.logError("Could not check if key exists in database! " + uniqueId + " " + e.getMessage());
         }
         return false;
     }

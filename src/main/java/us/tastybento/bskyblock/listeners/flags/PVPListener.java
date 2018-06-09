@@ -59,9 +59,9 @@ public class PVPListener extends AbstractFlagListener {
 
     /**
      * Checks how to respond to an attack
-     * @param e
-     * @param damager
-     * @param flag
+     * @param e - event
+     * @param damager - entity doing the damaging
+     * @param flag - flag
      */
     private void respond(Cancellable e, Entity damager, Flag flag) {
         // Get the attacker

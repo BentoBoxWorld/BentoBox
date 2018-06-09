@@ -183,7 +183,7 @@ public class NewIsland {
      * Finds the next free island spot based off the last known island Uses
      * island_distance setting from the config file Builds up in a grid fashion
      *
-     * @param lastIsland
+     * @param lastIsland - last island location
      * @return Location of next free island
      */
     private Location nextGridLocation(final Location lastIsland) {

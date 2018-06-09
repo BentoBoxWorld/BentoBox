@@ -20,7 +20,7 @@ public class MongoDBDatabaseConnecter implements DatabaseConnecter {
 
     /**
      * Class for MySQL database connections using the settings provided
-     * @param dbSettings
+     * @param dbSettings - database settings
      */
     public MongoDBDatabaseConnecter(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;

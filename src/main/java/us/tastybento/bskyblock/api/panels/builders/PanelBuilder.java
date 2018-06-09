@@ -41,8 +41,8 @@ public class PanelBuilder {
 
     /**
      * Forces panel to be a specific number of slots.
-     * @param size
-     * @return PanelBuilder
+     * @param size - size to be
+     * @return PanelBuilder - PanelBuilder
      */
     public PanelBuilder size(int size) {
         this.size = size;
@@ -61,7 +61,7 @@ public class PanelBuilder {
 
     /**
      * Sets which PanelListener will listen for clicks
-     * @param listener
+     * @param listener - listener for this panel
      * @return PanelBuilder
      */
     public PanelBuilder listener(PanelListener listener) {

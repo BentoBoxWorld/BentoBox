@@ -92,9 +92,7 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
         if(e.getCause().equals(DamageCause.VOID)) {
             // Will be set back after the teleport
             p.setGameMode(GameMode.SPECTATOR);
-            getIslands().getIslandAt(p.getLocation()).ifPresent(i -> {
-                new SafeTeleportBuilder(getPlugin()).entity(p).island(i).build();
-            });
+            getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeTeleportBuilder(getPlugin()).entity(p).island(i).build());
         }
     }
 

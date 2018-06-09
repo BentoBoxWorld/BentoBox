@@ -72,8 +72,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @Override
-    public boolean objectExists(String key) {
-        return databaseConnecter.uniqueIdExists(dataObject.getSimpleName(), key);
+    public boolean objectExists(String uniqueId) {
+        return databaseConnecter.uniqueIdExists(dataObject.getSimpleName(), uniqueId);
     }
 
 
@@ -360,8 +360,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     /**
      * Serialize an object if required
-     * @param object
-     * @return
+     * @param object - object to serialize
+     * @return - serialized object
      */
     private Object serialize(Object object) {
         if (object == null) {

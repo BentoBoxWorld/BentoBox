@@ -81,7 +81,7 @@ public class FlyingMobEvents implements Listener {
 
     /**
      * Protects entities exploding. However, I am not sure if this will ever be called as pre-explosions should prevent it.
-     * @param e
+     * @param e - event
      * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

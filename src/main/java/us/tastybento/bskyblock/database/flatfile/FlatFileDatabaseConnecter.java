@@ -104,8 +104,8 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     /**
      * Adds comments to a YAML file
-     * @param file
-     * @param commentMap
+     * @param file - file
+     * @param commentMap - map of comments to apply to file
      */
     private void commentFile(File file, Map<String, String> commentMap) {
         // Run through the file and add in the comments

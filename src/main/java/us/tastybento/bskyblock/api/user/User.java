@@ -38,8 +38,8 @@ public class User {
 
     /**
      * Get an instance of User from a CommandSender
-     * @param sender
-     * @return user
+     * @param sender - command sender, e.g. console
+     * @return user - user
      */
     public static User getInstance(CommandSender sender) {
         if (sender instanceof Player) {
@@ -51,7 +51,7 @@ public class User {
     /**
      * Get an instance of User from a Player object
      * @param player - the player
-     * @return user
+     * @return user - user
      */
     public static User getInstance(Player player) {
         if (player == null) {
@@ -65,7 +65,7 @@ public class User {
     /**
      * Get an instance of User from a UUID
      * @param uuid - UUID
-     * @return user
+     * @return user - user
      */
     public static User getInstance(UUID uuid) {
         if (uuid == null) {
@@ -159,7 +159,7 @@ public class User {
     }
 
     /**
-     * @param permission
+     * @param permission - permission string
      * @return true if permission is empty or if the player has that permission
      */
     public boolean hasPermission(String permission) {
@@ -189,8 +189,9 @@ public class User {
 
     /**
      * Gets a translation of this reference for this user.
-     * @param reference
-     * @param variables
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
      * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
@@ -217,8 +218,9 @@ public class User {
 
     /**
      * Gets a translation of this reference for this user.
-     * @param reference
-     * @param variables
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
      * @return Translated string with colors converted, or a blank String if nothing has been found
      */
     public String getTranslationOrNothing(String reference, String... variables) {
@@ -272,7 +274,7 @@ public class User {
 
     /**
      * Sets the user's game mode
-     * @param mode
+     * @param mode - GameMode
      */
     public void setGameMode(GameMode mode) {
         player.setGameMode(mode);
@@ -325,7 +327,7 @@ public class User {
 
     /**
      * Performs a command as the player
-     * @param cmd
+     * @param cmd - command to execute
      * @return true if the command was successful, otherwise false
      */
     public boolean performCommand(String cmd) {

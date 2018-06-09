@@ -113,7 +113,7 @@ public class FireListener extends AbstractFlagListener {
 
     /**
      * Protect TNT from being set light by a fire arrow
-     * @param e
+     * @param e - event
      * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

@@ -126,7 +126,7 @@ public class IslandsManager {
 
     /**
      * Islands Manager
-     * @param plugin
+     * @param plugin - plugin
      */
     public IslandsManager(BSkyBlock plugin){
         this.plugin = plugin;
@@ -421,7 +421,7 @@ public class IslandsManager {
 
     /**
      * Get the island that is defined as spawn in this world
-     * @param world
+     * @param world - world
      * @return island or null
      */
     public Island getSpawn(World world){
@@ -430,7 +430,7 @@ public class IslandsManager {
 
     /**
      * Get the spawn point on the spawn island if it exists
-     * @param world
+     * @param world - world
      * @return the spawnPoint or null if spawn does not exist
      */
     public Location getSpawnPoint(World world) {
@@ -524,7 +524,7 @@ public class IslandsManager {
     /**
      * Indicates whether a player is at an island spawn or not
      *
-     * @param playerLoc
+     * @param playerLoc - player's location
      * @return true if they are, false if they are not, or spawn does not exist
      */
     public boolean isAtSpawn(Location playerLoc) {
@@ -730,8 +730,8 @@ public class IslandsManager {
 
     /**
      * Puts a player in a team. Removes them from their old island if required.
+     * @param teamIsland - team island
      * @param playerUUID - the player's UUID
-     * @return true if successful, false if not
      */
     public void setJoinTeam(Island teamIsland, UUID playerUUID) {
         // Add player to new island

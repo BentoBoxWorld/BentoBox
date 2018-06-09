@@ -17,7 +17,7 @@ public class IslandCreateCommand extends CompositeCommand {
 
     /**
      * Command to create an island
-     * @param islandCommand
+     * @param islandCommand - parent command
      */
     public IslandCreateCommand(CompositeCommand islandCommand) {
         super(islandCommand, "create");

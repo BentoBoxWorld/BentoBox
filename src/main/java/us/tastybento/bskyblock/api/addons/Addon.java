@@ -115,7 +115,7 @@ public abstract class Addon implements AddonInterface {
     /**
      * Register a listener for this addon
      *
-     * @param listener
+     * @param listener - listener
      */
     public void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, BSkyBlock.getInstance());
@@ -201,7 +201,7 @@ public abstract class Addon implements AddonInterface {
 
     /**
      * Get the resource from Jar file
-     * @param jarResource
+     * @param jarResource - jar resource filename
      * @return resource or null if there is a problem
      */
     public InputStream getResource(String jarResource) {
@@ -235,7 +235,7 @@ public abstract class Addon implements AddonInterface {
     /**
      * Set this addon's data folder
      *
-     * @param file
+     * @param file - data folder
      */
     public void setDataFolder(File file) {
         dataFolder = file;
@@ -244,7 +244,7 @@ public abstract class Addon implements AddonInterface {
     /**
      * Set this addons description
      *
-     * @param desc
+     * @param desc - description
      */
     public void setDescription(AddonDescription desc) {
         description = desc;

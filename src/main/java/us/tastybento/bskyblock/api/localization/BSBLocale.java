@@ -103,7 +103,7 @@ public class BSBLocale {
 
     /**
      * Merges a language YAML file to this locale
-     * @param language
+     * @param language - language file
      */
     public void merge(File language) {
         YamlConfiguration toBeMerged = YamlConfiguration.loadConfiguration(language);

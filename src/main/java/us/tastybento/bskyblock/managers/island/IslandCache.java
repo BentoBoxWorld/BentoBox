@@ -33,7 +33,7 @@ public class IslandCache {
 
     /**
      * Adds an island to the grid
-     * @param island
+     * @param island - island to add
      * @return true if successfully added, false if not
      */
     public boolean addIsland(Island island) {
@@ -56,7 +56,7 @@ public class IslandCache {
 
     /**
      * Adds an island to the grid register
-     * @param newIsland
+     * @param newIsland - new island
      * @return true if successfully added, false if not
      */
     private boolean addToGrid(Island newIsland) {
@@ -71,7 +71,7 @@ public class IslandCache {
 
     /**
      * Deletes an island from the database. Does not remove blocks
-     * @param island
+     * @param island - island to delete
      * @return true if successful, false if not
      */
     public boolean deleteIslandFromCache(Island island) {
@@ -86,7 +86,7 @@ public class IslandCache {
 
     /**
      * Get island based on the exact center location of the island
-     * @param location
+     * @param location - location to search for
      * @return island or null if it does not exist
      */
     public Island get(Location location) {

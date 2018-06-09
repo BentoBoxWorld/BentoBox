@@ -100,9 +100,9 @@ public class AddonClassLoader extends URLClassLoader {
 
     /**
      * This is a custom findClass that enables classes in other addons to be found
-     * @param name
-     * @param checkGlobal
-     * @return Class
+     * @param name - class name
+     * @param checkGlobal - check globally or not when searching
+     * @return Class - class if found
      */
     public Class<?> findClass(String name, boolean checkGlobal) {
         if (name.startsWith("us.tastybento.")) {

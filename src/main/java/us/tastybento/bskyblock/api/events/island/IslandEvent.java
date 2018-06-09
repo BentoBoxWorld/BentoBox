@@ -116,7 +116,7 @@ public class IslandEvent {
 
         /**
          * True if this is an admin driven event
-         * @param admin
+         * @param admin - true if due to admin event
          * @return TeamEvent
          */
         public IslandEventBuilder admin(boolean admin) {

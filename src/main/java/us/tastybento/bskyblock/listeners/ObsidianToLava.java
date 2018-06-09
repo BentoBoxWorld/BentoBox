@@ -26,7 +26,7 @@ public class ObsidianToLava implements Listener {
     private BSkyBlock plugin;
 
     /**
-     * @param plugin
+     * @param plugin - plugin
      */
     public ObsidianToLava(BSkyBlock plugin) {
         this.plugin = plugin;

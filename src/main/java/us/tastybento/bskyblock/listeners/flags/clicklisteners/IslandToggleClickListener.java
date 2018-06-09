@@ -24,7 +24,7 @@ public class IslandToggleClickListener implements ClickHandler {
     private String id;
     
     /**
-     * @param id
+     * @param id - the flag ID that this click listener is associated with
      */
     public IslandToggleClickListener(String id) {
         this.id = id;

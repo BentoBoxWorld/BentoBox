@@ -136,8 +136,9 @@ public class Island implements DataObject {
     public boolean addToBanList(UUID targetUUID) {
         if (targetUUID != null) {
             members.put(targetUUID, RanksManager.BANNED_RANK);
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -170,7 +171,7 @@ public class Island implements DataObject {
      * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the 
      * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
      * setting is allowed.
-     * @param flag
+     * @param flag - flag
      * @return flag value
      */
     public int getFlag(Flag flag) {
@@ -291,7 +292,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * @param material
+     * @param material - Material
      * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
      * a tile entity.
      */
@@ -385,7 +386,7 @@ public class Island implements DataObject {
 
     /**
      * Checks if the coords are in island space
-     * @param blockCoord
+     * @param blockCoord - Pair(x,z) coords of block
      * @return true or false
      */
     public boolean inIslandSpace(Pair<Integer, Integer> blockCoord) {
@@ -395,7 +396,7 @@ public class Island implements DataObject {
     /**
      * Check if the flag is allowed or not
      * For flags that are for the island in general and not related to rank.
-     * @param flag
+     * @param flag - flag
      * @return true if allowed, false if not
      */
     public boolean isAllowed(Flag flag) {
@@ -432,7 +433,7 @@ public class Island implements DataObject {
     /**
      * Checks if a location is within this island's protected area
      *
-     * @param target
+     * @param target - target location
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
@@ -445,13 +446,13 @@ public class Island implements DataObject {
      * @return true if successful, otherwise false.
      */
     public boolean removeFromBanList(UUID targetUUID) {
-        members.remove(targetUUID);
-        return true;
+        return (members.remove(targetUUID) != null);
     }
 
     /**
-     * Removes a player from the team member map. Do not call this directly. Use {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(World, UUID)}
-     * @param playerUUID
+     * Removes a player from the team member map. Do not call this directly.
+     * Use {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(World, UUID)}
+     * @param playerUUID - uuid of player
      */
     public void removeMember(UUID playerUUID) {
         members.remove(playerUUID);
@@ -476,7 +477,7 @@ public class Island implements DataObject {
 
     /**
      * Set the Island Guard flag rank
-     * @param flag
+     * @param flag - flag
      * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
      */
     public void setFlag(Flag flag, int value){
@@ -589,7 +590,7 @@ public class Island implements DataObject {
     /**
      * Set user's rank to an arbitrary rank value
      * @param user - the User
-     * @param rank
+     * @param rank - rank value
      */
     public void setRank(User user, int rank) {
         if (user.getUniqueId() != null) {
@@ -644,7 +645,7 @@ public class Island implements DataObject {
 
     /**
      * Show info on the island
-     * @param plugin
+     * @param plugin - plugin
      * @param user - the user who is receiving the info
      * @return true always
      */
@@ -681,7 +682,7 @@ public class Island implements DataObject {
 
     /**
      * Shows the members of this island
-     * @param plugin
+     * @param plugin - plugin
      * @param user - user who is requesting
      */
     public void showMembers(BSkyBlock plugin, User user) {
@@ -703,7 +704,7 @@ public class Island implements DataObject {
 
     /**
      * Toggles a settings flag
-     * @param flag
+     * @param flag - flag
      */
     public void toggleFlag(Flag flag) {
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
@@ -713,8 +714,8 @@ public class Island implements DataObject {
 
     /**
      * Sets the state of a settings flag
-     * @param flag
-     * @param state
+     * @param flag - flag
+     * @param state - true or false
      */
     public void setSettingsFlag(Flag flag, boolean state) {
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {

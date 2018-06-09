@@ -182,7 +182,7 @@ public class PlayersManager {
 
     /**
      * Clears any home locations for player
-     * @param world 
+     * @param world - world
      * @param playerUUID - the player's UUID
      */
     public void clearHomeLocations(World world, UUID playerUUID) {
@@ -192,7 +192,7 @@ public class PlayersManager {
 
     /**
      * Returns the home location, or null if none
-     * @param world 
+     * @param world - world
      *
      * @param user - the player
      * @param number - a number
@@ -205,7 +205,7 @@ public class PlayersManager {
     
     /**
      * Returns the home location, or null if none
-     * @param world 
+     * @param world - world
      *
      * @param playerUUID - the player's UUID
      * @param number - a number
@@ -238,25 +238,25 @@ public class PlayersManager {
 
     /**
      * Attempts to return a UUID for a given player's name.
-     * @param string
+     * @param name - name of player
      * @return UUID of player or null if unknown
      */
     @SuppressWarnings("deprecation")
-    public UUID getUUID(String string) {
+    public UUID getUUID(String name) {
         // See if this is a UUID
         // example: 5988eecd-1dcd-4080-a843-785b62419abb
-        if (string.length() == 36 && string.contains("-")) {
+        if (name.length() == 36 && name.contains("-")) {
             try {
-                return UUID.fromString(string);
+                return UUID.fromString(name);
             } catch (Exception ignored) {}
         }
         // Look in the name cache, then the data base and finally Bukkit blocking request
         return playerCache.values().stream()
-                .filter(p -> p.getPlayerName().equalsIgnoreCase(string)).findFirst()
+                .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
                 .map(p -> UUID.fromString(p.getUniqueId()))
-                .orElse(names.objectExists(string) 
-                        ? names.loadObject(string).getUuid() 
-                                : Bukkit.getOfflinePlayer(string).getUniqueId());
+                .orElse(names.objectExists(name)
+                        ? names.loadObject(name).getUuid()
+                                : Bukkit.getOfflinePlayer(name).getUniqueId());
     }
 
     /**
@@ -300,7 +300,7 @@ public class PlayersManager {
      * Sets how many resets the player has left
      *
      * @param playerUUID - the player's UUID
-     * @param resets
+     * @param resets - number of resets
      */
     public void setResetsLeft(UUID playerUUID, int resets) {
         addPlayer(playerUUID);
@@ -349,7 +349,7 @@ public class PlayersManager {
     /**
      * Sets the locale this player wants to use
      * @param playerUUID - the player's UUID
-     * @param localeName
+     * @param localeName - locale name, e.g., en-US
      */
     public void setLocale(UUID playerUUID, String localeName) {
         addPlayer(playerUUID);
@@ -368,7 +368,7 @@ public class PlayersManager {
     /**
      * Set death number for player
      * @param playerUUID - the player's UUID
-     * @param deaths
+     * @param deaths - number of deaths
      */
     public void setDeaths(UUID playerUUID, int deaths) {
         addPlayer(playerUUID);
@@ -421,11 +421,11 @@ public class PlayersManager {
 
     /**
      * Tries to get the user from this name
-     * @param string
-     * @return user
+     * @param name - name
+     * @return user - user
      */
-    public User getUser(String string) {
-        return User.getInstance(getUUID(string));
+    public User getUser(String name) {
+        return User.getInstance(getUUID(name));
     }
 
 }

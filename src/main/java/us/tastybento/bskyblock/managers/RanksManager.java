@@ -57,8 +57,8 @@ public class RanksManager {
 
     /**
      * Try to add a new rank. Owner, member, visitor and banned ranks cannot be changed.
-     * @param reference
-     * @param value
+     * @param reference - a reference that can be found in a locale file
+     * @param value - the rank value
      * @return true if the rank was successfully added
      */
     public boolean addRank(String reference, int value) {
@@ -86,7 +86,7 @@ public class RanksManager {
 
     /**
      * Try to remove a rank. Owner, member, visitor and banned ranks cannot be removed.
-     * @param reference
+     * @param reference - a reference that can be found in a locale file
      * @return true if removed
      */
     public boolean removeRank(String reference) {
@@ -119,7 +119,7 @@ public class RanksManager {
 
     /**
      * Gets the next rank value above the current rank. Highest is {@link RanksManager#OWNER_RANK}
-     * @param currentRank
+     * @param currentRank - current rank value
      * @return Optional rank value
      */
     public int getRankUpValue(int currentRank) {
@@ -133,7 +133,7 @@ public class RanksManager {
 
     /**
      * Gets the previous rank value below the current rank. Lowest is {@link RanksManager#VISITOR_RANK}
-     * @param currentRank
+     * @param currentRank - current rank value
      * @return Optional rank value
      */
     public int getRankDownValue(int currentRank) {

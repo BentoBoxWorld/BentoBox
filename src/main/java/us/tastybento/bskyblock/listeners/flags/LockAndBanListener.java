@@ -138,7 +138,7 @@ public class LockAndBanListener implements Listener {
 
     /**
      * Sends player home
-     * @param player
+     * @param player - player
      */
     private void eject(Player player) {
         player.setGameMode(GameMode.SPECTATOR);

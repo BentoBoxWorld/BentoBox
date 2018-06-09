@@ -94,7 +94,7 @@ public class Util {
 
     /**
      * Get a list of parameter types for the collection argument in this method
-     * @param writeMethod
+     * @param writeMethod - write method
      * @return a list of parameter types for the collection argument in this method
      */
     public static List<Type> getCollectionParameterTypes(Method writeMethod) {
@@ -162,8 +162,8 @@ public class Util {
      * Returns all of the items that begin with the given start,
      * ignoring case.  Intended for tabcompletion.
      *
-     * @param list
-     * @param start
+     * @param list - string list
+     * @param start - first few chars of a string
      * @return List of items that start with the letters
      */
     public static List<String> tabLimit(final List<String> list, final String start) {
@@ -220,8 +220,8 @@ public class Util {
 
     /**
      * Checks is world = world2 irrespective of the world type
-     * @param world
-     * @param world2
+     * @param world - world
+     * @param world2 - world
      * @return true if the same
      */
     public static boolean sameWorld(World world, World world2) {

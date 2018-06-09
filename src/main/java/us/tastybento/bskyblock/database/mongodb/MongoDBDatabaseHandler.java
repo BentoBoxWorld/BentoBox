@@ -151,8 +151,8 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExists(java.lang.String)
      */
     @Override
-    public boolean objectExists(String key) {
-        return collection.find(new Document(MONGO_ID, key)).first() != null;
+    public boolean objectExists(String uniqueId) {
+        return collection.find(new Document(MONGO_ID, uniqueId)).first() != null;
     }
 
     @Override

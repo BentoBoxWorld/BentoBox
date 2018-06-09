@@ -21,7 +21,7 @@ public class HeadGetter {
     private static Map<String,Set<HeadRequester>> headRequesters = new HashMap<>();
 
     /**
-     * @param plugin
+     * @param plugin - plugin
      */
     public HeadGetter(BSkyBlock plugin) {
         super();

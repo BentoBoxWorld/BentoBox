@@ -26,7 +26,6 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -126,7 +125,7 @@ public class Clipboard {
 
     /**
      * Pastes the clipboard to location
-     * @param location
+     * @param location - location to paste
      */
     public void paste(Location location) {
         blockConfig.getKeys(false).forEach(b -> pasteBlock(location, blockConfig.getConfigurationSection(b)));
@@ -387,8 +386,6 @@ public class Clipboard {
 
     /**
      * Load a file to clipboard
-     * @throws IOException 
-     * @throws InvalidConfigurationException 
      */
     public boolean load(User user, String string) {
         File zipFile = new File(schemFolder, string + ".schem"); 
@@ -429,9 +426,9 @@ public class Clipboard {
 
     /**
      * Save the clipboard to a file
-     * @param user
-     * @param string
-     * @return
+     * @param user - user who is copying
+     * @param string - filename
+     * @return - true if successful, false if error
      */
     public boolean save(User user, String string) {
         File file = new File(schemFolder, string); 

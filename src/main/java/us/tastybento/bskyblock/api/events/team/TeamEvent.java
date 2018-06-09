@@ -107,7 +107,7 @@ public class TeamEvent {
 
         /**
          * True if this is an admin driven event
-         * @param admin
+         * @param admin - true if due to an admin event
          * @return TeamEvent
          */
         public TeamEventBuilder admin(boolean admin) {
