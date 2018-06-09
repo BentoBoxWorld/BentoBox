@@ -337,6 +337,7 @@ protection:
       description: |
         Configure invincible visitor
         settings.
+      visitors-protected: "&cVisitors protected"
     LEASH: "LEASH"
     LOCK:
       name: "Lock island"
@@ -361,6 +362,7 @@ protection:
       description: |
         Enable/Disable PVP
         on island.
+      pvp-not-allowed: "&cPVP is not allowed"
     PVP_NETHER:
       name: "Nether PVP"
       description: |

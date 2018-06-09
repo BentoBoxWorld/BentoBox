@@ -36,6 +36,8 @@ import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickLi
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flags {
+    // Disabled setting 'rank'
+    private static final int DISABLED = -1;
 
     // TODO: add DYEING sheeps
     // TODO: add ELYTRA
@@ -134,11 +136,11 @@ public class Flags {
      */
     // PVP
     public static final Flag PVP_OVERWORLD = new FlagBuilder().id("PVP_OVERWORLD").icon(Material.ARROW).type(Type.SETTING)
-            .listener(new PVPListener()).onClick(new IslandToggleClickListener("PVP_OVERWORLD")).build();
+            .defaultRank(DISABLED).listener(new PVPListener()).onClick(new IslandToggleClickListener("PVP_OVERWORLD")).build();
     public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING)
-            .onClick(new IslandToggleClickListener("PVP_NETHER")).build();
+            .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_NETHER")).build();
     public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING)
-            .onClick(new IslandToggleClickListener("PVP_END")).build();
+            .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_END")).build();
     // Others
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();

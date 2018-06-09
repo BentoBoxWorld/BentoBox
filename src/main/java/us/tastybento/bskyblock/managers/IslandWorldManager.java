@@ -462,7 +462,7 @@ public class IslandWorldManager {
      * @return invisible visitor settings
      */
     public List<String> getIvSettings(World world) {
-        return worldSettings.get(world).getIvSettings();
+        return worldSettings.get(Util.getWorld(world)).getIvSettings();
     }
 
 }

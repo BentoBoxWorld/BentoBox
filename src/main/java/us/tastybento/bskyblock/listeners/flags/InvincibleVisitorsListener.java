@@ -78,10 +78,10 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e) {
         World world = e.getEntity().getWorld();
-        if (!getPlugin().getIWM().getIvSettings(world).contains(e.getCause().name())
+        if (!getPlugin().getIWM().inWorld(e.getEntity().getLocation())
+                || !getPlugin().getIWM().getIvSettings(world).contains(e.getCause().name())
                 || !(e.getEntity() instanceof Player) 
                 || e.getCause().equals(DamageCause.ENTITY_ATTACK)
-                || !getPlugin().getIWM().inWorld(e.getEntity().getLocation())
                 || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))) {
             return;
         }
