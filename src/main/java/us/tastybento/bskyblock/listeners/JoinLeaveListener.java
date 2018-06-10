@@ -10,6 +10,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.listeners.flags.RemoveMobsListener;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
 public class JoinLeaveListener implements Listener {
@@ -50,8 +52,8 @@ public class JoinLeaveListener implements Listener {
             } else {
                 plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
             }
-            if (plugin.getSettings().isRemoveMobsOnLogin()) {
-                plugin.getIslands().removeMobs(user.getLocation());
+            if (Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
+                RemoveMobsListener.clearArea(user.getLocation());
             }
         }
     }

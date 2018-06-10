@@ -821,15 +821,6 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#removeMobs(org.bukkit.Location)}.
-     */
-    @Test
-    public void testRemoveMobs() {
-        IslandsManager im = new IslandsManager(plugin);
-        im.removeMobs(location);
-    }
-
-    /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(java.util.UUID)}.
      */
     @Test

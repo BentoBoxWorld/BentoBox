@@ -302,19 +302,6 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "island.reset.kicked-keep-inventory")
     private boolean kickedKeepInventory = false;
 
-    // Remove mobs
-    @ConfigComment("Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps")
-    @ConfigComment("players return to their island if the island has been overrun by monsters.")
-    @ConfigComment("Con is that it kills any mob grinders.")
-    @ConfigEntry(path = "island.remove-mobs.on-login")
-    private boolean removeMobsOnLogin = false;
-    @ConfigComment("Remove mobs when /island.")
-    @ConfigEntry(path = "island.remove-mobs.on-island")
-    private boolean removeMobsOnIsland = false;
-    @ConfigComment("Mob white list - these mobs will NOT be removed when logging in or doing /island")
-    @ConfigEntry(path = "island.remove-mobs.whitelist")
-    private List<String> removeMobsWhitelist = new ArrayList<>();
-    @ConfigComment("Make island if player teleports to the island world and does not have one")
     @ConfigEntry(path = "island.make-island-if-none")
     private boolean makeIslandIfNone = false;
     @ConfigComment("Immediately teleport player to their island (home 1 if it exists) when entering the world")
@@ -714,12 +701,6 @@ public class Settings implements DataObject, WorldSettings {
         return purgeMaxIslandLevel;
     }
     /**
-     * @return the removeMobsWhitelist
-     */
-    public List<String> getRemoveMobsWhitelist() {
-        return removeMobsWhitelist;
-    }
-    /**
      * @return the resetLimit
      */
     public int getResetLimit() {
@@ -920,18 +901,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public boolean isPurgeRemoveUserData() {
         return purgeRemoveUserData;
-    }
-    /**
-     * @return the removeMobsOnIsland
-     */
-    public boolean isRemoveMobsOnIsland() {
-        return removeMobsOnIsland;
-    }
-    /**
-     * @return the removeMobsOnLogin
-     */
-    public boolean isRemoveMobsOnLogin() {
-        return removeMobsOnLogin;
     }
     /**
      * @return the resetConfirmation
@@ -1346,25 +1315,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setPurgeRemoveUserData(boolean purgeRemoveUserData) {
         this.purgeRemoveUserData = purgeRemoveUserData;
-    }
-    /**
-     * @param removeMobsOnIsland the removeMobsOnIsland to set
-     */
-    public void setRemoveMobsOnIsland(boolean removeMobsOnIsland) {
-        this.removeMobsOnIsland = removeMobsOnIsland;
-    }
-
-    /**
-     * @param removeMobsOnLogin the removeMobsOnLogin to set
-     */
-    public void setRemoveMobsOnLogin(boolean removeMobsOnLogin) {
-        this.removeMobsOnLogin = removeMobsOnLogin;
-    }
-    /**
-     * @param removeMobsWhitelist the removeMobsWhitelist to set
-     */
-    public void setRemoveMobsWhitelist(List<String> removeMobsWhitelist) {
-        this.removeMobsWhitelist = removeMobsWhitelist;
     }
     /**
      * @param resetConfirmation the resetConfirmation to set

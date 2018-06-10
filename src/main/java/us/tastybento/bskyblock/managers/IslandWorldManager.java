@@ -16,6 +16,7 @@ import org.bukkit.entity.EntityType;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.generators.ChunkGeneratorWorld;
 import us.tastybento.bskyblock.util.Util;
@@ -463,6 +464,16 @@ public class IslandWorldManager {
      */
     public List<String> getIvSettings(World world) {
         return worldSettings.get(Util.getWorld(world)).getIvSettings();
+    }
+
+    /**
+     * Returns whether a world flag is set or not
+     * @param world - world
+     * @param flag - world setting flag
+     * @return true or false
+     */
+    public boolean isWorldFlag(World world, Flag flag) {
+        return worldSettings.get(Util.getWorld(world)).getWorldFlags().get(flag.getID());
     }
 
 }

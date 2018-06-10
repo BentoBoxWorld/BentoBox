@@ -609,7 +609,7 @@ public class IslandsManager {
 
     /**
      * Checks if a specific location is within the protected range of an island
-     * owned by the player
+     * that the player is a member of (owner or member)
      *
      * @param player - the player
      * @param loc - location
@@ -644,15 +644,6 @@ public class IslandsManager {
             return false;
         }
         return Optional.ofNullable(getIsland(world, user)).map(i -> i.onIsland(user.getLocation())).orElse(false);
-    }
-
-
-    /**
-     * @param location - the location
-     */
-    public void removeMobs(Location location) {
-        // TODO Auto-generated method stub
-
     }
 
     /**
