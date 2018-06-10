@@ -7,6 +7,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,6 +29,7 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -155,6 +158,12 @@ public class EnterExitListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
+        
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
     }
 
     /**

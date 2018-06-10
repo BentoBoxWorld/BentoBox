@@ -8,34 +8,43 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.ItemFactory;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.panels.PanelItem;
-import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ Flag.class, Util.class })
+@PrepareForTest({ BSkyBlock.class, Util.class, Bukkit.class })
 public class FlagTest {
 
     @BeforeClass
@@ -44,8 +53,27 @@ public class FlagTest {
 
     @Before
     public void setUp() throws Exception {
+        // Set up plugin
+        BSkyBlock plugin = mock(BSkyBlock.class);
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+
+        // World Settings
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+        
+        PowerMockito.mockStatic(Bukkit.class);
+        ItemFactory itemF = mock(ItemFactory.class);
+        ItemMeta im = mock(ItemMeta.class);
+        when(itemF.getItemMeta(Mockito.any())).thenReturn(im);
+        when(Bukkit.getItemFactory()).thenReturn(itemF);
+        
     }
 
     @Test
@@ -115,6 +143,7 @@ public class FlagTest {
         assertEquals(100, id.getDefaultRank());
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEqualsObject() {
         Flag flag1 = null;
@@ -144,10 +173,22 @@ public class FlagTest {
         Island island = mock(Island.class);
         when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
         
-        User user = mock(User.class);
+        User user = mock(User.class, Mockito.withSettings().verboseLogging());
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
-        when(user.getTranslation(Mockito.anyString())).thenReturn("translation");
-        when(user.getTranslation(Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString(), Mockito.anyString())).thenReturn("long translation");
+        Answer<String> answer = new Answer<String>() {
+
+            @Override
+            public String answer(InvocationOnMock invocation) throws Throwable {
+                StringBuilder sb = new StringBuilder();                
+                Arrays.stream(invocation.getArguments()).forEach(sb::append);
+                sb.append("mock");
+                return sb.toString();
+            }
+            
+        };
+        
+        when(user.getTranslation(Mockito.anyVararg())).thenAnswer(answer);
+        when(user.getTranslation(Mockito.any(),Mockito.any(),Mockito.any())).thenAnswer(answer);
         
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
         when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
@@ -160,24 +201,15 @@ public class FlagTest {
         when(rm.getRank(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn("Visitor");
         when(rm.getRank(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn("Owner");
         
-        PowerMockito.whenNew(ItemStack.class).withAnyArguments().thenReturn(mock(ItemStack.class));
-        
-        PanelItemBuilder pib = mock(PanelItemBuilder.class);
-        when(pib.description(Mockito.anyString())).thenReturn(pib);
-        when(pib.name(Mockito.anyString())).thenReturn(pib);
-        when(pib.icon(Mockito.any(ItemStack.class))).thenReturn(pib);
-        when(pib.clickHandler(Mockito.any())).thenReturn(pib);
-        when(pib.build()).thenReturn(mock(PanelItem.class));
-        
-        // Remember to prepare the calling class, not the subject class!
-        PowerMockito.whenNew(PanelItemBuilder.class).withAnyArguments().thenReturn(pib);
-        
         Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
         
-        id.toPanelItem(plugin, user);
+        PanelItem pi = id.toPanelItem(plugin, user);
         
         verify(user).getTranslation(Mockito.eq("protection.flags.id.name"));
         verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), Mockito.anyVararg());
+        
+        assertEquals(Material.ACACIA_DOOR, pi.getItem().getType());
+        
     }
 
     @Test

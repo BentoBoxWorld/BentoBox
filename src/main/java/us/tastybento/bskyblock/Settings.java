@@ -231,6 +231,15 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigComment("Default is false, because it is an experimental feature that can break a lot of redstone systems.")
     private boolean disableOfflineRedstone = false;
 
+    @ConfigComment("World flags. These are boolean settings for various flags for this world")
+    @ConfigEntry(path = "world.flags")
+    private Map<String, Boolean> worldFlags = new HashMap<>();
+    {
+        worldFlags.put("ENTER_EXIT_MESSAGES", true);
+        worldFlags.put("PISTON_PUSH", true);
+        worldFlags.put("REMOVE_MOBS", true);
+    }
+    
     // ---------------------------------------------
 
     /*      ISLAND      */
@@ -359,7 +368,7 @@ public class Settings implements DataObject, WorldSettings {
     private List<String> ivSettings = new ArrayList<>();
 
     //TODO flags
-
+    
     // ---------------------------------------------
 
     /*      ACID        */
@@ -1507,6 +1516,20 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setIvSettings(List<String> ivSettings) {
         this.ivSettings = ivSettings;
+    }
+    
+    /**
+     * @return the worldFlags
+     */
+    @Override
+    public Map<String, Boolean> getWorldFlags() {
+        return worldFlags;
+    }
+    /**
+     * @param worldFlags the worldFlags to set
+     */
+    public void setWorldFlags(Map<String, Boolean> worldFlags) {
+        this.worldFlags = worldFlags;
     }
 
 }

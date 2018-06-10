@@ -61,6 +61,7 @@ import com.google.common.collect.ImmutableMap;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
@@ -184,6 +185,12 @@ public class PVPListenerTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
     }
 
     /**

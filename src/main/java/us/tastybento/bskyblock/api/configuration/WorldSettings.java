@@ -131,5 +131,11 @@ public interface WorldSettings {
      * @return Invincible Visitor setting list
      */
     List<String> getIvSettings();
+
+    /**
+     * Get world flags
+     * @return Map of world flags
+     */
+    Map<String, Boolean> getWorldFlags();
     
 }

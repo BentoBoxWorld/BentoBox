@@ -29,6 +29,7 @@ import us.tastybento.bskyblock.listeners.flags.PhysicalInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.PistonPushListener;
 import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
+import us.tastybento.bskyblock.listeners.flags.RemoveMobsListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 import us.tastybento.bskyblock.listeners.flags.clicklisteners.IslandToggleClickListener;
@@ -157,7 +158,8 @@ public class Flags {
     static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
     public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.MENU)
             .listener(ilv).onClick(ilv).build();
-    
+    public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
+            .listener(new RemoveMobsListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("REMOVE_MOBS")).build();
     /**
      * @return List of all the flags in this class
      */

@@ -1,7 +1,5 @@
 package us.tastybento.bskyblock.api.flags;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Material;
@@ -16,7 +14,6 @@ import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
-import us.tastybento.bskyblock.util.Util;
 
 public class Flag implements Comparable<Flag> {
 
@@ -31,7 +28,6 @@ public class Flag implements Comparable<Flag> {
     private final Material icon;
     private final Listener listener;
     private final Type type;
-    private Map<World, Boolean> worldSettings = new HashMap<>();
     private boolean setting;
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
@@ -61,19 +57,21 @@ public class Flag implements Comparable<Flag> {
     /**
      * Check if a setting is set in this world
      * @param world - world
-     * @return world setting, or default system setting if a specific world setting is not set
+     * @return world setting, or default flag setting if a specific world setting is not set
      */
     public boolean isSetForWorld(World world) {
-        return worldSettings.getOrDefault(Util.getWorld(world), setting);
+        return BSkyBlock.getInstance().getIWM().getWorldSettings(world).getWorldFlags().getOrDefault(getID(), setting);
     }
 
     /**
-     * Set the default or global setting for this world
+     * Set a world setting
      * @param world - world
      * @param setting - true or false
      */
     public void setSetting(World world, boolean setting) {
-        worldSettings.put(Util.getWorld(world), setting);
+        if (getType().equals(Type.WORLD_SETTING)) {
+            BSkyBlock.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), setting);
+        }
     }
 
     /**
@@ -175,7 +173,9 @@ public class Flag implements Comparable<Flag> {
             // Dynamic rank list
             if (getType().equals(Type.PROTECTION)) {
                 // Protection flag
-                pib.description(user.getTranslation("protection.panel.flag-item.description-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")));
+                String d = user.getTranslation("protection.flags." + id + ".description");
+                d = user.getTranslation("protection.panel.flag-item.description-layout", "[description]", d);
+                pib.description(d);
                 plugin.getRanksManager().getRanks().forEach((reference, score) -> {
                     if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
                         pib.description(user.getTranslation("protection.panel.flag-item.blocked_rank") + user.getTranslation(reference));

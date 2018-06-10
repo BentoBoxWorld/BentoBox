@@ -6,7 +6,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -25,8 +27,10 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.util.Util;
 
@@ -88,8 +92,15 @@ public class PistonPushListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
+                
+        // World Settings
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
         
-        Flags.PISTON_PUSH.setSetting(world, true);
     }
 
     @Test

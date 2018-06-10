@@ -6,6 +6,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -34,6 +36,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
@@ -113,6 +116,12 @@ public class MobSpawnListenerTest {
         
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
 
 
     }

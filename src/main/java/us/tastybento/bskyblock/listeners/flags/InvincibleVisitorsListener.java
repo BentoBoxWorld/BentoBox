@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
 
 import us.tastybento.bskyblock.api.panels.Panel;
+import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.PanelItem.ClickHandler;
 import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
@@ -40,10 +41,13 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
                 getPlugin().getSettings().getIvSettings().remove(c.name());
             } else {
                 getPlugin().getSettings().getIvSettings().add(c.name());
-            } 
+            }
+            // Apply change to panel
+            panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
+        } else {
+            // Open the IV Settings panel
+            openPanel(user, ivPanelName);
         }
-        // Open the IV Settings panel
-        openPanel(user, ivPanelName);
         return true;
     }
 
@@ -54,21 +58,23 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
         PanelBuilder pb = new PanelBuilder();
         pb.user(user).name(ivPanelName);
         // Make panel items
-        Arrays.stream(EntityDamageEvent.DamageCause.values()).forEach(c -> {
-            PanelItemBuilder pib = new PanelItemBuilder();
-            pib.name(Util.prettifyText(c.toString()));
-            pib.clickHandler(this);
-            if (getPlugin().getSettings().getIvSettings().contains(c.name())) {
-                pib.icon(Material.GREEN_GLAZED_TERRACOTTA);
-                pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
-            } else {
-                pib.icon(Material.RED_GLAZED_TERRACOTTA);
-                pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled")); 
-            }
-            pb.item(pib.build());
-        });
+        Arrays.stream(EntityDamageEvent.DamageCause.values()).forEach(c -> pb.item(getPanelItem(c, user)));
         pb.build();
 
+    }
+    
+    private PanelItem getPanelItem(DamageCause c, User user) {
+        PanelItemBuilder pib = new PanelItemBuilder();
+        pib.name(Util.prettifyText(c.toString()));
+        pib.clickHandler(this);
+        if (getPlugin().getSettings().getIvSettings().contains(c.name())) {
+            pib.icon(Material.GREEN_SHULKER_BOX);
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
+        } else {
+            pib.icon(Material.RED_SHULKER_BOX);
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled")); 
+        } 
+        return pib.build();
     }
 
     /**

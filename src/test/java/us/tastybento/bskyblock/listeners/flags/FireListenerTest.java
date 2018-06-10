@@ -6,7 +6,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -42,6 +44,7 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -98,7 +101,6 @@ public class FireListenerTest {
 
         // Worlds
         iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
@@ -134,6 +136,12 @@ public class FireListenerTest {
         PlayersManager pm = mock(PlayersManager.class);
         when(pm.getName(Mockito.any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
+        
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
     }
     
     @Before
