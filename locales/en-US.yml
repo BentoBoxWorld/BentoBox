@@ -435,6 +435,11 @@ protection:
     RIDING: 
       description: "Toggle riding"
       name: "Animal riding"
+    REMOVE_MOBS: 
+      description: |
+        &aRemove monsters when
+        &ateleporting to island
+      name: "Remove monsters"
     SHEARING: 
       description: "Toggle sheering"
       name: Shearing
