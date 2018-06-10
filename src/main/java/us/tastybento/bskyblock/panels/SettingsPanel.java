@@ -18,9 +18,8 @@ public class SettingsPanel {
         PanelBuilder panelBuilder = new PanelBuilder()
                 .name(user.getTranslation("protection.panel.title"));
 
-        // Add flags after position 8, i.e., from second row
-        plugin.getFlagsManager().getFlags().forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
-
+        // Add flags, sorted
+        plugin.getFlagsManager().getFlags().stream().sorted((e1, e2) -> e1.getID().compareTo(e2.getID())).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
         // Make the panel
         panelBuilder.build().open(user);
     }

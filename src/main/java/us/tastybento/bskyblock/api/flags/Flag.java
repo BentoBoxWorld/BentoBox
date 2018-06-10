@@ -23,7 +23,7 @@ public class Flag implements Comparable<Flag> {
     public enum Type {
         PROTECTION,
         SETTING,
-        SUB_MENU,
+        MENU,
         WORLD_SETTING
     }
 
@@ -148,8 +148,12 @@ public class Flag implements Comparable<Flag> {
                 .icon(new ItemStack(icon))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation("protection.flags." + id + ".name")))
                 .clickHandler(clickHandler);
+        if (getType().equals(Type.MENU)) {
+            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")));
+            return pib.build();
+        }
         // Check if this is a setting or world setting
-        if (this.getType().equals(Type.WORLD_SETTING)) {
+        if (getType().equals(Type.WORLD_SETTING)) {
             String setting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
             pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")
@@ -160,7 +164,7 @@ public class Flag implements Comparable<Flag> {
         // Get the island this user is on or their own
         Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         if (island != null) {
-            if (this.getType().equals(Type.SETTING)) {
+            if (getType().equals(Type.SETTING)) {
                 String setting = island.isAllowed(this) ? user.getTranslation("protection.panel.flag-item.setting-active")
                         : user.getTranslation("protection.panel.flag-item.setting-disabled");
                 pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")
@@ -169,7 +173,7 @@ public class Flag implements Comparable<Flag> {
             }
             // TODO: Get the world settings - the player has no island and is not in an island location
             // Dynamic rank list
-            if (this.getType().equals(Type.PROTECTION)) {
+            if (getType().equals(Type.PROTECTION)) {
                 // Protection flag
                 pib.description(user.getTranslation("protection.panel.flag-item.description-layout", "[description]", user.getTranslation("protection.flags." + id + ".description")));
                 plugin.getRanksManager().getRanks().forEach((reference, score) -> {

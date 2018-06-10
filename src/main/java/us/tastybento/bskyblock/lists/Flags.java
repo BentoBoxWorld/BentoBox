@@ -155,7 +155,7 @@ public class Flags {
             .onClick(new WorldToggleClickListener("PISTON_PUSH"))
             .build();
     static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
-    public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.SUB_MENU)
+    public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.MENU)
             .listener(ilv).onClick(ilv).build();
     
     /**
