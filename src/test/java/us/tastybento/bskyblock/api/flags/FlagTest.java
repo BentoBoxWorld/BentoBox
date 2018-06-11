@@ -173,7 +173,7 @@ public class FlagTest {
         Island island = mock(Island.class);
         when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
         
-        User user = mock(User.class, Mockito.withSettings().verboseLogging());
+        User user = mock(User.class);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
         Answer<String> answer = new Answer<String>() {
 
