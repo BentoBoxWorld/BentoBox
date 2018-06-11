@@ -52,7 +52,7 @@ public class JoinLeaveListener implements Listener {
             } else {
                 plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
             }
-            if (Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
+            if (plugin.getIWM().inWorld(user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
                 RemoveMobsListener.clearArea(user.getLocation());
             }
         }

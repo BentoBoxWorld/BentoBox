@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
@@ -61,10 +62,12 @@ public class Flag implements Comparable<Flag> {
     /**
      * Check if a setting is set in this world
      * @param world - world
-     * @return world setting, or default flag setting if a specific world setting is not set
+     * @return world setting or default flag setting if a specific world setting is not set.
+     * If world is not a game world, then the result will always be false!
      */
     public boolean isSetForWorld(World world) {
-        return BSkyBlock.getInstance().getIWM().getWorldSettings(world).getWorldFlags().getOrDefault(getID(), setting);
+        WorldSettings ws = BSkyBlock.getInstance().getIWM().getWorldSettings(world);
+        return ws != null ? ws.getWorldFlags().getOrDefault(getID(), setting) : false;
     }
 
     /**

@@ -35,7 +35,7 @@ public class RemoveMobsListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onUserTeleport(PlayerTeleportEvent e) {
         // Only process if flag is active
-        if (Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld()) && getIslands().locationIsOnIsland(e.getPlayer(), e.getTo())) {
+        if (getIslands().locationIsOnIsland(e.getPlayer(), e.getTo()) && Flags.REMOVE_MOBS.isSetForWorld(e.getTo().getWorld())) {
             clearArea(e.getTo());
         }
     }

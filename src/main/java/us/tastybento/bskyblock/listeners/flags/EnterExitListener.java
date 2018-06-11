@@ -26,9 +26,9 @@ public class EnterExitListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
         // Only process if Enter Exit flags are active, we are in the right world and there is a change in X or Z coords
-        if (!Flags.ENTER_EXIT_MESSAGES.isSetForWorld(e.getFrom().getWorld())
+        if (!getIslandWorldManager().inWorld(e.getFrom())
                 || e.getFrom().toVector().multiply(XZ).equals(e.getTo().toVector().multiply(XZ)) 
-                || !getIslandWorldManager().inWorld(e.getFrom())) {
+                || !Flags.ENTER_EXIT_MESSAGES.isSetForWorld(e.getFrom().getWorld())) {
             return;
         }
         Optional<Island> from = this.getIslands().getProtectedIslandAt(e.getFrom());
