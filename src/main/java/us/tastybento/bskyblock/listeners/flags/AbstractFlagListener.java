@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
@@ -79,23 +80,25 @@ public abstract class AbstractFlagListener implements Listener {
     /**
      * Cancels the event and sends the island public message to user
      * @param e - event
+     * @param flag - the flag that has been checked
      */
-    public void noGo(Event e) {
-        noGo(e, false);
+    public void noGo(Event e, Flag flag) {
+        noGo(e, flag,false);
     }
 
     /**
      * Cancels the event and sends the island protected message to user unless silent is true
      * @param e - event
+     * @param flag - the flag that has been checked
      * @param silent - if true, message is not sent
      */
-    public void noGo(Event e, boolean silent) {
+    public void noGo(Event e, Flag flag, boolean silent) {
         if (e instanceof Cancellable) {
             ((Cancellable)e).setCancelled(true);
         }
         if (user != null) {
             if (!silent) {
-                user.notify("protection.protected");
+                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(flag.getDescriptionReference()));
             }
             user.updateInventory();
         }
@@ -148,7 +151,7 @@ public abstract class AbstractFlagListener implements Listener {
 
         if (island.isPresent()) {
             if (!island.get().isAllowed(user, flag)) {
-                noGo(e, silent);
+                noGo(e, flag, silent);
                 // Clear the user for the next time
                 user = null;
                 return false;
@@ -159,7 +162,7 @@ public abstract class AbstractFlagListener implements Listener {
         }
         // The player is in the world, but not on an island, so general world settings apply
         if (!flag.isSetForWorld(loc.getWorld())) {
-            noGo(e, silent);
+            noGo(e, flag, silent);
             user = null;
             return false;
         } else {

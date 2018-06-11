@@ -455,7 +455,7 @@ protection:
       description: "Toggle access"
       name: "Trap doors"
   locked: "&cThis island is locked!"
-  protected: "&cIsland protected!"
+  protected: "&cIsland protected: [description]"
 
   panel:
     title: "Island flags"
