@@ -9,6 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
@@ -21,6 +22,11 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
+        // Close inventory if clicked outside
+        if (event.getSlotType().equals(SlotType.OUTSIDE)) {
+            event.getWhoClicked().closeInventory();
+            return;
+        }
         User user = User.getInstance(event.getWhoClicked()); // The player that
         // clicked the item
         Inventory inventory = event.getInventory(); // The inventory that was
