@@ -14,6 +14,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
 import us.tastybento.bskyblock.api.panels.Panel;
+import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
 
 public class PanelListenerManager implements Listener {
@@ -39,13 +40,11 @@ public class PanelListenerManager implements Listener {
                 // Get the panel itself
                 Panel panel = openPanels.get(user.getUniqueId());
                 // Check that they clicked on a specific item
-                for (int slot : panel.getItems().keySet()) {
-                    if (slot == event.getRawSlot()) {
-                        panel.getItems().get(slot).getClickHandler().ifPresent(handler ->
-                            // Execute the handler's onClick method and optionally cancel the event if the handler returns true
-                            event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot()))
-                        );
-                    }
+                PanelItem pi = panel.getItems().get(event.getRawSlot());
+                if (pi != null) {
+                    pi.getClickHandler().ifPresent(handler ->
+                    // Execute the handler's onClick method and optionally cancel the event if the handler returns true
+                    event.setCancelled(handler.onClick(panel, user, event.getClick(), event.getSlot())));
                 }
                 // If there is a listener, then run it.
                 panel.getListener().ifPresent(l -> l.onInventoryClick(user, event));
