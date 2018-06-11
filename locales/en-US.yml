@@ -135,6 +135,8 @@ commands:
       set-pos2: "&aPosition 2 set at [vector]"
       need-pos1-pos2: "&cSet pos1 and pos2 first!"
       copied-blocks: "&bCopied [number] blocks to clipboard"
+    world:
+      description: "Manage world settings"
   island:
     about:
       description: "display copyright and license info"
@@ -457,6 +459,7 @@ protection:
 
   panel:
     title: "Island flags"
+    world-settings: "[world_name] Settings"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |+

@@ -140,7 +140,7 @@ public class Flag implements Comparable<Flag> {
 
     /**
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
-     * The panel item may reflect their island settings, the island they are on, or the world in general.
+     * @param plugin - plugin
      * @param user - user that will see this flag
      * @return - PanelItem for this flag
      */
@@ -208,5 +208,6 @@ public class Flag implements Comparable<Flag> {
     public int compareTo(Flag o) {
         return getID().compareTo(o.getID());
     }
+
 
 }

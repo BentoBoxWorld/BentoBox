@@ -212,13 +212,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Check for console and permissions
         if (cmd.onlyPlayer && !(sender instanceof Player)) {
             user.sendMessage("general.errors.use-in-game");
-            return true;
+            return false;
         }
         // Check perms, but only if this isn't the console
         if ((sender instanceof Player) && !sender.isOp() && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
             user.sendMessage("general.errors.no-permission");
             user.sendMessage("general.errors.you-need", TextVariables.PERMISSION, cmd.getPermission());
-            return true;
+            return false;
         }
         // Fire an event to see if this command should be cancelled
         CommandEvent event = CommandEvent.builder()
@@ -228,7 +228,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 .setArgs(args)
                 .build();
         if (event.isCancelled()) {
-            return true;
+            return false;
         }
         // Execute and trim args
         return cmd.execute(user, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
