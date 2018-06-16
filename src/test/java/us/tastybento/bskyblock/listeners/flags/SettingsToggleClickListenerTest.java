@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
@@ -52,7 +53,6 @@ public class SettingsToggleClickListenerTest {
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-        
         listener = new WorldToggleClickListener("test");
 
         panel = mock(Panel.class);
@@ -61,6 +61,7 @@ public class SettingsToggleClickListenerTest {
         user = mock(User.class);
         when(user.getWorld()).thenReturn(mock(World.class));
         when(user.getLocation()).thenReturn(mock(Location.class));
+        when(user.getPlayer()).thenReturn(mock(Player.class));
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
         
