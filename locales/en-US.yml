@@ -133,8 +133,10 @@ commands:
       could-not-save: "&Hmm, something went wrong saving that file: [message]"
       set-pos1: "&aPosition 1 set at [vector]"
       set-pos2: "&aPosition 2 set at [vector]"
+      set-different-pos: "&cSet a different location - this pos is already set!"
       need-pos1-pos2: "&cSet pos1 and pos2 first!"
       copied-blocks: "&bCopied [number] blocks to clipboard"
+      look-at-a-block: "&cLook at block within 20 blocks to set"
     world:
       description: "Manage world settings"
   island:

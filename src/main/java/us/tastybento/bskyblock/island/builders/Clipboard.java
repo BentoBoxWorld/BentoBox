@@ -14,7 +14,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,6 +25,7 @@ import org.bukkit.block.Sign;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
@@ -53,12 +53,15 @@ public class Clipboard {
         NORTH,
         UP
     }
-
+    
     private static final String ATTACHED = "attached";
+
+    private static final String BLOCK = "blocks";
 
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
     private Location pos2;
+    private Location origin;
     private BSkyBlock plugin;
     private boolean copied;
 
@@ -82,6 +85,7 @@ public class Clipboard {
      * @param pos1 the pos1 to set
      */
     public void setPos1(Location pos1) {
+        origin = null;
         this.pos1 = pos1;
     }
     /**
@@ -94,15 +98,28 @@ public class Clipboard {
      * @param pos2 the pos2 to set
      */
     public void setPos2(Location pos2) {
+        origin = null;
         this.pos2 = pos2;
     }
 
+    /**
+     * @return the origin
+     */
+    public Location getOrigin() {
+        return origin;
+    }
+    /**
+     * @param origin the origin to set
+     */
+    public void setOrigin(Location origin) {
+        this.origin = origin;
+    }
     /**
      * Copy the blocks between pos1 and pos2 to the clipboard
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined
      */
-    public boolean copy(User user) {
+    public boolean copy(User user, boolean copyAir) {
         if (pos1 == null || pos2 == null) {
             user.sendMessage("commands.admin.schem.need-pos1-pos2");
             return false;
@@ -110,14 +127,31 @@ public class Clipboard {
         // Clear the clipboard
         blockConfig = new YamlConfiguration();
         int count = 0;
+        int minX = Math.max(pos1.getBlockX(),pos2.getBlockX());
+        int maxX = Math.min(pos1.getBlockX(), pos2.getBlockX());
+        int minY = Math.max(pos1.getBlockY(),pos2.getBlockY());
+        int maxY = Math.min(pos1.getBlockY(), pos2.getBlockY());
+        int minZ = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
+        int maxZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
         for (int x = Math.min(pos1.getBlockX(), pos2.getBlockX()); x <= Math.max(pos1.getBlockX(),pos2.getBlockX()); x++) {
             for (int y = Math.min(pos1.getBlockY(), pos2.getBlockY()); y <= Math.max(pos1.getBlockY(),pos2.getBlockY()); y++) {
                 for (int z = Math.min(pos1.getBlockZ(), pos2.getBlockZ()); z <= Math.max(pos1.getBlockZ(),pos2.getBlockZ()); z++) {
-                    copyBlock(pos1.getWorld().getBlockAt(x, y, z), user.getLocation());
-                    count++;
+                    Block block = pos1.getWorld().getBlockAt(x, y, z);
+                    if (copyBlock(block, origin == null ? user.getLocation() : origin, copyAir)) {
+                        minX = Math.min(minX, x);
+                        maxX = Math.max(maxX, x);
+                        minY = Math.min(minY, y);
+                        maxY = Math.max(maxY, y);
+                        minZ = Math.min(minZ, z);
+                        maxZ = Math.max(maxZ, z);
+                        count ++;
+                    }
                 }
             }
         }
+        blockConfig.set("size.xsize", maxX - minX + 1);
+        blockConfig.set("size.ysize", maxY - minY + 1);
+        blockConfig.set("size.zsize", maxZ - minZ + 1);
         user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
         copied = true;
         return true;
@@ -128,7 +162,7 @@ public class Clipboard {
      * @param location - location to paste
      */
     public void paste(Location location) {
-        blockConfig.getKeys(false).forEach(b -> pasteBlock(location, blockConfig.getConfigurationSection(b)));
+        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
     }
 
     private void pasteBlock(Location location, ConfigurationSection s) {
@@ -182,30 +216,25 @@ public class Clipboard {
         // Material Data
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
-            Bukkit.getLogger().info("Openable");
             Openable open = (Openable)md;
             open.setOpen(s.getBoolean("open")); 
         }
 
         if (md instanceof Directional) {
-            Bukkit.getLogger().info("Directional");
             Directional facing = (Directional)md;
             facing.setFacingDirection(BlockFace.valueOf(s.getString("facing")));
         }
 
         if (md instanceof Lever) {
-            Bukkit.getLogger().info("Lever");
             Lever r = (Lever)md;
             r.setPowered(s.getBoolean("powered"));
         }
         if (md instanceof Button) {
-            Bukkit.getLogger().info("Button");
             Button r = (Button)md;
             r.setPowered(s.getBoolean("powered"));
         }
         // Block data
         if (bs instanceof Sign) {
-            Bukkit.getLogger().info("Sign");
             Sign sign = (Sign)bs;
             List<String> lines = s.getStringList("lines");
             for (int i =0 ; i < lines.size(); i++) {
@@ -214,7 +243,6 @@ public class Clipboard {
             sign.update();
         }
         if (bs instanceof Banner) {
-            Bukkit.getLogger().info("Banner");
             Banner banner = (Banner)bs;
             DyeColor baseColor = DyeColor.valueOf(s.getString("baseColor"));
             banner.setBaseColor(baseColor);
@@ -232,7 +260,6 @@ public class Clipboard {
         bs.update(true, false);
 
         if (bs instanceof InventoryHolder) {
-            Bukkit.getLogger().info("Inventory holder " + s.getCurrentPath());
             Inventory ih = ((InventoryHolder)bs).getInventory();
             ConfigurationSection inv = s.getConfigurationSection("inventory");
             inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
@@ -241,18 +268,18 @@ public class Clipboard {
     }
 
     @SuppressWarnings("deprecation")
-    private void copyBlock(Block block, Location origin) {
-        if (block.getType().equals(Material.AIR)) {
-            return;
+    private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir) {
+        if (!copyAir && block.getType().equals(Material.AIR)) {
+            return false;
         }
         // Create position
-        int x = block.getLocation().getBlockX() - origin.getBlockX();
-        int y = block.getLocation().getBlockY() - origin.getBlockY();
-        int z = block.getLocation().getBlockZ() - origin.getBlockZ();
+        int x = block.getLocation().getBlockX() - copyOrigin.getBlockX();
+        int y = block.getLocation().getBlockY() - copyOrigin.getBlockY();
+        int z = block.getLocation().getBlockZ() - copyOrigin.getBlockZ();
         String pos = x + "," + y + "," + z;
 
         // Position defines the section
-        ConfigurationSection s = blockConfig.createSection(pos);
+        ConfigurationSection s = blockConfig.createSection(BLOCK + "." + pos);
         // Set the block type
         s.set("type", block.getType().toString());
         if (block.getData() != 0) {
@@ -265,52 +292,43 @@ public class Clipboard {
         // Material Data
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
-            Bukkit.getLogger().info("Openable");
             Openable open = (Openable)md;
             s.set("open", open.isOpen()); 
         }
         if (md instanceof Directional) {
-            Bukkit.getLogger().info("Directional");
             Directional facing = (Directional)md;
             s.set("facing", facing.getFacing().name()); 
         }
         if (md instanceof Attachable) {
-            Bukkit.getLogger().info("Attachable");
             Attachable facing = (Attachable)md;
             s.set("facing", facing.getFacing().name());
             s.set("attached-face", facing.getAttachedFace().name());
             s.set(ATTACHED, true);
         }
         if (md instanceof Colorable) {
-            Bukkit.getLogger().info("Colorable");
             Colorable c = (Colorable)md;
             s.set("color", c.getColor().name());
         }
         if (block.getType().equals(Material.CARPET)) {
-            Bukkit.getLogger().info("Carpet");
             DyeColor c = DyeColor.getByWoolData(block.getData());
             s.set("color", c.name());  
         }
         if (md instanceof Redstone) {
-            Bukkit.getLogger().info("Redstone");
             Redstone r = (Redstone)md;
             blockConfig.set("powered", r.isPowered());
         }
 
         // Block data
         if (bs instanceof Sign) {
-            Bukkit.getLogger().info("Sign");
             Sign sign = (Sign)bs;
             s.set("lines", Arrays.asList(sign.getLines()));
         }
         if (bs instanceof Banner) {
-            Bukkit.getLogger().info("Banner");
             Banner banner = (Banner)bs;
             s.set("baseColor", banner.getBaseColor().toString());
             banner.getPatterns().forEach(p -> s.set("pattern." + p.getPattern().toString(), p.getColor().toString()));
         }
         if (bs instanceof InventoryHolder) {
-            Bukkit.getLogger().info("Inventory holder");
             InventoryHolder ih = (InventoryHolder)bs;
             for (int index = 0; index < ih.getInventory().getSize(); index++) {
                 ItemStack i = ih.getInventory().getItem(index);
@@ -319,7 +337,7 @@ public class Clipboard {
                 }
             }
         }
-
+        return true;
     }
 
     /**
@@ -384,41 +402,51 @@ public class Clipboard {
         return copied;
     }
 
+
+    /**
+     * Load a file to clipboard
+     * @param filename - filename in schems folder
+     * @return
+     * @throws IOException 
+     * @throws InvalidConfigurationException 
+     */
+    public void load(String fileName) throws IOException, InvalidConfigurationException {
+        File zipFile = new File(schemFolder, fileName + ".schem"); 
+        if (!zipFile.exists()) {
+            plugin.logError("Could not load schems file - does not exist : " + zipFile.getName());
+            throw new IOException("Could not load schems file - does not exist : " + zipFile.getName());
+        }
+        unzip(zipFile.getAbsolutePath());
+        File file = new File(schemFolder, fileName);
+        if (!file.exists()) {
+            plugin.logError("Could not load schems file - does not exist : " + file.getName());
+            throw new IOException("Could not load schems file - does not exist : " + file.getName());
+        }
+        blockConfig = new YamlConfiguration();
+        blockConfig.load(file);
+        copied = true;
+        Files.delete(file.toPath());
+    }
+
     /**
      * Load a file to clipboard
      */
-    public boolean load(User user, String string) {
-        File zipFile = new File(schemFolder, string + ".schem"); 
-        if (!zipFile.exists()) {
-            user.sendMessage("commands.admin.schem.no-such-file");
-            return false; 
-        }
+    /**
+     * @param user - use trying to load
+     * @param fileName - filename
+     * @return
+     */
+    public boolean load(User user, String fileName) {
         try {
-            unzip(zipFile.getAbsolutePath());
-        } catch (IOException e) {
+            load(fileName);
+        } catch (IOException e1) {
             user.sendMessage("commands.admin.schem.could-not-load");
-            plugin.logError("Could not load schems file - could not unzip : " + zipFile.getName());
+            plugin.logError("Could not load schems file: " + fileName + " " + e1.getMessage());
             return false; 
-        }
-        File file = new File(schemFolder, string);
-        if (!file.exists()) {
+        } catch (InvalidConfigurationException e1) {
             user.sendMessage("commands.admin.schem.could-not-load");
-            plugin.logError("Could not load schems file - does not exist : " + file.getName());
+            plugin.logError("Could not load schems file - YAML error : " + fileName + " " + e1.getMessage());
             return false; 
-        }
-        blockConfig = new YamlConfiguration();
-        try {
-            blockConfig.load(file);
-        } catch (Exception e) {
-            user.sendMessage("commands.admin.schem.could-not-load");
-            plugin.logError("Could not load schems file - YAML error : " + file.getName());
-            return false; 
-        }
-        copied = true;
-        try {
-            Files.delete(file.toPath());
-        } catch (IOException e) {
-            plugin.logError("Could not delete temporary schems file: " + file.getName());
         }
         user.sendMessage("general.success");
         return true;

@@ -120,24 +120,16 @@ public class NewIsland {
                 .build();
         if (!event.isCancelled()) {
             // Create island
-            new IslandBuilder(island)
-            .setPlayer(user.getPlayer())
-            .setChestItems(plugin.getSettings().getChestItems())
-            .setType(IslandType.ISLAND)
-            .build();
-            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
-                new IslandBuilder(island)
+            IslandBuilder ib = new IslandBuilder(plugin, island)
                 .setPlayer(user.getPlayer())
                 .setChestItems(plugin.getSettings().getChestItems())
-                .setType(IslandType.NETHER)
-                .build();
+                .setType(IslandType.ISLAND);
+            ib.build();
+            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
+                ib.setType(IslandType.NETHER).build();
             }
             if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
-                new IslandBuilder(island)
-                .setPlayer(user.getPlayer())
-                .setChestItems(plugin.getSettings().getChestItems())
-                .setType(IslandType.END)
-                .build();
+                ib.setType(IslandType.END).build();
             }
             // Teleport player to their island
             plugin.getIslands().homeTeleport(world, user.getPlayer());
