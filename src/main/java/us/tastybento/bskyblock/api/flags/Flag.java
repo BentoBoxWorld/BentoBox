@@ -25,10 +25,6 @@ public class Flag implements Comparable<Flag> {
         WORLD_SETTING
     }
 
-    private static final String PRO_FLAGS = "protection.flags.";
-    private static final String DOT_DESC = ".description";
-    private static final String DESC_PLACEHOLDER = "[description]";
-
     private final String id;
     private final Material icon;
     private final Listener listener;
@@ -141,6 +137,14 @@ public class Flag implements Comparable<Flag> {
         return type == other.type;
     }
 
+    public String getNameReference() {
+        return "protection.flags." + this.id + ".name";
+    }
+
+    public String getDescriptionReference() {
+        return "protection.flags." + this.id + ".description";
+    }
+
     /**
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
@@ -151,17 +155,17 @@ public class Flag implements Comparable<Flag> {
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(new ItemStack(icon))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(PRO_FLAGS + id + ".name")))
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler);
         if (getType().equals(Type.MENU)) {
-            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", DESC_PLACEHOLDER, user.getTranslation(PRO_FLAGS + id + DOT_DESC)));
+            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
         // Check if this is a setting or world setting
         if (getType().equals(Type.WORLD_SETTING)) {
             String worldDetting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");
-            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", DESC_PLACEHOLDER, user.getTranslation(PRO_FLAGS + id + DOT_DESC)
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
                     , "[setting]", worldDetting));
             return pib.build();
         } 
@@ -172,7 +176,7 @@ public class Flag implements Comparable<Flag> {
             if (getType().equals(Type.SETTING)) {
                 String islandSetting = island.isAllowed(this) ? user.getTranslation("protection.panel.flag-item.setting-active")
                         : user.getTranslation("protection.panel.flag-item.setting-disabled");
-                pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", DESC_PLACEHOLDER, user.getTranslation(PRO_FLAGS + id + DOT_DESC)
+                pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
                         , "[setting]", islandSetting));
                 return pib.build();
             }
@@ -180,8 +184,8 @@ public class Flag implements Comparable<Flag> {
             // Dynamic rank list
             if (getType().equals(Type.PROTECTION)) {
                 // Protection flag
-                String d = user.getTranslation(PRO_FLAGS + id + DOT_DESC);
-                d = user.getTranslation("protection.panel.flag-item.description-layout", DESC_PLACEHOLDER, d);
+                String d = user.getTranslation(getDescriptionReference());
+                d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, d);
                 pib.description(d);
                 plugin.getRanksManager().getRanks().forEach((reference, score) -> {
                     if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {

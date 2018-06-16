@@ -412,6 +412,9 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
     private long leaveWait = 10L;
 
+    @ConfigEntry(path = "panel.close-on-click-outside")
+    private boolean closePanelOnClickOutside = true;
+
     private String uniqueId = "config";
 
     // Getters and setters
@@ -1480,6 +1483,14 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setWorldFlags(Map<String, Boolean> worldFlags) {
         this.worldFlags = worldFlags;
+    }
+
+    public boolean getClosePanelOnClickOutside() {
+        return closePanelOnClickOutside;
+    }
+
+    public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
+        this.closePanelOnClickOutside = closePanelOnClickOutside;
     }
 
 }

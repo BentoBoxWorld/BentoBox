@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
@@ -23,13 +24,12 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        // Close inventory if clicked outside
-        if (event.getSlotType().equals(SlotType.OUTSIDE)) {
+        // Close inventory if clicked outside and if setting is true
+        if (BSkyBlock.getInstance().getSettings().getClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
             event.getWhoClicked().closeInventory();
             return;
         }
-        User user = User.getInstance(event.getWhoClicked()); // The player that
-        // clicked the item
+        User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
         Inventory inventory = event.getInventory(); // The inventory that was
         // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(user.getUniqueId())) {
