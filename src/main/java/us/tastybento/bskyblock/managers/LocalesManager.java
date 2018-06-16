@@ -4,11 +4,7 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.BSBLocale;
@@ -21,7 +17,7 @@ import us.tastybento.bskyblock.util.FileLister;
 public class LocalesManager {
 
     private BSkyBlock plugin;
-    private HashMap<Locale, BSBLocale> languages = new HashMap<>();
+    private Map<Locale, BSBLocale> languages = new HashMap<>();
     private static final String LOCALE_FOLDER = "locales";
 
     public LocalesManager(BSkyBlock plugin) {
@@ -60,7 +56,6 @@ public class LocalesManager {
         // Files must be 9 chars long
         FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase().endsWith(".yml") && name.length() == 9;
 
-
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);
         // If the folder does not exist, then make it and fill with the locale files from the jar
@@ -79,7 +74,6 @@ public class LocalesManager {
             } catch (IOException e) {
                 plugin.logError("Could not copy locale files from jar " + e.getMessage());
             }
-
         }
 
         // Store all the locales available
@@ -105,8 +99,21 @@ public class LocalesManager {
         }
     }
 
-    public Set<Locale> getAvailableLocales() {
-        return languages.keySet();
+    public List<Locale> getAvailableLocales(boolean sort) {
+        if (sort) {
+            List<Locale> locales = new LinkedList<>(languages.keySet());
+
+            locales.sort((locale1, locale2) -> {
+                if (locale1.toLanguageTag().equals(plugin.getSettings().getDefaultLanguage())) return -2;
+                else if (locale1.toLanguageTag().startsWith("en")) return -1;
+                else if (locale1.toLanguageTag().equals(locale2.toLanguageTag())) return 0;
+                else return 1;
+            });
+
+            return locales;
+        } else {
+            return new ArrayList<>(languages.keySet());
+        }
     }
 
     public Map<Locale, BSBLocale> getLanguages() {

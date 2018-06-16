@@ -1,6 +1,8 @@
 package us.tastybento.bskyblock.panels;
 
 import java.util.Locale;
+import java.util.Set;
+import java.util.SortedSet;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
@@ -22,7 +24,7 @@ public class LanguagePanel {
         PanelBuilder panelBuilder = new PanelBuilder()
                 .name(user.getTranslation("language.panel-title"));
 
-        for (Locale locale : BSkyBlock.getInstance().getLocalesManager().getAvailableLocales()) {
+        for (Locale locale : BSkyBlock.getInstance().getLocalesManager().getAvailableLocales(true)) {
             PanelItemBuilder localeIcon = new PanelItemBuilder().icon(BSkyBlock.getInstance().getLocalesManager().getLanguages().get(locale).getBanner())
                     .name(fancyLocaleDisplayName(user, locale))
                     .clickHandler((panel, u, click, slot) -> {
