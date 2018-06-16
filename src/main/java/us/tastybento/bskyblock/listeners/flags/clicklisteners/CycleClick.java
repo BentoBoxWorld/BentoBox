@@ -44,14 +44,14 @@ public class CycleClick implements PanelItem.ClickHandler {
                 } else {
                     island.setFlag(flag, rm.getRankUpValue(currentRank));
                 }
-                user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             } else if (click.equals(ClickType.RIGHT)) {
                 if (currentRank == RanksManager.VISITOR_RANK) {
                     island.setFlag(flag, RanksManager.OWNER_RANK);
                 } else {
                     island.setFlag(flag, rm.getRankDownValue(currentRank));
                 }
-                user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());

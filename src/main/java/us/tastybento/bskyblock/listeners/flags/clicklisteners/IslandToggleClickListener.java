@@ -42,7 +42,7 @@ public class IslandToggleClickListener implements ClickHandler {
             Flag flag = plugin.getFlagsManager().getFlagByID(id);
             // Toggle flag
             island.toggleFlag(flag);
-            user.getWorld().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             // Apply change to panel
             panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem()); 
         }
