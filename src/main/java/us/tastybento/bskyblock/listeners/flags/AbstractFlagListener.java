@@ -83,7 +83,7 @@ public abstract class AbstractFlagListener implements Listener {
      * @param flag - the flag that has been checked
      */
     public void noGo(Event e, Flag flag) {
-        noGo(e, flag,false);
+        noGo(e, flag, false);
     }
 
     /**
@@ -98,7 +98,7 @@ public abstract class AbstractFlagListener implements Listener {
         }
         if (user != null) {
             if (!silent) {
-                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(flag.getDescriptionReference()));
+                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(flag.getHintReference()));
             }
             user.updateInventory();
         }

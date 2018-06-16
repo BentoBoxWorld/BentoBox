@@ -163,6 +163,10 @@ public class Flag implements Comparable<Flag> {
         return "protection.flags." + this.id + ".description";
     }
 
+    public String getHintReference() {
+        return "protection.flags." + this.id + ".hint";
+    }
+
     /**
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
