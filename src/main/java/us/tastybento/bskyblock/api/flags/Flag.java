@@ -19,10 +19,19 @@ import us.tastybento.bskyblock.managers.RanksManager;
 public class Flag implements Comparable<Flag> {
 
     public enum Type {
-        PROTECTION,
-        SETTING,
-        MENU,
-        WORLD_SETTING
+        PROTECTION(Material.SHIELD),
+        SETTING(Material.COMMAND),
+        WORLD_SETTING(Material.GRASS);
+
+        private Material icon;
+
+        Type(Material icon) {
+            this.icon = icon;
+        }
+
+        public Material getIcon() {
+            return icon;
+        }
     }
 
     private final String id;
@@ -32,8 +41,9 @@ public class Flag implements Comparable<Flag> {
     private boolean setting;
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
+    private final boolean subPanel;
 
-    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank, PanelItem.ClickHandler clickListener) {
+    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
@@ -41,6 +51,7 @@ public class Flag implements Comparable<Flag> {
         this.type = type;
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
+        this.subPanel = subPanel;
     }
 
     public String getID() {
@@ -97,6 +108,13 @@ public class Flag implements Comparable<Flag> {
      */
     public int getDefaultRank() {
         return defaultRank;
+    }
+
+    /**
+     * @return whether the flag uses a subpanel or not
+     */
+    public boolean hasSubPanel() {
+        return subPanel;
     }
 
     /* (non-Javadoc)
@@ -157,7 +175,7 @@ public class Flag implements Comparable<Flag> {
                 .icon(new ItemStack(icon))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
                 .clickHandler(clickHandler);
-        if (getType().equals(Type.MENU)) {
+        if (hasSubPanel()) {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
         }
@@ -208,7 +226,7 @@ public class Flag implements Comparable<Flag> {
     @Override
     public String toString() {
         return "Flag [id=" + id + ", icon=" + icon + ", listener=" + listener + ", type=" + type + ", defaultSetting="
-                + setting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + "]";
+                + setting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + ", subPanel=" + subPanel + "]";
     }
 
     @Override

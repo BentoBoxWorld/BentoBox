@@ -17,6 +17,7 @@ public class FlagBuilder {
     private Type type = Type.PROTECTION;
     private int defaultRank = RanksManager.MEMBER_RANK;
     private PanelItem.ClickHandler onClick;
+    private boolean subPanel = false;
 
     public FlagBuilder id(String string) {
         id = string;
@@ -43,7 +44,7 @@ public class FlagBuilder {
     }
 
     public Flag build() {
-        return new Flag(id, icon, listener, setting, type, defaultRank, onClick);
+        return new Flag(id, icon, listener, setting, type, defaultRank, onClick, subPanel);
     }
 
     /**
@@ -96,5 +97,15 @@ public class FlagBuilder {
         this.onClick = onClickListener;
         return this;
     }
-    
+
+    /**
+     * Marks this flag as "using a sub-panel"
+     * @param subPanel - whether the flag will use a sub-panel or not
+     * @return FlagBuilder
+     */
+    public FlagBuilder subPanel(boolean subPanel) {
+        this.subPanel = subPanel;
+        return this;
+    }
+
 }

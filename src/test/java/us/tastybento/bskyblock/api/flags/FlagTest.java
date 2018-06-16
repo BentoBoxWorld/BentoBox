@@ -78,49 +78,49 @@ public class FlagTest {
 
     @Test
     public void testHashCode() {
-        Flag flag1 = new Flag(null, null, null, false, null, 0, null);
-        Flag flag2 = new Flag(null, null, null, false, null, 0, null);
+        Flag flag1 = new Flag(null, null, null, false, null, 0, null, false);
+        Flag flag2 = new Flag(null, null, null, false, null, 0, null, false);
         assertTrue(flag1.hashCode() == flag2.hashCode());
     }
 
     @Test
     public void testFlag() {
-        assertNotNull(new Flag(null, null, null, false, null, 0, null));
+        assertNotNull(new Flag(null, null, null, false, null, 0, null, false));
     }
 
     @Test
     public void testGetID() {
-        Flag id = new Flag("id", null, null, false, null, 0, null);
+        Flag id = new Flag("id", null, null, false, null, 0, null, false);
         assertEquals("id", id.getID());
     }
 
     @Test
     public void testGetIcon() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null, false);
         assertEquals(Material.ACACIA_DOOR, id.getIcon());
     }
 
     @Test
     public void testGetListener() {
         Listener l = mock(Listener.class);
-        Flag id = new Flag("id", Material.ACACIA_DOOR, l, false, null, 0, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, l, false, null, 0, null, false);
         Optional<Listener> ol = Optional.ofNullable(l);
         assertEquals(ol, id.getListener());
-        id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
+        id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null, false);
         assertEquals(Optional.empty(), id.getListener());
     }
 
     @Test
     public void testIsDefaultSetting() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null, false);
         assertFalse(id.isSetForWorld(mock(World.class)));
-        id = new Flag("id", Material.ACACIA_DOOR, null, true, null, 0, null);
+        id = new Flag("id", Material.ACACIA_DOOR, null, true, null, 0, null, false);
         assertTrue(id.isSetForWorld(mock(World.class)));
     }
 
     @Test
     public void testSetDefaultSetting() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null, false);
         assertFalse(id.isSetForWorld(mock(World.class)));
         id.setDefaultSetting(true);
         assertTrue(id.isSetForWorld(mock(World.class)));
@@ -131,15 +131,15 @@ public class FlagTest {
 
     @Test
     public void testGetType() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null, false);
         assertEquals(Flag.Type.PROTECTION,id.getType());
-        id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.SETTING, 0, null);
+        id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.SETTING, 0, null, false);
         assertEquals(Flag.Type.SETTING,id.getType());
     }
 
     @Test
     public void testGetDefaultRank() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 100, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 100, null, false);
         assertEquals(100, id.getDefaultRank());
     }
 
@@ -147,18 +147,18 @@ public class FlagTest {
     @Test
     public void testEqualsObject() {
         Flag flag1 = null;
-        Flag flag2 = new Flag(null, null, null, false, null, 0, null);
+        Flag flag2 = new Flag(null, null, null, false, null, 0, null, false);
         
         assertFalse(flag2.equals(null));
         int i = 45;
         assertFalse(flag2.equals(i));
         
-        flag1 = new Flag(null, null, null, false, null, 0, null);
+        flag1 = new Flag(null, null, null, false, null, 0, null, false);
         flag2 = flag1;
         assertTrue(flag1.equals(flag2));
         assertTrue(flag2.equals(flag1));
         
-        flag2 = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
+        flag2 = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null, false);
         assertFalse(flag1.equals(flag2));
         assertFalse(flag2.equals(flag1));
         
@@ -201,7 +201,7 @@ public class FlagTest {
         when(rm.getRank(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn("Visitor");
         when(rm.getRank(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn("Owner");
         
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null, false);
         
         PanelItem pi = id.toPanelItem(plugin, user);
         
@@ -214,14 +214,14 @@ public class FlagTest {
 
     @Test
     public void testToString() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
-        assertEquals("Flag [id=id, icon=ACACIA_DOOR, listener=null, type=PROTECTION, defaultSetting=false, defaultRank=0, clickHandler=null]", id.toString());
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null, false);
+        assertEquals("Flag [id=id, icon=ACACIA_DOOR, listener=null, type=PROTECTION, defaultSetting=false, defaultRank=0, clickHandler=null, subPanel=false]", id.toString());
     }
 
     @Test
     public void testCompareTo() {
-        Flag aaa = new Flag("AAA", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
-        Flag bbb = new Flag("BBB", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null);
+        Flag aaa = new Flag("AAA", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null, false);
+        Flag bbb = new Flag("BBB", Material.ACACIA_DOOR, null, false, Flag.Type.PROTECTION, 0, null, false);
         assertTrue(aaa.compareTo(bbb) < bbb.compareTo(aaa));
         assertTrue(aaa.compareTo(aaa) == 0);
     }

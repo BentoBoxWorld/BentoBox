@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.commands.island;
 import java.util.List;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.panels.SettingsPanel;
 import us.tastybento.bskyblock.util.Util;
@@ -33,7 +34,7 @@ public class IslandSettingsCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         // Settings are only shown if you are in the right world
         if (Util.getWorld(user.getWorld()).equals(getWorld())) {
-            SettingsPanel.openPanel(getPlugin(), user);
+            SettingsPanel.openPanel(getPlugin(), user, Flag.Type.PROTECTION); //TODO keep track of history?
             return true;
         } else {
             user.sendMessage("general.errors.wrong-world");
