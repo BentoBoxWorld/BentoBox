@@ -97,8 +97,10 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case ENDER_CHEST:
             break;
         case JUKEBOX:
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.JUKEBOX);
+            break;
         case NOTE_BLOCK:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.MUSIC);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.NOTE_BLOCK);
             break;
         case WORKBENCH:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.CRAFTING);

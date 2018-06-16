@@ -62,7 +62,8 @@ public class Flags {
     public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING").allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build();
     public static final Flag FURNACE = new FlagBuilder().id("FURNACE").icon(Material.FURNACE).build();
     public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.FENCE_GATE).build();
-    public static final Flag MUSIC = new FlagBuilder().id("MUSIC").icon(Material.JUKEBOX).build();
+    public static final Flag NOTE_BLOCK = new FlagBuilder().id("NOTE_BLOCK").icon(Material.NOTE_BLOCK).build();
+    public static final Flag JUKEBOX = new FlagBuilder().id("JUKEBOX").icon(Material.JUKEBOX).build();
     public static final Flag LEVER_BUTTON = new FlagBuilder().id("LEVER_BUTTON").icon(Material.LEVER).build();
     public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).build();
     public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.MONSTER_EGG).build();
@@ -160,6 +161,7 @@ public class Flags {
             .listener(ilv).onClick(ilv).build();
     public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
             .listener(new RemoveMobsListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("REMOVE_MOBS")).build();
+
     /**
      * @return List of all the flags in this class
      */
