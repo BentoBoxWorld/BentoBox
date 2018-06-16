@@ -25,7 +25,7 @@ public class PanelListenerManager implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         // Close inventory if clicked outside and if setting is true
-        if (BSkyBlock.getInstance().getSettings().getClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
+        if (BSkyBlock.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
             event.getWhoClicked().closeInventory();
             return;
         }

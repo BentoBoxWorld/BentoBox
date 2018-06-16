@@ -1485,10 +1485,17 @@ public class Settings implements DataObject, WorldSettings {
         this.worldFlags = worldFlags;
     }
 
-    public boolean getClosePanelOnClickOutside() {
+    /**
+     * @return whether panels should close when clicked outside or not
+     */
+    public boolean isClosePanelOnClickOutside() {
         return closePanelOnClickOutside;
     }
 
+    /**
+     * Set panel close on click outside
+     * @param closePanelOnClickOutside
+     */
     public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
         this.closePanelOnClickOutside = closePanelOnClickOutside;
     }

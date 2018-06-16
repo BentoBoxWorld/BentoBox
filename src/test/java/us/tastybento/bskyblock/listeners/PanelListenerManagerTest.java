@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
@@ -25,19 +26,28 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
+import org.powermock.reflect.Whitebox;
 
+import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.PanelItem.ClickHandler;
 import us.tastybento.bskyblock.api.panels.PanelListener;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Test class for PanelListenerManager.java
  * @author tastybento
  *
  */
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({BSkyBlock.class, Util.class, Bukkit.class })
 public class PanelListenerManagerTest {
 
     private Player player;
@@ -52,12 +62,21 @@ public class PanelListenerManagerTest {
     private Inventory anotherInv;
     private PanelListener pl;
     private ClickHandler ch;
+    private Settings settings;
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
+        // Set up plugin
+        BSkyBlock plugin = mock(BSkyBlock.class);
+        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        // Settings
+        settings = mock(Settings.class);
+        when(plugin.getSettings()).thenReturn(settings);
+        when(settings.isClosePanelOnClickOutside()).thenReturn(true);
+
         uuid = UUID.randomUUID();
         player = mock(Player.class);
         when(player.getUniqueId()).thenReturn(uuid);
