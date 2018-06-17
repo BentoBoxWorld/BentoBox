@@ -120,7 +120,7 @@ public class NewIsland {
                 .build();
         if (!event.isCancelled()) {
             // Create island
-            IslandBuilder ib = new IslandBuilder(plugin, island)
+            IslandBuilder ib = new IslandBuilder(island)
                 .setPlayer(user.getPlayer())
                 .setChestItems(plugin.getSettings().getChestItems())
                 .setType(IslandType.ISLAND);

@@ -2,7 +2,7 @@ package us.tastybento.bskyblock.panels;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
+
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.PanelItem;

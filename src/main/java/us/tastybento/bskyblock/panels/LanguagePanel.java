@@ -1,8 +1,6 @@
 package us.tastybento.bskyblock.panels;
 
 import java.util.Locale;
-import java.util.Set;
-import java.util.SortedSet;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;

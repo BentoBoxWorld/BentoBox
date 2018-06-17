@@ -703,7 +703,8 @@ public class IslandsManager {
                     try {
                         handler.saveObject(island);
                     } catch (Exception e) {
-                        plugin.logError("Could not save island to datavase when running async! " + e.getMessage());
+                        plugin.logError("Could not save island to database when running async! " + e.getMessage());
+                        e.printStackTrace();
                     }
                 }
             };
