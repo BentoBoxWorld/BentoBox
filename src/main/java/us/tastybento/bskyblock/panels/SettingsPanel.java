@@ -41,8 +41,6 @@ public class SettingsPanel {
     private static void setupHeader(User user, PanelBuilder panelBuilder, Flag.Type currentFlagType) {
         int slot = 2;
         for (Flag.Type flagType : Flag.Type.values()) {
-            System.out.println("DEBUGGY:" + flagType.toString());
-            System.out.println("DEBUGGY:" + user.getTranslation("protection.panel." + flagType.toString() + ".description"));
             PanelItem panelItem = new PanelItemBuilder()
                     .icon(flagType.getIcon())
                     .name(user.getTranslation("protection.panel." + flagType.toString() + ".title"))
