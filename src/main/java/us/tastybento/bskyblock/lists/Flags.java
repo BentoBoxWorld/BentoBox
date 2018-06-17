@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
+import org.bukkit.inventory.ItemStack;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
@@ -40,11 +41,8 @@ public class Flags {
     // Disabled setting 'rank'
     private static final int DISABLED = -1;
 
-    // TODO: add DYEING sheeps
     // TODO: add ELYTRA
     // TODO: add FISHING
-    // TODO: add INTERACT_TAMED
-    // TODO: split LEVER_BUTTON into BUTTON and LEVER
     // TODO: add KEEP_INVENTORY - is it needed?
 
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
@@ -56,6 +54,7 @@ public class Flags {
     public static final Flag BED = new FlagBuilder().id("BED").icon(Material.BED).build();
     public static final Flag BREWING = new FlagBuilder().id("BREWING").icon(Material.BREWING_STAND_ITEM).build();
     public static final Flag CHEST = new FlagBuilder().id("CHEST").icon(Material.CHEST).build();
+    public static final Flag ENDER_CHEST = new FlagBuilder().id("ENDER_CHEST").icon(Material.ENDER_CHEST).build();
     public static final Flag DOOR = new FlagBuilder().id("DOOR").allowedByDefault(true).icon(Material.WOOD_DOOR).build();
     public static final Flag TRAPDOOR = new FlagBuilder().id("TRAPDOOR").allowedByDefault(true).icon(Material.TRAP_DOOR).build();
     public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING").allowedByDefault(true).icon(Material.WORKBENCH).build();
@@ -64,7 +63,8 @@ public class Flags {
     public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.FENCE_GATE).build();
     public static final Flag NOTE_BLOCK = new FlagBuilder().id("NOTE_BLOCK").icon(Material.NOTE_BLOCK).build();
     public static final Flag JUKEBOX = new FlagBuilder().id("JUKEBOX").icon(Material.JUKEBOX).build();
-    public static final Flag LEVER_BUTTON = new FlagBuilder().id("LEVER_BUTTON").icon(Material.LEVER).build();
+    public static final Flag LEVER = new FlagBuilder().id("LEVER").icon(Material.LEVER).build();
+    public static final Flag BUTTON = new FlagBuilder().id("BUTTON").icon(Material.WOOD_BUTTON).build();
     public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).build();
     public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.MONSTER_EGG).build();
 
@@ -143,10 +143,12 @@ public class Flags {
             .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_NETHER")).build();
     public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING)
             .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_END")).build();
+
     // Others
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
+
     // Global flags (apply to every island)
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())

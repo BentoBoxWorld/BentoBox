@@ -95,6 +95,7 @@ public class BlockInteractionListener extends AbstractFlagListener {
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENCHANTING);
             break;
         case ENDER_CHEST:
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENDER_CHEST);
             break;
         case JUKEBOX:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.JUKEBOX);
@@ -107,8 +108,10 @@ public class BlockInteractionListener extends AbstractFlagListener {
             break;
         case STONE_BUTTON:
         case WOOD_BUTTON:
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BUTTON);
+            break;
         case LEVER:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.LEVER_BUTTON);
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.LEVER);
             break;
         case DIODE:
         case DIODE_BLOCK_OFF:
