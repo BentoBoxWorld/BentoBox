@@ -125,6 +125,12 @@ public class BSkyBlock extends JavaPlugin {
                     playersManager.save(true);
                     islandsManager.save(true);
                 }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
+
+                instance.log("#############################################");
+                instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
+                instance.log("Thanks for using our plugin !");
+                instance.log("- Tastybento and Poslovitch, 2017-2018");
+                instance.log("#############################################");
             });
         });
     }
