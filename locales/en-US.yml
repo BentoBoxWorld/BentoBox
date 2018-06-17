@@ -460,8 +460,17 @@ protection:
   protected: "&cIsland protected: [description]"
 
   panel:
-    title: "Island flags"
-    world-settings: "[world_name] Settings"
+    PROTECTION:
+      title: "Protection"
+      description: |
+        Protection settings
+        for this location
+    SETTING:
+      title: "Settings"
+      description: "General settings"
+    WORLD_SETTING:
+      title: "[world_name] Settings"
+      description: "Settings for this game world"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |+
