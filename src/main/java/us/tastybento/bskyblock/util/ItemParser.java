@@ -1,9 +1,13 @@
 package us.tastybento.bskyblock.util;
 
 import org.apache.commons.lang.StringUtils;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.block.banner.Pattern;
+import org.bukkit.block.banner.PatternType;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionData;
@@ -21,38 +25,27 @@ public class ItemParser {
 
     public static ItemStack parse(String s){
         String[] part = s.split(":");
-        // Material:Qty
+
+        // Material-specific handling
+        if (part[0].contains("POTION") || part[0].equalsIgnoreCase("TIPPED_ARROW")) {
+            return potion(part);
+        } else if (part[0].contains("BANNER")) {
+            return banner(part);
+        }
+
+        // Generic handling
         if (part.length == 2) {
-            return two(s, part);
+            // Material:Qty
+            return two(part);
         } else if (part.length == 3) {
-            return three(s, part);
-        } else if (part.length == 6 && (part[0].contains("POTION") || part[0].equalsIgnoreCase("TIPPED_ARROW"))) {
-            return potion(s, part);
+            // Material:Durability:Qty
+            return three(part);
         }
         return null;
     }
 
-    private static ItemStack three(String s, String[] part) {
-        // Rearrange
-        String[] twoer = {part[0], part[2]};
-        ItemStack result = two(s, twoer);
-        if (result == null) {
-            return null;
-        }
-        if (StringUtils.isNumeric(part[1])) {
-            result.setDurability((short) Integer.parseInt(part[1]));
-        } else if (result.getType().equals(Material.MONSTER_EGG)) {
-            // Check if this is a string
-            EntityType entityType = EntityType.valueOf(part[1]);
-            SpawnEggMeta meta = ((SpawnEggMeta)result.getItemMeta());
-            meta.setSpawnedType(entityType);
-            result.setItemMeta(meta);
-        }
-        return result;
-    }
-
-    private static ItemStack two(String s, String[] part) {
-        int reqAmount = 0;
+    private static ItemStack two(String[] part) {
+        int reqAmount;
         try {
             reqAmount = Integer.parseInt(part[1]);
         } catch (Exception e) {
@@ -71,8 +64,30 @@ public class ItemParser {
         return new ItemStack(reqItem, reqAmount);
     }
 
-    private static ItemStack potion(String s, String[] part) {
-        int reqAmount = 0;
+    private static ItemStack three(String[] part) {
+        // Rearrange
+        String[] twoer = {part[0], part[2]};
+        ItemStack result = two(twoer);
+        if (result == null) {
+            return null;
+        }
+        if (StringUtils.isNumeric(part[1])) {
+            result.setDurability((short) Integer.parseInt(part[1]));
+        } else if (result.getType().equals(Material.MONSTER_EGG)) {
+            // Check if this is a string
+            EntityType entityType = EntityType.valueOf(part[1]);
+            SpawnEggMeta meta = ((SpawnEggMeta)result.getItemMeta());
+            meta.setSpawnedType(entityType);
+            result.setItemMeta(meta);
+        }
+        return result;
+    }
+
+    private static ItemStack potion(String[] part) {
+        if (part.length != 6) {
+            return null;
+        }
+        int reqAmount;
         try {
             reqAmount = Integer.parseInt(part[5]);
         } catch (Exception e) {
@@ -98,7 +113,6 @@ public class ItemParser {
         if (part[0].equalsIgnoreCase("TIPPED_ARROW")) {
             result = new ItemStack(Material.TIPPED_ARROW);
         }
-        result.setAmount(reqAmount);
         PotionMeta potionMeta = (PotionMeta)(result.getItemMeta());
         PotionType type = PotionType.valueOf(part[1].toUpperCase());
         boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
@@ -108,5 +122,28 @@ public class ItemParser {
 
         result.setAmount(reqAmount);
         return result;
+    }
+
+    private static ItemStack banner(String[] part) {
+        try {
+            if (part.length > 3) {
+                int reqAmount = Integer.parseInt(part[1]);
+
+                ItemStack result = new ItemStack(Material.BANNER, reqAmount, (short) DyeColor.valueOf(part[2]).getDyeData());
+
+                BannerMeta meta = (BannerMeta) result.getItemMeta();
+                for (int i = 3; i < part.length; i += 2) {
+                    meta.addPattern(new Pattern(DyeColor.valueOf(part[i + 1]), PatternType.valueOf(part[i])));
+                }
+
+                result.setItemMeta(meta);
+
+                return result;
+            } else {
+                return new ItemStack(Material.BANNER, 1); // Return a blank banner
+            }
+        } catch (Exception e) {
+            return new ItemStack(Material.BANNER, 1); // Return a blank banner
+        }
     }
 }

@@ -10,13 +10,7 @@
 # Banbeucmas: Người dịch bản YML gốc
 # This translation is adapted to version : [alpha-2]
 
-banner:
-- "RED"
-- "CREEPER:YELLOW"
-- "RHOMBUS_MIDDLE:YELLOW"
-- "TRIANGLES_BOTTOM:RED"
-- "SQUARE_BOTTOM_LEFT:RED"
-- "SQUARE_BOTTOM_RIGHT:RED"
+banner: "BANNER:1:RED:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED"
 
 general:
   deaths: "Chết"
