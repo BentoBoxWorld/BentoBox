@@ -54,19 +54,21 @@ public class AddonsManager {
         }
         Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         addons.forEach(Addon::onLoad);
+        plugin.log("Loaded " + addons.size() + " addons.");
     }
 
     /**
      * Enables all the addons
      */
     public void enableAddons() {
+        plugin.log("Enabling addons...");
         addons.forEach(addon -> {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
             plugin.log("Enabling " + addon.getDescription().getName() + "...");
         });
-
+        plugin.log("Addons successfully enabled.");
     }
 
     /**
@@ -134,6 +136,7 @@ public class AddonsManager {
      * Disable all the enabled addons
      */
     public void disableAddons() {
+        plugin.log("Disabling addons...");
         // Unload addons
         addons.forEach(addon -> {
             addon.onDisable();
@@ -148,6 +151,7 @@ public class AddonsManager {
                 // Ignore
             }
         });
+        plugin.log("Addons successfully disabled.");
     }
 
     public List<Addon> getAddons() {
