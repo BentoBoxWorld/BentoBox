@@ -129,7 +129,7 @@ public abstract class AbstractFlagListener implements Listener {
             return true;
         }
         // Get the island and if present
-        Optional<Island> island = getIslands().getIslandAt(loc);
+        Optional<Island> island = getIslands().getProtectedIslandAt(loc);
         // Handle Settings Flag
         if (flag.getType().equals(Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
