@@ -73,8 +73,17 @@ public class Flag implements Comparable<Flag> {
      * If world is not a game world, then the result will always be false!
      */
     public boolean isSetForWorld(World world) {
-        WorldSettings ws = BSkyBlock.getInstance().getIWM().getWorldSettings(world);
-        return ws != null ? ws.getWorldFlags().getOrDefault(getID(), setting) : false;
+        if (type.equals(Type.WORLD_SETTING)) {
+            WorldSettings ws = BSkyBlock.getInstance().getIWM().getWorldSettings(world);
+            if (ws != null) {
+                ws.getWorldFlags().putIfAbsent(getID(), setting);
+                return ws.getWorldFlags().get(getID());
+            }
+            return false;
+        } else {
+            // Setting
+            return setting;
+        }
     }
 
     /**

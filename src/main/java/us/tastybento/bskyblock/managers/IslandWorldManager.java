@@ -468,12 +468,13 @@ public class IslandWorldManager {
 
     /**
      * Returns whether a world flag is set or not
+     * Same result as calling {@link Flag#isSetForWorld(World)}
      * @param world - world
      * @param flag - world setting flag
      * @return true or false
      */
     public boolean isWorldFlag(World world, Flag flag) {
-        return worldSettings.get(Util.getWorld(world)).getWorldFlags().get(flag.getID());
+        return flag.isSetForWorld(world);
     }
 
 }

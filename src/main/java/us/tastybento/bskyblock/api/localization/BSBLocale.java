@@ -1,16 +1,11 @@
 package us.tastybento.bskyblock.api.localization;
 
 import java.io.File;
-import java.util.List;
 import java.util.Locale;
 
-import org.bukkit.DyeColor;
-import org.bukkit.Material;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BannerMeta;
+
 import us.tastybento.bskyblock.util.ItemParser;
 
 /**
@@ -22,7 +17,6 @@ public class BSBLocale {
     private YamlConfiguration config;
     private ItemStack banner;
 
-    @SuppressWarnings("deprecation")
     public BSBLocale(Locale locale, File file) {
         this.locale = locale;
         config = YamlConfiguration.loadConfiguration(file);

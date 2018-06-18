@@ -331,6 +331,10 @@ protection:
     ENCHANTING: 
       description: "Toggle use"
       name: "Enchanting table"
+    ENDER_CHEST:
+      description: "Toggle use/crafting"
+      name: "Ender Chests"
+      hint: "Ender chests are disabled in this world"
     ENDER_PEARL: 
       description: "Toggle use"
       name: "EnderPearls"

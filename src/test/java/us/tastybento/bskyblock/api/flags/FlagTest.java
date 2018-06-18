@@ -35,6 +35,7 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
+import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -112,21 +113,33 @@ public class FlagTest {
 
     @Test
     public void testIsDefaultSetting() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null, false);
+        Type type = Type.SETTING;
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, type , 0, null, false);
         assertFalse(id.isSetForWorld(mock(World.class)));
-        id = new Flag("id", Material.ACACIA_DOOR, null, true, null, 0, null, false);
+        id = new Flag("id", Material.ACACIA_DOOR, null, true, type, 0, null, false);
         assertTrue(id.isSetForWorld(mock(World.class)));
     }
 
     @Test
     public void testSetDefaultSetting() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, null, 0, null, false);
+        Type type = Type.SETTING;
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, type, 0, null, false);
         assertFalse(id.isSetForWorld(mock(World.class)));
         id.setDefaultSetting(true);
         assertTrue(id.isSetForWorld(mock(World.class)));
         id.setDefaultSetting(false);
         assertFalse(id.isSetForWorld(mock(World.class)));
         
+    }
+    
+    @Test
+    public void testIsDefaultSetting_World_Setting() {
+        Type type = Type.WORLD_SETTING;
+        Flag id = new Flag("id", Material.ACACIA_DOOR, null, false, type , 0, null, false);
+        assertFalse(id.isSetForWorld(mock(World.class)));
+        // Default can only be set once with world settings, so use a new id for flag
+        id = new Flag("id2", Material.ACACIA_DOOR, null, true, type, 0, null, false);
+        assertTrue(id.isSetForWorld(mock(World.class)));
     }
 
     @Test

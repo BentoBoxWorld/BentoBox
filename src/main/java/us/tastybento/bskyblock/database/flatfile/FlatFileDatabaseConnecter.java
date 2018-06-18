@@ -94,7 +94,8 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
         try {
             // Approach is save to temp file (saving is not necessarily atomic), then move file atomically
             // This has best chance of no file corruption
-            File tmpFile = File.createTempFile(tableName, ".tmp", tableFolder);
+            
+            File tmpFile = File.createTempFile("yaml", null, tableFolder);
             yamlConfig.save(tmpFile);
             if (tmpFile.exists()) {
                 Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
@@ -102,7 +103,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
                 throw new Exception();
             }
         } catch (Exception e) {
-            plugin.logError("Could not save yaml file to database " + tableName + " " + fileName + " " + e.getMessage());
+            plugin.logError("Could not save yaml file: " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {

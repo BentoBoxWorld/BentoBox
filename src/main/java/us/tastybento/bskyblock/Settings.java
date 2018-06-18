@@ -229,16 +229,12 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigComment("Disable redstone operation on islands unless a team member is online.")
     @ConfigComment("This may reduce lag but it can cause problems with visitors needing to use a redstone system.")
     @ConfigComment("Default is false, because it is an experimental feature that can break a lot of redstone systems.")
+    @ConfigEntry(path = "world.disable-offline-redstone")
     private boolean disableOfflineRedstone = false;
 
     @ConfigComment("World flags. These are boolean settings for various flags for this world")
     @ConfigEntry(path = "world.flags")
     private Map<String, Boolean> worldFlags = new HashMap<>();
-    {
-        worldFlags.put("ENTER_EXIT_MESSAGES", true);
-        worldFlags.put("PISTON_PUSH", true);
-        worldFlags.put("REMOVE_MOBS", true);
-    }
     
     // ---------------------------------------------
 

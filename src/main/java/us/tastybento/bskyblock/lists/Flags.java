@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
-import org.bukkit.inventory.ItemStack;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
@@ -16,6 +15,7 @@ import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;
 import us.tastybento.bskyblock.listeners.flags.BucketListener;
 import us.tastybento.bskyblock.listeners.flags.EggListener;
+import us.tastybento.bskyblock.listeners.flags.EnderChestListener;
 import us.tastybento.bskyblock.listeners.flags.EnterExitListener;
 import us.tastybento.bskyblock.listeners.flags.EntityInteractListener;
 import us.tastybento.bskyblock.listeners.flags.FireListener;
@@ -54,7 +54,6 @@ public class Flags {
     public static final Flag BED = new FlagBuilder().id("BED").icon(Material.BED).build();
     public static final Flag BREWING = new FlagBuilder().id("BREWING").icon(Material.BREWING_STAND_ITEM).build();
     public static final Flag CHEST = new FlagBuilder().id("CHEST").icon(Material.CHEST).build();
-    public static final Flag ENDER_CHEST = new FlagBuilder().id("ENDER_CHEST").icon(Material.ENDER_CHEST).build();
     public static final Flag DOOR = new FlagBuilder().id("DOOR").allowedByDefault(true).icon(Material.WOOD_DOOR).build();
     public static final Flag TRAPDOOR = new FlagBuilder().id("TRAPDOOR").allowedByDefault(true).icon(Material.TRAP_DOOR).build();
     public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING").allowedByDefault(true).icon(Material.WORKBENCH).build();
@@ -149,7 +148,12 @@ public class Flags {
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
 
-    // Global flags (apply to every island)
+    // World Settings - apply to every island in the game worlds
+    public static final Flag ENDER_CHEST = new FlagBuilder().id("ENDER_CHEST").icon(Material.ENDER_CHEST)
+            .allowedByDefault(false).type(Type.WORLD_SETTING)
+            .listener(new EnderChestListener())
+            .onClick(new WorldToggleClickListener("ENDER_CHEST"))
+            .build();
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
             .onClick(new WorldToggleClickListener("ENTER_EXIT_MESSAGES"))
