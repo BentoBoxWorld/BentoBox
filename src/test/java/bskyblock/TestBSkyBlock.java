@@ -166,6 +166,7 @@ public class TestBSkyBlock {
         Bukkit.getLogger().info("SETUP: member UUID = " + MEMBER_UUID);
         Bukkit.getLogger().info("SETUP: visitor UUID = " + VISITOR_UUID);
         Mockito.when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
 
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);

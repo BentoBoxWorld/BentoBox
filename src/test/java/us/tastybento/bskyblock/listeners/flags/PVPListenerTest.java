@@ -155,6 +155,7 @@ public class PVPListenerTest {
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
         island = mock(Island.class);
         when(im.getIslandAt(Mockito.any())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
         // All flags are disallowed by default.
         when(island.isAllowed(Mockito.any())).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);

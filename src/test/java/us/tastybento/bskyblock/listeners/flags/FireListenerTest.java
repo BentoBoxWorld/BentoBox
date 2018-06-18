@@ -412,6 +412,7 @@ public class FireListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
         
         // Block on fire
         Block block = mock(Block.class);
@@ -482,7 +483,7 @@ public class FireListenerTest {
         assertFalse(listener.onTNTDamage(e));
         
         // Check with no island
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(Matchers.any())).thenReturn(Optional.empty());
         // BREAK_BLOCKS spread is not allowed, so should be cancelled
         Flags.BREAK_BLOCKS.setDefaultSetting(false);
         assertTrue(listener.onTNTDamage(e));
