@@ -121,10 +121,11 @@ public class BSkyBlock extends JavaPlugin {
                 islandsManager.load();
                 
                 // Save islands & players data asynchronously every X minutes
+                
                 instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                     playersManager.save(true);
                     islandsManager.save(true);
-                }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
+                }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
                 instance.log("#############################################");
                 instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
