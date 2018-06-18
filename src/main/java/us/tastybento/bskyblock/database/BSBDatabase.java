@@ -61,6 +61,7 @@ public class BSBDatabase<T> {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | ClassNotFoundException | IntrospectionException e) {
             logger.severe(() -> "Could not load object from database! " + e.getMessage());
+            e.printStackTrace();
         }
         return result;
     }
