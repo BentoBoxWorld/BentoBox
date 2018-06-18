@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.util;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,7 +27,6 @@ import us.tastybento.bskyblock.api.user.User;
  */
 public class Util {
 
-    private static final DecimalFormat df = new DecimalFormat("#.###");
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
     private static String serverVersion = null;
@@ -89,7 +87,11 @@ public class Util {
         if (l == null || l.getWorld() == null) {
             return "";
         }
-        return l.getWorld().getName() + ":" + df.format(l.getX()) + ":" + df.format(l.getY()) + ":" + df.format(l.getZ()) + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
+        return l.getWorld().getName() + ":" + format(l.getX()) + ":" + format(l.getY()) + ":" + format(l.getZ()) + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
+    }
+
+    private static String format(double num) {
+        return String.valueOf(Math.round(num * 100D) / 100D);
     }
 
     /**
