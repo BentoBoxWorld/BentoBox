@@ -24,6 +24,9 @@ public class ItemParser {
     private ItemParser() {}
 
     public static ItemStack parse(String s){
+        if (s == null) {
+            return null;
+        }
         String[] part = s.split(":");
 
         // Material-specific handling
@@ -126,9 +129,13 @@ public class ItemParser {
 
     private static ItemStack banner(String[] part) {
         try {
+            if (part.length == 2) {
+                return new ItemStack(Material.BANNER, Integer.parseInt(part[1]));
+            }
             if (part.length > 3) {
                 int reqAmount = Integer.parseInt(part[1]);
 
+                @SuppressWarnings("deprecation")
                 ItemStack result = new ItemStack(Material.BANNER, reqAmount, (short) DyeColor.valueOf(part[2]).getDyeData());
 
                 BannerMeta meta = (BannerMeta) result.getItemMeta();
