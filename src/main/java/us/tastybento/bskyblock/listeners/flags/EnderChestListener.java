@@ -45,7 +45,7 @@ public class EnderChestListener extends AbstractFlagListener {
 
     private boolean checkEnderChest(Player player, Material type) {
         if (type.equals(Material.ENDER_CHEST)
-                && getIslandWorldManager().inWorld(player.getLocation())
+                && getIWM().inWorld(player.getLocation())
                 && !player.isOp()
                 && !player.hasPermission(getPlugin().getIWM().getPermissionPrefix(player.getWorld()) + ".craft.enderchest")
                 && !Flags.ENDER_CHEST.isSetForWorld(player.getWorld())) {

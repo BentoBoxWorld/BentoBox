@@ -93,7 +93,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
-        if (getIslandWorldManager().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
+        if (getIWM().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
             User user = User.getInstance((Player) e.getAttacker());
             // Get the island and if present, check the flag, react if required and return
             getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> {

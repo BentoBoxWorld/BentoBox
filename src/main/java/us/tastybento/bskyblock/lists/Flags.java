@@ -22,6 +22,7 @@ import us.tastybento.bskyblock.listeners.flags.FireListener;
 import us.tastybento.bskyblock.listeners.flags.HurtingListener;
 import us.tastybento.bskyblock.listeners.flags.InventoryListener;
 import us.tastybento.bskyblock.listeners.flags.InvincibleVisitorsListener;
+import us.tastybento.bskyblock.listeners.flags.IslandRespawnListener;
 import us.tastybento.bskyblock.listeners.flags.ItemDropPickUpListener;
 import us.tastybento.bskyblock.listeners.flags.LeashListener;
 import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
@@ -167,6 +168,8 @@ public class Flags {
             .listener(ilv).onClick(ilv).subPanel(true).build();
     public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
             .listener(new RemoveMobsListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("REMOVE_MOBS")).build();
+    public static final Flag ISLAND_RESPAWN = new FlagBuilder().id("ISLAND_RESPAWN").icon(Material.TORCH).type(Type.WORLD_SETTING)
+            .listener(new IslandRespawnListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("ISLAND_RESPAWN")).build();
 
     /**
      * @return List of all the flags in this class

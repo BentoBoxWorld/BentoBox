@@ -374,6 +374,11 @@ protection:
           &asettings.
       name: "Invincible Visitors"
       visitors-protected: "&cVisitors protected"
+    ISLAND_RESPAWN:
+      description: |
+        &aPlayers respawn
+        &aon island
+      name: "Island respawn"
     ITEM_DROP: 
       description: "Toggle dropping"
       name: "Item drop"

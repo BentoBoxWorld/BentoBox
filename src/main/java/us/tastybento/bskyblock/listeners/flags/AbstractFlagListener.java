@@ -192,7 +192,7 @@ public abstract class AbstractFlagListener implements Listener {
      * Get the island world manager
      * @return Island World Manager
      */
-    protected IslandWorldManager getIslandWorldManager() {
+    protected IslandWorldManager getIWM() {
         return plugin.getIWM();
     }
 }
