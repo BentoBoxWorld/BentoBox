@@ -8,6 +8,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -377,6 +378,7 @@ public class Island implements DataObject {
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
+        Bukkit.getLogger().info("DEBUG: minX = " + minX + " range = " + range + " minZ = " + minZ);
         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
 
@@ -651,15 +653,20 @@ public class Island implements DataObject {
      */
     public boolean showInfo(BSkyBlock plugin, User user) {
         user.sendMessage("commands.admin.info.title");
-        user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
-        Date d = new Date(plugin.getServer().getOfflinePlayer(owner).getLastPlayed());
-        user.sendMessage("commands.admin.info.last-login","[date]", d.toString());
-        user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(owner)));
-        String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
-        String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
-        user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-        // Show team members
-        showMembers(plugin, user);
+        if (owner == null) {
+            user.sendMessage("commands.admin.info.unowned");
+        } else {
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
+            Date d = new Date(plugin.getServer().getOfflinePlayer(owner).getLastPlayed());
+            user.sendMessage("commands.admin.info.last-login","[date]", d.toString());
+
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
+            String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(plugin, user);
+        }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
         Vector from = center.toVector().subtract(new Vector(range, 0, range)).setY(0);

@@ -653,6 +653,7 @@ public class IslandsManager {
      */
     public void removePlayer(World world, User user) {
         islandCache.removePlayer(world, user.getUniqueId());
+        save(true);
     }
 
     /**
@@ -662,6 +663,7 @@ public class IslandsManager {
      */
     public void removePlayer(World world, UUID uuid) {
         islandCache.removePlayer(world, uuid);
+        save(true);
     }
 
     /**

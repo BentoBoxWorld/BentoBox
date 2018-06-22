@@ -7,10 +7,12 @@ import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.admin.AdminGetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminInfoCommand;
+import us.tastybento.bskyblock.commands.admin.AdminRegisterCommand;
 import us.tastybento.bskyblock.commands.admin.AdminReloadCommand;
 import us.tastybento.bskyblock.commands.admin.AdminSchemCommand;
 import us.tastybento.bskyblock.commands.admin.AdminSetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminTeleportCommand;
+import us.tastybento.bskyblock.commands.admin.AdminUnregisterCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
 import us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand;
 import us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand;
@@ -46,6 +48,9 @@ public class AdminCommand extends CompositeCommand {
         new AdminTeamMakeLeaderCommand(this);
         // Schems
         new AdminSchemCommand(this);
+        // Register/unregister islands
+        new AdminRegisterCommand(this);
+        new AdminUnregisterCommand(this);
     }
 
     @Override

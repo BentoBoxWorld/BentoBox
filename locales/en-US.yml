@@ -50,6 +50,7 @@ commands:
     description: "help command"
   admin:
     help:
+      parameters: ""
       description: "admin command"
     team:
       add:
@@ -71,15 +72,15 @@ commands:
         parameters: "<player>"
         description: "make player the team's leader"
         already-leader: "&cPlayer is already the leader!"
-      register:
-        parameters: "<player>"
-        description: "register player to unowned island you are on"
-        registered-island: "&aRegistered player to island at [xyz]."
-        already-owned: "&cIsland is already owned by another player!"
-      unregister:
-        parameters: "<owner>"
-        description: "unregister owner from island, but keep island blocks"
-        unregistered-island: "&aUnregistered player from island at [xyz]."
+    register:
+      parameters: "<player>"
+      description: "register player to unowned island you are on"
+      registered-island: "&aRegistered player to island at [xyz]."
+      already-owned: "&cIsland is already owned by another player!"
+    unregister:
+      parameters: "<owner>"
+      description: "unregister owner from island, but keep island blocks"
+      unregistered-island: "&aUnregistered player from island at [xyz]."
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"

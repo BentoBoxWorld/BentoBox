@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -167,19 +168,24 @@ public class IslandCache {
      * @param uuid - player's UUID
      */
     public void removePlayer(World world, UUID uuid) {
-        islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
-        Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
+        Bukkit.getLogger().info("DEBUG: removing " + uuid + " in " + world.getName());
+        world = Util.getWorld(world);
+        islandsByUUID.putIfAbsent(world, new HashMap<>());
+        Island island = islandsByUUID.get(world).get(uuid);
         if (island != null) {
+            Bukkit.getLogger().info("DEBUG: island found");
             if (island.getOwner() != null && island.getOwner().equals(uuid)) {
+                Bukkit.getLogger().info("DEBUG: owner is not null and uuid is owner");
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);
             } else {
+                Bukkit.getLogger().info("DEBUG: owner is not uuid - just remove member");
                 // Remove player from the island membership
                 island.removeMember(uuid);
             }
         }
-        islandsByUUID.get(Util.getWorld(world)).remove(uuid);
+        islandsByUUID.get(world).remove(uuid);
     }
 
     /**

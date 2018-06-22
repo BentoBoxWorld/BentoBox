@@ -44,6 +44,9 @@ public class AdminRegisterCommand extends CompositeCommand {
             user.sendMessage("commands.admin.register.cannot-register-team-player");
             return false;
         }
+        getIslands().getIslandAt(user.getLocation()).ifPresent(i -> getPlugin().log("DEBUG: island at this location is " + i.getCenter()));
+        
+        
         // Check if island is owned
         Optional<Island> island = getIslands().getIslandAt(user.getLocation());
         if (island.map(i -> i.getOwner() != null).orElse(false)) {
@@ -58,5 +61,6 @@ public class AdminRegisterCommand extends CompositeCommand {
             user.sendMessage("general.success");
             return true;
         }).orElse(false); // Island does not exist
+
     }
 }
