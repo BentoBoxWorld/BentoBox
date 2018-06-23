@@ -122,24 +122,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param aliases - aliases
      */
     public CompositeCommand(Addon addon, String label, String... aliases) {
-        super(label);
-        this.topLabel = label;
+        this(label, aliases);
         this.addon = addon;
-        this.plugin = BSkyBlock.getInstance();
-        setAliases(new ArrayList<>(Arrays.asList(aliases)));
-        parent = null;
-        setUsage("");
-        subCommandLevel = 0; // Top level
-        subCommands = new LinkedHashMap<>();
-        subCommandAliases = new LinkedHashMap<>();
-        // Register command if it is not already registered
-        if (plugin.getCommand(label) == null) {
-            plugin.getCommandsManager().registerCommand(this);
-        }
-        setup();
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
-            new DefaultHelpCommand(this);
-        }
     }
 
     /**
