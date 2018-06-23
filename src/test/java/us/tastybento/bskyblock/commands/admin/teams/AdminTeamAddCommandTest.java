@@ -221,7 +221,7 @@ public class AdminTeamAddCommandTest {
         
         assertFalse(itl.execute(user, Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-leader", "[name]", "tastybento");
-        Mockito.verify(island).showMembers(Mockito.eq(plugin), Mockito.any());
+        Mockito.verify(island).showMembers(Mockito.eq(plugin), Mockito.any(), Mockito.any());
     }
     
     /**

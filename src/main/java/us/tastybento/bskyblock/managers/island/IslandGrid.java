@@ -1,9 +1,6 @@
 package us.tastybento.bskyblock.managers.island;
 
 import java.util.Map.Entry;
-
-import org.bukkit.Bukkit;
-
 import java.util.TreeMap;
 
 import us.tastybento.bskyblock.database.objects.Island;
@@ -72,17 +69,13 @@ public class IslandGrid {
      * @return Island or null
      */
     public Island getIslandAt(int x, int z) {
-        Bukkit.getLogger().info("DEBUG: x and z = " + x + " " + z);
         Entry<Integer, TreeMap<Integer, Island>> en = grid.floorEntry(x);
         if (en != null) {
             Entry<Integer, Island> ent = en.getValue().floorEntry(z);
             if (ent != null) {
-                Bukkit.getLogger().info("DEBUG: found island");
                 // Check if in the island range
                 Island island = ent.getValue();
-                Bukkit.getLogger().info("DEBUG: island center = " + island.getCenter());
                 if (island.inIslandSpace(x, z)) {
-                    Bukkit.getLogger().info("DEBUG: in island space");
                     return island;
                 }
             }

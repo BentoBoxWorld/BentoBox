@@ -8,18 +8,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-
-import com.google.common.collect.BiMap;
-import com.google.common.collect.HashBiMap;
 
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
 public class IslandCache {
-    private BiMap<Location, Island> islandsByLocation;
+    private Map<Location, Island> islandsByLocation;
     /**
      * Every player who is associated with an island is in this map.
      */
@@ -27,7 +23,7 @@ public class IslandCache {
     private Map<World, IslandGrid> grids;
 
     public IslandCache() {
-        islandsByLocation = HashBiMap.create();
+        islandsByLocation = new HashMap<>();
         islandsByUUID = new HashMap<>();
         grids = new HashMap<>();
     }
@@ -38,10 +34,17 @@ public class IslandCache {
      * @return true if successfully added, false if not
      */
     public boolean addIsland(Island island) {
-        islandsByLocation.put(island.getCenter(), island);       
+        if (island.getCenter() == null || island.getWorld() == null) {
+            return false;
+        }
+        islandsByLocation.put(island.getCenter(), island);
+        // Make world       
         islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
-        islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
-        island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
+        // Only add islands to this map if they are owned
+        if (island.getOwner() != null) {
+            islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
+            island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
+        }
         return addToGrid(island);
     }
 
@@ -117,7 +120,7 @@ public class IslandCache {
         }
         return grids.get(Util.getWorld(location.getWorld())).getIslandAt(location.getBlockX(), location.getBlockZ());
     }
-    
+
     public Collection<Island> getIslands() {
         return Collections.unmodifiableCollection(islandsByLocation.values());
     }
@@ -168,19 +171,16 @@ public class IslandCache {
      * @param uuid - player's UUID
      */
     public void removePlayer(World world, UUID uuid) {
-        Bukkit.getLogger().info("DEBUG: removing " + uuid + " in " + world.getName());
         world = Util.getWorld(world);
         islandsByUUID.putIfAbsent(world, new HashMap<>());
         Island island = islandsByUUID.get(world).get(uuid);
         if (island != null) {
-            Bukkit.getLogger().info("DEBUG: island found");
             if (island.getOwner() != null && island.getOwner().equals(uuid)) {
-                Bukkit.getLogger().info("DEBUG: owner is not null and uuid is owner");
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);
+                //islandsByLocation.put(island.getCenter(), island);
             } else {
-                Bukkit.getLogger().info("DEBUG: owner is not uuid - just remove member");
                 // Remove player from the island membership
                 island.removeMember(uuid);
             }
@@ -207,5 +207,5 @@ public class IslandCache {
         islandsByUUID.get(Util.getWorld(island.getWorld())).put(newOwnerUUID, island);
         islandsByLocation.put(island.getCenter(), island);        
     }
-    
+
 }

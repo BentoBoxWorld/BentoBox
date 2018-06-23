@@ -175,7 +175,7 @@ public class AdminInfoCommandTest {
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(is);
         assertTrue(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(is).showInfo(Mockito.eq(plugin), Mockito.eq(user));
+        Mockito.verify(is).showInfo(Mockito.eq(plugin), Mockito.eq(user), Mockito.any());
     }
    
     /**
@@ -204,7 +204,7 @@ public class AdminInfoCommandTest {
         // Island has owner
         Island is = mock(Island.class);
         when(is.getOwner()).thenReturn(uuid);
-        when(is.showInfo(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(is.showInfo(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(true);
         Optional<Island> opi = Optional.of(is);
         when(im.getIslandAt(Mockito.any())).thenReturn(opi);
         when(user.getLocation()).thenReturn(loc);
@@ -212,6 +212,6 @@ public class AdminInfoCommandTest {
         
         assertTrue(itl.execute(user, new ArrayList<>()));
         // Confirm other verifications
-        Mockito.verify(is).showInfo(Mockito.eq(plugin), Mockito.eq(user));
+        Mockito.verify(is).showInfo(Mockito.eq(plugin), Mockito.eq(user), Mockito.any());
     }
 }

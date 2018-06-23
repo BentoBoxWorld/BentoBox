@@ -1,8 +1,12 @@
 package us.tastybento.bskyblock.commands.admin;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -43,9 +47,7 @@ public class AdminRegisterCommand extends CompositeCommand {
         if (getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("commands.admin.register.cannot-register-team-player");
             return false;
-        }
-        getIslands().getIslandAt(user.getLocation()).ifPresent(i -> getPlugin().log("DEBUG: island at this location is " + i.getCenter()));
-        
+        }        
         
         // Check if island is owned
         Optional<Island> island = getIslands().getIslandAt(user.getLocation());
@@ -54,13 +56,51 @@ public class AdminRegisterCommand extends CompositeCommand {
             return false;
         }
         // Register island if it exists
-        return island.map(i -> {
+        if (!island.map(i -> {
             // Island exists
             getIslands().makeLeader(user, targetUUID, i, getPermissionPrefix());
             user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
             user.sendMessage("general.success");
             return true;
-        }).orElse(false); // Island does not exist
-
+        }).orElse(false)) {
+            // Island does not exist
+            user.sendMessage("commands.admin.register.no-island-here");
+            this.askConfirmation(user, () -> {
+                // Make island here                
+                Island i = getIslands().createIsland(getClosestIsland(user.getLocation()), targetUUID);
+                getIslands().makeLeader(user, targetUUID, i, getPermissionPrefix());
+                getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
+                user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
+                user.sendMessage("general.success");
+            });
+            return false;
+        }
+        return true;
     }
+    
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        if (args.isEmpty()) {
+            // Don't show every player on the server. Require at least the first letter
+            return Optional.empty();
+        }
+        List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
+        return Optional.of(Util.tabLimit(options, lastArg));
+    }
+    
+    /**
+     * This returns the coordinate of where an island should be on the grid.
+     *
+     * @param location
+     * @return Location of where an island should be on a grid in this world
+     */
+    public Location getClosestIsland(Location location) {
+        int dist = getIWM().getIslandDistance(getWorld()) * 2;
+        long x = Math.round((double) location.getBlockX() / dist) * dist + getIWM().getIslandXOffset(getWorld());
+        long z = Math.round((double) location.getBlockZ() / dist) * dist + getIWM().getIslandZOffset(getWorld());
+        long y = getIWM().getIslandHeight(getWorld());
+        return new Location(location.getWorld(), x, y, z);
+    }
+
 }

@@ -8,7 +8,6 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -110,7 +109,8 @@ public class Island implements DataObject {
         createdDate = System.currentTimeMillis();
         updatedDate = System.currentTimeMillis();
         world = location.getWorld();
-        center = location;
+        // Make a copy of the location
+        center = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
         range = BSkyBlock.getInstance().getIWM().getIslandDistance(world);
         minX = center.getBlockX() - range;
         minZ = center.getBlockZ() - range;
@@ -378,7 +378,6 @@ public class Island implements DataObject {
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
-        Bukkit.getLogger().info("DEBUG: minX = " + minX + " range = " + range + " minZ = " + minZ);
         return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
     }
 
@@ -649,9 +648,10 @@ public class Island implements DataObject {
      * Show info on the island
      * @param plugin - plugin
      * @param user - the user who is receiving the info
+     * @param world 
      * @return true always
      */
-    public boolean showInfo(BSkyBlock plugin, User user) {
+    public boolean showInfo(BSkyBlock plugin, User user, World world) {
         user.sendMessage("commands.admin.info.title");
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
@@ -665,7 +665,7 @@ public class Island implements DataObject {
             String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
             user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
             // Show team members
-            showMembers(plugin, user);
+            showMembers(plugin, user, world);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -691,9 +691,10 @@ public class Island implements DataObject {
      * Shows the members of this island
      * @param plugin - plugin
      * @param user - user who is requesting
+     * @param world 
      */
-    public void showMembers(BSkyBlock plugin, User user) {
-        if (plugin.getIslands().inTeam(user.getWorld(), user.getUniqueId())) {
+    public void showMembers(BSkyBlock plugin, User user, World world) {
+        if (plugin.getIslands().inTeam(world, user.getUniqueId())) {
             user.sendMessage("commands.admin.info.team-members-title");
             members.forEach((u, i) -> {
                 if (owner.equals(u)) {

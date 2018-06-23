@@ -77,6 +77,7 @@ commands:
       description: "register player to unowned island you are on"
       registered-island: "&aRegistered player to island at [xyz]."
       already-owned: "&cIsland is already owned by another player!"
+      no-island-here: "&cThere is no island here. Confirm to make one."
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"
@@ -100,6 +101,7 @@ commands:
       is-spawn: "Island is a spawn island"
       banned-players: "Banned players:"
       banned-format: "&c[name]"
+      unowned: "&cUnonwed"
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:

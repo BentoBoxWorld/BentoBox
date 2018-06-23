@@ -710,7 +710,7 @@ public class IslandsManager {
                     }
                 }
             };
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, save);
         } else {
             for(Island island : collection){
                 try {

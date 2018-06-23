@@ -159,6 +159,9 @@ public class IslandsManagerTest {
         
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
+        
+        // Scheduler
+        when(Bukkit.getScheduler()).thenReturn(mock(BukkitScheduler.class));
     }
 
 
@@ -426,7 +429,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location);
         assertNotNull(island);
-        assertEquals(island.getCenter(), location);
+        assertEquals(island.getCenter().getWorld(), location.getWorld());
     }
 
     /**
@@ -438,7 +441,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location, owner);
         assertNotNull(island);
-        assertEquals(location, island.getCenter());
+        assertEquals(island.getCenter().getWorld(), location.getWorld());
         assertEquals(owner, island.getOwner());
     }
 
@@ -517,7 +520,7 @@ public class IslandsManagerTest {
     public void testGetIslandLocation() {
         IslandsManager im = new IslandsManager(plugin);
         im.createIsland(location, uuid);
-        assertEquals(location, im.getIslandLocation(world, uuid));
+        assertEquals(world, im.getIslandLocation(world, uuid).getWorld());
         assertNull(im.getIslandLocation(world, UUID.randomUUID()));
     }
 

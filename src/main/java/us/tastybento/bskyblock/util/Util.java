@@ -6,6 +6,8 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -151,13 +153,12 @@ public class Util {
      * @return a list of online players this player can see
      */
     public static List<String> getOnlinePlayerList(User user) {
-        final List<String> returned = new ArrayList<>();
-        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            if (user == null || user.getPlayer().canSee(p)) {
-                returned.add(p.getName());
-            }
+        if (user == null || !user.isPlayer()) {
+            // Console and null get to see every player
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         }
-        return returned;
+        // Otherwise prevent invisible players from seeing
+        return Bukkit.getOnlinePlayers().stream().filter(p -> user.getPlayer().canSee(p)).map(Player::getName).collect(Collectors.toList());
     }
 
     /**
