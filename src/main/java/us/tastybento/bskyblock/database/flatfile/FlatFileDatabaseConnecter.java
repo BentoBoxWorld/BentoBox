@@ -98,9 +98,10 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
             File tmpFile = File.createTempFile("yaml", null, tableFolder);
             yamlConfig.save(tmpFile);
             if (tmpFile.exists()) {
-                Files.move(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                Files.copy(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.delete(tmpFile.toPath());
             } else {
-                throw new Exception();
+                throw new IOException();
             }
         } catch (Exception e) {
             plugin.logError("Could not save yaml file: " + tableName + " " + fileName + " " + e.getMessage());
