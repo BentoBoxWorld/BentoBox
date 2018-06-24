@@ -23,17 +23,6 @@ import us.tastybento.bskyblock.lists.Flags;
  */
 public class RemoveMobsListener extends AbstractFlagListener {
 
-    private static Set<EntityType> keepers;
-
-    public RemoveMobsListener() {
-        keepers  = new HashSet<>();
-        keepers.add(EntityType.ZOMBIE_VILLAGER);
-        keepers.add(EntityType.PIG_ZOMBIE);
-        keepers.add(EntityType.WITHER);
-        keepers.add(EntityType.ENDERMAN);
-        keepers.add(EntityType.GHAST);
-    }
-
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onUserTeleport(PlayerTeleportEvent e) {
         // Only process if flag is active
@@ -43,6 +32,13 @@ public class RemoveMobsListener extends AbstractFlagListener {
     }
 
     public static void clearArea(Location loc) {
+        Set<EntityType> keepers = new HashSet<>();
+        keepers.add(EntityType.ZOMBIE_VILLAGER);
+        keepers.add(EntityType.PIG_ZOMBIE);
+        keepers.add(EntityType.WITHER);
+        keepers.add(EntityType.ENDERMAN);
+        keepers.add(EntityType.GHAST);
+
         loc.getWorld().getNearbyEntities(loc, 5D, 5D, 5D).stream()
         .filter(en -> (en instanceof Monster))
         .filter(en -> !keepers.contains(en.getType()))

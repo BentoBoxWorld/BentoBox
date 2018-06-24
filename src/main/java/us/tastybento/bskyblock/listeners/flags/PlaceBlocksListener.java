@@ -65,14 +65,14 @@ public class PlaceBlocksListener extends AbstractFlagListener {
             return;
         default:
             // Check in-hand items
-            if (e.getMaterial() != null) {
-                // This check protects against an exploit in 1.7.9 against cactus
-                // and sugar cane and placing boats on non-liquids
-                if (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST
-                        || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR
-                        || (e.getMaterial().name().contains("BOAT") && !e.getClickedBlock().isLiquid())) {
-                    checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
-                }
+            // This check protects against an exploit in 1.7.9 against cactus
+            // and sugar cane and placing boats on non-liquids
+            if (e.getMaterial() != null
+            && (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial().equals(Material.WOOD_DOOR)
+                    || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)
+                    || e.getMaterial().equals(Material.IRON_DOOR) || (e.getMaterial().name().contains("BOAT")
+                            && !e.getClickedBlock().isLiquid()))) {
+                checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
             }
         }
     }

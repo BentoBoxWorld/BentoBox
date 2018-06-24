@@ -39,6 +39,9 @@ import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickLi
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flags {
+
+    private Flags() {}
+
     // Disabled setting 'rank'
     private static final int DISABLED = -1;
 

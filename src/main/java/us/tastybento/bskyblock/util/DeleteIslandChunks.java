@@ -8,8 +8,6 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.database.objects.Island;
 
-//import com.wasteofplastic.askyblock.nms.NMSAbstraction;
-
 /**
  * Deletes islands fast using chunk regeneration
  *
