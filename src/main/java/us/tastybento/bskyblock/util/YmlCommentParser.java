@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
+
 /**
  * A very simplistic yml parser, that only do the following:
  * <ol>
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
  * </ol>
  */
 public class YmlCommentParser {
-    private static final Logger log = Logger.getLogger(YmlCommentParser.class.getName());
+    private static final Logger log = Bukkit.getLogger();
     private static final Pattern SECTION_PATTERN = Pattern.compile("^(?<indent>\\s*)(?<name>[^ \\-][^:]*):(?<value>[^#]*)?(?<comment>#.*)?");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("^(?<indent>\\s*)(?<comment>#.*)");
     private Map<String, String> commentMap = new HashMap<>();

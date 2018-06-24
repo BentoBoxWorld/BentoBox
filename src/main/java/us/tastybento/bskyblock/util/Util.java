@@ -33,6 +33,8 @@ public class Util {
     private static String serverVersion = null;
     private static BSkyBlock plugin = BSkyBlock.getInstance();
 
+    private Util() {}
+
     public static void setPlugin(BSkyBlock p) {
         plugin = p;
     }
