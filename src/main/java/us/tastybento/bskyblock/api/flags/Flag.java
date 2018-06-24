@@ -34,6 +34,8 @@ public class Flag implements Comparable<Flag> {
         }
     }
 
+    private static final String PROTECTION_FLAGS = "protection.flags.";
+
     private final String id;
     private final Material icon;
     private final Listener listener;
@@ -43,11 +45,10 @@ public class Flag implements Comparable<Flag> {
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
 
-    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
+    Flag(String id, Material icon, Listener listener, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
-        this.setting = defaultSetting;
         this.type = type;
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
@@ -165,15 +166,15 @@ public class Flag implements Comparable<Flag> {
     }
 
     public String getNameReference() {
-        return "protection.flags." + this.id + ".name";
+        return PROTECTION_FLAGS + this.id + ".name";
     }
 
     public String getDescriptionReference() {
-        return "protection.flags." + this.id + ".description";
+        return PROTECTION_FLAGS + this.id + ".description";
     }
 
     public String getHintReference() {
-        return "protection.flags." + this.id + ".hint";
+        return PROTECTION_FLAGS + this.id + ".hint";
     }
 
     /**
@@ -246,6 +247,4 @@ public class Flag implements Comparable<Flag> {
     public int compareTo(Flag o) {
         return getID().compareTo(o.getID());
     }
-
-
 }

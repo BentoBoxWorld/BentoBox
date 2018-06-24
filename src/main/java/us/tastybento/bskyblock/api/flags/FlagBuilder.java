@@ -44,7 +44,9 @@ public class FlagBuilder {
     }
 
     public Flag build() {
-        return new Flag(id, icon, listener, setting, type, defaultRank, onClick, subPanel);
+        Flag f = new Flag(id, icon, listener, type, defaultRank, onClick, subPanel);
+        f.setDefaultSetting(setting);
+        return f;
     }
 
     /**

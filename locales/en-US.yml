@@ -275,65 +275,83 @@ protection:
   flags:
     ANIMAL_SPAWN: 
       description: "Toggle spawning"
-      name: "Animal spawning" 
+      name: "Animal spawning"
     ANVIL: 
       description: "Toggle interaction"
       name: Anvils
+      hint: "Anvil use disabled"
     ARMOR_STAND: 
       description: "Toggle interaction"
       name: "Armor stands"
+      hint: "Armor stand use disabled"
     BEACON: 
       description: "Toggle interaction"
       name: Beacons
+      hint: "Beacon use disabled"
     BED: 
       description: "Toggle interaction"
       name: Beds
+      hint: "Bed use disabled"
     BREAK_BLOCKS: 
       description: "Toggle breaking"
       name: "Break blocks"
+      hint: "Block breaking disabled"
     BREEDING: 
       description: "Toggle breeding"
       name: "Breed animals"
+      hint: "Animal breeding protected"
     BREWING: 
       description: "Toggle interaction"
       name: "Brewing stands"
+      hint: "No brewing allowed"
     BUCKET: 
       description: "Toggle interaction"
       name: Buckets
+      hint: "No bucket use allowed"
     CHEST: 
       description: "Toggle chest access"
       name: Chests
+      hint: "Chest access disabled"
     CHORUS_FRUIT: 
       description: "Toggle teleportation"
       name: "Chorus fruits"
+      hint: "No teleporting"
     COLLECT_LAVA: 
       description: |
           Toggle collecting lava
           (override Buckets)
       name: "Collect lava"
+      hint: "No lava collection"
     COLLECT_WATER: 
       description: |
           Toggle collecting water
           (override Buckets)
       name: "Collect water"
+      hint: "No water collection"
     CRAFTING: 
       description: "Toggle use"
       name: Workbenches
+      hint: "No workbench use"
     CROP_TRAMPLE: 
       description: "Toggle crop trampling"
       name: "Trample crops"
+      hint: "Crops are protected"
     DOOR: 
       description: "Toggle door usage"
       name: "Use doors"
+      hint: "No door use"
     EGGS: 
       description: "Toggle egg throwing"
       name: "Egg throwing"
+      hint: "No egg throwing"
     ELYTRA: 
       description: "Toggle use on island"
-      name: "Elytras"
+      name: "Elytra"
+      hint: "No elytra flying allowed"
     ENCHANTING: 
       description: "Toggle use"
       name: "Enchanting table"
+      hint: "No table use"
     ENDER_CHEST:
       description: "Toggle use/crafting"
       name: "Ender Chests"
@@ -341,6 +359,7 @@ protection:
     ENDER_PEARL: 
       description: "Toggle use"
       name: "EnderPearls"
+      hint: "No enderpearl use"
     ENTER_EXIT_MESSAGES: 
       description: "Display entry and exit messages"
       island: "[name]'s island"
@@ -350,27 +369,35 @@ protection:
     FIRE: 
       description: "Allow fire to exist or not"
       name: Fire
+      hint: "No fire allowed"
     FIRE_EXTINGUISH: 
       description: "Toggle extinguishing"
       name: "Fire extinguish"
+      hint: "No fire extinguishing allowed"
     FIRE_SPREAD: 
       description: "Toggle spread"
       name: "Fire spread"
+      hint: "No fire spread allowed"
     FURNACE: 
       description: "Toggle use"
       name: Furnace
+      hint: "No furnace use"
     GATE: 
       description: "Toggle use"
       name: Gates
+      hint: "No gate use"
     HURT_ANIMALS: 
       description: "Toggle hurting"
       name: "Hurt animals"
+      hint: "No animal hurting allowed"
     HURT_MONSTERS: 
       description: "Toggle hurting"
       name: "Hurt monsters"
+      hint: "No monster hurting"
     HURT_VILLAGERS: 
       description: "Toggle hurting"
       name: "Hurt villagers"
+      hint: "No villager hurting"
     INVINCIBLE_VISITORS: 
       description: |
           &aConfigure invincible visitor
@@ -385,21 +412,25 @@ protection:
     ITEM_DROP: 
       description: "Toggle dropping"
       name: "Item drop"
+      hint: "Items cannot be dropped"
     ITEM_PICKUP: 
       description: "Toggle pickup"
       name: "Item pickup"
+      hint: "Items cannot be picked up"
     LEASH: 
       description: "Toggle use"
       name: "Leash use"
     LEVER_BUTTON:
       description: "Toggle use"
       name: "Leaver or button use"
+      hint: "No leash use"
     LOCK: 
       description: "Toggle lock"
       name: "Lock island"
     MILKING: 
       description: "Toggle cow milking"
       name: Milking
+      hint: "No milking allowed"
     MONSTER_SPAWN: 
       description: "Toggle spawning"
       name: "Monster spawning"
@@ -408,9 +439,11 @@ protection:
         &aToggle access
         &ato mount inventory
       name: "Mount inventory"
+      hint: "No access to mount inventory"
     MUSIC: 
       description: "Toggle access"
       name: Music
+      hint: "No jukebox use"
     PISTON_PUSH: 
       description: |
           &aAllow pistons to push
@@ -419,34 +452,42 @@ protection:
     PLACE_BLOCKS: 
       description: "Toggle placing"
       name: "Place blocks"
+      hint: "Not allowed to place blocks"
     PORTAL: 
       description: "Toggle use"
       name: Portal
+      hint: "Portal use is disallowed"
     PRESSURE_PLATE: 
       description: "Toggle usage"
       name: "Pressure Plates"
+      hint: "No pressure plate use"
     PVP_END: 
       description: |
           &cEnable/Disable PVP
           &cin the End.
       name: "End PVP"
+      hint: "No PVP allowed in the End"
     PVP_NETHER: 
       description: |
           &cEnable/Disable PVP
           &cin nether.
       name: "Nether PVP"
+      hint: "No PVP allowed in the Nether"
     PVP_OVERWORLD: 
       description: |
           &cEnable/Disable PVP
           &con island.
       name: "Overworld PVP"
       pvp-not-allowed: "&cPVP is not allowed"
+      hint: "No PVP allowed in this world"
     REDSTONE: 
       description: "Toggle use"
       name: "Redstone items"
+      hint: "No redstone item use"
     RIDING: 
       description: "Toggle riding"
       name: "Animal riding"
+      hint: "No animal riding allowed"
     REMOVE_MOBS: 
       description: |
         &aRemove monsters when
@@ -455,15 +496,19 @@ protection:
     SHEARING: 
       description: "Toggle sheering"
       name: Shearing
+      hint: "No shearing"
     SPAWN_EGGS: 
       description: "Toggle use"
       name: "Spawn eggs"
+      hint: "No throwing spawn eggs"
     TRADING: 
       description: "Toggle trading"
       name: "Village trading"
+      hint: "No villager trading"
     TRAPDOOR:
       description: "Toggle access"
       name: "Trap doors"
+      hint: "No trapdoor use"
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
 

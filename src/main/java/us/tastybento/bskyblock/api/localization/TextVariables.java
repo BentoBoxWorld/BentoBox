@@ -5,6 +5,8 @@ package us.tastybento.bskyblock.api.localization;
  * @author Poslovitch
  */
 public class TextVariables {
+    
+    TextVariables() {}
 
     public static final String NAME = "[name]";
     public static final String DESCRIPTION = "[description]";
