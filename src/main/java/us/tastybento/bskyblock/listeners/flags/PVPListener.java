@@ -45,9 +45,9 @@ public class PVPListener extends AbstractFlagListener {
             // Protect visitors
             if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor((Player)e.getEntity())) {
                 if (e.getDamager() instanceof Player) {
-                    User.getInstance(e.getDamager()).sendMessage("protection.flags.INVINCIBLE_VISITORS.visitors-protected");
+                    User.getInstance(e.getDamager()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
                 } else if (e.getDamager() instanceof Projectile && ((Projectile)e.getDamager()).getShooter() instanceof Player) {
-                    User.getInstance((Player)((Projectile)e.getDamager()).getShooter()).sendMessage("protection.flags.INVINCIBLE_VISITORS.visitors-protected");
+                    User.getInstance((Player)((Projectile)e.getDamager()).getShooter()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
                 }
                 e.setCancelled(true);
             } else {
@@ -68,7 +68,7 @@ public class PVPListener extends AbstractFlagListener {
         if (damager instanceof Player) {
             User user = User.getInstance(damager);
             if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
-                user.sendMessage("protection.flags.PVP_OVERWORLD.pvp-not-allowed");
+                user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
                 e.setCancelled(true);
             }
         } else if (damager instanceof Projectile) {
@@ -79,7 +79,7 @@ public class PVPListener extends AbstractFlagListener {
                 if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     damager.remove();
-                    user.sendMessage("protection.flags.PVP_OVERWORLD.pvp-not-allowed");
+                    user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
                     e.setCancelled(true);
                 }
             }
@@ -91,11 +91,11 @@ public class PVPListener extends AbstractFlagListener {
         if (e.getCaught() instanceof Player && getPlugin().getIWM().inWorld(e.getCaught().getLocation())) {
             // Protect visitors
             if (protectedVisitor((Player)e.getCaught())) {
-                User.getInstance(e.getPlayer()).sendMessage("protection.flags.INVINCIBLE_VISITORS.visitors-protected");
+                User.getInstance(e.getPlayer()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
                 e.setCancelled(true);
             } else if (!checkIsland(e, e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
                 e.getHook().remove();
-                User.getInstance(e.getPlayer()).sendMessage("protection.flags.PVP_OVERWORLD.pvp-not-allowed");
+                User.getInstance(e.getPlayer()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
                 e.setCancelled(true);
             }
         }
@@ -113,17 +113,17 @@ public class PVPListener extends AbstractFlagListener {
             e.setCancelled(e.getAffectedEntities().stream().anyMatch(le -> blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))));
         }
     }
-    
+
     private boolean blockPVP(User user, LivingEntity le, Event e, Flag flag) {
         if (le instanceof Player) {
             // Protect visitors
             if (protectedVisitor(le)) {
-                user.sendMessage("protection.flags.INVINCIBLE_VISITORS.visitors-protected");
+                user.sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
                 return true;
             }
             // Check if PVP is allowed or not
             if (!checkIsland(e, le.getLocation(), flag)) {
-                user.sendMessage("protection.flags.PVP_OVERWORLD.pvp-not-allowed");
+                user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
                 return true;
             }
         }
@@ -155,8 +155,14 @@ public class PVPListener extends AbstractFlagListener {
     }
 
     private Flag getFlag(World w) {
-        return w.getEnvironment().equals(World.Environment.NORMAL) ? Flags.PVP_OVERWORLD 
-                : w.getEnvironment().equals(World.Environment.NETHER) ? Flags.PVP_NETHER : Flags.PVP_END;
+        switch (w.getEnvironment()) {
+        case NETHER:
+            return Flags.PVP_NETHER;
+        case THE_END:
+            return Flags.PVP_END;
+        default:
+            return Flags.PVP_OVERWORLD;
+        }
     }
 
 }

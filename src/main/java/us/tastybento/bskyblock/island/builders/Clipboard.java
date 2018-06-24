@@ -53,10 +53,16 @@ public class Clipboard {
         NORTH,
         UP
     }
-    
+
     private static final String ATTACHED = "attached";
 
     private static final String BLOCK = "blocks";
+
+    private static final String FACING = "facing";
+
+    private static final String POWERED = "powered";
+
+    private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
 
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
@@ -185,7 +191,7 @@ public class Clipboard {
         // Block state
 
         if (s.getBoolean(ATTACHED) && m.toString().contains("TORCH")) {
-            TorchDir d = TorchDir.valueOf(s.getString("facing"));
+            TorchDir d = TorchDir.valueOf(s.getString(FACING));
 
             Block rel = block.getRelative(BlockFace.DOWN);
             Material rm = rel.getType();
@@ -203,7 +209,7 @@ public class Clipboard {
                 block.setData((byte)d.ordinal());
             }
             return;
-        } 
+        }
 
         block.setType(m);
 
@@ -217,21 +223,21 @@ public class Clipboard {
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
             Openable open = (Openable)md;
-            open.setOpen(s.getBoolean("open")); 
+            open.setOpen(s.getBoolean("open"));
         }
 
         if (md instanceof Directional) {
             Directional facing = (Directional)md;
-            facing.setFacingDirection(BlockFace.valueOf(s.getString("facing")));
+            facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
         }
 
         if (md instanceof Lever) {
             Lever r = (Lever)md;
-            r.setPowered(s.getBoolean("powered"));
+            r.setPowered(s.getBoolean(POWERED));
         }
         if (md instanceof Button) {
             Button r = (Button)md;
-            r.setPowered(s.getBoolean("powered"));
+            r.setPowered(s.getBoolean(POWERED));
         }
         // Block data
         if (bs instanceof Sign) {
@@ -249,7 +255,7 @@ public class Clipboard {
             int i = 0;
             ConfigurationSection pat = s.getConfigurationSection("pattern");
             if (pat != null) {
-                for (String pattern : pat.getKeys(false)) {    
+                for (String pattern : pat.getKeys(false)) {
                     banner.setPattern(i, new Pattern(DyeColor.valueOf(pat.getString(pattern))
                             , PatternType.valueOf(pattern)));
                     i++;
@@ -293,15 +299,15 @@ public class Clipboard {
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
             Openable open = (Openable)md;
-            s.set("open", open.isOpen()); 
+            s.set("open", open.isOpen());
         }
         if (md instanceof Directional) {
             Directional facing = (Directional)md;
-            s.set("facing", facing.getFacing().name()); 
+            s.set(FACING, facing.getFacing().name());
         }
         if (md instanceof Attachable) {
             Attachable facing = (Attachable)md;
-            s.set("facing", facing.getFacing().name());
+            s.set(FACING, facing.getFacing().name());
             s.set("attached-face", facing.getAttachedFace().name());
             s.set(ATTACHED, true);
         }
@@ -311,11 +317,11 @@ public class Clipboard {
         }
         if (block.getType().equals(Material.CARPET)) {
             DyeColor c = DyeColor.getByWoolData(block.getData());
-            s.set("color", c.name());  
+            s.set("color", c.name());
         }
         if (md instanceof Redstone) {
             Redstone r = (Redstone)md;
-            blockConfig.set("powered", r.isPowered());
+            blockConfig.set(POWERED, r.isPowered());
         }
 
         // Block data
@@ -407,20 +413,20 @@ public class Clipboard {
      * Load a file to clipboard
      * @param filename - filename in schems folder
      * @return
-     * @throws IOException 
-     * @throws InvalidConfigurationException 
+     * @throws IOException
+     * @throws InvalidConfigurationException
      */
     public void load(String fileName) throws IOException, InvalidConfigurationException {
-        File zipFile = new File(schemFolder, fileName + ".schem"); 
+        File zipFile = new File(schemFolder, fileName + ".schem");
         if (!zipFile.exists()) {
-            plugin.logError("Could not load schems file - does not exist : " + zipFile.getName());
-            throw new IOException("Could not load schems file - does not exist : " + zipFile.getName());
+            plugin.logError(LOAD_ERROR + zipFile.getName());
+            throw new IOException(LOAD_ERROR + zipFile.getName());
         }
         unzip(zipFile.getAbsolutePath());
         File file = new File(schemFolder, fileName);
         if (!file.exists()) {
-            plugin.logError("Could not load schems file - does not exist : " + file.getName());
-            throw new IOException("Could not load schems file - does not exist : " + file.getName());
+            plugin.logError(LOAD_ERROR + file.getName());
+            throw new IOException(LOAD_ERROR + file.getName());
         }
         blockConfig = new YamlConfiguration();
         blockConfig.load(file);
@@ -442,11 +448,11 @@ public class Clipboard {
         } catch (IOException e1) {
             user.sendMessage("commands.admin.schem.could-not-load");
             plugin.logError("Could not load schems file: " + fileName + " " + e1.getMessage());
-            return false; 
+            return false;
         } catch (InvalidConfigurationException e1) {
             user.sendMessage("commands.admin.schem.could-not-load");
             plugin.logError("Could not load schems file - YAML error : " + fileName + " " + e1.getMessage());
-            return false; 
+            return false;
         }
         user.sendMessage("general.success");
         return true;
@@ -459,7 +465,7 @@ public class Clipboard {
      * @return - true if successful, false if error
      */
     public boolean save(User user, String string) {
-        File file = new File(schemFolder, string); 
+        File file = new File(schemFolder, string);
         try {
             getBlockConfig().save(file);
         } catch (IOException e) {

@@ -403,7 +403,7 @@ protection:
           &aConfigure invincible visitor
           &asettings.
       name: "Invincible Visitors"
-      visitors-protected: "&cVisitors protected"
+      hint: "&cVisitors protected"
     ISLAND_RESPAWN:
       description: |
         &aPlayers respawn
@@ -478,8 +478,7 @@ protection:
           &cEnable/Disable PVP
           &con island.
       name: "Overworld PVP"
-      pvp-not-allowed: "&cPVP is not allowed"
-      hint: "No PVP allowed in this world"
+      hint: "&cPVP is not allowed"
     REDSTONE: 
       description: "Toggle use"
       name: "Redstone items"
