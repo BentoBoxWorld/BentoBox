@@ -14,7 +14,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 
 public class IslandTeamInviteAcceptCommand extends CompositeCommand {
-    
+
     private IslandTeamCommand itc;
 
     public IslandTeamInviteAcceptCommand(IslandTeamCommand islandTeamCommand) {
@@ -89,7 +89,7 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
             getPlayers().setDeaths(playerUUID, 0);
         }
         // Put player back into normal mode
-        user.setGameMode(GameMode.SURVIVAL);
+        user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 
         user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
         User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));

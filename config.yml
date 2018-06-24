@@ -131,6 +131,11 @@ world:
   # If the number of islands is greater than this number, no new island will be created.
   max-islands: 0
 
+  # The default game mode for this world. Players will be set to this mode when they create
+  # a new island for example. Options are SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
+  default-game-mode: SURVIVAL
+
+
   ### Nether-related Settings ###
   nether:
     # Generate Nether - if this is false, the nether world will not be made and access to

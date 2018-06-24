@@ -98,41 +98,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private static Map<User, Confirmer> toBeConfirmed = new HashMap<>();
 
     /**
-     * Used only for testing....
-     */
-    public CompositeCommand(BSkyBlock plugin, String label, String... string) {
-        super(label);
-        this.plugin = plugin;
-        setAliases(new ArrayList<>(Arrays.asList(string)));
-        parent = null;
-        setUsage("");
-        subCommandLevel = 0; // Top level
-        subCommands = new LinkedHashMap<>();
-        subCommandAliases = new LinkedHashMap<>();
-        setup();
-        if (!getSubCommand("help").isPresent() && !label.equals("help")) {
-            new DefaultHelpCommand(this);
-        }
-    }
-
-    /**
      * Top level command
      * @param addon - addon creating the command
      * @param label - string for this command
      * @param aliases - aliases
      */
     public CompositeCommand(Addon addon, String label, String... aliases) {
-        this(label, aliases);
-        this.addon = addon;
-    }
-
-    /**
-     * This is the top-level command constructor for commands that have no parent.
-     * @param label - string for this command
-     * @param aliases - aliases for this command
-     */
-    public CompositeCommand(String label, String... aliases) {
         super(label);
+        this.addon = addon;
         this.topLabel = label;
         this.plugin = BSkyBlock.getInstance();
         setAliases(new ArrayList<>(Arrays.asList(aliases)));
@@ -143,12 +116,22 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         subCommandAliases = new LinkedHashMap<>();
         // Register command if it is not already registered
         if (plugin.getCommand(label) == null) {
-            plugin.getCommandsManager().registerCommand(this);
+            plugin.getCommandsManager()
+            .registerCommand(this);
         }
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
+    }
+
+    /**
+     * This is the top-level command constructor for commands that have no parent.
+     * @param label - string for this command
+     * @param aliases - aliases for this command
+     */
+    public CompositeCommand(String label, String... aliases) {
+        this((Addon)null, label, aliases);
     }
 
     /**
@@ -333,7 +316,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         // Try aliases
         if (subCommandAliases.containsKey(label.toLowerCase())) {
-            return Optional.ofNullable(subCommandAliases.get(label)); 
+            return Optional.ofNullable(subCommandAliases.get(label));
         }
         return Optional.empty();
     }
@@ -434,7 +417,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public void inheritPermission() {
         this.permission = parent.getPermission();
-    } 
+    }
 
     /**
      * This creates the full linking chain of commands
@@ -518,7 +501,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Set the permission prefix. This will be added automatically to the permission 
+     * Set the permission prefix. This will be added automatically to the permission
      * and will apply to any sub commands too.
      * Do not put a dot on the end of it.
      * @param permissionPrefix the permissionPrefix to set
@@ -584,7 +567,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             user.sendMessage("general.request-cancelled");
             toBeConfirmed.remove(user);
         }, getPlugin().getSettings().getConfirmationTime() * 20L);
-        
+
         // Add to the global confirmation map
         toBeConfirmed.put(user, new Confirmer(getTopLabel(), getLabel(), confirmed, task));
     }

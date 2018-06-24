@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.api.configuration;
 import java.util.List;
 import java.util.Map;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 
 /**
@@ -11,7 +12,7 @@ import org.bukkit.entity.EntityType;
  *
  */
 public interface WorldSettings {
-    
+
     /**
      * @return the friendly name of the world. Used in player commands
      */
@@ -21,7 +22,7 @@ public interface WorldSettings {
      * @return the entityLimits
      */
     Map<EntityType, Integer> getEntityLimits();
-    
+
     /**
      * @return the islandDistance
      */
@@ -31,77 +32,77 @@ public interface WorldSettings {
      * @return the islandHeight
      */
     int getIslandHeight();
-    
+
     /**
      * @return the islandProtectionRange
      */
     int getIslandProtectionRange();
-    
+
     /**
      * @return the islandStartX
      */
     int getIslandStartX();
-    
+
     /**
      * @return the islandStartZ
      */
     int getIslandStartZ();
-    
+
     /**
      * @return the islandXOffset
      */
     int getIslandXOffset();
-    
+
     /**
      * @return the islandZOffset
      */
     int getIslandZOffset();
-    
+
     /**
      * @return the maxIslands
      */
     int getMaxIslands();
-    
+
     /**
      * @return the netherSpawnRadius
      */
     int getNetherSpawnRadius();
-    
+
     /**
      * @return the seaHeight
      */
     int getSeaHeight();
-    
+
     /**
      * @return the tileEntityLimits
      */
     Map<String, Integer> getTileEntityLimits();
-    
+
     /**
      * @return the worldName
      */
     String getWorldName();
-    
+
     /**
      * @return the endGenerate
      */
     boolean isEndGenerate();
-    
+
     /**
      * @return the endIslands
      */
     boolean isEndIslands();
-    
+
     /**
      * @return the netherGenerate
      */
     boolean isNetherGenerate();
-    
+
     /**
      * @return the netherIslands
      */
     boolean isNetherIslands();
-    
+
     /**
      * @return the netherTrees
      */
@@ -137,5 +138,11 @@ public interface WorldSettings {
      * @return Map of world flags
      */
     Map<String, Boolean> getWorldFlags();
-    
+
+    /**
+     * Get the default game mode for this game world, e.g. SURVIVAL
+     * @return game mode
+     */
+    GameMode getDefaultGameMode();
+
 }

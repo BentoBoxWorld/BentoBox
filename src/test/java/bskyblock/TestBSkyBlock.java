@@ -59,6 +59,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.listeners.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
@@ -80,11 +81,12 @@ public class TestBSkyBlock {
     private static Block block;
     private static Player ownerOfIsland;
     private static Player visitorToIsland;
-    
+
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
+        when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         Server server = mock(Server.class);
@@ -92,25 +94,25 @@ public class TestBSkyBlock {
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
         Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
-        
+
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
-        
+
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
-        
+
         Bukkit.setServer(server);
-        
+
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        
+
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
 
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        
+
         sender = mock(CommandSender.class);
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
@@ -162,16 +164,12 @@ public class TestBSkyBlock {
         members.put(OWNER_UUID, RanksManager.OWNER_RANK);
         members.put(MEMBER_UUID, RanksManager.MEMBER_RANK);
         island.setMembers(members);
-        Bukkit.getLogger().info("SETUP: owner UUID = " + OWNER_UUID);
-        Bukkit.getLogger().info("SETUP: member UUID = " + MEMBER_UUID);
-        Bukkit.getLogger().info("SETUP: visitor UUID = " + VISITOR_UUID);
         Mockito.when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
 
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
-
     }
 
     @Test
@@ -252,7 +250,7 @@ public class TestBSkyBlock {
     private class TestCommand extends CompositeCommand {
 
         public TestCommand() {
-            super(plugin, "test", "t", "tt");
+            super("test", "t", "tt");
             setParameters("test.params");
         }
 
@@ -354,7 +352,7 @@ public class TestBSkyBlock {
     private class Test3ArgsCommand extends CompositeCommand {
 
         public Test3ArgsCommand() {
-            super(plugin, "args", "");
+            super("args", "");
         }
 
         @Override

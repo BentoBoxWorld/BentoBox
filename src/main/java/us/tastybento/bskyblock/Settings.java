@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,11 +8,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 
-import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
@@ -21,8 +19,6 @@ import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDbSetup.DatabaseType;
 import us.tastybento.bskyblock.database.objects.DataObject;
-import us.tastybento.bskyblock.database.objects.adapters.Adapter;
-import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter;
 
 /**
  * All the plugin settings are here
@@ -185,6 +181,11 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "world.max-islands")
     private int maxIslands = -1;
 
+    @ConfigComment("The default game mode for this world. Players will be set to this mode when they create")
+    @ConfigComment("a new island for example. Options are SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR")
+    @ConfigEntry(path = "world.default-game-mode")
+    private GameMode defaultGameMode = GameMode.SURVIVAL;
+
     // Nether
     @ConfigComment("Generate Nether - if this is false, the nether world will not be made and access to")
     @ConfigComment("the nether will not occur. Other plugins may still enable portal usage.")
@@ -235,7 +236,7 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigComment("World flags. These are boolean settings for various flags for this world")
     @ConfigEntry(path = "world.flags")
     private Map<String, Boolean> worldFlags = new HashMap<>();
-    
+
     // ---------------------------------------------
 
     /*      ISLAND      */
@@ -252,7 +253,7 @@ public class Settings implements DataObject, WorldSettings {
     private int maxTeamSize = 4;
     @ConfigComment("Default maximum number of homes a player can have. Min = 1")
     @ConfigComment("Accessed via sethome <number> or go <number>")
-    @ConfigComment("Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>")  
+    @ConfigComment("Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>")
     @ConfigEntry(path = "island.max-homes")
     private int maxHomes = 5;
     @ConfigComment("Island naming")
@@ -351,34 +352,9 @@ public class Settings implements DataObject, WorldSettings {
     private List<String> ivSettings = new ArrayList<>();
 
     //TODO flags
-    
+
     // ---------------------------------------------
 
-    /*      ACID        */
-
-    /*
-     * This settings category only exists if the GameType is ACIDISLAND.
-     */
-
-    @ConfigEntry(path = "acid.damage-op", specificTo = GameType.ACIDISLAND)
-    private boolean acidDamageOp = false;
-
-    @ConfigEntry(path = "acid.damage-chickens", specificTo = GameType.ACIDISLAND)
-    private boolean acidDamageChickens = false;
-
-    @ConfigEntry(path = "acid.options.item-destroy-time", specificTo = GameType.ACIDISLAND)
-    private int acidDestroyItemTime = 0;
-
-    // Damage
-    @ConfigEntry(path = "acid.damage.acid.player", specificTo = GameType.ACIDISLAND)
-    private int acidDamage = 10;
-
-    @ConfigEntry(path = "acid.damage.rain", specificTo = GameType.ACIDISLAND)
-    private int acidRainDamage = 1;
-
-    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND)
-    @Adapter(PotionEffectListAdapter.class)
-    private List<PotionEffectType> acidEffects = new ArrayList<>(Arrays.asList(PotionEffectType.CONFUSION, PotionEffectType.SLOW));
 
     /*      SCHEMATICS      */
     private List<String> companionNames = new ArrayList<>();
@@ -476,30 +452,6 @@ public class Settings implements DataObject, WorldSettings {
         this.disableOfflineRedstone = disableOfflineRedstone;
     }
     /**
-     * @return the acidDamage
-     */
-    public int getAcidDamage() {
-        return acidDamage;
-    }
-    /**
-     * @return the acidDestroyItemTime
-     */
-    public int getAcidDestroyItemTime() {
-        return acidDestroyItemTime;
-    }
-    /**
-     * @return the acidEffects
-     */
-    public List<PotionEffectType> getAcidEffects() {
-        return acidEffects;
-    }
-    /**
-     * @return the acidRainDamage
-     */
-    public int getAcidRainDamage() {
-        return acidRainDamage;
-    }
-    /**
      * @return the chestItems
      */
     public List<ItemStack> getChestItems() {
@@ -586,6 +538,7 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the entityLimits
      */
+    @Override
     public Map<EntityType, Integer> getEntityLimits() {
         return entityLimits;
     }
@@ -599,42 +552,49 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the islandDistance
      */
+    @Override
     public int getIslandDistance() {
         return islandDistance;
     }
     /**
      * @return the islandHeight
      */
+    @Override
     public int getIslandHeight() {
         return islandHeight;
     }
     /**
      * @return the islandProtectionRange
      */
+    @Override
     public int getIslandProtectionRange() {
         return islandProtectionRange;
     }
     /**
      * @return the islandStartX
      */
+    @Override
     public int getIslandStartX() {
         return islandStartX;
     }
     /**
      * @return the islandStartZ
      */
+    @Override
     public int getIslandStartZ() {
         return islandStartZ;
     }
     /**
      * @return the islandXOffset
      */
+    @Override
     public int getIslandXOffset() {
         return islandXOffset;
     }
     /**
      * @return the islandZOffset
      */
+    @Override
     public int getIslandZOffset() {
         return islandZOffset;
     }
@@ -666,12 +626,14 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the maxIslands
      */
+    @Override
     public int getMaxIslands() {
         return maxIslands;
     }
     /**
      * @return the maxTeamSize
      */
+    @Override
     public int getMaxTeamSize() {
         return maxTeamSize;
     }
@@ -690,6 +652,7 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the netherSpawnRadius
      */
+    @Override
     public int getNetherSpawnRadius() {
         return netherSpawnRadius;
     }
@@ -714,12 +677,14 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the seaHeight
      */
+    @Override
     public int getSeaHeight() {
         return seaHeight;
     }
     /**
      * @return the tileEntityLimits
      */
+    @Override
     public Map<String, Integer> getTileEntityLimits() {
         return tileEntityLimits;
     }
@@ -739,20 +704,9 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the worldName
      */
+    @Override
     public String getWorldName() {
         return worldName;
-    }
-    /**
-     * @return the acidDamageChickens
-     */
-    public boolean isAcidDamageChickens() {
-        return acidDamageChickens;
-    }
-    /**
-     * @return the acidDamageOp
-     */
-    public boolean isAcidDamageOp() {
-        return acidDamageOp;
     }
     /**
      * @return the allowChestDamage
@@ -823,12 +777,14 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the endGenerate
      */
+    @Override
     public boolean isEndGenerate() {
         return endGenerate;
     }
     /**
      * @return the endIslands
      */
+    @Override
     public boolean isEndIslands() {
         return endIslands;
     }
@@ -936,42 +892,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public boolean isUseOwnGenerator() {
         return useOwnGenerator;
-    }
-    /**
-     * @param acidDamage the acidDamage to set
-     */
-    public void setAcidDamage(int acidDamage) {
-        this.acidDamage = acidDamage;
-    }
-    /**
-     * @param acidDamageChickens the acidDamageChickens to set
-     */
-    public void setAcidDamageChickens(boolean acidDamageChickens) {
-        this.acidDamageChickens = acidDamageChickens;
-    }
-    /**
-     * @param acidDamageOp the acidDamageOp to set
-     */
-    public void setAcidDamageOp(boolean acidDamageOp) {
-        this.acidDamageOp = acidDamageOp;
-    }
-    /**
-     * @param acidDestroyItemTime the acidDestroyItemTime to set
-     */
-    public void setAcidDestroyItemTime(int acidDestroyItemTime) {
-        this.acidDestroyItemTime = acidDestroyItemTime;
-    }
-    /**
-     * @param acidEffects the acidEffects to set
-     */
-    public void setAcidEffects(List<PotionEffectType> acidEffects) {
-        this.acidEffects = acidEffects;
-    }
-    /**
-     * @param acidRainDamage the acidRainDamage to set
-     */
-    public void setAcidRainDamage(int acidRainDamage) {
-        this.acidRainDamage = acidRainDamage;
     }
     /**
      * @param allowChestDamage the allowChestDamage to set
@@ -1436,6 +1356,7 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the dragonSpawn
      */
+    @Override
     public boolean isDragonSpawn() {
         return dragonSpawn;
     }
@@ -1466,7 +1387,7 @@ public class Settings implements DataObject, WorldSettings {
     public void setIvSettings(List<String> ivSettings) {
         this.ivSettings = ivSettings;
     }
-    
+
     /**
      * @return the worldFlags
      */
@@ -1495,5 +1416,19 @@ public class Settings implements DataObject, WorldSettings {
     public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
         this.closePanelOnClickOutside = closePanelOnClickOutside;
     }
+    /**
+     * @return the defaultGameMode
+     */
+    @Override
+    public GameMode getDefaultGameMode() {
+        return defaultGameMode;
+    }
+    /**
+     * @param defaultGameMode the defaultGameMode to set
+     */
+    public void setDefaultGameMode(GameMode defaultGameMode) {
+        this.defaultGameMode = defaultGameMode;
+    }
+
 
 }

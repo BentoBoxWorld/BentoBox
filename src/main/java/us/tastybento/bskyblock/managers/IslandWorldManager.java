@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
@@ -162,7 +163,7 @@ public class IslandWorldManager {
                 .filter(w -> !plugin.getIslands().hasIsland(w.getKey(), user))
                 .map(Map.Entry::getValue).collect(Collectors.toSet());
     }
-    
+
     /**
      * Check if a name is a known friendly world name, ignores case
      * @param name - world name
@@ -183,7 +184,7 @@ public class IslandWorldManager {
         worldSettings.put(world, settings);
         multiverseReg(world);
     }
-    
+
     /**
      * Get the settings for this world or sub-worlds (nether, end)
      * @param world - world
@@ -208,7 +209,7 @@ public class IslandWorldManager {
     public Map<EntityType, Integer> getEntityLimits(World world) {
         return worldSettings.get(Util.getWorld(world)).getEntityLimits();
     }
-    
+
     /**
      * @return the islandDistance
      */
@@ -222,98 +223,98 @@ public class IslandWorldManager {
     public int getIslandHeight(World world) {
         return worldSettings.get(Util.getWorld(world)).getIslandHeight();
     }
-    
+
     /**
      * @return the islandProtectionRange
      */
     public int getIslandProtectionRange(World world) {
         return worldSettings.get(Util.getWorld(world)).getIslandProtectionRange();
     }
-    
+
     /**
      * @return the islandStartX
      */
     public int getIslandStartX(World world) {
         return worldSettings.get(Util.getWorld(world)).getIslandStartX();
     }
-    
+
     /**
      * @return the islandStartZ
      */
     public int getIslandStartZ(World world) {
         return worldSettings.get(Util.getWorld(world)).getIslandStartZ();
     }
-    
+
     /**
      * @return the islandXOffset
      */
     public int getIslandXOffset(World world) {
         return worldSettings.get(Util.getWorld(world)).getIslandXOffset();
     }
-    
+
     /**
      * @return the islandZOffset
      */
     public int getIslandZOffset(World world) {
         return worldSettings.get(Util.getWorld(world)).getIslandZOffset();
     }
-    
+
     /**
      * @return the maxIslands
      */
     public int getMaxIslands(World world) {
         return worldSettings.get(Util.getWorld(world)).getMaxIslands();
     }
-    
+
     /**
      * @return the netherSpawnRadius
      */
     public int getNetherSpawnRadius(World world) {
         return worldSettings.get(Util.getWorld(world)).getNetherSpawnRadius();
     }
-    
+
     /**
      * @return the seaHeight
      */
     public int getSeaHeight(World world) {
         return worldSettings.get(Util.getWorld(world)).getSeaHeight();
     }
-    
+
     /**
      * @return the tileEntityLimits
      */
     public Map<String, Integer> getTileEntityLimits(World world) {
         return worldSettings.get(Util.getWorld(world)).getTileEntityLimits();
     }
-    
+
     /**
      * @return the worldName
      */
     public String getWorldName(World world) {
         return worldSettings.get(Util.getWorld(world)).getWorldName();
     }
-    
+
     /**
      * @return the endGenerate
      */
     public boolean isEndGenerate(World world) {
         return worldSettings.get(Util.getWorld(world)).isEndGenerate();
     }
-    
+
     /**
      * @return the endIslands
      */
     public boolean isEndIslands(World world) {
         return worldSettings.get(Util.getWorld(world)).isEndIslands();
     }
-    
+
     /**
      * @return the netherGenerate
      */
     public boolean isNetherGenerate(World world) {
         return worldSettings.get(Util.getWorld(world)).isNetherGenerate();
     }
-    
+
     /**
      * @return the netherIslands
      */
@@ -330,7 +331,7 @@ public class IslandWorldManager {
         World w = Util.getWorld(world);
         return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate();
     }
-    
+
     /**
      * Checks if a world is a known island nether world
      * @param world - world
@@ -350,7 +351,7 @@ public class IslandWorldManager {
         World w = Util.getWorld(world);
         return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate();
     }
-    
+
     /**
      * Checks if a world is a known island end world
      * @param world - world
@@ -437,7 +438,7 @@ public class IslandWorldManager {
     public int getMaxHomes(World world) {
         return worldSettings.get(Util.getWorld(world)).getMaxHomes();
     }
-    
+
     /**
      * Get the friendly name for world or related nether or end
      * @param world - world
@@ -454,7 +455,7 @@ public class IslandWorldManager {
      */
     public String getPermissionPrefix(World world) {
         return worldSettings.get(Util.getWorld(world)).getPermissionPrefix();
-        
+
     }
 
     /**
@@ -477,4 +478,12 @@ public class IslandWorldManager {
         return flag.isSetForWorld(world);
     }
 
+    /**
+     * Get the default game mode for this world.
+     * @param world - world
+     * @return GameMode: SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
+     */
+    public GameMode getDefaultGameMode(World world) {
+        return worldSettings.get(Util.getWorld(world)).getDefaultGameMode();
+    }
 }

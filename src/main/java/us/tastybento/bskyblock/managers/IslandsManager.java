@@ -74,11 +74,6 @@ public class IslandsManager {
                 || space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
             return false;
         }
-        // In BSkyBlock, liquid may be unsafe
-        // Check if acid has no damage
-        if (plugin.getSettings().getAcidDamage() > 0D && (ground.isLiquid() || space1.isLiquid() || space2.isLiquid())) {
-            return false;
-        }
         if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
                 || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
                 || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
@@ -340,7 +335,7 @@ public class IslandsManager {
     /**
      * Determines a safe teleport spot on player's island or the team island
      * they belong to.
-     * 
+     *
      * @param world - world to check
      * @param user - the player
      * @param number - a number - starting home location e.g., 1
@@ -362,11 +357,11 @@ public class IslandsManager {
             // To cover slabs, stairs and other half blocks, try one block above
             Location lPlusOne = l.clone();
             lPlusOne.add(new Vector(0, 1, 0));
-                if (isSafeLocation(lPlusOne)) {
-                    // Adjust the home location accordingly
-                    plugin.getPlayers().setHomeLocation(user, lPlusOne, number);
-                    return lPlusOne;
-                }
+            if (isSafeLocation(lPlusOne)) {
+                // Adjust the home location accordingly
+                plugin.getPlayers().setHomeLocation(user, lPlusOne, number);
+                return lPlusOne;
+            }
         }
         // Home location either isn't safe, or does not exist so try the island
         // location
@@ -517,7 +512,7 @@ public class IslandsManager {
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-            player.setGameMode(GameMode.SURVIVAL);
+            player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
         }
     }
 
@@ -633,7 +628,7 @@ public class IslandsManager {
 
     /**
      * Checks if an online player is in the protected area of their island, a team island or a
-     * coop island in the specific world in the arguments. Note that the user 
+     * coop island in the specific world in the arguments. Note that the user
      *
      * @param world - the world to check
      * @param user - the user

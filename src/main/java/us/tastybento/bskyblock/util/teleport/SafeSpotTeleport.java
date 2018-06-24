@@ -110,7 +110,7 @@ public class SafeSpotTeleport {
             entity.sendMessage(failureMessage);
         }
         if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
-            ((Player)entity).setGameMode(GameMode.SURVIVAL);
+            ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(bestSpot.getWorld()));
         }
     }
 
@@ -152,13 +152,13 @@ public class SafeSpotTeleport {
                     if (is.inIslandSpace(blockCoord)) {
                         result.add(chunkCoord);
                     }
-                });  
+                });
             }
         }
     }
 
     /**
-     * Loops through the chunks and if a safe spot is found, fires off the teleportation 
+     * Loops through the chunks and if a safe spot is found, fires off the teleportation
      * @param chunkSnapshot - list of chunk snapshots to check
      */
     private void checkChunks(final List<ChunkSnapshot> chunkSnapshot) {
@@ -180,7 +180,7 @@ public class SafeSpotTeleport {
      * @param chunk - chunk snapshot
      * @return true if a safe spot was found
      */
-    private boolean scanChunk(ChunkSnapshot chunk) { 
+    private boolean scanChunk(ChunkSnapshot chunk) {
         // Max height
         int maxHeight = location.getWorld().getMaxHeight() - 20;
         // Run through the chunk
@@ -214,7 +214,7 @@ public class SafeSpotTeleport {
             if (entity instanceof Player) {
                 Player player = (Player)entity;
                 if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    player.setGameMode(GameMode.SURVIVAL);
+                    player.setGameMode(plugin.getIWM().getDefaultGameMode(loc.getWorld()));
                 }
             } else {
                 entity.setVelocity(velocity);
