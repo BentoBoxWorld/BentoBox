@@ -142,11 +142,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Get the original value
                 Object value = config.get(storageLocation);
                 method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
-                /*
-                 * I don't know what this part is for...
-                if (value != null && !value.getClass().equals(MemorySection.class)) {
-                    method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
-                }*/
                 // We are done here
                 continue;
             }
@@ -273,7 +268,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Get path for comments
             String parent = "";
             if (storageLocation.contains(".")) {
-                parent = storageLocation.substring(0, storageLocation.lastIndexOf(".")) + ".";                
+                parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
             }
             // See if there are multiple comments
             ConfigComment.Line comments = field.getAnnotation(ConfigComment.Line.class);
@@ -355,7 +350,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.value());     
+        yamlComments.put(random, "# " + comment.value());
     }
 
     /**
@@ -412,7 +407,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         if (clazz.equals(Float.class) && value.getClass().equals(String.class)) {
             return Float.valueOf((String)value);
-        } 
+        }
         if (clazz.equals(UUID.class)) {
             value = UUID.fromString((String)value);
         }
