@@ -32,11 +32,10 @@ public class FileLister{
      * @param folderPath - folder path
      * @param checkJar - if true, the jar will be checked
      * @return List of file names
-     
+
      */
     public List<String> list(String folderPath, boolean checkJar) throws IOException {
         List<String> result = new ArrayList<>();
-
         // Check if the folder exists
         File localeDir = new File(plugin.getDataFolder(), folderPath);
         if (localeDir.exists()) {
@@ -44,34 +43,7 @@ public class FileLister{
             return Arrays.asList(Objects.requireNonNull(localeDir.list(ymlFilter)));
         } else if (checkJar) {
             // Else look in the JAR
-            File jarfile;
-
-            try {
-                Method method = JavaPlugin.class.getDeclaredMethod("getFile");
-                method.setAccessible(true);
-
-                jarfile = (File) method.invoke(plugin);
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
-
-            JarFile jar = new JarFile(jarfile);
-
-            Enumeration<JarEntry> entries = jar.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String path = entry.getName();
-
-                if (!path.startsWith(folderPath)) {
-                    continue;
-                }
-
-                if (entry.getName().endsWith(".yml")) {
-                    result.add(entry.getName());
-                }
-
-            }
-            jar.close();
+            return listJar(folderPath);
         }
         return result;
     }
