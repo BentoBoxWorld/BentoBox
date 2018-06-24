@@ -92,7 +92,7 @@ public class AdminRegisterCommand extends CompositeCommand {
     /**
      * This returns the coordinate of where an island should be on the grid.
      *
-     * @param location
+     * @param location - location to check
      * @return Location of where an island should be on a grid in this world
      */
     public Location getClosestIsland(Location location) {

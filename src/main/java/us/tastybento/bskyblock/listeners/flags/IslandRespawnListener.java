@@ -1,5 +1,5 @@
-/**
- * 
+/*
+
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -28,7 +28,7 @@ public class IslandRespawnListener extends AbstractFlagListener {
 
     /**
      * Tag players who die in island space and have an island
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerDeath(PlayerDeathEvent e) {
@@ -40,7 +40,7 @@ public class IslandRespawnListener extends AbstractFlagListener {
     
     /**
      * Place players back on their island if respawn on island is true and active
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerRespawn(PlayerRespawnEvent e) {

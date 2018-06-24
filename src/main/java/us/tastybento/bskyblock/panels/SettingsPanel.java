@@ -10,11 +10,15 @@ import us.tastybento.bskyblock.api.panels.builders.PanelBuilder;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
 
+import java.util.Comparator;
+
 /**
  * Creates settings panels
  * @author Poslovitch, tastybento
  */
 public class SettingsPanel {
+
+    private static final String PROTECTION_PANEL = "protection.panel.";
 
     private SettingsPanel() {}
 
@@ -26,13 +30,13 @@ public class SettingsPanel {
     public static void openPanel(BSkyBlock plugin, User user, Flag.Type flagType) {
         // Create the panel
         PanelBuilder panelBuilder = new PanelBuilder()
-                .name(user.getTranslation("protection.panel." + flagType.toString() + ".title"))
+                .name(user.getTranslation(PROTECTION_PANEL + flagType.toString() + ".title"))
                 .size(54);
 
         setupHeader(user, panelBuilder, flagType);
 
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(flagType))
-                .sorted((e1, e2) -> e1.getID().compareTo(e2.getID())).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
+        .sorted(Comparator.comparing(Flag::getID)).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
 
         // Show it to the player
         panelBuilder.build().open(user);
@@ -43,8 +47,8 @@ public class SettingsPanel {
         for (Flag.Type flagType : Flag.Type.values()) {
             PanelItem panelItem = new PanelItemBuilder()
                     .icon(flagType.getIcon())
-                    .name(user.getTranslation("protection.panel." + flagType.toString() + ".title"))
-                    .description(user.getTranslation("protection.panel." + flagType.toString() + ".description"))
+                    .name(user.getTranslation(PROTECTION_PANEL + flagType.toString() + ".title"))
+                    .description(user.getTranslation(PROTECTION_PANEL + flagType.toString() + ".description"))
                     .glow(flagType.equals(currentFlagType))
                     .clickHandler((panel, user1, clickType, slot1) -> {
                         if (!flagType.equals(currentFlagType)) {

@@ -83,11 +83,9 @@ public class PlaceBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {
-        if (e.getNewState().getType().equals(Material.FROSTED_ICE)) {
-            if (e.getEntity() instanceof Player) {
-                this.setUser(User.getInstance((Player)e.getEntity()));
-                checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
-            }  
+        if (e.getNewState().getType().equals(Material.FROSTED_ICE) && e.getEntity() instanceof Player) {
+            setUser(User.getInstance((Player)e.getEntity()));
+            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
         }
     }
 

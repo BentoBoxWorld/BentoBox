@@ -98,7 +98,7 @@ public class IslandBuilderNew {
 
     /**
      * Copies schems from the jar file
-     * @param schems2
+     * @param schems2 - file containing schem
      */
     private void copySchems(File schems2) {
         plugin.saveResource("schems/island.schem", false);

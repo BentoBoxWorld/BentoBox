@@ -648,7 +648,7 @@ public class Island implements DataObject {
      * Show info on the island
      * @param plugin - plugin
      * @param user - the user who is receiving the info
-     * @param world 
+     * @param world - world to check
      * @return true always
      */
     public boolean showInfo(BSkyBlock plugin, User user, World world) {
@@ -691,7 +691,7 @@ public class Island implements DataObject {
      * Shows the members of this island
      * @param plugin - plugin
      * @param user - user who is requesting
-     * @param world 
+     * @param world - world to check
      */
     public void showMembers(BSkyBlock plugin, User user, World world) {
         if (plugin.getIslands().inTeam(world, user.getUniqueId())) {

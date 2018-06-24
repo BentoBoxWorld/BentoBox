@@ -1,5 +1,5 @@
-/**
- * 
+/*
+
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -22,9 +22,11 @@ import us.tastybento.bskyblock.lists.Flags;
  *
  */
 public class RemoveMobsListener extends AbstractFlagListener {
-    
-    private static Set<EntityType> keepers = new HashSet<>();
-    {
+
+    private static Set<EntityType> keepers;
+
+    public RemoveMobsListener() {
+        keepers  = new HashSet<>();
         keepers.add(EntityType.ZOMBIE_VILLAGER);
         keepers.add(EntityType.PIG_ZOMBIE);
         keepers.add(EntityType.WITHER);
@@ -39,11 +41,11 @@ public class RemoveMobsListener extends AbstractFlagListener {
             clearArea(e.getTo());
         }
     }
-    
+
     public static void clearArea(Location loc) {
         loc.getWorld().getNearbyEntities(loc, 5D, 5D, 5D).stream()
         .filter(en -> (en instanceof Monster))
         .filter(en -> !keepers.contains(en.getType()))
-        .forEach(Entity::remove); 
+        .forEach(Entity::remove);
     }
 }

@@ -1,5 +1,5 @@
-/**
- * 
+/*
+
  */
 package us.tastybento.bskyblock.listeners.flags;
 
@@ -24,7 +24,7 @@ public class EnderChestListener extends AbstractFlagListener {
 
     /**
      * Prevents opening ender chest unless player has permission
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEnderChestOpen(PlayerInteractEvent e) {
@@ -36,7 +36,7 @@ public class EnderChestListener extends AbstractFlagListener {
     /**
      * Prevents crafting of EnderChest unless the player has permission
      *
-     * @param event
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onCraft(CraftItemEvent e) {

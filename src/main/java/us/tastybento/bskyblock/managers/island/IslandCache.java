@@ -38,7 +38,7 @@ public class IslandCache {
             return false;
         }
         islandsByLocation.put(island.getCenter(), island);
-        // Make world       
+        // Make world
         islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
         // Only add islands to this map if they are owned
         if (island.getOwner() != null) {
@@ -79,7 +79,7 @@ public class IslandCache {
      * @return true if successful, false if not
      */
     public boolean deleteIslandFromCache(Island island) {
-        if (!islandsByLocation.remove(island.getCenter(), island) || !islandsByUUID.containsKey(island.getWorld())) {         
+        if (!islandsByLocation.remove(island.getCenter(), island) || !islandsByUUID.containsKey(island.getWorld())) {
             return false;
         }
         islandsByUUID.get(island.getWorld()).entrySet().removeIf(en -> en.getValue().equals(island));
@@ -179,7 +179,6 @@ public class IslandCache {
                 // Clear ownership and members
                 island.getMembers().clear();
                 island.setOwner(null);
-                //islandsByLocation.put(island.getCenter(), island);
             } else {
                 // Remove player from the island membership
                 island.removeMember(uuid);
@@ -190,7 +189,7 @@ public class IslandCache {
 
     /**
      * Get the number of islands in the cache
-     * @return the number of islands 
+     * @return the number of islands
      */
     public int size() {
         return islandsByLocation.size();
@@ -205,7 +204,7 @@ public class IslandCache {
         island.setOwner(newOwnerUUID);
         islandsByUUID.putIfAbsent(Util.getWorld(island.getWorld()), new HashMap<>());
         islandsByUUID.get(Util.getWorld(island.getWorld())).put(newOwnerUUID, island);
-        islandsByLocation.put(island.getCenter(), island);        
+        islandsByLocation.put(island.getCenter(), island);
     }
 
 }

@@ -411,10 +411,9 @@ public class Clipboard {
 
     /**
      * Load a file to clipboard
-     * @param filename - filename in schems folder
-     * @return
-     * @throws IOException
-     * @throws InvalidConfigurationException
+     * @param fileName - filename in schems folder
+     * @throws IOException - if there's a load error with unziping or name
+     * @throws InvalidConfigurationException - the YAML of the schem is at fault
      */
     public void load(String fileName) throws IOException, InvalidConfigurationException {
         File zipFile = new File(schemFolder, fileName + ".schem");
@@ -434,13 +433,13 @@ public class Clipboard {
         Files.delete(file.toPath());
     }
 
-    /**
-     * Load a file to clipboard
+    /*
+      Load a file to clipboard
      */
     /**
      * @param user - use trying to load
      * @param fileName - filename
-     * @return
+     * @return - ture if load is successful, false if not
      */
     public boolean load(User user, String fileName) {
         try {
