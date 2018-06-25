@@ -495,4 +495,47 @@ public class IslandWorldManager {
     public Set<EntityType> getRemoveMobsWhitelist(World world) {
         return worldSettings.get(Util.getWorld(world)).getRemoveMobsWhitelist();
     }
+    
+    /**
+     * @return the onJoinResetMoney
+     */
+    public boolean isOnJoinResetMoney(World world) {
+        return worldSettings.get(Util.getWorld(world)).isOnJoinResetMoney();
+    }
+    
+    /**
+     * @return the onJoinResetInventory
+     */
+    public boolean isOnJoinResetInventory(World world) {
+        return worldSettings.get(Util.getWorld(world)).isOnJoinResetInventory();
+    }
+    
+    /**
+     * @return the onJoinResetEnderChest
+     */
+    public boolean isOnJoinResetEnderChest(World world) {
+        return worldSettings.get(Util.getWorld(world)).isOnJoinResetEnderChest();
+    }
+    
+    /**
+     * @return the onLeaveResetMoney
+     */
+    public boolean isOnLeaveResetMoney(World world) {
+        return worldSettings.get(Util.getWorld(world)).isOnLeaveResetMoney();
+    }
+    
+    /**
+     * @return the onLeaveResetInventory
+     */
+    public boolean isOnLeaveResetInventory(World world) {
+        return worldSettings.get(Util.getWorld(world)).isOnLeaveResetInventory();
+    }
+    
+    /**
+     * @return the onLeaveResetEnderChest
+     */
+    public boolean isOnLeaveResetEnderChest(World world) {
+        return worldSettings.get(Util.getWorld(world)).isOnLeaveResetEnderChest();
+    }
+
 }

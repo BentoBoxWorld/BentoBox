@@ -152,4 +152,34 @@ public interface WorldSettings {
      */
     Set<EntityType> getRemoveMobsWhitelist();
 
+    /**
+     * @return the onJoinResetMoney
+     */
+    public boolean isOnJoinResetMoney();
+    
+    /**
+     * @return the onJoinResetInventory
+     */
+    public boolean isOnJoinResetInventory();
+    
+    /**
+     * @return the onJoinResetEnderChest
+     */
+    public boolean isOnJoinResetEnderChest();
+    
+    /**
+     * @return the onLeaveResetMoney
+     */
+    public boolean isOnLeaveResetMoney();
+    
+    /**
+     * @return the onLeaveResetInventory
+     */
+    public boolean isOnLeaveResetInventory();
+    
+    /**
+     * @return the onLeaveResetEnderChest
+     */
+    public boolean isOnLeaveResetEnderChest();
+
 }

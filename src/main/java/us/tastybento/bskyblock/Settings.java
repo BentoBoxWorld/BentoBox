@@ -306,6 +306,40 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "island.reset.kicked-keep-inventory")
     private boolean kickedKeepInventory = false;
 
+    @ConfigComment("What the plugin should reset when the player joins or creates an island")
+    @ConfigComment("Reset Money - if this is true, will reset the player's money to the starting money")
+    @ConfigComment("Recommendation is that this is set to true, but if you run multi-worlds")
+    @ConfigComment("make sure your economy handles multi-worlds too.")
+    @ConfigEntry(path = "island.reset.on-join.money")
+    private boolean onJoinResetMoney = false;
+
+    @ConfigComment("Reset inventory - if true, the player's inventory will be cleared.")
+    @ConfigComment("Note: if you have MultiInv running or a similar inventory control plugin, that")
+    @ConfigComment("plugin may still reset the inventory when the world changes.")
+    @ConfigEntry(path = "island.reset.on-join.inventory")
+    private boolean onJoinResetInventory = false;
+
+    @ConfigComment("Reset Ender Chest - if true, the player's Ender Chest will be cleared.")
+    @ConfigEntry(path = "island.reset.on-join.ender-chest")
+    private boolean onJoinResetEnderChest = false;
+
+    @ConfigComment("What the plugin should reset when the player leaves or is kicked from an island")
+    @ConfigComment("Reset Money - if this is true, will reset the player's money to the starting money")
+    @ConfigComment("Recommendation is that this is set to true, but if you run multi-worlds")
+    @ConfigComment("make sure your economy handles multi-worlds too.")
+    @ConfigEntry(path = "island.reset.on-leave.money")
+    private boolean onLeaveResetMoney = false;
+
+    @ConfigComment("Reset inventory - if true, the player's inventory will be cleared.")
+    @ConfigComment("Note: if you have MultiInv running or a similar inventory control plugin, that")
+    @ConfigComment("plugin may still reset the inventory when the world changes.")
+    @ConfigEntry(path = "island.reset.on-leave.inventory")
+    private boolean onLeaveResetInventory = false;
+
+    @ConfigComment("Reset Ender Chest - if true, the player's Ender Chest will be cleared.")
+    @ConfigEntry(path = "island.reset.on-leave.ender-chest")
+    private boolean onLeaveResetEnderChest = false;
+
     @ConfigEntry(path = "island.make-island-if-none")
     private boolean makeIslandIfNone = false;
     @ConfigComment("Immediately teleport player to their island (home 1 if it exists) when entering the world")
@@ -1448,6 +1482,84 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setRemoveMobsWhitelist(Set<EntityType> removeMobsWhitelist) {
         this.removeMobsWhitelist = removeMobsWhitelist;
+    }
+    /**
+     * @return the onJoinResetMoney
+     */
+    @Override
+    public boolean isOnJoinResetMoney() {
+        return onJoinResetMoney;
+    }
+    /**
+     * @return the onJoinResetInventory
+     */
+    @Override
+    public boolean isOnJoinResetInventory() {
+        return onJoinResetInventory;
+    }
+    /**
+     * @return the onJoinResetEnderChest
+     */
+    @Override
+    public boolean isOnJoinResetEnderChest() {
+        return onJoinResetEnderChest;
+    }
+    /**
+     * @return the onLeaveResetMoney
+     */
+    @Override
+    public boolean isOnLeaveResetMoney() {
+        return onLeaveResetMoney;
+    }
+    /**
+     * @return the onLeaveResetInventory
+     */
+    @Override
+    public boolean isOnLeaveResetInventory() {
+        return onLeaveResetInventory;
+    }
+    /**
+     * @return the onLeaveResetEnderChest
+     */
+    @Override
+    public boolean isOnLeaveResetEnderChest() {
+        return onLeaveResetEnderChest;
+    }
+    /**
+     * @param onJoinResetMoney the onJoinResetMoney to set
+     */
+    public void setOnJoinResetMoney(boolean onJoinResetMoney) {
+        this.onJoinResetMoney = onJoinResetMoney;
+    }
+    /**
+     * @param onJoinResetInventory the onJoinResetInventory to set
+     */
+    public void setOnJoinResetInventory(boolean onJoinResetInventory) {
+        this.onJoinResetInventory = onJoinResetInventory;
+    }
+    /**
+     * @param onJoinResetEnderChest the onJoinResetEnderChest to set
+     */
+    public void setOnJoinResetEnderChest(boolean onJoinResetEnderChest) {
+        this.onJoinResetEnderChest = onJoinResetEnderChest;
+    }
+    /**
+     * @param onLeaveResetMoney the onLeaveResetMoney to set
+     */
+    public void setOnLeaveResetMoney(boolean onLeaveResetMoney) {
+        this.onLeaveResetMoney = onLeaveResetMoney;
+    }
+    /**
+     * @param onLeaveResetInventory the onLeaveResetInventory to set
+     */
+    public void setOnLeaveResetInventory(boolean onLeaveResetInventory) {
+        this.onLeaveResetInventory = onLeaveResetInventory;
+    }
+    /**
+     * @param onLeaveResetEnderChest the onLeaveResetEnderChest to set
+     */
+    public void setOnLeaveResetEnderChest(boolean onLeaveResetEnderChest) {
+        this.onLeaveResetEnderChest = onLeaveResetEnderChest;
     }
 
 
