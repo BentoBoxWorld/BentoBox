@@ -78,6 +78,16 @@ public class IslandResetCommand extends CompositeCommand {
         Island oldIsland = getIslands().getIsland(getWorld(), player.getUniqueId());
         // Remove them from this island (it still exists and will be deleted later)
         getIslands().removePlayer(getWorld(), player.getUniqueId());
+        // Remove money inventory etc.
+        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+            user.getPlayer().getEnderChest().clear();
+        }
+        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+            user.getPlayer().getInventory().clear();
+        }
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+            // TODO: needs Vault
+        }
         // Create new island and then delete the old one
         try {
             NewIsland.builder()

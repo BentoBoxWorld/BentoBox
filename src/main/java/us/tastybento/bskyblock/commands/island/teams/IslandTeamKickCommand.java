@@ -60,6 +60,16 @@ public class IslandTeamKickCommand extends CompositeCommand {
             kickSet.remove(targetUUID);
             User.getInstance(targetUUID).sendMessage("commands.island.team.kick.leader-kicked");
             getIslands().removePlayer(getWorld(), targetUUID);
+            // Remove money inventory etc.
+            if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+                user.getPlayer().getEnderChest().clear();
+            }
+            if (getIWM().isOnLeaveResetInventory(getWorld())) {
+                user.getPlayer().getInventory().clear();
+            }
+            if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+                // TODO: needs Vault
+            }
             user.sendMessage("general.success");
             return true;
         } else {

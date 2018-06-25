@@ -211,12 +211,10 @@ commands:
       leave:
         cannot-leave: "&cTeamleaders cannot leave! Become a member first, or kick all members."
         description: "leave your island"
-        type-again: "&cEnter the leave command again to confirm"
         left-your-island: "&c[name] left your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
-        type-again: "&cEnter the kick command again to confirm"
         leader-kicked: "&cThe leader kicked you from the island!"
         cannot-kick: "&cYou cannot kick yourself!"
       demote:

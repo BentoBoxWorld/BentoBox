@@ -17,6 +17,8 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
@@ -52,6 +54,8 @@ public class IslandTeamKickCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    private IslandWorldManager iwm;
+    private Player player;
 
     /**
      * @throws java.lang.Exception
@@ -73,7 +77,7 @@ public class IslandTeamKickCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
+        player = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
@@ -83,7 +87,7 @@ public class IslandTeamKickCommandTest {
             notUUID = UUID.randomUUID();
         }
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
@@ -115,7 +119,7 @@ public class IslandTeamKickCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
         
         // IWM friendly name
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
     }
@@ -230,4 +234,35 @@ public class IslandTeamKickCommandTest {
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.kick.type-again"));
     }
 
+    /**
+     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     */
+    @Test
+    public void testExecuteTestResets() {
+        when(s.isKickConfirmation()).thenReturn(false);
+        
+        String[] name = {"tastybento"};
+        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+        
+        Set<UUID> members = new HashSet<>();
+        members.add(notUUID);
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
+        
+        // Require resets
+        when(iwm.isOnLeaveResetEnderChest(Mockito.any())).thenReturn(true);
+        Inventory enderChest = mock(Inventory.class);
+        when(player.getEnderChest()).thenReturn(enderChest);
+        when(iwm.isOnLeaveResetInventory(Mockito.any())).thenReturn(true);
+        PlayerInventory inv = mock(PlayerInventory.class);
+        when(player.getInventory()).thenReturn(inv);
+        when(iwm.isOnLeaveResetMoney(Mockito.any())).thenReturn(true);
+
+        IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
+        assertTrue(itl.execute(user, Arrays.asList(name)));
+        Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
+        
+        Mockito.verify(enderChest).clear();
+        Mockito.verify(inv).clear();
+    }
 }

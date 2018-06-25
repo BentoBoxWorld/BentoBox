@@ -31,11 +31,12 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
             return false;
         }
         if (!getSettings().isLeaveConfirmation()) {
-            leave(user);            
+            leave(user);
+            return true;
         } else {
             this.askConfirmation(user, () -> leave(user));
-        }
-        return true;
+            return false;
+        }        
     }
 
     private void leave(User user) {
@@ -43,7 +44,17 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
         if (leaderUUID != null) {
             User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
         }
-        getIslands().removePlayer(getWorld(), user.getUniqueId());
+        getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
+        // Remove money inventory etc.
+        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+            user.getPlayer().getEnderChest().clear();
+        }
+        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+            user.getPlayer().getInventory().clear();
+        }
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+            // TODO: needs Vault
+        }
         user.sendMessage("general.success");
     }
 
