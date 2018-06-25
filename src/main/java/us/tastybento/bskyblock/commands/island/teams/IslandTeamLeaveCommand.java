@@ -1,19 +1,13 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
-
-import org.bukkit.scheduler.BukkitRunnable;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 public class IslandTeamLeaveCommand extends CompositeCommand {
-
-    Set<UUID> leaveSet;
 
     public IslandTeamLeaveCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "leave");
@@ -24,7 +18,6 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
         setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.leave.description");
-        leaveSet = new HashSet<>();
     }
 
     @Override
@@ -37,29 +30,21 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.leave.cannot-leave");
             return false;
         }
-        if (!getSettings().isLeaveConfirmation() || leaveSet.contains(user.getUniqueId())) {
-            leaveSet.remove(user.getUniqueId());
-            UUID leaderUUID = getIslands().getTeamLeader(getWorld(), user.getUniqueId());
-            if (leaderUUID != null) {
-                User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
-            }
-            getIslands().removePlayer(getWorld(), user.getUniqueId());
-            user.sendMessage("general.success");
-            return true;
+        if (!getSettings().isLeaveConfirmation()) {
+            leave(user);            
         } else {
-            user.sendMessage("commands.island.team.leave.type-again");
-            leaveSet.add(user.getUniqueId());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    if (leaveSet.contains(user.getUniqueId())) {
-                        leaveSet.remove(user.getUniqueId());
-                        user.sendMessage("general.errors.command-cancelled");
-                    }
-                }}.runTaskLater(getPlugin(), getSettings().getLeaveWait() * 20);
-            return false;
+            this.askConfirmation(user, () -> leave(user));
         }
+        return true;
+    }
+
+    private void leave(User user) {
+        UUID leaderUUID = getIslands().getTeamLeader(getWorld(), user.getUniqueId());
+        if (leaderUUID != null) {
+            User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
+        }
+        getIslands().removePlayer(getWorld(), user.getUniqueId());
+        user.sendMessage("general.success");
     }
 
 }
