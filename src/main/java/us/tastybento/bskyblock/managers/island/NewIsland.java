@@ -132,7 +132,7 @@ public class NewIsland {
                 ib.setType(IslandType.END).build();
             }
             // Teleport player to their island
-            plugin.getIslands().homeTeleport(world, user.getPlayer());
+            plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
             // Fire exit event
             Reason reasonDone = Reason.CREATED;
             switch (reason) {

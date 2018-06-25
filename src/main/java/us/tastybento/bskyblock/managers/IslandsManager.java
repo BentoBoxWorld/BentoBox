@@ -474,17 +474,44 @@ public class IslandsManager {
      * @param player - the player
      */
     public void homeTeleport(World world, Player player) {
-        homeTeleport(world, player, 1);
+        homeTeleport(world, player, 1, false);
     }
 
     /**
      * Teleport player to a home location. If one cannot be found a search is done to
      * find a safe place.
+     * 
+     * @param world - world to check
      * @param player - the player
      * @param number - a number - home location to do to
      */
-    @SuppressWarnings("deprecation")
     public void homeTeleport(World world, Player player, int number) {
+        homeTeleport(world, player, number, false);
+    }
+
+    /**
+     * This teleports player to their island. If not safe place can be found
+     * then the player is sent to spawn via /spawn command
+     *
+     * @param world - world to check
+     * @param player - the player
+     * @param newIsland - true if this is a new island teleport
+     */
+    public void homeTeleport(World world, Player player, boolean newIsland) {
+        homeTeleport(world, player, 1, newIsland);
+    }
+
+    /**
+     * Teleport player to a home location. If one cannot be found a search is done to
+     * find a safe place.
+     * 
+     * @param world - world to check
+     * @param player - the player
+     * @param number - a number - home location to do to
+     * @param newIsland - true if this is a new island teleport
+     */
+    @SuppressWarnings("deprecation")
+    public void homeTeleport(World world, Player player, int number, boolean newIsland) {
         User user = User.getInstance(player);
         Location home = getSafeHomeLocation(world, user, number);
         // Stop any gliding
@@ -517,6 +544,21 @@ public class IslandsManager {
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
+        }
+        // If this is a new island, then run commands and do resets
+        if (newIsland) {
+            // TODO add command running
+            
+            // Remove money inventory etc.
+            if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
+                user.getPlayer().getEnderChest().clear();
+            }
+            if (plugin.getIWM().isOnJoinResetInventory(world)) {
+                user.getPlayer().getInventory().clear();
+            }
+            if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnJoinResetMoney(world)) {
+                // TODO: needs Vault
+            }
         }
     }
 

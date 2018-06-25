@@ -77,14 +77,14 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
         user.teleport(newHome);
         // Remove player as owner of the old island
         getIslands().removePlayer(getWorld(), playerUUID);
-        // Remove money inventory etc.
-        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+        // Remove money inventory etc. for leaving
+        if (getIWM().isOnLeaveResetEnderChest(getWorld()) || getIWM().isOnJoinResetEnderChest(getWorld())) {
             user.getPlayer().getEnderChest().clear();
         }
-        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+        if (getIWM().isOnLeaveResetInventory(getWorld()) || getIWM().isOnJoinResetInventory(getWorld())) {
             user.getPlayer().getInventory().clear();
         }
-        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+        if (getSettings().isUseEconomy() && (getIWM().isOnLeaveResetMoney(getWorld()) || getIWM().isOnJoinResetMoney(getWorld()))) {
             // TODO: needs Vault
         }
         // Add the player as a team member of the new island
