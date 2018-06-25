@@ -105,13 +105,22 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // No portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
+            if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+                ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(bestSpot.getWorld()));
+            }
         } else if (entity instanceof Player && !failureMessage.isEmpty()) {
             // Failed, no safe spot
             entity.sendMessage(failureMessage);
+            if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+                if (plugin.getIWM().inWorld(entity.getLocation())) {
+                    ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(entity.getWorld()));
+                } else {
+                    // Last resort
+                    ((Player)entity).setGameMode(GameMode.SURVIVAL);
+                }
+            }
         }
-        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
-            ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(bestSpot.getWorld()));
-        }
+
     }
 
     /**
