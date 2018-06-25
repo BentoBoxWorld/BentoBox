@@ -9,8 +9,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +27,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Cow;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.Zombie;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -43,8 +54,10 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.island.IslandCache;
 import us.tastybento.bskyblock.util.Util;
 
@@ -747,8 +760,8 @@ public class IslandsManagerTest {
      */
     @Test
     public void testLoad() {
-        IslandsManager im = new IslandsManager(plugin);
-        im.load();
+        //IslandsManager im = new IslandsManager(plugin);
+        //im.load();
 
     }
 
@@ -839,7 +852,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testSave() {
-        //fail("Not yet implemented"); // TODO
+        //fail("Not yet implemented"); // TODO - warning saving stuff will go on the file system
     }
 
     /**
@@ -880,6 +893,64 @@ public class IslandsManagerTest {
     @Test
     public void testShutdown() {
         //fail("Not yet implemented"); // TODO
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#clearArea(Location)}.
+     */
+    @Test
+    public void testClearArea() {
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+
+        Flags.REMOVE_MOBS.setSetting(world, true);
+        // Default whitelist
+        Set<EntityType> whitelist = new HashSet<>();
+        whitelist.add(EntityType.ENDERMAN);
+        whitelist.add(EntityType.WITHER);
+        whitelist.add(EntityType.ZOMBIE_VILLAGER);
+        whitelist.add(EntityType.PIG_ZOMBIE);
+        when(iwm.getRemoveMobsWhitelist(Mockito.any())).thenReturn(whitelist);
+
+
+        // Monsters and animals
+        Zombie zombie = mock(Zombie.class);
+        when(zombie.getLocation()).thenReturn(location);
+        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
+        Slime slime = mock(Slime.class);
+        when(slime.getLocation()).thenReturn(location);
+        when(slime.getType()).thenReturn(EntityType.SLIME);
+        Cow cow = mock(Cow.class);
+        when(cow.getLocation()).thenReturn(location);
+        when(cow.getType()).thenReturn(EntityType.COW);
+        Wither wither = mock(Wither.class);
+        when(wither.getType()).thenReturn(EntityType.WITHER);
+        Creeper creeper = mock(Creeper.class);
+        when(creeper.getType()).thenReturn(EntityType.CREEPER);
+
+
+        Collection<Entity> collection = new ArrayList<>();
+        collection.add(player);
+        collection.add(zombie);
+        collection.add(cow);
+        collection.add(slime);
+        collection.add(wither);
+        collection.add(creeper);
+        when(world
+                .getNearbyEntities(Mockito.any(Location.class), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
+        .thenReturn(collection);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.clearArea(location);
+
+        Mockito.verify(zombie).remove();
+        Mockito.verify(player, Mockito.never()).remove();
+        Mockito.verify(cow, Mockito.never()).remove();
+        Mockito.verify(slime, Mockito.never()).remove();
+        Mockito.verify(wither, Mockito.never()).remove();
+        Mockito.verify(creeper).remove();
     }
 
 }

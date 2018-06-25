@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.api.configuration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
@@ -144,5 +145,11 @@ public interface WorldSettings {
      * @return game mode
      */
     GameMode getDefaultGameMode();
+
+    /**
+     * Get the set of entity types that should not be removed in this world when a player teleports to their island
+     * @return set of entity types
+     */
+    Set<EntityType> getRemoveMobsWhitelist();
 
 }

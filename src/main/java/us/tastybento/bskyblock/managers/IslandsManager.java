@@ -16,6 +16,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
@@ -118,6 +119,9 @@ public class IslandsManager {
 
     // Island Cache
     private IslandCache islandCache;
+
+    // Async database saving semaphore
+    private boolean midSave;
 
     /**
      * Islands Manager
@@ -693,9 +697,14 @@ public class IslandsManager {
      * @param async - if true, saving will be done async
      */
     public void save(boolean async){
+        if (midSave) {
+            // If it's already saving, then do nothing
+            return;
+        }
         Collection<Island> collection = islandCache.getIslands();
-        if(async){
-            Runnable save = () -> {
+        if(async) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                midSave = true;
                 for(Island island : collection){
                     try {
                         handler.saveObject(island);
@@ -704,14 +713,14 @@ public class IslandsManager {
                         e.printStackTrace();
                     }
                 }
-            };
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, save);
+                midSave = false;
+            });
         } else {
             for(Island island : collection){
                 try {
                     handler.saveObject(island);
                 } catch (Exception e) {
-                    plugin.logError("Could not save island to datavase when running sync! " + e.getMessage());
+                    plugin.logError("Could not save island to database when running sync! " + e.getMessage());
                 }
             }
         }
@@ -800,6 +809,17 @@ public class IslandsManager {
 
         }
 
+    }
+
+    /**
+     * Clear an area of mobs as per world rules. Radius is 5 blocks in every direction.
+     * @param loc - location to clear
+     */
+    public void clearArea(Location loc) {
+        loc.getWorld().getNearbyEntities(loc, 5D, 5D, 5D).stream()
+        .filter(en -> (en instanceof Monster))
+        .filter(en -> !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType()))
+        .forEach(Entity::remove);
     }
 
 }

@@ -135,7 +135,6 @@ world:
   # a new island for example. Options are SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
   default-game-mode: SURVIVAL
 
-
   ### Nether-related Settings ###
   nether:
     # Generate Nether - if this is false, the nether world will not be made and access to
@@ -172,6 +171,21 @@ world:
   # Default is false, because it is an experimental feature that can break a lot of redstone systems.
   disable-offline-redstone: false
 
+  # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
+  # players return to their island if the island has been overrun by monsters.
+  # This setting is toggled in world flags and set by the settings GUI
+  # Mob white list - these mobs will NOT be removed when logging in or doing /island
+  remove-mobs-whitelist:
+  - WITHER
+  - ENDERMAN
+  - PIG_ZOMBIE
+  - ZOMBIE_VILLAGER
+
+  # World flags. These are boolean settings for various flags for this world
+  flags:
+    ENTER_EXIT_MESSAGES: true
+    REMOVE_MOBS: true
+    
 ### Island Settings ###
 island:
   # Default chest items
@@ -268,23 +282,6 @@ island:
 
       # Reset Ender Chest - if true, the player's Ender Chest will be cleared.
       ender-chest: false
-
-  # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
-  # players return to their island if the island has been overrun by monsters.
-  # Con is that it kills any mob grinders.
-  remove-mobs:
-    # Remove mobs on island when logging in.
-    on-login: false
-
-    # Remove mobs when /island.
-    on-island: false
-    
-    # Mob white list - these mobs will NOT be removed when logging in or doing /island
-    whitelist:
-    - WITHER
-    - ENDERMAN
-    - PIG_ZOMBIE
-    #- ZOMBIE_VILLAGER (1.10+)
 
   # Make island if player teleports to the island world and does not have one
   make-island-if-none: false

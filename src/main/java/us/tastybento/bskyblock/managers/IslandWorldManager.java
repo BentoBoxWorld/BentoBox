@@ -486,4 +486,13 @@ public class IslandWorldManager {
     public GameMode getDefaultGameMode(World world) {
         return worldSettings.get(Util.getWorld(world)).getDefaultGameMode();
     }
+
+    /**
+     * Get the set of entity types not to remove when player teleports to island
+     * @param world - world
+     * @return - set of entity types
+     */
+    public Set<EntityType> getRemoveMobsWhitelist(World world) {
+        return worldSettings.get(Util.getWorld(world)).getRemoveMobsWhitelist();
+    }
 }

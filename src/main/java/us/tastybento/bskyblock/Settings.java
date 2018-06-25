@@ -233,6 +233,13 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "world.disable-offline-redstone")
     private boolean disableOfflineRedstone = false;
 
+    @ConfigComment("Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps")
+    @ConfigComment("players return to their island if the island has been overrun by monsters.")
+    @ConfigComment("This setting is toggled in world flags and set by the settings GUI.")
+    @ConfigComment("Mob white list - these mobs will NOT be removed when logging in or doing /island")
+    @ConfigEntry(path = "world.remove-mobs-whitelist")
+    private Set<EntityType> removeMobsWhitelist = new HashSet<>();
+
     @ConfigComment("World flags. These are boolean settings for various flags for this world")
     @ConfigEntry(path = "world.flags")
     private Map<String, Boolean> worldFlags = new HashMap<>();
@@ -1428,6 +1435,19 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setDefaultGameMode(GameMode defaultGameMode) {
         this.defaultGameMode = defaultGameMode;
+    }
+    /**
+     * @return the removeMobsWhitelist
+     */
+    @Override
+    public Set<EntityType> getRemoveMobsWhitelist() {
+        return removeMobsWhitelist;
+    }
+    /**
+     * @param removeMobsWhitelist the removeMobsWhitelist to set
+     */
+    public void setRemoveMobsWhitelist(Set<EntityType> removeMobsWhitelist) {
+        this.removeMobsWhitelist = removeMobsWhitelist;
     }
 
 

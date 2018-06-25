@@ -10,7 +10,6 @@ import org.bukkit.event.player.PlayerQuitEvent;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.listeners.flags.RemoveMobsListener;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
@@ -53,7 +52,7 @@ public class JoinLeaveListener implements Listener {
                 plugin.logWarning("Player that just logged in has no name! " + playerUUID.toString());
             }
             if (plugin.getIWM().inWorld(user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
-                RemoveMobsListener.clearArea(user.getLocation());
+                plugin.getIslands().clearArea(user.getLocation());
             }
         }
     }
