@@ -26,11 +26,11 @@
 				</includes>
 			</resource>
 			<resource>
-				<targetPath>schematics</targetPath>
+				<targetPath>schems</targetPath>
 				<filtering>false</filtering>
-				<directory>${basedir}/schematics</directory>
+				<directory>${basedir}/schems</directory>
 				<includes>
-					<include>*.schematic</include>
+					<include>*.schem</include>
 				</includes>
 			</resource>
 			<resource>

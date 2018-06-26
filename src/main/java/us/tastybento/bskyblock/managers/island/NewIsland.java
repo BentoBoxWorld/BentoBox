@@ -11,8 +11,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.island.builders.IslandBuilder;
-import us.tastybento.bskyblock.island.builders.IslandBuilder.IslandType;
+import us.tastybento.bskyblock.island.builders.IslandBuilderNew;
 
 /**
  * Create and paste a new island
@@ -81,10 +80,10 @@ public class NewIsland {
             this.reason2 = reason;
             return this;
         }
-        
+
         public Builder world(World world) {
-           this.world2 = world;
-           return this;
+            this.world2 = world;
+            return this;
         }
 
         public Island build() throws IOException {
@@ -120,16 +119,16 @@ public class NewIsland {
                 .build();
         if (!event.isCancelled()) {
             // Create island
-            IslandBuilder ib = new IslandBuilder(island)
-                .setPlayer(user.getPlayer())
-                .setChestItems(plugin.getSettings().getChestItems())
-                .setType(IslandType.ISLAND);
+            IslandBuilderNew ib = new IslandBuilderNew(plugin, island)
+                    .setPlayer(user.getPlayer())
+                    .setChestItems(plugin.getSettings().getChestItems())
+                    .setType(IslandBuilderNew.IslandType.ISLAND);
             ib.build();
             if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
-                ib.setType(IslandType.NETHER).build();
+                ib.setType(IslandBuilderNew.IslandType.NETHER).build();
             }
             if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
-                ib.setType(IslandType.END).build();
+                ib.setType(IslandBuilderNew.IslandType.END).build();
             }
             // Teleport player to their island
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
@@ -146,11 +145,11 @@ public class NewIsland {
                 break;
             }
             IslandEvent.builder()
-                    .involvedPlayer(user.getUniqueId())
-                    .reason(reasonDone)
-                    .island(island)
-                    .location(island.getCenter())
-                    .build();
+            .involvedPlayer(user.getUniqueId())
+            .reason(reasonDone)
+            .island(island)
+            .location(island.getCenter())
+            .build();
         }
     }
 

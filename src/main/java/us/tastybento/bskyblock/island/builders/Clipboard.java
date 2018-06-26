@@ -21,12 +21,14 @@ import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -38,6 +40,7 @@ import org.bukkit.material.Lever;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
 import org.bukkit.material.Redstone;
+import org.bukkit.material.Stairs;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.TextVariables;
@@ -211,7 +214,7 @@ public class Clipboard {
             return;
         }
 
-        block.setType(m);
+        block.setType(m, false);
 
         BlockState bs = block.getState();
 
@@ -228,7 +231,11 @@ public class Clipboard {
 
         if (md instanceof Directional) {
             Directional facing = (Directional)md;
-            facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
+            if (md instanceof Stairs) {
+                facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
+            } else {
+                facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
+            }
         }
 
         if (md instanceof Lever) {
@@ -239,6 +246,7 @@ public class Clipboard {
             Button r = (Button)md;
             r.setPowered(s.getBoolean(POWERED));
         }
+
         // Block data
         if (bs instanceof Sign) {
             Sign sign = (Sign)bs;
@@ -262,6 +270,19 @@ public class Clipboard {
                 }
             }
         }
+        if (bs instanceof CreatureSpawner) {
+            CreatureSpawner spawner = ((CreatureSpawner) bs);
+            spawner.setSpawnedType(EntityType.valueOf(s.getString("spawnedType", "PIG")));
+            spawner.setMaxNearbyEntities(s.getInt("maxNearbyEntities", 16));
+            spawner.setMaxSpawnDelay(s.getInt("maxSpawnDelay", 2*60*20));
+            spawner.setMinSpawnDelay(s.getInt("minSpawnDelay", 5*20));
+
+            spawner.setDelay(s.getInt("delay", -1));
+            spawner.setRequiredPlayerRange(s.getInt("requiredPlayerRange", 16));
+            spawner.setSpawnRange(s.getInt("spawnRange", 4));
+
+        }
+
 
         bs.update(true, false);
 
@@ -270,6 +291,7 @@ public class Clipboard {
             ConfigurationSection inv = s.getConfigurationSection("inventory");
             inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
         }
+
 
     }
 
@@ -343,6 +365,17 @@ public class Clipboard {
                 }
             }
         }
+        if (bs instanceof CreatureSpawner) {
+            CreatureSpawner spawner = (CreatureSpawner)bs;
+            s.set("spawnedType",spawner.getSpawnedType().name());
+            s.set("delay", spawner.getDelay());
+            s.set("maxNearbyEntities", spawner.getMaxNearbyEntities());
+            s.set("maxSpawnDelay", spawner.getMaxSpawnDelay());
+            s.set("minSpawnDelay", spawner.getMinSpawnDelay());
+            s.set("requiredPlayerRange", spawner.getRequiredPlayerRange());
+            s.set("spawnRange", spawner.getSpawnRange());
+        }
+
         return true;
     }
 
