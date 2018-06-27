@@ -111,14 +111,12 @@ public class NetherPopulator extends BlockPopulator {
                     } else if (b.getType().equals(Material.DIRT)) {
                         world.generateTree(source.getBlock(x, y + 1, z).getLocation(), TreeType.BROWN_MUSHROOM);
                         b.setType(Material.SOUL_SAND);
-                    } else if (b.getType().equals(Material.SOUL_SAND) && b.getRelative(BlockFace.UP).getType().equals(Material.AIR)) {
-                        if (random.nextInt(9) == 1) {
-                            b.getRelative(BlockFace.UP).setType(Material.NETHER_WARTS);
-                        }
+                    } else if (b.getType().equals(Material.SOUL_SAND) && b.getRelative(BlockFace.UP).getType().equals(Material.AIR)
+                            && random.nextInt(9) == 1) {
+                        b.getRelative(BlockFace.UP).setType(Material.NETHER_WARTS);
                     }
                 }
             }
         }
     }
-
 }

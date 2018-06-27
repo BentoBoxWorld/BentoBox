@@ -31,8 +31,8 @@ public interface PlaceholderAPIInterface {
 
     /**
      * Replace placeholders in the message according to the receiver
-     * @param receiver
-     * @param message
+     * @param receiver - user who will receive the message
+     * @param message - message
      * @return updated message
      */
     String replacePlaceholders(User receiver, String message);

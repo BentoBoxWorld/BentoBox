@@ -1,8 +1,6 @@
-############################################################################
 # Config for BSkyBlock V${version}
-#
+
 # Created and maintained by Tastybento with the help of Poslovitch
-############################################################################
 
 ### General Settings ###
 general:
@@ -28,13 +26,6 @@ general:
   # Starting money - this is how much money new players will have as their
   # balance at the start of an island. 
   starting-money: 10.0
-
-  # Use the control panel as the default display for /island
-  # /island will always create an island if one does not exist
-  # If the control panel is not used, then /island will teleport the player home
-  # Players can change this setting using /island cp on or /island cp off
-  # Changing this setting will only apply to new players.
-  use-control-panel: true
 
   ### Purge-related Settings ###
   purge:
@@ -140,6 +131,10 @@ world:
   # If the number of islands is greater than this number, no new island will be created.
   max-islands: 0
 
+  # The default game mode for this world. Players will be set to this mode when they create
+  # a new island for example. Options are SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
+  default-game-mode: SURVIVAL
+
   ### Nether-related Settings ###
   nether:
     # Generate Nether - if this is false, the nether world will not be made and access to
@@ -170,92 +165,27 @@ world:
   end:
     generate: true
     islands: true
-    
-  ### Entities-related Settings ###
-  entities:
-    # Sets the limit for number of entities that can spawn in a chunk in this world.
-    # Note: this does not limit the number of them, just how many spawn naturally.
-    # Note: If set to a negative number the world will use the server-wide spawn limit instead.
-    spawn-per-chunk:
-      # Limit monsters spawn
-      monsters: 100
-      # Limits animals spawn
-      animals: 15
-      # Limits water animals (Squid) spawn
-      water-animals: 15
-
-    # General entity limiting
-    # Use this section to limit how many entities can be added to an island.
-    # 0 means the item will be blocked from placement completely.
-    # Uncomment to set the limit. The numbers are just suggested values.
-    # The limit is per-world, so a hopper limit of 30 means up to 30 in the overworld and
-    # up to 30 in the nether.
-    limits:
-      # Mobs, animals and other living entities
-      #BAT: 10
-      #BLAZE: 10
-      #BOAT: 10
-      #CAVE_SPIDER: 10
-      #CHICKEN: 10
-      #COW: 10
-      #CREEPER: 10
-      #DONKEY: 10
-      #ENDERMAN: 10
-      #HORSE: 10
-      #HUSK: 10
-      #IRON_GOLEM: 10
-      #LLAMA: 10
-      #MAGMA_CUBE: 10
-      #MULE: 10
-      #MUSHROOM_COW: 10
-      #OCELOT: 10
-      #PIG: 10
-      #PIG_ZOMBIE: 10
-      #POLAR_BEAR: 10
-      #RABBIT: 10
-      #SHEEP: 10
-      #SKELETON: 10
-      #SKELETON_HORSE: 10
-      #SLIME: 10
-      #SNOWMAN: 10
-      #SPIDER: 10
-      #SQUID: 10
-      #STRAY: 10
-      #WITCH: 10
-      #WITHER: 10
-      #WITHER_SKELETON: 10
-      #WOLF: 10
-      #ZOMBIE: 10
-      #ZOMBIE_HORSE: 10
-      #ZOMBIE_VILLAGER: 10     
-      # These are the ONLY blocks that can be limited (because they are entities).
-      #BANNER: 20
-      #ITEM_FRAME: 30
-      #FURNACE: 10
-      #CHEST: 50
-      #TRAPPED_CHEST: 50
-      #ENDER_CHEST: 1
-      #JUKEBOX: 5
-      #DISPENSER: 5
-      #DROPPER: 5
-      #SIGN: 10
-      #MOB_SPAWNER: 10
-      #NOTE_BLOCK: 5
-      #ENCHANTMENT_TABLE: 5
-      #BEACON: 12
-      #SKULL: 50
-      #DAYLIGHT_DETECTOR: 10
-      HOPPER: 30
-      #REDSTONE_COMPARATOR: 30
-      #FLOWER_POT: 20
-      #PAINTING: 5
-      #ARMOR_STAND: 5
 
   # Disable redstone operation on islands unless a team member is online.
   # This may reduce lag but it can cause problems with visitors needing to use a redstone system.
   # Default is false, because it is an experimental feature that can break a lot of redstone systems.
   disable-offline-redstone: false
 
+  # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
+  # players return to their island if the island has been overrun by monsters.
+  # This setting is toggled in world flags and set by the settings GUI
+  # Mob white list - these mobs will NOT be removed when logging in or doing /island
+  remove-mobs-whitelist:
+  - WITHER
+  - ENDERMAN
+  - PIG_ZOMBIE
+  - ZOMBIE_VILLAGER
+
+  # World flags. These are boolean settings for various flags for this world
+  flags:
+    ENTER_EXIT_MESSAGES: true
+    REMOVE_MOBS: true
+    
 ### Island Settings ###
 island:
   # Default chest items
@@ -281,13 +211,6 @@ island:
   # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
   # Permission size cannot be less than the default below. 
   max-team-size: 4
-  
-  # Ranks for players
-  # Pre-defined ranks are:
-  # Owner (1000), Member (700), Visitor (0)  and Banned (-1)
-  # Rank names should be references to locale settings and must be in quotes
-  # like "ranks.coop".
-  "ranks.coop": 100
   
   # Default maximum number of homes a player can have. Min = 1
   # Accessed via sethome <number> or go <number>
@@ -360,23 +283,6 @@ island:
       # Reset Ender Chest - if true, the player's Ender Chest will be cleared.
       ender-chest: false
 
-  # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
-  # players return to their island if the island has been overrun by monsters.
-  # Con is that it kills any mob grinders.
-  remove-mobs:
-    # Remove mobs on island when logging in.
-    on-login: false
-
-    # Remove mobs when /island.
-    on-island: false
-    
-    # Mob white list - these mobs will NOT be removed when logging in or doing /island
-    whitelist:
-    - WITHER
-    - ENDERMAN
-    - PIG_ZOMBIE
-    #- ZOMBIE_VILLAGER (1.10+)
-
   # Make island if player teleports to the island world and does not have one
   make-island-if-none: false
 
@@ -385,34 +291,7 @@ island:
 
   # Have player's respawn on their island if they die
   respawn-on-island: false
-  
-  # Only allow the island leader to coop players.
-  # Island members wont be able to coop other players.
-  only-leader-can-coop: false
-  
-  # Island and Team Chat
-  chat:
-    # Team Chat
-    # The prefix [Team Chat] that goes in front of team chats is in the locale files
-    team:
-      # This enables player to set is so their chat goes to their team mates only
-      # using the /island teamchat command.
-      use: true
-
-      # Log all messages sent in TeamChats to console.
-      log: true
-
-      # Set this to true will include trust players in the TeamChat.
-      include-trust: true
-
-      # Set this to true will include coop players in the TeamChat.
-      include-coop: false
-
-    # TODO
-    island:
-      use: true
-      log: true
-
+    
   # Ask the player to confirm the command he is using by typing it again.
   # The "wait" value is the number of seconds to wait for confirmation.
   require-confirmation:
@@ -445,42 +324,33 @@ protection:
   # Includes blaze and ghast. 
   restrict-flying-mobs: true
   
-  # Invincible visitors - Prevent players from killing them (intentionally or by accident)
-  # If they fall to the void, they get TP'd to their island.
+  # Invincible visitors. List of damages that will not affect visitors.
+  # Make list blank if visitors should receive all damages
   invincible-visitors:
-    # Toggle the invincibility
-    use: true
-
-    # This allow you to customize what kind of damage visitors should not receive
-    # If you want visitors to receive a listed damage, put a "#" at the start of the line
-    # See this for more info about options : https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/entity/EntityDamageEvent.DamageCause.html
-    options:
-    - BLOCK_EXPLOSION
-    - CONTACT
-    - CUSTOM
-    - DROWNING
-    - ENTITY_ATTACK
-    - ENTITY_EXPLOSION
-    - FALL
-    - FALLING_BLOCK
-    - FIRE
-    - FIRE_TICK
-    - LAVA
-    - LIGHTNING
-    - MAGIC
-    - POISON
-    - PROJECTILE
-    - STARVATION
-    - SUFFOCATION
-    - THORNS
-    - WITHER
-    # 1.9+ only
-    - DRAGON_BREATH
-    - FLY_INTO_WALL
-    # 1.10+ only
-    - HOT_FLOOR
-    # 1.11+ only
-    - CRAMMING
+  - BLOCK_EXPLOSION
+  - CONTACT
+  - CUSTOM
+  - DROWNING
+  - ENTITY_ATTACK
+  - ENTITY_EXPLOSION
+  - FALL
+  - FALLING_BLOCK
+  - FIRE
+  - FIRE_TICK
+  - LAVA
+  - LIGHTNING
+  - MAGIC
+  - POISON
+  - PROJECTILE
+  - STARVATION
+  - SUFFOCATION
+  - THORNS
+  - WITHER
+  - DRAGON_BREATH
+  - FLY_INTO_WALL
+  - HOT_FLOOR
+  - CRAMMING
+  - VOID
 
   # Visitor banned commands: Visitors to islands cannot use these commands
   visitor-banned-commands:
@@ -489,58 +359,10 @@ protection:
 
   # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
   toggle-pvp-cooldown: 60
-
+  
   # TODO
   flags: []
   
-### Acid Settings ###
-# Originally designed for AcidIsland, but can be used for BSkyBlock as well.
-acid:
-  # Ops receive damage from acid (Set to true if you want Ops to play properly)
-  damage-op: false
-
-  # Damage chickens in acid - true or false - chickens tend to go swimming...
-  damage-chickens: false
-
-  damage:
-    # Water is acid
-    acid:
-      # Acid damage to player per second by being in acid if they have no armor on.
-      # A fully health player has 20 health points. Players will regen some health
-      # so the default will give players about 3 seconds to get out the acid
-      # 0 = no damage, 10 = default damage, 20 = instant death
-      player: 0
-
-      # Damage that monsters will experience in acid.
-      monster: 0
-
-      # Damage that animals will experience in acid.
-      animal: 0
-
-      # Destroy items in water after this many seconds. Timing is variable and may occur
-      # up to 2x this time. If 0, items will not be removed. Acid damage does not need to
-      # be on for this setting to work. i.e., it'll work with water too.
-      # Items fizz when they are destroyed.
-      item: 0
-
-    # Damage that rain does.
-    rain: 0
-
-    # Damage type to apply in addition to acid damage
-    # Types can be : SLOW, SLOW_DIGGING, CONFUSION, BLINDNESS, HUNGER, WEAKNESS and POISON
-    # If you just want these to act, then make the acid damage 0 above
-    # Note - these are potion effects and so can be cured by milk
-    effects:
-    #- confusion
-
-  # Armor protection
-  protection:
-    # Protect players from acid rain if they have a helmet on
-    helmet: false
-
-    # Protect players from all acid if they have a full set of armor on
-    full-armor: false
-
 ### Schematics Settings ###
 schematics:
   # These are the default settings applied to the schematics

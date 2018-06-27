@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -33,9 +34,10 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.database.objects.Players;
 import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BSkyBlock.class })
+@PrepareForTest( { BSkyBlock.class, Util.class })
 public class MySQLDatabaseHandlerTest {
     
     private static MySQLDatabaseHandler<Island> handler;
@@ -86,6 +88,9 @@ public class MySQLDatabaseHandlerTest {
         instance = new Island();
         instance.setUniqueId(UNIQUE_ID);
         handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
+        
+        PowerMockito.mockStatic(Util.class);
+        when(Util.sameWorld(Mockito.any(), Mockito.any())).thenReturn(true);
 
     }
 

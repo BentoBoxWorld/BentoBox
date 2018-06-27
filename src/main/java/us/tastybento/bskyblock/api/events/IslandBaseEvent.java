@@ -29,9 +29,9 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
     }
 
     /**
-     * @param island
+     * @param island - island
      * @param playerUUID - the player's UUID
-     * @param admin
+     * @param admin - true if ths is due to an admin event
      * @param location - the location
      */
     public IslandBaseEvent(Island island, UUID playerUUID, boolean admin, Location location) {
@@ -53,7 +53,7 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
      * @return the owner of the island
      */
     public UUID getOwner() {
-        return getOwner();
+        return island.getOwner();
     }
 
     /**

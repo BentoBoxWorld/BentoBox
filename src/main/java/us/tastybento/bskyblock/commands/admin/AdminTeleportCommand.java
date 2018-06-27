@@ -1,14 +1,12 @@
 package us.tastybento.bskyblock.commands.admin;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
@@ -22,7 +20,8 @@ public class AdminTeleportCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.tp");
+        // Permission
+        setPermission(getPermissionPrefix() + "admin.tp");
         setOnlyPlayer(true);
         setParameters("commands.admin.tp.parameters");
         setDescription("commands.admin.tp.description");
@@ -41,12 +40,12 @@ public class AdminTeleportCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         } else {
-            if (getIslands().hasIsland(targetUUID) || getIslands().inTeam(targetUUID)) {
-                Location warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getIslandWorld());
+            if (getIslands().hasIsland(getWorld(), targetUUID) || getIslands().inTeam(getWorld(), targetUUID)) {
+                Location warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getIslandWorld());
                 if (getLabel().equals("tpnether")) {
-                    warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getNetherWorld());
+                    warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getNetherWorld());
                 } else if (getLabel().equals("tpend")) {
-                    warpSpot = getIslands().getIslandLocation(targetUUID).toVector().toLocation(getPlugin().getIslandWorldManager().getEndWorld());
+                    warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld());
                 }
                 // Other wise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
@@ -63,14 +62,13 @@ public class AdminTeleportCommand extends CompositeCommand {
     }
     
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
-        List<String> options = new ArrayList<>();
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        options.addAll(Util.getOnlinePlayerList(user));
+        List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 

@@ -9,10 +9,7 @@
 #
 # Cette traduction est adaptée pour la version : [alpha-2]
 
-banner:
-- "WHITE"
-- "STRIPE_BOTTOM:RED"
-- "STRIPE_TOP:BLUE"
+banner: "BANNER:1:WHITE:STRIPE_BOTTOM:RED:STRIPE_TOP:BLUE"
 
 general:
   deaths: "morts"

@@ -46,7 +46,7 @@ public abstract class Addon implements AddonInterface {
      */
     public FileConfiguration getConfig() {
         if (config == null) {
-            config = loadYamlFile(ADDON_CONFIG_FILENAME);
+            config = loadYamlFile();
         }
         return config;
     }
@@ -93,13 +93,12 @@ public abstract class Addon implements AddonInterface {
     }
 
     /**
-     * Load a YAML file
+     * Load YAML config file
      *
-     * @param file
      * @return Yaml File configuration
      */
-    private FileConfiguration loadYamlFile(String file) {
-        File yamlFile = new File(dataFolder, file);
+    private FileConfiguration loadYamlFile() {
+        File yamlFile = new File(dataFolder, ADDON_CONFIG_FILENAME);
 
         YamlConfiguration yamlConfig = null;
         if (yamlFile.exists()) {
@@ -107,7 +106,7 @@ public abstract class Addon implements AddonInterface {
                 yamlConfig = new YamlConfiguration();
                 yamlConfig.load(yamlFile);
             } catch (Exception e) {
-                Bukkit.getLogger().severe("Could not load YAML file: " + file + " " + e.getMessage());
+                Bukkit.getLogger().severe(() -> "Could not load config.yml: " + e.getMessage());
             }
         }
         return yamlConfig;
@@ -116,7 +115,7 @@ public abstract class Addon implements AddonInterface {
     /**
      * Register a listener for this addon
      *
-     * @param listener
+     * @param listener - listener
      */
     public void registerListener(Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, BSkyBlock.getInstance());
@@ -139,7 +138,7 @@ public abstract class Addon implements AddonInterface {
      */
     public void saveDefaultConfig() {
         saveResource(ADDON_CONFIG_FILENAME, false);
-        config = loadYamlFile(ADDON_CONFIG_FILENAME);
+        config = loadYamlFile();
     }
 
     /**
@@ -202,7 +201,7 @@ public abstract class Addon implements AddonInterface {
 
     /**
      * Get the resource from Jar file
-     * @param jarResource
+     * @param jarResource - jar resource filename
      * @return resource or null if there is a problem
      */
     public InputStream getResource(String jarResource) {
@@ -236,7 +235,7 @@ public abstract class Addon implements AddonInterface {
     /**
      * Set this addon's data folder
      *
-     * @param file
+     * @param file - data folder
      */
     public void setDataFolder(File file) {
         dataFolder = file;
@@ -245,7 +244,7 @@ public abstract class Addon implements AddonInterface {
     /**
      * Set this addons description
      *
-     * @param desc
+     * @param desc - description
      */
     public void setDescription(AddonDescription desc) {
         description = desc;

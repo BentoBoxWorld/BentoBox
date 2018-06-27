@@ -7,11 +7,10 @@ import java.util.UUID;
 
 import org.bukkit.scheduler.BukkitRunnable;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
-public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
+public class IslandTeamKickCommand extends CompositeCommand {
 
     Set<UUID> kickSet;
 
@@ -21,7 +20,7 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setParameters("commands.island.team.kick.parameters");
         setDescription("commands.island.team.kick.description");
@@ -30,11 +29,11 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        if (!getTeamLeader(user).equals(user.getUniqueId())) {
+        if (!getTeamLeader(getWorld(), user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -53,14 +52,24 @@ public class IslandTeamKickCommand extends AbstractIslandTeamCommand {
             user.sendMessage("commands.island.kick.cannot-kick");
             return false;
         }
-        if (!getIslands().getMembers(user.getUniqueId()).contains(targetUUID)) {
+        if (!getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
         if (!getSettings().isKickConfirmation() || kickSet.contains(targetUUID)) {
             kickSet.remove(targetUUID);
             User.getInstance(targetUUID).sendMessage("commands.island.team.kick.leader-kicked");
-            getIslands().removePlayer(targetUUID);
+            getIslands().removePlayer(getWorld(), targetUUID);
+            // Remove money inventory etc.
+            if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+                user.getPlayer().getEnderChest().clear();
+            }
+            if (getIWM().isOnLeaveResetInventory(getWorld())) {
+                user.getPlayer().getInventory().clear();
+            }
+            if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+                // TODO: needs Vault
+            }
             user.sendMessage("general.success");
             return true;
         } else {

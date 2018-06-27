@@ -32,6 +32,7 @@ import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
@@ -90,6 +91,11 @@ public class SafeSpotTeleportTest {
         Settings settings = mock(Settings.class);
         when(settings.getIslandProtectionRange()).thenReturn(1);
         when(plugin.getSettings()).thenReturn(settings);
+        
+        // Island world manager
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(1);
+        when(plugin.getIWM()).thenReturn(iwm);
         
         // Server & Scheduler
         sch = mock(BukkitScheduler.class);

@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
@@ -8,10 +5,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
-import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 /**
@@ -26,7 +22,7 @@ public class IslandSetnameCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.name");
+        setPermission("island.name");
         setOnlyPlayer(true);
         setParameters("commands.island.setname.parameters");
         setDescription("commands.island.setname.description");
@@ -37,15 +33,14 @@ public class IslandSetnameCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        Player player = user.getPlayer();
-        UUID playerUUID = player.getUniqueId();
+        UUID playerUUID = user.getUniqueId();
 
-        if (!getIslands().hasIsland(playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
 
-        if (!getIslands().isOwner(playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -60,19 +55,19 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength()) {
-            user.sendMessage("commands.island.setname.too-short", "[length]",  String.valueOf(getSettings().getNameMinLength()));
+            user.sendMessage("commands.island.setname.too-short", TextVariables.NUMBER,  String.valueOf(getSettings().getNameMinLength()));
             return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
-            user.sendMessage("commands.island.setname.too-long", "[length]", String.valueOf(getSettings().getNameMaxLength()));
+            user.sendMessage("commands.island.setname.too-long", TextVariables.NUMBER, String.valueOf(getSettings().getNameMaxLength()));
             return false;
         }
 
         // Set the name
-        if (!player.hasPermission(Constants.PERMPREFIX + "island.name.format")) {
-            getIslands().getIsland(player.getUniqueId()).setName(ChatColor.translateAlternateColorCodes('&', name));
+        if (user.isOp() || user.hasPermission(this.getPermissionPrefix() + ".island.name.format")) {
+            getIslands().getIsland(getWorld(), playerUUID).setName(ChatColor.translateAlternateColorCodes('&', name));
         } else {
-            getIslands().getIsland(playerUUID).setName(name);
+            getIslands().getIsland(getWorld(), playerUUID).setName(name);
         }
 
         user.sendMessage("general.success");

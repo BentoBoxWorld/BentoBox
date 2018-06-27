@@ -3,6 +3,7 @@ package us.tastybento.bskyblock.island.builders;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.TreeType;
@@ -17,9 +18,9 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Chest;
 
-import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Constants.GameType;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 
@@ -37,20 +38,16 @@ public class IslandBuilder {
         END
     }
 
-    private static final String PLAYER_PLACEHOLDER = "[player]";
-
     private Island island;
     private World world;
     private IslandType type = IslandType.ISLAND;
     private List<ItemStack> chestItems;
     private UUID playerUUID;
     private String playerName;
-    private BSkyBlock plugin;
 
     //TODO support companions?
 
-    public IslandBuilder(BSkyBlock plugin, Island island) {
-        this.plugin = plugin;
+    public IslandBuilder(Island island) {
         this.island = island;
         world = island.getWorld();
     }
@@ -60,21 +57,6 @@ public class IslandBuilder {
      */
     public IslandBuilder setType(IslandType type) {
         this.type = type;
-        switch(type) {
-        case END:
-            world = plugin.getIslandWorldManager().getEndWorld();
-            break;
-        case ISLAND:
-            world = plugin.getIslandWorldManager().getIslandWorld();
-            break;
-        case NETHER:
-            world = plugin.getIslandWorldManager().getNetherWorld();
-            break;
-        default:
-            world = island.getWorld();
-            break;
-
-        }
         return this;
     }
 
@@ -97,16 +79,29 @@ public class IslandBuilder {
 
     public void build() {
         // Switch on island type
-        if (type == IslandType.ISLAND) {
-            if (Constants.GAMETYPE == GameType.ACIDISLAND) {
-                generateAcidIslandBlocks();
-            } else {
-                generateIslandBlocks();
-            }
-        } else if (type == IslandType.NETHER){
-            generateNetherBlocks();
-        } else if (type == IslandType.END){
-            generateEndBlocks();
+        switch (type) {
+            case ISLAND:
+                world = island.getWorld();
+                if (Constants.GAMETYPE == GameType.ACIDISLAND) {
+                    generateAcidIslandBlocks();
+                } else {
+                    generateIslandBlocks();
+                }
+                break;
+            case NETHER:
+                world = Bukkit.getWorld(island.getWorld().getName() + "_nether");
+                if (world == null) {
+                    return;
+                }
+                generateNetherBlocks();
+                break;
+            case END:
+                world = Bukkit.getWorld(island.getWorld().getName() + "_the_end");
+                if (world == null) {
+                    return;
+                }
+                generateEndBlocks();
+                break;
         }
         // Do other stuff
     }
@@ -229,7 +224,7 @@ public class IslandBuilder {
         int islandHeight = island.getCenter().getBlockY();
 
         World world = island.getCenter().getWorld();
-        int y = 0;
+        int y;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 3; x_space <= x + 3; x_space++) {
@@ -310,7 +305,7 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        int y = 0;
+        int y;
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 3; x_space <= x + 3; x_space++) {
                 for (int z_space = z - 3; z_space <= z + 3; z_space++) {
@@ -382,7 +377,7 @@ public class IslandBuilder {
         int z = island.getCenter().getBlockZ();
         int islandHeight = island.getCenter().getBlockY();
 
-        int y = 0;
+        int y;
         // Add some grass
         for (y = islandHeight + 4; y < islandHeight + 5; y++) {
             for (int x_space = x - 3; x_space <= x + 3; x_space++) {
@@ -462,10 +457,10 @@ public class IslandBuilder {
             User user = User.getInstance(playerUUID);
 
             // Sets the lines of the sign
-            sign.setLine(0, user.getTranslation("new-island.sign.line0", PLAYER_PLACEHOLDER, playerName));
-            sign.setLine(1, user.getTranslation("new-island.sign.line1", PLAYER_PLACEHOLDER, playerName));
-            sign.setLine(2, user.getTranslation("new-island.sign.line2", PLAYER_PLACEHOLDER, playerName));
-            sign.setLine(3, user.getTranslation("new-island.sign.line3", PLAYER_PLACEHOLDER, playerName));
+            sign.setLine(0, user.getTranslation("new-island.sign.line0", TextVariables.NAME, playerName));
+            sign.setLine(1, user.getTranslation("new-island.sign.line1", TextVariables.NAME, playerName));
+            sign.setLine(2, user.getTranslation("new-island.sign.line2", TextVariables.NAME, playerName));
+            sign.setLine(3, user.getTranslation("new-island.sign.line3", TextVariables.NAME, playerName));
 
             ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
             sign.update();

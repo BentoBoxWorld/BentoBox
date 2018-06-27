@@ -3,10 +3,13 @@ package us.tastybento.bskyblock.api.flags;
 import java.util.Optional;
 
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.panels.builders.PanelItemBuilder;
 import us.tastybento.bskyblock.api.user.User;
@@ -16,26 +19,40 @@ import us.tastybento.bskyblock.managers.RanksManager;
 public class Flag implements Comparable<Flag> {
 
     public enum Type {
-        PROTECTION,
-        SETTING
+        PROTECTION(Material.SHIELD),
+        SETTING(Material.COMMAND),
+        WORLD_SETTING(Material.GRASS);
+
+        private Material icon;
+
+        Type(Material icon) {
+            this.icon = icon;
+        }
+
+        public Material getIcon() {
+            return icon;
+        }
     }
+
+    private static final String PROTECTION_FLAGS = "protection.flags.";
 
     private final String id;
     private final Material icon;
     private final Listener listener;
     private final Type type;
-    private boolean defaultSetting;
+    private boolean setting;
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
+    private final boolean subPanel;
 
-    Flag(String id, Material icon, Listener listener, boolean defaultSetting, Type type, int defaultRank, PanelItem.ClickHandler clickListener) {
+    Flag(String id, Material icon, Listener listener, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
-        this.defaultSetting = defaultSetting;
         this.type = type;
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
+        this.subPanel = subPanel;
     }
 
     public String getID() {
@@ -51,10 +68,34 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
-     * @return - true means it is allowed. false means it is not allowed
+     * Check if a setting is set in this world
+     * @param world - world
+     * @return world setting or default flag setting if a specific world setting is not set.
+     * If world is not a game world, then the result will always be false!
      */
-    public boolean isDefaultSetting() {
-        return defaultSetting;
+    public boolean isSetForWorld(World world) {
+        if (type.equals(Type.WORLD_SETTING)) {
+            WorldSettings ws = BSkyBlock.getInstance().getIWM().getWorldSettings(world);
+            if (ws != null) {
+                ws.getWorldFlags().putIfAbsent(getID(), setting);
+                return ws.getWorldFlags().get(getID());
+            }
+            return false;
+        } else {
+            // Setting
+            return setting;
+        }
+    }
+
+    /**
+     * Set a world setting
+     * @param world - world
+     * @param setting - true or false
+     */
+    public void setSetting(World world, boolean setting) {
+        if (getType().equals(Type.WORLD_SETTING)) {
+            BSkyBlock.getInstance().getIWM().getWorldSettings(world).getWorldFlags().put(getID(), setting);
+        }
     }
 
     /**
@@ -62,7 +103,7 @@ public class Flag implements Comparable<Flag> {
      * @param defaultSetting - true means it is allowed. false means it is not allowed
      */
     public void setDefaultSetting(boolean defaultSetting) {
-        this.defaultSetting = defaultSetting;
+        this.setting = defaultSetting;
     }
 
     /**
@@ -77,6 +118,13 @@ public class Flag implements Comparable<Flag> {
      */
     public int getDefaultRank() {
         return defaultRank;
+    }
+
+    /**
+     * @return whether the flag uses a subpanel or not
+     */
+    public boolean hasSubPanel() {
+        return subPanel;
     }
 
     /* (non-Javadoc)
@@ -117,30 +165,74 @@ public class Flag implements Comparable<Flag> {
         return type == other.type;
     }
 
+    public String getNameReference() {
+        return PROTECTION_FLAGS + this.id + ".name";
+    }
+
+    public String getDescriptionReference() {
+        return PROTECTION_FLAGS + this.id + ".description";
+    }
+
+    public String getHintReference() {
+        return PROTECTION_FLAGS + this.id + ".hint";
+    }
+
     /**
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
-     * The panel item may reflect their island settings, the island they are on, or the world in general.
+     * @param plugin - plugin
      * @param user - user that will see this flag
      * @return - PanelItem for this flag
      */
     public PanelItem toPanelItem(BSkyBlock plugin, User user) {
-        // Get the island this user is on or their own
-        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getUniqueId()));
-        String rank = RanksManager.OWNER_RANK_REF;
-        if (island != null) {
-            // TODO: Get the world settings - the player has no island and is not in an island location
-            rank = plugin.getRanksManager().getRank(island.getFlag(this));
-        }
-        return new PanelItemBuilder()
+        // Start the flag conversion
+        PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(new ItemStack(icon))
-                .name(user.getTranslation("protection.panel.flag-item.name-layout", "[name]", user.getTranslation("protection.flags." + id + ".name")))
-                .description(user.getTranslation("protection.panel.flag-item.description-layout",
-                        "[description]", user.getTranslation("protection.flags." + id + ".description"),
-                        "[rank]", user.getTranslation(rank)))
-                .clickHandler(clickHandler)
-                .build();
+                .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
+                .clickHandler(clickHandler);
+        if (hasSubPanel()) {
+            pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
+            return pib.build();
+        }
+        // Check if this is a setting or world setting
+        if (getType().equals(Type.WORLD_SETTING)) {
+            String worldDetting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
+                    : user.getTranslation("protection.panel.flag-item.setting-disabled");
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
+                    , "[setting]", worldDetting));
+            return pib.build();
+        } 
+
+        // Get the island this user is on or their own
+        Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+        if (island != null) {
+            if (getType().equals(Type.SETTING)) {
+                String islandSetting = island.isAllowed(this) ? user.getTranslation("protection.panel.flag-item.setting-active")
+                        : user.getTranslation("protection.panel.flag-item.setting-disabled");
+                pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
+                        , "[setting]", islandSetting));
+                return pib.build();
+            }
+            // TODO: Get the world settings - the player has no island and is not in an island location
+            // Dynamic rank list
+            if (getType().equals(Type.PROTECTION)) {
+                // Protection flag
+                String d = user.getTranslation(getDescriptionReference());
+                d = user.getTranslation("protection.panel.flag-item.description-layout", TextVariables.DESCRIPTION, d);
+                pib.description(d);
+                plugin.getRanksManager().getRanks().forEach((reference, score) -> {
+                    if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
+                        pib.description(user.getTranslation("protection.panel.flag-item.blocked_rank") + user.getTranslation(reference));
+                    } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
+                        pib.description(user.getTranslation("protection.panel.flag-item.allowed_rank") + user.getTranslation(reference));
+                    } else if (score == island.getFlag(this)) {
+                        pib.description(user.getTranslation("protection.panel.flag-item.minimal_rank") + user.getTranslation(reference));
+                    }
+                });
+            }
+        }
+        return pib.build();
     }
-    
+
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()
@@ -148,12 +240,11 @@ public class Flag implements Comparable<Flag> {
     @Override
     public String toString() {
         return "Flag [id=" + id + ", icon=" + icon + ", listener=" + listener + ", type=" + type + ", defaultSetting="
-                + defaultSetting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + "]";
+                + setting + ", defaultRank=" + defaultRank + ", clickHandler=" + clickHandler + ", subPanel=" + subPanel + "]";
     }
 
     @Override
     public int compareTo(Flag o) {
         return getID().compareTo(o.getID());
     }
-
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.listeners.flags;
 
 import java.util.HashMap;
@@ -19,7 +16,6 @@ import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Squid;
 import org.bukkit.entity.Villager;
-import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
@@ -63,25 +59,24 @@ public class HurtingListener extends AbstractFlagListener {
 
     /**
      * Finds the true attacker, even if the attack was via a projectile
-     * @param event
-     * @param damager
-     * @param hurtMobs
+     * @param e - event
+     * @param damager - damager
+     * @param flag - flag
      */
-    private void respond(Event event, Entity damager, Flag hurtMobs) {
+    private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), hurtMobs);
+            setUser(User.getInstance(damager)).checkIsland(e, damager.getLocation(), flag);
         } else if (damager instanceof Projectile) {
             // Find out who fired the projectile
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), hurtMobs)) {
-                    damager.setFireTicks(0);
+                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, damager.getLocation(), flag)) {
+                    e.getEntity().setFireTicks(0);
                     damager.remove();
                 }
             }
         }
-
     }
 
     /**
@@ -123,7 +118,7 @@ public class HurtingListener extends AbstractFlagListener {
     public void onSplashPotionSplash(final PotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
@@ -167,7 +162,7 @@ public class HurtingListener extends AbstractFlagListener {
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
+        if (projectile.getShooter() instanceof Player) {
             UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
             thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);

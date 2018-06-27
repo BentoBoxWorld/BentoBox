@@ -10,6 +10,11 @@ public class PlaceholderBuilder {
         return this;
     }
 
+    /**
+     * The value this placeholder should take
+     * @param value - placeholder request value
+     * @return PlaceholderBuilder object
+     */
     public PlaceholderBuilder value(Placeholder.PlaceholderRequest value) {
         this.value = value;
         return this;

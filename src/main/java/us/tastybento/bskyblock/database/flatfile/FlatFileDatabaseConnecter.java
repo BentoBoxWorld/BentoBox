@@ -92,9 +92,19 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
             tableFolder.mkdirs();
         }
         try {
-            yamlConfig.save(file);
+            // Approach is save to temp file (saving is not necessarily atomic), then move file atomically
+            // This has best chance of no file corruption
+            
+            File tmpFile = File.createTempFile("yaml", null, tableFolder);
+            yamlConfig.save(tmpFile);
+            if (tmpFile.exists()) {
+                Files.copy(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                Files.delete(tmpFile.toPath());
+            } else {
+                throw new IOException();
+            }
         } catch (Exception e) {
-            plugin.logError("Could not save yaml file to database " + tableName + " " + fileName + " " + e.getMessage());
+            plugin.logError("Could not save yaml file: " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
@@ -104,8 +114,8 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
 
     /**
      * Adds comments to a YAML file
-     * @param file
-     * @param commentMap
+     * @param file - file
+     * @param commentMap - map of comments to apply to file
      */
     private void commentFile(File file, Map<String, String> commentMap) {
         // Run through the file and add in the comments

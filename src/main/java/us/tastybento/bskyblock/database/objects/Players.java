@@ -5,14 +5,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 
 import com.google.gson.annotations.Expose;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Tracks the following info on the player
@@ -21,7 +24,7 @@ import us.tastybento.bskyblock.BSkyBlock;
  */
 public class Players implements DataObject {
     @Expose
-    private Map<Integer, Location> homeLocations = new HashMap<>();
+    private Map<Location, Integer> homeLocations = new HashMap<>();
     @Expose
     private String uniqueId;
     @Expose
@@ -46,40 +49,55 @@ public class Players implements DataObject {
      *            Constructor - initializes the state variables
      *
      */
-    public Players(BSkyBlock plugin, final UUID uniqueId) {
+    public Players(BSkyBlock plugin, UUID uniqueId) {
         this.uniqueId = uniqueId.toString();
         homeLocations = new HashMap<>();
-        playerName = "";
         resetsLeft = plugin.getSettings().getResetLimit();
         locale = "";
         kickedList = new HashMap<>();
-        playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
-        if (playerName == null) {
-            playerName = uniqueId.toString();
+        // Try to get player's name
+        this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
+        if (this.playerName == null) {
+            this.playerName = uniqueId.toString();
         }
     }
 
     /**
      * Gets the default home location.
-     * @return Location
+     * @param world - world to check
+     * @return Location - home location in world
      */
-    public Location getHomeLocation() {
-        return getHomeLocation(1); // Default
+    public Location getHomeLocation(World world) {
+        return getHomeLocation(world, 1); // Default
     }
 
     /**
-     * Gets the home location by number.
+     * Gets the home location by number for world
+     * @param world - includes world and any related nether or end worlds
      * @param number - a number
      * @return Location of this home or null if not available
      */
-    public Location getHomeLocation(int number) {
-        return homeLocations.get(number);
+    public Location getHomeLocation(World world, int number) {
+        return homeLocations.entrySet().stream()
+                .filter(en -> Util.sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
+                .map(Map.Entry::getKey)
+                .findFirst()
+                .orElse(null);
     }
 
     /**
+     * @param world - world
      * @return List of home locations
      */
-    public Map<Integer,Location> getHomeLocations() {
+    public Map<Location, Integer> getHomeLocations(World world) {
+        return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(),world))
+                .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+    }
+    
+    /**
+     * @return the homeLocations
+     */
+    public Map<Location, Integer> getHomeLocations() {
         return homeLocations;
     }
 
@@ -100,7 +118,7 @@ public class Players implements DataObject {
     /**
      * @param homeLocations the homeLocations to set
      */
-    public void setHomeLocations(Map<Integer, Location> homeLocations) {
+    public void setHomeLocations(Map<Location, Integer> homeLocations) {
         this.homeLocations = homeLocations;
     }
 
@@ -153,12 +171,10 @@ public class Players implements DataObject {
      * @param location - the location
      * @param number - a number
      */
-    public void setHomeLocation(final Location location, int number) {
-        if (location == null) {
-            homeLocations.clear();
-        } else {
-            homeLocations.put(number, location);
-        }
+    public void setHomeLocation(Location location, int number) {
+        // Remove any home locations in the same world with the same number
+        homeLocations.entrySet().removeIf(e -> Util.sameWorld(location.getWorld(), e.getKey().getWorld()) && e.getValue().equals(number));
+        homeLocations.put(location, number);
     }
 
     /**
@@ -170,10 +186,11 @@ public class Players implements DataObject {
     }
 
     /**
-     * Clears all home Locations
+     * Clears all home Locations in world
+     * @param world - world
      */
-    public void clearHomeLocations() {
-        homeLocations.clear();
+    public void clearHomeLocations(World world) {
+        homeLocations.keySet().removeIf(l -> Util.sameWorld(l.getWorld(), world));
     }
 
     /**
@@ -201,19 +218,15 @@ public class Players implements DataObject {
      * @param deaths the deaths to set
      */
     public void setDeaths(int deaths) {
-        this.deaths = deaths;
-        if (this.deaths > getPlugin().getSettings().getDeathsMax()) {
-            this.deaths = getPlugin().getSettings().getDeathsMax();
-        }
+        this.deaths = deaths > getPlugin().getSettings().getDeathsMax() ? getPlugin().getSettings().getDeathsMax() : deaths;
     }
 
     /**
      * Add death
      */
     public void addDeath() {
-        deaths++;
-        if (deaths > getPlugin().getSettings().getDeathsMax()) {
-            deaths = getPlugin().getSettings().getDeathsMax();
+        if (deaths < getPlugin().getSettings().getDeathsMax()) {
+            deaths++;
         }
     }
 
@@ -241,8 +254,8 @@ public class Players implements DataObject {
                 return 0;
             } else {
                 // Still not there yet
-                // Temp minutes
-                return (coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60);
+                // Time in minutes
+                return (long) Math.ceil((coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60D));
             }
         }
         return 0;

@@ -9,20 +9,20 @@
 #
 # This translation is adapted to version : [alpha-2]
 
-banner:
-- "WHITE"
-- "STRIPE_SMALL:RED"
-- "SQUARE_TOP_RIGHT:CYAN"
-- "SQUARE_TOP_RIGHT:BLUE"
+banner: "BANNER:1:WHITE:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
 
 general:
   success: "&aSuccess!"
+  request-cancelled: "&cConfirmation timeout - &brequest cancelled"
+  previous-request-cancelled: "&6Previous confirmation request cancelled"
+  confirm: "&cType command again within &b[seconds]s&c to confirm"
   errors:
     command-cancelled: "&cCommand cancelled"
     no-permission: "&cYou don't have permission to execute this command."
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
     no-island: "&cYou do not have an island!"
+    player-has-island: "&cPlayer already has an island!"
     player-has-no-island: "&cThat player has no island!"
     already-have-island: "&cYou already have an island!"
     no-safe-location: "&cNo safe location found on island!"
@@ -30,25 +30,58 @@ general:
     not-in-team: "&cThat player is not in your team!"
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&cUnknown player!"
+    unknown-player-name: "&c[name] is an unknown player!"
     general: "&cThat command is not ready yet - contact admin"
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
-    you-must-wait: "&cYou must wait [seconds]s before you can do that command again"
+    you-must-wait: "&cYou must wait [number]s before you can do that command again"
     you-need: "&cYou need [permission]"
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
 commands:
+  # Parameters in <> are required, parameters in [] are optional
   help:
-    header: "&7=========== &c%bsb_plugin_name% &7==========="
+    header: "&7=========== &c[label] help &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
     description: "help command"
   admin:
     help:
+      parameters: ""
       description: "admin command"
+    team:
+      add:
+        parameters: "<leader> <player>"
+        description: "add player to leader's team"
+        name-not-leader: "&c[name] is not the leader"
+        name-has-island: "&c[name] has an island. Unregister or delete them first!"
+      disband:
+        parameters: "<team leader>"
+        description: "disband team leader's team"
+        user-disband-leader: "&cNot leader! Use disband [leader]"
+        disbanded: "&cAdmin disbanded your team!"
+      kick:
+        parameters: "<team player>"
+        description: "kick a player from a team"
+        cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
+        admin-kicked: "&cThe admin kicked you from the team."
+      makeleader:
+        parameters: "<player>"
+        description: "make player the team's leader"
+        already-leader: "&cPlayer is already the leader!"
+    register:
+      parameters: "<player>"
+      description: "register player to unowned island you are on"
+      registered-island: "&aRegistered player to island at [xyz]."
+      already-owned: "&cIsland is already owned by another player!"
+      no-island-here: "&cThere is no island here. Confirm to make one."
+    unregister:
+      parameters: "<owner>"
+      description: "unregister owner from island, but keep island blocks"
+      unregistered-island: "&aUnregistered player from island at [xyz]."
     info:
       parameters: "<player>"
       description: "get info on where you are or player's island"
@@ -68,43 +101,62 @@ commands:
       is-spawn: "Island is a spawn island"
       banned-players: "Banned players:"
       banned-format: "&c[name]"
+      unowned: "&cUnonwed"
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
-      parameters: "[player] [range]"
+      parameters: "<player> <range>"
       description: "set the range of player's island"
       range-updated: "Island range updated to [number]"
     reload:
       description: "reload the plugin"
     tp:
-      parameters: "[player]"
+      parameters: "<player>"
       description: "teleport to a player's island"
       manual: "&cNo safe warp found! Manually tp near to &b[location] &cand check it out"
     getrank:
-      parameters: "[player]"
+      parameters: "<player>"
       description: "get a player's rank on their island"
       rank-is: "&aRank is [rank] on their island."
     setrank:
-      parameters: "[player] [rank]"
+      parameters: "<player> <rank>"
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
+    schem:
+      parameters: "<load><copy><paste><pos1><pos2><save>"
+      description: "manipulate schems"
+      copy-first: "&cCopy a schem first!"
+      no-such-file: "&cNo such file!"
+      could-not-load: "&cCould not load that file!"
+      could-not-save: "&Hmm, something went wrong saving that file: [message]"
+      set-pos1: "&aPosition 1 set at [vector]"
+      set-pos2: "&aPosition 2 set at [vector]"
+      set-different-pos: "&cSet a different location - this pos is already set!"
+      need-pos1-pos2: "&cSet pos1 and pos2 first!"
+      copied-blocks: "&bCopied [number] blocks to clipboard"
+      look-at-a-block: "&cLook at block within 20 blocks to set"
+    world:
+      description: "Manage world settings"
   island:
     about:
-      description: "display info about %bsb_plugin_name%"
+      description: "display copyright and license info"
     go:
-      parameters: "<home number>"
+      parameters: "[home number]"
       description: "teleport you to your island"
-      teleport: "&aTeleporting you to your island. &b/[label] help &afor help."
+      teleport: "&aTeleporting you to your island."
       teleported: "&aTeleported you to home &e#[number]."
+      tip: "&bType /[label] help &afor help."
     help:
       description: "The main island command"
+      pick-world: "&cSpecify world from [worlds]"
     spawn:
       description: "teleport you to the spawn"
     create:
       description: "create an island"
       unable-create-island: "Your island could not be generated, please contact an administrator."
       creating-island: "Creating your island..."
+      pick-world: "&cPick a world from [worlds]"
     info:
       description: "display info about your island"
     reset:
@@ -112,18 +164,16 @@ commands:
       must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
-      confirm: "&cType &b/[label] reset confirm&c within [seconds]s to confirm reset"
-      cancelled: "&bReset cancelled"
     sethome:
       description: "set your teleport point for /island"
       must-be-on-your-island: "You must be on your island to set home!"
-      num-homes: "Homes can be 1 to [max]."
+      num-homes: "Homes can be 1 to [number]."
       home-set: "Your island home has been set to your current location."
-      parameters: "<home number>"
+      parameters: "[home number]"
     setname:
       description: "set a name for your island"
-      name-too-short: "&cToo short. Minimum size is [length] characters."
-      name-too-long: "&cToo long. Maximum size is [length] characters."
+      name-too-short: "&cToo short. Minimum size is [number] characters."
+      name-too-long: "&cToo long. Maximum size is [number] characters."
       parameters: "<name>"
     resetname:
       description: "reset your island name"
@@ -140,7 +190,7 @@ commands:
         you-will-lose-your-island: "&cWARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&cYou cannot invite yourself!"
-          cooldown: "&cYou cannot invite that person for another [time] seconds"
+          cooldown: "&cYou cannot invite that person for another [number] seconds"
           island-is-full: "&cYour island is full, you can't invite anyone else."
           none-invited-you: "&cNo one invited you :c."
           you-already-are-in-team: "&cYou are already on a team!"
@@ -161,12 +211,10 @@ commands:
       leave:
         cannot-leave: "&cTeamleaders cannot leave! Become a member first, or kick all members."
         description: "leave your island"
-        type-again: "&cEnter the leave command again to confirm"
-        left-your-island: "&c[player] left your island"
+        left-your-island: "&c[name] left your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
-        type-again: "&cEnter the kick command again to confirm"
         leader-kicked: "&cThe leader kicked you from the island!"
         cannot-kick: "&cYou cannot kick yourself!"
       demote:
@@ -194,14 +242,14 @@ commands:
       cannot-ban: "&cThat player cannot be banned."
       cannot-ban-member: "&cKick the team member first, then ban."
       player-already-banned: "&cPlayer is already banned"
-      owner-banned-you: "&b[owner]&c banned you from their island!"
+      owner-banned-you: "&b[name]&c banned you from their island!"
       you-are-banned: "&bYou are banned from this island!"
     unban:
       description: "unban a player from your island"
       parameters: "<player>"
       cannot-unban-yourself: "&cYou cannot unban yourself!"
       player-not-banned: "&cPlayer is not banned"
-      you-are-unbanned: "&b[owner]&a unbanned you from their island!"
+      you-are-unbanned: "&b[name]&a unbanned you from their island!"
     banlist:
       description: "list banned players"
       noone: "&aNo one is banned on this island"
@@ -221,96 +269,274 @@ ranks:
   admin: "Admin"
   mod: "Mod"
   
-protection:
-  protected: "&cIsland protected!"
-  locked: "&cThis island is locked!"
+protection: 
   flags:
-    ANVIL:
-      name: "Anvils"
-      description: "Toggle interaction with anvils"
-    ARMOR_STAND:
+    ANIMAL_SPAWN: 
+      description: "Toggle spawning"
+      name: "Animal spawning"
+    ANVIL: 
+      description: "Toggle interaction"
+      name: Anvils
+      hint: "Anvil use disabled"
+    ARMOR_STAND: 
+      description: "Toggle interaction"
       name: "Armor stands"
-      description: "Toggle interaction with armor stands"
-    BEACON:
-      name: "Beacons"
-      description: "Toggle interaction with beacons"
-    BED:
-      name: "Beds"
-      description: "Toggle interaction with beds"
-    BREAK_BLOCKS:
+      hint: "Armor stand use disabled"
+    BEACON: 
+      description: "Toggle interaction"
+      name: Beacons
+      hint: "Beacon use disabled"
+    BED: 
+      description: "Toggle interaction"
+      name: Beds
+      hint: "Bed use disabled"
+    BREAK_BLOCKS: 
+      description: "Toggle breaking"
       name: "Break blocks"
-      description: "Toggle block breaking"
-    BREEDING:
+      hint: "Block breaking disabled"
+    BREEDING: 
+      description: "Toggle breeding"
       name: "Breed animals"
-      description: "Toggle animal breeding"
-    BREWING:
+      hint: "Animal breeding protected"
+    BREWING: 
+      description: "Toggle interaction"
       name: "Brewing stands"
-      description: "Toggle interaction with brewing stands"
-    BUCKET:
-      name: "Buckets"
-      description: "Toggle interaction with buckets"
-    COLLECT_WATER:
-      name: "Collect water"
-      description: |
-        Toggle collecting water using buckets
-        (override Buckets)
-    COLLECT_LAVA:
-      name: "Collect lava"
-      description: |
-        Toggle collecting lava using buckets
-        (override Buckets)
-    CHORUS_FRUIT:
+      hint: "No brewing allowed"
+    BUCKET: 
+      description: "Toggle interaction"
+      name: Buckets
+      hint: "No bucket use allowed"
+    CHEST: 
+      description: "Toggle chest access"
+      name: Chests
+      hint: "Chest access disabled"
+    CHORUS_FRUIT: 
+      description: "Toggle teleportation"
       name: "Chorus fruits"
-      description: "Toggle teleportation using Chorus fruits"
-    CRAFTING: "Use crafting table"
-    CROP_TRAMPLE: "Trample crops"
-    DOOR: "Use doors"
-    ELYTRA: "Use elytras"
-    ENCHANTING: "Use enchanting table"
-    ENTER_EXIT_MESSAGES: "Display entry and exit messages"
-    FIRE: "FIRE"
-    FIRE_EXTINGUISH: "FIRE_EXTINGUISH"
-    FIRE_SPREAD: "FIRE_SPREAD"
-    FURNACE: "FURNACE"
-    GATE: "GATE"
-    HURT_ANIMALS: "HURT_ANIMALS"
-    HURT_MONSTERS: "HURT_MONSTERS"
-    HURT_VILLAGERS: "HURT_VILLAGERS"
-    ITEM_DROP: "ITEM_DROP"
-    ITEM_PICKUP: "ITEM_PICKUP"
-    LEASH: "LEASH"
-    LOCK:
-      name: "Lock island"
+      hint: "No teleporting"
+    COLLECT_LAVA: 
       description: |
-        Toggle island lock
-    MILKING: "MILKING"
-    MOB_SPAWN: "MOB_SPAWN"
-    MONSTER_SPAWN: "MONSTER_SPAWN"
-    MOUNT_INVENTORY: "MOUNT_INVENTORY"
-    RIDING: "RIDING"
-    MUSIC: "MUSIC"
-    CHEST: "CHEST"
-    PLACE_BLOCKS: "PLACE_BLOCKS"
-    PORTAL: "PORTAL"
-    PRESSURE_PLATE: "PRESSURE_PLATE"
-    PVP_OVERWORLD: "PVP_OVERWORLD"
-    PVP_NETHER: "PVP_NETHER"
-    PVP_END: "PVP_END"
-    REDSTONE: "REDSTONE"
-    SPAWN_EGGS: "SPAWN_EGGS"
-    SHEARING: "SHEARING"
-    EGGS: "EGGS"
-    TRADING: "TRADING"
+          Toggle collecting lava
+          (override Buckets)
+      name: "Collect lava"
+      hint: "No lava collection"
+    COLLECT_WATER: 
+      description: |
+          Toggle collecting water
+          (override Buckets)
+      name: "Collect water"
+      hint: "No water collection"
+    CRAFTING: 
+      description: "Toggle use"
+      name: Workbenches
+      hint: "No workbench use"
+    CROP_TRAMPLE: 
+      description: "Toggle crop trampling"
+      name: "Trample crops"
+      hint: "Crops are protected"
+    DOOR: 
+      description: "Toggle door usage"
+      name: "Use doors"
+      hint: "No door use"
+    EGGS: 
+      description: "Toggle egg throwing"
+      name: "Egg throwing"
+      hint: "No egg throwing"
+    ELYTRA: 
+      description: "Toggle use on island"
+      name: "Elytra"
+      hint: "No elytra flying allowed"
+    ENCHANTING: 
+      description: "Toggle use"
+      name: "Enchanting table"
+      hint: "No table use"
+    ENDER_CHEST:
+      description: "Toggle use/crafting"
+      name: "Ender Chests"
+      hint: "Ender chests are disabled in this world"
+    ENDER_PEARL: 
+      description: "Toggle use"
+      name: "EnderPearls"
+      hint: "No enderpearl use"
+    ENTER_EXIT_MESSAGES: 
+      description: "Display entry and exit messages"
+      island: "[name]'s island"
+      name: "Enter/Exit messages"
+      now-entering: "Now entering [name]"
+      now-leaving: "Now leaving [name]"
+    FIRE: 
+      description: "Allow fire to exist or not"
+      name: Fire
+      hint: "No fire allowed"
+    FIRE_EXTINGUISH: 
+      description: "Toggle extinguishing"
+      name: "Fire extinguish"
+      hint: "No fire extinguishing allowed"
+    FIRE_SPREAD: 
+      description: "Toggle spread"
+      name: "Fire spread"
+      hint: "No fire spread allowed"
+    FURNACE: 
+      description: "Toggle use"
+      name: Furnace
+      hint: "No furnace use"
+    GATE: 
+      description: "Toggle use"
+      name: Gates
+      hint: "No gate use"
+    HURT_ANIMALS: 
+      description: "Toggle hurting"
+      name: "Hurt animals"
+      hint: "No animal hurting allowed"
+    HURT_MONSTERS: 
+      description: "Toggle hurting"
+      name: "Hurt monsters"
+      hint: "No monster hurting"
+    HURT_VILLAGERS: 
+      description: "Toggle hurting"
+      name: "Hurt villagers"
+      hint: "No villager hurting"
+    INVINCIBLE_VISITORS: 
+      description: |
+          &aConfigure invincible visitor
+          &asettings.
+      name: "Invincible Visitors"
+      hint: "&cVisitors protected"
+    ISLAND_RESPAWN:
+      description: |
+        &aPlayers respawn
+        &aon island
+      name: "Island respawn"
+    ITEM_DROP: 
+      description: "Toggle dropping"
+      name: "Item drop"
+      hint: "Items cannot be dropped"
+    ITEM_PICKUP: 
+      description: "Toggle pickup"
+      name: "Item pickup"
+      hint: "Items cannot be picked up"
+    LEASH: 
+      description: "Toggle use"
+      name: "Leash use"
+    LEVER_BUTTON:
+      description: "Toggle use"
+      name: "Leaver or button use"
+      hint: "No leash use"
+    LOCK: 
+      description: "Toggle lock"
+      name: "Lock island"
+    MILKING: 
+      description: "Toggle cow milking"
+      name: Milking
+      hint: "No milking allowed"
+    MONSTER_SPAWN: 
+      description: "Toggle spawning"
+      name: "Monster spawning"
+    MOUNT_INVENTORY: 
+      description: |
+        &aToggle access
+        &ato mount inventory
+      name: "Mount inventory"
+      hint: "No access to mount inventory"
+    MUSIC: 
+      description: "Toggle access"
+      name: Music
+      hint: "No jukebox use"
+    PISTON_PUSH: 
+      description: |
+          &aAllow pistons to push
+          &ablocks outside island
+      name: "Piston Push"
+    PLACE_BLOCKS: 
+      description: "Toggle placing"
+      name: "Place blocks"
+      hint: "Not allowed to place blocks"
+    PORTAL: 
+      description: "Toggle use"
+      name: Portal
+      hint: "Portal use is disallowed"
+    PRESSURE_PLATE: 
+      description: "Toggle usage"
+      name: "Pressure Plates"
+      hint: "No pressure plate use"
+    PVP_END: 
+      description: |
+          &cEnable/Disable PVP
+          &cin the End.
+      name: "End PVP"
+      hint: "No PVP allowed in the End"
+    PVP_NETHER: 
+      description: |
+          &cEnable/Disable PVP
+          &cin nether.
+      name: "Nether PVP"
+      hint: "No PVP allowed in the Nether"
+    PVP_OVERWORLD: 
+      description: |
+          &cEnable/Disable PVP
+          &con island.
+      name: "Overworld PVP"
+      hint: "&cPVP is not allowed"
+    REDSTONE: 
+      description: "Toggle use"
+      name: "Redstone items"
+      hint: "No redstone item use"
+    RIDING: 
+      description: "Toggle riding"
+      name: "Animal riding"
+      hint: "No animal riding allowed"
+    REMOVE_MOBS: 
+      description: |
+        &aRemove monsters when
+        &ateleporting to island
+      name: "Remove monsters"
+    SHEARING: 
+      description: "Toggle sheering"
+      name: Shearing
+      hint: "No shearing"
+    SPAWN_EGGS: 
+      description: "Toggle use"
+      name: "Spawn eggs"
+      hint: "No throwing spawn eggs"
+    TRADING: 
+      description: "Toggle trading"
+      name: "Village trading"
+      hint: "No villager trading"
+    TRAPDOOR:
+      description: "Toggle access"
+      name: "Trap doors"
+      hint: "No trapdoor use"
+  locked: "&cThis island is locked!"
+  protected: "&cIsland protected: [description]"
+
   panel:
-    title: "Island flags"
+    PROTECTION:
+      title: "Protection"
+      description: |
+        Protection settings
+        for this location
+    SETTING:
+      title: "Settings"
+      description: "General settings"
+    WORLD_SETTING:
+      title: "[world_name] Settings"
+      description: "Settings for this game world"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |+
         &a[description]
 
-        &7Allowed for: &f[rank]
-    help-item:
-      name: "&aNeed some help?"
+        &7Allowed for:
+      allowed_rank: "&3- &a"
+      blocked_rank: "&3- &c"
+      minimal_rank: "&3- &2"
+      menu-layout: "&a[description]"
+      setting-layout: |+
+        &a[description]
+        
+        &7Current setting: [setting]
+      setting-active: "&aActive"
+      setting-disabled: "&cDisabled"
 
 language:
   panel-title: "Select your language"
@@ -320,6 +546,6 @@ language:
 new-island:
   sign:
     line0: "&1%bsb_plugin_name%"
-    line1: "[player]"
+    line1: "[name]"
     line2: "Don't fall!"
     line3: "Have fun! &c<3"

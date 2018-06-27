@@ -41,8 +41,8 @@ public class PanelBuilder {
 
     /**
      * Forces panel to be a specific number of slots.
-     * @param size
-     * @return PanelBuilder
+     * @param size - size to be
+     * @return PanelBuilder - PanelBuilder
      */
     public PanelBuilder size(int size) {
         this.size = size;
@@ -61,7 +61,7 @@ public class PanelBuilder {
 
     /**
      * Sets which PanelListener will listen for clicks
-     * @param listener
+     * @param listener - listener for this panel
      * @return PanelBuilder
      */
     public PanelBuilder listener(PanelListener listener) {
@@ -71,10 +71,13 @@ public class PanelBuilder {
 
     /**
      * Get the next free slot number
-     * @return next slot number
+     * @return next slot number, or -1 in case none has been found.
      */
     public int nextSlot() {
-        return items.isEmpty() ? 0 : items.lastKey() + 1;
+        for (int i = 0 ; i < (size == 0 ? 54 : size) ; i++) {
+            if (!slotOccupied(i)) return i;
+        }
+        return -1;
     }
 
     /**

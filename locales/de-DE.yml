@@ -10,10 +10,7 @@
 #
 # This translation is adapted to version : [alpha-1]
 
-banner:
-- "RED"
-- "STRIPE_RIGHT:BLACK"
-- "STRIPE_LEFT:YELLOW"
+banner: "BANNER:1:RED:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW"
 
 not-setup:
   header: |-

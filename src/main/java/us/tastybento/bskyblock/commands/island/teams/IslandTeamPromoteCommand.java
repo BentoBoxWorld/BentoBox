@@ -2,11 +2,11 @@ package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
-public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
+public class IslandTeamPromoteCommand extends CompositeCommand {
 
     public IslandTeamPromoteCommand(CompositeCommand islandTeamCommand, String string) {
         super(islandTeamCommand, string);
@@ -14,7 +14,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         if (this.getLabel().equals("promote")) {
             setParameters("commands.island.team.promote.parameters");
@@ -27,11 +27,11 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return true;
         }
-        if (!getTeamLeader(user).equals(user.getUniqueId())) {
+        if (!getTeamLeader(getWorld(), user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return true;
         }
@@ -46,7 +46,7 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
             user.sendMessage("general.errors.unknown-player");
             return true;
         }
-        if (!inTeam(target) || !getTeamLeader(user).equals(getTeamLeader(target))) {
+        if (!inTeam(getWorld(), target) || !getTeamLeader(getWorld(), user).equals(getTeamLeader(getWorld(), target))) {
             user.sendMessage("general.errors.not-in-team");
             return true;
         }
@@ -55,13 +55,13 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
     }
 
     private boolean change(User user, User target) {
-        int currentRank = getIslands().getIsland(user.getUniqueId()).getRank(target);
+        int currentRank = getIslands().getIsland(getWorld(), user.getUniqueId()).getRank(target);
         if (this.getLabel().equals("promote")) {
             int nextRank = getPlugin().getRanksManager().getRankUpValue(currentRank);
             if (nextRank > currentRank) {
-                getIslands().getIsland(user.getUniqueId()).setRank(target, nextRank);
+                getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
-                user.sendMessage("commands.island.team.promote.success", "[name]", target.getName(), "[rank]", rankName);
+                user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
                 return true;
             } else {
                 user.sendMessage("commands.island.team.promote.failure");
@@ -71,9 +71,9 @@ public class IslandTeamPromoteCommand extends AbstractIslandTeamCommand {
             // Demote
             int prevRank = getPlugin().getRanksManager().getRankDownValue(currentRank);
             if (prevRank < currentRank) {
-                getIslands().getIsland(user.getUniqueId()).setRank(target, prevRank);
+                getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
-                user.sendMessage("commands.island.team.demote.success", "[name]", target.getName(), "[rank]", rankName);
+                user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
                 return true;
             } else {
                 user.sendMessage("commands.island.team.demote.failure");

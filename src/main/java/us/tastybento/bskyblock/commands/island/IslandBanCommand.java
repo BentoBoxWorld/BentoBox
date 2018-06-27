@@ -1,6 +1,5 @@
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -10,8 +9,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -24,7 +23,7 @@ public class IslandBanCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.ban");
+        setPermission("island.ban");
         setOnlyPlayer(true);
         setParameters("commands.island.ban.parameters");
         setDescription("commands.island.ban.description");
@@ -39,11 +38,11 @@ public class IslandBanCommand extends CompositeCommand {
         }
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getIslands().hasIsland(playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -58,11 +57,11 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.cannot-ban-yourself");
             return false;
         }
-        if (getIslands().getMembers(user.getUniqueId()).contains(targetUUID)) {
+        if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("commands.island.ban.cannot-ban-member");
             return false; 
         }
-        if (getIslands().getIsland(playerUUID).isBanned(targetUUID)) {
+        if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false; 
         }        
@@ -77,13 +76,13 @@ public class IslandBanCommand extends CompositeCommand {
     }
 
     private boolean ban(User user, User targetUser) {
-        Island island = getIslands().getIsland(user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island.addToBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
+            targetUser.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
             // If the player is online, has an island and on the banned island, move them home immediately
-            if (targetUser.isOnline() && getIslands().hasIsland(targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
-                getIslands().homeTeleport(targetUser.getPlayer());
+            if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
+                getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
                 island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
             }            
             return true;
@@ -93,18 +92,18 @@ public class IslandBanCommand extends CompositeCommand {
     }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         if (args.isEmpty()) {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        Island island = getIslands().getIsland(user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         List<String> options = Bukkit.getOnlinePlayers().stream()
                 .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
                 .filter(p -> !island.isBanned(p.getUniqueId()))
                 .filter(p -> user.getPlayer().canSee(p))
                 .map(Player::getName).collect(Collectors.toList());
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 }

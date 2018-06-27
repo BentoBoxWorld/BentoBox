@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.api.panels.builders;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Material;
@@ -30,12 +31,11 @@ public class PanelItemBuilder {
 
     /**
      * Set icon to player's head
-     * @param playerUUID - player's UUID
+     * @param playerName - player's name
      * @return PanelItemBuilder
      */
     public PanelItemBuilder icon(String playerName) {
-        ItemStack item = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
-        this.icon = item;
+        this.icon = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
         this.name = playerName;
         this.playerHead = true;
         return this;
@@ -77,9 +77,7 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder description(String description) {
-        for (String line : description.split("\n")) {
-            this.description.add(line);
-        }
+        Collections.addAll(this.description, description.split("\n"));
         return this;
     }
 

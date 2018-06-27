@@ -77,8 +77,8 @@ public class PlaceholderHandler {
 
     /**
      * Replace placeholders in the message according to the receiver
-     * @param receiver
-     * @param message
+     * @param receiver - user to receive the message
+     * @param message - message
      * @return updated message
      */
     public static String replacePlaceholders(User receiver, String message){

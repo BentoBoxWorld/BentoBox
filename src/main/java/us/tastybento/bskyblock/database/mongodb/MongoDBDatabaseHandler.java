@@ -12,7 +12,6 @@ import org.bukkit.potion.PotionEffectType;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoCursor;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.IndexOptions;
@@ -43,10 +42,6 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String UNIQUEID = "uniqueId";
     private static final String MONGO_ID = "_id";
 
-    /**
-     * Connection to the database
-     */
-    private MongoDatabase database = null;
     private MongoCollection<Document> collection;
     private DatabaseConnecter dbConnecter;
 
@@ -63,7 +58,10 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         super(plugin, type, dbConnecter);
         this.bskyblock = plugin;
         this.dbConnecter = dbConnecter;
-        database = (MongoDatabase)dbConnecter.createConnection();
+        /*
+      Connection to the database
+     */
+        MongoDatabase database = (MongoDatabase) dbConnecter.createConnection();
         collection = database.getCollection(dataObject.getCanonicalName());
         IndexOptions indexOptions = new IndexOptions().unique(true);
         collection.createIndex(Indexes.text(UNIQUEID), indexOptions);       
@@ -90,10 +88,9 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public List<T> loadObjects() {
         List<T> list = new ArrayList<>();
         Gson gson = getGSON();
-        MongoCursor<Document> it = collection.find(new Document()).iterator();
-        while (it.hasNext()) {
+        for (Document document : collection.find(new Document())) {
             // The deprecated serialize option does not have a viable alternative without involving a huge amount of custom code
-            String json = JSON.serialize(it.next());
+            String json = JSON.serialize(document);
             json = json.replaceFirst(MONGO_ID, UNIQUEID);
             list.add(gson.fromJson(json, dataObject));
         }
@@ -154,8 +151,8 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see us.tastybento.bskyblock.database.managers.AbstractDatabaseHandler#objectExists(java.lang.String)
      */
     @Override
-    public boolean objectExists(String key) {
-        return collection.find(new Document(MONGO_ID, key)).first() != null ? true : false;
+    public boolean objectExists(String uniqueId) {
+        return collection.find(new Document(MONGO_ID, uniqueId)).first() != null;
     }
 
     @Override

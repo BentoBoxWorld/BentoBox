@@ -28,18 +28,18 @@ import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 public class User {
 
     private static Map<UUID, User> users = new HashMap<>();
-    
+
     /**
      * Clears all users from the user list
      */
     public static void clearUsers() {
         users.clear();
     }
-    
+
     /**
      * Get an instance of User from a CommandSender
-     * @param sender
-     * @return user
+     * @param sender - command sender, e.g. console
+     * @return user - user
      */
     public static User getInstance(CommandSender sender) {
         if (sender instanceof Player) {
@@ -51,7 +51,7 @@ public class User {
     /**
      * Get an instance of User from a Player object
      * @param player - the player
-     * @return user
+     * @return user - user
      */
     public static User getInstance(Player player) {
         if (player == null) {
@@ -65,9 +65,12 @@ public class User {
     /**
      * Get an instance of User from a UUID
      * @param uuid - UUID
-     * @return user
+     * @return user - user
      */
     public static User getInstance(UUID uuid) {
+        if (uuid == null) {
+            return null;
+        }
         if (users.containsKey(uuid)) {
             return users.get(uuid);
         }
@@ -86,7 +89,7 @@ public class User {
 
     private static BSkyBlock plugin = BSkyBlock.getInstance();
 
-    private final Player player;
+    private Player player;
     private final UUID playerUUID;
     private final CommandSender sender;
 
@@ -108,10 +111,10 @@ public class User {
         this.playerUUID = playerUUID;
         sender = player;
     }
-    
+
     /**
      * Used for testing
-     * @param plugin
+     * @param p - BSkyBlock plugin
      */
     public static void setPlugin(BSkyBlock p) {
         plugin = p;
@@ -122,15 +125,15 @@ public class User {
     }
 
     public PlayerInventory getInventory() {
-        return player.getInventory();
+        return player != null ? player.getInventory() : null;
     }
 
     public Location getLocation() {
-        return player.getLocation();
+        return player != null ? player.getLocation() : null;
     }
 
     public String getName() {
-        return player.getName();
+        return player != null ? player.getName() : plugin.getPlayers().getName(playerUUID);
     }
 
     /**
@@ -156,7 +159,7 @@ public class User {
     }
 
     /**
-     * @param permission
+     * @param permission - permission string
      * @return true if permission is empty or if the player has that permission
      */
     public boolean hasPermission(String permission) {
@@ -186,8 +189,9 @@ public class User {
 
     /**
      * Gets a translation of this reference for this user.
-     * @param reference
-     * @param variables
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
      * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
@@ -214,8 +218,9 @@ public class User {
 
     /**
      * Gets a translation of this reference for this user.
-     * @param reference
-     * @param variables
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
      * @return Translated string with colors converted, or a blank String if nothing has been found
      */
     public String getTranslationOrNothing(String reference, String... variables) {
@@ -269,7 +274,7 @@ public class User {
 
     /**
      * Sets the user's game mode
-     * @param mode
+     * @param mode - GameMode
      */
     public void setGameMode(GameMode mode) {
         player.setGameMode(mode);
@@ -319,17 +324,17 @@ public class User {
         player.updateInventory();
 
     }
-    
+
     /**
      * Performs a command as the player
-     * @param cmd
+     * @param cmd - command to execute
      * @return true if the command was successful, otherwise false
      */
     public boolean performCommand(String cmd) {
-       return player.performCommand(cmd);
-        
+        return player.performCommand(cmd);
+
     }
-    
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -356,12 +361,7 @@ public class User {
         }
         User other = (User) obj;
         if (playerUUID == null) {
-            if (other.playerUUID != null) {
-                return false;
-            }
-        } else if (!playerUUID.equals(other.playerUUID)) {
-            return false;
-        }
-        return true;
+            return other.playerUUID == null;
+        } else return playerUUID.equals(other.playerUUID);
     }
 }

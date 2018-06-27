@@ -43,13 +43,12 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @RunWith(PowerMockRunner.class)
 public class UserTest {
 
-    private static World world;
     private static Player player;
 
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         Server server = mock(Server.class);
-        world = mock(World.class);
+        World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -454,6 +453,7 @@ public class UserTest {
         Mockito.verify(pl).performCommand("test");
     }
 
+    @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEqualsObject() {
         User user1 = User.getInstance(UUID.randomUUID());
@@ -463,15 +463,11 @@ public class UserTest {
         assertFalse(user1.equals(null));
         assertFalse(user2.equals(user1));
         assertFalse(user2.equals(null));
-        assertFalse(user2.equals("an string"));
+        assertFalse(user2.equals("a string"));
         
         user1 = User.getInstance((UUID)null);
-        assertFalse(user1.equals(user2));
         assertFalse(user2.equals(user1));
-        
-        user2 = User.getInstance((UUID)null);
-        assertTrue(user1.equals(user2));
-        assertTrue(user2.equals(user1));
+
     }
 
     @Test

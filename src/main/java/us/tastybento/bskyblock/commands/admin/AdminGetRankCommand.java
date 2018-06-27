@@ -1,9 +1,5 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.commands.admin;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -12,8 +8,8 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
@@ -33,7 +29,7 @@ public class AdminGetRankCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.setrank");
+        setPermission("admin.setrank");
         setOnlyPlayer(false);
         setParameters("commands.admin.getrank.parameters");
         setDescription("commands.admin.getrank.description");
@@ -55,21 +51,21 @@ public class AdminGetRankCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(targetUUID)) {
+        if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
         // Get rank
         RanksManager rm = getPlugin().getRanksManager();
         User target = User.getInstance(targetUUID);     
-        Island island = getPlugin().getIslands().getIsland(targetUUID);       
+        Island island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);       
         int currentRank = island.getRank(target);
-        user.sendMessage("commands.admin.getrank.rank-is", "[rank]", user.getTranslation(rm.getRank(currentRank)));
+        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK, user.getTranslation(rm.getRank(currentRank)));
         return true;
     }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         return Optional.of(Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList()));
     }
 }

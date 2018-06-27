@@ -1,7 +1,6 @@
 package us.tastybento.bskyblock;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -9,56 +8,78 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.potion.PotionEffectType;
 
-import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
-import us.tastybento.bskyblock.api.configuration.ISettings;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDbSetup.DatabaseType;
-import us.tastybento.bskyblock.database.objects.adapters.Adapter;
-import us.tastybento.bskyblock.database.objects.adapters.PotionEffectListAdapter;
+import us.tastybento.bskyblock.database.objects.DataObject;
 
 /**
  * All the plugin settings are here
  * @author Tastybento
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
-public class Settings implements ISettings<Settings> {
-
-    private String uniqueId = "config";
+public class Settings implements DataObject, WorldSettings {
 
     // ---------------------------------------------
 
     /*      GENERAL     */
+    @ConfigComment("BSkyBlock uses bStats.org to get global data about the plugin to help improving it.")
+    @ConfigComment("bStats has nearly no effect on your server's performance and the sent data is completely")
+    @ConfigComment("anonymous so please consider twice if you really want to disable it.")
+    @ConfigEntry(path = "general.metrics")
+    private boolean metrics = true;
 
+    @ConfigComment("Check for updates - this will tell Ops and the console if there is a new")
+    @ConfigComment("version available. It contacts dev.bukkit.org to request the latest version")
+    @ConfigComment("info. It does not download the latest version or change any files")
     @ConfigEntry(path = "general.check-updates")
     private boolean checkUpdates = true;
 
+    @ConfigComment("Default language for new players.")
+    @ConfigComment("This is the filename in the locale folder without .yml.")
+    @ConfigComment("If this does not exist, the default en-US will be used.")
     @ConfigEntry(path = "general.default-language")
     private String defaultLanguage = "en-US";
 
+    @ConfigComment("Use economy or not. If true, an economy plugin is required. If false, no money is used or give.")
+    @ConfigComment("If there is no economy plugin present anyway, money will be automatically disabled.")
     @ConfigEntry(path = "general.use-economy")
     private boolean useEconomy = true;
 
+    @ConfigComment("Starting money - this is how much money new players will have as their")
+    @ConfigComment("balance at the start of an island.")
+    @ConfigEntry(path = "general.starting-money")
+    private double startingMoney = 10.0;
+
     // Purge
+    @ConfigComment("Only islands below this level will be removed if they are abandoned and admins issue the purge command")
     @ConfigEntry(path = "general.purge.max-island-level")
     private int purgeMaxIslandLevel = 50;
 
+    @ConfigComment("Remove user data when its island gets purged.")
+    @ConfigComment("Helps a lot to avoid huge backups and can save some performance on startup,")
+    @ConfigComment("but the player settings and data will be reset.")
     @ConfigEntry(path = "general.purge.remove-user-data")
     private boolean purgeRemoveUserData = false;
 
     // Database
+    @ConfigComment("FLATFILE, MYSQL, MONGO")
+    @ConfigComment("if you use MONGO, you must also run the BSBMongo plugin (not addon)")
+    @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/")
     @ConfigEntry(path = "general.database.type")
     private DatabaseType databaseType = DatabaseType.FLATFILE;
 
     @ConfigEntry(path = "general.database.host")
     private String dbHost = "localhost";
 
+    @ConfigComment("Port 3306 is MySQL's default. Port 27017 is MongoDB's default.")
     @ConfigEntry(path = "general.database.port")
     private int dbPort = 3306;
 
@@ -71,15 +92,35 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "general.database.password")
     private String dbPassword = "password";
 
+    @ConfigComment("How often the data will be saved to file in mins. Default is 5 minutes.")
+    @ConfigComment("This helps prevent issues if the server crashes.")
+    @ConfigComment("Data is also saved at important points in the game.")
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
+    @ConfigComment("Recover super flat - if the generator does not run for some reason, you can get")
+    @ConfigComment("super flat chunks (grass). To remove automatically, select this option. Turn off")
+    @ConfigComment("if there are no more because it may cause lag.")
+    @ConfigComment("This will regenerate any chunks with bedrock at y=0 when they are loaded")
+    @ConfigEntry(path = "general.recover-super-flat")
+    private boolean recoverSuperFlat = false;
+
+    @ConfigComment("Mute death messages")
+    @ConfigEntry(path = "general.mute-death-messages")
+    private boolean muteDeathMessages = false;
+
+    @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
+    @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers")
     private Set<String> fakePlayers = new HashSet<>();
 
+    @ConfigComment("Allow obsidian to be scooped up with an empty bucket back into lava")
+    @ConfigComment("This only works if there is a single block of obsidian (no obsidian within 10 blocks)")
+    @ConfigComment("Recommendation is to keep this true so that newbies don't bother you or reset their")
+    @ConfigComment("island unnecessarily.")
     @ConfigEntry(path = "general.allow-obsidian-scooping")
     private boolean allowObsidianScooping = true;
-    
+
     @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset")
     @ConfigEntry(path = "general.confirmation-time")
     private int confirmationTime = 20;
@@ -87,15 +128,33 @@ public class Settings implements ISettings<Settings> {
     // ---------------------------------------------
 
     /*      WORLD       */
-    @ConfigEntry(path = "world.world-name", needsReset = true)
-    private String worldName = "BSkyBlock";
+    @ConfigComment("Friendly name for this world. Used in admin commands. Must be a single word")
+    @ConfigEntry(path = "world.friendly-name", needsReset = true)
+    private String friendlyName = "BSkyBlock";
 
+    @ConfigComment("Name of the world - if it does not exist then it will be generated.")
+    @ConfigComment("It acts like a prefix for nether and end (e.g. BSkyBlock, BSkyBlock_nether, BSkyBlock_end)")
+    @ConfigEntry(path = "world.world-name", needsReset = true)
+    private String worldName = "BSkyBlock-world";
+
+    @ConfigComment("Radius of island in blocks. (So distance between islands is twice this)")
+    @ConfigComment("Will be rounded up to the nearest 16 blocks.")
+    @ConfigComment("It is the same for every dimension : Overworld, Nether and End.")
+    @ConfigComment("This value cannot be changed mid-game and the plugin will not start if it is different.")
     @ConfigEntry(path = "world.distance-between-islands", needsReset = true)
     private int islandDistance = 200;
 
+    @ConfigComment("Default protection range radius in blocks. Cannot be larger than distance.")
+    @ConfigComment("Admins can change protection sizes for players individually using /bsadmin setrange")
+    @ConfigComment("or set this permission: bskyblock.island.range.<number>")
     @ConfigEntry(path = "world.protection-range", overrideOnChange = true)
     private int islandProtectionRange = 100;
 
+    @ConfigComment("Start islands at these coordinates. This is where new islands will start in the")
+    @ConfigComment("world. These must be a factor of your island distance, but the plugin will auto")
+    @ConfigComment("calculate the closest location on the grid. Islands develop around this location")
+    @ConfigComment("both positively and negatively in a square grid.")
+    @ConfigComment("If none of this makes sense, leave it at 0,0.")
     @ConfigEntry(path = "world.start-x", needsReset = true)
     private int islandStartX = 0;
 
@@ -105,28 +164,56 @@ public class Settings implements ISettings<Settings> {
     private int islandXOffset;
     private int islandZOffset;
 
-    @ConfigEntry(path = "world.sea-height")
-    private int seaHeight = 0;
-
+    @ConfigComment("Island height - Lowest is 5.")
+    @ConfigComment("It is the y coordinate of the bedrock block in the schematic")
     @ConfigEntry(path = "world.island-height")
     private int islandHeight = 100;
 
+    @ConfigComment("Sea height (don't changes this mid-game unless you delete the world)")
+    @ConfigComment("Minimum is 0, which means you are playing Skyblock!")
+    @ConfigComment("If sea height is less than about 10, then players will drop right through it")
+    @ConfigComment("if it exists. Makes for an interesting variation on skyblock.")
+    @ConfigEntry(path = "world.sea-height")
+    private int seaHeight = 0;
+
+    @ConfigComment("Maximum number of islands in the world. Set to 0 for unlimited. ")
+    @ConfigComment("If the number of islands is greater than this number, no new island will be created.")
     @ConfigEntry(path = "world.max-islands")
     private int maxIslands = -1;
 
+    @ConfigComment("The default game mode for this world. Players will be set to this mode when they create")
+    @ConfigComment("a new island for example. Options are SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR")
+    @ConfigEntry(path = "world.default-game-mode")
+    private GameMode defaultGameMode = GameMode.SURVIVAL;
+
     // Nether
+    @ConfigComment("Generate Nether - if this is false, the nether world will not be made and access to")
+    @ConfigComment("the nether will not occur. Other plugins may still enable portal usage.")
+    @ConfigComment("Note: Some challenges will not be possible if there is no nether.")
+    @ConfigComment("Note that with a standard nether all players arrive at the same portal and entering a")
+    @ConfigComment("portal will return them back to their islands.")
     @ConfigEntry(path = "world.nether.generate")
     private boolean netherGenerate = true;
 
+    @ConfigComment("Islands in Nether. Change to false for standard vanilla nether.")
     @ConfigEntry(path = "world.nether.islands", needsReset = true)
     private boolean netherIslands = true;
 
+    @ConfigComment("Nether trees are made if a player grows a tree in the nether (gravel and glowstone)")
+    @ConfigComment("Applies to both vanilla and islands Nether")
     @ConfigEntry(path = "world.nether.trees")
     private boolean netherTrees = true;
 
+    @ConfigComment("Make the nether roof, if false, there is nothing up there")
+    @ConfigComment("Change to false if lag is a problem from the generation")
+    @ConfigComment("Only applies to islands Nether")
     @ConfigEntry(path = "world.nether.roof")
     private boolean netherRoof = true;
 
+    @ConfigComment("Nether spawn protection radius - this is the distance around the nether spawn")
+    @ConfigComment("that will be protected from player interaction (breaking blocks, pouring lava etc.)")
+    @ConfigComment("Minimum is 0 (not recommended), maximum is 100. Default is 25.")
+    @ConfigComment("Only applies to vanilla nether")
     @ConfigEntry(path = "world.nether.spawn-radius")
     private int netherSpawnRadius = 32;
 
@@ -137,57 +224,129 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "world.end.islands", needsReset = true)
     private boolean endIslands = true;
 
+    @ConfigEntry(path = "world.end.dragon-spawn")
+    private boolean dragonSpawn = false;
+
+    @ConfigComment("Disable redstone operation on islands unless a team member is online.")
+    @ConfigComment("This may reduce lag but it can cause problems with visitors needing to use a redstone system.")
+    @ConfigComment("Default is false, because it is an experimental feature that can break a lot of redstone systems.")
+    @ConfigEntry(path = "world.disable-offline-redstone")
+    private boolean disableOfflineRedstone = false;
+
+    @ConfigComment("Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps")
+    @ConfigComment("players return to their island if the island has been overrun by monsters.")
+    @ConfigComment("This setting is toggled in world flags and set by the settings GUI.")
+    @ConfigComment("Mob white list - these mobs will NOT be removed when logging in or doing /island")
+    @ConfigEntry(path = "world.remove-mobs-whitelist")
+    private Set<EntityType> removeMobsWhitelist = new HashSet<>();
+
+    @ConfigComment("World flags. These are boolean settings for various flags for this world")
+    @ConfigEntry(path = "world.flags")
+    private Map<String, Boolean> worldFlags = new HashMap<>();
+
+    // ---------------------------------------------
+
+    /*      ISLAND      */
     // Entities
     @ConfigEntry(path = "island.limits.entities")
     private Map<EntityType, Integer> entityLimits = new EnumMap<>(EntityType.class);
     @ConfigEntry(path = "island.limits.tile-entities")
     private Map<String, Integer> tileEntityLimits = new HashMap<>();
 
-    // ---------------------------------------------
-
-    /*      ISLAND      */
+    @ConfigComment("Default max team size")
+    @ConfigComment("Use this permission to set for specific user groups: askyblock.team.maxsize.<number>")
+    @ConfigComment("Permission size cannot be less than the default below. ")
     @ConfigEntry(path = "island.max-team-size")
     private int maxTeamSize = 4;
+    @ConfigComment("Default maximum number of homes a player can have. Min = 1")
+    @ConfigComment("Accessed via sethome <number> or go <number>")
+    @ConfigComment("Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>")
     @ConfigEntry(path = "island.max-homes")
     private int maxHomes = 5;
+    @ConfigComment("Island naming")
+    @ConfigComment("Only players with the TODO can name their island")
+    @ConfigComment("It is displayed in the top ten and enter and exit announcements")
+    @ConfigComment("It replaces the owner's name. Players can use & for color coding if they have the TODO permission")
+    @ConfigComment("These set the minimum and maximum size of a name.")
     @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength = 4;
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
+    @ConfigComment("How long a player must wait until they can rejoin a team island after being")
+    @ConfigComment("kicked in minutes. This slows the effectiveness of players repeating challenges")
+    @ConfigComment("by repetitively being invited to a team island.")
     @ConfigEntry(path = "island.invite-wait")
     private int inviteWait = 60;
 
     // Reset
+    @ConfigComment("How many resets a player is allowed (override with /asadmin clearreset <player>)")
+    @ConfigComment("Value of -1 means unlimited, 0 means hardcore - no resets.")
+    @ConfigComment("Example, 2 resets means they get 2 resets or 3 islands lifetime")
     @ConfigEntry(path = "island.reset.reset-limit")
     private int resetLimit = -1;
 
     @ConfigEntry(path = "island.require-confirmation.reset")
     private boolean resetConfirmation = true;
 
+    @ConfigComment("How long a player must wait before they can reset their island again in second")
     @ConfigEntry(path = "island.reset-wait")
-    private long resetWait = 10L;
+    private long resetWait = 300;
 
+    @ConfigComment("Kicked or leaving players lose resets")
+    @ConfigComment("Players who leave a team will lose an island reset chance")
+    @ConfigComment("If a player has zero resets left and leaves a team, they cannot make a new")
+    @ConfigComment("island by themselves and can only join a team.")
+    @ConfigComment("Leave this true to avoid players exploiting free islands")
     @ConfigEntry(path = "island.reset.leavers-lose-reset")
     private boolean leaversLoseReset = false;
 
+    @ConfigComment("Allow kicked players to keep their inventory.")
+    @ConfigComment("If false, kicked player's inventory will be thrown at the island leader if the")
+    @ConfigComment("kicked player is online and in the island world.")
     @ConfigEntry(path = "island.reset.kicked-keep-inventory")
     private boolean kickedKeepInventory = false;
 
-    // Remove mobs
-    @ConfigEntry(path = "island.remove-mobs.on-login")
-    private boolean removeMobsOnLogin = false;
-    @ConfigEntry(path = "island.remove-mobs.on-island")
-    private boolean removeMobsOnIsland = false;
+    @ConfigComment("What the plugin should reset when the player joins or creates an island")
+    @ConfigComment("Reset Money - if this is true, will reset the player's money to the starting money")
+    @ConfigComment("Recommendation is that this is set to true, but if you run multi-worlds")
+    @ConfigComment("make sure your economy handles multi-worlds too.")
+    @ConfigEntry(path = "island.reset.on-join.money")
+    private boolean onJoinResetMoney = false;
 
-    @ConfigEntry(path = "island.remove-mobs.whitelist")
-    private List<String> removeMobsWhitelist = new ArrayList<>();
+    @ConfigComment("Reset inventory - if true, the player's inventory will be cleared.")
+    @ConfigComment("Note: if you have MultiInv running or a similar inventory control plugin, that")
+    @ConfigComment("plugin may still reset the inventory when the world changes.")
+    @ConfigEntry(path = "island.reset.on-join.inventory")
+    private boolean onJoinResetInventory = false;
+
+    @ConfigComment("Reset Ender Chest - if true, the player's Ender Chest will be cleared.")
+    @ConfigEntry(path = "island.reset.on-join.ender-chest")
+    private boolean onJoinResetEnderChest = false;
+
+    @ConfigComment("What the plugin should reset when the player leaves or is kicked from an island")
+    @ConfigComment("Reset Money - if this is true, will reset the player's money to the starting money")
+    @ConfigComment("Recommendation is that this is set to true, but if you run multi-worlds")
+    @ConfigComment("make sure your economy handles multi-worlds too.")
+    @ConfigEntry(path = "island.reset.on-leave.money")
+    private boolean onLeaveResetMoney = false;
+
+    @ConfigComment("Reset inventory - if true, the player's inventory will be cleared.")
+    @ConfigComment("Note: if you have MultiInv running or a similar inventory control plugin, that")
+    @ConfigComment("plugin may still reset the inventory when the world changes.")
+    @ConfigEntry(path = "island.reset.on-leave.inventory")
+    private boolean onLeaveResetInventory = false;
+
+    @ConfigComment("Reset Ender Chest - if true, the player's Ender Chest will be cleared.")
+    @ConfigEntry(path = "island.reset.on-leave.ender-chest")
+    private boolean onLeaveResetEnderChest = false;
 
     @ConfigEntry(path = "island.make-island-if-none")
     private boolean makeIslandIfNone = false;
-
+    @ConfigComment("Immediately teleport player to their island (home 1 if it exists) when entering the world")
     @ConfigEntry(path = "island.immediate-teleport-on-island")
     private boolean immediateTeleportOnIsland = false;
-
+    @ConfigComment("Have player's respawn on their island if they die")
+    @ConfigEntry(path = "island.respawn-on-island")
     private boolean respawnOnIsland = true;
 
     // Deaths
@@ -204,9 +363,13 @@ public class Settings implements ISettings<Settings> {
     // ---------------------------------------------
 
     /*      PROTECTION      */
+    @ConfigComment("Allow pistons to push outside of the protected area (maybe to make bridges)")
     @ConfigEntry(path = "protection.allow-piston-push")
     private boolean allowPistonPush = false;
 
+    @ConfigComment("Restrict Wither and other flying mobs.")
+    @ConfigComment("Any flying mobs that exit the island space where they were spawned will be removed.")
+    @ConfigComment("Includes blaze and ghast. ")
     @ConfigEntry(path = "protection.restrict-flying-mobs")
     private boolean restrictFlyingMobs = true;
 
@@ -223,35 +386,16 @@ public class Settings implements ISettings<Settings> {
     private boolean allowCreeperGriefing;
     private boolean allowMobDamageToItemFrames;
 
+    // Invincible visitor settings
+    @ConfigComment("Invincible visitors. List of damages that will not affect visitors.")
+    @ConfigComment("Make list blank if visitors should receive all damages")
+    @ConfigEntry(path = "protection.invincible-visitors")
+    private List<String> ivSettings = new ArrayList<>();
+
     //TODO flags
 
     // ---------------------------------------------
 
-    /*      ACID        */
-
-    /*
-     * This settings category only exists if the GameType is ACIDISLAND.
-     */
-
-    @ConfigEntry(path = "acid.damage-op", specificTo = GameType.ACIDISLAND)
-    private boolean acidDamageOp = false;
-
-    @ConfigEntry(path = "acid.damage-chickens", specificTo = GameType.ACIDISLAND)
-    private boolean acidDamageChickens = false;
-
-    @ConfigEntry(path = "acid.options.item-destroy-time", specificTo = GameType.ACIDISLAND)
-    private int acidDestroyItemTime = 0;
-
-    // Damage
-    @ConfigEntry(path = "acid.damage.acid.player", specificTo = GameType.ACIDISLAND)
-    private int acidDamage = 10;
-
-    @ConfigEntry(path = "acid.damage.rain", specificTo = GameType.ACIDISLAND)
-    private int acidRainDamage = 1;
-
-    @ConfigEntry(path = "acid.damage.effects", specificTo = GameType.ACIDISLAND)
-    @Adapter(PotionEffectListAdapter.class)
-    private List<PotionEffectType> acidEffects = new ArrayList<>(Arrays.asList(PotionEffectType.CONFUSION, PotionEffectType.SLOW));
 
     /*      SCHEMATICS      */
     private List<String> companionNames = new ArrayList<>();
@@ -267,6 +411,8 @@ public class Settings implements ISettings<Settings> {
     private boolean teamJoinDeathReset;
 
     // Timeout for team kick and leave commands
+    @ConfigComment("Ask the player to confirm the command he is using by typing it again.")
+    @ConfigComment("The 'wait' value is the number of seconds to wait for confirmation.")
     @ConfigEntry(path = "island.require-confirmation.kick")
     private boolean kickConfirmation = true;
 
@@ -279,30 +425,72 @@ public class Settings implements ISettings<Settings> {
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
     private long leaveWait = 10L;
 
+    @ConfigEntry(path = "panel.close-on-click-outside")
+    private boolean closePanelOnClickOutside = true;
+
+    private String uniqueId = "config";
+
+    // Getters and setters
 
     /**
-     * @return the acidDamage
+     * @return the metrics
      */
-    public int getAcidDamage() {
-        return acidDamage;
+    public boolean isMetrics() {
+        return metrics;
     }
     /**
-     * @return the acidDestroyItemTime
+     * @param metrics the metrics to set
      */
-    public int getAcidDestroyItemTime() {
-        return acidDestroyItemTime;
+    public void setMetrics(boolean metrics) {
+        this.metrics = metrics;
     }
     /**
-     * @return the acidEffects
+     * @return the startingMoney
      */
-    public List<PotionEffectType> getAcidEffects() {
-        return acidEffects;
+    public double getStartingMoney() {
+        return startingMoney;
     }
     /**
-     * @return the acidRainDamage
+     * @param startingMoney the startingMoney to set
      */
-    public int getAcidRainDamage() {
-        return acidRainDamage;
+    public void setStartingMoney(double startingMoney) {
+        this.startingMoney = startingMoney;
+    }
+    /**
+     * @return the recoverSuperFlat
+     */
+    public boolean isRecoverSuperFlat() {
+        return recoverSuperFlat;
+    }
+    /**
+     * @param recoverSuperFlat the recoverSuperFlat to set
+     */
+    public void setRecoverSuperFlat(boolean recoverSuperFlat) {
+        this.recoverSuperFlat = recoverSuperFlat;
+    }
+    /**
+     * @return the muteDeathMessages
+     */
+    public boolean isMuteDeathMessages() {
+        return muteDeathMessages;
+    }
+    /**
+     * @param muteDeathMessages the muteDeathMessages to set
+     */
+    public void setMuteDeathMessages(boolean muteDeathMessages) {
+        this.muteDeathMessages = muteDeathMessages;
+    }
+    /**
+     * @return the disableOfflineRedstone
+     */
+    public boolean isDisableOfflineRedstone() {
+        return disableOfflineRedstone;
+    }
+    /**
+     * @param disableOfflineRedstone the disableOfflineRedstone to set
+     */
+    public void setDisableOfflineRedstone(boolean disableOfflineRedstone) {
+        this.disableOfflineRedstone = disableOfflineRedstone;
     }
     /**
      * @return the chestItems
@@ -391,14 +579,12 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the entityLimits
      */
+    @Override
     public Map<EntityType, Integer> getEntityLimits() {
         return entityLimits;
     }
-    @Override
-    public Settings getInstance() {
-        return this;
-    }
     /**
+     * Number of minutes to wait
      * @return the inviteWait
      */
     public int getInviteWait() {
@@ -407,42 +593,49 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the islandDistance
      */
+    @Override
     public int getIslandDistance() {
         return islandDistance;
     }
     /**
      * @return the islandHeight
      */
+    @Override
     public int getIslandHeight() {
         return islandHeight;
     }
     /**
      * @return the islandProtectionRange
      */
+    @Override
     public int getIslandProtectionRange() {
         return islandProtectionRange;
     }
     /**
      * @return the islandStartX
      */
+    @Override
     public int getIslandStartX() {
         return islandStartX;
     }
     /**
      * @return the islandStartZ
      */
+    @Override
     public int getIslandStartZ() {
         return islandStartZ;
     }
     /**
      * @return the islandXOffset
      */
+    @Override
     public int getIslandXOffset() {
         return islandXOffset;
     }
     /**
      * @return the islandZOffset
      */
+    @Override
     public int getIslandZOffset() {
         return islandZOffset;
     }
@@ -467,18 +660,21 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the maxHomes
      */
+    @Override
     public int getMaxHomes() {
         return maxHomes;
     }
     /**
      * @return the maxIslands
      */
+    @Override
     public int getMaxIslands() {
         return maxIslands;
     }
     /**
      * @return the maxTeamSize
      */
+    @Override
     public int getMaxTeamSize() {
         return maxTeamSize;
     }
@@ -497,6 +693,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the netherSpawnRadius
      */
+    @Override
     public int getNetherSpawnRadius() {
         return netherSpawnRadius;
     }
@@ -505,12 +702,6 @@ public class Settings implements ISettings<Settings> {
      */
     public int getPurgeMaxIslandLevel() {
         return purgeMaxIslandLevel;
-    }
-    /**
-     * @return the removeMobsWhitelist
-     */
-    public List<String> getRemoveMobsWhitelist() {
-        return removeMobsWhitelist;
     }
     /**
      * @return the resetLimit
@@ -527,12 +718,14 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the seaHeight
      */
+    @Override
     public int getSeaHeight() {
         return seaHeight;
     }
     /**
      * @return the tileEntityLimits
      */
+    @Override
     public Map<String, Integer> getTileEntityLimits() {
         return tileEntityLimits;
     }
@@ -552,20 +745,9 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the worldName
      */
+    @Override
     public String getWorldName() {
         return worldName;
-    }
-    /**
-     * @return the acidDamageChickens
-     */
-    public boolean isAcidDamageChickens() {
-        return acidDamageChickens;
-    }
-    /**
-     * @return the acidDamageOp
-     */
-    public boolean isAcidDamageOp() {
-        return acidDamageOp;
     }
     /**
      * @return the allowChestDamage
@@ -636,12 +818,14 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the endGenerate
      */
+    @Override
     public boolean isEndGenerate() {
         return endGenerate;
     }
     /**
      * @return the endIslands
      */
+    @Override
     public boolean isEndIslands() {
         return endIslands;
     }
@@ -684,12 +868,14 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the netherGenerate
      */
+    @Override
     public boolean isNetherGenerate() {
         return netherGenerate;
     }
     /**
      * @return the netherIslands
      */
+    @Override
     public boolean isNetherIslands() {
         return netherIslands;
     }
@@ -702,6 +888,7 @@ public class Settings implements ISettings<Settings> {
     /**
      * @return the netherTrees
      */
+    @Override
     public boolean isNetherTrees() {
         return netherTrees;
     }
@@ -710,18 +897,6 @@ public class Settings implements ISettings<Settings> {
      */
     public boolean isPurgeRemoveUserData() {
         return purgeRemoveUserData;
-    }
-    /**
-     * @return the removeMobsOnIsland
-     */
-    public boolean isRemoveMobsOnIsland() {
-        return removeMobsOnIsland;
-    }
-    /**
-     * @return the removeMobsOnLogin
-     */
-    public boolean isRemoveMobsOnLogin() {
-        return removeMobsOnLogin;
     }
     /**
      * @return the resetConfirmation
@@ -758,42 +933,6 @@ public class Settings implements ISettings<Settings> {
      */
     public boolean isUseOwnGenerator() {
         return useOwnGenerator;
-    }
-    /**
-     * @param acidDamage the acidDamage to set
-     */
-    public void setAcidDamage(int acidDamage) {
-        this.acidDamage = acidDamage;
-    }
-    /**
-     * @param acidDamageChickens the acidDamageChickens to set
-     */
-    public void setAcidDamageChickens(boolean acidDamageChickens) {
-        this.acidDamageChickens = acidDamageChickens;
-    }
-    /**
-     * @param acidDamageOp the acidDamageOp to set
-     */
-    public void setAcidDamageOp(boolean acidDamageOp) {
-        this.acidDamageOp = acidDamageOp;
-    }
-    /**
-     * @param acidDestroyItemTime the acidDestroyItemTime to set
-     */
-    public void setAcidDestroyItemTime(int acidDestroyItemTime) {
-        this.acidDestroyItemTime = acidDestroyItemTime;
-    }
-    /**
-     * @param acidEffects the acidEffects to set
-     */
-    public void setAcidEffects(List<PotionEffectType> acidEffects) {
-        this.acidEffects = acidEffects;
-    }
-    /**
-     * @param acidRainDamage the acidRainDamage to set
-     */
-    public void setAcidRainDamage(int acidRainDamage) {
-        this.acidRainDamage = acidRainDamage;
     }
     /**
      * @param allowChestDamage the allowChestDamage to set
@@ -1138,25 +1277,6 @@ public class Settings implements ISettings<Settings> {
         this.purgeRemoveUserData = purgeRemoveUserData;
     }
     /**
-     * @param removeMobsOnIsland the removeMobsOnIsland to set
-     */
-    public void setRemoveMobsOnIsland(boolean removeMobsOnIsland) {
-        this.removeMobsOnIsland = removeMobsOnIsland;
-    }
-
-    /**
-     * @param removeMobsOnLogin the removeMobsOnLogin to set
-     */
-    public void setRemoveMobsOnLogin(boolean removeMobsOnLogin) {
-        this.removeMobsOnLogin = removeMobsOnLogin;
-    }
-    /**
-     * @param removeMobsWhitelist the removeMobsWhitelist to set
-     */
-    public void setRemoveMobsWhitelist(List<String> removeMobsWhitelist) {
-        this.removeMobsWhitelist = removeMobsWhitelist;
-    }
-    /**
      * @param resetConfirmation the resetConfirmation to set
      */
     public void setResetConfirmation(boolean resetConfirmation) {
@@ -1258,6 +1378,188 @@ public class Settings implements ISettings<Settings> {
      */
     public void setConfirmationTime(int confirmationTime) {
         this.confirmationTime = confirmationTime;
+    }
+
+    /* (non-Javadoc)
+     * @see us.tastybento.bskyblock.api.configuration.WorldSettings#getFriendlyName()
+     */
+    @Override
+    public String getFriendlyName() {
+        return friendlyName;
+    }
+
+    /**
+     * @param friendlyName the friendlyName to set
+     */
+    public void setFriendlyName(String friendlyName) {
+        this.friendlyName = friendlyName;
+    }
+    /**
+     * @return the dragonSpawn
+     */
+    @Override
+    public boolean isDragonSpawn() {
+        return dragonSpawn;
+    }
+    /**
+     * @param dragonSpawn the dragonSpawn to set
+     */
+    public void setDragonSpawn(boolean dragonSpawn) {
+        this.dragonSpawn = dragonSpawn;
+    }
+
+    @Override
+    public String getPermissionPrefix() {
+        return "bskyblock";
+    }
+
+    /**
+     * Invincible visitor settings
+     * @return the ivSettings
+     */
+    @Override
+    public List<String> getIvSettings() {
+        return ivSettings;
+    }
+
+    /**
+     * @param ivSettings the ivSettings to set
+     */
+    public void setIvSettings(List<String> ivSettings) {
+        this.ivSettings = ivSettings;
+    }
+
+    /**
+     * @return the worldFlags
+     */
+    @Override
+    public Map<String, Boolean> getWorldFlags() {
+        return worldFlags;
+    }
+    /**
+     * @param worldFlags the worldFlags to set
+     */
+    public void setWorldFlags(Map<String, Boolean> worldFlags) {
+        this.worldFlags = worldFlags;
+    }
+
+    /**
+     * @return whether panels should close when clicked outside or not
+     */
+    public boolean isClosePanelOnClickOutside() {
+        return closePanelOnClickOutside;
+    }
+
+    /**
+     * Set panel close on click outside
+     * @param closePanelOnClickOutside - true means close panel when click is outside panel
+     */
+    public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
+        this.closePanelOnClickOutside = closePanelOnClickOutside;
+    }
+    /**
+     * @return the defaultGameMode
+     */
+    @Override
+    public GameMode getDefaultGameMode() {
+        return defaultGameMode;
+    }
+    /**
+     * @param defaultGameMode the defaultGameMode to set
+     */
+    public void setDefaultGameMode(GameMode defaultGameMode) {
+        this.defaultGameMode = defaultGameMode;
+    }
+    /**
+     * @return the removeMobsWhitelist
+     */
+    @Override
+    public Set<EntityType> getRemoveMobsWhitelist() {
+        return removeMobsWhitelist;
+    }
+    /**
+     * @param removeMobsWhitelist the removeMobsWhitelist to set
+     */
+    public void setRemoveMobsWhitelist(Set<EntityType> removeMobsWhitelist) {
+        this.removeMobsWhitelist = removeMobsWhitelist;
+    }
+    /**
+     * @return the onJoinResetMoney
+     */
+    @Override
+    public boolean isOnJoinResetMoney() {
+        return onJoinResetMoney;
+    }
+    /**
+     * @return the onJoinResetInventory
+     */
+    @Override
+    public boolean isOnJoinResetInventory() {
+        return onJoinResetInventory;
+    }
+    /**
+     * @return the onJoinResetEnderChest
+     */
+    @Override
+    public boolean isOnJoinResetEnderChest() {
+        return onJoinResetEnderChest;
+    }
+    /**
+     * @return the onLeaveResetMoney
+     */
+    @Override
+    public boolean isOnLeaveResetMoney() {
+        return onLeaveResetMoney;
+    }
+    /**
+     * @return the onLeaveResetInventory
+     */
+    @Override
+    public boolean isOnLeaveResetInventory() {
+        return onLeaveResetInventory;
+    }
+    /**
+     * @return the onLeaveResetEnderChest
+     */
+    @Override
+    public boolean isOnLeaveResetEnderChest() {
+        return onLeaveResetEnderChest;
+    }
+    /**
+     * @param onJoinResetMoney the onJoinResetMoney to set
+     */
+    public void setOnJoinResetMoney(boolean onJoinResetMoney) {
+        this.onJoinResetMoney = onJoinResetMoney;
+    }
+    /**
+     * @param onJoinResetInventory the onJoinResetInventory to set
+     */
+    public void setOnJoinResetInventory(boolean onJoinResetInventory) {
+        this.onJoinResetInventory = onJoinResetInventory;
+    }
+    /**
+     * @param onJoinResetEnderChest the onJoinResetEnderChest to set
+     */
+    public void setOnJoinResetEnderChest(boolean onJoinResetEnderChest) {
+        this.onJoinResetEnderChest = onJoinResetEnderChest;
+    }
+    /**
+     * @param onLeaveResetMoney the onLeaveResetMoney to set
+     */
+    public void setOnLeaveResetMoney(boolean onLeaveResetMoney) {
+        this.onLeaveResetMoney = onLeaveResetMoney;
+    }
+    /**
+     * @param onLeaveResetInventory the onLeaveResetInventory to set
+     */
+    public void setOnLeaveResetInventory(boolean onLeaveResetInventory) {
+        this.onLeaveResetInventory = onLeaveResetInventory;
+    }
+    /**
+     * @param onLeaveResetEnderChest the onLeaveResetEnderChest to set
+     */
+    public void setOnLeaveResetEnderChest(boolean onLeaveResetEnderChest) {
+        this.onLeaveResetEnderChest = onLeaveResetEnderChest;
     }
 
 

@@ -5,25 +5,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.configuration.serialization.ConfigurationSerializable;
-import org.bukkit.configuration.serialization.ConfigurationSerialization;
-import org.bukkit.plugin.InvalidDescriptionException;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.addons.AddonClassLoader;
 import us.tastybento.bskyblock.api.addons.exception.InvalidAddonFormatException;
-import us.tastybento.bskyblock.api.addons.exception.InvalidAddonInheritException;
 import us.tastybento.bskyblock.api.events.addon.AddonEvent;
 
 /**
@@ -47,35 +45,30 @@ public class AddonsManager {
     /**
      * Loads all the addons from the addons folder
      */
-    public void enableAddons() {
+    public void loadAddons() {
+        plugin.log("Loading addons...");
         File f = new File(plugin.getDataFolder(), "addons");
-        if (f.exists()) {
-            if (f.isDirectory()) {
-                for (File file : f.listFiles()) {
-                    if (!file.isDirectory()) {
-                        try {
-                            loadAddon(file);
-                        } catch (InvalidAddonFormatException | InvalidAddonInheritException | InvalidDescriptionException e) {
-                            plugin.logError("Could not load addon " + file.getName() + " : " + e.getMessage());
-                        }
-                    }
-                }
-            }
-        } else {
-            try {
-                f.mkdir();
-            } catch (SecurityException e) {
-                plugin.logError("Cannot create folder 'addons' (Permission ?)");
-            }
+        if (!f.exists() && !f.mkdirs()) {
+            plugin.logError("Cannot make addons folder!");
+            return;
         }
+        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
+        addons.forEach(Addon::onLoad);
+        plugin.log("Loaded " + addons.size() + " addons.");
+    }
 
+    /**
+     * Enables all the addons
+     */
+    public void enableAddons() {
+        plugin.log("Enabling addons...");
         addons.forEach(addon -> {
             addon.onEnable();
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
             addon.setEnabled(true);
             plugin.log("Enabling " + addon.getDescription().getName() + "...");
         });
-
+        plugin.log("Addons successfully enabled.");
     }
 
     /**
@@ -84,27 +77,17 @@ public class AddonsManager {
      * @return Optional addon object
      */
     public Optional<Addon> getAddonByName(String name){
-        if(name.equals("")) {
-            return Optional.empty();
-        }
-
-        for(Addon addon  : addons){
-            if(addon.getDescription().getName().contains(name)) {
-                return Optional.of(addon);
-            }
-        }
-        return Optional.empty();
+        return addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst();
     }
 
-    private void loadAddon(File f) throws InvalidAddonFormatException, InvalidAddonInheritException, InvalidDescriptionException {
+    private void loadAddon(File f) {
         try {
-            Addon addon = null;
+            Addon addon;
             // Check that this is a jar
             if (!f.getName().endsWith(".jar")) {
-                return;
+                throw new IOException("Filename must end in .jar. Name is '" + f.getName() + "'");
             }
             try (JarFile jar = new JarFile(f)) {
-
                 // Obtain the addon.yml file
                 JarEntry entry = jar.getJarEntry("addon.yml");
                 if (entry == null) {
@@ -133,18 +116,13 @@ public class AddonsManager {
                     addon.saveResource(localeFile, localeDir, false, true);
                 }
                 plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
-
                 // Fire the load event
                 Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-
                 // Add it to the list of addons
                 addons.add(addon);
 
-                // Run the onLoad() method
-                addon.onLoad();
-
                 // Inform the console
-                plugin.log("Loading BSkyBlock addon " + addon.getDescription().getName() + "...");
+                plugin.log("Loaded BSkyBlock addon " + addon.getDescription().getName() + "...");               
             }
 
         } catch (Exception e) {
@@ -152,13 +130,13 @@ public class AddonsManager {
                 plugin.log(f.getName() + "is not a jarfile, ignoring...");
             }
         }
-
     }
 
     /**
      * Disable all the enabled addons
      */
     public void disableAddons() {
+        plugin.log("Disabling addons...");
         // Unload addons
         addons.forEach(addon -> {
             addon.onDisable();
@@ -169,10 +147,11 @@ public class AddonsManager {
         loader.forEach(l -> {
             try {
                 l.close();
-            } catch (IOException e) {
-                // Do nothing
+            } catch (IOException ignore) {
+                // Ignore
             }
         });
+        plugin.log("Addons successfully disabled.");
     }
 
     public List<Addon> getAddons() {
@@ -189,44 +168,21 @@ public class AddonsManager {
 
     /**
      * Finds a class by name that has been loaded by this loader
-     * Code copied from Bukkit JavaPluginLoader
      * @param name - name of the class
      * @return Class - the class
      */
-    public Class<?> getClassByName(final String name) {
-        Class<?> cachedClass = classes.get(name);
-
-        if (cachedClass != null) {
-            return cachedClass;
-        } else {
-            for (AddonClassLoader l : loader) {
-                try {
-                    cachedClass = l.findClass(name, false);
-                } catch (ClassNotFoundException cnfe) {}
-                if (cachedClass != null) {
-                    return cachedClass;
-                }
-            }
-        }
-        return null;
+    public Class<?> getClassByName(final String name) {        
+        return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
     /**
      * Sets a class that this loader should know about
-     * Code copied from Bukkit JavaPluginLoader
      *
      * @param name - name of the class
      * @param clazz - the class
      */
     public void setClass(final String name, final Class<?> clazz) {
-        if (!classes.containsKey(name)) {
-            classes.put(name, clazz);
-
-            if (ConfigurationSerializable.class.isAssignableFrom(clazz)) {
-                Class<? extends ConfigurationSerializable> serializable = clazz.asSubclass(ConfigurationSerializable.class);
-                ConfigurationSerialization.registerClass(serializable);
-            }
-        }
+        classes.putIfAbsent(name, clazz);
     }
 
     /**
@@ -239,17 +195,11 @@ public class AddonsManager {
     public List<String> listJarYamlFiles(JarFile jar, String folderPath) {
         List<String> result = new ArrayList<>();
 
-        /**
-         * Loop through all the entries.
-         */
         Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String path = entry.getName();
 
-            /**
-             * Not in the folder.
-             */
             if (!path.startsWith(folderPath)) {
                 continue;
             }

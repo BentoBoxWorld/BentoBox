@@ -9,8 +9,12 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -23,7 +27,14 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Cow;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Wither;
+import org.bukkit.entity.Zombie;
 import org.bukkit.material.MaterialData;
 import org.bukkit.material.TrapDoor;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -43,11 +54,11 @@ import com.google.common.collect.ImmutableSet.Builder;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.island.IslandCache;
-import us.tastybento.bskyblock.util.DeleteIslandChunks;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -67,6 +78,7 @@ public class IslandsManagerTest {
     private Block space2;
     private Location location;
     private BlockState blockState;
+    private IslandWorldManager iwm;
 
     /**
      * @throws java.lang.Exception
@@ -101,7 +113,7 @@ public class IslandsManagerTest {
         // Set up user already
         User.getInstance(player);
 
-        // Locales        
+        // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
@@ -119,7 +131,8 @@ public class IslandsManagerTest {
 
         // Standard location
         manager = new IslandsManager(plugin);
-        location = mock(Location.class);                
+        location = mock(Location.class);
+        when(location.getWorld()).thenReturn(world);
         space1 = mock(Block.class);
         ground = mock(Block.class);
         space2 = mock(Block.class);
@@ -148,6 +161,20 @@ public class IslandsManagerTest {
             }
 
         });
+
+        // Worlds
+        iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getNetherWorld()).thenReturn(world);
+        when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.inWorld(any())).thenReturn(true);
+
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(world);
+
+        // Scheduler
+        when(Bukkit.getScheduler()).thenReturn(mock(BukkitScheduler.class));
     }
 
 
@@ -174,7 +201,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testIsSafeLocationNonSolidGround() {
-        when(ground.getType()).thenReturn(Material.WATER);        
+        when(ground.getType()).thenReturn(Material.WATER);
         assertFalse(manager.isSafeLocation(location));
     }
 
@@ -193,7 +220,7 @@ public class IslandsManagerTest {
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    public void testIsSafeLocationPortals() {        
+    public void testIsSafeLocationPortals() {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.PORTAL);
@@ -218,31 +245,6 @@ public class IslandsManagerTest {
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
         assertFalse(manager.isSafeLocation(location));
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
-    @Test
-    public void testIsSafeLocationAcid() {
-        when(ground.getType()).thenReturn(Material.GRASS);
-        when(space1.getType()).thenReturn(Material.STATIONARY_WATER);
-        when(space2.getType()).thenReturn(Material.AIR);
-
-        when(s.getAcidDamage()).thenReturn(10);
-
-        when(ground.isLiquid()).thenReturn(true);
-        when(space1.isLiquid()).thenReturn(false);
-        when(space2.isLiquid()).thenReturn(false);
-        assertFalse("In acid", manager.isSafeLocation(location));
-        when(ground.isLiquid()).thenReturn(false);
-        when(space1.isLiquid()).thenReturn(true);
-        when(space2.isLiquid()).thenReturn(false);
-        assertFalse("In acid", manager.isSafeLocation(location));
-        when(ground.isLiquid()).thenReturn(false);
-        when(space1.isLiquid()).thenReturn(false);
-        when(space2.isLiquid()).thenReturn(true);
-        assertFalse("In acid", manager.isSafeLocation(location));
     }
 
     /**
@@ -274,7 +276,7 @@ public class IslandsManagerTest {
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.STATIONARY_LAVA);
         assertFalse("In lava", manager.isSafeLocation(location));
-    }  
+    }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
@@ -305,7 +307,7 @@ public class IslandsManagerTest {
     @Test
     public void testBadBlocks() {
         // Fences
-        Arrays.asList(Material.values()).stream().filter(m -> m.toString().contains("FENCE")).forEach(m -> {
+        Arrays.stream(Material.values()).filter(m -> m.toString().contains("FENCE")).forEach(m -> {
             when(ground.getType()).thenReturn(m);
             assertFalse("Fence :" + m.toString(), manager.isSafeLocation(location));
         });
@@ -369,8 +371,8 @@ public class IslandsManagerTest {
 
         when(plugin.getSettings()).thenReturn(settings);
 
-        IslandWorld iwm = mock(IslandWorld.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
 
 
@@ -415,7 +417,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location);
         assertNotNull(island);
-        assertEquals(island.getCenter(), location);
+        assertEquals(island.getCenter().getWorld(), location.getWorld());
     }
 
     /**
@@ -427,7 +429,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location, owner);
         assertNotNull(island);
-        assertEquals(location, island.getCenter());
+        assertEquals(island.getCenter().getWorld(), location.getWorld());
         assertEquals(owner, island.getOwner());
     }
 
@@ -438,74 +440,13 @@ public class IslandsManagerTest {
     public void testDeleteIslandIslandBoolean() {
         IslandsManager im = new IslandsManager(plugin);
 
-        im.deleteIsland((Island)null, true);     
+        im.deleteIsland((Island)null, true);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
         im.deleteIsland(island, false);
         island = im.createIsland(location, owner);
         im.deleteIsland(island, true);
         assertNull(island);
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#deleteIsland(java.util.UUID, boolean)}.
-     */
-    @Test
-    public void testDeleteIslandUUIDBoolean() {
-        UUID owner = UUID.randomUUID();
-        IslandsManager im = new IslandsManager(plugin);
-        Island island = im.createIsland(location, owner);
-
-        im.deleteIsland(owner, false);
-
-        assertNull(island.getOwner());
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#deleteIsland(java.util.UUID, boolean)}.
-     * @throws Exception 
-     */
-    @Test
-    public void testDeleteIslandUUIDBooleanRemoveBlocks() throws Exception {
-        DeleteIslandChunks dic = mock(DeleteIslandChunks.class);
-        PowerMockito.whenNew(DeleteIslandChunks.class).withAnyArguments().thenReturn(dic);
-        UUID owner = UUID.randomUUID();
-        IslandsManager im = new IslandsManager(plugin);
-        Island island = im.createIsland(location, owner);
-        island = im.createIsland(location, owner);        
-        im.deleteIsland(owner, true);
-
-        assertNull(island);
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#deleteIsland(java.util.UUID, boolean)}.
-     */
-    @Test
-    public void testDeleteIslandUUIDBooleanNoIsland() {
-        UUID owner = UUID.randomUUID();
-        IslandsManager im = new IslandsManager(plugin);
-        // Should error
-        im.deleteIsland(owner, false);
-
-        Mockito.verify(plugin).logError(Mockito.anyString());
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getBanList(java.util.UUID)}.
-     */
-    @Test
-    public void testGetBanList() {
-        UUID owner = UUID.randomUUID();
-        IslandsManager im = new IslandsManager(plugin);
-        Island island = im.createIsland(location, owner);
-        Set<UUID> bl = im.getBanList(owner);
-        assertNotNull(bl);
-        assertTrue(bl.isEmpty());
-        UUID targetUUID = UUID.randomUUID();
-        island.addToBanList(targetUUID);
-        bl = im.getBanList(owner);
-        assertTrue(bl.contains(targetUUID));
     }
 
     /**
@@ -527,40 +468,21 @@ public class IslandsManagerTest {
         UUID owner = UUID.randomUUID();
         IslandsManager im = new IslandsManager(plugin);
         Island island = im.createIsland(location, owner);
-        assertEquals(island, im.getIsland(owner));
-        assertNull(im.getIsland(UUID.randomUUID()));
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getIslandAt(int, int)}.
-     * @throws Exception 
-     */
-    @Test
-    public void testGetIslandAtIntInt() throws Exception {
-        IslandCache ic = mock(IslandCache.class);
-        Island is = mock(Island.class);
-        when(ic.getIslandAt(Mockito.anyInt(), Mockito.anyInt())).thenReturn(is);
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
-        IslandsManager im = new IslandsManager(plugin);
-        assertEquals(is, im.getIslandAt(1, 1));
-        when(ic.getIslandAt(Mockito.anyInt(), Mockito.anyInt())).thenReturn(null);
-        assertNull(im.getIslandAt(100000, -100000));
+        assertEquals(island, im.getIsland(world, owner));
+        assertNull(im.getIsland(world, UUID.randomUUID()));
     }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testGetIslandAtLocation() throws Exception {
         // Mock island cache
         IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
-        when(ic.getIslandAt(Mockito.anyInt(), Mockito.anyInt())).thenReturn(is);
+        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
-
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
 
         IslandsManager im = new IslandsManager(plugin);
         // In world, correct island
@@ -568,11 +490,11 @@ public class IslandsManagerTest {
         assertEquals(oi, im.getIslandAt(location));
 
         // in world, wrong island
-        when(ic.getIslandAt(Mockito.anyInt(), Mockito.anyInt())).thenReturn(null);
+        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(null);
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
 
         // not in world
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(false);
+        when(iwm.inWorld(any())).thenReturn(true);
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
         assertEquals(Optional.empty(), im.getIslandAt(location));
 
@@ -584,26 +506,10 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetIslandLocation() {
-        UUID owner = UUID.randomUUID();
         IslandsManager im = new IslandsManager(plugin);
-        im.createIsland(location, owner);
-        assertEquals(location, im.getIslandLocation(owner));
-        assertNull(im.getIslandLocation(UUID.randomUUID()));
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getIslandName(java.util.UUID)}.
-     * @throws Exception 
-     */
-    @Test
-    public void testGetIslandName() throws Exception {        
-        // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
-        when(ic.getIslandName(Mockito.any())).thenReturn("name");
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);      
-        IslandsManager im = new IslandsManager(plugin);
-        assertEquals("name", im.getIslandName(user.getUniqueId()));
-
+        im.createIsland(location, uuid);
+        assertEquals(world, im.getIslandLocation(world, uuid).getWorld());
+        assertNull(im.getIslandLocation(world, UUID.randomUUID()));
     }
 
     /**
@@ -612,14 +518,14 @@ public class IslandsManagerTest {
     @Test
     public void testGetLast() {
         IslandsManager im = new IslandsManager(plugin);
-        assertNull(im.getLast());
         im.setLast(location);
-        assertEquals(location, im.getLast());
+        assertEquals(location, im.getLast(world));
+        assertNull(im.getLast(null));
     }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getMembers(java.util.UUID)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testGetMembers() throws Exception {
@@ -629,15 +535,15 @@ public class IslandsManagerTest {
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
-        when(ic.getMembers(Mockito.any())).thenReturn(members);
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);      
+        when(ic.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
+        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
         IslandsManager im = new IslandsManager(plugin);
-        assertEquals(members, im.getMembers(UUID.randomUUID()));
+        assertEquals(members, im.getMembers(world, UUID.randomUUID()));
     }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getProtectedIslandAt(org.bukkit.Location)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testGetProtectedIslandAt() throws Exception {
@@ -645,14 +551,11 @@ public class IslandsManagerTest {
         IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.getIslandAt(Mockito.anyInt(), Mockito.anyInt())).thenReturn(is);
+        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
 
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         // In world
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         IslandsManager im = new IslandsManager(plugin);
         Optional<Island> oi = Optional.ofNullable(is);
         // In world, correct island
@@ -660,7 +563,7 @@ public class IslandsManagerTest {
         assertEquals(oi, im.getProtectedIslandAt(location));
 
         // Not in protected space
-        when(is.onIsland(Mockito.any())).thenReturn(false);        
+        when(is.onIsland(Mockito.any())).thenReturn(false);
         assertEquals(Optional.empty(), im.getProtectedIslandAt(location));
 
         im.setSpawn(is);
@@ -669,7 +572,7 @@ public class IslandsManagerTest {
         assertEquals(oi, im.getProtectedIslandAt(location));
 
         // Not in protected space
-        when(is.onIsland(Mockito.any())).thenReturn(false);        
+        when(is.onIsland(Mockito.any())).thenReturn(false);
         assertEquals(Optional.empty(), im.getProtectedIslandAt(location));
     }
 
@@ -679,9 +582,9 @@ public class IslandsManagerTest {
     @Test
     public void testGetSafeHomeLocation() {
         IslandsManager im = new IslandsManager(plugin);
-        when(pm.getHomeLocation(Mockito.any(), Mockito.eq(0))).thenReturn(null);
-        when(pm.getHomeLocation(Mockito.any(), Mockito.eq(1))).thenReturn(location);
-        assertEquals(location, im.getSafeHomeLocation(UUID.randomUUID(), 0));
+        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(0))).thenReturn(null);
+        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(1))).thenReturn(location);
+        assertEquals(location, im.getSafeHomeLocation(world, user, 0));
         // Change location so that it is not safe
         // TODO
     }
@@ -692,11 +595,15 @@ public class IslandsManagerTest {
     @Test
     public void testGetSpawnPoint() {
         IslandsManager im = new IslandsManager(plugin);
-        assertNull(im.getSpawnPoint());
+        assertNull(im.getSpawnPoint(world));
+        // Create a spawn island for this world
         Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
+        // Make a spawn position on the island
         when(island.getSpawnPoint()).thenReturn(location);
+        // Set the spawn island
         im.setSpawn(island);
-        assertEquals(location,im.getSpawnPoint());
+        assertEquals(location,im.getSpawnPoint(world));
     }
 
     /**
@@ -704,13 +611,30 @@ public class IslandsManagerTest {
      */
     @Test
     public void testHomeTeleportPlayerInt() {
+        when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.SURVIVAL);
         IslandsManager im = new IslandsManager(plugin);
-        when(pm.getHomeLocation(Mockito.any(), Mockito.eq(0))).thenReturn(null);
-        when(pm.getHomeLocation(Mockito.any(), Mockito.eq(1))).thenReturn(location);
+        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(0))).thenReturn(null);
+        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(1))).thenReturn(location);
         when(player.getGameMode()).thenReturn(GameMode.SPECTATOR);
-        im.homeTeleport(player, 0);
+        im.homeTeleport(world, player, 0);
         Mockito.verify(player).teleport(location);
         Mockito.verify(player).setGameMode(GameMode.SURVIVAL);
+
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#homeTeleport(org.bukkit.entity.Player, int)}.
+     */
+    @Test
+    public void testHomeTeleportPlayerIntDifferentGameMode() {
+        when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.CREATIVE);
+        IslandsManager im = new IslandsManager(plugin);
+        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(0))).thenReturn(null);
+        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(1))).thenReturn(location);
+        when(player.getGameMode()).thenReturn(GameMode.SPECTATOR);
+        im.homeTeleport(world, player, 0);
+        Mockito.verify(player).teleport(location);
+        Mockito.verify(player).setGameMode(GameMode.CREATIVE);
 
     }
 
@@ -722,6 +646,7 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.isAtSpawn(location));
         Island island = mock(Island.class);
+        when(island.getWorld()).thenReturn(world);
         when(island.onIsland(Mockito.any())).thenReturn(true);
         im.setSpawn(island);
         assertTrue(im.isAtSpawn(location));
@@ -729,7 +654,7 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#isIsland(org.bukkit.Location)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testIsIsland() throws Exception {
@@ -742,9 +667,6 @@ public class IslandsManagerTest {
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         // In world
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.isIsland(null));
         im.createIsland(location);
@@ -762,7 +684,7 @@ public class IslandsManagerTest {
         // Location
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(10);
-        when(location.getBlockZ()).thenReturn(10);       
+        when(location.getBlockZ()).thenReturn(10);
         when(location.getBlock()).thenReturn(space1);
 
         PowerMockito.whenNew(Location.class).withAnyArguments().thenReturn(location);
@@ -776,7 +698,7 @@ public class IslandsManagerTest {
         when(space1.isLiquid()).thenReturn(true);
         assertTrue(im.isIsland(location));
 
-        // Empty space        
+        // Empty space
         when(space1.isEmpty()).thenReturn(true);
         when(space1.isLiquid()).thenReturn(false);
         assertTrue(im.isIsland(location));
@@ -785,14 +707,14 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#getClosestIsland(org.bukkit.Location)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testGetClosestIsland() throws Exception {
-        when(s.getIslandDistance()).thenReturn(100);
-        when(s.getIslandXOffset()).thenReturn(0);
-        when(s.getIslandZOffset()).thenReturn(0);
-        when(s.getIslandHeight()).thenReturn(120);
+        when(iwm.getIslandDistance(world)).thenReturn(100);
+        when(iwm.getIslandXOffset(world)).thenReturn(0);
+        when(iwm.getIslandZOffset(world)).thenReturn(0);
+        when(iwm.getIslandHeight(world)).thenReturn(120);
         IslandsManager im = new IslandsManager(plugin);
         when(location.getBlockX()).thenReturn(456);
         when(location.getBlockZ()).thenReturn(456);
@@ -803,7 +725,7 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#isOwner(java.util.UUID)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testIsOwner() throws Exception {
@@ -816,21 +738,21 @@ public class IslandsManagerTest {
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         IslandsManager im = new IslandsManager(plugin);
-        assertFalse(im.isOwner(null));
+        assertFalse(im.isOwner(world, null));
 
-        when(ic.hasIsland(Mockito.any())).thenReturn(false);
-        assertFalse(im.isOwner(UUID.randomUUID()));
+        when(ic.hasIsland(Mockito.any(), Mockito.any())).thenReturn(false);
+        assertFalse(im.isOwner(world, UUID.randomUUID()));
 
-        when(ic.hasIsland(Mockito.any())).thenReturn(true);
-        when(ic.get(Mockito.any(UUID.class))).thenReturn(is);
+        when(ic.hasIsland(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(ic.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         UUID owner = UUID.randomUUID();
         when(is.getOwner()).thenReturn(owner);
         UUID notOwner = UUID.randomUUID();
         while (owner.equals(notOwner)) {
             notOwner = UUID.randomUUID();
         }
-        assertFalse(im.isOwner(notOwner));
-        assertTrue(im.isOwner(owner));
+        assertFalse(im.isOwner(world, notOwner));
+        assertTrue(im.isOwner(world, owner));
     }
 
     /**
@@ -838,14 +760,14 @@ public class IslandsManagerTest {
      */
     @Test
     public void testLoad() {
-        IslandsManager im = new IslandsManager(plugin);
-        im.load();
-        
+        //IslandsManager im = new IslandsManager(plugin);
+        //im.load();
+
     }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#locationIsOnIsland(org.bukkit.entity.Player, org.bukkit.Location)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testLocationIsOnIsland() throws Exception {
@@ -853,32 +775,29 @@ public class IslandsManagerTest {
         IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.getIslandAt(Mockito.anyInt(),Mockito.anyInt())).thenReturn(is);
+        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
 
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         // In world
-        PowerMockito.mockStatic(Util.class);
-        when(Util.inWorld(Mockito.any(Location.class))).thenReturn(true);
-
         when(is.onIsland(Mockito.any())).thenReturn(true);
-        
+
         Builder<UUID> members = new ImmutableSet.Builder<>();
         members.add(uuid);
         when(is.getMemberSet()).thenReturn(members.build());
 
         when(player.getUniqueId()).thenReturn(uuid);
-        
+
         IslandsManager im = new IslandsManager(plugin);
         assertFalse(im.locationIsOnIsland(null, null));
-        
+
         assertTrue(im.locationIsOnIsland(player, location));
-        
+
         // No members
         Builder<UUID> mem = new ImmutableSet.Builder<>();
         when(is.getMemberSet()).thenReturn(mem.build());
         assertFalse(im.locationIsOnIsland(player, location));
-        
+
         // Not on island
         when(is.getMemberSet()).thenReturn(members.build());
         when(is.onIsland(Mockito.any())).thenReturn(false);
@@ -887,7 +806,7 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#userIsOnIsland(us.tastybento.bskyblock.api.user.User)}.
-     * @throws Exception 
+     * @throws Exception
      */
     @Test
     public void testUserIsOnIsland() throws Exception {
@@ -895,27 +814,18 @@ public class IslandsManagerTest {
         IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.get(Mockito.any(UUID.class))).thenReturn(is);
+        when(ic.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
 
         PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
 
         IslandsManager im = new IslandsManager(plugin);
-        assertFalse(im.userIsOnIsland(null));
-        
-        when(is.onIsland(Mockito.any())).thenReturn(false);
-        assertFalse(im.userIsOnIsland(user));
-        
-        when(is.onIsland(Mockito.any())).thenReturn(true);
-        assertTrue(im.userIsOnIsland(user));       
-    }
+        assertFalse(im.userIsOnIsland(world, null));
 
-    /**
-     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#removeMobs(org.bukkit.Location)}.
-     */
-    @Test
-    public void testRemoveMobs() {
-        IslandsManager im = new IslandsManager(plugin);
-        im.removeMobs(location);
+        when(is.onIsland(Mockito.any())).thenReturn(false);
+        assertFalse(im.userIsOnIsland(world, user));
+
+        when(is.onIsland(Mockito.any())).thenReturn(true);
+        assertTrue(im.userIsOnIsland(world, user));
     }
 
     /**
@@ -924,7 +834,7 @@ public class IslandsManagerTest {
     @Test
     public void testRemovePlayer() {
         IslandsManager im = new IslandsManager(plugin);
-        im.removePlayer(uuid);
+        im.removePlayer(world, uuid);
     }
 
     /**
@@ -942,7 +852,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testSave() {
-        //fail("Not yet implemented"); // TODO
+        //fail("Not yet implemented"); // TODO - warning saving stuff will go on the file system
     }
 
     /**
@@ -983,6 +893,64 @@ public class IslandsManagerTest {
     @Test
     public void testShutdown() {
         //fail("Not yet implemented"); // TODO
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.managers.IslandsManager#clearArea(Location)}.
+     */
+    @Test
+    public void testClearArea() {
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+
+        Flags.REMOVE_MOBS.setSetting(world, true);
+        // Default whitelist
+        Set<EntityType> whitelist = new HashSet<>();
+        whitelist.add(EntityType.ENDERMAN);
+        whitelist.add(EntityType.WITHER);
+        whitelist.add(EntityType.ZOMBIE_VILLAGER);
+        whitelist.add(EntityType.PIG_ZOMBIE);
+        when(iwm.getRemoveMobsWhitelist(Mockito.any())).thenReturn(whitelist);
+
+
+        // Monsters and animals
+        Zombie zombie = mock(Zombie.class);
+        when(zombie.getLocation()).thenReturn(location);
+        when(zombie.getType()).thenReturn(EntityType.ZOMBIE);
+        Slime slime = mock(Slime.class);
+        when(slime.getLocation()).thenReturn(location);
+        when(slime.getType()).thenReturn(EntityType.SLIME);
+        Cow cow = mock(Cow.class);
+        when(cow.getLocation()).thenReturn(location);
+        when(cow.getType()).thenReturn(EntityType.COW);
+        Wither wither = mock(Wither.class);
+        when(wither.getType()).thenReturn(EntityType.WITHER);
+        Creeper creeper = mock(Creeper.class);
+        when(creeper.getType()).thenReturn(EntityType.CREEPER);
+
+
+        Collection<Entity> collection = new ArrayList<>();
+        collection.add(player);
+        collection.add(zombie);
+        collection.add(cow);
+        collection.add(slime);
+        collection.add(wither);
+        collection.add(creeper);
+        when(world
+                .getNearbyEntities(Mockito.any(Location.class), Mockito.anyDouble(), Mockito.anyDouble(), Mockito.anyDouble()))
+        .thenReturn(collection);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.clearArea(location);
+
+        Mockito.verify(zombie).remove();
+        Mockito.verify(player, Mockito.never()).remove();
+        Mockito.verify(cow, Mockito.never()).remove();
+        Mockito.verify(slime, Mockito.never()).remove();
+        Mockito.verify(wither, Mockito.never()).remove();
+        Mockito.verify(creeper).remove();
     }
 
 }

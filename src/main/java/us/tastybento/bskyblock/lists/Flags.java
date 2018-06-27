@@ -15,28 +15,38 @@ import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;
 import us.tastybento.bskyblock.listeners.flags.BucketListener;
 import us.tastybento.bskyblock.listeners.flags.EggListener;
+import us.tastybento.bskyblock.listeners.flags.EnderChestListener;
+import us.tastybento.bskyblock.listeners.flags.EnterExitListener;
 import us.tastybento.bskyblock.listeners.flags.EntityInteractListener;
 import us.tastybento.bskyblock.listeners.flags.FireListener;
 import us.tastybento.bskyblock.listeners.flags.HurtingListener;
 import us.tastybento.bskyblock.listeners.flags.InventoryListener;
+import us.tastybento.bskyblock.listeners.flags.InvincibleVisitorsListener;
+import us.tastybento.bskyblock.listeners.flags.IslandRespawnListener;
 import us.tastybento.bskyblock.listeners.flags.ItemDropPickUpListener;
 import us.tastybento.bskyblock.listeners.flags.LeashListener;
 import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
 import us.tastybento.bskyblock.listeners.flags.PVPListener;
 import us.tastybento.bskyblock.listeners.flags.PhysicalInteractionListener;
+import us.tastybento.bskyblock.listeners.flags.PistonPushListener;
 import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
+import us.tastybento.bskyblock.listeners.flags.RemoveMobsListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
+import us.tastybento.bskyblock.listeners.flags.clicklisteners.IslandToggleClickListener;
+import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flags {
 
-    // TODO: add DYEING sheeps
+    private Flags() {}
+
+    // Disabled setting 'rank'
+    private static final int DISABLED = -1;
+
     // TODO: add ELYTRA
     // TODO: add FISHING
-    // TODO: add INTERACT_TAMED
-    // TODO: split LEVER_BUTTON into BUTTON and LEVER
     // TODO: add KEEP_INVENTORY - is it needed?
 
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
@@ -54,8 +64,10 @@ public class Flags {
     public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING").allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build();
     public static final Flag FURNACE = new FlagBuilder().id("FURNACE").icon(Material.FURNACE).build();
     public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.FENCE_GATE).build();
-    public static final Flag MUSIC = new FlagBuilder().id("MUSIC").icon(Material.JUKEBOX).build();
-    public static final Flag LEVER_BUTTON = new FlagBuilder().id("LEVER_BUTTON").icon(Material.LEVER).build();
+    public static final Flag NOTE_BLOCK = new FlagBuilder().id("NOTE_BLOCK").icon(Material.NOTE_BLOCK).build();
+    public static final Flag JUKEBOX = new FlagBuilder().id("JUKEBOX").icon(Material.JUKEBOX).build();
+    public static final Flag LEVER = new FlagBuilder().id("LEVER").icon(Material.LEVER).build();
+    public static final Flag BUTTON = new FlagBuilder().id("BUTTON").icon(Material.WOOD_BUTTON).build();
     public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).build();
     public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.MONSTER_EGG).build();
 
@@ -128,20 +140,45 @@ public class Flags {
      * Settings flags (not protection flags)
      */
     // PVP
-    public static final Flag PVP_OVERWORLD = new FlagBuilder().id("PVP_OVERWORLD").icon(Material.ARROW).type(Type.SETTING).listener(new PVPListener()).build();
-    public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING).build();
-    public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING).build();
+    public static final Flag PVP_OVERWORLD = new FlagBuilder().id("PVP_OVERWORLD").icon(Material.ARROW).type(Type.SETTING)
+            .defaultRank(DISABLED).listener(new PVPListener()).onClick(new IslandToggleClickListener("PVP_OVERWORLD")).build();
+    public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING)
+            .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_NETHER")).build();
+    public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING)
+            .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_END")).build();
+
     // Others
-    public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).type(Type.SETTING).build();
-    
+
+    // World Settings - apply to every island in the game worlds
+    public static final Flag ENDER_CHEST = new FlagBuilder().id("ENDER_CHEST").icon(Material.ENDER_CHEST)
+            .allowedByDefault(false).type(Type.WORLD_SETTING)
+            .listener(new EnderChestListener())
+            .onClick(new WorldToggleClickListener("ENDER_CHEST"))
+            .build();
+    public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
+            .listener(new EnterExitListener())
+            .onClick(new WorldToggleClickListener("ENTER_EXIT_MESSAGES"))
+            .build();
+    public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON_BASE).allowedByDefault(true).type(Type.WORLD_SETTING)
+            .listener(new PistonPushListener())
+            .onClick(new WorldToggleClickListener("PISTON_PUSH"))
+            .build();
+    static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
+    public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.WORLD_SETTING)
+            .listener(ilv).onClick(ilv).subPanel(true).build();
+    public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
+            .listener(new RemoveMobsListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("REMOVE_MOBS")).build();
+    public static final Flag ISLAND_RESPAWN = new FlagBuilder().id("ISLAND_RESPAWN").icon(Material.TORCH).type(Type.WORLD_SETTING)
+            .listener(new IslandRespawnListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("ISLAND_RESPAWN")).build();
+
     /**
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
-        return Arrays.asList(Flags.class.getFields()).stream().map(field -> {
+        return Arrays.stream(Flags.class.getFields()).map(field -> {
             try {
                 return (Flag)field.get(null);
             } catch (IllegalArgumentException | IllegalAccessException e) {

@@ -17,6 +17,7 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Pair;
 
@@ -30,7 +31,7 @@ public class SafeSpotTeleport {
     private static final int MAX_CHUNKS = 200;
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 200;
-    private boolean checking = true;
+    private boolean checking;
     private BukkitTask task;
 
     // Parameters
@@ -49,11 +50,11 @@ public class SafeSpotTeleport {
     /**
      * Teleports and entity to a safe spot on island
      * @param plugin - BSkyBlock plugin object
-     * @param entity
+     * @param entity - entity to teleport
      * @param location - the location
      * @param failureMessage - already translated failure message
-     * @param portal
-     * @param homeNumber
+     * @param portal - true if this is a portal teleport
+     * @param homeNumber - home number to go to
      */
     protected SafeSpotTeleport(BSkyBlock plugin, final Entity entity, final Location location, final String failureMessage, boolean portal,
             int homeNumber) {
@@ -104,24 +105,33 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // No portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
+            if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+                ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(bestSpot.getWorld()));
+            }
         } else if (entity instanceof Player && !failureMessage.isEmpty()) {
             // Failed, no safe spot
             entity.sendMessage(failureMessage);
+            if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+                if (plugin.getIWM().inWorld(entity.getLocation())) {
+                    ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(entity.getWorld()));
+                } else {
+                    // Last resort
+                    ((Player)entity).setGameMode(GameMode.SURVIVAL);
+                }
+            }
         }
-        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
-            ((Player)entity).setGameMode(GameMode.SURVIVAL);
-        }
+
     }
 
     /**
      * Gets a set of chunk coords that will be scanned.
-     * @return
+     * @return - list of chunk coords to be scanned
      */
     private List<Pair<Integer, Integer>> getChunksToScan() {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
         // Get island if available
         Optional<Island> island = plugin.getIslands().getIslandAt(location);
-        int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getSettings().getIslandProtectionRange());
+        int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         maxRadius = maxRadius > MAX_RADIUS ? MAX_RADIUS : maxRadius;
 
         int x = location.getBlockX();
@@ -151,14 +161,14 @@ public class SafeSpotTeleport {
                     if (is.inIslandSpace(blockCoord)) {
                         result.add(chunkCoord);
                     }
-                });  
+                });
             }
         }
     }
 
     /**
-     * Loops through the chunks and if a safe spot is found, fires off the teleportation 
-     * @param chunkSnapshot
+     * Loops through the chunks and if a safe spot is found, fires off the teleportation
+     * @param chunkSnapshot - list of chunk snapshots to check
      */
     private void checkChunks(final List<ChunkSnapshot> chunkSnapshot) {
         // Run async task to scan chunks
@@ -176,10 +186,10 @@ public class SafeSpotTeleport {
 
 
     /**
-     * @param chunk
+     * @param chunk - chunk snapshot
      * @return true if a safe spot was found
      */
-    private boolean scanChunk(ChunkSnapshot chunk) { 
+    private boolean scanChunk(ChunkSnapshot chunk) {
         // Max height
         int maxHeight = location.getWorld().getMaxHeight() - 20;
         // Run through the chunk
@@ -205,7 +215,7 @@ public class SafeSpotTeleport {
         Bukkit.getScheduler().runTask(plugin, () -> {
             if (!portal && entity instanceof Player) {
                 // Set home
-                plugin.getPlayers().setHomeLocation(entity.getUniqueId(), loc, homeNumber);
+                plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
             }
             Vector velocity = entity.getVelocity();
             entity.teleport(loc);
@@ -213,7 +223,7 @@ public class SafeSpotTeleport {
             if (entity instanceof Player) {
                 Player player = (Player)entity;
                 if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                    player.setGameMode(GameMode.SURVIVAL);
+                    player.setGameMode(plugin.getIWM().getDefaultGameMode(loc.getWorld()));
                 }
             } else {
                 entity.setVelocity(velocity);
@@ -224,11 +234,11 @@ public class SafeSpotTeleport {
 
     /**
      * Returns true if the location is a safe one.
-     * @param chunk
+     * @param chunk - chunk snapshot
      * @param x - x coordinate
-     * @param y
+     * @param y - y coordinate
      * @param z - z coordinate
-     * @param worldHeight
+     * @param worldHeight - height of world
      * @return true if this is a safe spot, false if this is a portal scan
      */
     private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {

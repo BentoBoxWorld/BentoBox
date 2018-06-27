@@ -1,11 +1,12 @@
 package us.tastybento.bskyblock.api.commands;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang.math.NumberUtils;
 
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
 /**
@@ -32,7 +33,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         // Set the usage to what the parent's command is
         setParameters(parent.getParameters());
         setDescription(parent.getDescription());
-        setPermission(parent.getPermission());
+        inheritPermission();
     }
 
     @Override
@@ -51,7 +52,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             }
         }
         if (depth == 0) {
-            user.sendMessage("commands.help.header");
+            user.sendMessage("commands.help.header", TextVariables.LABEL, getIWM().getFriendlyName(getWorld()));
         }
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {
@@ -81,9 +82,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             if (!subCommand.getLabel().equals(HELP)) {
                 // Every command should have help because every command has a default help
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
-                if (sub.isPresent()) {
-                    sub.get().execute(user, Arrays.asList(String.valueOf(newDepth)));
-                }
+                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, Collections.singletonList(String.valueOf(newDepth))));
             }
         }        
     }

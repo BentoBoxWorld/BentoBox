@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
@@ -8,10 +5,9 @@ import java.util.List;
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.ChatColor;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -19,7 +15,7 @@ import us.tastybento.bskyblock.util.Util;
  */
 public class IslandGoCommand extends CompositeCommand {
 
-    public IslandGoCommand(IslandCommand islandCommand) {
+    public IslandGoCommand(CompositeCommand islandCommand) {
         super(islandCommand, "go", "home", "h");
     }
 
@@ -28,7 +24,7 @@ public class IslandGoCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.home");
+        setPermission("island.home");
         setOnlyPlayer(true);
         setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
@@ -39,19 +35,21 @@ public class IslandGoCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().hasIsland(user.getUniqueId())) {
+
+        if (getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return false;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.valueOf(args.get(0));
-            int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
+            int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1  && homeValue <= maxHomes) {
-                getIslands().homeTeleport(user.getPlayer(), homeValue);
+                getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
+                user.sendMessage("commands.island.go.tip", TextVariables.LABEL, getTopLabel());
                 return true;
             }
         }
-        getIslands().homeTeleport(user.getPlayer());
+        getIslands().homeTeleport(getWorld(), user.getPlayer());
         return true;
     }
 

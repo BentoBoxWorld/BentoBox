@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.listeners.flags;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,6 +36,7 @@ import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.listeners.flags.clicklisteners.CycleClick;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
@@ -43,7 +45,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
-public class UpDownClickTest {
+public class CycleClickTest {
 
     private static final Integer PROTECTION_RANGE = 200;
     private static final Integer X = 600;
@@ -52,19 +54,9 @@ public class UpDownClickTest {
     private BSkyBlock plugin;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
-    private PlayersManager pm;
     private Island island;
-    private World world;
-    private Location loc;
-    private Location outside;
-    private Location inside;
-    private Notifier notifier;
-    private Location inside2;
-    private BukkitScheduler sch;
     private Flag flag;
-    private PanelItem panelItem;
     private Panel panel;
     private Inventory inv;
 
@@ -79,10 +71,10 @@ public class UpDownClickTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // World
-        world = mock(World.class);
+        World world = mock(World.class);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
@@ -101,17 +93,17 @@ public class UpDownClickTest {
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        PlayersManager pm = mock(PlayersManager.class);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
-        sch = mock(BukkitScheduler.class);
+        BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
@@ -121,14 +113,14 @@ public class UpDownClickTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
 
         // Notifier
-        notifier = mock(Notifier.class);
+        Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island Banned list initialization
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
-        loc = mock(Location.class);
+        Location loc = mock(Location.class);
         when(loc.getWorld()).thenReturn(world);
         when(loc.getBlockX()).thenReturn(X);
         when(loc.getBlockY()).thenReturn(Y);
@@ -140,22 +132,22 @@ public class UpDownClickTest {
         // Island owner is user by default
         when(island.getOwner()).thenReturn(uuid);
 
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
         // Common from to's
-        outside = mock(Location.class);
+        Location outside = mock(Location.class);
         when(outside.getWorld()).thenReturn(world);
         when(outside.getBlockX()).thenReturn(X + PROTECTION_RANGE + 1);
         when(outside.getBlockY()).thenReturn(Y);
         when(outside.getBlockZ()).thenReturn(Z);
 
-        inside = mock(Location.class);
+        Location inside = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 1);
         when(inside.getBlockY()).thenReturn(Y);
         when(inside.getBlockZ()).thenReturn(Z);
 
-        inside2 = mock(Location.class);
+        Location inside2 = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
         when(inside.getBlockY()).thenReturn(Y);
@@ -166,7 +158,7 @@ public class UpDownClickTest {
         when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
 
-        panelItem = mock(PanelItem.class);
+        PanelItem panelItem = mock(PanelItem.class);
         flag = mock(Flag.class);
         when(flag.toPanelItem(Mockito.any(), Mockito.any())).thenReturn(panelItem);
         when(panelItem.getItem()).thenReturn(mock(ItemStack.class));
@@ -192,32 +184,52 @@ public class UpDownClickTest {
 
     @Test
     public void testUpDownClick() {
-        UpDownClick udc = new UpDownClick("LOCK");
+        CycleClick udc = new CycleClick("LOCK");
         assertNotNull(udc);
     }
 
     @Test
     public void testOnLeftClick() {
-        UpDownClick udc = new UpDownClick("LOCK");
+        final int SLOT = 5;
+        CycleClick udc = new CycleClick("LOCK");
+        // Rank starts at member
         // Click left
-        assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
         Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
         Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
-        Mockito.verify(inv).setItem(Mockito.eq(5), Mockito.any());        
+        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        // Check rollover
+        // Clicking when Owner should go to Visitor
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
+        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
     }
 
     @Test
     public void testOnRightClick() {
-        UpDownClick udc = new UpDownClick("LOCK");
+        final int SLOT = 5;
+        CycleClick udc = new CycleClick("LOCK");
+        // Rank starts at member
         // Right click
-        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, 0));
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
         Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
+        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        // Check rollover
+        // Clicking when Visitor should go to Owner
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
+        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
     }
     
     @Test
     public void testAllClicks() {
         // Test all possible click types
-        UpDownClick udc = new UpDownClick("LOCK");
+        CycleClick udc = new CycleClick("LOCK");
         Arrays.asList(ClickType.values()).forEach(c -> assertTrue(udc.onClick(panel, user, c, 0)));
     }
     
@@ -235,7 +247,7 @@ public class UpDownClickTest {
     
     @Test
     public void testNullIsland() {
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(null);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
         Mockito.verify(plugin, Mockito.never()).getRanksManager();  
     }
 

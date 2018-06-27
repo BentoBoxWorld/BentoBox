@@ -36,6 +36,7 @@ import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 
@@ -47,11 +48,9 @@ import us.tastybento.bskyblock.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
 public class IslandBanlistCommandTest {
 
-    private BSkyBlock plugin;
     private IslandCommand ic;
     private UUID uuid;
     private User user;
-    private Settings s;
     private IslandsManager im;
     private PlayersManager pm;
     private Island island;
@@ -62,7 +61,7 @@ public class IslandBanlistCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Command manager
@@ -70,7 +69,7 @@ public class IslandBanlistCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
         when(s.getResetLimit()).thenReturn(3);
         when(plugin.getSettings()).thenReturn(s);
@@ -88,16 +87,17 @@ public class IslandBanlistCommandTest {
         // Parent command has no aliases
         ic = mock(IslandCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        when(ic.getTopLabel()).thenReturn("island");
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -109,7 +109,12 @@ public class IslandBanlistCommandTest {
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
-        when(im.getIsland(Mockito.any(UUID.class))).thenReturn(island);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
+
+        // IWM friendly name
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(plugin.getIWM()).thenReturn(iwm);
 
     }
 
@@ -133,7 +138,7 @@ public class IslandBanlistCommandTest {
     @Test
     public void testBanlistNooneBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertTrue(iubc.execute(user, new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.banlist.noone");
     }
@@ -141,7 +146,7 @@ public class IslandBanlistCommandTest {
     @Test
     public void testBanlistBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        when(im.hasIsland(Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Make a ban list
         String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};        
         Set<UUID> banned = new HashSet<>();

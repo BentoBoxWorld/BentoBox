@@ -3,19 +3,19 @@ package us.tastybento.bskyblock.util;
 import java.lang.reflect.Method;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
+import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
 import org.bukkit.permissions.PermissionAttachmentInfo;
+import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
@@ -23,15 +23,18 @@ import us.tastybento.bskyblock.api.user.User;
 /**
  * A set of utility methods
  *
- * @author Tastybento
+ * @author tastybento
  * @author Poslovitch
  */
 public class Util {
 
-    private static final DecimalFormat df = new DecimalFormat("#.###");
+    private static final String NETHER = "_nether";
+    private static final String THE_END = "_the_end";
     private static String serverVersion = null;
     private static BSkyBlock plugin = BSkyBlock.getInstance();
-    
+
+    private Util() {}
+
     public static void setPlugin(BSkyBlock p) {
         plugin = p;
     }
@@ -87,12 +90,16 @@ public class Util {
         if (l == null || l.getWorld() == null) {
             return "";
         }
-        return l.getWorld().getName() + ":" + df.format(l.getX()) + ":" + df.format(l.getY()) + ":" + df.format(l.getZ()) + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
+        return l.getWorld().getName() + ":" + format(l.getX()) + ":" + format(l.getY()) + ":" + format(l.getZ()) + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
+    }
+
+    private static String format(double num) {
+        return String.valueOf(Math.round(num * 100D) / 100D);
     }
 
     /**
      * Get a list of parameter types for the collection argument in this method
-     * @param writeMethod
+     * @param writeMethod - write method
      * @return a list of parameter types for the collection argument in this method
      */
     public static List<Type> getCollectionParameterTypes(Method writeMethod) {
@@ -123,62 +130,22 @@ public class Util {
      *         Credits to mikenon on GitHub!
      */
     public static String prettifyText(String ugly) {
-        String fin = "";
+        StringBuilder fin = new StringBuilder();
         ugly = ugly.toLowerCase();
         if (ugly.contains("_")) {
             String[] splt = ugly.split("_");
             int i = 0;
             for (String s : splt) {
                 i += 1;
-                fin += Character.toUpperCase(s.charAt(0)) + s.substring(1);
+                fin.append(Character.toUpperCase(s.charAt(0))).append(s.substring(1));
                 if (i < splt.length) {
-                    fin += " ";
+                    fin.append(" ");
                 }
             }
         } else {
-            fin += Character.toUpperCase(ugly.charAt(0)) + ugly.substring(1);
+            fin.append(Character.toUpperCase(ugly.charAt(0))).append(ugly.substring(1));
         }
-        return fin;
-    }
-
-    /**
-     * Determines if a location is in the island world or not or
-     * in the new nether if it is activated
-     * @param loc - location
-     * @return true if in the island world
-     */
-    public static boolean inWorld(Location loc) {
-        if (loc != null) {
-            if (loc.getWorld().equals(plugin.getIslandWorldManager().getIslandWorld())) {
-                return true;
-            }
-            if (plugin.getSettings().isNetherIslands() && loc.getWorld().equals(plugin.getIslandWorldManager().getNetherWorld())) {
-                return true;
-            }
-            if (plugin.getSettings().isEndIslands() && loc.getWorld().equals(plugin.getIslandWorldManager().getEndWorld())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /**
-     * Determines if an entity is in the island world or not or
-     * in the new nether if it is activated
-     * @param entity
-     * @return true if in world
-     */
-    public static boolean inWorld(Entity entity) {
-        return inWorld(entity.getLocation());
-    }
-
-    /**
-     * Determines if a block is in the island world or not
-     * @param block
-     * @return true if in the island world
-     */
-    public static boolean inWorld(Block block) {
-        return inWorld(block.getLocation());
+        return fin.toString();
     }
 
     /**
@@ -187,21 +154,20 @@ public class Util {
      * @return a list of online players this player can see
      */
     public static List<String> getOnlinePlayerList(User user) {
-        final List<String> returned = new ArrayList<>();
-        for (Player p : Bukkit.getServer().getOnlinePlayers()) {
-            if (user == null || user.getPlayer().canSee(p)) {
-                returned.add(p.getName());
-            }
+        if (user == null || !user.isPlayer()) {
+            // Console and null get to see every player
+            return Bukkit.getOnlinePlayers().stream().map(Player::getName).collect(Collectors.toList());
         }
-        return returned;
+        // Otherwise prevent invisible players from seeing
+        return Bukkit.getOnlinePlayers().stream().filter(p -> user.getPlayer().canSee(p)).map(Player::getName).collect(Collectors.toList());
     }
 
     /**
      * Returns all of the items that begin with the given start,
      * ignoring case.  Intended for tabcompletion.
      *
-     * @param list
-     * @param start
+     * @param list - string list
+     * @param start - first few chars of a string
      * @return List of items that start with the letters
      */
     public static List<String> tabLimit(final List<String> list, final String start) {
@@ -250,5 +216,32 @@ public class Util {
         }
         return permValue;
     }
+
+    public static String xyz(Vector location) {
+        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
+    }
+
+
+    /**
+     * Checks is world = world2 irrespective of the world type
+     * @param world - world
+     * @param world2 - world
+     * @return true if the same
+     */
+    public static boolean sameWorld(World world, World world2) {
+        String worldName = world.getName().replaceAll(NETHER, "").replaceAll(THE_END, "");
+        String world2Name = world2.getName().replaceAll(NETHER, "").replaceAll(THE_END, "");
+        return worldName.equalsIgnoreCase(world2Name);
+    }
+
+    /**
+     * Convert world to an overworld
+     * @param world - world
+     * @return over world
+     */
+    public static World getWorld(World world) {
+        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
+    }
+
 
 }

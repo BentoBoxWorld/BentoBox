@@ -24,7 +24,7 @@ public class SafeTeleportBuilder {
 
     /**
      * Set who or what is going to teleport
-     * @param entity
+     * @param entity - entity to teleport
      * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder entity(Entity entity) {
@@ -34,7 +34,7 @@ public class SafeTeleportBuilder {
 
     /**
      * Set the island to teleport to
-     * @param island
+     * @param island - island destination
      * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder island(Island island) {
@@ -44,7 +44,7 @@ public class SafeTeleportBuilder {
 
     /**
      * Set the home number to this number
-     * @param homeNumber
+     * @param homeNumber - home number
      * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder homeNumber(int homeNumber) {
@@ -63,7 +63,7 @@ public class SafeTeleportBuilder {
 
     /**
      * Set the failure message if this teleport cannot happen
-     * @param failureMessage
+     * @param failureMessage - failure message to report to user
      * @return SafeTeleportBuilder
      */
     public SafeTeleportBuilder failureMessage(String failureMessage) {

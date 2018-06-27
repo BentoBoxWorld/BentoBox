@@ -28,9 +28,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.managers.CommandsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 
 /**
  * @author tastybento
@@ -42,12 +42,11 @@ public class AdminCommandTest {
 
     @Mock
     static BSkyBlock plugin;
-    private static World world;
-    
+
     @BeforeClass
     public static void setUpBeforeClass() throws Exception {
         Server server = mock(Server.class);
-        world = mock(World.class);
+        World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -61,6 +60,10 @@ public class AdminCommandTest {
 
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(plugin.getIWM()).thenReturn(iwm);
         
     }
     
@@ -85,7 +88,7 @@ public class AdminCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
         AdminCommand ac = new AdminCommand();
         ac.setup();
-        assertEquals(Constants.PERMPREFIX + "admin.*", ac.getPermission());
+        assertEquals("bskyblock.admin.*", ac.getPermission());
         assertFalse(ac.isOnlyPlayer());
         assertEquals("commands.admin.help.parameters", ac.getParameters());
         assertEquals("commands.admin.help.description", ac.getDescription());

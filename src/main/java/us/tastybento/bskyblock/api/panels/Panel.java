@@ -21,8 +21,10 @@ public class Panel implements HeadRequester {
     private Map<Integer, PanelItem> items;
     private PanelListener listener;
     private User user;
+    private final String name;
 
     public Panel(String name, Map<Integer, PanelItem> items, int size, User user, PanelListener listener) {
+        this.name = name;
         this.items = items;
         // If size is undefined (0) then use the number of items
         if (size == 0) {
@@ -83,7 +85,7 @@ public class Panel implements HeadRequester {
 
     /**
      * Open the inventory panel
-     * @param users
+     * @param users - users that should see the panel
      */
     public void open(User... users) {
         for (User u : users) {
@@ -134,5 +136,12 @@ public class Panel implements HeadRequester {
                 }
             }
         }
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
     }
 }

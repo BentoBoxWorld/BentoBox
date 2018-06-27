@@ -69,16 +69,19 @@ public abstract class AbstractDatabaseHandler<T> {
 
     /**
      * Deletes the object with the unique id from the database
-     * @param instance
+     * @param instance - object instance
      */
     public abstract void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException ;
 
     /**
-     * Checks if a key exists or not
-     * @param key
-     * @return true if this key exists
+     * Checks if a unique id exists or not
+     * @param uniqueId - uniqueId to check
+     * @return true if this uniqueId exists
      */
-    public abstract boolean objectExists(String key);
+    public abstract boolean objectExists(String uniqueId);
 
+    /**
+     * Closes the database
+     */
     public abstract void close();
 }

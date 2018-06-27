@@ -2,7 +2,6 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
@@ -27,7 +26,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
         // Inherit parameters from the respective parent class - in this case, only /island go and /island sethome
         setParameters(parent.getParameters());
         setDescription(parent.getDescription());
-        setPermission(parent.getPermission());
+        inheritPermission();
     }
 
     @Override
@@ -48,7 +47,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
     private void showPrettyHelp(User user, String usage, String params, String desc) {
         // Player. Check perms
         if (user.hasPermission(getPermission())) {
-            int maxHomes = Util.getPermValue(user.getPlayer(), Constants.PERMPREFIX + "island.maxhomes", getSettings().getMaxHomes());
+            int maxHomes = Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (maxHomes > 1) {
                 params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
             }

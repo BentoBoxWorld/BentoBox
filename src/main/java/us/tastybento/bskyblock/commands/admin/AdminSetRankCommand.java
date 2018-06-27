@@ -1,15 +1,11 @@
-/**
- * 
- */
 package us.tastybento.bskyblock.commands.admin;
 
-import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -30,7 +26,7 @@ public class AdminSetRankCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.setrank");
+        setPermission("admin.setrank");
         setOnlyPlayer(false);
         setParameters("commands.admin.setrank.parameters");
         setDescription("commands.admin.setrank.description");
@@ -52,7 +48,7 @@ public class AdminSetRankCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(targetUUID)) {
+        if (!getPlugin().getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
@@ -60,14 +56,14 @@ public class AdminSetRankCommand extends CompositeCommand {
         RanksManager rm = getPlugin().getRanksManager();
         int rankValue = rm.getRanks().entrySet().stream()
                 .filter(r -> user.getTranslation(r.getKey()).equalsIgnoreCase(args.get(1))).findFirst()
-                .map(r -> r.getValue()).orElse(-999);
+                .map(Map.Entry::getValue).orElse(-999);
         if (rankValue < RanksManager.BANNED_RANK) {
             user.sendMessage("commands.admin.setrank.unknown-rank");
             return false;
         }
         User target = User.getInstance(targetUUID);
         
-        Island island = getPlugin().getIslands().getIsland(targetUUID);       
+        Island island = getPlugin().getIslands().getIsland(getWorld(), targetUUID);       
         int currentRank = island.getRank(target);
         island.setRank(target, rankValue);
         user.sendMessage("commands.admin.setrank.rank-set", "[from]", user.getTranslation(rm.getRank(currentRank)), "[to]", user.getTranslation(rm.getRank(rankValue)));
@@ -75,7 +71,7 @@ public class AdminSetRankCommand extends CompositeCommand {
     }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         return Optional.of(getPlugin().getRanksManager().getRanks().keySet().stream().map(user::getTranslation).collect(Collectors.toList()));
     }
 }

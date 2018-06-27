@@ -2,10 +2,8 @@ package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.panels.LanguagePanel;
 
 /**
@@ -13,7 +11,7 @@ import us.tastybento.bskyblock.panels.LanguagePanel;
  */
 public class IslandLanguageCommand extends CompositeCommand {
 
-    public IslandLanguageCommand(IslandCommand islandCommand) {
+    public IslandLanguageCommand(CompositeCommand islandCommand) {
         super(islandCommand, "language", "lang");
     }
 
@@ -22,7 +20,7 @@ public class IslandLanguageCommand extends CompositeCommand {
      */
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.language");
+        setPermission("island.language");
         setOnlyPlayer(true);
         setDescription("commands.island.language.description");
     }

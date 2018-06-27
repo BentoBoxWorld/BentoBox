@@ -3,8 +3,8 @@ package us.tastybento.bskyblock.commands;
 import java.util.ArrayList;
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.commands.island.IslandAboutCommand;
 import us.tastybento.bskyblock.commands.island.IslandBanCommand;
@@ -19,12 +19,11 @@ import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.IslandUnbanCommand;
 import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand;
 
 public class IslandCommand extends CompositeCommand {
 
     public IslandCommand() {
-        super(Constants.ISLANDCOMMAND, "is");
+        super("island", "is");
     }
 
     /* (non-Javadoc)
@@ -35,7 +34,9 @@ public class IslandCommand extends CompositeCommand {
         setDescription("commands.island.help.description");
         setOnlyPlayer(true);
         // Permission
-        setPermission(Constants.PERMPREFIX + "island");
+        setPermissionPrefix("bskyblock");
+        setPermission("island");
+        setWorld(getPlugin().getIWM().getIslandWorld());
         // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);
@@ -51,8 +52,6 @@ public class IslandCommand extends CompositeCommand {
         new IslandBanlistCommand(this);
         // Team commands
         new IslandTeamCommand(this);
-        new IslandTeamInviteCommand(this);
-
     }
 
     /* (non-Javadoc)
@@ -62,20 +61,18 @@ public class IslandCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         if (user == null) {
             return false;
-        }
+        }        
         if (args.isEmpty()) {
-            // If this player does not have an island, create one
-            if (!getPlugin().getIslands().hasIsland(user.getUniqueId())) {
-                return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
-            } else {
-                // Otherwise, currently, just go home
+            // If user has an island, go
+            if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) != null) {
                 return getSubCommand("go").map(goCmd -> goCmd.execute(user, new ArrayList<>())).orElse(false);
             }
-        } else {
-            user.sendMessage("general.errors.unknown-command", "[label]", Constants.ISLANDCOMMAND);
-            return false;
+            // No islands currently
+            return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
         }
-    }
+        user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
+        return false;
 
+    }
 
 }

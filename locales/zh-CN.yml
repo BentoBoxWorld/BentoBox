@@ -9,14 +9,7 @@
 # DuckSoft:   translator
 # This translation is adapted to version : [alpha-1]
 
-banner:
-- "RED"
-- "SQUARE_TOP_RIGHT:YELLOW"
-- "CROSS:RED"
-- "CURLY_BORDER:RED"
-- "MOJANG:YELLOW"
-- "HALF_HORIZONTAL_MIRROR:RED"
-- "HALF_VERTICAL:RED"
+banner: "BANNER:1:RED:SQUARE_TOP_RIGHT:YELLOW:CROSS:RED:CURLY_BORDER:RED:MOJANG:YELLOW:HALF_HORIZONTAL_MIRROR:RED:HALF_VERTICAL:RED"
 
 not-setup:
   header: |-

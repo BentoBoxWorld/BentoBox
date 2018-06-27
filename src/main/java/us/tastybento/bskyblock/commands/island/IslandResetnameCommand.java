@@ -1,12 +1,8 @@
-/**
- *
- */
 package us.tastybento.bskyblock.commands.island;
 
 import java.util.List;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -22,10 +18,9 @@ public class IslandResetnameCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.name");
+        setPermission("island.name");
         setOnlyPlayer(true);
         setDescription("commands.island.resetname.description");
-
     }
 
     /* (non-Javadoc)
@@ -35,17 +30,17 @@ public class IslandResetnameCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
 
-        if (!getIslands().hasIsland(playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
 
-        if (!getIslands().isOwner(playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
         // Resets the island name
-        getIslands().getIsland(playerUUID).setName(null);
+        getIslands().getIsland(getWorld(), playerUUID).setName(null);
 
         user.sendMessage("general.success");
         return true;

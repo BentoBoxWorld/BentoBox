@@ -10,7 +10,7 @@ public class IslandAboutCommand extends CompositeCommand {
 
     /**
      * About
-     * @param islandCommand
+     * @param islandCommand - parent command
      */
     public IslandAboutCommand(CompositeCommand islandCommand) {
         super(islandCommand, "about", "ab");

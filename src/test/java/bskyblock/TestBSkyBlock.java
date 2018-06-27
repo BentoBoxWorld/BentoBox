@@ -13,9 +13,9 @@ import static org.mockito.Mockito.when;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -49,7 +49,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
@@ -58,16 +57,17 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.listeners.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BSkyBlock.class, Flags.class})
+@PrepareForTest({ BSkyBlock.class, Flags.class, Util.class})
 public class TestBSkyBlock {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
@@ -81,11 +81,12 @@ public class TestBSkyBlock {
     private static Block block;
     private static Player ownerOfIsland;
     private static Player visitorToIsland;
-    
+
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
+        when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         Server server = mock(Server.class);
@@ -93,30 +94,30 @@ public class TestBSkyBlock {
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
         Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
-        
+
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
-        
+
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
-        
+
         Bukkit.setServer(server);
-        
+
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        
+
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
 
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        
+
         sender = mock(CommandSender.class);
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
         visitorToIsland = mock(Player.class);
-        Mockito.when(player.hasPermission(Constants.PERMPREFIX + "default.permission")).thenReturn(true);
+        Mockito.when(player.hasPermission("default.permission")).thenReturn(true);
 
 
         location = mock(Location.class);
@@ -142,12 +143,14 @@ public class TestBSkyBlock {
         block = Mockito.mock(Block.class);
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
-        Mockito.when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        Mockito.when(plugin.getIWM()).thenReturn(iwm);
         Mockito.when(iwm.getIslandWorld()).thenReturn(world);
         Mockito.when(iwm.getNetherWorld()).thenReturn(world);
         Mockito.when(iwm.getEndWorld()).thenReturn(world);
-
+        when(iwm.inWorld(any())).thenReturn(true);
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(world);
 
         // Islands
         IslandsManager im = mock(IslandsManager.class);
@@ -161,15 +164,12 @@ public class TestBSkyBlock {
         members.put(OWNER_UUID, RanksManager.OWNER_RANK);
         members.put(MEMBER_UUID, RanksManager.MEMBER_RANK);
         island.setMembers(members);
-        Bukkit.getLogger().info("SETUP: owner UUID = " + OWNER_UUID);
-        Bukkit.getLogger().info("SETUP: member UUID = " + MEMBER_UUID);
-        Bukkit.getLogger().info("SETUP: visitor UUID = " + VISITOR_UUID);
         Mockito.when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
 
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
-
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
     }
 
     @Test
@@ -190,7 +190,7 @@ public class TestBSkyBlock {
         User user = User.getInstance(playerUUID);
         CompositeCommand testCommand = new TestCommand();
         testCommand.setOnlyPlayer(true);
-        testCommand.setPermission(Constants.PERMPREFIX + "default.permission");
+        testCommand.setPermission("default.permission");
         // Test basic execution
         assertTrue(testCommand.execute(user, new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
@@ -198,7 +198,7 @@ public class TestBSkyBlock {
         assertEquals("t", testCommand.getAliases().get(0));
         assertTrue(testCommand.isOnlyPlayer());
         assertNull(testCommand.getParent());
-        assertEquals(Constants.PERMPREFIX + "default.permission", testCommand.getPermission());
+        assertEquals("default.permission", testCommand.getPermission());
         // Check commands and aliases match to correct class
         for (Entry<String, CompositeCommand> command : testCommand.getSubCommands().entrySet()) {
             assertEquals(testCommand.getSubCommand(command.getKey()), Optional.of(command.getValue()));
@@ -215,11 +215,11 @@ public class TestBSkyBlock {
         args[0] = "d";
         assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "sub1";
-        assertEquals(Arrays.asList(), testCommand.tabComplete(player, "test", args));
+        assertEquals(Collections.emptyList(), testCommand.tabComplete(player, "test", args));
         String[] args2 = {"sub2",""};
         assertEquals(Arrays.asList("subsub", "help"), testCommand.tabComplete(player, "test", args2));
         args2[1] = "s";
-        assertEquals(Arrays.asList("subsub"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Collections.singletonList("subsub"), testCommand.tabComplete(player, "test", args2));
         String[] args3 = {"sub2","subsub", ""};
         assertEquals(Arrays.asList("subsubsub", "help"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
@@ -232,7 +232,7 @@ public class TestBSkyBlock {
         // Test command arguments
         CompositeCommand argCmd = new Test3ArgsCommand();
         argCmd.setOnlyPlayer(true);
-        argCmd.setPermission(Constants.PERMPREFIX + "default.permission");
+        argCmd.setPermission("default.permission");
         assertTrue(argCmd.execute(player, "args", new String[]{"give", "100", "ben"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub"}));
         assertFalse(testCommand.execute(player,  "test", new String[] {"sub2", "subsub", "subsubsub", "ben"}));
@@ -250,7 +250,7 @@ public class TestBSkyBlock {
     private class TestCommand extends CompositeCommand {
 
         public TestCommand() {
-            super(plugin, "test", "t", "tt");
+            super("test", "t", "tt");
             setParameters("test.params");
         }
 
@@ -342,10 +342,9 @@ public class TestBSkyBlock {
         }
 
         @Override
-        public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
-            List<String> options = new ArrayList<>();
-            String lastArg = (!args.isEmpty() ? args.getLast() : "");
-            options.addAll(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
+        public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            List<String> options = new ArrayList<>(Arrays.asList("Florian", "Ben", "Bill", "Ted"));
             return Optional.of(Util.tabLimit(options, lastArg));
         }
     }
@@ -353,7 +352,7 @@ public class TestBSkyBlock {
     private class Test3ArgsCommand extends CompositeCommand {
 
         public Test3ArgsCommand() {
-            super(plugin, "args", "");
+            super("args", "");
         }
 
         @Override

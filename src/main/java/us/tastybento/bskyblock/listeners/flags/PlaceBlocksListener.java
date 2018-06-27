@@ -2,6 +2,7 @@ package us.tastybento.bskyblock.listeners.flags;
 
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
@@ -10,6 +11,7 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -63,14 +65,14 @@ public class PlaceBlocksListener extends AbstractFlagListener {
             return;
         default:
             // Check in-hand items
-            if (e.getMaterial() != null) {
-                // This check protects against an exploit in 1.7.9 against cactus
-                // and sugar cane and placing boats on non-liquids
-                if (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial() == Material.WOOD_DOOR || e.getMaterial() == Material.CHEST
-                        || e.getMaterial() == Material.TRAPPED_CHEST || e.getMaterial() == Material.IRON_DOOR
-                        || (e.getMaterial().name().contains("BOAT") && !e.getClickedBlock().isLiquid())) {
-                    checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
-                }
+            // This check protects against an exploit in 1.7.9 against cactus
+            // and sugar cane and placing boats on non-liquids
+            if (e.getMaterial() != null
+            && (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial().equals(Material.WOOD_DOOR)
+                    || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)
+                    || e.getMaterial().equals(Material.IRON_DOOR) || (e.getMaterial().name().contains("BOAT")
+                            && !e.getClickedBlock().isLiquid()))) {
+                checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
             }
         }
     }
@@ -81,9 +83,9 @@ public class PlaceBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onBlockForm(EntityBlockFormEvent e) {
-        if (e.getNewState().getType().equals(Material.FROSTED_ICE)) {
-            // Silently check
-            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS, true);
+        if (e.getNewState().getType().equals(Material.FROSTED_ICE) && e.getEntity() instanceof Player) {
+            setUser(User.getInstance((Player)e.getEntity()));
+            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
         }
     }
 

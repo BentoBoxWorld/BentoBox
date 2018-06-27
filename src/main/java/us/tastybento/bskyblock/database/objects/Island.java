@@ -109,8 +109,9 @@ public class Island implements DataObject {
         createdDate = System.currentTimeMillis();
         updatedDate = System.currentTimeMillis();
         world = location.getWorld();
-        center = location;
-        range = BSkyBlock.getInstance().getSettings().getIslandDistance();
+        // Make a copy of the location
+        center = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
+        range = BSkyBlock.getInstance().getIWM().getIslandDistance(world);
         minX = center.getBlockX() - range;
         minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;
@@ -136,8 +137,9 @@ public class Island implements DataObject {
     public boolean addToBanList(UUID targetUUID) {
         if (targetUUID != null) {
             members.put(targetUUID, RanksManager.BANNED_RANK);
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -167,17 +169,15 @@ public class Island implements DataObject {
         return createdDate;
     }
     /**
-     * Gets the rank needed to bypass this Island Guard flag
-     * @param flag
-     * @return the rank needed to bypass this flag. Players must have at least this rank to bypass this flag.
+     * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the 
+     * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
+     * setting is allowed.
+     * @param flag - flag
+     * @return flag value
      */
-    public int getFlag(Flag flag){
-        if(flags.containsKey(flag)) {
-            return flags.get(flag);
-        } else {            
-            flags.put(flag, flag.getDefaultRank());
-            return flag.getDefaultRank();
-        }
+    public int getFlag(Flag flag) {
+        flags.putIfAbsent(flag, flag.getDefaultRank());
+        return flags.get(flag);
     }
 
     /**
@@ -195,6 +195,7 @@ public class Island implements DataObject {
     }
 
     /**
+     * Get the team members of the island. If this is empty or cleared, there is no team.
      * @return the members - key is the UUID, value is the RanksManager enum, e.g. RanksManager.MEMBER_RANK
      */
     public Map<UUID, Integer> getMembers() {
@@ -292,7 +293,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * @param material
+     * @param material - Material
      * @return count of how many tile entities of type mat are on the island at last count. Counts are done when a player places
      * a tile entity.
      */
@@ -314,10 +315,9 @@ public class Island implements DataObject {
                             }
                         } else if (material.toString().endsWith("BANNER") && holder.getType().toString().endsWith("BANNER")) {
                             result++;
-                        } else if (material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST)) {
-                            if (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST)) {
-                                result++;
-                            }
+                        } else if ((material.equals(Material.WALL_SIGN) || material.equals(Material.SIGN_POST))
+                                && (holder.getType().equals(Material.WALL_SIGN) || holder.getType().equals(Material.SIGN_POST))) {
+                            result++;
                         }
                     }
                 }
@@ -382,15 +382,12 @@ public class Island implements DataObject {
     }
 
     public boolean inIslandSpace(Location location) {
-        if (Util.inWorld(location)) {
-            return inIslandSpace(location.getBlockX(), location.getBlockZ());
-        }
-        return false;
+        return Util.sameWorld(world, location.getWorld()) && inIslandSpace(location.getBlockX(), location.getBlockZ());
     }
 
     /**
      * Checks if the coords are in island space
-     * @param blockCoord
+     * @param blockCoord - Pair(x,z) coords of block
      * @return true or false
      */
     public boolean inIslandSpace(Pair<Integer, Integer> blockCoord) {
@@ -399,11 +396,12 @@ public class Island implements DataObject {
 
     /**
      * Check if the flag is allowed or not
-     * For flags that are for the island in general and not related to rank
-     * @param flag
+     * For flags that are for the island in general and not related to rank.
+     * @param flag - flag
      * @return true if allowed, false if not
      */
     public boolean isAllowed(Flag flag) {
+        // A negative value means not allowed
         return getFlag(flag) >= 0;
     }
 
@@ -436,16 +434,11 @@ public class Island implements DataObject {
     /**
      * Checks if a location is within this island's protected area
      *
-     * @param target
+     * @param target - target location
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
-        if (center != null && center.getWorld() != null) {
-            return target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2)
-                    && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
-        }
-
-        return false;
+        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2) && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
     }
 
     /**
@@ -454,10 +447,14 @@ public class Island implements DataObject {
      * @return true if successful, otherwise false.
      */
     public boolean removeFromBanList(UUID targetUUID) {
-        members.remove(targetUUID);
-        return true;
+        return (members.remove(targetUUID) != null);
     }
 
+    /**
+     * Removes a player from the team member map. Do not call this directly.
+     * Use {@link us.tastybento.bskyblock.managers.IslandsManager#removePlayer(World, UUID)}
+     * @param playerUUID - uuid of player
+     */
     public void removeMember(UUID playerUUID) {
         members.remove(playerUUID);
     }
@@ -466,6 +463,9 @@ public class Island implements DataObject {
      * @param center the center to set
      */
     public void setCenter(Location center) {
+        if (center != null) {
+            this.world = center.getWorld();
+        }
         this.center = center;
     }
 
@@ -478,7 +478,7 @@ public class Island implements DataObject {
 
     /**
      * Set the Island Guard flag rank
-     * @param flag
+     * @param flag - flag
      * @param value - Use RanksManager settings, e.g. RanksManager.MEMBER
      */
     public void setFlag(Flag flag, int value){
@@ -591,7 +591,7 @@ public class Island implements DataObject {
     /**
      * Set user's rank to an arbitrary rank value
      * @param user - the User
-     * @param rank
+     * @param rank - rank value
      */
     public void setRank(User user, int rank) {
         if (user.getUniqueId() != null) {
@@ -646,30 +646,36 @@ public class Island implements DataObject {
 
     /**
      * Show info on the island
-     * @param plugin
+     * @param plugin - plugin
      * @param user - the user who is receiving the info
+     * @param world - world to check
      * @return true always
      */
-    public boolean showInfo(BSkyBlock plugin, User user) {
+    public boolean showInfo(BSkyBlock plugin, User user, World world) {
         user.sendMessage("commands.admin.info.title");
-        user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
-        Date d = new Date(plugin.getServer().getOfflinePlayer(owner).getLastPlayed());
-        user.sendMessage("commands.admin.info.last-login","[date]", d.toString());
-        user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(owner)));
-        String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
-        String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
-        user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-        // Show team members
-        showMembers(plugin, user);
+        if (owner == null) {
+            user.sendMessage("commands.admin.info.unowned");
+        } else {
+            user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
+            Date d = new Date(plugin.getServer().getOfflinePlayer(owner).getLastPlayed());
+            user.sendMessage("commands.admin.info.last-login","[date]", d.toString());
+
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
+            String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(plugin, user, world);
+        }
         Vector location = center.toVector();
-        user.sendMessage("commands.admin.info.island-location", "[xyz]", xyz(location));
+        user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
         Vector from = center.toVector().subtract(new Vector(range, 0, range)).setY(0);
         Vector to = center.toVector().add(new Vector(range-1, 0, range-1)).setY(center.getWorld().getMaxHeight());
-        user.sendMessage("commands.admin.info.island-coords", "[xz1]", xyz(from), "[xz2]", xyz(to));
+        user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(range));
         Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
-        Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());;
-        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", xyz(pfrom), "[xz2]", xyz(pto));
+        Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());
+        user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));
         if (spawn) {
             user.sendMessage("commands.admin.info.is-spawn");
         }
@@ -680,18 +686,15 @@ public class Island implements DataObject {
         }
         return true;
     }
-    
-    private String xyz(Vector location) {
-        return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
-    }
-    
+
     /**
      * Shows the members of this island
-     * @param plugin
+     * @param plugin - plugin
      * @param user - user who is requesting
+     * @param world - world to check
      */
-    public void showMembers(BSkyBlock plugin, User user) {
-        if (plugin.getIslands().inTeam(user.getUniqueId())) {
+    public void showMembers(BSkyBlock plugin, User user, World world) {
+        if (plugin.getIslands().inTeam(world, user.getUniqueId())) {
             user.sendMessage("commands.admin.info.team-members-title");
             members.forEach((u, i) -> {
                 if (owner.equals(u)) {
@@ -704,6 +707,29 @@ public class Island implements DataObject {
             });
         }
 
-        
+
     }
+
+    /**
+     * Toggles a settings flag
+     * @param flag - flag
+     */
+    public void toggleFlag(Flag flag) {
+        if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
+            setSettingsFlag(flag, !isAllowed(flag));
+        }
+    }
+
+    /**
+     * Sets the state of a settings flag
+     * @param flag - flag
+     * @param state - true or false
+     */
+    public void setSettingsFlag(Flag flag, boolean state) {
+        if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
+            flags.put(flag, state ? 1 : -1);
+        }
+    }
+
+
 }

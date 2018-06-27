@@ -67,7 +67,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
                     return;
                 }
             }
-        } catch (Exception ex) {}
+        } catch (Exception ignored) {}
 
         switch (e.getClickedBlock().getType()) {
         case CAKE_BLOCK:
@@ -93,7 +93,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
-        if (inWorld(e.getVehicle()) && e.getAttacker() instanceof Player) {
+        if (getIWM().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
             User user = User.getInstance((Player) e.getAttacker());
             // Get the island and if present, check the flag, react if required and return
             getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> {
@@ -101,11 +101,10 @@ public class BreakBlocksListener extends AbstractFlagListener {
                     e.setCancelled(true);
                     user.sendMessage("protection.protected");
                 }
-                return;
             });
 
             // The player is in the world, but not on an island, so general world settings apply
-            if (!Flags.BREAK_BLOCKS.isDefaultSetting()) {
+            if (!Flags.BREAK_BLOCKS.isSetForWorld(e.getVehicle().getWorld())) {
                 e.setCancelled(true);
                 user.sendMessage("protection.protected");
             }
@@ -129,13 +128,10 @@ public class BreakBlocksListener extends AbstractFlagListener {
         } else if (e.getDamager() instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
-            if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
-                    e.getEntity().setFireTicks(0);
-                    e.getDamager().remove();
-                }
+            if (p.getShooter() instanceof Player && !setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
+                e.getEntity().setFireTicks(0);
+                e.getDamager().remove();
             }
         }
     }
-
 }

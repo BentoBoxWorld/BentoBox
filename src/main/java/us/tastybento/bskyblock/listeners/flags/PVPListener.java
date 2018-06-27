@@ -1,31 +1,30 @@
-/**
- *
- */
 package us.tastybento.bskyblock.listeners.flags;
 
 import java.util.HashMap;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
-import org.bukkit.potion.PotionEffect;
 
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
- * TODO: PVP is different to other flags - it's either allowed for everyone or not allowed for everyone. Currently owners can hit visitors.
  * Handles PVP
  * @author tastybento
  *
@@ -41,46 +40,63 @@ public class PVPListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityDamage(final EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player) {
-            Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = Flags.PVP_NETHER;
-            } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = Flags.PVP_END;
+    public void onEntityDamage(EntityDamageByEntityEvent e) {
+        if (e.getEntity() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getLocation())) {
+            // Protect visitors
+            if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor((Player)e.getEntity())) {
+                if (e.getDamager() instanceof Player) {
+                    User.getInstance(e.getDamager()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                } else if (e.getDamager() instanceof Projectile && ((Projectile)e.getDamager()).getShooter() instanceof Player) {
+                    User.getInstance((Player)((Projectile)e.getDamager()).getShooter()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                }
+                e.setCancelled(true);
+            } else {
+                // PVP check
+                respond(e, e.getDamager(), getFlag(e.getEntity().getWorld()));
             }
-            respond(e, e.getDamager(), flag);
         }
     }
 
-    private void respond(Event event, Entity damager, Flag flag) {
+    /**
+     * Checks how to respond to an attack
+     * @param e - event
+     * @param damager - entity doing the damaging
+     * @param flag - flag
+     */
+    private void respond(Cancellable e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager)).checkIsland(event, damager.getLocation(), flag);
+            User user = User.getInstance(damager);
+            if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
+                user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                e.setCancelled(true);
+            }
         } else if (damager instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(event, damager.getLocation(), flag)) {
+                User user = User.getInstance((Player)p.getShooter());
+                if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     damager.remove();
+                    user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                    e.setCancelled(true);
                 }
             }
         }
-
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
-        if (e.getCaught() != null && e.getCaught() instanceof Player) {
-            Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = Flags.PVP_NETHER;
-            } else if (e.getCaught().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = Flags.PVP_END;
-            }
-            if (checkIsland(e, e.getCaught().getLocation(), flag)) {
+        if (e.getCaught() instanceof Player && getPlugin().getIWM().inWorld(e.getCaught().getLocation())) {
+            // Protect visitors
+            if (protectedVisitor((Player)e.getCaught())) {
+                User.getInstance(e.getPlayer()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                e.setCancelled(true);
+            } else if (!checkIsland(e, e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
                 e.getHook().remove();
+                User.getInstance(e.getPlayer()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                e.setCancelled(true);
             }
         }
     }
@@ -91,73 +107,62 @@ public class PVPListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onSplashPotionSplash(final PotionSplashEvent e) {
-        // Deduce the world
-        Flag flag = Flags.PVP_OVERWORLD;
-        if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-            flag = Flags.PVP_NETHER;
-        } else if (e.getPotion().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-            flag = Flags.PVP_END;
+        if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getLocation())) {
+            User user = User.getInstance((Player)e.getEntity().getShooter());
+            // Run through affected entities and cancel the splash if any are a protected player
+            e.setCancelled(e.getAffectedEntities().stream().anyMatch(le -> blockPVP(user, le, e, getFlag(e.getEntity().getWorld()))));
         }
+    }
 
-        // Try to get the thrower
-        Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
-            Player attacker = (Player)projectile.getShooter();
-            // Run through all the affected entities
-            for (LivingEntity entity: e.getAffectedEntities()) {
-                // Self damage
-                if (attacker.equals(entity)) {
-                    continue;
-                }
-                // PVP?
-                if (entity instanceof Player) {
-                    if (!setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), flag)) {
-                        for (PotionEffect effect : e.getPotion().getEffects()) {
-                            entity.removePotionEffect(effect.getType());
-                        }
-                    }
-                }
+    private boolean blockPVP(User user, LivingEntity le, Event e, Flag flag) {
+        if (le instanceof Player) {
+            // Protect visitors
+            if (protectedVisitor(le)) {
+                user.sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                return true;
+            }
+            // Check if PVP is allowed or not
+            if (!checkIsland(e, le.getLocation(), flag)) {
+                user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                return true;
             }
         }
+        return false;
+    }
+
+    private boolean protectedVisitor(LivingEntity entity) {
+        return getPlugin().getIWM().getIvSettings(entity.getWorld()).contains(DamageCause.ENTITY_ATTACK.name())
+                && !getIslands().userIsOnIsland(entity.getWorld(), User.getInstance(entity));
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionSplash(final LingeringPotionSplashEvent e) {
         // Try to get the shooter
-        Projectile projectile = e.getEntity();
-        if (projectile.getShooter() != null && projectile.getShooter() instanceof Player) {
-            UUID uuid = ((Player) projectile.getShooter()).getUniqueId();
-            // Store it and remove it when the effect is gone
-            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
-            getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
+        if (e.getEntity().getShooter() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getLocation())) {
+            // Store it and remove it when the effect is gone (Entity ID, UUID of throwing player)
+            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), ((Player)e.getEntity().getShooter()).getUniqueId());
+            Bukkit.getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
         }
     }
 
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
-        if (e.getEntity() == null || e.getEntity().getUniqueId() == null) {
-            return;
-        }
-
-        if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
-            // Deduce the world
-            Flag flag = Flags.PVP_OVERWORLD;
-            if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getNetherWorld())) {
-                flag = Flags.PVP_NETHER;
-            } else if (e.getEntity().getWorld().equals(getPlugin().getIslandWorldManager().getEndWorld())) {
-                flag = Flags.PVP_END;
-            }
-
-            UUID attacker = thrownPotions.get(e.getDamager().getEntityId());
-            // Self damage
-            if (attacker.equals(e.getEntity().getUniqueId())) {
-                return;
-            }
-            Entity entity = e.getEntity();
-            // PVP?
-            if (entity instanceof Player) {
-                checkIsland(e, entity.getLocation(), flag);
-            }
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onLingeringPotionDamage(AreaEffectCloudApplyEvent e) {
+        if (e.getEntity() != null && thrownPotions.containsKey(e.getEntity().getEntityId())) {
+            User user = User.getInstance(thrownPotions.get(e.getEntity().getEntityId()));
+            // Run through affected entities and delete them if they are safe
+            e.getAffectedEntities().removeIf(le -> !le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld())));
         }
     }
+
+    private Flag getFlag(World w) {
+        switch (w.getEnvironment()) {
+        case NETHER:
+            return Flags.PVP_NETHER;
+        case THE_END:
+            return Flags.PVP_END;
+        default:
+            return Flags.PVP_OVERWORLD;
+        }
+    }
+
 }

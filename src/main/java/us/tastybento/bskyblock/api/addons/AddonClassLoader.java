@@ -41,7 +41,7 @@ public class AddonClassLoader extends URLClassLoader {
 
         loader = addonsManager;
 
-        Class<?> javaClass = null;
+        Class<?> javaClass;
         try {
             String mainClass = data.getString("main");
             javaClass = Class.forName(mainClass, true, this);
@@ -94,19 +94,19 @@ public class AddonClassLoader extends URLClassLoader {
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
     @Override
-    protected Class<?> findClass(String name) throws ClassNotFoundException {
+    protected Class<?> findClass(String name) {
         return findClass(name, true);
     }
 
     /**
      * This is a custom findClass that enables classes in other addons to be found
-     * @param name
-     * @param checkGlobal
-     * @return Class
+     * @param name - class name
+     * @param checkGlobal - check globally or not when searching
+     * @return Class - class if found
      */
-    public Class<?> findClass(String name, boolean checkGlobal) throws ClassNotFoundException {
+    public Class<?> findClass(String name, boolean checkGlobal) {
         if (name.startsWith("us.tastybento.")) {
-            throw new ClassNotFoundException(name);
+            return null;
         }
         Class<?> result = classes.get(name);
         if (result == null) {
@@ -114,7 +114,11 @@ public class AddonClassLoader extends URLClassLoader {
                 result = loader.getClassByName(name);
             }
             if (result == null) {
-                result = super.findClass(name);
+                try {
+                    result = super.findClass(name);
+                } catch (ClassNotFoundException e) {
+                    return null;
+                }
                 if (result != null) {
                     loader.setClass(name, result);
                 }

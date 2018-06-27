@@ -6,22 +6,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.island.NewIsland;
 
 public class IslandResetCommand extends CompositeCommand {
 
-    private static final String SECONDS_PLACEHOLDER = "[seconds]";
     private Map<UUID, Long> cooldown;
-    private Map<UUID, Long> confirm;
 
     public IslandResetCommand(CompositeCommand islandCommand) {
         super(islandCommand, "reset", "restart");
@@ -30,8 +27,7 @@ public class IslandResetCommand extends CompositeCommand {
     @Override
     public void setup() {
         cooldown = new HashMap<>();
-        confirm = new HashMap<>();
-        setPermission(Constants.PERMPREFIX + "island.create");
+        setPermission("island.create");
         setOnlyPlayer(true);
         setDescription("commands.island.reset.description");
     }
@@ -40,18 +36,18 @@ public class IslandResetCommand extends CompositeCommand {
     public boolean execute(User user, List<String> args) {
         // Check cooldown
         if (getSettings().getResetWait() > 0 && onRestartWaitTime(user) > 0 && !user.isOp()) {
-            user.sendMessage("general.errors.you-must-wait", SECONDS_PLACEHOLDER, String.valueOf(onRestartWaitTime(user)));
+            user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(onRestartWaitTime(user)));
             return false;
         }
-        if (!getIslands().hasIsland(user.getUniqueId())) {
+        if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(user.getUniqueId())) {
+        if (!getIslands().isOwner(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
-        if (getIslands().inTeam(user.getUniqueId())) {
+        if (getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("commands.island.reset.must-remove-members");
             return false;
         }
@@ -61,57 +57,41 @@ public class IslandResetCommand extends CompositeCommand {
                 return false;
             } else {
                 // Notify how many resets are left
-                user.sendMessage("commands.island.reset.resets-left", "[number]", String.valueOf(getPlayers().getResetsLeft(user.getUniqueId()))); 
+                user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(getPlayers().getResetsLeft(user.getUniqueId())));
             }
         }
-        // Check for non-confirm command
-        if (!args.isEmpty() && !(confirm.containsKey(user.getUniqueId()) && args.get(0).equalsIgnoreCase("confirm"))) {
-            showHelp(this, user);
-            return false;
-        }
-
-        // Check confirmation or reset immediately if no confirmation required
-        if (!getSettings().isResetConfirmation() || (confirm.containsKey(user.getUniqueId()) && args.size() == 1 && args.get(0).equalsIgnoreCase("confirm"))) {
+        // Request confirmation
+        if (getSettings().isResetConfirmation()) {
+            this.askConfirmation(user, () -> resetIsland(user));
+            return true;
+        } else {
             return resetIsland(user);
         }
-        
-        // Confirmation required        
-        if (!confirm.containsKey(user.getUniqueId())) {
-            requestConfirmation(user);
-        } else {
-            // Show how many seconds left to confirm
-            int time = (int)((confirm.get(user.getUniqueId()) - System.currentTimeMillis()) / 1000D);
-            user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, SECONDS_PLACEHOLDER, String.valueOf(time));
-        }
-        return true;
-    }
 
-    private void requestConfirmation(User user) {
-        user.sendMessage("commands.island.reset.confirm", "[label]", Constants.ISLANDCOMMAND, SECONDS_PLACEHOLDER, String.valueOf(getSettings().getConfirmationTime()));
-        // Require confirmation          
-        confirm.put(user.getUniqueId(), System.currentTimeMillis() + getSettings().getConfirmationTime() * 1000L);
-        Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            if (confirm.containsKey(user.getUniqueId())) {
-                user.sendMessage("commands.island.reset.cancelled");
-                confirm.remove(user.getUniqueId());
-            }
-        }, getSettings().getConfirmationTime() * 20L);       
     }
 
     private boolean resetIsland(User user) {
-        // Remove the confirmation
-        confirm.remove(user.getUniqueId());
         // Reset the island
         Player player = user.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
         // Get the player's old island
-        Island oldIsland = getIslands().getIsland(player.getUniqueId());
+        Island oldIsland = getIslands().getIsland(getWorld(), player.getUniqueId());
         // Remove them from this island (it still exists and will be deleted later)
-        getIslands().removePlayer(player.getUniqueId());
+        getIslands().removePlayer(getWorld(), player.getUniqueId());
+        // Remove money inventory etc.
+        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+            user.getPlayer().getEnderChest().clear();
+        }
+        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+            user.getPlayer().getInventory().clear();
+        }
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+            // TODO: needs Vault
+        }
         // Create new island and then delete the old one
         try {
             NewIsland.builder()
-            .player(player)
+            .player(user)
             .reason(Reason.RESET)
             .oldIsland(oldIsland)
             .build();

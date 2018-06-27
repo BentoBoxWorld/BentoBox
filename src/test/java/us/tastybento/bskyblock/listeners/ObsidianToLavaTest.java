@@ -24,7 +24,6 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.PluginManager;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -34,17 +33,13 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PlayerEvent.class, PlayerInteractEvent.class})
 public class ObsidianToLavaTest {
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
 
     private static World world;
 
@@ -100,8 +95,8 @@ public class ObsidianToLavaTest {
         when(who.getLocation()).thenReturn(location);
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
@@ -124,7 +119,7 @@ public class ObsidianToLavaTest {
         // Put player in world
         when(iwm.inWorld(Mockito.any())).thenReturn(true);
         // Put player on island
-        when(im.userIsOnIsland(Mockito.any())).thenReturn(true);
+        when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
         // Set as survival
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
         
@@ -186,7 +181,7 @@ public class ObsidianToLavaTest {
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
 
         // Test when player is not on island
-        when(im.userIsOnIsland(Mockito.any())).thenReturn(false);
+        when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         assertFalse(listener.onPlayerInteract(event));
         
 

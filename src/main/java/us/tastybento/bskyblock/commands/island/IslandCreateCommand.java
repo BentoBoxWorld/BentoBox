@@ -1,16 +1,11 @@
-/**
- *
- */
 package us.tastybento.bskyblock.commands.island;
 
 import java.io.IOException;
 import java.util.List;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.managers.island.NewIsland;
 
 /**
@@ -20,13 +15,17 @@ import us.tastybento.bskyblock.managers.island.NewIsland;
  */
 public class IslandCreateCommand extends CompositeCommand {
 
-    public IslandCreateCommand(IslandCommand islandCommand) {
-        super(islandCommand, "create", "auto");
+    /**
+     * Command to create an island
+     * @param islandCommand - parent command
+     */
+    public IslandCreateCommand(CompositeCommand islandCommand) {
+        super(islandCommand, "create");
     }
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.create");
+        setPermission("island.create");
         setOnlyPlayer(true);
         setDescription("commands.island.create.description");
     }
@@ -36,32 +35,26 @@ public class IslandCreateCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-        if (getIslands().hasIsland(user.getUniqueId())) {
+        if (getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
-        if (getIslands().inTeam(user.getUniqueId())) {
+        if (getIslands().inTeam(getWorld(), user.getUniqueId())) {
+            user.sendMessage("general.errors.already-have-island");
             return false;
         }
         user.sendMessage("commands.island.create.creating-island");
-        createIsland(user);
-        return true;
-    }
-
-    /**
-     * Creates an island for player
-     *
-     * @param user - the User
-     */
-    protected void createIsland(User user) {
         try {
             NewIsland.builder()
-            .player(user.getPlayer())
+            .player(user)
+            .world(getWorld())
             .reason(Reason.CREATE)
             .build();
+            return true;
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
+            return false;
         }
     }
 }

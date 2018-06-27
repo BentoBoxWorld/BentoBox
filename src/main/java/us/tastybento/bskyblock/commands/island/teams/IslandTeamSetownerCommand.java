@@ -1,20 +1,17 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
 import java.util.ArrayList;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
 import us.tastybento.bskyblock.api.events.team.TeamEvent;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
 
-public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
+public class IslandTeamSetownerCommand extends CompositeCommand {
 
     public IslandTeamSetownerCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "setleader");
@@ -22,7 +19,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setParameters("commands.island.team.setowner.parameters");
         setDescription("commands.island.team.setowner.description");
@@ -32,8 +29,8 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
     public boolean execute(User user, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
-        boolean inTeam = getPlugin().getIslands().inTeam(playerUUID);
-        UUID teamLeaderUUID = getTeamLeader(user);
+        boolean inTeam = getPlugin().getIslands().inTeam(getWorld(), playerUUID);
+        UUID teamLeaderUUID = getTeamLeader(getWorld(), user);
         if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
             user.sendMessage("general.errors.not-leader");
             return false;
@@ -48,7 +45,7 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getIslands().inTeam(playerUUID)) {
+        if (!getIslands().inTeam(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-team");
             return false;
         }
@@ -56,14 +53,14 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
             user.sendMessage("commands.island.team.setowner.errors.cant-transfer-to-yourself");
             return false;
         }
-        if (!getPlugin().getIslands().getMembers(playerUUID).contains(targetUUID)) {
+        if (!getPlugin().getIslands().getMembers(getWorld(), playerUUID).contains(targetUUID)) {
             user.sendMessage("commands.island.team.setowner.errors.target-is-not-member");
             return false;
         }
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                        .getIsland(playerUUID))
+                        .getIsland(getWorld(), playerUUID))
                 .reason(TeamEvent.Reason.MAKELEADER)
                 .involvedPlayer(targetUUID)
                 .build();
@@ -71,41 +68,17 @@ public class IslandTeamSetownerCommand extends AbstractIslandTeamCommand {
         if (event.isCancelled()) {
             return false;
         }
-        makeLeader(user, targetUUID);
-
+        getIslands().makeLeader(getWorld(), user, targetUUID, getPermissionPrefix());
         getIslands().save(true);
         return true;
     }
 
-    private void makeLeader(User user, UUID targetUUID) {
-        // target is the new leader
-        Island island = getIslands().getIsland(user.getUniqueId());
-        island.setOwner(targetUUID);
-        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", getPlayers().getName(targetUUID));
-
-        // Check if online
-        User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.setowner.you-are-the-owner");
-        if (target.isOnline()) {
-            // Check if new leader has a lower range permission than the island size
-            int range = getMaxRangeSize(user);
-            // Range can go up or down
-            if (range != island.getProtectionRange()) {
-                user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                getPlugin().log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
-                                + range + " for " + user.getName() + " due to permission.");
-            }
-            island.setProtectionRange(range);
-
-        }
-    }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         List<String> options = new ArrayList<>();
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
-        for (UUID member : getPlugin().getIslands().getMembers(user.getUniqueId())) {
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        for (UUID member : getPlugin().getIslands().getMembers(getWorld(), user.getUniqueId())) {
             options.add(getPlugin().getServer().getOfflinePlayer(member).getName());
         }
         return Optional.of(Util.tabLimit(options, lastArg));

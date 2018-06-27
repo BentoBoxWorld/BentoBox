@@ -6,6 +6,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -14,7 +16,6 @@ import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Cow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Zombie;
@@ -23,6 +24,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,25 +36,28 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BSkyBlock.class, Flags.class })
+@PrepareForTest( {BSkyBlock.class, Flags.class, Util.class })
 public class MobSpawnListenerTest {
 
     private static Location location;
     private static BSkyBlock plugin;
-    private static FlagsManager flagsManager;
     private static Zombie zombie;
     private static Slime slime;
     private static Cow cow;
+    private static IslandWorldManager iwm;
+    private static World world;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUpBeforeClass() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
@@ -61,7 +66,7 @@ public class MobSpawnListenerTest {
         when(plugin.getIslands()).thenReturn(im);
 
         Server server = mock(Server.class);
-        World world = mock(World.class);
+        world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -85,20 +90,8 @@ public class MobSpawnListenerTest {
         when(location.getBlockZ()).thenReturn(0);
         PowerMockito.mockStatic(Flags.class);
 
-        flagsManager = new FlagsManager(plugin);
+        FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
-
-
-        // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
-        when(iwm.getIslandWorld()).thenReturn(world);
-        when(iwm.getNetherWorld()).thenReturn(world);
-        when(iwm.getEndWorld()).thenReturn(world);
-
-        MobSpawnListener listener = mock(MobSpawnListener.class);        
-        when(listener.inWorld(any(Location.class))).thenReturn(true);
-        when(listener.inWorld(any(Entity.class))).thenReturn(true);
 
         // Monsters and animals
         zombie = mock(Zombie.class);
@@ -107,12 +100,36 @@ public class MobSpawnListenerTest {
         when(slime.getLocation()).thenReturn(location);
         cow = mock(Cow.class);
         when(cow.getLocation()).thenReturn(location);
+        
+    }
+    
+    @Before
+    public void setUp() {
+        // Worlds
+        iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getNetherWorld()).thenReturn(world);
+        when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
+        when(plugin.getIWM()).thenReturn(iwm);
+        
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+
 
     }
 
    
     @Test
     public void testNotInWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);

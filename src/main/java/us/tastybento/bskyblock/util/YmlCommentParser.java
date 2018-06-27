@@ -13,6 +13,8 @@ import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.bukkit.Bukkit;
+
 /**
  * A very simplistic yml parser, that only do the following:
  * <ol>
@@ -21,7 +23,7 @@ import java.util.regex.Pattern;
  * </ol>
  */
 public class YmlCommentParser {
-    private static final Logger log = Logger.getLogger(YmlCommentParser.class.getName());
+    private static final Logger log = Bukkit.getLogger();
     private static final Pattern SECTION_PATTERN = Pattern.compile("^(?<indent>\\s*)(?<name>[^ \\-][^:]*):(?<value>[^#]*)?(?<comment>#.*)?");
     private static final Pattern COMMENT_PATTERN = Pattern.compile("^(?<indent>\\s*)(?<comment>#.*)");
     private Map<String, String> commentMap = new HashMap<>();
@@ -52,11 +54,11 @@ public class YmlCommentParser {
             Matcher commentM = COMMENT_PATTERN.matcher(line);
             Matcher sectionM = SECTION_PATTERN.matcher(line);
             if (commentM.matches()) {
-                comments.append(commentM.group("comment") + "\n");
+                comments.append(commentM.group("comment")).append("\n");
             } else if (sectionM.matches()) {
                 String comment = sectionM.group("comment");
                 if (comment != null && !comment.trim().isEmpty()) {
-                    comments.append(comment + "\n");
+                    comments.append(comment).append("\n");
                 }
                 String name = sectionM.group("name").trim();
                 String value = sectionM.group("value");
@@ -158,9 +160,9 @@ public class YmlCommentParser {
                 String path = getPath(baseKey, name);
                 String comment = getComment(path);
                 if (comment != null) {
-                    sb.append((lineNum > 1 ? "\n" : "") + comment
+                    sb.append(lineNum > 1 ? "\n" : "").append(comment
                             .replaceAll("^#", Matcher.quoteReplacement(indent + "#"))
-                    .replaceAll("\n#", Matcher.quoteReplacement("\n" + indent + "#")));
+                            .replaceAll("\n#", Matcher.quoteReplacement("\n" + indent + "#")));
                 }
                 if (value != null && !value.trim().isEmpty()) {
                     // Scalar with value
@@ -173,7 +175,7 @@ public class YmlCommentParser {
                 }
             }
             lineNum++;
-            sb.append(line + "\n");
+            sb.append(line).append("\n");
         }
         return sb.toString().replaceAll("\r\n", "\n").replaceAll("\n\r", "\n").replaceAll("\n", "\r\n");
     }

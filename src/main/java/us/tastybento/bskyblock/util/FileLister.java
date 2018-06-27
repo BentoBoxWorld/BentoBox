@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.List;
+import java.util.Objects;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
@@ -28,58 +29,21 @@ public class FileLister{
     /**
      * Returns a list of yml files in the folder given. If the folder does not exist in the file system
      * it can check the plugin jar instead.
-     * @param folderPath
+     * @param folderPath - folder path
      * @param checkJar - if true, the jar will be checked
      * @return List of file names
-     
+
      */
     public List<String> list(String folderPath, boolean checkJar) throws IOException {
         List<String> result = new ArrayList<>();
-
         // Check if the folder exists
         File localeDir = new File(plugin.getDataFolder(), folderPath);
         if (localeDir.exists()) {
             FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase().endsWith(".yml");
-            return Arrays.asList(localeDir.list(ymlFilter));
+            return Arrays.asList(Objects.requireNonNull(localeDir.list(ymlFilter)));
         } else if (checkJar) {
             // Else look in the JAR
-            File jarfile;
-
-            /**
-             * Get the jar file from the plugin.
-             */
-            try {
-                Method method = JavaPlugin.class.getDeclaredMethod("getFile");
-                method.setAccessible(true);
-
-                jarfile = (File) method.invoke(plugin);
-            } catch (Exception e) {
-                throw new IOException(e);
-            }
-
-            JarFile jar = new JarFile(jarfile);
-
-            /**
-             * Loop through all the entries.
-             */
-            Enumeration<JarEntry> entries = jar.entries();
-            while (entries.hasMoreElements()) {
-                JarEntry entry = entries.nextElement();
-                String path = entry.getName();
-
-                /**
-                 * Not in the folder.
-                 */
-                if (!path.startsWith(folderPath)) {
-                    continue;
-                }
-
-                if (entry.getName().endsWith(".yml")) {
-                    result.add(entry.getName());
-                }
-
-            }
-            jar.close();
+            return listJar(folderPath);
         }
         return result;
     }
@@ -89,9 +53,6 @@ public class FileLister{
         // Look in the JAR
         File jarfile;
 
-        /**
-         * Get the jar file from the plugin.
-         */
         try {
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
@@ -103,17 +64,11 @@ public class FileLister{
 
         JarFile jar = new JarFile(jarfile);
 
-        /**
-         * Loop through all the entries.
-         */
         Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
             JarEntry entry = entries.nextElement();
             String path = entry.getName();
 
-            /**
-             * Not in the folder.
-             */
             if (!path.startsWith(folderPath)) {
                 continue;
             }

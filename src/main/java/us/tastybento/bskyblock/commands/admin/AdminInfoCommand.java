@@ -3,7 +3,6 @@ package us.tastybento.bskyblock.commands.admin;
 import java.util.List;
 import java.util.UUID;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
@@ -15,7 +14,7 @@ public class AdminInfoCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "admin.info");
+        setPermission("admin.info");
         setOnlyPlayer(false);
         setParameters("commands.admin.info.parameters");
         setDescription("commands.admin.info.description");
@@ -30,7 +29,7 @@ public class AdminInfoCommand extends CompositeCommand {
         }
         // If there are no args, then the player wants info on the island at this location
         if (args.isEmpty()) {
-            if (!getIslands().getIslandAt(user.getLocation()).map(i -> i.showInfo(getPlugin(), user)).orElse(false)) {
+            if (!getIslands().getIslandAt(user.getLocation()).map(i -> i.showInfo(getPlugin(), user, getWorld())).orElse(false)) {
                 user.sendMessage("commands.admin.info.no-island");
                 return false;
             }
@@ -42,12 +41,12 @@ public class AdminInfoCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (!getPlugin().getIslands().hasIsland(targetUUID)) {
+        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        // Show info for this player    
-        getPlugin().getIslands().getIsland(targetUUID).showInfo(getPlugin(), user);       
+        // Show info for this player
+        getIslands().getIsland(getWorld(), targetUUID).showInfo(getPlugin(), user, getWorld());
         return true;
     }
 }

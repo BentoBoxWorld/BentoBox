@@ -7,5 +7,5 @@ public interface HeadRequester {
     /**
      * @param item - panel item
      */
-    public void setHead(PanelItem item);
+    void setHead(PanelItem item);
 }

@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.listeners.flags;
 
 import org.bukkit.Location;
@@ -39,12 +36,11 @@ public class FireListener extends AbstractFlagListener {
      */
     public boolean checkFire(Cancellable e, Location l, Flag flag) {
         // Check world
-        if (!inWorld(l)) {
+        if (!getIWM().inWorld(l)) {
             return false;
         }
         // Check if the island exists and if fire is allowed
-        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag)).orElse(!flag.isDefaultSetting());
-
+        boolean cancel = getIslands().getIslandAt(l).map(i -> !i.isAllowed(flag)).orElse(!flag.isSetForWorld(l.getWorld()));
         e.setCancelled(cancel);
         return cancel;
     }
@@ -117,13 +113,13 @@ public class FireListener extends AbstractFlagListener {
 
     /**
      * Protect TNT from being set light by a fire arrow
-     * @param e
+     * @param e - event
      * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public boolean onTNTDamage(EntityChangeBlockEvent e) {
         // Check world
-        if (!e.getBlock().getType().equals(Material.TNT) || !inWorld(e.getBlock().getLocation())) {
+        if (!e.getBlock().getType().equals(Material.TNT) || !getIWM().inWorld(e.getBlock().getLocation())) {
             return false;
         }
         // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow

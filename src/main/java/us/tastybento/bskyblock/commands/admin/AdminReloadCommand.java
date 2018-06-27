@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.commands.admin;
 
 import java.util.List;
@@ -15,7 +12,7 @@ import us.tastybento.bskyblock.api.user.User;
 public class AdminReloadCommand extends CompositeCommand {
 
     /**
-     * @param parent
+     * @param parent - parent command
      */
     public AdminReloadCommand(CompositeCommand parent) {
         super(parent, "reload", "rl");

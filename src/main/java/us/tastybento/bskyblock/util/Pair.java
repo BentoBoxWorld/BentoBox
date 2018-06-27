@@ -53,13 +53,8 @@ public class Pair<X, Z> {
             return false;
         }
         if (z == null) {
-            if (other.z != null) {
-                return false;
-            }
-        } else if (!z.equals(other.z)) {
-            return false;
-        }
-        return true;
+            return other.z == null;
+        } else return z.equals(other.z);
     }
     
 }

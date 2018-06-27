@@ -22,7 +22,7 @@ public class LanguagePanel {
         PanelBuilder panelBuilder = new PanelBuilder()
                 .name(user.getTranslation("language.panel-title"));
 
-        for (Locale locale : BSkyBlock.getInstance().getLocalesManager().getAvailableLocales()) {
+        for (Locale locale : BSkyBlock.getInstance().getLocalesManager().getAvailableLocales(true)) {
             PanelItemBuilder localeIcon = new PanelItemBuilder().icon(BSkyBlock.getInstance().getLocalesManager().getLanguages().get(locale).getBanner())
                     .name(fancyLocaleDisplayName(user, locale))
                     .clickHandler((panel, u, click, slot) -> {

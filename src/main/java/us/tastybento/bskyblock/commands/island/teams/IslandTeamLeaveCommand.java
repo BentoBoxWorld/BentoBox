@@ -1,19 +1,13 @@
 package us.tastybento.bskyblock.commands.island.teams;
 
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.scheduler.BukkitRunnable;
-
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 
-public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
-
-    Set<UUID> leaveSet;
+public class IslandTeamLeaveCommand extends CompositeCommand {
 
     public IslandTeamLeaveCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "leave");
@@ -21,45 +15,47 @@ public class IslandTeamLeaveCommand extends AbstractIslandTeamCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.team");
+        setPermission("island.team");
         setOnlyPlayer(true);
         setDescription("commands.island.team.leave.description");
-        leaveSet = new HashSet<>();
     }
 
     @Override
     public boolean execute(User user, List<String> args) {
-        if (!getIslands().inTeam(user.getUniqueId())) {
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
         }       
-        if (getIslands().hasIsland(user.getUniqueId())) {
+        if (getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("commands.island.team.leave.cannot-leave");
             return false;
         }
-        if (!getSettings().isLeaveConfirmation() || leaveSet.contains(user.getUniqueId())) {
-            leaveSet.remove(user.getUniqueId());
-            UUID leaderUUID = getIslands().getTeamLeader(user.getUniqueId());
-            if (leaderUUID != null) {
-                User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", "[player]", user.getName());
-            }
-            getIslands().removePlayer(user.getUniqueId());
-            user.sendMessage("general.success");
+        if (!getSettings().isLeaveConfirmation()) {
+            leave(user);
             return true;
         } else {
-            user.sendMessage("commands.island.team.leave.type-again");
-            leaveSet.add(user.getUniqueId());
-            new BukkitRunnable() {
-
-                @Override
-                public void run() {
-                    if (leaveSet.contains(user.getUniqueId())) {
-                        leaveSet.remove(user.getUniqueId());
-                        user.sendMessage("general.errors.command-cancelled");
-                    }
-                }}.runTaskLater(getPlugin(), getSettings().getLeaveWait() * 20);
+            this.askConfirmation(user, () -> leave(user));
             return false;
+        }        
+    }
+
+    private void leave(User user) {
+        UUID leaderUUID = getIslands().getTeamLeader(getWorld(), user.getUniqueId());
+        if (leaderUUID != null) {
+            User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
         }
+        getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
+        // Remove money inventory etc.
+        if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+            user.getPlayer().getEnderChest().clear();
+        }
+        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+            user.getPlayer().getInventory().clear();
+        }
+        if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+            // TODO: needs Vault
+        }
+        user.sendMessage("general.success");
     }
 
 }

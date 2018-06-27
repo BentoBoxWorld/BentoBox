@@ -5,25 +5,24 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.Player;
+import org.bukkit.World;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.BSBDatabase;
-import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.database.objects.Names;
 import us.tastybento.bskyblock.database.objects.Players;
 
-public class PlayersManager{
+public class PlayersManager {
 
     private BSkyBlock plugin;
     private BSBDatabase<Players> handler;
+    private BSBDatabase<Names> names;
 
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
@@ -39,6 +38,8 @@ public class PlayersManager{
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Players classes
         handler = new BSBDatabase<>(plugin, Players.class);
+        // Set up the names database
+        names = new BSBDatabase<>(plugin, Names.class);
         playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }
@@ -61,7 +62,7 @@ public class PlayersManager{
         Collection<Players> set = Collections.unmodifiableCollection(playerCache.values());
         if(async) {
             Runnable save = () -> set.forEach(handler::saveObject);
-            plugin.getServer().getScheduler().runTaskAsynchronously(plugin, save);
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, save);
         } else {
             set.forEach(handler::saveObject);
         }
@@ -73,6 +74,11 @@ public class PlayersManager{
         handler.close();
     }
 
+    /**
+     * Get player by UUID. Adds player to cache if not in there already
+     * @param uuid of player
+     * @return player object or null if it does not exist
+     */
     public Players getPlayer(UUID uuid){
         if (!playerCache.containsKey(uuid)) {
             addPlayer(uuid);
@@ -85,35 +91,34 @@ public class PlayersManager{
      */
 
     /**
-     * Adds a player to the cache
+     * Adds a player to the cache. If the UUID does not exist, a new player is made
      * @param playerUUID - the player's UUID
      */
-    public void addPlayer(final UUID playerUUID) {
+    public void addPlayer(UUID playerUUID) {
         if (playerUUID == null) {
             return;
         }
         if (!playerCache.containsKey(playerUUID)) {
-            Players player = null;
+            Players player;
             // If the player is in the database, load it, otherwise create a new player
             if (handler.objectExists(playerUUID.toString())) {
-                    player = handler.loadObject(playerUUID.toString());
+                player = handler.loadObject(playerUUID.toString());
             } else {
                 player = new Players(plugin, playerUUID);
             }
             playerCache.put(playerUUID, player);
-            return;
         }
     }
 
     /**
      * Stores the player's info and removes the player from the cache
      *
-     * @param player - the player - UUID of player
+     * @param playerUUID - the player - UUID of player
      *
      */
-    public void removeOnlinePlayer(final UUID player) {
-        save(player);
-        playerCache.remove(player);
+    public void removeOnlinePlayer(UUID playerUUID) {
+        save(playerUUID);
+        playerCache.remove(playerUUID);
     }
 
     /**
@@ -134,31 +139,26 @@ public class PlayersManager{
      * @param uniqueID - unique ID
      * @return true if player is know, otherwise false
      */
-    public boolean isKnown(final UUID uniqueID) {
+    public boolean isKnown(UUID uniqueID) {
         if (uniqueID == null) {
             return false;
         }
         // Try cache
-        if (playerCache.containsKey(uniqueID)) {
-            return true;
-        } else {
-            // Get from the database - do not add to cache yet
-            return handler.objectExists(uniqueID.toString());
-        }
+        return playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString());
+// Get from the database - do not add to cache yet
     }
 
     /**
-     * Returns the player object for the named player
-     *
-     * @param playerUUID - the player's UUID
-     *            - String name of player
-     * @return - player object
+     * Sets the home location for the player
+     * @param user - the player
+     * @param location - the location
+     * @param number - a number - 1 is default. Can be any number.
      */
-    public Players get(UUID playerUUID) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID);
+    public void setHomeLocation(User user, Location location, int number) {
+        addPlayer(user.getUniqueId());
+        playerCache.get(user.getUniqueId()).setHomeLocation(location,number);
     }
-
+    
     /**
      * Sets the home location for the player
      * @param playerUUID - the player's UUID
@@ -182,23 +182,38 @@ public class PlayersManager{
 
     /**
      * Clears any home locations for player
+     * @param world - world
      * @param playerUUID - the player's UUID
      */
-    public void clearHomeLocations(UUID playerUUID) {
+    public void clearHomeLocations(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        playerCache.get(playerUUID).clearHomeLocations();
+        playerCache.get(playerUUID).clearHomeLocations(world);
     }
 
     /**
      * Returns the home location, or null if none
+     * @param world - world
+     *
+     * @param user - the player
+     * @param number - a number
+     * @return Home location or null if none
+     */
+    public Location getHomeLocation(World world, User user, int number) {
+        addPlayer(user.getUniqueId());
+        return playerCache.get(user.getUniqueId()).getHomeLocation(world, number);
+    }
+    
+    /**
+     * Returns the home location, or null if none
+     * @param world - world
      *
      * @param playerUUID - the player's UUID
      * @param number - a number
      * @return Home location or null if none
      */
-    public Location getHomeLocation(UUID playerUUID, int number) {
+    public Location getHomeLocation(World world, UUID playerUUID, int number) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocation(number);
+        return playerCache.get(playerUUID).getHomeLocation(world, number);
     }
 
     /**
@@ -206,9 +221,9 @@ public class PlayersManager{
      * @param playerUUID - the player's UUID
      * @return Home location or null if none
      */
-    public Location getHomeLocation(UUID playerUUID) {
+    public Location getHomeLocation(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocation(1);
+        return playerCache.get(playerUUID).getHomeLocation(world, 1);
     }
 
     /**
@@ -216,24 +231,32 @@ public class PlayersManager{
      * @param playerUUID - the player's UUID
      * @return List of home locations
      */
-    public Map<Integer, Location> getHomeLocations(UUID playerUUID) {
+    public Map<Location, Integer> getHomeLocations(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getHomeLocations();
+        return playerCache.get(playerUUID).getHomeLocations(world);
     }
 
     /**
      * Attempts to return a UUID for a given player's name.
-     * @param string
+     * @param name - name of player
      * @return UUID of player or null if unknown
      */
     @SuppressWarnings("deprecation")
-    public UUID getUUID(String string) {
+    public UUID getUUID(String name) {
         // See if this is a UUID
-        try {
-            return UUID.fromString(string);
-        } catch (Exception e) {}
-        // Look in the name cache
-        return Bukkit.getOfflinePlayer(string).getUniqueId();
+        // example: 5988eecd-1dcd-4080-a843-785b62419abb
+        if (name.length() == 36 && name.contains("-")) {
+            try {
+                return UUID.fromString(name);
+            } catch (Exception ignored) {}
+        }
+        // Look in the name cache, then the data base and finally Bukkit blocking request
+        return playerCache.values().stream()
+                .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
+                .map(p -> UUID.fromString(p.getUniqueId()))
+                .orElse(names.objectExists(name)
+                        ? names.loadObject(name).getUuid()
+                                : Bukkit.getOfflinePlayer(name).getUniqueId());
     }
 
     /**
@@ -243,6 +266,8 @@ public class PlayersManager{
     public void setPlayerName(User user) {
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
+        // Add to names database
+        names.saveObject(new Names(user.getName(), user.getUniqueId()));
     }
 
     /**
@@ -250,7 +275,7 @@ public class PlayersManager{
      * Player must have logged into the game before
      *
      * @param playerUUID - the player's UUID
-     * @return String - playerName
+     * @return String - playerName, empty string if UUID is null
      */
     public String getName(UUID playerUUID) {
         if (playerUUID == null) {
@@ -258,21 +283,6 @@ public class PlayersManager{
         }
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getPlayerName();
-    }
-
-    /**
-     * Reverse lookup - returns the owner of an island from the location
-     *
-     * @param loc - location
-     * @return UUID of owner of island
-     */
-    public UUID getPlayerFromIslandLocation(Location loc) {
-        if (loc == null) {
-            return null;
-        }
-        // Look in the grid
-        Optional<Island> island = plugin.getIslands().getIslandAt(loc);
-        return island.map(Island::getOwner).orElse(null);
     }
 
     /**
@@ -290,7 +300,7 @@ public class PlayersManager{
      * Sets how many resets the player has left
      *
      * @param playerUUID - the player's UUID
-     * @param resets
+     * @param resets - number of resets
      */
     public void setResetsLeft(UUID playerUUID, int resets) {
         addPlayer(playerUUID);
@@ -339,80 +349,11 @@ public class PlayersManager{
     /**
      * Sets the locale this player wants to use
      * @param playerUUID - the player's UUID
-     * @param localeName
+     * @param localeName - locale name, e.g., en-US
      */
     public void setLocale(UUID playerUUID, String localeName) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).setLocale(localeName);
-    }
-
-    /**
-     * Ban target from a player's island. Ban may be blocked by event being cancelled.
-     * @param playerUUID - the player's UUID
-     * @param targetUUID - the target's UUID
-     * @return true if banned, false if not
-     */
-    public boolean ban(UUID playerUUID, UUID targetUUID) {
-        addPlayer(playerUUID);
-        addPlayer(targetUUID);
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island != null) {
-            // Player has island
-            return island.addToBanList(targetUUID);
-        }
-        return false;
-    }
-
-    /**
-     * Unban target from player's island
-     * @param playerUUID - the player's UUID
-     * @param targetUUID - the target's UUID
-     * @return true if target sucessfully unbanned
-     */
-    public boolean unban(UUID playerUUID, UUID targetUUID) {
-        addPlayer(playerUUID);
-        addPlayer(targetUUID);
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island != null) {
-            // Player has island
-            return island.removeFromBanList(targetUUID);
-        }
-        return false;
-    }
-
-    /**
-     * @param playerUUID - the player's UUID
-     * @param targetUUID - the target's UUID
-     * @return true if target is banned from player's island
-     */
-    public boolean isBanned(UUID playerUUID, UUID targetUUID) {
-        if (playerUUID == null || targetUUID == null) {
-            // If the island is unowned, then playerUUID could be null
-            return false;
-        }
-        addPlayer(playerUUID);
-        addPlayer(targetUUID);
-        // Check if the target player has a permission bypass (admin.noban)
-        Player target = plugin.getServer().getPlayer(targetUUID);
-        if (target != null && target.hasPermission(Constants.PERMPREFIX + "admin.noban")) {
-            return false;
-        }
-        Island island = plugin.getIslands().getIsland(playerUUID);
-        if (island != null) {
-            // Player has island
-            return island.isBanned(targetUUID);
-        }
-        return false;
-    }
-
-    /**
-     * Clears resets for online players or players in the cache
-     * @param resetLimit
-     */
-    public void clearResets(int resetLimit) {
-        for (Players player : playerCache.values()) {
-            player.setResetsLeft(resetLimit);
-        }
     }
 
     /**
@@ -427,7 +368,7 @@ public class PlayersManager{
     /**
      * Set death number for player
      * @param playerUUID - the player's UUID
-     * @param deaths
+     * @param deaths - number of deaths
      */
     public void setDeaths(UUID playerUUID, int deaths) {
         addPlayer(playerUUID);
@@ -469,15 +410,6 @@ public class PlayersManager{
     }
 
     /**
-     * Resets everything to do with a player that needs to be reset
-     * @param player - the player
-     */
-    public void resetPlayer(Player player) {
-        // TODO Auto-generated method stub
-
-    }
-
-    /**
      * Saves the player to the database
      * @param playerUUID - the player's UUID
      */
@@ -487,14 +419,13 @@ public class PlayersManager{
         }
     }
 
-
     /**
      * Tries to get the user from this name
-     * @param string
-     * @return user
+     * @param name - name
+     * @return user - user
      */
-    public User getUser(String string) {
-        return User.getInstance(getUUID(string));
+    public User getUser(String name) {
+        return User.getInstance(getUUID(name));
     }
 
 }

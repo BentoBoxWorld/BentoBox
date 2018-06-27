@@ -1,21 +1,26 @@
 package us.tastybento.bskyblock;
 
+import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import us.tastybento.bskyblock.api.configuration.BSBConfig;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDbSetup;
-import us.tastybento.bskyblock.generators.IslandWorld;
+import us.tastybento.bskyblock.listeners.BlockEndDragon;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
 import us.tastybento.bskyblock.listeners.ObsidianToLava;
 import us.tastybento.bskyblock.listeners.PanelListenerManager;
+import us.tastybento.bskyblock.listeners.protection.FlyingMobEvents;
 import us.tastybento.bskyblock.managers.AddonsManager;
 import us.tastybento.bskyblock.managers.CommandsManager;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -43,7 +48,7 @@ public class BSkyBlock extends JavaPlugin {
     private LocalesManager localesManager;
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
-    private IslandWorld islandWorldManager;
+    private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
 
     // Settings
@@ -60,21 +65,8 @@ public class BSkyBlock extends JavaPlugin {
         saveDefaultConfig();
         setInstance(this);
 
-        settings = new Settings();
         // Load settings from config.yml. This will check if there are any issues with it too.
-        try {
-            settings = settings.loadSettings();
-        } catch (Exception e) {
-            logError("Settings could not be loaded " + e.getMessage());
-        }
-
-        // Save a backup of settings to the database so it can be checked next time
-        try {
-            settings.saveBackup();
-        } catch (Exception e) {
-            logError("Settings backup could not be saved" + e.getMessage());
-        }
-
+        settings = new BSBConfig<>(this, Settings.class).loadConfigObject("");
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
@@ -94,42 +86,52 @@ public class BSkyBlock extends JavaPlugin {
         // Load Notifier
         notifier = new Notifier();
 
-        // Set up commands
+        // Set up command manager
         commandsManager = new CommandsManager();
-        new IslandCommand();
-        new AdminCommand();
 
         // These items have to be loaded when the server has done 1 tick.
         // Note Worlds are not loaded this early, so any Locations or World reference will be null
         // at this point. Therefore, the 1 tick scheduler is required.
         getServer().getScheduler().runTask(this, () -> {
             // Create the world if it does not exist
-            islandWorldManager = new IslandWorld(instance);
-
+            islandWorldManager = new IslandWorldManager(instance);
+            
+            // Set up commands
+            new IslandCommand();
+            new AdminCommand();
+            
+            // Locales manager must be loaded before addons
+            localesManager = new LocalesManager(instance);
+            PlaceholderHandler.register(instance);
+            
+            // Load addons. Addons may load worlds, so they must go before islands are loaded.
+            addonsManager = new AddonsManager(instance);
+            addonsManager.loadAddons();
+            // Enable addons
+            addonsManager.enableAddons();
+           
             getServer().getScheduler().runTask(instance, () -> {
-
                 // Load Flags
                 flagsManager = new FlagsManager(instance);
-
-                // Load islands from database
-                islandsManager.load();
-
-                localesManager = new LocalesManager(instance);
-                PlaceholderHandler.register(instance);
 
                 // Register Listeners
                 registerListeners();
 
-                // Load addons
-                addonsManager = new AddonsManager(instance);
-                addonsManager.enableAddons();
-
+                // Load islands from database - need to wait until all the worlds are loaded
+                islandsManager.load();
+                
                 // Save islands & players data asynchronously every X minutes
-                getSettings().setDatabaseBackupPeriod(10 * 60 * 20);
+                
                 instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                     playersManager.save(true);
                     islandsManager.save(true);
-                }, getSettings().getDatabaseBackupPeriod(), getSettings().getDatabaseBackupPeriod());
+                }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
+
+                instance.log("#############################################");
+                instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
+                instance.log("Thanks for using our plugin !");
+                instance.log("- Tastybento and Poslovitch, 2017-2018");
+                instance.log("#############################################");
             });
         });
     }
@@ -149,6 +151,10 @@ public class BSkyBlock extends JavaPlugin {
         manager.registerEvents(new NetherPortals(this), this);
         // Obsidian to lava helper
         manager.registerEvents(new ObsidianToLava(this), this);
+        // Flying mobs protection
+        manager.registerEvents(new FlyingMobEvents(this), this);
+        // End dragon blocking
+        manager.registerEvents(new BlockEndDragon(this), this);
     }
 
     @Override
@@ -163,6 +169,8 @@ public class BSkyBlock extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
+        // Save settings
+        new BSBConfig<>(this, Settings.class).saveConfigObject(settings);
     }
 
     private void registerCustomCharts(){
@@ -263,7 +271,7 @@ public class BSkyBlock extends JavaPlugin {
     /**
      * @return the Island World Manager
      */
-    public IslandWorld getIslandWorldManager() {
+    public IslandWorldManager getIWM() {
         return islandWorldManager;
     }
 
@@ -299,4 +307,14 @@ public class BSkyBlock extends JavaPlugin {
     public void logWarning(String warning) {
         getLogger().warning(warning);
     }
+
+    /**
+     * Registers a world as a world to be covered by this plugin
+     * @param world - Bukkit over world
+     * @param worldSettings - settings for this world
+     */
+    public void registerWorld(World world, WorldSettings worldSettings) {
+        islandWorldManager.addWorld(world, worldSettings);
+    }
+
 }

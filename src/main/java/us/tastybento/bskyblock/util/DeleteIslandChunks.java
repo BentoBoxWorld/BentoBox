@@ -8,8 +8,6 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.database.objects.Island;
 
-//import com.wasteofplastic.askyblock.nms.NMSAbstraction;
-
 /**
  * Deletes islands fast using chunk regeneration
  *
@@ -21,7 +19,7 @@ public class DeleteIslandChunks {
     /**
      * Deletes the island
      * @param plugin - BSkyBlock plugin object
-     * @param island
+     * @param island - island to delete
      */
     public DeleteIslandChunks(final BSkyBlock plugin, final Island island) {
         // Fire event
@@ -40,12 +38,12 @@ public class DeleteIslandChunks {
         for (int x = minXChunk; x <= maxXChunk; x++) {
             for (int z = minZChunk; z<=maxZChunk; z++) {
                 world.regenerateChunk(x, z);
-                if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
-                    plugin.getIslandWorldManager().getNetherWorld().regenerateChunk(x, z);
+                if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)) {
+                    plugin.getIWM().getNetherWorld().regenerateChunk(x, z);
 
                 }
-                if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
-                    plugin.getIslandWorldManager().getEndWorld().regenerateChunk(x, z);
+                if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)) {
+                    plugin.getIWM().getEndWorld().regenerateChunk(x, z);
                 }
             }
         }

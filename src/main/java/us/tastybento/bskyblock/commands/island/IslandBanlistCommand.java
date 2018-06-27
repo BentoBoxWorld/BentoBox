@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -17,7 +16,7 @@ public class IslandBanlistCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.ban");
+        setPermission("island.ban");
         setOnlyPlayer(true);
         setDescription("commands.island.banlist.description");
     }
@@ -30,11 +29,11 @@ public class IslandBanlistCommand extends CompositeCommand {
             return false;
         } 
         // Player issuing the command must have an island       
-        if (!getIslands().hasIsland(user.getUniqueId())) {
+        if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false; 
         }
-        Island island = getIslands().getIsland(user.getUniqueId());
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         // Show all the players banned on the island
         if (island.getBanned().isEmpty()) {
             user.sendMessage("commands.island.banlist.noone");

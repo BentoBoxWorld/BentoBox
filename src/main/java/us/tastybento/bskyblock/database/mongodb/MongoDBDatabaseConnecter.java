@@ -16,20 +16,19 @@ import us.tastybento.bskyblock.database.DatabaseConnectionSettingsImpl;
 public class MongoDBDatabaseConnecter implements DatabaseConnecter {
 
     private MongoClient client;
-    private MongoCredential credential;
     private DatabaseConnectionSettingsImpl dbSettings;
 
     /**
      * Class for MySQL database connections using the settings provided
-     * @param dbSettings
+     * @param dbSettings - database settings
      */
     public MongoDBDatabaseConnecter(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
-        credential = MongoCredential.createCredential(dbSettings.getUsername(),
+        MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
                 dbSettings.getDatabaseName(),
                 dbSettings.getPassword().toCharArray());
         MongoClientOptions options = MongoClientOptions.builder().sslEnabled(false).build();
-        client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()),credential,options);
+        client = new MongoClient(new ServerAddress(dbSettings.getHost(), dbSettings.getPort()), credential,options);
     }
 
     @Override

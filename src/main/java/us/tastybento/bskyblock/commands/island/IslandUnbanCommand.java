@@ -1,13 +1,12 @@
 package us.tastybento.bskyblock.commands.island;
 
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
-import us.tastybento.bskyblock.Constants;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.util.Util;
@@ -20,7 +19,7 @@ public class IslandUnbanCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission(Constants.PERMPREFIX + "island.ban");
+        setPermission("island.ban");
         setOnlyPlayer(true);
         setParameters("commands.island.unban.parameters");
         setDescription("commands.island.unban.description");
@@ -35,11 +34,11 @@ public class IslandUnbanCommand extends CompositeCommand {
         } 
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
-        if (!getIslands().hasIsland(playerUUID)) {
+        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(playerUUID)) {
+        if (!getIslands().isOwner(getWorld(), playerUUID)) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }
@@ -54,7 +53,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             user.sendMessage("commands.island.unban.cannot-unban-yourself");
             return false;
         }
-        if (!getIslands().getIsland(playerUUID).isBanned(targetUUID)) {
+        if (!getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.unban.player-not-banned");
             return false; 
         }
@@ -64,9 +63,9 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     private boolean unban(User user, User targetUser) {
-        if (getIslands().getIsland(user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
+        if (getIslands().getIsland(getWorld(), user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
+            targetUser.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
             return true;
         }
         // Unbanning was blocked, maybe due to an event cancellation. Fail silently.
@@ -74,10 +73,10 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     @Override
-    public Optional<List<String>> tabComplete(final User user, final String alias, final LinkedList<String> args) {       
-        Island island = getIslands().getIsland(user.getUniqueId());
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {       
+        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         List<String> options = island.getBanned().stream().map(getPlayers()::getName).collect(Collectors.toList());
-        String lastArg = (!args.isEmpty() ? args.getLast() : "");
+        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         return Optional.of(Util.tabLimit(options, lastArg));
     }
 }

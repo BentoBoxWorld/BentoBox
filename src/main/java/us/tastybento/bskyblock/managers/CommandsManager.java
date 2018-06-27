@@ -30,4 +30,8 @@ public class CommandsManager {
         return commands.get(command);
     }
 
+    public String listCommands() {
+        return commands.keySet().toString();
+    }
+
 }

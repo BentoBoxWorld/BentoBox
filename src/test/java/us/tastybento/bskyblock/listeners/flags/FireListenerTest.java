@@ -6,7 +6,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Logger;
 
@@ -18,7 +20,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Cow;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.WitherSkeleton;
@@ -30,6 +31,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
+import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,28 +44,28 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
+import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.generators.IslandWorld;
 import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
+import us.tastybento.bskyblock.managers.PlayersManager;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BSkyBlock.class, Flags.class} )
+@PrepareForTest( {BSkyBlock.class, Flags.class, Util.class} )
 public class FireListenerTest {
 
     private static Location location;
     private static BSkyBlock plugin;
-    private static FlagsManager flagsManager;
-    private static Zombie zombie;
-    private static Slime slime;
-    private static Cow cow;
+    private static IslandWorldManager iwm;
 
     @BeforeClass
-    public static void setUp() {
+    public static void setUpClass() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
@@ -93,27 +95,24 @@ public class FireListenerTest {
         when(location.getBlockZ()).thenReturn(0);
         PowerMockito.mockStatic(Flags.class);
 
-        flagsManager = new FlagsManager(plugin);
+        FlagsManager flagsManager = new FlagsManager(plugin);
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
 
         // Worlds
-        IslandWorld iwm = mock(IslandWorld.class);
-        when(plugin.getIslandWorldManager()).thenReturn(iwm);
+        iwm = mock(IslandWorldManager.class);
         when(iwm.getIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld()).thenReturn(world);
         when(iwm.getEndWorld()).thenReturn(world);
-
-        MobSpawnListener listener = mock(MobSpawnListener.class);        
-        when(listener.inWorld(any(Location.class))).thenReturn(true);
-        when(listener.inWorld(any(Entity.class))).thenReturn(true);
-
+        when(iwm.inWorld(any())).thenReturn(true);
+        when(plugin.getIWM()).thenReturn(iwm);
+                
         // Monsters and animals
-        zombie = mock(Zombie.class);
+        Zombie zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
-        slime = mock(Slime.class);
+        Slime slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
-        cow = mock(Cow.class);
+        Cow cow = mock(Cow.class);
         when(cow.getLocation()).thenReturn(location);
 
         // Fake players
@@ -126,12 +125,29 @@ public class FireListenerTest {
         ///user.setPlugin(plugin);
         User.setPlugin(plugin);
         
+        
         // Locales - final
         
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
         
+        // Player name
+        PlayersManager pm = mock(PlayersManager.class);
+        when(pm.getName(Mockito.any())).thenReturn("tastybento");
+        when(plugin.getPlayers()).thenReturn(pm);
+        
+        // World Settings
+        WorldSettings ws = mock(WorldSettings.class);
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
+        Map<String, Boolean> worldFlags = new HashMap<>();
+        when(ws.getWorldFlags()).thenReturn(worldFlags);
+    }
+    
+    @Before
+    public void setUp() {
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
     }
 
     @Test
@@ -349,7 +365,7 @@ public class FireListenerTest {
         // Obsidian is not TNT
         assertFalse(listener.onTNTPrimed(e));
         // Out of world
-        when(block.getLocation()).thenReturn(null);
+        when(iwm.inWorld(any())).thenReturn(false);
         assertFalse(listener.onTNTPrimed(e));
         
         // Now set to TNT
@@ -357,7 +373,7 @@ public class FireListenerTest {
         assertFalse(listener.onTNTPrimed(e));
         
         // Back in world
-        when(block.getLocation()).thenReturn(location);
+        when(iwm.inWorld(any())).thenReturn(true);
 
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);
@@ -396,6 +412,7 @@ public class FireListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
+        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
         
         // Block on fire
         Block block = mock(Block.class);
@@ -466,7 +483,7 @@ public class FireListenerTest {
         assertFalse(listener.onTNTDamage(e));
         
         // Check with no island
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
+        when(im.getProtectedIslandAt(Matchers.any())).thenReturn(Optional.empty());
         // BREAK_BLOCKS spread is not allowed, so should be cancelled
         Flags.BREAK_BLOCKS.setDefaultSetting(false);
         assertTrue(listener.onTNTDamage(e));
