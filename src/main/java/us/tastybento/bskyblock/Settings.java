@@ -165,7 +165,7 @@ public class Settings implements DataObject, WorldSettings {
     private int islandZOffset;
 
     @ConfigComment("Island height - Lowest is 5.")
-    @ConfigComment("It is the y coordinate of the bedrock block in the schematic")
+    @ConfigComment("It is the y coordinate of the bedrock block in the schem")
     @ConfigEntry(path = "world.island-height")
     private int islandHeight = 100;
 
@@ -428,6 +428,7 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
 
+    //---------------------------------------------------------------------------------------/
     private String uniqueId = "config";
 
     // Getters and setters
