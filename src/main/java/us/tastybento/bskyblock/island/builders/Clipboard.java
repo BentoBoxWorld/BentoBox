@@ -9,7 +9,10 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
@@ -17,6 +20,7 @@ import java.util.zip.ZipOutputStream;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,7 +32,10 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -41,6 +48,7 @@ import org.bukkit.material.MaterialData;
 import org.bukkit.material.Openable;
 import org.bukkit.material.Redstone;
 import org.bukkit.material.Stairs;
+import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.TextVariables;
@@ -133,8 +141,11 @@ public class Clipboard {
             user.sendMessage("commands.admin.schem.need-pos1-pos2");
             return false;
         }
+        // World
+        World world = pos1.getWorld();
         // Clear the clipboard
         blockConfig = new YamlConfiguration();
+
         int count = 0;
         int minX = Math.max(pos1.getBlockX(),pos2.getBlockX());
         int maxX = Math.min(pos1.getBlockX(), pos2.getBlockX());
@@ -142,11 +153,15 @@ public class Clipboard {
         int maxY = Math.min(pos1.getBlockY(), pos2.getBlockY());
         int minZ = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
         int maxZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+
         for (int x = Math.min(pos1.getBlockX(), pos2.getBlockX()); x <= Math.max(pos1.getBlockX(),pos2.getBlockX()); x++) {
             for (int y = Math.min(pos1.getBlockY(), pos2.getBlockY()); y <= Math.max(pos1.getBlockY(),pos2.getBlockY()); y++) {
                 for (int z = Math.min(pos1.getBlockZ(), pos2.getBlockZ()); z <= Math.max(pos1.getBlockZ(),pos2.getBlockZ()); z++) {
-                    Block block = pos1.getWorld().getBlockAt(x, y, z);
-                    if (copyBlock(block, origin == null ? user.getLocation() : origin, copyAir)) {
+                    Block block = world.getBlockAt(x, y, z);
+                    if (copyBlock(block, origin == null ? user.getLocation() : origin, copyAir, world.getLivingEntities().stream()
+                            .filter(Objects::nonNull)
+                            .filter(e -> !(e instanceof Player) && e.getLocation().getBlock().equals(block))
+                            .collect(Collectors.toList()))) {
                         minX = Math.min(minX, x);
                         maxX = Math.max(maxX, x);
                         minY = Math.min(minY, y);
@@ -179,10 +194,9 @@ public class Clipboard {
         int x = location.getBlockX() + Integer.valueOf(pos[0]);
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
-        Material m = Material.getMaterial(s.getString("type"));
+        Material m = Material.getMaterial(s.getString("type", "AIR"));
         Block block = location.getWorld().getBlockAt(x, y, z);
         if (s.getBoolean(ATTACHED)) {
-            plugin.log("Setting 1 tick later for " + m.toString());
             plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(block, s, m));
         } else {
             setBlock(block, s, m);
@@ -292,12 +306,21 @@ public class Clipboard {
             inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
         }
 
+        // Entities
+        if (s.isConfigurationSection("entity")) {
+            ConfigurationSection e = s.getConfigurationSection("entity");
+            e.getKeys(false).forEach(k -> {
+                Location center = block.getLocation().add(new Vector(0.5, 0.0, 0.5));
+                LivingEntity ent = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(e.getString(k + ".type")));
+                ent.setCustomName(e.getString(k + ".name"));
+            });
+        }
 
     }
 
     @SuppressWarnings("deprecation")
-    private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir) {
-        if (!copyAir && block.getType().equals(Material.AIR)) {
+    private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<Entity> entities) {
+        if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
         }
         // Create position
@@ -308,6 +331,18 @@ public class Clipboard {
 
         // Position defines the section
         ConfigurationSection s = blockConfig.createSection(BLOCK + "." + pos);
+
+        // Set entities
+        for (Entity e: entities) {
+            s.set("entity." + e.getUniqueId() + ".type", e.getType().name());
+            s.set("entity." + e.getUniqueId() + ".name", e.getCustomName());
+        }
+
+        // Return if this is just air block
+        if (!copyAir && block.getType().equals(Material.AIR) && !entities.isEmpty()) {
+            return true;
+        }
+
         // Set the block type
         s.set("type", block.getType().toString());
         if (block.getData() != 0) {
