@@ -228,13 +228,13 @@ public class Clipboard {
             return;
         }
 
+
         block.setType(m, false);
 
         BlockState bs = block.getState();
 
         byte data = (byte)s.getInt("data");
         block.setData(data);
-
 
         // Material Data
         MaterialData md = bs.getData();
@@ -249,9 +249,9 @@ public class Clipboard {
                 //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
                 Stairs stairs = (Stairs)md;
                 stairs.setInverted(s.getBoolean("inverted"));
-                stairs.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
+                stairs.setFacingDirection(BlockFace.valueOf(s.getString(FACING, "NORTH")));
             } else {
-                facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
+                facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING, "NORTH")));
             }
         }
 
@@ -265,8 +265,6 @@ public class Clipboard {
         }
 
         // Block data
-
-
         if (bs instanceof Sign) {
             Sign sign = (Sign)bs;
             List<String> lines = s.getStringList("lines");
@@ -277,17 +275,18 @@ public class Clipboard {
         }
         if (bs instanceof Banner) {
             Banner banner = (Banner)bs;
-            DyeColor baseColor = DyeColor.valueOf(s.getString("baseColor"));
+            DyeColor baseColor = DyeColor.valueOf(s.getString("baseColor", "RED"));
             banner.setBaseColor(baseColor);
             int i = 0;
             ConfigurationSection pat = s.getConfigurationSection("pattern");
             if (pat != null) {
                 for (String pattern : pat.getKeys(false)) {
-                    banner.setPattern(i, new Pattern(DyeColor.valueOf(pat.getString(pattern))
+                    banner.setPattern(i, new Pattern(DyeColor.valueOf(pat.getString(pattern, "GREEN"))
                             , PatternType.valueOf(pattern)));
                     i++;
                 }
             }
+            bs.update(true, false);
         }
         if (bs instanceof CreatureSpawner) {
             CreatureSpawner spawner = ((CreatureSpawner) bs);
@@ -299,13 +298,14 @@ public class Clipboard {
             spawner.setDelay(s.getInt("delay", -1));
             spawner.setRequiredPlayerRange(s.getInt("requiredPlayerRange", 16));
             spawner.setSpawnRange(s.getInt("spawnRange", 4));
-
+            bs.update(true, false);
         }
 
 
-        bs.update(true, false);
+
 
         if (bs instanceof InventoryHolder) {
+            bs.update(true, false);
             Inventory ih = ((InventoryHolder)bs).getInventory();
             ConfigurationSection inv = s.getConfigurationSection("inventory");
             inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
@@ -316,7 +316,7 @@ public class Clipboard {
             ConfigurationSection e = s.getConfigurationSection("entity");
             e.getKeys(false).forEach(k -> {
                 Location center = block.getLocation().add(new Vector(0.5, 0.0, 0.5));
-                LivingEntity ent = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(e.getString(k + ".type")));
+                LivingEntity ent = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(e.getString(k + ".type", "PIG")));
                 ent.setCustomName(e.getString(k + ".name"));
             });
         }
@@ -368,7 +368,7 @@ public class Clipboard {
                 //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
                 Stairs stairs = (Stairs)md;
                 s.set("inverted", stairs.isInverted());
-                s.set(FACING, stairs.getAscendingDirection());
+                s.set(FACING, stairs.getAscendingDirection().name());
             } else {
                 Directional facing = (Directional)md;
                 s.set(FACING, facing.getFacing().name());
