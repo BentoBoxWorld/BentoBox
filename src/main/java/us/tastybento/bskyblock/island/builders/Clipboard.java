@@ -246,7 +246,10 @@ public class Clipboard {
         if (md instanceof Directional) {
             Directional facing = (Directional)md;
             if (md instanceof Stairs) {
-                facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
+                //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
+                Stairs stairs = (Stairs)md;
+                stairs.setInverted(s.getBoolean("inverted"));
+                stairs.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
             } else {
                 facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)));
             }
@@ -262,6 +265,8 @@ public class Clipboard {
         }
 
         // Block data
+
+
         if (bs instanceof Sign) {
             Sign sign = (Sign)bs;
             List<String> lines = s.getStringList("lines");
@@ -359,8 +364,15 @@ public class Clipboard {
             s.set("open", open.isOpen());
         }
         if (md instanceof Directional) {
-            Directional facing = (Directional)md;
-            s.set(FACING, facing.getFacing().name());
+            if (md instanceof Stairs) {
+                //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
+                Stairs stairs = (Stairs)md;
+                s.set("inverted", stairs.isInverted());
+                s.set(FACING, stairs.getAscendingDirection());
+            } else {
+                Directional facing = (Directional)md;
+                s.set(FACING, facing.getFacing().name());
+            }
         }
         if (md instanceof Attachable) {
             Attachable facing = (Attachable)md;
