@@ -5,7 +5,7 @@ package us.tastybento.bskyblock.api.localization;
  * @author Poslovitch
  */
 public class TextVariables {
-    
+
     private TextVariables() {}
 
     public static final String NAME = "[name]";
@@ -14,4 +14,5 @@ public class TextVariables {
     public static final String RANK = "[rank]";
     public static final String LABEL = "[label]";
     public static final String PERMISSION = "[permission]";
+    public static final String SPAWN_HERE = "[spawn_here]";
 }

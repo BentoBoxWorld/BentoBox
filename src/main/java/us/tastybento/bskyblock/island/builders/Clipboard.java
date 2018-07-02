@@ -10,7 +10,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -81,6 +83,9 @@ public class Clipboard {
     private Location origin;
     private BSkyBlock plugin;
     private boolean copied;
+
+    // Pasted items
+    private Map<Location, List<String>> signs = new HashMap<>();
 
     private File schemFolder;
 
@@ -186,61 +191,61 @@ public class Clipboard {
      * @param location - location to paste
      */
     public void paste(Location location) {
+        signs.clear();
         blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
     }
 
-    private void pasteBlock(Location location, ConfigurationSection s) {
-        String[] pos = s.getName().split(",");
+    private void pasteBlock(Location location, ConfigurationSection config) {
+        String[] pos = config.getName().split(",");
         int x = location.getBlockX() + Integer.valueOf(pos[0]);
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
-        Material m = Material.getMaterial(s.getString("type", "AIR"));
+        // Default type is air
+        Material material = Material.getMaterial(config.getString("type", "AIR"));
         Block block = location.getWorld().getBlockAt(x, y, z);
-        if (s.getBoolean(ATTACHED)) {
-            plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(block, s, m));
+        if (config.getBoolean(ATTACHED)) {
+            plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(block, config, material));
         } else {
-            setBlock(block, s, m);
+            setBlock(block, config, material);
         }
     }
 
     @SuppressWarnings("deprecation")
-    private void setBlock(Block block, ConfigurationSection s, Material m) {
+    private void setBlock(Block block, ConfigurationSection config, Material material) {
         // Block state
 
-        if (s.getBoolean(ATTACHED) && m.toString().contains("TORCH")) {
-            TorchDir d = TorchDir.valueOf(s.getString(FACING));
-
+        if (config.getBoolean(ATTACHED) && material.toString().contains("TORCH")) {
+            TorchDir d = TorchDir.valueOf(config.getString(FACING));
+            // The block below has to be set to something solid for this to work
             Block rel = block.getRelative(BlockFace.DOWN);
             Material rm = rel.getType();
             Byte data = rel.getData();
-
             if (rel.isEmpty() || rel.isLiquid()) {
                 rel.setType(Material.STONE);
-                block.setType(m);
+                block.setType(material);
                 block.setData((byte)d.ordinal());
                 // Set the block back to what it was
                 rel.setType(rm);
                 rel.setData(data);
             } else {
-                block.setType(m);
+                block.setType(material);
                 block.setData((byte)d.ordinal());
             }
             return;
         }
-
-
-        block.setType(m, false);
-
-        BlockState bs = block.getState();
-
-        byte data = (byte)s.getInt("data");
+        // Set the block type
+        block.setType(material, false);
+        // Set the block data
+        byte data = (byte)config.getInt("data");
         block.setData(data);
 
+        // Get the block state
+        BlockState bs = block.getState();
         // Material Data
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
             Openable open = (Openable)md;
-            open.setOpen(s.getBoolean("open"));
+            open.setOpen(config.getBoolean("open"));
         }
 
         if (md instanceof Directional) {
@@ -248,37 +253,40 @@ public class Clipboard {
             if (md instanceof Stairs) {
                 //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
                 Stairs stairs = (Stairs)md;
-                stairs.setInverted(s.getBoolean("inverted"));
-                stairs.setFacingDirection(BlockFace.valueOf(s.getString(FACING, "NORTH")));
+                stairs.setInverted(config.getBoolean("inverted"));
+                stairs.setFacingDirection(BlockFace.valueOf(config.getString(FACING, "NORTH")));
             } else {
-                facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING, "NORTH")));
+                facing.setFacingDirection(BlockFace.valueOf(config.getString(FACING, "NORTH")));
             }
         }
 
         if (md instanceof Lever) {
             Lever r = (Lever)md;
-            r.setPowered(s.getBoolean(POWERED));
+            r.setPowered(config.getBoolean(POWERED));
         }
         if (md instanceof Button) {
             Button r = (Button)md;
-            r.setPowered(s.getBoolean(POWERED));
+            r.setPowered(config.getBoolean(POWERED));
         }
 
         // Block data
         if (bs instanceof Sign) {
             Sign sign = (Sign)bs;
-            List<String> lines = s.getStringList("lines");
+            List<String> lines = config.getStringList("lines");
             for (int i =0 ; i < lines.size(); i++) {
                 sign.setLine(i, lines.get(i));
             }
             sign.update();
+            // Log the sign
+            signs.put(block.getLocation(), lines);
+
         }
         if (bs instanceof Banner) {
             Banner banner = (Banner)bs;
-            DyeColor baseColor = DyeColor.valueOf(s.getString("baseColor", "RED"));
+            DyeColor baseColor = DyeColor.valueOf(config.getString("baseColor", "RED"));
             banner.setBaseColor(baseColor);
             int i = 0;
-            ConfigurationSection pat = s.getConfigurationSection("pattern");
+            ConfigurationSection pat = config.getConfigurationSection("pattern");
             if (pat != null) {
                 for (String pattern : pat.getKeys(false)) {
                     banner.setPattern(i, new Pattern(DyeColor.valueOf(pat.getString(pattern, "GREEN"))
@@ -290,30 +298,27 @@ public class Clipboard {
         }
         if (bs instanceof CreatureSpawner) {
             CreatureSpawner spawner = ((CreatureSpawner) bs);
-            spawner.setSpawnedType(EntityType.valueOf(s.getString("spawnedType", "PIG")));
-            spawner.setMaxNearbyEntities(s.getInt("maxNearbyEntities", 16));
-            spawner.setMaxSpawnDelay(s.getInt("maxSpawnDelay", 2*60*20));
-            spawner.setMinSpawnDelay(s.getInt("minSpawnDelay", 5*20));
+            spawner.setSpawnedType(EntityType.valueOf(config.getString("spawnedType", "PIG")));
+            spawner.setMaxNearbyEntities(config.getInt("maxNearbyEntities", 16));
+            spawner.setMaxSpawnDelay(config.getInt("maxSpawnDelay", 2*60*20));
+            spawner.setMinSpawnDelay(config.getInt("minSpawnDelay", 5*20));
 
-            spawner.setDelay(s.getInt("delay", -1));
-            spawner.setRequiredPlayerRange(s.getInt("requiredPlayerRange", 16));
-            spawner.setSpawnRange(s.getInt("spawnRange", 4));
+            spawner.setDelay(config.getInt("delay", -1));
+            spawner.setRequiredPlayerRange(config.getInt("requiredPlayerRange", 16));
+            spawner.setSpawnRange(config.getInt("spawnRange", 4));
             bs.update(true, false);
         }
-
-
-
 
         if (bs instanceof InventoryHolder) {
             bs.update(true, false);
             Inventory ih = ((InventoryHolder)bs).getInventory();
-            ConfigurationSection inv = s.getConfigurationSection("inventory");
+            ConfigurationSection inv = config.getConfigurationSection("inventory");
             inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
         }
 
         // Entities
-        if (s.isConfigurationSection("entity")) {
-            ConfigurationSection e = s.getConfigurationSection("entity");
+        if (config.isConfigurationSection("entity")) {
+            ConfigurationSection e = config.getConfigurationSection("entity");
             e.getKeys(false).forEach(k -> {
                 Location center = block.getLocation().add(new Vector(0.5, 0.0, 0.5));
                 LivingEntity ent = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(e.getString(k + ".type", "PIG")));
@@ -433,6 +438,13 @@ public class Clipboard {
         return blockConfig;
     }
 
+    /**
+     * @return the signs
+     */
+    public Map<Location, List<String>> getSigns() {
+        plugin.log("DEBUG: signs " + signs.size());
+        return signs;
+    }
     private void unzip(final String zipFilePath) throws IOException {
         Path path = Paths.get(zipFilePath);
         if (!(path.toFile().exists())) {

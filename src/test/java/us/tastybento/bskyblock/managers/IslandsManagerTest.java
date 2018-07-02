@@ -600,7 +600,7 @@ public class IslandsManagerTest {
         Island island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         // Make a spawn position on the island
-        when(island.getSpawnPoint()).thenReturn(location);
+        when(island.getSpawnPoint(Mockito.any())).thenReturn(location);
         // Set the spawn island
         im.setSpawn(island);
         assertEquals(location,im.getSpawnPoint(world));

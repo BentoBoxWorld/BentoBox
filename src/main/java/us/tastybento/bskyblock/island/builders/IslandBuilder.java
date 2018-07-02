@@ -1,61 +1,106 @@
 package us.tastybento.bskyblock.island.builders;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.EnumMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.TreeType;
 import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Sign;
-import org.bukkit.entity.EntityType;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.InventoryHolder;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Chest;
 
-import us.tastybento.bskyblock.Constants;
-import us.tastybento.bskyblock.Constants.GameType;
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.TextVariables;
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.util.Util;
 
 /**
- * Fired when a team event happens.
+ * Generates islands
  *
  * @author tastybento
  * @since 1.0
  */
 public class IslandBuilder {
 
-    public enum IslandType {
-        ISLAND,
-        NETHER,
-        END
-    }
-
     private Island island;
     private World world;
-    private IslandType type = IslandType.ISLAND;
-    private List<ItemStack> chestItems;
+    private Environment type = Environment.NORMAL;
     private UUID playerUUID;
     private String playerName;
+    private BSkyBlock plugin;
+    private Map<Environment, Clipboard> islandSchems = new EnumMap<>(Environment.class);
+    private Location spawnPoint;
+    private Runnable task;
 
     //TODO support companions?
 
-    public IslandBuilder(Island island) {
+    public IslandBuilder(BSkyBlock plugin, Island island) {
+        this.plugin = plugin;
         this.island = island;
         world = island.getWorld();
+        loadIslands();
+    }
+
+    private void loadIslands() {
+        File schems = new File(plugin.getDataFolder(), "schems");
+        if (!schems.exists()) {
+            if (!schems.mkdirs()) {
+                plugin.logError("Could not make schems folder!");
+            } else {
+                copySchems(schems);
+            }
+        }
+
+        try {
+            Clipboard cb = new Clipboard(plugin);
+            cb.load("island");
+            islandSchems.put(Environment.NORMAL, cb);
+        } catch (IOException | InvalidConfigurationException e) {
+            plugin.logError("Could not load default island");
+        }
+        if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands()) {
+            try {
+                Clipboard cbn = new Clipboard(plugin);
+                cbn.load("nether-island");
+                islandSchems.put(Environment.NETHER, cbn);
+            } catch (IOException | InvalidConfigurationException e) {
+                plugin.logError("Could not load default nether island");
+            }
+        }
+        if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands()) {
+            try {
+                Clipboard cbe = new Clipboard(plugin);
+                cbe.load("end-island");
+                islandSchems.put(Environment.THE_END, cbe);
+            } catch (IOException | InvalidConfigurationException e) {
+                plugin.logError("Could not load default end island");
+            }
+        }
+        plugin.log("Loaded " + islandSchems.size() + " islands");
+    }
+
+    /**
+     * Copies schems from the jar file
+     * @param schems2 - file containing schem
+     */
+    private void copySchems(File schems2) {
+        plugin.saveResource("schems/island.schem", false);
+        plugin.saveResource("schems/nether-island.schem", false);
+        plugin.saveResource("schems/end-island.schem", false);
     }
 
     /**
      * @param type the type to set
      */
-    public IslandBuilder setType(IslandType type) {
+    public IslandBuilder setType(Environment type) {
         this.type = type;
         return this;
     }
@@ -70,417 +115,72 @@ public class IslandBuilder {
     }
 
     /**
-     * @param list the default chestItems to set
+     * The task to run when the island is built
+     * @param task
+     * @return IslandBuilder
      */
-    public IslandBuilder setChestItems(List<ItemStack> list) {
-        chestItems = list;
+    public IslandBuilder run(Runnable task) {
+        this.task = task;
         return this;
     }
 
     public void build() {
+        plugin.log("Pasting island to " + type);
+        Location loc = island.getCenter();
         // Switch on island type
         switch (type) {
-            case ISLAND:
-                world = island.getWorld();
-                if (Constants.GAMETYPE == GameType.ACIDISLAND) {
-                    generateAcidIslandBlocks();
-                } else {
-                    generateIslandBlocks();
-                }
-                break;
-            case NETHER:
-                world = Bukkit.getWorld(island.getWorld().getName() + "_nether");
-                if (world == null) {
-                    return;
-                }
-                generateNetherBlocks();
-                break;
-            case END:
-                world = Bukkit.getWorld(island.getWorld().getName() + "_the_end");
-                if (world == null) {
-                    return;
-                }
-                generateEndBlocks();
-                break;
+        case NETHER:
+            world = Bukkit.getWorld(island.getWorld().getName() + "_nether");
+            if (world == null) {
+                return;
+            }
+            loc = island.getCenter().toVector().toLocation(world);
+            break;
+        case THE_END:
+            world = Bukkit.getWorld(island.getWorld().getName() + "_the_end");
+            if (world == null) {
+                return;
+            }
+            loc = island.getCenter().toVector().toLocation(world);
+            break;
+        default:
+            break;
         }
+        islandSchems.get(type).paste(loc);
         // Do other stuff
+        // Handle signs - signs are attachable, so they are not there until 1 tick after pasting
+        if (playerUUID != null) {
+            Bukkit.getScheduler().runTaskLater(plugin, () -> islandSchems.get(type).getSigns().forEach(this::writeSign), 2L);
+        }
+        if (task != null) {
+            Bukkit.getScheduler().runTaskLater(plugin, task, 3L);
+        }
+    }
+
+    private void writeSign(Location loc, List<String> lines) {
+        Sign sign = (Sign) loc.getBlock().getState();
+        org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
+        lines.forEach(plugin::log);
+        // Handle spawn sign
+        if (!lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+            loc.getBlock().setType(Material.AIR);
+            // Orient to face same direction as sign
+            spawnPoint = new Location(loc.getWorld(), loc.getBlockX() + 0.5D, loc.getBlockY(),
+                    loc.getBlockZ() + 0.5D, Util.blockFaceToFloat(s.getFacing().getOppositeFace()), 30F);
+            return;
+        }
+        // Sub in player's name
+        for (int i = 0 ; i < lines.size(); i++) {
+            sign.setLine(i, lines.get(i).replace(TextVariables.NAME, playerName));
+        }
+        sign.update();
     }
 
     /**
-     * Creates the AcidIsland default island block by block
+     * @return the spawnPoint
      */
-    private void generateAcidIslandBlocks() {
-        // AcidIsland
-        // Build island layer by layer
-        // Start from the base
-        // half sandstone; half sand
-        int x = island.getCenter().getBlockX();
-        int z = island.getCenter().getBlockZ();
-        int islandHeight = island.getCenter().getBlockY();
-
-        int y = 0;
-        for (int x_space = x - 4; x_space <= x + 4; x_space++) {
-            for (int z_space = z - 4; z_space <= z + 4; z_space++) {
-                Block b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.BEDROCK);
-            }
-        }
-        for (y = 1; y < islandHeight + 5; y++) {
-            for (int x_space = x - 4; x_space <= x + 4; x_space++) {
-                for (int z_space = z - 4; z_space <= z + 4; z_space++) {
-                    Block b = world.getBlockAt(x_space, y, z_space);
-                    if (y < (islandHeight / 2)) {
-                        b.setType(Material.SANDSTONE);
-                    } else {
-                        b.setType(Material.SAND);
-                    }
-                }
-            }
-        }
-        // Then cut off the corners to make it round-ish
-        for (y = 0; y < islandHeight + 5; y++) {
-            for (int x_space = x - 4; x_space <= x + 4; x_space += 8) {
-                for (int z_space = z - 4; z_space <= z + 4; z_space += 8) {
-                    Block b = world.getBlockAt(x_space, y, z_space);
-                    b.setType(Material.STATIONARY_WATER);
-                }
-            }
-        }
-        // Add some grass
-        for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-                for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                    Block blockToChange = world.getBlockAt(x_space, y, z_space);
-                    blockToChange.setType(Material.GRASS);
-                }
-            }
-        }
-        // Place bedrock - MUST be there (ensures island are not
-        // overwritten
-        Block b = world.getBlockAt(x, islandHeight, z);
-        b.setType(Material.BEDROCK);
-        // Then add some more dirt in the classic shape
-        y = islandHeight + 3;
-        for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-            for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.DIRT);
-            }
-        }
-        b = world.getBlockAt(x - 3, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x + 3, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z - 3);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z + 3);
-        b.setType(Material.DIRT);
-        y = islandHeight + 2;
-        for (int x_space = x - 1; x_space <= x + 1; x_space++) {
-            for (int z_space = z - 1; z_space <= z + 1; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.DIRT);
-            }
-        }
-        b = world.getBlockAt(x - 2, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x + 2, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z - 2);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z + 2);
-        b.setType(Material.DIRT);
-        y = islandHeight + 1;
-        b = world.getBlockAt(x - 1, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x + 1, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z - 1);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z + 1);
-        b.setType(Material.DIRT);
-
-        // Add island items
-        y = islandHeight;
-        // Add tree (natural)
-        Location treeLoc = new Location(world, x, y + 5D, z);
-        world.generateTree(treeLoc, TreeType.ACACIA);
-
-        // Place a helpful sign in front of player
-        placeSign(x, islandHeight + 5, z + 3);
-        // Place the chest - no need to use the safe spawn function
-        // because we
-        // know what this island looks like
-        placeChest(x, islandHeight + 5, z + 1);
-    }
-
-    private void generateIslandBlocks() {
-        // Skyblock
-        // Build island layer by layer
-        // Start from the base
-        // half sandstone; half sand
-        int x = island.getCenter().getBlockX();
-        int z = island.getCenter().getBlockZ();
-        int islandHeight = island.getCenter().getBlockY();
-
-        World world = island.getCenter().getWorld();
-        int y;
-        // Add some grass
-        for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 3; x_space <= x + 3; x_space++) {
-                for (int z_space = z - 3; z_space <= z + 3; z_space++) {
-                    world.getBlockAt(x_space, y, z_space).setType(Material.GRASS);
-                }
-            }
-        }
-
-        // Then cut off the corners to make it round-ish
-        for (int x_space = x - 3; x_space <= x + 3; x_space += 6) {
-            for (int z_space = z - 3; z_space <= z + 3; z_space += 6) {
-                world.getBlockAt(x_space, y-1, z_space).setType(Material.AIR);
-            }
-        }
-        // Place bedrock - MUST be there (ensures island are not
-        // overwritten
-        Block b = world.getBlockAt(x, islandHeight, z);
-        b.setType(Material.BEDROCK);
-        // Then add some more dirt in the classic shape
-        y = islandHeight + 3;
-        for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-            for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.DIRT);
-            }
-        }
-        b = world.getBlockAt(x - 3, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x + 3, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z - 3);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z + 3);
-        b.setType(Material.DIRT);
-        y = islandHeight + 2;
-        for (int x_space = x - 1; x_space <= x + 1; x_space++) {
-            for (int z_space = z - 1; z_space <= z + 1; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.DIRT);
-            }
-        }
-        b = world.getBlockAt(x - 2, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x + 2, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z - 2);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z + 2);
-        b.setType(Material.DIRT);
-        y = islandHeight + 1;
-        b = world.getBlockAt(x - 1, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x + 1, y, z);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z - 1);
-        b.setType(Material.DIRT);
-        b = world.getBlockAt(x, y, z + 1);
-        b.setType(Material.DIRT);
-
-        // Add island items
-        y = islandHeight;
-        // Add tree (natural)
-        Location treeLoc = new Location(world, x, y + 5D, z);
-        world.generateTree(treeLoc, TreeType.TREE);
-
-        // Place a helpful sign in front of player
-        placeSign(x, islandHeight + 5, z + 3);
-        // Place the chest - no need to use the safe spawn function
-        // because we
-        // know what this island looks like
-        placeChest(x, islandHeight + 5, z + 1);
-    }
-
-    private void generateNetherBlocks() {
-        // Nether block
-        int x = island.getCenter().getBlockX();
-        int z = island.getCenter().getBlockZ();
-        int islandHeight = island.getCenter().getBlockY();
-
-        int y;
-        for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 3; x_space <= x + 3; x_space++) {
-                for (int z_space = z - 3; z_space <= z + 3; z_space++) {
-                    world.getBlockAt(x_space, y, z_space).setType(Material.NETHER_BRICK);
-                }
-            }
-        }
-        // Then cut off the corners to make it round-ish
-        for (int x_space = x - 3; x_space <= x + 3; x_space += 6) {
-            for (int z_space = z - 3; z_space <= z + 3; z_space += 6) {
-                world.getBlockAt(x_space, y-1, z_space).setType(Material.AIR);
-            }
-        }
-        // Place bedrock - MUST be there (ensures island are not
-        // overwritten
-        Block b = world.getBlockAt(x, islandHeight, z);
-        b.setType(Material.BEDROCK);
-        // Then add some more dirt in the classic shape
-        y = islandHeight + 3;
-        for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-            for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.NETHERRACK);
-            }
-        }
-        b = world.getBlockAt(x - 3, y, z);
-        b.setType(Material.SOUL_SAND);
-        b = world.getBlockAt(x + 3, y, z);
-        b.setType(Material.SOUL_SAND);
-        b = world.getBlockAt(x, y, z - 3);
-        b.setType(Material.SOUL_SAND);
-        b = world.getBlockAt(x, y, z + 3);
-        b.setType(Material.SOUL_SAND);
-        y = islandHeight + 2;
-        for (int x_space = x - 1; x_space <= x + 1; x_space++) {
-            for (int z_space = z - 1; z_space <= z + 1; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.GRAVEL);
-            }
-        }
-        b = world.getBlockAt(x - 2, y, z);
-        b.setType(Material.QUARTZ_ORE);
-        b = world.getBlockAt(x + 2, y, z);
-        b.setType(Material.QUARTZ_ORE);
-        b = world.getBlockAt(x, y, z - 2);
-        b.setType(Material.QUARTZ_ORE);
-        b = world.getBlockAt(x, y, z + 2);
-        b.setType(Material.QUARTZ_ORE);
-        y = islandHeight + 1;
-        b = world.getBlockAt(x - 1, y, z);
-        b.setType(Material.MAGMA);
-        b = world.getBlockAt(x + 1, y, z);
-        b.setType(Material.MAGMA);
-        b = world.getBlockAt(x, y, z - 1);
-        b.setType(Material.MAGMA);
-        b = world.getBlockAt(x, y, z + 1);
-        b.setType(Material.MAGMA);
-
-        // Place a helpful sign in front of player
-        placeSign(x, islandHeight + 5, z + 3);
-        // Place the chest - no need to use the safe spawn function
-        // because we know what this island looks like
-        placeChest(x, islandHeight + 5, z + 1);
-    }
-
-    private void generateEndBlocks() {
-        // Nether block
-        int x = island.getCenter().getBlockX();
-        int z = island.getCenter().getBlockZ();
-        int islandHeight = island.getCenter().getBlockY();
-
-        int y;
-        // Add some grass
-        for (y = islandHeight + 4; y < islandHeight + 5; y++) {
-            for (int x_space = x - 3; x_space <= x + 3; x_space++) {
-                for (int z_space = z - 3; z_space <= z + 3; z_space++) {
-                    world.getBlockAt(x_space, y, z_space).setType(Material.END_BRICKS);
-                }
-            }
-        }
-        // Then cut off the corners to make it round-ish
-        for (int x_space = x - 3; x_space <= x + 3; x_space += 6) {
-            for (int z_space = z - 3; z_space <= z + 3; z_space += 6) {
-                world.getBlockAt(x_space, y-1, z_space).setType(Material.AIR);
-            }
-        }
-        // Place bedrock - MUST be there (ensures island are not
-        // overwritten
-        Block b = world.getBlockAt(x, islandHeight, z);
-        b.setType(Material.BEDROCK);
-        // Then add some more dirt in the classic shape
-        y = islandHeight + 3;
-        for (int x_space = x - 2; x_space <= x + 2; x_space++) {
-            for (int z_space = z - 2; z_space <= z + 2; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.ENDER_STONE);
-            }
-        }
-        b = world.getBlockAt(x - 3, y, z);
-        b.setType(Material.OBSIDIAN);
-        b = world.getBlockAt(x + 3, y, z);
-        b.setType(Material.OBSIDIAN);
-        b = world.getBlockAt(x, y, z - 3);
-        b.setType(Material.OBSIDIAN);
-        b = world.getBlockAt(x, y, z + 3);
-        b.setType(Material.OBSIDIAN);
-        y = islandHeight + 2;
-        for (int x_space = x - 1; x_space <= x + 1; x_space++) {
-            for (int z_space = z - 1; z_space <= z + 1; z_space++) {
-                b = world.getBlockAt(x_space, y, z_space);
-                b.setType(Material.ENDER_STONE);
-            }
-        }
-        b = world.getBlockAt(x - 2, y, z);
-        b.setType(Material.ENDER_STONE);
-        b = world.getBlockAt(x + 2, y, z);
-        b.setType(Material.ENDER_STONE);
-        b = world.getBlockAt(x, y, z - 2);
-        b.setType(Material.ENDER_STONE);
-        b = world.getBlockAt(x, y, z + 2);
-        b.setType(Material.ENDER_STONE);
-        y = islandHeight + 1;
-        b = world.getBlockAt(x - 1, y, z);
-        b.setType(Material.ENDER_STONE);
-        b = world.getBlockAt(x + 1, y, z);
-        b.setType(Material.ENDER_STONE);
-        b = world.getBlockAt(x, y, z - 1);
-        b.setType(Material.ENDER_STONE);
-        b = world.getBlockAt(x, y, z + 1);
-        b.setType(Material.ENDER_STONE);
-
-        // Add island items
-        y = islandHeight;
-        // Spawn an ender crystal
-        world.spawnEntity(new Location(world, x, y + 5D, z), EntityType.ENDER_CRYSTAL);
-
-        // Place a helpful sign in front of player
-        placeSign(x, islandHeight + 5, z + 3);
-        // Place the chest - no need to use the safe spawn function
-        // because we know what this island looks like
-        placeChest(x, islandHeight + 5, z + 1);
-    }
-
-    private void placeSign(int x, int y, int z) {
-        Block blockToChange = world.getBlockAt(x, y, z);
-        blockToChange.setType(Material.SIGN_POST);
-        if (playerUUID != null) {
-            Sign sign = (Sign) blockToChange.getState();
-            User user = User.getInstance(playerUUID);
-
-            // Sets the lines of the sign
-            sign.setLine(0, user.getTranslation("new-island.sign.line0", TextVariables.NAME, playerName));
-            sign.setLine(1, user.getTranslation("new-island.sign.line1", TextVariables.NAME, playerName));
-            sign.setLine(2, user.getTranslation("new-island.sign.line2", TextVariables.NAME, playerName));
-            sign.setLine(3, user.getTranslation("new-island.sign.line3", TextVariables.NAME, playerName));
-
-            ((org.bukkit.material.Sign) sign.getData()).setFacingDirection(BlockFace.NORTH);
-            sign.update();
-        }
-    }
-
-    private void placeChest(int x, int y, int z) {
-        // Fill the chest and orient it correctly
-        Block blockToChange = world.getBlockAt(x, y, z);
-        blockToChange.setType(Material.CHEST);
-        BlockState state = blockToChange.getState();
-        Chest chest = new Chest(BlockFace.SOUTH);
-        state.setData(chest);
-        state.update();
-        if (!chestItems.isEmpty()) {
-            InventoryHolder chestBlock = (InventoryHolder) state;
-            for (ItemStack item: chestItems) {
-                chestBlock.getInventory().addItem(item);
-            }
-        }
+    public Optional<Location> getSpawnPoint() {
+        return Optional.ofNullable(spawnPoint);
     }
 }
 

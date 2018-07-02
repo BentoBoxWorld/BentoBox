@@ -348,6 +348,7 @@ public class IslandsManager {
     public Location getSafeHomeLocation(World world, User user, int number) {
         // Try the numbered home location first
         Location l = plugin.getPlayers().getHomeLocation(world, user, number);
+
         if (l == null) {
             // Get the default home, which may be null too, but that's okay
             number = 1;
@@ -433,7 +434,7 @@ public class IslandsManager {
      * @return the spawnPoint or null if spawn does not exist
      */
     public Location getSpawnPoint(World world) {
-        return spawn.containsKey(world) ? spawn.get(world).getSpawnPoint() : null;
+        return spawn.containsKey(world) ? spawn.get(world).getSpawnPoint(world.getEnvironment()) : null;
     }
 
     /**
@@ -480,7 +481,7 @@ public class IslandsManager {
     /**
      * Teleport player to a home location. If one cannot be found a search is done to
      * find a safe place.
-     * 
+     *
      * @param world - world to check
      * @param player - the player
      * @param number - a number - home location to do to
@@ -504,7 +505,7 @@ public class IslandsManager {
     /**
      * Teleport player to a home location. If one cannot be found a search is done to
      * find a safe place.
-     * 
+     *
      * @param world - world to check
      * @param player - the player
      * @param number - a number - home location to do to
@@ -548,7 +549,7 @@ public class IslandsManager {
         // If this is a new island, then run commands and do resets
         if (newIsland) {
             // TODO add command running
-            
+
             // Remove money inventory etc.
             if (plugin.getIWM().isOnJoinResetEnderChest(world)) {
                 user.getPlayer().getEnderChest().clear();
@@ -723,7 +724,7 @@ public class IslandsManager {
                     // Move player to spawn
                     if (spawn.containsKey(island.getWorld())) {
                         // go to island spawn
-                        player.teleport(spawn.get(island.getWorld()).getSpawnPoint());
+                        player.teleport(spawn.get(island.getWorld()).getSpawnPoint(island.getWorld().getEnvironment()));
                     } else {
                         if (!player.performCommand(Constants.SPAWNCOMMAND)) {
                             plugin.logWarning("During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");

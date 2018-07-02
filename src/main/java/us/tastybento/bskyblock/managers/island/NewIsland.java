@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.events.IslandBaseEvent;
@@ -11,7 +12,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.island.builders.IslandBuilderNew;
+import us.tastybento.bskyblock.island.builders.IslandBuilder;
 
 /**
  * Create and paste a new island
@@ -117,40 +118,67 @@ public class NewIsland {
                 .island(island)
                 .location(island.getCenter())
                 .build();
-        if (!event.isCancelled()) {
-            // Create island
-            IslandBuilderNew ib = new IslandBuilderNew(plugin, island)
-                    .setPlayer(user.getPlayer())
-                    .setChestItems(plugin.getSettings().getChestItems())
-                    .setType(IslandBuilderNew.IslandType.ISLAND);
-            ib.build();
-            if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
-                ib.setType(IslandBuilderNew.IslandType.NETHER).build();
-            }
-            if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
-                ib.setType(IslandBuilderNew.IslandType.END).build();
-            }
-            // Teleport player to their island
-            plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
-            // Fire exit event
-            Reason reasonDone = Reason.CREATED;
-            switch (reason) {
-            case CREATE:
-                reasonDone = Reason.CREATED;
-                break;
-            case RESET:
-                reasonDone = Reason.RESETTED;
-                break;
-            default:
-                break;
-            }
-            IslandEvent.builder()
-            .involvedPlayer(user.getUniqueId())
-            .reason(reasonDone)
-            .island(island)
-            .location(island.getCenter())
-            .build();
+        if (event.isCancelled()) {
+            return;
         }
+        // Create island
+        IslandBuilder ib = new IslandBuilder(plugin, island)
+                .setPlayer(user.getPlayer())
+                .setType(Environment.NORMAL);
+        ib.run(() -> {
+            // Set initial spawn point if one exists
+            ib.getSpawnPoint().ifPresent(l -> {
+                plugin.getPlayers().setHomeLocation(user, l, 1);
+                island.setSpawnPoint(Environment.NORMAL, l);
+            });
+            // Teleport player after this island is built
+            plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
+        });
+        // Build it
+        ib.build();
+
+        // Make nether island
+        if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
+            IslandBuilder ib_nether = new IslandBuilder(plugin, island)
+                    .setPlayer(user.getPlayer())
+                    .setType(Environment.NETHER);
+            ib_nether.run(() -> ib_nether.getSpawnPoint().ifPresent(l -> island.setSpawnPoint(Environment.NETHER, l)));
+            // Build it
+            ib_nether.build();
+        }
+
+        // Make end island
+        if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
+            IslandBuilder ib_end = new IslandBuilder(plugin, island)
+                    .setPlayer(user.getPlayer())
+                    .setType(Environment.THE_END);
+            ib_end.run(() -> {
+                // Set initial spawn point if one exists
+                ib_end.getSpawnPoint().ifPresent(l -> island.setSpawnPoint(Environment.NETHER, l));
+            });
+            // Build it
+            ib_end.build();
+        }
+
+        // Fire exit event
+        Reason reasonDone = Reason.CREATED;
+        switch (reason) {
+        case CREATE:
+            reasonDone = Reason.CREATED;
+            break;
+        case RESET:
+            reasonDone = Reason.RESETTED;
+            break;
+        default:
+            break;
+        }
+        IslandEvent.builder()
+        .involvedPlayer(user.getUniqueId())
+        .reason(reasonDone)
+        .island(island)
+        .location(island.getCenter())
+        .build();
+
     }
 
     /**
