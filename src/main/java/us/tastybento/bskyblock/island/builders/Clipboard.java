@@ -179,10 +179,6 @@ public class Clipboard {
                         maxZ = Math.max(maxZ, z);
                         count ++;
                     }
-                    if (block.getType().equals(Material.BEDROCK)) {
-                        plugin.log("DEBUG: setting bedrock to " + x + "," + y + "," + z);
-                        blockConfig.set("bedrock", x + "," + y + "," + z);
-                    }
                 }
             }
         }
@@ -230,7 +226,7 @@ public class Clipboard {
         Sign sign = (Sign) block.getState();
         org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
         // Handle spawn sign
-        if (!lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+        if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
             block.setType(Material.AIR);
             // Orient to face same direction as sign
             Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
@@ -238,15 +234,13 @@ public class Clipboard {
             island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
             return;
         }
+        String name = TextVariables.NAME;
+        if (island != null) {
+            name = plugin.getPlayers().getName(island.getOwner());
+        }
         // Sub in player's name
         for (int i = 0 ; i < lines.size(); i++) {
-            sign.setLine(i, lines
-                    .get(i)
-                    .replace(TextVariables.NAME,
-                            plugin
-                            .getPlayers()
-                            .getName(island
-                                    .getOwner())));
+            sign.setLine(i, lines.get(i).replace(TextVariables.NAME, name));
         }
         sign.update();
     }
@@ -473,6 +467,9 @@ public class Clipboard {
         s.set("type", block.getType().toString());
         if (block.getData() != 0) {
             s.set("data", block.getData());
+        }
+        if (block.getType().equals(Material.BEDROCK)) {
+            blockConfig.set("bedrock", x + "," + y + "," + z);
         }
 
         // Block state
