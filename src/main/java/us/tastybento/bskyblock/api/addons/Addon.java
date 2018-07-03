@@ -282,4 +282,16 @@ public abstract class Addon implements AddonInterface {
     public Optional<Addon> getAddonByName(String name) {
         return getBSkyBlock().getAddonsManager().getAddonByName(name);
     }
+
+    public void log(String string) {
+        getBSkyBlock().log(string);
+    }
+
+    public void logWarning(String string) {
+        getBSkyBlock().logWarning(string);
+    }
+
+    public void logError(String string) {
+        getBSkyBlock().logError(string);
+    }
 }

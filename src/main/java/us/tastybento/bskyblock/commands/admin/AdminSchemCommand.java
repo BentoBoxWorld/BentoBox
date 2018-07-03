@@ -21,6 +21,7 @@ public class AdminSchemCommand extends CompositeCommand {
         super(parent, "schem");
     }
 
+    @Override
     public void setup() {
         setPermission("admin.schem");
         setParameters("commands.admin.schem.parameters");
@@ -29,13 +30,14 @@ public class AdminSchemCommand extends CompositeCommand {
         clipboards = new HashMap<>();
     }
 
+    @Override
     @SuppressWarnings("deprecation")
     public boolean execute(User user, List<String> args) {
         if (args.isEmpty()) {
             showHelp(this, user);
             return false;
         }
-        Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin()));
+        Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), getPlugin().getDataFolder()));
 
         if (args.get(0).equalsIgnoreCase("paste")) {
             if (cb.isFull()) {
@@ -71,7 +73,7 @@ public class AdminSchemCommand extends CompositeCommand {
             if (b != null) {
                 cb.setOrigin(b.getLocation());
                 user.getPlayer().sendBlockChange(b.getLocation(), Material.STAINED_GLASS,(byte)14);
-                Bukkit.getScheduler().runTaskLater(getPlugin(), 
+                Bukkit.getScheduler().runTaskLater(getPlugin(),
                         () -> user.getPlayer().sendBlockChange(b.getLocation(), b.getType(), b.getData()), 20L);
 
                 user.sendMessage("general.success");

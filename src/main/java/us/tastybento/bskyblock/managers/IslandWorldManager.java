@@ -1,8 +1,10 @@
 package us.tastybento.bskyblock.managers;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -16,6 +18,7 @@ import org.bukkit.WorldType;
 import org.bukkit.entity.EntityType;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
@@ -495,47 +498,64 @@ public class IslandWorldManager {
     public Set<EntityType> getRemoveMobsWhitelist(World world) {
         return worldSettings.get(Util.getWorld(world)).getRemoveMobsWhitelist();
     }
-    
+
     /**
      * @return the onJoinResetMoney
      */
     public boolean isOnJoinResetMoney(World world) {
         return worldSettings.get(Util.getWorld(world)).isOnJoinResetMoney();
     }
-    
+
     /**
      * @return the onJoinResetInventory
      */
     public boolean isOnJoinResetInventory(World world) {
         return worldSettings.get(Util.getWorld(world)).isOnJoinResetInventory();
     }
-    
+
     /**
      * @return the onJoinResetEnderChest
      */
     public boolean isOnJoinResetEnderChest(World world) {
         return worldSettings.get(Util.getWorld(world)).isOnJoinResetEnderChest();
     }
-    
+
     /**
      * @return the onLeaveResetMoney
      */
     public boolean isOnLeaveResetMoney(World world) {
         return worldSettings.get(Util.getWorld(world)).isOnLeaveResetMoney();
     }
-    
+
     /**
      * @return the onLeaveResetInventory
      */
     public boolean isOnLeaveResetInventory(World world) {
         return worldSettings.get(Util.getWorld(world)).isOnLeaveResetInventory();
     }
-    
+
     /**
      * @return the onLeaveResetEnderChest
      */
     public boolean isOnLeaveResetEnderChest(World world) {
         return worldSettings.get(Util.getWorld(world)).isOnLeaveResetEnderChest();
+    }
+
+    /**
+     * The data folder for the addon that registered this world, or the plugin's data folder if none found
+     * @return
+     */
+    public File getDataFolder(World world) {
+        return worldSettings.get(Util.getWorld(world)).getAddon().map(Addon::getDataFolder).orElse(plugin.getDataFolder());
+    }
+
+    /**
+     * Get the addon associated with this world set
+     * @param world - world
+     * @return Addon, or empty
+     */
+    public Optional<Addon> getAddon(World world) {
+        return worldSettings.get(Util.getWorld(world)).getAddon();
     }
 
 }

@@ -10,18 +10,18 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Nameable;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
@@ -34,10 +34,14 @@ import org.bukkit.block.banner.PatternType;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Entity;
+import org.bukkit.entity.AbstractHorse;
+import org.bukkit.entity.Ageable;
+import org.bukkit.entity.ChestedHorse;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Horse;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
@@ -55,6 +59,8 @@ import org.bukkit.util.Vector;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.util.Util;
 
 public class Clipboard {
 
@@ -84,19 +90,17 @@ public class Clipboard {
     private BSkyBlock plugin;
     private boolean copied;
 
-    // Pasted items
-    private Map<Location, List<String>> signs = new HashMap<>();
-
     private File schemFolder;
 
-    public Clipboard(BSkyBlock plugin) {
+    public Clipboard(BSkyBlock plugin, File schemFolder) {
         super();
         this.plugin = plugin;
-        schemFolder = new File(plugin.getDataFolder(), "schems");
         if (!schemFolder.exists()) {
             schemFolder.mkdirs();
         }
+        this.schemFolder = schemFolder;
     }
+
     /**
      * @return the pos1
      */
@@ -187,31 +191,64 @@ public class Clipboard {
     }
 
     /**
-     * Pastes the clipboard to location
-     * @param location - location to paste
+     * Pastes the clipboard to island location
+     * @param world - world in which to paste
+     * @param island - location to paste
+     * @param task - task to run after pasting
      */
-    public void paste(Location location) {
-        signs.clear();
-        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+    public void paste(World world, Island island, Runnable task) {
+        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, island.getCenter(), blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        if (task != null) {
+            Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
+        }
     }
 
-    private void pasteBlock(Location location, ConfigurationSection config) {
+    /**
+     * Paste clipboard at this location
+     * @param location
+     */
+    public void paste(Location location) {
+        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+
+    }
+
+    private void writeSign(Island island, Block block, List<String> lines) {
+        Sign sign = (Sign) block.getState();
+        org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
+        // Handle spawn sign
+        if (!lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
+            block.setType(Material.AIR);
+            // Orient to face same direction as sign
+            Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
+                    block.getZ() + 0.5D, Util.blockFaceToFloat(s.getFacing().getOppositeFace()), 30F);
+            island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
+            return;
+        }
+        // Sub in player's name
+        for (int i = 0 ; i < lines.size(); i++) {
+            sign.setLine(i, lines.get(i).replace(TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
+        }
+        sign.update();
+    }
+
+
+    private void pasteBlock(World world, Island island, Location location, ConfigurationSection config) {
         String[] pos = config.getName().split(",");
         int x = location.getBlockX() + Integer.valueOf(pos[0]);
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
         // Default type is air
         Material material = Material.getMaterial(config.getString("type", "AIR"));
-        Block block = location.getWorld().getBlockAt(x, y, z);
+        Block block = world.getBlockAt(x, y, z);
         if (config.getBoolean(ATTACHED)) {
-            plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(block, config, material));
+            plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, material));
         } else {
-            setBlock(block, config, material);
+            setBlock(island, block, config, material);
         }
     }
 
     @SuppressWarnings("deprecation")
-    private void setBlock(Block block, ConfigurationSection config, Material material) {
+    private void setBlock(Island island, Block block, ConfigurationSection config, Material material) {
         // Block state
 
         if (config.getBoolean(ATTACHED) && material.toString().contains("TORCH")) {
@@ -270,17 +307,12 @@ public class Clipboard {
         }
 
         // Block data
+        // Signs
         if (bs instanceof Sign) {
-            Sign sign = (Sign)bs;
             List<String> lines = config.getStringList("lines");
-            for (int i =0 ; i < lines.size(); i++) {
-                sign.setLine(i, lines.get(i));
-            }
-            sign.update();
-            // Log the sign
-            signs.put(block.getLocation(), lines);
-
+            writeSign(island, block, lines);
         }
+        // Banners
         if (bs instanceof Banner) {
             Banner banner = (Banner)bs;
             DyeColor baseColor = DyeColor.valueOf(config.getString("baseColor", "RED"));
@@ -296,6 +328,7 @@ public class Clipboard {
             }
             bs.update(true, false);
         }
+        // Mob spawners
         if (bs instanceof CreatureSpawner) {
             CreatureSpawner spawner = ((CreatureSpawner) bs);
             spawner.setSpawnedType(EntityType.valueOf(config.getString("spawnedType", "PIG")));
@@ -308,7 +341,7 @@ public class Clipboard {
             spawner.setSpawnRange(config.getInt("spawnRange", 4));
             bs.update(true, false);
         }
-
+        // Chests, in general
         if (bs instanceof InventoryHolder) {
             bs.update(true, false);
             Inventory ih = ((InventoryHolder)bs).getInventory();
@@ -318,18 +351,50 @@ public class Clipboard {
 
         // Entities
         if (config.isConfigurationSection("entity")) {
-            ConfigurationSection e = config.getConfigurationSection("entity");
-            e.getKeys(false).forEach(k -> {
+            ConfigurationSection en = config.getConfigurationSection("entity");
+            en.getKeys(false).forEach(k -> {
+                ConfigurationSection ent = en.getConfigurationSection(k);
                 Location center = block.getLocation().add(new Vector(0.5, 0.0, 0.5));
-                LivingEntity ent = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(e.getString(k + ".type", "PIG")));
-                ent.setCustomName(e.getString(k + ".name"));
+                LivingEntity e = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
+                if (e instanceof Nameable) {
+                    e.setCustomName(ent.getString("name"));
+                }
+                if (e instanceof Colorable) {
+                    if (ent.contains("color")) {
+                        ((Colorable) e).setColor(DyeColor.valueOf(ent.getString("color")));
+                    }
+                }
+                if (e instanceof Tameable) {
+                    ((Tameable)e).setTamed(ent.getBoolean("tamed"));
+                }
+                if (e instanceof ChestedHorse) {
+                    ((ChestedHorse)e).setCarryingChest(ent.getBoolean("chest"));
+                }
+                if (e instanceof Ageable) {
+                    if (ent.getBoolean("adult")) {
+                        ((Ageable)e).setAdult();
+                    } else {
+                        ((Ageable)e).setBaby();
+                    }
+                }
+                if (e instanceof AbstractHorse) {
+                    AbstractHorse horse = (AbstractHorse)e;
+                    horse.setDomestication(ent.getInt("domestication"));
+                    ConfigurationSection inv = ent.getConfigurationSection("inventory");
+                    inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+                }
+
+                if (e instanceof AbstractHorse) {
+                    Horse horse = (Horse)e;
+                    horse.setStyle(Horse.Style.valueOf(ent.getString("style", "NONE")));
+                }
             });
         }
 
     }
 
     @SuppressWarnings("deprecation")
-    private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<Entity> entities) {
+    private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
         if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
         }
@@ -343,9 +408,40 @@ public class Clipboard {
         ConfigurationSection s = blockConfig.createSection(BLOCK + "." + pos);
 
         // Set entities
-        for (Entity e: entities) {
-            s.set("entity." + e.getUniqueId() + ".type", e.getType().name());
-            s.set("entity." + e.getUniqueId() + ".name", e.getCustomName());
+        for (LivingEntity e: entities) {
+            ConfigurationSection en = s.createSection("entity." + e.getUniqueId());
+            en.set("type", e.getType().name());
+            if (e instanceof Nameable) {
+                en.set("name", e.getCustomName());
+            }
+            if (e instanceof Colorable) {
+                Colorable c = (Colorable)e;
+                en.set("color", c.getColor().name());
+            }
+            if (e instanceof Tameable && ((Tameable)e).isTamed()) {
+                en.set("tamed", true);
+            }
+            if (e instanceof ChestedHorse && ((ChestedHorse)e).isCarryingChest()) {
+                en.set("chest", true);
+            }
+            if (e instanceof Ageable) {
+                en.set("adult", ((Ageable)e).isAdult());
+            }
+            if (e instanceof AbstractHorse) {
+                AbstractHorse horse = (AbstractHorse)e;
+                en.set("domestication", horse.getDomestication());
+                for (int index = 0; index < horse.getInventory().getSize(); index++) {
+                    ItemStack i = horse.getInventory().getItem(index);
+                    if (i != null) {
+                        en.set("inventory." + index, i);
+                    }
+                }
+            }
+
+            if (e instanceof Horse) {
+                Horse horse = (Horse)e;
+                en.set("style", horse.getStyle().name());
+            }
         }
 
         // Return if this is just air block
@@ -438,13 +534,6 @@ public class Clipboard {
         return blockConfig;
     }
 
-    /**
-     * @return the signs
-     */
-    public Map<Location, List<String>> getSigns() {
-        plugin.log("DEBUG: signs " + signs.size());
-        return signs;
-    }
     private void unzip(final String zipFilePath) throws IOException {
         Path path = Paths.get(zipFilePath);
         if (!(path.toFile().exists())) {
@@ -574,4 +663,6 @@ public class Clipboard {
         user.sendMessage("general.success");
         return true;
     }
+
+
 }

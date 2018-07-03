@@ -122,42 +122,24 @@ public class NewIsland {
             return;
         }
         // Create island
-        IslandBuilder ib = new IslandBuilder(plugin, island)
-                .setPlayer(user.getPlayer())
-                .setType(Environment.NORMAL);
-        ib.run(() -> {
+        new IslandBuilder(plugin, island).setType(Environment.NORMAL).run(() -> {
             // Set initial spawn point if one exists
-            ib.getSpawnPoint().ifPresent(l -> {
-                plugin.getPlayers().setHomeLocation(user, l, 1);
-                island.setSpawnPoint(Environment.NORMAL, l);
-            });
+            if (island.getSpawnPoint(Environment.NORMAL) != null) {
+                plugin.log("DEBUG: spawn point = " + island.getSpawnPoint(Environment.NORMAL));
+                plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
+            }
             // Teleport player after this island is built
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
-        });
-        // Build it
-        ib.build();
+        }).build();
 
         // Make nether island
         if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
-            IslandBuilder ib_nether = new IslandBuilder(plugin, island)
-                    .setPlayer(user.getPlayer())
-                    .setType(Environment.NETHER);
-            ib_nether.run(() -> ib_nether.getSpawnPoint().ifPresent(l -> island.setSpawnPoint(Environment.NETHER, l)));
-            // Build it
-            ib_nether.build();
+            new IslandBuilder(plugin, island).setType(Environment.NETHER).build();
         }
 
         // Make end island
         if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
-            IslandBuilder ib_end = new IslandBuilder(plugin, island)
-                    .setPlayer(user.getPlayer())
-                    .setType(Environment.THE_END);
-            ib_end.run(() -> {
-                // Set initial spawn point if one exists
-                ib_end.getSpawnPoint().ifPresent(l -> island.setSpawnPoint(Environment.NETHER, l));
-            });
-            // Build it
-            ib_end.build();
+            new IslandBuilder(plugin, island).setType(Environment.THE_END).build();
         }
 
         // Fire exit event
