@@ -658,11 +658,11 @@ public class Clipboard {
     /**
      * Save the clipboard to a file
      * @param user - user who is copying
-     * @param string - filename
+     * @param newFile - filename
      * @return - true if successful, false if error
      */
-    public boolean save(User user, String string) {
-        File file = new File(schemFolder, string);
+    public boolean save(User user, String newFile) {
+        File file = new File(schemFolder, newFile);
         try {
             getBlockConfig().save(file);
         } catch (IOException e) {

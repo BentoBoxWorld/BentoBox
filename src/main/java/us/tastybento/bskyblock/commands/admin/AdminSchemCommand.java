@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.commands.admin;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -37,7 +38,10 @@ public class AdminSchemCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), getPlugin().getDataFolder()));
+        File schemFolder = new File(getIWM().getDataFolder(getWorld()), "schems");
+        getPlugin().log("DEBUG: schemFolder = " + schemFolder.getAbsolutePath());
+        getPlugin().log(getIWM().getAddon(getWorld()).map(a -> "Addon = " + a.toString() + " data folder = " + a.getDataFolder().getAbsolutePath()).orElse("Not addon"));
+        Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), schemFolder));
 
         if (args.get(0).equalsIgnoreCase("paste")) {
             if (cb.isFull()) {
@@ -92,7 +96,15 @@ public class AdminSchemCommand extends CompositeCommand {
         if (args.get(0).equalsIgnoreCase("save")) {
             if (cb.isFull()) {
                 if (args.size() == 2) {
-                    return cb.save(user, args.get(1));
+                    // Check if file exists
+                    File newFile = new File(schemFolder, args.get(1) + ".schem");
+                    if (newFile.exists()) {
+                        user.sendMessage("commands.admin.schem.file-exists");
+                        this.askConfirmation(user, () -> cb.save(user, args.get(1)));
+                        return false;
+                    } else {
+                        return cb.save(user, args.get(1));
+                    }
                 } else {
                     showHelp(this, user);
                     return false;
