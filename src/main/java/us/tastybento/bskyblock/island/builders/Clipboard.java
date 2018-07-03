@@ -179,6 +179,10 @@ public class Clipboard {
                         maxZ = Math.max(maxZ, z);
                         count ++;
                     }
+                    if (block.getType().equals(Material.BEDROCK)) {
+                        plugin.log("DEBUG: setting bedrock to " + x + "," + y + "," + z);
+                        blockConfig.set("bedrock", x + "," + y + "," + z);
+                    }
                 }
             }
         }
@@ -197,7 +201,17 @@ public class Clipboard {
      * @param task - task to run after pasting
      */
     public void paste(World world, Island island, Runnable task) {
-        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, island.getCenter(), blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        // Offset due to bedrock
+        Vector off = new Vector(0,0,0);
+        if (blockConfig.contains("bedrock")) {
+            String[] offset = blockConfig.getString("bedrock").split(",");
+            off = new Vector(Integer.valueOf(offset[0]), Integer.valueOf(offset[1]), Integer.valueOf(offset[2]));
+        }
+        // Calculate location for pasting
+        Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
+        // Paste
+        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        // Run follow on task if it exists
         if (task != null) {
             Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
         }
@@ -226,7 +240,13 @@ public class Clipboard {
         }
         // Sub in player's name
         for (int i = 0 ; i < lines.size(); i++) {
-            sign.setLine(i, lines.get(i).replace(TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
+            sign.setLine(i, lines
+                    .get(i)
+                    .replace(TextVariables.NAME,
+                            plugin
+                            .getPlayers()
+                            .getName(island
+                                    .getOwner())));
         }
         sign.update();
     }

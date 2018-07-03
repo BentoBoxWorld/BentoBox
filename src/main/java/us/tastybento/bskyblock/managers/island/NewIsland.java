@@ -12,7 +12,6 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.island.builders.IslandBuilder;
 
 /**
  * Create and paste a new island
@@ -122,24 +121,23 @@ public class NewIsland {
             return;
         }
         // Create island
-        new IslandBuilder(plugin, island).setType(Environment.NORMAL).run(() -> {
+        plugin.getSchemsManager().paste(world, island, () -> {
             // Set initial spawn point if one exists
             if (island.getSpawnPoint(Environment.NORMAL) != null) {
-                plugin.log("DEBUG: spawn point = " + island.getSpawnPoint(Environment.NORMAL));
                 plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
             }
             // Teleport player after this island is built
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
-        }).build();
+        });
 
         // Make nether island
         if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
-            new IslandBuilder(plugin, island).setType(Environment.NETHER).build();
+            plugin.getSchemsManager().paste(plugin.getIWM().getNetherWorld(world), island);
         }
 
         // Make end island
         if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
-            new IslandBuilder(plugin, island).setType(Environment.THE_END).build();
+            plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island);
         }
 
         // Fire exit event

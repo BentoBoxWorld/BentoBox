@@ -28,18 +28,17 @@ public class SchemsManager {
     }
 
     private void copySchems(File schems, World world, String name) {
-        if (!schems.exists()) {
-            if (!schems.mkdirs()) {
-                plugin.logError("Could not make schems folder!");
-            } else {
-                Optional<Addon> addon = plugin.getIWM().getAddon(world);
-                addon.ifPresent(a -> a.saveResource("schems/" + name, false));
-                if (!addon.isPresent()) {
-                    plugin.saveResource("schems/" + name, false);
-                }
-            }
-        }
+        if (!schems.exists() && !schems.mkdirs()) {
+            plugin.logError("Could not make schems folder!");
+            return;
 
+        }
+        Optional<Addon> addon = plugin.getIWM().getAddon(world);
+        if (addon.isPresent()) {
+            addon.get().saveResource("schems/" + name + ".schem", false);
+        } else {
+            plugin.saveResource("schems/" + name + ".schem", false);
+        }
     }
 
     public Clipboard get(World world) {
@@ -100,6 +99,16 @@ public class SchemsManager {
         if (islandSchems.containsKey(world)) {
             islandSchems.get(world).paste(world, island, task);
         }
+    }
+
+    /**
+     * Paste the schem to world for island
+     * @param world
+     * @param island
+     */
+    public void paste(World world, Island island) {
+        paste(world, island, null);
+
     }
 
 }
