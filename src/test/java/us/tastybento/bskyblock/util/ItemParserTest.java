@@ -9,6 +9,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemFactory;
@@ -16,6 +17,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.PotionMeta;
 import org.bukkit.inventory.meta.SpawnEggMeta;
+import org.bukkit.material.MaterialData;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 import org.junit.Before;
@@ -183,7 +185,7 @@ public class ItemParserTest {
                         assertEquals(3, result.getAmount());
                     }
                 }
-            }            
+            }
         }
     }
 
@@ -193,27 +195,37 @@ public class ItemParserTest {
         assertEquals(Material.TIPPED_ARROW, result.getType());
     }
 
-    
+
     @Test
     public void testParseBannerSimple() {
         ItemStack result = ItemParser.parse("BANNER:2");
         assertEquals(Material.BANNER, result.getType());
         assertEquals(2, result.getAmount());
     }
-    
+
+    @SuppressWarnings("deprecation")
     @Test
     public void testParseBannerThreeArgs() {
         // Germany
         ItemStack result = ItemParser.parse("BANNER:1:RED");
         assertEquals(Material.BANNER, result.getType());
         assertEquals(1, result.getAmount());
+        assertEquals(new MaterialData(Material.BANNER, DyeColor.RED.getDyeData()), result.getData());
     }
-    
+
     @Test
     public void testParseBanner() {
         // Germany - two patterns
         ItemParser.parse("BANNER:1:RED:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW");
         Mockito.verify(bannerMeta, Mockito.times(2)).addPattern(Mockito.any());
+    }
+
+    @Test
+    public void testParseBannerTooManyColons() {
+        ItemStack result = ItemParser.parse("BANNER:1::::::::::::::");
+        Mockito.verify(bannerMeta, Mockito.never()).addPattern(Mockito.any());
+        assertEquals(Material.BANNER, result.getType());
+        assertEquals(1, result.getAmount());
     }
 
     @Test
