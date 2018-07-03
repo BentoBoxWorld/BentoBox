@@ -31,8 +31,8 @@ public class SchemsManager {
         if (!schems.exists() && !schems.mkdirs()) {
             plugin.logError("Could not make schems folder!");
             return;
-
         }
+
         Optional<Addon> addon = plugin.getIWM().getAddon(world);
         if (addon.isPresent()) {
             addon.get().saveResource("schems/" + name + ".schem", false);

@@ -63,6 +63,9 @@ public class BSkyBlock extends JavaPlugin {
 
     @Override
     public void onEnable(){
+        // Store the current millis time so we can tell how many ms it took for BSB to fully load.
+        final long startMillis = System.currentTimeMillis();
+
         // Save the default config from config.yml
         saveDefaultConfig();
         setInstance(this);
@@ -116,7 +119,6 @@ public class BSkyBlock extends JavaPlugin {
             // Enable addons
             addonsManager.enableAddons();
 
-
             getServer().getScheduler().runTask(instance, () -> {
                 // Load Flags
                 flagsManager = new FlagsManager(instance);
@@ -128,7 +130,6 @@ public class BSkyBlock extends JavaPlugin {
                 islandsManager.load();
 
                 // Save islands & players data asynchronously every X minutes
-
                 instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                     playersManager.save(true);
                     islandsManager.save(true);
@@ -136,6 +137,7 @@ public class BSkyBlock extends JavaPlugin {
 
                 instance.log("#############################################");
                 instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
+                instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
                 instance.log("Thanks for using our plugin !");
                 instance.log("- Tastybento and Poslovitch, 2017-2018");
                 instance.log("#############################################");
