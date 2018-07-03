@@ -147,10 +147,10 @@ public class ItemParser {
 
                 return result;
             } else {
-                return new ItemStack(Material.BANNER, 1); // Return a blank banner
+                return null;
             }
         } catch (Exception e) {
-            return new ItemStack(Material.BANNER, 1); // Return a blank banner
+            return null;
         }
     }
 }
