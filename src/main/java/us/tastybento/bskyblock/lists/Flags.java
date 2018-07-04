@@ -9,6 +9,8 @@ import org.bukkit.Material;
 
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
+import us.tastybento.bskyblock.api.flags.clicklisteners.IslandToggleClickListener;
+import us.tastybento.bskyblock.api.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.listeners.flags.BlockInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
@@ -34,8 +36,6 @@ import us.tastybento.bskyblock.listeners.flags.PortalListener;
 import us.tastybento.bskyblock.listeners.flags.RemoveMobsListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
-import us.tastybento.bskyblock.listeners.flags.clicklisteners.IslandToggleClickListener;
-import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.managers.RanksManager;
 
 public class Flags {

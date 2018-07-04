@@ -7,6 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
+import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**

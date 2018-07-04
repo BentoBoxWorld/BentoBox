@@ -20,6 +20,7 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
+import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;

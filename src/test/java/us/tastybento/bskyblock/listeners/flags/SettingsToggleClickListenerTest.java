@@ -20,10 +20,10 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
+import us.tastybento.bskyblock.api.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.listeners.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.util.Util;

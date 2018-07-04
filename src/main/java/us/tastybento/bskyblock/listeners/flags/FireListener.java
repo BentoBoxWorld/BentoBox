@@ -16,6 +16,7 @@ import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 
+import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;

@@ -5,6 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**

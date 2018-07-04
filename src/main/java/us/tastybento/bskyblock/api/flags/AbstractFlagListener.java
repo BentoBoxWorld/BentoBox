@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.listeners.flags;
+package us.tastybento.bskyblock.api.flags;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
@@ -10,8 +10,6 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
@@ -131,7 +129,7 @@ public abstract class AbstractFlagListener implements Listener {
         // Get the island and if present
         Optional<Island> island = getIslands().getProtectedIslandAt(loc);
         // Handle Settings Flag
-        if (flag.getType().equals(Type.SETTING)) {
+        if (flag.getType().equals(Flag.Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
             return island.map(x -> x.isAllowed(flag)).orElse(flag.isSetForWorld(loc.getWorld()));
         }
@@ -144,6 +142,12 @@ public abstract class AbstractFlagListener implements Listener {
         if (user == null && !createEventUser(e)) {
             plugin.logError("Check island had no associated user! " + e.getEventName());
             return false;
+        }
+
+        // Ops or bypass mods can do anything
+        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassprotect")) {
+            user = null;
+            return true;
         }
 
         // Check if the plugin is set in User (required for testing)
@@ -187,7 +191,7 @@ public abstract class AbstractFlagListener implements Listener {
     protected IslandsManager getIslands() {
         return plugin.getIslands();
     }
-    
+
     /**
      * Get the island world manager
      * @return Island World Manager

@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.listeners.flags.clicklisteners;
+package us.tastybento.bskyblock.api.flags.clicklisteners;
 
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;

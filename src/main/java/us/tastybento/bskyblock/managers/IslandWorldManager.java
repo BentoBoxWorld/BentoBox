@@ -452,7 +452,7 @@ public class IslandWorldManager {
     }
 
     /**
-     * Get the permission prefix for this world
+     * Get the permission prefix for this world. No trailing dot included.
      * @param world - world
      * @return permission prefix for this world
      */
