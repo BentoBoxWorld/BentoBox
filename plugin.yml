@@ -41,13 +41,13 @@ permissions:
             default: true
           bskyblock.island.lock:
             description: Allows island locking
-            default: false
+            default: true
           bskyblock.island.expel:
             description: Allows expelling of visitors
             default: true
           bskyblock.island.ban:
             description: Allows banning of visitors
-            default: false
+            default: true
           bskyblock.island.settings:
             description: Player can see server settings
             default: true

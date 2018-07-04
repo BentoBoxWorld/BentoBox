@@ -1,5 +1,6 @@
 package us.tastybento.bskyblock.commands.admin;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ public class AdminSchemCommand extends CompositeCommand {
         super(parent, "schem");
     }
 
+    @Override
     public void setup() {
         setPermission("admin.schem");
         setParameters("commands.admin.schem.parameters");
@@ -29,13 +31,15 @@ public class AdminSchemCommand extends CompositeCommand {
         clipboards = new HashMap<>();
     }
 
+    @Override
     @SuppressWarnings("deprecation")
     public boolean execute(User user, List<String> args) {
         if (args.isEmpty()) {
             showHelp(this, user);
             return false;
         }
-        Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin()));
+        File schemFolder = new File(getIWM().getDataFolder(getWorld()), "schems");
+        Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), schemFolder));
 
         if (args.get(0).equalsIgnoreCase("paste")) {
             if (cb.isFull()) {
@@ -71,7 +75,7 @@ public class AdminSchemCommand extends CompositeCommand {
             if (b != null) {
                 cb.setOrigin(b.getLocation());
                 user.getPlayer().sendBlockChange(b.getLocation(), Material.STAINED_GLASS,(byte)14);
-                Bukkit.getScheduler().runTaskLater(getPlugin(), 
+                Bukkit.getScheduler().runTaskLater(getPlugin(),
                         () -> user.getPlayer().sendBlockChange(b.getLocation(), b.getType(), b.getData()), 20L);
 
                 user.sendMessage("general.success");
@@ -90,7 +94,15 @@ public class AdminSchemCommand extends CompositeCommand {
         if (args.get(0).equalsIgnoreCase("save")) {
             if (cb.isFull()) {
                 if (args.size() == 2) {
-                    return cb.save(user, args.get(1));
+                    // Check if file exists
+                    File newFile = new File(schemFolder, args.get(1) + ".schem");
+                    if (newFile.exists()) {
+                        user.sendMessage("commands.admin.schem.file-exists");
+                        this.askConfirmation(user, () -> cb.save(user, args.get(1)));
+                        return false;
+                    } else {
+                        return cb.save(user, args.get(1));
+                    }
                 } else {
                     showHelp(this, user);
                     return false;

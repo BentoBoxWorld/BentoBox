@@ -132,11 +132,11 @@ public class ItemParser {
             if (part.length == 2) {
                 return new ItemStack(Material.BANNER, Integer.parseInt(part[1]));
             }
-            if (part.length > 3) {
+            if (part.length >= 3) {
                 int reqAmount = Integer.parseInt(part[1]);
 
                 @SuppressWarnings("deprecation")
-                ItemStack result = new ItemStack(Material.BANNER, reqAmount, (short) DyeColor.valueOf(part[2]).getDyeData());
+                ItemStack result = new ItemStack(Material.BANNER, reqAmount, DyeColor.valueOf(part[2]).getDyeData());
 
                 BannerMeta meta = (BannerMeta) result.getItemMeta();
                 for (int i = 3; i < part.length; i += 2) {
@@ -147,10 +147,10 @@ public class ItemParser {
 
                 return result;
             } else {
-                return new ItemStack(Material.BANNER, 1); // Return a blank banner
+                return null;
             }
         } catch (Exception e) {
-            return new ItemStack(Material.BANNER, 1); // Return a blank banner
+            return null;
         }
     }
 }

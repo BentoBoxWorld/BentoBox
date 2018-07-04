@@ -25,6 +25,7 @@ import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.managers.SchemsManager;
 import us.tastybento.bskyblock.util.HeadGetter;
 
 /**
@@ -50,6 +51,7 @@ public class BSkyBlock extends JavaPlugin {
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
+    private SchemsManager schemsManager;
 
     // Settings
     private Settings settings;
@@ -61,6 +63,9 @@ public class BSkyBlock extends JavaPlugin {
 
     @Override
     public void onEnable(){
+        // Store the current millis time so we can tell how many ms it took for BSB to fully load.
+        final long startMillis = System.currentTimeMillis();
+
         // Save the default config from config.yml
         saveDefaultConfig();
         setInstance(this);
@@ -78,7 +83,7 @@ public class BSkyBlock extends JavaPlugin {
 
         // Start head getter
         headGetter = new HeadGetter(this);
-        
+
         // Load metrics
         metrics = new Metrics(instance);
         registerCustomCharts();
@@ -95,21 +100,25 @@ public class BSkyBlock extends JavaPlugin {
         getServer().getScheduler().runTask(this, () -> {
             // Create the world if it does not exist
             islandWorldManager = new IslandWorldManager(instance);
-            
+            // Load schems manager
+            schemsManager = new SchemsManager(instance);
+            // Load the default island schems
+            schemsManager.loadIslands(getIWM().getIslandWorld());
+
             // Set up commands
             new IslandCommand();
             new AdminCommand();
-            
+
             // Locales manager must be loaded before addons
             localesManager = new LocalesManager(instance);
             PlaceholderHandler.register(instance);
-            
+
             // Load addons. Addons may load worlds, so they must go before islands are loaded.
             addonsManager = new AddonsManager(instance);
             addonsManager.loadAddons();
             // Enable addons
             addonsManager.enableAddons();
-           
+
             getServer().getScheduler().runTask(instance, () -> {
                 // Load Flags
                 flagsManager = new FlagsManager(instance);
@@ -119,9 +128,8 @@ public class BSkyBlock extends JavaPlugin {
 
                 // Load islands from database - need to wait until all the worlds are loaded
                 islandsManager.load();
-                
+
                 // Save islands & players data asynchronously every X minutes
-                
                 instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                     playersManager.save(true);
                     islandsManager.save(true);
@@ -129,6 +137,7 @@ public class BSkyBlock extends JavaPlugin {
 
                 instance.log("#############################################");
                 instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
+                instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
                 instance.log("Thanks for using our plugin !");
                 instance.log("- Tastybento and Poslovitch, 2017-2018");
                 instance.log("#############################################");
@@ -295,15 +304,15 @@ public class BSkyBlock extends JavaPlugin {
     public HeadGetter getHeadGetter() {
         return headGetter;
     }
-    
+
     public void log(String string) {
         getLogger().info(() -> string);
     }
-    
+
     public void logError(String error) {
         getLogger().severe(() -> error);
     }
-    
+
     public void logWarning(String warning) {
         getLogger().warning(warning);
     }
@@ -316,5 +325,15 @@ public class BSkyBlock extends JavaPlugin {
     public void registerWorld(World world, WorldSettings worldSettings) {
         islandWorldManager.addWorld(world, worldSettings);
     }
+
+
+
+    /**
+     * @return the schemsManager
+     */
+    public SchemsManager getSchemsManager() {
+        return schemsManager;
+    }
+
 
 }

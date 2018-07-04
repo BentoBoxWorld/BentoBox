@@ -6,12 +6,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 
+import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
@@ -165,7 +167,7 @@ public class Settings implements DataObject, WorldSettings {
     private int islandZOffset;
 
     @ConfigComment("Island height - Lowest is 5.")
-    @ConfigComment("It is the y coordinate of the bedrock block in the schematic")
+    @ConfigComment("It is the y coordinate of the bedrock block in the schem")
     @ConfigEntry(path = "world.island-height")
     private int islandHeight = 100;
 
@@ -428,6 +430,7 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
 
+    //---------------------------------------------------------------------------------------/
     private String uniqueId = "config";
 
     // Getters and setters
@@ -1560,6 +1563,12 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setOnLeaveResetEnderChest(boolean onLeaveResetEnderChest) {
         this.onLeaveResetEnderChest = onLeaveResetEnderChest;
+    }
+
+    @Override
+    public Optional<Addon> getAddon() {
+        // This is a plugin, not an addon
+        return Optional.empty();
     }
 
 

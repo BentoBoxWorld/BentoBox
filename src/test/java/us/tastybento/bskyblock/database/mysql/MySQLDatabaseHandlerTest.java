@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.plugin.PluginManager;
 import org.junit.BeforeClass;
@@ -39,7 +40,7 @@ import us.tastybento.bskyblock.util.Util;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( { BSkyBlock.class, Util.class })
 public class MySQLDatabaseHandlerTest {
-    
+
     private static MySQLDatabaseHandler<Island> handler;
     private static Island instance;
     private static String UNIQUE_ID = "xyz";
@@ -66,14 +67,14 @@ public class MySQLDatabaseHandlerTest {
         Bukkit.setServer(server);
 
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        
+
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
-        
+
         Settings settings = mock(Settings.class);
-        
+
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.getDeathsMax()).thenReturn(10);
-        
+
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         dbConn = mock(MySQLDatabaseConnecter.class);
         Connection connection = mock(Connection.class);
@@ -88,7 +89,7 @@ public class MySQLDatabaseHandlerTest {
         instance = new Island();
         instance.setUniqueId(UNIQUE_ID);
         handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
-        
+
         PowerMockito.mockStatic(Util.class);
         when(Util.sameWorld(Mockito.any(), Mockito.any())).thenReturn(true);
 
@@ -120,11 +121,11 @@ public class MySQLDatabaseHandlerTest {
         players.setPlayerName("name");
         players.setPlayerUUID(UUID.randomUUID());
         players.setResetsLeft(3);
-       
+
 
         MySQLDatabaseHandler<Players> h = new MySQLDatabaseHandler<>(plugin, Players.class, dbConn);
         h.saveObject(players);
-        
+
         Island island = new Island();
         island.setUniqueId(UNIQUE_ID);
         island.setCenter(location);
@@ -149,12 +150,12 @@ public class MySQLDatabaseHandlerTest {
         island.setPurgeProtected(true);
         island.setRange(100);
         island.setSpawn(true);
-        island.setSpawnPoint(location);
+        island.setSpawnPoint(Environment.NORMAL, location);
         island.setWorld(world);
-        
+
         MySQLDatabaseHandler<Island> ih = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
         ih.saveObject(island);
-        
+
     }
 
 }

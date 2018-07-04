@@ -11,6 +11,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
@@ -101,7 +102,7 @@ public class Island implements DataObject {
     @Expose
     private int levelHandicap;
     @Expose
-    private Location spawnPoint;
+    private Map<Environment, Location> spawnPoint = new HashMap<>();
 
     public Island() {}
     public Island(Location location, UUID owner, int protectionRange) {
@@ -169,7 +170,7 @@ public class Island implements DataObject {
         return createdDate;
     }
     /**
-     * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the 
+     * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the
      * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
      * setting is allowed.
      * @param flag - flag
@@ -286,10 +287,6 @@ public class Island implements DataObject {
      */
     public int getRank(User user) {
         return members.getOrDefault(user.getUniqueId(), RanksManager.VISITOR_RANK);
-    }
-
-    public Location getSpawnPoint() {
-        return spawnPoint;
     }
 
     /**
@@ -620,9 +617,21 @@ public class Island implements DataObject {
         //TODO default flags
     }
 
-    public void setSpawnPoint(Location location) {
-        spawnPoint = location;
+    /**
+     * Get the default spawn location for this island. Note that this may only be valid
+     * after the initial pasting because the player can change the island after that point
+     * @return the spawnPoint
+     */
+    public Map<Environment, Location> getSpawnPoint() {
+        return spawnPoint;
+    }
 
+    /**
+     * Set when island is pasted
+     * @param spawnPoint the spawnPoint to set
+     */
+    public void setSpawnPoint(Map<Environment, Location> spawnPoint) {
+        this.spawnPoint = spawnPoint;
     }
 
     @Override
@@ -699,10 +708,10 @@ public class Island implements DataObject {
             members.forEach((u, i) -> {
                 if (owner.equals(u)) {
                     user.sendMessage("commands.admin.info.team-owner-format", "[name]", plugin.getPlayers().getName(u)
-                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i))); 
+                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
                 } else if (i > RanksManager.VISITOR_RANK){
                     user.sendMessage("commands.admin.info.team-member-format", "[name]", plugin.getPlayers().getName(u)
-                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i))); 
+                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
                 }
             });
         }
@@ -729,6 +738,24 @@ public class Island implements DataObject {
         if (flag.getType().equals(Flag.Type.SETTING) || flag.getType().equals(Flag.Type.WORLD_SETTING)) {
             flags.put(flag, state ? 1 : -1);
         }
+    }
+
+    /**
+     * Set the spawn location for this island type
+     * @param islandType - island type
+     * @param l - location
+     */
+    public void setSpawnPoint(Environment islandType, Location l) {
+        spawnPoint.put(islandType, l);
+    }
+
+    /**
+     * Get the spawn point for this island type
+     * @param islandType - island type
+     * @return - location or null if one does not exist
+     */
+    public Location getSpawnPoint(Environment islandType) {
+        return spawnPoint.get(islandType);
     }
 
 

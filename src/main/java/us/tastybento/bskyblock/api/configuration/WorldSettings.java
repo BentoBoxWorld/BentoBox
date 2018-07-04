@@ -2,10 +2,13 @@ package us.tastybento.bskyblock.api.configuration;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
+
+import us.tastybento.bskyblock.api.addons.Addon;
 
 /**
  * Contains world-specific settings. Only getters are required, but you may need setters for your own class.
@@ -156,30 +159,35 @@ public interface WorldSettings {
      * @return the onJoinResetMoney
      */
     public boolean isOnJoinResetMoney();
-    
+
     /**
      * @return the onJoinResetInventory
      */
     public boolean isOnJoinResetInventory();
-    
+
     /**
      * @return the onJoinResetEnderChest
      */
     public boolean isOnJoinResetEnderChest();
-    
+
     /**
      * @return the onLeaveResetMoney
      */
     public boolean isOnLeaveResetMoney();
-    
+
     /**
      * @return the onLeaveResetInventory
      */
     public boolean isOnLeaveResetInventory();
-    
+
     /**
      * @return the onLeaveResetEnderChest
      */
     public boolean isOnLeaveResetEnderChest();
+
+    /**
+     * @return the Addon that registered this world
+     */
+    public Optional<Addon> getAddon();
 
 }
