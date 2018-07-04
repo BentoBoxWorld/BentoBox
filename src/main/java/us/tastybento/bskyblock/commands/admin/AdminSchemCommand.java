@@ -39,8 +39,6 @@ public class AdminSchemCommand extends CompositeCommand {
             return false;
         }
         File schemFolder = new File(getIWM().getDataFolder(getWorld()), "schems");
-        getPlugin().log("DEBUG: schemFolder = " + schemFolder.getAbsolutePath());
-        getPlugin().log(getIWM().getAddon(getWorld()).map(a -> "Addon = " + a.toString() + " data folder = " + a.getDataFolder().getAbsolutePath()).orElse("Not addon"));
         Clipboard cb = clipboards.getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), schemFolder));
 
         if (args.get(0).equalsIgnoreCase("paste")) {

@@ -359,8 +359,10 @@ public class Clipboard {
         if (bs instanceof InventoryHolder) {
             bs.update(true, false);
             Inventory ih = ((InventoryHolder)bs).getInventory();
-            ConfigurationSection inv = config.getConfigurationSection("inventory");
-            inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+            if (config.isConfigurationSection("inventory")) {
+                ConfigurationSection inv = config.getConfigurationSection("inventory");
+                inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+            }
         }
 
         // Entities
