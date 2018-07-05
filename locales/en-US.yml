@@ -307,6 +307,10 @@ protection:
       description: "Toggle interaction"
       name: Buckets
       hint: "No bucket use allowed"
+    BUTTON: 
+      description: "Toggle button use"
+      name: Buttons
+      hint: "No button use allowed"
     CHEST: 
       description: "Toggle chest access"
       name: Chests
