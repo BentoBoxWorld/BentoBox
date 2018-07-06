@@ -27,12 +27,21 @@ public class SchemsManager {
         islandSchems = new HashMap<>();
     }
 
+    /**
+     * @param schems - schems folder for either the addon or the plugin
+     * @param world - world
+     * @param name - name of the schem to save (excluding .schem)
+     */
     private void copySchems(File schems, World world, String name) {
         if (!schems.exists() && !schems.mkdirs()) {
             plugin.logError("Could not make schems folder!");
             return;
         }
-
+        File schem = new File(schems, name + ".schem");
+        if (schem.exists()) {
+            // No overwriting
+            return;
+        }
         Optional<Addon> addon = plugin.getIWM().getAddon(world);
         if (addon.isPresent()) {
             addon.get().saveResource("schems/" + name + ".schem", false);
@@ -50,28 +59,17 @@ public class SchemsManager {
      * @param world - world
      */
     public void loadIslands(World world) {
-        if (plugin.getSchemsManager().loadSchem(world, "island")) {
-            plugin.log("Loaded island for " + plugin.getIWM().getFriendlyName(world));
-        } else {
-            plugin.logError("Could not load island for " + plugin.getIWM().getFriendlyName(world));
+        if (!plugin.getSchemsManager().loadSchem(world, "island")) {
+            plugin.logError("Could not load island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
-        if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)) {
-
-            if (plugin.getSchemsManager().loadSchem(plugin.getIWM().getNetherWorld(world), "nether-island")) {
-                plugin.log("Loaded nether island for " + plugin.getIWM().getFriendlyName(world));
-            } else {
-                plugin.logError("Could not load nether island for " + plugin.getIWM().getFriendlyName(world));
-            }
+        if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)
+                && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getNetherWorld(world), "nether-island")) {
+            plugin.logError("Could not load nether_island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
-        if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)) {
-            if (plugin.getSchemsManager().loadSchem(plugin.getIWM().getEndWorld(world), "end-island")) {
-                plugin.log("Loaded end island for " + plugin.getIWM().getFriendlyName(world));
-            } else {
-                plugin.logError("Could not load end island for " + plugin.getIWM().getFriendlyName(world));
-            }
+        if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)
+                && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getEndWorld(world), "end-island")) {
+            plugin.logError("Could not load end_island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
-
-
     }
 
     private boolean loadSchem(World world, String name) {
