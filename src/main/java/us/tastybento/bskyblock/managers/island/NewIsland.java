@@ -154,6 +154,9 @@ public class NewIsland {
             plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island);
         }
 
+        // Set default settings
+        island.setFlagsDefaults();
+
         // Fire exit event
         Reason reasonDone = Reason.CREATED;
         switch (reason) {

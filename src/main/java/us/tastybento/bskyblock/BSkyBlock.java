@@ -70,6 +70,9 @@ public class BSkyBlock extends JavaPlugin {
         saveDefaultConfig();
         setInstance(this);
 
+        // Load Flags
+        flagsManager = new FlagsManager(instance);
+
         // Load settings from config.yml. This will check if there are any issues with it too.
         settings = new BSBConfig<>(this, Settings.class).loadConfigObject("");
         // Start Database managers
@@ -120,9 +123,6 @@ public class BSkyBlock extends JavaPlugin {
             addonsManager.enableAddons();
 
             getServer().getScheduler().runTask(instance, () -> {
-                // Load Flags
-                flagsManager = new FlagsManager(instance);
-
                 // Register Listeners
                 registerListeners();
 

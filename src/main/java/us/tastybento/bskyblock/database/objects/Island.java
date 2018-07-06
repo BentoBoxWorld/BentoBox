@@ -25,6 +25,7 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
 import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Pair;
 import us.tastybento.bskyblock.util.Util;
@@ -490,10 +491,16 @@ public class Island implements DataObject {
     }
 
     /**
-     * Resets the flags to their default as set in config.yml for this island
+     * Resets the flags to their default as set in config.yml for this island.
+     * If flags are missing from the config, the default hard-coded value is used and set
      */
-    public void setFlagsDefaults(){
-        //TODO default flags
+    public void setFlagsDefaults() {
+        Map<Flag, Integer> result = new HashMap<>();
+        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
+        .forEach(f -> result.put(f, BSkyBlock.getInstance().getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
+        .forEach(f -> result.put(f, BSkyBlock.getInstance().getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+        this.setFlags(result);
     }
 
     /**

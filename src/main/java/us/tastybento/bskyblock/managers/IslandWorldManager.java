@@ -23,6 +23,7 @@ import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.generators.ChunkGeneratorWorld;
+import us.tastybento.bskyblock.lists.Flags;
 import us.tastybento.bskyblock.util.Util;
 
 /**
@@ -186,6 +187,9 @@ public class IslandWorldManager {
         worlds.put(world, friendlyName);
         worldSettings.put(world, settings);
         multiverseReg(world);
+        // Set default island settings
+        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION)).forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
+        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING)).forEach(f -> settings.getDefaultIslandSettings().putIfAbsent(f, f.getDefaultRank()));
     }
 
     /**
@@ -558,4 +562,25 @@ public class IslandWorldManager {
         return worldSettings.get(Util.getWorld(world)).getAddon();
     }
 
+    /**
+     * Get default island flag settings for this world.
+     * @param world - world
+     * @return default rank settings for new islands.
+     */
+    public Map<Flag, Integer> getDefaultIslandFlags(World world) {
+        return worldSettings.get(Util.getWorld(world)).getDefaultIslandFlags();
+    }
+
+    public List<String> getVisibleSettings(World world) {
+        return worldSettings.get(Util.getWorld(world)).getVisibleSettings();
+    }
+
+    /**
+     * Return island setting defaults for world
+     * @param world - world
+     * @return default settings for new islands
+     */
+    public Map<Flag, Integer> getDefaultIslandSettings(World world) {
+        return worldSettings.get(Util.getWorld(world)).getDefaultIslandSettings();
+    }
 }

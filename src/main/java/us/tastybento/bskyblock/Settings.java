@@ -21,6 +21,9 @@ import us.tastybento.bskyblock.api.configuration.WorldSettings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.database.BSBDbSetup.DatabaseType;
 import us.tastybento.bskyblock.database.objects.DataObject;
+import us.tastybento.bskyblock.database.objects.adapters.Adapter;
+import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer;
+import us.tastybento.bskyblock.database.objects.adapters.FlagSerializer2;
 
 /**
  * All the plugin settings are here
@@ -246,6 +249,22 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "world.flags")
     private Map<String, Boolean> worldFlags = new HashMap<>();
 
+    @ConfigComment("These are the default protection settings for new islands.")
+    @ConfigComment("The value is the minimum island rank required allowed to do the action")
+    @ConfigComment("Ranks are: Visitor = 0, Member = 900, Owner = 1000")
+    @ConfigEntry(path = "world.default-island-flags")
+    @Adapter(FlagSerializer.class)
+    private Map<Flag, Integer> defaultIslandFlags = new HashMap<>();
+
+    @ConfigComment("These are the default settings for new islands")
+    @ConfigEntry(path = "world.default-island-settings")
+    @Adapter(FlagSerializer2.class)
+    private Map<Flag, Integer> defaultIslandSettings = new HashMap<>();
+
+    @ConfigComment("These are the settings visible to users.")
+    @ConfigEntry(path = "world.visible-settings")
+    private List<String> visibleSettings = new ArrayList<>();
+
     // ---------------------------------------------
 
     /*      ISLAND      */
@@ -377,8 +396,6 @@ public class Settings implements DataObject, WorldSettings {
 
     private int togglePvPCooldown;
 
-    private Map<Flag, Boolean> defaultFlags = new HashMap<>();
-
     //TODO transform these options below into flags
     private boolean allowEndermanGriefing;
     private boolean endermanDeathDrop;
@@ -393,8 +410,6 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigComment("Make list blank if visitors should receive all damages")
     @ConfigEntry(path = "protection.invincible-visitors")
     private List<String> ivSettings = new ArrayList<>();
-
-    //TODO flags
 
     // ---------------------------------------------
 
@@ -566,12 +581,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public int getDeathsMax() {
         return deathsMax;
-    }
-    /**
-     * @return the defaultFlags
-     */
-    public Map<Flag, Boolean> getDefaultFlags() {
-        return defaultFlags;
     }
     /**
      * @return the defaultLanguage
@@ -1070,12 +1079,6 @@ public class Settings implements DataObject, WorldSettings {
         this.deathsSumTeam = deathsSumTeam;
     }
     /**
-     * @param defaultFlags the defaultFlags to set
-     */
-    public void setDefaultFlags(Map<Flag, Boolean> defaultFlags) {
-        this.defaultFlags = defaultFlags;
-    }
-    /**
      * @param defaultLanguage the defaultLanguage to set
      */
     public void setDefaultLanguage(String defaultLanguage) {
@@ -1569,6 +1572,44 @@ public class Settings implements DataObject, WorldSettings {
     public Optional<Addon> getAddon() {
         // This is a plugin, not an addon
         return Optional.empty();
+    }
+    /**
+     * @return the defaultIslandProtection
+     */
+    @Override
+    public Map<Flag, Integer> getDefaultIslandFlags() {
+        return defaultIslandFlags;
+    }
+    /**
+     * @return the visibleSettings
+     */
+    @Override
+    public List<String> getVisibleSettings() {
+        return visibleSettings;
+    }
+    /**
+     */
+    public void setDefaultIslandFlags(Map<Flag, Integer> defaultIslandFlags) {
+        this.defaultIslandFlags = defaultIslandFlags;
+    }
+    /**
+     * @param visibleSettings the visibleSettings to set
+     */
+    public void setVisibleSettings(List<String> visibleSettings) {
+        this.visibleSettings = visibleSettings;
+    }
+    /**
+     * @return the defaultIslandSettings
+     */
+    @Override
+    public Map<Flag, Integer> getDefaultIslandSettings() {
+        return defaultIslandSettings;
+    }
+    /**
+     * @param defaultIslandSettings the defaultIslandSettings to set
+     */
+    public void setDefaultIslandSettings(Map<Flag, Integer> defaultIslandSettings) {
+        this.defaultIslandSettings = defaultIslandSettings;
     }
 
 
