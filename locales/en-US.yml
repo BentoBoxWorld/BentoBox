@@ -447,6 +447,13 @@ protection:
       description: "Toggle access"
       name: Music
       hint: "No jukebox use"
+    OFFLINE_REDSTONE:
+      description: |
+          &aWhen disabled, redstone
+          &awill not operate on islands
+          &awhere all members are offline.
+          &aMay help reduce lag.
+      name: "Offline Redstone"     
     PISTON_PUSH: 
       description: |
           &aAllow pistons to push

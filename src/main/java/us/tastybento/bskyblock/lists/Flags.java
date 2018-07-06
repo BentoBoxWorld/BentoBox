@@ -28,6 +28,7 @@ import us.tastybento.bskyblock.listeners.flags.IslandRespawnListener;
 import us.tastybento.bskyblock.listeners.flags.ItemDropPickUpListener;
 import us.tastybento.bskyblock.listeners.flags.LeashListener;
 import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
+import us.tastybento.bskyblock.listeners.flags.OfflineRedstoneListener;
 import us.tastybento.bskyblock.listeners.flags.PVPListener;
 import us.tastybento.bskyblock.listeners.flags.PhysicalInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.PistonPushListener;
@@ -173,6 +174,8 @@ public class Flags {
             .listener(new RemoveMobsListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("REMOVE_MOBS")).build();
     public static final Flag ISLAND_RESPAWN = new FlagBuilder().id("ISLAND_RESPAWN").icon(Material.TORCH).type(Type.WORLD_SETTING)
             .listener(new IslandRespawnListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("ISLAND_RESPAWN")).build();
+    public static final Flag OFFLINE_REDSTONE = new FlagBuilder().id("OFFLINE_REDSTONE").icon(Material.REDSTONE_COMPARATOR).type(Type.WORLD_SETTING)
+            .listener(new OfflineRedstoneListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("OFFLINE_REDSTONE")).build();
 
     /**
      * @return List of all the flags in this class

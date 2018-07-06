@@ -239,12 +239,6 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "world.end.dragon-spawn")
     private boolean dragonSpawn = false;
 
-    @ConfigComment("Disable redstone operation on islands unless a team member is online.")
-    @ConfigComment("This may reduce lag but it can cause problems with visitors needing to use a redstone system.")
-    @ConfigComment("Default is false, because it is an experimental feature that can break a lot of redstone systems.")
-    @ConfigEntry(path = "world.disable-offline-redstone")
-    private boolean disableOfflineRedstone = false;
-
     @ConfigComment("Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps")
     @ConfigComment("players return to their island if the island has been overrun by monsters.")
     @ConfigComment("This setting is toggled in world flags and set by the settings GUI.")
@@ -502,18 +496,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setMuteDeathMessages(boolean muteDeathMessages) {
         this.muteDeathMessages = muteDeathMessages;
-    }
-    /**
-     * @return the disableOfflineRedstone
-     */
-    public boolean isDisableOfflineRedstone() {
-        return disableOfflineRedstone;
-    }
-    /**
-     * @param disableOfflineRedstone the disableOfflineRedstone to set
-     */
-    public void setDisableOfflineRedstone(boolean disableOfflineRedstone) {
-        this.disableOfflineRedstone = disableOfflineRedstone;
     }
     /**
      * @return the chestItems

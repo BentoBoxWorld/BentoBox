@@ -17,30 +17,22 @@ import org.bukkit.util.Vector;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
-import us.tastybento.bskyblock.managers.IslandsManager;
 
 /**
  * Listener for the lock flag
  * Also handles ban protection
- * 
+ *
  * @author tastybento
  *
  */
 public class LockAndBanListener implements Listener {
 
-    private IslandsManager im;
     private enum CheckResult {
         BANNED,
         LOCKED,
         OPEN
     }
 
-    /**
-     * Enforces island bans and locks
-     */
-    public LockAndBanListener() {
-        this.im = BSkyBlock.getInstance().getIslands();
-    }
 
     // Teleport check
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -79,12 +71,12 @@ public class LockAndBanListener implements Listener {
         e.getVehicle().getPassengers().stream().filter(en -> en instanceof Player).map(en -> (Player)en).forEach(p -> {
             if (!checkAndNotify(p, e.getTo()).equals(CheckResult.OPEN)) {
                 p.leaveVehicle();
-                p.teleport(e.getFrom());                
+                p.teleport(e.getFrom());
                 e.getFrom().getWorld().playSound(e.getFrom(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
                 eject(p);
             }
         });
-    }  
+    }
 
     // Login check
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
@@ -103,7 +95,7 @@ public class LockAndBanListener implements Listener {
     private CheckResult check(Player player, Location loc) {
 
         // See if the island is locked to non-members or player is banned
-        return im.getProtectedIslandAt(loc)
+        return BSkyBlock.getInstance().getIslands().getProtectedIslandAt(loc)
                 .map(is -> {
                     if (is.isBanned(player.getUniqueId())) {
                         return CheckResult.BANNED;
@@ -143,9 +135,9 @@ public class LockAndBanListener implements Listener {
     private void eject(Player player) {
         player.setGameMode(GameMode.SPECTATOR);
         // Teleport player to their home
-        if (im.hasIsland(player.getWorld(), player.getUniqueId())) {
-            im.homeTeleport(player.getWorld(), player);
-        } // else, TODO: teleport somewhere else?   
+        if (BSkyBlock.getInstance().getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
+            BSkyBlock.getInstance().getIslands().homeTeleport(player.getWorld(), player);
+        } // else, TODO: teleport somewhere else?
     }
 
 }
