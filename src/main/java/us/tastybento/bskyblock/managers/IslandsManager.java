@@ -113,6 +113,10 @@ public class IslandsManager {
 
     private BSBDatabase<Island> handler;
 
+    /**
+     * The last locations where an island were put.
+     * This is not stored persistently and resets when the server starts
+     */
     private Map<World,Location> last;
     // Metrics data
     private int metrics_createdcount = 0;
@@ -578,59 +582,6 @@ public class IslandsManager {
      */
     public void setSpawn(Island spawn) {
         this.spawn.put(spawn.getWorld(), spawn);
-    }
-
-    /**
-     * Checks if there is an island or blocks at this location
-     * @param location - the location
-     * @return true if island found
-     */
-    public boolean isIsland(Location location){
-        if (location == null) {
-            return false;
-        }
-        location = getClosestIsland(location);
-        if (islandCache.getIslandAt(location) != null) {
-            return true;
-        }
-
-        if (!plugin.getSettings().isUseOwnGenerator()) {
-            // Block check
-            if (!location.getBlock().isEmpty() && !location.getBlock().isLiquid()) {
-                createIsland(location);
-                return true;
-            }
-            // Look around
-            for (int x = -5; x <= 5; x++) {
-                for (int y = 10; y <= 255; y++) {
-                    for (int z = -5; z <= 5; z++) {
-                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty()
-                                && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isLiquid()) {
-                            createIsland(location);
-                            return true;
-                        }
-                    }
-                }
-            }
-        }
-        return false;
-    }
-
-    /**
-     * This returns the coordinate of where an island should be on the grid.
-     *
-     * @param location - the location location to query
-     * @return Location of closest island
-     */
-    public Location getClosestIsland(Location location) {
-        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
-        long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
-        long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
-        long y = plugin.getIWM().getIslandHeight(location.getWorld());
-        if (location.getBlockX() == x && location.getBlockZ() == z) {
-            return location;
-        }
-        return new Location(location.getWorld(), x, y, z);
     }
 
     /**

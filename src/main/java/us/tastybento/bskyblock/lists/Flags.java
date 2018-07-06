@@ -9,9 +9,9 @@ import org.bukkit.Material;
 
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
+import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.api.flags.clicklisteners.IslandToggleClickListener;
 import us.tastybento.bskyblock.api.flags.clicklisteners.WorldToggleClickListener;
-import us.tastybento.bskyblock.api.flags.FlagBuilder;
 import us.tastybento.bskyblock.listeners.flags.BlockInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;

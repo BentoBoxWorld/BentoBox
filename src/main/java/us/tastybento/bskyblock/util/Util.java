@@ -1,10 +1,6 @@
 package us.tastybento.bskyblock.util;
 
-import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -46,10 +42,27 @@ public class Util {
      */
     public static String getServerVersion() {
         if (serverVersion == null) {
-            String serverPackageName = plugin.getServer().getClass().getPackage().getName();
+            String serverPackageName = Bukkit.getServer().getClass().getPackage().getName();
             serverVersion = serverPackageName.substring(serverPackageName.lastIndexOf('.') + 1);
         }
         return serverVersion;
+    }
+
+    /**
+     * This returns the coordinate of where an island should be on the grid.
+     *
+     * @param location - the location location to query
+     * @return Location of closest island
+     */
+    public static Location getClosestIsland(Location location) {
+        int dist = plugin.getIWM().getIslandDistance(location.getWorld());
+        long x = Math.round((double) location.getBlockX() / dist) * dist + plugin.getIWM().getIslandXOffset(location.getWorld());
+        long z = Math.round((double) location.getBlockZ() / dist) * dist + plugin.getIWM().getIslandZOffset(location.getWorld());
+        if (location.getBlockX() == x && location.getBlockZ() == z) {
+            return location;
+        }
+        int y = plugin.getIWM().getIslandHeight(location.getWorld());
+        return new Location(location.getWorld(), x, y, z);
     }
 
     /**
@@ -96,29 +109,6 @@ public class Util {
 
     private static String format(double num) {
         return String.valueOf(Math.round(num * 100D) / 100D);
-    }
-
-    /**
-     * Get a list of parameter types for the collection argument in this method
-     * @param writeMethod - write method
-     * @return a list of parameter types for the collection argument in this method
-     */
-    public static List<Type> getCollectionParameterTypes(Method writeMethod) {
-        List<Type> result = new ArrayList<>();
-        // Get the return type
-        // This uses a trick to extract what the arguments are of the writeMethod of the field.
-        // In this way, we can deduce what type needs to be written at runtime.
-        Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
-        // There could be more than one argument, so step through them
-        for (Type genericParameterType : genericParameterTypes) {
-            // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
-            if( genericParameterType instanceof ParameterizedType ) {
-                // Get the actual type arguments of the parameter
-                Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
-                result.addAll(Arrays.asList(parameters));
-            }
-        }
-        return result;
     }
 
     /**

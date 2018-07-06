@@ -1,6 +1,8 @@
 package us.tastybento.bskyblock.managers.island;
 
 import java.io.IOException;
+import java.util.EnumMap;
+import java.util.Map;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -12,6 +14,7 @@ import us.tastybento.bskyblock.api.events.island.IslandEvent;
 import us.tastybento.bskyblock.api.events.island.IslandEvent.Reason;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Create and paste a new island
@@ -19,11 +22,18 @@ import us.tastybento.bskyblock.database.objects.Island;
  *
  */
 public class NewIsland {
+    private static final Integer MAX_UNOWNED_ISLANDS = 10;
     private BSkyBlock plugin;
     private Island island;
     private final User user;
     private final Reason reason;
     private final World world;
+    private enum Result {
+        ISLAND_FOUND,
+        BLOCK_AT_CENTER,
+        BLOCKS_IN_AREA,
+        FREE
+    }
 
     private NewIsland(Island oldIsland, User user, Reason reason, World world) {
         super();
@@ -100,6 +110,10 @@ public class NewIsland {
      */
     public void newIsland() {
         Location next = getNextIsland();
+        if (next == null) {
+            plugin.logError("Failed to make island - no unoccupied spot found");
+            return;
+        }
         // Add to the grid
         island = plugin.getIslands().createIsland(next, user.getUniqueId());
         // Save the player so that if the server is reset weird things won't happen
@@ -163,7 +177,7 @@ public class NewIsland {
 
     /**
      * Get the location of next free island spot
-     * @return Location of island spot
+     * @return Location of island spot or null if one cannot be found
      */
     private Location getNextIsland() {
         Location last = plugin.getIslands().getLast(world);
@@ -171,12 +185,61 @@ public class NewIsland {
             last = new Location(world, plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
                     plugin.getIWM().getIslandHeight(world), plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
         }
-        Location next = last.clone();
-        while (plugin.getIslands().isIsland(next)) {
-            next = nextGridLocation(next);
+        // Find a free spot
+        Map<Result, Integer> result = new EnumMap<>(Result.class);
+        Result r = isIsland(last);
+        while (!r.equals(Result.FREE)
+                && (result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS
+                        && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS)) {
+            last = nextGridLocation(last);
+            result.merge(r, 1, (k,v) -> v++);
+            r = isIsland(last);
         }
-        return next;
+        if (!r.equals(Result.FREE)) {
+            // We could not find a free spot within the limit required. It's likely this world is not empty
+            plugin.logError("Could not find a free spot for islands! Is this world empty?");
+            plugin.logError("Blocks at center locations: " + result.getOrDefault(Result.BLOCK_AT_CENTER, 0) + " max " + MAX_UNOWNED_ISLANDS);
+            plugin.logError("Blocks around center locations: " + result.getOrDefault(Result.BLOCKS_IN_AREA, 0) + " max " + MAX_UNOWNED_ISLANDS);
+            plugin.logError("Known islands: " + result.getOrDefault(Result.ISLAND_FOUND, 0) + " max unlimited.");
+            return null;
+        }
+        plugin.getIslands().setLast(last);
+        return last;
     }
+
+    /**
+     * Checks if there is an island or blocks at this location
+     * @param location - the location
+     * @return true if island found, null if blocks found, false if nothing found
+     */
+    private Result isIsland(Location location){
+        location = Util.getClosestIsland(location);
+        if (plugin.getIslands().getIslandAt(location).isPresent()) {
+            return Result.ISLAND_FOUND;
+        }
+
+        if (!plugin.getSettings().isUseOwnGenerator()) {
+            // Block check
+            if (!location.getBlock().isEmpty() && !location.getBlock().isLiquid()) {
+                plugin.getIslands().createIsland(location);
+                return Result.BLOCK_AT_CENTER;
+            }
+            // Look around
+            for (int x = -5; x <= 5; x++) {
+                for (int y = 10; y < location.getWorld().getMaxHeight(); y++) {
+                    for (int z = -5; z <= 5; z++) {
+                        if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty()
+                                && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isLiquid()) {
+                            plugin.getIslands().createIsland(location);
+                            return Result.BLOCKS_IN_AREA;
+                        }
+                    }
+                }
+            }
+        }
+        return Result.FREE;
+    }
+
 
     /**
      * Finds the next free island spot based off the last known island Uses

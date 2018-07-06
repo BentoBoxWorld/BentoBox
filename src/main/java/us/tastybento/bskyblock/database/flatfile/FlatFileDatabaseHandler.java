@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -156,7 +158,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Handle storage of maps. Check if this type is a Map
                 if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Note that we have no idea what type this is
-                    List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                    List<Type> collectionTypes = getCollectionParameterTypes(method);
                     // collectionTypes should be 2 long
                     Type keyType = collectionTypes.get(0);
                     Type valueType = collectionTypes.get(1);
@@ -178,7 +180,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Loop through the collection resultset
                     // Note that we have no idea what type this is
-                    List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                    List<Type> collectionTypes = getCollectionParameterTypes(method);
                     // collectionTypes should be only 1 long
                     Type setType = collectionTypes.get(0);
                     Set<Object> value = new HashSet<>();
@@ -191,7 +193,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Loop through the collection resultset
                     // Note that we have no idea what type this is
-                    List<Type> collectionTypes = Util.getCollectionParameterTypes(method);
+                    List<Type> collectionTypes = getCollectionParameterTypes(method);
                     // collectionTypes should be only 1 long
                     Type setType = collectionTypes.get(0);
                     List<Object> value = new ArrayList<>();
@@ -213,6 +215,29 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
 
         return instance;
+    }
+
+    /**
+     * Get a list of parameter types for the collection argument in this method
+     * @param writeMethod - write method
+     * @return a list of parameter types for the collection argument in this method
+     */
+    private List<Type> getCollectionParameterTypes(Method writeMethod) {
+        List<Type> result = new ArrayList<>();
+        // Get the return type
+        // This uses a trick to extract what the arguments are of the writeMethod of the field.
+        // In this way, we can deduce what type needs to be written at runtime.
+        Type[] genericParameterTypes = writeMethod.getGenericParameterTypes();
+        // There could be more than one argument, so step through them
+        for (Type genericParameterType : genericParameterTypes) {
+            // If the argument is a parameter, then do something - this should always be true if the parameter is a collection
+            if( genericParameterType instanceof ParameterizedType ) {
+                // Get the actual type arguments of the parameter
+                Type[] parameters = ((ParameterizedType)genericParameterType).getActualTypeArguments();
+                result.addAll(Arrays.asList(parameters));
+            }
+        }
+        return result;
     }
 
     /**
