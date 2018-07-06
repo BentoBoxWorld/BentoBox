@@ -221,7 +221,7 @@ public class NewIsland {
             return Result.ISLAND_FOUND;
         }
 
-        if (!plugin.getSettings().isUseOwnGenerator()) {
+        if (!plugin.getIWM().isUseOwnGenerator(location.getWorld())) {
             // Block check
             if (!location.getBlock().isEmpty() && !location.getBlock().isLiquid()) {
                 plugin.getIslands().createIsland(location);

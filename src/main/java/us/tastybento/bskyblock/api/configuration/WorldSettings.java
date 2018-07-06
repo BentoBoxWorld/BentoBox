@@ -203,5 +203,10 @@ public interface WorldSettings {
 
     Map<Flag, Integer> getDefaultIslandSettings();
 
+    /**
+     * @return true if the default world generator should not operate in this world
+     */
+    boolean isUseOwnGenerator();
+
 
 }

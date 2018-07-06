@@ -166,13 +166,20 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "world.start-z", needsReset = true)
     private int islandStartZ = 0;
 
+    @ConfigEntry(path = "world.offset-x")
     private int islandXOffset;
+    @ConfigEntry(path = "world.offset-z")
     private int islandZOffset;
 
     @ConfigComment("Island height - Lowest is 5.")
     @ConfigComment("It is the y coordinate of the bedrock block in the schem")
     @ConfigEntry(path = "world.island-height")
     private int islandHeight = 100;
+
+    @ConfigComment("Use your own world generator for this world. In this case, the plugin will not generate")
+    @ConfigComment("anything.")
+    @ConfigEntry(path = "world.use-own-generator")
+    private boolean useOwnGenerator;
 
     @ConfigComment("Sea height (don't changes this mid-game unless you delete the world)")
     @ConfigComment("Minimum is 0, which means you are playing Skyblock!")
@@ -421,8 +428,6 @@ public class Settings implements DataObject, WorldSettings {
     private List<ItemStack> chestItems = new ArrayList<>();
 
     private EntityType companionType = EntityType.COW;
-
-    private boolean useOwnGenerator;
 
     private Map<String,Integer> limitedBlocks = new HashMap<>();
     private boolean teamJoinDeathReset;
@@ -943,6 +948,7 @@ public class Settings implements DataObject, WorldSettings {
     /**
      * @return the useOwnGenerator
      */
+    @Override
     public boolean isUseOwnGenerator() {
         return useOwnGenerator;
     }

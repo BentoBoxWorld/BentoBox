@@ -54,7 +54,25 @@ public class IslandWorldManager {
         worlds = new HashMap<>();
         worldSettings = new HashMap<>();
         if (plugin.getSettings().isUseOwnGenerator()) {
-            // Do nothing
+            plugin.log("Default world generator disabled.");
+            islandWorld = Bukkit.getWorld(plugin.getSettings().getWorldName());
+            if (plugin.getSettings().isNetherGenerate()) {
+                netherWorld = plugin.getServer().getWorld(plugin.getSettings().getWorldName() + NETHER);
+                if (netherWorld == null) {
+                    plugin.logError("Island nether world does not exist - you must create it manually");
+                }
+            }
+            if (plugin.getSettings().isEndGenerate()) {
+                endWorld = plugin.getServer().getWorld(plugin.getSettings().getWorldName() + THE_END);
+                if (endWorld == null) {
+                    plugin.logError("Island end world does not exist - you must create it manually");
+                }
+            }
+            if (islandWorld != null) {
+                addWorld(islandWorld, plugin.getSettings());
+            } else {
+                plugin.logError("Island world does not exist - you must create it manually");
+            }
             return;
         }
         if (plugin.getServer().getWorld(plugin.getSettings().getWorldName()) == null) {
@@ -90,8 +108,12 @@ public class IslandWorldManager {
         }
     }
 
+    /**
+     * Registers a world with Multiverse if the plugin exists
+     * @param world - world
+     */
     private void multiverseReg(World world) {
-        if (Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
+        if (!isUseOwnGenerator(world) && Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
             Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                     MULTIVERSE_IMPORT + world.getName() + " normal -g " + plugin.getName()));
             Bukkit.getScheduler().runTask(plugin, () -> {
@@ -583,4 +605,9 @@ public class IslandWorldManager {
     public Map<Flag, Integer> getDefaultIslandSettings(World world) {
         return worldSettings.get(Util.getWorld(world)).getDefaultIslandSettings();
     }
+
+    public boolean isUseOwnGenerator(World world) {
+        return worldSettings.get(Util.getWorld(world)).isUseOwnGenerator();
+    }
+
 }
