@@ -11,7 +11,6 @@ import java.util.Set;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
-import org.bukkit.inventory.ItemStack;
 
 import us.tastybento.bskyblock.api.addons.Addon;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
@@ -372,11 +371,16 @@ public class Settings implements DataObject, WorldSettings {
     private boolean respawnOnIsland = true;
 
     // Deaths
+    @ConfigComment("Maximum number of deaths to count. The death count can be used by add-ons.")
     @ConfigEntry(path = "island.deaths.max")
     private int deathsMax = 10;
 
     @ConfigEntry(path = "island.deaths.sum-team")
     private boolean deathsSumTeam = false;
+
+    @ConfigComment("When a player joins a team, reset their death count")
+    @ConfigEntry(path = "island.deaths.team-join-reset")
+    private boolean teamJoinDeathReset = true;
 
     // Ranks
     @ConfigEntry(path = "island.customranks")
@@ -413,18 +417,6 @@ public class Settings implements DataObject, WorldSettings {
     private List<String> ivSettings = new ArrayList<>();
 
     // ---------------------------------------------
-
-
-    /*      SCHEMATICS      */
-    private List<String> companionNames = new ArrayList<>();
-
-    @ConfigEntry(path = "island.chest-items")
-    private List<ItemStack> chestItems = new ArrayList<>();
-
-    private EntityType companionType = EntityType.COW;
-
-    private Map<String,Integer> limitedBlocks = new HashMap<>();
-    private boolean teamJoinDeathReset;
 
     // Timeout for team kick and leave commands
     @ConfigComment("Ask the player to confirm the command he is using by typing it again.")
@@ -498,24 +490,6 @@ public class Settings implements DataObject, WorldSettings {
         this.muteDeathMessages = muteDeathMessages;
     }
     /**
-     * @return the chestItems
-     */
-    public List<ItemStack> getChestItems() {
-        return chestItems;
-    }
-    /**
-     * @return the companionNames
-     */
-    public List<String> getCompanionNames() {
-        return companionNames;
-    }
-    /**
-     * @return the companionType
-     */
-    public EntityType getCompanionType() {
-        return companionType;
-    }
-    /**
      * @return the customRanks
      */
     public Map<String, Integer> getCustomRanks() {
@@ -568,6 +542,12 @@ public class Settings implements DataObject, WorldSettings {
      */
     public int getDeathsMax() {
         return deathsMax;
+    }
+    /**
+     * @param teamJoinDeathReset the teamJoinDeathReset to set
+     */
+    public void setTeamJoinDeathReset(boolean teamJoinDeathReset) {
+        this.teamJoinDeathReset = teamJoinDeathReset;
     }
     /**
      * @return the defaultLanguage
@@ -649,12 +629,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public long getLeaveWait() {
         return leaveWait;
-    }
-    /**
-     * @return the limitedBlocks
-     */
-    public Map<String, Integer> getLimitedBlocks() {
-        return limitedBlocks;
     }
     /**
      * @return the maxHomes
@@ -916,12 +890,6 @@ public class Settings implements DataObject, WorldSettings {
         return restrictFlyingMobs;
     }
     /**
-     * @return the teamJoinDeathReset
-     */
-    public boolean isTeamJoinDeathReset() {
-        return teamJoinDeathReset;
-    }
-    /**
      * @return the useEconomy
      */
     public boolean isUseEconomy() {
@@ -987,24 +955,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setCheckUpdates(boolean checkUpdates) {
         this.checkUpdates = checkUpdates;
-    }
-    /**
-     * @param chestItems the chestItems to set
-     */
-    public void setChestItems(List<ItemStack> chestItems) {
-        this.chestItems = chestItems;
-    }
-    /**
-     * @param companionNames the companionNames to set
-     */
-    public void setCompanionNames(List<String> companionNames) {
-        this.companionNames = companionNames;
-    }
-    /**
-     * @param companionType the companionType to set
-     */
-    public void setCompanionType(EntityType companionType) {
-        this.companionType = companionType;
     }
     /**
      * @param customRanks the customRanks to set
@@ -1187,12 +1137,6 @@ public class Settings implements DataObject, WorldSettings {
         this.leaveWait = leaveWait;
     }
     /**
-     * @param limitedBlocks the limitedBlocks to set
-     */
-    public void setLimitedBlocks(Map<String, Integer> limitedBlocks) {
-        this.limitedBlocks = limitedBlocks;
-    }
-    /**
      * @param makeIslandIfNone the makeIslandIfNone to set
      */
     public void setMakeIslandIfNone(boolean makeIslandIfNone) {
@@ -1305,12 +1249,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setSeaHeight(int seaHeight) {
         this.seaHeight = seaHeight;
-    }
-    /**
-     * @param teamJoinDeathReset the teamJoinDeathReset to set
-     */
-    public void setTeamJoinDeathReset(boolean teamJoinDeathReset) {
-        this.teamJoinDeathReset = teamJoinDeathReset;
     }
     /**
      * @param tileEntityLimits the tileEntityLimits to set
@@ -1598,6 +1536,10 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setDefaultIslandSettings(Map<Flag, Integer> defaultIslandSettings) {
         this.defaultIslandSettings = defaultIslandSettings;
+    }
+
+    public boolean isTeamJoinDeathReset() {
+        return teamJoinDeathReset;
     }
 
 
