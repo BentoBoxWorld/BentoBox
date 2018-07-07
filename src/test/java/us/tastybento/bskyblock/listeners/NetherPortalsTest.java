@@ -87,7 +87,7 @@ public class NetherPortalsTest {
         end = mock(World.class);
         when(end.getEnvironment()).thenReturn(Environment.THE_END);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(end);
-        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
         when(iwm.getNetherWorld(Mockito.any())).thenReturn(nether);
         when(iwm.inWorld(any())).thenReturn(true);
         when(iwm.getNetherSpawnRadius(Mockito.any())).thenReturn(100);

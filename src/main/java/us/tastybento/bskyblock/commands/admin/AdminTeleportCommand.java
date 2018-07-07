@@ -41,11 +41,11 @@ public class AdminTeleportCommand extends CompositeCommand {
             return false;
         } else {
             if (getIslands().hasIsland(getWorld(), targetUUID) || getIslands().inTeam(getWorld(), targetUUID)) {
-                Location warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getIslandWorld());
+                Location warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getWorld());
                 if (getLabel().equals("tpnether")) {
-                    warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getNetherWorld());
+                    warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getNetherWorld(getWorld()));
                 } else if (getLabel().equals("tpend")) {
-                    warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld());
+                    warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld(getWorld()));
                 }
                 // Other wise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
@@ -60,7 +60,7 @@ public class AdminTeleportCommand extends CompositeCommand {
             return false;
         }
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";

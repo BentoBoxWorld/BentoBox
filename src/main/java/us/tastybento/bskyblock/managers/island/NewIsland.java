@@ -143,14 +143,13 @@ public class NewIsland {
             // Teleport player after this island is built
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
         });
-
         // Make nether island
-        if (plugin.getSettings().isNetherGenerate() && plugin.getSettings().isNetherIslands() && plugin.getIWM().getNetherWorld() != null) {
+        if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {
             plugin.getSchemsManager().paste(plugin.getIWM().getNetherWorld(world), island);
         }
 
         // Make end island
-        if (plugin.getSettings().isEndGenerate() && plugin.getSettings().isEndIslands() && plugin.getIWM().getEndWorld() != null) {
+        if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world) && plugin.getIWM().getEndWorld(world) != null) {
             plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island);
         }
 

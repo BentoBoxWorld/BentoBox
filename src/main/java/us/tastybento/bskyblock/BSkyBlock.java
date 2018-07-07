@@ -106,7 +106,7 @@ public class BSkyBlock extends JavaPlugin {
             // Load schems manager
             schemsManager = new SchemsManager(instance);
             // Load the default island schems
-            schemsManager.loadIslands(getIWM().getIslandWorld());
+            schemsManager.loadIslands(getIWM().getBSBIslandWorld());
 
             // Set up commands
             new IslandCommand();

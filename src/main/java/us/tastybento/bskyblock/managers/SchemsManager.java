@@ -73,6 +73,7 @@ public class SchemsManager {
     }
 
     private boolean loadSchem(World world, String name) {
+        plugin.log("Loading " + name + ".schem for " + world.getName());
         File schems = new File(plugin.getIWM().getDataFolder(world), "schems");
         copySchems(schems, world, name);
         try {
@@ -96,6 +97,8 @@ public class SchemsManager {
     public void paste(World world, Island island, Runnable task) {
         if (islandSchems.containsKey(world)) {
             islandSchems.get(world).paste(world, island, task);
+        } else {
+            plugin.logError("Tried to paste schem for " + world.getName() + " but it is not loaded!");
         }
     }
 

@@ -165,9 +165,9 @@ public class IslandsManagerTest {
         // Worlds
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandWorld()).thenReturn(world);
-        when(iwm.getNetherWorld()).thenReturn(world);
-        when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
+        when(iwm.getBSBNetherWorld()).thenReturn(world);
+        when(iwm.getBSBEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
@@ -373,7 +373,7 @@ public class IslandsManagerTest {
 
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
 
 
         IslandsManager manager = new IslandsManager(plugin);

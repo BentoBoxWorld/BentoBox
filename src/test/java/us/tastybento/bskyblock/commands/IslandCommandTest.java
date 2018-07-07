@@ -76,7 +76,7 @@ public class IslandCommandTest {
     public void setup() {
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
         when(iwm.getWorld(Mockito.anyString())).thenReturn(world);
         when(plugin.getIWM()).thenReturn(iwm);
     }

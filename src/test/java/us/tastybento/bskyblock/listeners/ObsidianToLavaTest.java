@@ -55,7 +55,7 @@ public class ObsidianToLavaTest {
         world = mock(World.class);
 
         // Mock server
-        Server server = mock(Server.class);        
+        Server server = mock(Server.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -97,14 +97,14 @@ public class ObsidianToLavaTest {
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getIslandWorld()).thenReturn(world);
-        when(iwm.getNetherWorld()).thenReturn(world);
-        when(iwm.getEndWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
+        when(iwm.getNetherWorld(Mockito.any())).thenReturn(world);
+        when(iwm.getEndWorld(Mockito.any())).thenReturn(world);
 
         // Mock up IslandsManager
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
-        
+
         // Mock up items and blocks
         ItemStack item = mock(ItemStack.class);
         Block clickedBlock = mock(Block.class);
@@ -112,18 +112,18 @@ public class ObsidianToLavaTest {
         when(clickedBlock.getY()).thenReturn(0);
         when(clickedBlock.getZ()).thenReturn(0);
         when(clickedBlock.getWorld()).thenReturn(world);
-        
+
         // Users
         User.setPlugin(plugin);
-        
+
         // Put player in world
         when(iwm.inWorld(Mockito.any())).thenReturn(true);
         // Put player on island
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
         // Set as survival
         when(who.getGameMode()).thenReturn(GameMode.SURVIVAL);
-        
-        // Locales      
+
+        // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
@@ -160,8 +160,8 @@ public class ObsidianToLavaTest {
         when(clickedBlock.getType()).thenReturn(block);
         // Create the event
         testEvent(plugin, who, action, item, clickedBlock);
-        
-        
+
+
         PlayerInteractEvent event = new PlayerInteractEvent(who, action, item, clickedBlock, BlockFace.EAST);
 
         // Test not in world
@@ -183,7 +183,7 @@ public class ObsidianToLavaTest {
         // Test when player is not on island
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         assertFalse(listener.onPlayerInteract(event));
-        
+
 
     }
 

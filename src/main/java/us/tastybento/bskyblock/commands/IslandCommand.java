@@ -36,7 +36,7 @@ public class IslandCommand extends CompositeCommand {
         // Permission
         setPermissionPrefix("bskyblock");
         setPermission("island");
-        setWorld(getPlugin().getIWM().getIslandWorld());
+        setWorld(getPlugin().getIWM().getBSBIslandWorld());
         // Set up subcommands
         new IslandAboutCommand(this);
         new IslandCreateCommand(this);

@@ -94,7 +94,7 @@ public class AdminRegisterCommandTest {
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         World world = mock(World.class);
-        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
         when(plugin.getIWM()).thenReturn(iwm);
 
 

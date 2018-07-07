@@ -32,7 +32,7 @@ public class AdminCommand extends CompositeCommand {
         setOnlyPlayer(false);
         setParameters("commands.admin.help.parameters");
         setDescription("commands.admin.help.description");
-        setWorld(getPlugin().getIWM().getIslandWorld());
+        setWorld(getPlugin().getIWM().getBSBIslandWorld());
         new AdminVersionCommand(this);
         new AdminReloadCommand(this);
         new AdminTeleportCommand(this, "tp");

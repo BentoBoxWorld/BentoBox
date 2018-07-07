@@ -121,10 +121,47 @@ public class BlockInteractionListener extends AbstractFlagListener {
         case REDSTONE_COMPARATOR_OFF:
         case DAYLIGHT_DETECTOR:
         case DAYLIGHT_DETECTOR_INVERTED:
+        case REDSTONE_COMPARATOR:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.REDSTONE);
+            break;
+        case ARMOR_STAND:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case BANNER:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case BED:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case BOAT:
+        case BOAT_ACACIA:
+        case BOAT_BIRCH:
+        case BOAT_DARK_OAK:
+        case BOAT_JUNGLE:
+        case BOAT_SPRUCE:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case DRAGON_EGG:
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
+            break;
+        case ENDER_PORTAL_FRAME:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case FLOWER_POT:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case MOB_SPAWNER:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case OBSERVER:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
+            break;
+        case POWERED_MINECART:
+            this.getPlugin().log("DEBUG: " + e.getClickedBlock().getType());
             break;
         default:
             break;
+
         }
         // Now check for in-hand items
         if (e.getItem() != null) {

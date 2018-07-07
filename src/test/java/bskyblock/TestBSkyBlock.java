@@ -145,9 +145,9 @@ public class TestBSkyBlock {
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         Mockito.when(plugin.getIWM()).thenReturn(iwm);
-        Mockito.when(iwm.getIslandWorld()).thenReturn(world);
-        Mockito.when(iwm.getNetherWorld()).thenReturn(world);
-        Mockito.when(iwm.getEndWorld()).thenReturn(world);
+        Mockito.when(iwm.getBSBIslandWorld()).thenReturn(world);
+        Mockito.when(iwm.getBSBNetherWorld()).thenReturn(world);
+        Mockito.when(iwm.getBSBEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);

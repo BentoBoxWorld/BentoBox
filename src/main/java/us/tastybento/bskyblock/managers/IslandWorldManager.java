@@ -28,6 +28,7 @@ import us.tastybento.bskyblock.util.Util;
 
 /**
  * Handles registration and management of worlds
+ *
  * @author tastybento
  *
  */
@@ -79,8 +80,8 @@ public class IslandWorldManager {
             plugin.log(CREATING + plugin.getName() + "'s Island World...");
         }
         // Create the world if it does not exist
-        islandWorld = WorldCreator.name(plugin.getSettings().getWorldName()).type(WorldType.FLAT).environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld(plugin))
-                .createWorld();
+        islandWorld = WorldCreator.name(plugin.getSettings().getWorldName()).type(WorldType.FLAT)
+                .environment(World.Environment.NORMAL).generator(new ChunkGeneratorWorld(plugin)).createWorld();
         addWorld(islandWorld, plugin.getSettings());
         // Make the nether if it does not exist
         if (plugin.getSettings().isNetherGenerate()) {
@@ -88,10 +89,11 @@ public class IslandWorldManager {
                 plugin.log(CREATING + plugin.getName() + "'s Nether...");
             }
             if (!plugin.getSettings().isNetherIslands()) {
-                netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.NORMAL).environment(World.Environment.NETHER).createWorld();
-            } else {
-                netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
+                netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.NORMAL)
                         .environment(World.Environment.NETHER).createWorld();
+            } else {
+                netherWorld = WorldCreator.name(plugin.getSettings().getWorldName() + NETHER).type(WorldType.FLAT)
+                        .generator(new ChunkGeneratorWorld(plugin)).environment(World.Environment.NETHER).createWorld();
             }
         }
         // Make the end if it does not exist
@@ -100,22 +102,27 @@ public class IslandWorldManager {
                 plugin.log(CREATING + plugin.getName() + "'s End World...");
             }
             if (!plugin.getSettings().isEndIslands()) {
-                endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.NORMAL).environment(World.Environment.THE_END).createWorld();
-            } else {
-                endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.FLAT).generator(new ChunkGeneratorWorld(plugin))
+                endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.NORMAL)
                         .environment(World.Environment.THE_END).createWorld();
+            } else {
+                endWorld = WorldCreator.name(plugin.getSettings().getWorldName() + THE_END).type(WorldType.FLAT)
+                        .generator(new ChunkGeneratorWorld(plugin)).environment(World.Environment.THE_END)
+                        .createWorld();
             }
         }
     }
 
     /**
      * Registers a world with Multiverse if the plugin exists
-     * @param world - world
+     *
+     * @param world
+     *            - world
      */
     private void multiverseReg(World world) {
         if (!isUseOwnGenerator(world) && Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            Bukkit.getScheduler().runTask(plugin, () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                    MULTIVERSE_IMPORT + world.getName() + " normal -g " + plugin.getName()));
+            Bukkit.getScheduler().runTask(plugin,
+                    () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
+                            MULTIVERSE_IMPORT + world.getName() + " normal -g " + plugin.getName()));
             Bukkit.getScheduler().runTask(plugin, () -> {
                 if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
                         MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + world.getName())) {
@@ -126,9 +133,11 @@ public class IslandWorldManager {
     }
 
     /**
+     * Should only be used by BSB-specific functions
+     *
      * @return the islandWorld
      */
-    public World getIslandWorld() {
+    public World getBSBIslandWorld() {
         if (plugin.getSettings().isUseOwnGenerator()) {
             return Bukkit.getServer().getWorld(plugin.getSettings().getWorldName());
         }
@@ -136,9 +145,11 @@ public class IslandWorldManager {
     }
 
     /**
+     * Should only be used by BSB-specific functions
+     *
      * @return the netherWorld
      */
-    public World getNetherWorld() {
+    public World getBSBNetherWorld() {
         if (plugin.getSettings().isUseOwnGenerator()) {
             return Bukkit.getServer().getWorld(plugin.getSettings().getWorldName() + NETHER);
         }
@@ -146,9 +157,11 @@ public class IslandWorldManager {
     }
 
     /**
+     * Should only be used by BSB-specific functions
+     *
      * @return the endWorld
      */
-    public World getEndWorld() {
+    public World getBSBEndWorld() {
         if (plugin.getSettings().isUseOwnGenerator()) {
             return Bukkit.getServer().getWorld(plugin.getSettings().getWorldName() + THE_END);
         }
@@ -157,7 +170,9 @@ public class IslandWorldManager {
 
     /**
      * Checks if a location is in any of the island worlds
-     * @param loc - location
+     *
+     * @param loc
+     *            - location
      * @return true if in a world or false if not
      */
     public boolean inWorld(Location loc) {
@@ -168,40 +183,51 @@ public class IslandWorldManager {
      * @return List of over worlds
      */
     public List<World> getOverWorlds() {
-        return worlds.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL)).collect(Collectors.toList());
+        return worlds.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL))
+                .collect(Collectors.toList());
     }
 
     /**
      * Get friendly names of all the over worlds
+     *
      * @return Set of world names
      */
     public Set<String> getOverWorldNames() {
-        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL)).map(Map.Entry::getValue).collect(Collectors.toSet());
-    }
-
-    /**
-     * Get a set of world names that user does not already have an island in
-     * @param user - user
-     * @return set of world names, or empty set
-     */
-    public Set<String> getFreeOverWorldNames(User user) {
         return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
-                .filter(w -> !plugin.getIslands().hasIsland(w.getKey(), user))
                 .map(Map.Entry::getValue).collect(Collectors.toSet());
     }
 
     /**
-     * Check if a name is a known friendly world name, ignores case
-     * @param name - world name
-     * @return true if name is a known world name
+     * Get a set of world names that user does not already have an island in
+     *
+     * @param user
+     *            - user
+     * @return set of world names, or empty set
      */
-    public boolean isOverWorld(String name) {
-        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL)).anyMatch(w -> w.getValue().equalsIgnoreCase(name));
+    public Set<String> getFreeOverWorldNames(User user) {
+        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
+                .filter(w -> !plugin.getIslands().hasIsland(w.getKey(), user)).map(Map.Entry::getValue)
+                .collect(Collectors.toSet());
     }
 
     /**
-     * Add world to the list of known worlds along with a friendly name that will be used in commands
-     * @param world - world
+     * Check if a name is a known friendly world name, ignores case
+     *
+     * @param name
+     *            - world name
+     * @return true if name is a known world name
+     */
+    public boolean isOverWorld(String name) {
+        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
+                .anyMatch(w -> w.getValue().equalsIgnoreCase(name));
+    }
+
+    /**
+     * Add world to the list of known worlds along with a friendly name that will be
+     * used in commands
+     *
+     * @param world
+     *            - world
      */
     public void addWorld(World world, WorldSettings settings) {
         String friendlyName = settings.getFriendlyName().isEmpty() ? world.getName() : settings.getFriendlyName();
@@ -210,13 +236,17 @@ public class IslandWorldManager {
         worldSettings.put(world, settings);
         multiverseReg(world);
         // Set default island settings
-        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION)).forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
-        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING)).forEach(f -> settings.getDefaultIslandSettings().putIfAbsent(f, f.getDefaultRank()));
+        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
+        .forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
+        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
+        .forEach(f -> settings.getDefaultIslandSettings().putIfAbsent(f, f.getDefaultRank()));
     }
 
     /**
      * Get the settings for this world or sub-worlds (nether, end)
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return world settings, or null if world is unknown
      */
     public WorldSettings getWorldSettings(World world) {
@@ -225,11 +255,14 @@ public class IslandWorldManager {
 
     /**
      * Get the world based on friendly name.
-     * @param friendlyName - friendly name of world
+     *
+     * @param friendlyName
+     *            - friendly name of world
      * @return world, or null if it does not exist
      */
     public World getWorld(String friendlyName) {
-        return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName)).map(Map.Entry::getKey).findFirst().orElse(null);
+        return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName))
+                .map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
     /**
@@ -353,7 +386,9 @@ public class IslandWorldManager {
 
     /**
      * Checks if a world is a known nether world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return true if world is a known and valid nether world
      */
     public boolean isNether(World world) {
@@ -363,17 +398,22 @@ public class IslandWorldManager {
 
     /**
      * Checks if a world is a known island nether world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return true if world is a known and valid nether world
      */
     public boolean isIslandNether(World world) {
         World w = Util.getWorld(world);
-        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate() && worldSettings.get(w).isNetherIslands();
+        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate()
+                && worldSettings.get(w).isNetherIslands();
     }
 
     /**
      * Checks if a world is a known end world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return true if world is a known and valid nether world
      */
     public boolean isEnd(World world) {
@@ -383,17 +423,22 @@ public class IslandWorldManager {
 
     /**
      * Checks if a world is a known island end world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return true if world is a known and valid nether world
      */
     public boolean isIslandEnd(World world) {
         World w = Util.getWorld(world);
-        return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate() && worldSettings.get(w).isEndIslands();
+        return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate()
+                && worldSettings.get(w).isEndIslands();
     }
 
     /**
      * Get the nether world of this overWorld
-     * @param overWorld - overworld
+     *
+     * @param overWorld
+     *            - overworld
      * @return nether world, or null if it does not exist
      */
     public World getNetherWorld(World overWorld) {
@@ -402,7 +447,9 @@ public class IslandWorldManager {
 
     /**
      * Get the end world of this overWorld
-     * @param overWorld - overworld
+     *
+     * @param overWorld
+     *            - overworld
      * @return end world, or null if it does not exist
      */
     public World getEndWorld(World overWorld) {
@@ -411,7 +458,9 @@ public class IslandWorldManager {
 
     /**
      * Check if nether trees should be created in the nether or not
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return true or false
      */
     public boolean isNetherTrees(World world) {
@@ -421,7 +470,9 @@ public class IslandWorldManager {
 
     /**
      * Whether the End Dragon can spawn or not in this world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return true (default) if it can spawn or not
      */
     public boolean isDragonSpawn(World world) {
@@ -443,16 +494,21 @@ public class IslandWorldManager {
 
     /**
      * Gets world from friendly name
-     * @param friendlyWorldName - friendly world name. Used for commands.
+     *
+     * @param friendlyWorldName
+     *            - friendly world name. Used for commands.
      * @return world, or null if not known
      */
     public World getIslandWorld(String friendlyWorldName) {
-        return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst().map(Map.Entry::getKey).orElse(null);
+        return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst()
+                .map(Map.Entry::getKey).orElse(null);
     }
 
     /**
      * Get max team size for this world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return max team size
      */
     public int getMaxTeamSize(World world) {
@@ -461,7 +517,9 @@ public class IslandWorldManager {
 
     /**
      * Get max homes for world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return max homes
      */
     public int getMaxHomes(World world) {
@@ -470,7 +528,9 @@ public class IslandWorldManager {
 
     /**
      * Get the friendly name for world or related nether or end
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return Friendly name
      */
     public String getFriendlyName(World world) {
@@ -479,7 +539,9 @@ public class IslandWorldManager {
 
     /**
      * Get the permission prefix for this world. No trailing dot included.
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return permission prefix for this world
      */
     public String getPermissionPrefix(World world) {
@@ -489,7 +551,9 @@ public class IslandWorldManager {
 
     /**
      * Get the invincible visitor settings for this world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return invisible visitor settings
      */
     public List<String> getIvSettings(World world) {
@@ -497,10 +561,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Returns whether a world flag is set or not
-     * Same result as calling {@link Flag#isSetForWorld(World)}
-     * @param world - world
-     * @param flag - world setting flag
+     * Returns whether a world flag is set or not Same result as calling
+     * {@link Flag#isSetForWorld(World)}
+     *
+     * @param world
+     *            - world
+     * @param flag
+     *            - world setting flag
      * @return true or false
      */
     public boolean isWorldFlag(World world, Flag flag) {
@@ -509,7 +576,9 @@ public class IslandWorldManager {
 
     /**
      * Get the default game mode for this world.
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return GameMode: SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
      */
     public GameMode getDefaultGameMode(World world) {
@@ -518,7 +587,9 @@ public class IslandWorldManager {
 
     /**
      * Get the set of entity types not to remove when player teleports to island
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return - set of entity types
      */
     public Set<EntityType> getRemoveMobsWhitelist(World world) {
@@ -568,16 +639,21 @@ public class IslandWorldManager {
     }
 
     /**
-     * The data folder for the addon that registered this world, or the plugin's data folder if none found
+     * The data folder for the addon that registered this world, or the plugin's
+     * data folder if none found
+     *
      * @return
      */
     public File getDataFolder(World world) {
-        return worldSettings.get(Util.getWorld(world)).getAddon().map(Addon::getDataFolder).orElse(plugin.getDataFolder());
+        return worldSettings.get(Util.getWorld(world)).getAddon().map(Addon::getDataFolder)
+                .orElse(plugin.getDataFolder());
     }
 
     /**
      * Get the addon associated with this world set
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return Addon, or empty
      */
     public Optional<Addon> getAddon(World world) {
@@ -586,7 +662,9 @@ public class IslandWorldManager {
 
     /**
      * Get default island flag settings for this world.
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return default rank settings for new islands.
      */
     public Map<Flag, Integer> getDefaultIslandFlags(World world) {
@@ -599,7 +677,9 @@ public class IslandWorldManager {
 
     /**
      * Return island setting defaults for world
-     * @param world - world
+     *
+     * @param world
+     *            - world
      * @return default settings for new islands
      */
     public Map<Flag, Integer> getDefaultIslandSettings(World world) {

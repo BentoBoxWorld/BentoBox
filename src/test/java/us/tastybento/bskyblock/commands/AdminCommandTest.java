@@ -62,7 +62,7 @@ public class AdminCommandTest {
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
         
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.getIslandWorld()).thenReturn(world);
+        when(iwm.getBSBIslandWorld()).thenReturn(world);
         when(plugin.getIWM()).thenReturn(iwm);
         
     }
