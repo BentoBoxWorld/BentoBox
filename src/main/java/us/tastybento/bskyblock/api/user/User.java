@@ -364,4 +364,12 @@ public class User {
             return other.playerUUID == null;
         } else return playerUUID.equals(other.playerUUID);
     }
+
+    /**
+     * Checks if a user is in one of the game worlds
+     * @return true if user is, false if not
+     */
+    public boolean inWorld() {
+        return plugin.getIWM().inWorld(getLocation());
+    }
 }

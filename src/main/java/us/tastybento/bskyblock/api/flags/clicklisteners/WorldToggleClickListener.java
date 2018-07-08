@@ -19,10 +19,10 @@ import us.tastybento.bskyblock.util.Util;
  *
  */
 public class WorldToggleClickListener implements ClickHandler {
-    
+
     private BSkyBlock plugin = BSkyBlock.getInstance();
     private String id;
-    
+
     /**
      * @param id - the flag ID that this click listener is associated with
      */
@@ -41,10 +41,11 @@ public class WorldToggleClickListener implements ClickHandler {
             user.sendMessage("general.errors.wrong-world");
             return true;
         }
-        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".settings." + id;
+        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.world.settings." + id;
         if (!user.hasPermission(reqPerm)) {
             user.sendMessage("general.errors.no-permission");
             user.sendMessage("general.errors.you-need", "[permission]", reqPerm);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
         // Get flag

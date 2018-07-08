@@ -10,6 +10,7 @@ import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.util.Util;
 
 /**
  * Left Clicks increase rank, right clicks lower rank
@@ -30,6 +31,18 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
+        // Get the world
+        if (!plugin.getIWM().inWorld(user.getLocation())) {
+            user.sendMessage("general.errors.wrong-world");
+            return true;
+        }
+        String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".settings." + id;
+        if (!user.hasPermission(reqPerm)) {
+            user.sendMessage("general.errors.no-permission");
+            user.sendMessage("general.errors.you-need", "[permission]", reqPerm);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+            return true;
+        }
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
         // Get the user's island
@@ -55,6 +68,8 @@ public class CycleClick implements PanelItem.ClickHandler {
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+        } else {
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }
         return true;
     }

@@ -7,6 +7,7 @@ import java.util.Arrays;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
+import org.bukkit.Sound;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,6 +27,7 @@ import us.tastybento.bskyblock.util.Util;
 import us.tastybento.bskyblock.util.teleport.SafeTeleportBuilder;
 
 /**
+ * Listener for invincible visitor settings. Handles click listening and damage events
  * @author tastybento
  *
  */
@@ -33,15 +35,28 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+        // Get the world
+        if (!user.inWorld()) {
+            user.sendMessage("general.errors.wrong-world");
+            return true;
+        }
+        String reqPerm = getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.INVINCIBLE_VISITORS";
+        if (!user.hasPermission(reqPerm)) {
+            user.sendMessage("general.errors.no-permission");
+            user.sendMessage("general.errors.you-need", "[permission]", reqPerm);
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
+            return true;
+        }
+
         String ivPanelName = user.getTranslation("protection.flags.INVINCIBLE_VISITORS.name");
         if (panel.getName().equals(ivPanelName)) {
             // This is a click on the IV panel
             // Slot relates to the enum
             DamageCause c = Arrays.asList(EntityDamageEvent.DamageCause.values()).get(slot);
-            if (getPlugin().getSettings().getIvSettings().contains(c.name())) {
-                getPlugin().getSettings().getIvSettings().remove(c.name());
+            if (getIWM().getIvSettings(user.getWorld()).contains(c.name())) {
+                getIWM().getIvSettings(user.getWorld()).remove(c.name());
             } else {
-                getPlugin().getSettings().getIvSettings().add(c.name());
+                getIWM().getIvSettings(user.getWorld()).add(c.name());
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
@@ -63,18 +78,18 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
         pb.build();
 
     }
-    
+
     private PanelItem getPanelItem(DamageCause c, User user) {
         PanelItemBuilder pib = new PanelItemBuilder();
         pib.name(Util.prettifyText(c.toString()));
         pib.clickHandler(this);
-        if (getPlugin().getSettings().getIvSettings().contains(c.name())) {
+        if (getIWM().getIvSettings(user.getWorld()).contains(c.name())) {
             pib.icon(Material.GREEN_SHULKER_BOX);
             pib.description(user.getTranslation("protection.panel.flag-item.setting-active"));
         } else {
             pib.icon(Material.RED_SHULKER_BOX);
-            pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled")); 
-        } 
+            pib.description(user.getTranslation("protection.panel.flag-item.setting-disabled"));
+        }
         return pib.build();
     }
 
@@ -85,10 +100,9 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onVisitorGetDamage(EntityDamageEvent e) {
         World world = e.getEntity().getWorld();
-        if (!getPlugin().getIWM().inWorld(e.getEntity().getLocation())
-                || !getPlugin().getIWM().getIvSettings(world).contains(e.getCause().name())
-                || !(e.getEntity() instanceof Player) 
-                || e.getCause().equals(DamageCause.ENTITY_ATTACK)
+        if (!(e.getEntity() instanceof Player)
+                || !getIWM().inWorld(e.getEntity().getLocation())
+                || !getIWM().getIvSettings(world).contains(e.getCause().name())
                 || getIslands().userIsOnIsland(world, User.getInstance(e.getEntity()))) {
             return;
         }

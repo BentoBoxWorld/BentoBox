@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.listeners.flags;
+package us.tastybento.bskyblock.api.flags.clicklisteners;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -20,7 +20,6 @@ import org.powermock.reflect.Whitebox;
 
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
@@ -30,7 +29,7 @@ import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BSkyBlock.class, Util.class })
-public class SettingsToggleClickListenerTest {
+public class WorldToggleClickListenerTest {
 
     private IslandWorldManager iwm;
     private WorldToggleClickListener listener;
@@ -64,7 +63,7 @@ public class SettingsToggleClickListenerTest {
         when(user.getPlayer()).thenReturn(mock(Player.class));
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
-        
+
         FlagsManager fm = mock(FlagsManager.class);
         flag = mock(Flag.class);
         when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
@@ -88,7 +87,7 @@ public class SettingsToggleClickListenerTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         Mockito.verify(user).sendMessage("general.errors.no-permission");
-        Mockito.verify(user).sendMessage("general.errors.you-need", "[permission]", "bskyblock.settings.test");
+        Mockito.verify(user).sendMessage("general.errors.you-need", "[permission]", "bskyblock.admin.world.settings.test");
     }
 
     @Test

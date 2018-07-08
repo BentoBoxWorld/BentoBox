@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.listeners.flags;
+package us.tastybento.bskyblock.api.flags.clicklisteners;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -38,13 +38,15 @@ import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.FlagsManager;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
 import us.tastybento.bskyblock.managers.RanksManager;
+import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
+@PrepareForTest({Bukkit.class, BSkyBlock.class, User.class, Util.class })
 public class CycleClickTest {
 
     private static final Integer PROTECTION_RANGE = 200;
@@ -59,6 +61,7 @@ public class CycleClickTest {
     private Flag flag;
     private Panel panel;
     private Inventory inv;
+    private IslandWorldManager iwm;
 
     /**
      * @throws java.lang.Exception
@@ -90,6 +93,7 @@ public class CycleClickTest {
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
         when(user.getWorld()).thenReturn(world);
+        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
@@ -107,7 +111,7 @@ public class CycleClickTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
-        // Locales      
+        // Locales
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
@@ -180,6 +184,33 @@ public class CycleClickTest {
         inv = mock(Inventory.class);
         when(panel.getInventory()).thenReturn(inv);
 
+        // IslandWorldManager
+        iwm = mock(IslandWorldManager.class);
+        when(plugin.getIWM()).thenReturn(iwm);
+        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+
+        // Util
+        PowerMockito.mockStatic(Util.class);
+        when(Util.getWorld(Mockito.any())).thenReturn(world);
+
+    }
+
+    @Test
+    public void testNotInWorld() {
+        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        CycleClick udc = new CycleClick("LOCK");
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.wrong-world"));
+    }
+
+    @Test
+    public void testNoPremission() {
+        when(user.hasPermission(Mockito.anyString())).thenReturn(false);
+        CycleClick udc = new CycleClick("LOCK");
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.you-need"), Mockito.eq("[permission]"), Mockito.eq("bskyblock.settings.LOCK"));
     }
 
     @Test
@@ -225,30 +256,30 @@ public class CycleClickTest {
         Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
         Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
     }
-    
+
     @Test
     public void testAllClicks() {
         // Test all possible click types
         CycleClick udc = new CycleClick("LOCK");
         Arrays.asList(ClickType.values()).forEach(c -> assertTrue(udc.onClick(panel, user, c, 0)));
     }
-    
+
     @Test
     public void testNotOwner() {
         UUID u;
         do {
             u = UUID.randomUUID();
         } while(u.equals(uuid));
-        
+
         when(island.getOwner()).thenReturn(u);
         Mockito.verify(plugin, Mockito.never()).getRanksManager();
-        
+
     }
-    
+
     @Test
     public void testNullIsland() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
-        Mockito.verify(plugin, Mockito.never()).getRanksManager();  
+        Mockito.verify(plugin, Mockito.never()).getRanksManager();
     }
 
 }
