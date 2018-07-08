@@ -420,6 +420,10 @@ protection:
       description: "Toggle pickup"
       name: "Item pickup"
       hint: "Items cannot be picked up"
+    JUKEBOX:
+      description: "Toggle usage"
+      name: "Jukebox use"
+      hint: "No jukebox use allowed"
     LEASH: 
       description: "Toggle use"
       name: "Leash use"
@@ -443,10 +447,10 @@ protection:
         &ato mount inventory
       name: "Mount inventory"
       hint: "No access to mount inventory"
-    MUSIC: 
-      description: "Toggle access"
-      name: Music
-      hint: "No jukebox use"
+    NOTE_BLOCK: 
+      description: "Toggle use"
+      name: "Note block"
+      hint: "No note block use"
     OFFLINE_REDSTONE:
       description: |
           &aWhen disabled, redstone
