@@ -1,5 +1,7 @@
 package us.tastybento.bskyblock.listeners;
 
+import java.util.Objects;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -117,7 +119,7 @@ public class NetherPortals implements Listener {
         if (plugin.getIWM().isEndGenerate(overWorld) && plugin.getIWM().isEndIslands(overWorld)) {
             World endWorld = plugin.getIWM().getEndWorld(overWorld);
             // End exists and end islands are being used
-            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
+            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).filter(Objects::nonNull).orElse(e.getFrom().toVector().toLocation(endWorld));
             e.setCancelled(true);
             new SafeTeleportBuilder(plugin)
             .entity(e.getPlayer())
@@ -177,7 +179,7 @@ public class NetherPortals implements Listener {
         if (e.getFrom().getWorld().getEnvironment().equals(Environment.NETHER)) {
             // If this is from the island nether, then go to the same vector, otherwise try island home location
             Location to = plugin.getIWM().isNetherIslands(overWorld)
-                    ? plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld))
+                    ? plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).filter(Objects::nonNull).orElse(e.getFrom().toVector().toLocation(overWorld))
                             : plugin.getIslands().getIslandLocation(overWorld, e.getPlayer().getUniqueId());
 
                     e.setCancelled(true);
@@ -192,7 +194,7 @@ public class NetherPortals implements Listener {
         World nether = plugin.getIWM().getNetherWorld(overWorld);
         // If this is to island nether, then go to the same vector, otherwise try spawn
         Location to = (plugin.getIWM().isNetherIslands(overWorld) && plugin.getIWM().isNetherGenerate(overWorld))
-                ? plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether))
+                ? plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).filter(Objects::nonNull).orElse(e.getFrom().toVector().toLocation(nether))
                         : nether.getSpawnLocation();
                 e.setCancelled(true);
                 // Else other worlds teleport to the nether
