@@ -69,6 +69,19 @@ public class SafeSpotTeleport {
             ((Player)entity).setGameMode(GameMode.SPECTATOR);
         }
 
+        // If there is no portal scan required, try the desired location immediately
+        if (plugin.getIslands().isSafeLocation(location)) {
+            if (portal) {
+                // If the desired location is safe, then that's where you'll go if there's no portal
+                bestSpot = location;
+            } else {
+                // If this is not a portal teleport, then go to the safe location immediately
+                entity.teleport(location);
+                return;
+            }
+        }
+
+
         // Get chunks to scan
         chunksToScan = getChunksToScan();
 
@@ -213,8 +226,8 @@ public class SafeSpotTeleport {
         task.cancel();
         // Return to main thread and teleport the player
         Bukkit.getScheduler().runTask(plugin, () -> {
-            if (!portal && entity instanceof Player) {
-                // Set home
+            if (!portal && entity instanceof Player && homeNumber > 0) {
+                // Set home if so marked
                 plugin.getPlayers().setHomeLocation(User.getInstance(entity), loc, homeNumber);
             }
             Vector velocity = entity.getVelocity();
