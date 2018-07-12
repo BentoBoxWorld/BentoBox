@@ -1,6 +1,7 @@
 package us.tastybento.bskyblock.database.objects;
 
 import java.util.Date;
+import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -103,7 +104,7 @@ public class Island implements DataObject {
     @Expose
     private int levelHandicap;
     @Expose
-    private Map<Environment, Location> spawnPoint = new HashMap<>();
+    private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
 
     public Island() {}
     public Island(Location location, UUID owner, int protectionRange) {

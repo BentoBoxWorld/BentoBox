@@ -45,7 +45,7 @@ public class FlagSerializer2 implements AdapterInterface<Map<Flag, Integer>, Map
         }
         Map<Flag, Integer> flags = (Map<Flag, Integer>)object;
         for (Entry<Flag, Integer> en: flags.entrySet()) {
-            result.put(en.getKey().getID(), en.getValue() < 0 ? false : true);
+            result.put(en.getKey().getID(), en.getValue() >= 0);
         }
         return result;
     }

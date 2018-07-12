@@ -82,7 +82,6 @@ public class SchemsManager {
             islandSchems.put(world, cb);
         } catch (IOException | InvalidConfigurationException e) {
             plugin.logError("Could not load " + name + " schem");
-            e.printStackTrace();
             return false;
         }
         return true;

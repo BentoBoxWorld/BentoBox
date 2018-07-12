@@ -21,7 +21,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.Nameable;
 import org.bukkit.World;
 import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
@@ -82,6 +81,14 @@ public class Clipboard {
     private static final String POWERED = "powered";
 
     private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
+
+    private static final String BEDROCK = "bedrock";
+
+    private static final String INVENTORY = "inventory";
+
+    private static final String ENTITY = "entity";
+
+    private static final String COLOR = "color";
 
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
@@ -199,8 +206,8 @@ public class Clipboard {
     public void paste(World world, Island island, Runnable task) {
         // Offset due to bedrock
         Vector off = new Vector(0,0,0);
-        if (blockConfig.contains("bedrock")) {
-            String[] offset = blockConfig.getString("bedrock").split(",");
+        if (blockConfig.contains(BEDROCK)) {
+            String[] offset = blockConfig.getString(BEDROCK).split(",");
             off = new Vector(Integer.valueOf(offset[0]), Integer.valueOf(offset[1]), Integer.valueOf(offset[2]));
         }
         // Calculate location for pasting
@@ -302,7 +309,6 @@ public class Clipboard {
         if (md instanceof Directional) {
             Directional facing = (Directional)md;
             if (md instanceof Stairs) {
-                //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
                 Stairs stairs = (Stairs)md;
                 stairs.setInverted(config.getBoolean("inverted"));
                 stairs.setFacingDirection(BlockFace.valueOf(config.getString(FACING, "NORTH")));
@@ -359,26 +365,24 @@ public class Clipboard {
         if (bs instanceof InventoryHolder) {
             bs.update(true, false);
             Inventory ih = ((InventoryHolder)bs).getInventory();
-            if (config.isConfigurationSection("inventory")) {
-                ConfigurationSection inv = config.getConfigurationSection("inventory");
+            if (config.isConfigurationSection(INVENTORY)) {
+                ConfigurationSection inv = config.getConfigurationSection(INVENTORY);
                 inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
             }
         }
 
         // Entities
-        if (config.isConfigurationSection("entity")) {
-            ConfigurationSection en = config.getConfigurationSection("entity");
+        if (config.isConfigurationSection(ENTITY)) {
+            ConfigurationSection en = config.getConfigurationSection(ENTITY);
             en.getKeys(false).forEach(k -> {
                 ConfigurationSection ent = en.getConfigurationSection(k);
                 Location center = block.getLocation().add(new Vector(0.5, 0.0, 0.5));
                 LivingEntity e = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
-                if (e instanceof Nameable) {
+                if (e != null) {
                     e.setCustomName(ent.getString("name"));
                 }
-                if (e instanceof Colorable) {
-                    if (ent.contains("color")) {
-                        ((Colorable) e).setColor(DyeColor.valueOf(ent.getString("color")));
-                    }
+                if (e instanceof Colorable && ent.contains(COLOR)) {
+                    ((Colorable) e).setColor(DyeColor.valueOf(ent.getString(COLOR)));
                 }
                 if (e instanceof Tameable) {
                     ((Tameable)e).setTamed(ent.getBoolean("tamed"));
@@ -396,7 +400,7 @@ public class Clipboard {
                 if (e instanceof AbstractHorse) {
                     AbstractHorse horse = (AbstractHorse)e;
                     horse.setDomestication(ent.getInt("domestication"));
-                    ConfigurationSection inv = ent.getConfigurationSection("inventory");
+                    ConfigurationSection inv = ent.getConfigurationSection(INVENTORY);
                     inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
                 }
 
@@ -427,12 +431,10 @@ public class Clipboard {
         for (LivingEntity e: entities) {
             ConfigurationSection en = s.createSection("entity." + e.getUniqueId());
             en.set("type", e.getType().name());
-            if (e instanceof Nameable) {
-                en.set("name", e.getCustomName());
-            }
+            en.set("name", e.getCustomName());
             if (e instanceof Colorable) {
                 Colorable c = (Colorable)e;
-                en.set("color", c.getColor().name());
+                en.set(COLOR, c.getColor().name());
             }
             if (e instanceof Tameable && ((Tameable)e).isTamed()) {
                 en.set("tamed", true);
@@ -471,7 +473,7 @@ public class Clipboard {
             s.set("data", block.getData());
         }
         if (block.getType().equals(Material.BEDROCK)) {
-            blockConfig.set("bedrock", x + "," + y + "," + z);
+            blockConfig.set(BEDROCK, x + "," + y + "," + z);
         }
 
         // Block state
@@ -485,7 +487,6 @@ public class Clipboard {
         }
         if (md instanceof Directional) {
             if (md instanceof Stairs) {
-                //facing.setFacingDirection(BlockFace.valueOf(s.getString(FACING)).getOppositeFace());
                 Stairs stairs = (Stairs)md;
                 s.set("inverted", stairs.isInverted());
                 s.set(FACING, stairs.getAscendingDirection().name());
@@ -502,11 +503,11 @@ public class Clipboard {
         }
         if (md instanceof Colorable) {
             Colorable c = (Colorable)md;
-            s.set("color", c.getColor().name());
+            s.set(COLOR, c.getColor().name());
         }
         if (block.getType().equals(Material.CARPET)) {
             DyeColor c = DyeColor.getByWoolData(block.getData());
-            s.set("color", c.name());
+            s.set(COLOR, c.name());
         }
         if (md instanceof Redstone) {
             Redstone r = (Redstone)md;

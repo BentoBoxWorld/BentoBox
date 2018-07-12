@@ -704,7 +704,6 @@ public class IslandsManager {
                         handler.saveObject(island);
                     } catch (Exception e) {
                         plugin.logError("Could not save island to database when running async! " + e.getMessage());
-                        e.printStackTrace();
                     }
                 }
                 midSave = false;

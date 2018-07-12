@@ -18,6 +18,7 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
 import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
@@ -100,14 +101,14 @@ public class BreakBlocksListener extends AbstractFlagListener {
             getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> {
                 if (!x.isAllowed(user, Flags.BREAK_BLOCKS)) {
                     e.setCancelled(true);
-                    user.sendMessage("protection.protected");
+                    user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
                 }
             });
 
             // The player is in the world, but not on an island, so general world settings apply
             if (!Flags.BREAK_BLOCKS.isSetForWorld(e.getVehicle().getWorld())) {
                 e.setCancelled(true);
-                user.sendMessage("protection.protected");
+                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
             }
         }
     }

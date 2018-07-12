@@ -30,7 +30,7 @@ public class BSBDatabase<T> {
     public BSBDatabase(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
         handler = (AbstractDatabaseHandler<T>) BSBDbSetup.getDatabase().getHandler(type);
-       
+
     }
 
     /**
@@ -44,7 +44,6 @@ public class BSBDatabase<T> {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | ClassNotFoundException | IntrospectionException e) {
             logger.severe(() -> "Could not load objects from database! Error: " + e.getMessage());
-            e.printStackTrace();
         }
         return result;
     }
@@ -61,7 +60,6 @@ public class BSBDatabase<T> {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | ClassNotFoundException | IntrospectionException e) {
             logger.severe(() -> "Could not load object from database! " + e.getMessage());
-            e.printStackTrace();
         }
         return result;
     }
@@ -100,14 +98,14 @@ public class BSBDatabase<T> {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | IntrospectionException e) {
             logger.severe(() -> "Could not delete config! Error: " + e.getMessage());
-        }       
+        }
     }
 
     /**
      * Close the database
      */
     public void close() {
-        handler.close(); 
+        handler.close();
     }
 
 

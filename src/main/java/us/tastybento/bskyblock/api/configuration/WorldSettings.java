@@ -211,6 +211,6 @@ public interface WorldSettings {
     /**
      * @return the visitorBannedCommands
      */
-    public List<String> getVisitorBannedCommands();
+    List<String> getVisitorBannedCommands();
 
 }

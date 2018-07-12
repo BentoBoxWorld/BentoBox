@@ -190,9 +190,7 @@ public class NewIsland {
         // Find a free spot
         Map<Result, Integer> result = new EnumMap<>(Result.class);
         Result r = isIsland(last);
-        while (!r.equals(Result.FREE)
-                && (result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS
-                        && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS)) {
+        while (!r.equals(Result.FREE) && result.getOrDefault(Result.BLOCK_AT_CENTER, 0) < MAX_UNOWNED_ISLANDS) {
             last = nextGridLocation(last);
             result.merge(r, 1, (k,v) -> v++);
             r = isIsland(last);

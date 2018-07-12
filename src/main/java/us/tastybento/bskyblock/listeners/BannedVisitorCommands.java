@@ -1,6 +1,3 @@
-/**
- *
- */
 package us.tastybento.bskyblock.listeners;
 
 import org.bukkit.event.EventHandler;
@@ -22,7 +19,7 @@ public class BannedVisitorCommands implements Listener {
     private BSkyBlock plugin;
 
     /**
-     * @param plugin
+     * @param plugin - plugin
      */
     public BannedVisitorCommands(BSkyBlock plugin) {
         this.plugin = plugin;
