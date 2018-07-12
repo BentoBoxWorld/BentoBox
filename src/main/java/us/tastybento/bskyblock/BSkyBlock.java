@@ -11,6 +11,7 @@ import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
 import us.tastybento.bskyblock.commands.IslandCommand;
 import us.tastybento.bskyblock.database.BSBDbSetup;
+import us.tastybento.bskyblock.listeners.BannedVisitorCommands;
 import us.tastybento.bskyblock.listeners.BlockEndDragon;
 import us.tastybento.bskyblock.listeners.JoinLeaveListener;
 import us.tastybento.bskyblock.listeners.NetherPortals;
@@ -164,6 +165,8 @@ public class BSkyBlock extends JavaPlugin {
         manager.registerEvents(new FlyingMobEvents(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
+        // Banned visitor commands
+        manager.registerEvents(new BannedVisitorCommands(this), this);
     }
 
     @Override

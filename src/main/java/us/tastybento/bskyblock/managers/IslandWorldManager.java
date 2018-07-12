@@ -690,4 +690,11 @@ public class IslandWorldManager {
         return worldSettings.get(Util.getWorld(world)).isUseOwnGenerator();
     }
 
+    /**
+     * Return banned commands for visitors
+     * @return the visitorbannedcommands
+     */
+    public List<String> getVisitorBannedCommands(World world) {
+        return worldSettings.get(Util.getWorld(world)).getVisitorBannedCommands();
+    }
 }

@@ -1,43 +1,29 @@
-# Config for BSkyBlock V${version}
-
-# Created and maintained by Tastybento with the help of Poslovitch
-
-### General Settings ###
 general:
   # BSkyBlock uses bStats.org to get global data about the plugin to help improving it.
-  # bStats has nearly no effect on your server's performance and the sent data is completely 
+  # bStats has nearly no effect on your server's performance and the sent data is completely
   # anonymous so please consider twice if you really want to disable it.
   metrics: true
-
   # Check for updates - this will tell Ops and the console if there is a new
   # version available. It contacts dev.bukkit.org to request the latest version
   # info. It does not download the latest version or change any files
   check-updates: true
-
   # Default language for new players.
   # This is the filename in the locale folder without .yml.
   # If this does not exist, the default en-US will be used.
   default-language: en-US
-
   # Use economy or not. If true, an economy plugin is required. If false, no money is used or give.
   # If there is no economy plugin present anyway, money will be automatically disabled.
   use-economy: true
-
   # Starting money - this is how much money new players will have as their
-  # balance at the start of an island. 
+  # balance at the start of an island.
   starting-money: 10.0
-
-  ### Purge-related Settings ###
   purge:
     # Only islands below this level will be removed if they are abandoned and admins issue the purge command
     max-island-level: 50
-
     # Remove user data when its island gets purged.
     # Helps a lot to avoid huge backups and can save some performance on startup,
     # but the player settings and data will be reset.
     remove-user-data: false
-
-  ### Database-related Settings ###
   database:
     # FLATFILE, MYSQL, MONGO
     # if you use MONGO, you must also run the BSBMongo plugin (not addon)
@@ -49,66 +35,43 @@ general:
     name: BSkyBlock
     username: username
     password: password
-
     # How often the data will be saved to file in mins. Default is 5 minutes.
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
     backup-period: 5
-
   # Recover super flat - if the generator does not run for some reason, you can get
   # super flat chunks (grass). To remove automatically, select this option. Turn off
   # if there are no more because it may cause lag.
   # This will regenerate any chunks with bedrock at y=0 when they are loaded
   recover-super-flat: false
-
   # Mute death messages
   mute-death-messages: false
-
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
   fakeplayers:
-  - "[CoFH]"
-  
+  - '[CoFH]'
   # Allow obsidian to be scooped up with an empty bucket back into lava
   # This only works if there is a single block of obsidian (no obsidian within 10 blocks)
   # Recommendation is to keep this true so that newbies don't bother you or reset their
   # island unnecessarily.
   allow-obsidian-scooping: true
-  
-  allow-teleport:
-    # Allow /island teleport when falling. If set to false, all teleporting is
-    # disabled until death from the void or until you hit something.
-    # See commands that this will block too
-    # Using "*" (with quotes) will block ALL commands when falling
-    falling: true
-    falling-blocked-commands:
-    - home
-    
-    # The same as above, but this time it is when the player is swimming in acid
-    acid: true
-    acid-blocked-commands:
-    - home
-
   # Time in seconds that players have to confirm sensitive commands, e.g. island reset
-  confimation-time: 20
-  
-### World Settings ###
+  confirmation-time: 20
 world:
+  # Friendly name for this world. Used in admin commands. Must be a single word
+  friendly-name: BSkyBlock
   # Name of the world - if it does not exist then it will be generated.
   # It acts like a prefix for nether and end (e.g. BSkyBlock, BSkyBlock_nether, BSkyBlock_end)
   world-name: BSkyBlock_world
-
-  # Radius of island in blocks. (So distance between islands is twice this)  
+  # Radius of island in blocks. (So distance between islands is twice this)
   # Will be rounded up to the nearest 16 blocks.
   # It is the same for every dimension : Overworld, Nether and End.
   # This value cannot be changed mid-game and the plugin will not start if it is different.
   distance-between-islands: 64
-
   # Default protection range radius in blocks. Cannot be larger than distance.
   # Admins can change protection sizes for players individually using /bsadmin setrange
   # or set this permission: bskyblock.island.range.<number>
   protection-range: 50
-
   # Start islands at these coordinates. This is where new islands will start in the
   # world. These must be a factor of your island distance, but the plugin will auto
   # calculate the closest location on the grid. Islands develop around this location
@@ -116,26 +79,25 @@ world:
   # If none of this makes sense, leave it at 0,0.
   start-x: 0
   start-z: 0
-
+  offset-x: 0
+  offset-z: 0
   # Island height - Lowest is 5.
-  # It is the y coordinate of the bedrock block in the schematic
+  # It is the y coordinate of the bedrock block in the schem
   island-height: 120
-
+  # Use your own world generator for this world. In this case, the plugin will not generate
+  # anything.
+  use-own-generator: false
   # Sea height (don't changes this mid-game unless you delete the world)
   # Minimum is 0, which means you are playing Skyblock!
   # If sea height is less than about 10, then players will drop right through it
   # if it exists. Makes for an interesting variation on skyblock.
   sea-height: 0
-
   # Maximum number of islands in the world. Set to 0 for unlimited. 
   # If the number of islands is greater than this number, no new island will be created.
   max-islands: 0
-
   # The default game mode for this world. Players will be set to this mode when they create
   # a new island for example. Options are SURVIVAL, CREATIVE, ADVENTURE, SPECTATOR
   default-game-mode: SURVIVAL
-
-  ### Nether-related Settings ###
   nether:
     # Generate Nether - if this is false, the nether world will not be made and access to
     # the nether will not occur. Other plugins may still enable portal usage.
@@ -143,187 +105,191 @@ world:
     # Note that with a standard nether all players arrive at the same portal and entering a
     # portal will return them back to their islands.
     generate: true
-
     # Islands in Nether. Change to false for standard vanilla nether.
     islands: true
-
     # Nether trees are made if a player grows a tree in the nether (gravel and glowstone)
     # Applies to both vanilla and islands Nether
     trees: true
-
     # Make the nether roof, if false, there is nothing up there
     # Change to false if lag is a problem from the generation
     # Only applies to islands Nether
     roof: true
-   
     # Nether spawn protection radius - this is the distance around the nether spawn
     # that will be protected from player interaction (breaking blocks, pouring lava etc.)
     # Minimum is 0 (not recommended), maximum is 100. Default is 25.
     # Only applies to vanilla nether
     spawn-radius: 25
-  
   end:
     generate: true
     islands: true
-
-  # Disable redstone operation on islands unless a team member is online.
-  # This may reduce lag but it can cause problems with visitors needing to use a redstone system.
-  # Default is false, because it is an experimental feature that can break a lot of redstone systems.
-  disable-offline-redstone: false
-
+    dragon-spawn: false
   # Removing mobs - this kills all monsters in the vicinity. Benefit is that it helps
   # players return to their island if the island has been overrun by monsters.
-  # This setting is toggled in world flags and set by the settings GUI
+  # This setting is toggled in world flags and set by the settings GUI.
   # Mob white list - these mobs will NOT be removed when logging in or doing /island
   remove-mobs-whitelist:
-  - WITHER
-  - ENDERMAN
   - PIG_ZOMBIE
+  - ENDERMAN
   - ZOMBIE_VILLAGER
-
+  - WITHER
   # World flags. These are boolean settings for various flags for this world
   flags:
     ENTER_EXIT_MESSAGES: true
     REMOVE_MOBS: true
-    
-### Island Settings ###
+  # These are the default protection settings for new islands.
+  # The value is the minimum island rank required allowed to do the action
+  # Ranks are: Visitor = 0, Member = 900, Owner = 1000
+  default-island-flags:
+    HURT_ANIMALS: 900
+    COLLECT_WATER: 900
+    REDSTONE: 900
+    BUCKET: 900
+    BUTTON: 900
+    FIRE_EXTINGUISH: 900
+    LOCK: 0
+    ENDER_PEARL: 900
+    BEACON: 900
+    DOOR: 900
+    TRAPDOOR: 900
+    FURNACE: 900
+    PRESSURE_PLATE: 900
+    PLACE_BLOCKS: 900
+    ANVIL: 900
+    FIRE: 900
+    CRAFTING: 900
+    BREEDING: 900
+    HURT_VILLAGERS: 900
+    ENCHANTING: 900
+    SHEARING: 900
+    BED: 900
+    SPAWN_EGGS: 900
+    COLLECT_LAVA: 900
+    MILKING: 900
+    LEVER: 900
+    HURT_MONSTERS: 900
+    RIDING: 900
+    ARMOR_STAND: 900
+    GATE: 900
+    TRADING: 900
+    EGGS: 900
+    ITEM_DROP: 900
+    PORTAL: 900
+    CHEST: 900
+    NOTE_BLOCK: 900
+    LEASH: 900
+    BREAK_BLOCKS: 900
+    MOUNT_INVENTORY: 900
+    CHORUS_FRUIT: 900
+    JUKEBOX: 900
+    CROP_TRAMPLE: 900
+    ITEM_PICKUP: 900
+    BREWING: 900
+  # These are the default settings for new islands
+  default-island-settings:
+    PVP_END: false
+    ANIMAL_SPAWN: true
+    PVP_NETHER: false
+    MONSTER_SPAWN: true
+    FIRE_SPREAD: true
+    PVP_OVERWORLD: false
+  # These are the settings visible to users.
+  visible-settings: []
+  # Visitor banned commands - Visitors to islands cannot use these commands in this world
+  visitor-banned-commands:
+  - spawner
+  - spawnmob
 island:
-  # Default chest items
-  chest-items:
-  - ==: org.bukkit.inventory.ItemStack
-    type: LAVA_BUCKET
-  - ==: org.bukkit.inventory.ItemStack
-    type: ICE
-    amount: 2
-  - ==: org.bukkit.inventory.ItemStack
-    type: MELON_SEEDS
-  - ==: org.bukkit.inventory.ItemStack
-    type: BONE
-    amount: 2
-  - ==: org.bukkit.inventory.ItemStack
-    type: COBBLESTONE
-    amount: 5
-  - ==: org.bukkit.inventory.ItemStack
-    type: SAPLING
-    amount: 2
-
+  limits:
+    entities: {}
+    tile-entities: {}
   # Default max team size
-  # Use this permission to set for specific user groups: askyblock.team.maxsize.<number> 
+  # Use this permission to set for specific user groups: askyblock.team.maxsize.<number>
   # Permission size cannot be less than the default below. 
   max-team-size: 4
-  
   # Default maximum number of homes a player can have. Min = 1
   # Accessed via sethome <number> or go <number>
-  # Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>  
+  # Use this permission to set for specific user groups: askyblock.island.maxhomes.<number>
   max-homes: 1
-
-  # Island naming
-  # Only players with the TODO can name their island
-  # It is displayed in the top ten and enter and exit announcements
-  # It replaces the owner's name. Players can use & for color coding if they have the TODO permission
-  # These set the minimum and maximum size of a name. 
   name:
+    # Island naming
+    # Only players with the TODO can name their island
+    # It is displayed in the top ten and enter and exit announcements
+    # It replaces the owner's name. Players can use & for color coding if they have the TODO permission
+    # These set the minimum and maximum size of a name.
     min-length: 0
     max-length: 20
-
   # How long a player must wait until they can rejoin a team island after being
   # kicked in minutes. This slows the effectiveness of players repeating challenges
   # by repetitively being invited to a team island.
   invite-wait: 60
-
-  ### Join/leave/reset island related settings ###
   reset:
     # How many resets a player is allowed (override with /asadmin clearreset <player>)
     # Value of -1 means unlimited, 0 means hardcore - no resets.
     # Example, 2 resets means they get 2 resets or 3 islands lifetime
     reset-limit: -1
-
-    #How long a player must wait before they can reset their island again in second
-    reset-wait: 300
-    
     # Kicked or leaving players lose resets
     # Players who leave a team will lose an island reset chance
     # If a player has zero resets left and leaves a team, they cannot make a new
     # island by themselves and can only join a team.
     # Leave this true to avoid players exploiting free islands
-    leavers-lose-resets: true
-    
+    leavers-lose-reset: false
     # Allow kicked players to keep their inventory.
     # If false, kicked player's inventory will be thrown at the island leader if the
     # kicked player is online and in the island world.
     kicked-keep-inventory: false
-    
-    # What the plugin should reset when the player joins or creates an island
     on-join:
+      # What the plugin should reset when the player joins or creates an island
       # Reset Money - if this is true, will reset the player's money to the starting money
       # Recommendation is that this is set to true, but if you run multi-worlds
       # make sure your economy handles multi-worlds too.
       money: false
-
       # Reset inventory - if true, the player's inventory will be cleared.
       # Note: if you have MultiInv running or a similar inventory control plugin, that
       # plugin may still reset the inventory when the world changes.
       inventory: false
-
       # Reset Ender Chest - if true, the player's Ender Chest will be cleared.
       ender-chest: false
-
-    # What the plugin should reset when the player leaves or is kicked from an island
     on-leave:
+      # What the plugin should reset when the player leaves or is kicked from an island
       # Reset Money - if this is true, will reset the player's money to the starting money
       # Recommendation is that this is set to true, but if you run multi-worlds
       # make sure your economy handles multi-worlds too.
       money: false
-
       # Reset inventory - if true, the player's inventory will be cleared.
       # Note: if you have MultiInv running or a similar inventory control plugin, that
       # plugin may still reset the inventory when the world changes.
       inventory: false
-
       # Reset Ender Chest - if true, the player's Ender Chest will be cleared.
       ender-chest: false
-
-  # Make island if player teleports to the island world and does not have one
-  make-island-if-none: false
-
-  # Immediately teleport player to their island (home 1 if it exists) when entering the world
-  immediate-teleport-on-island: false
-
-  # Have player's respawn on their island if they die
-  respawn-on-island: false
-    
-  # Ask the player to confirm the command he is using by typing it again.
-  # The "wait" value is the number of seconds to wait for confirmation.
   require-confirmation:
+    reset: true
+    # Ask the player to confirm the command he is using by typing it again.
+    # The 'wait' value is the number of seconds to wait for confirmation.
     kick: true
     kick-wait: 10
-
     leave: true
     leave-wait: 10
-
-    reset: true
-    reset-wait: 10
-  
-  # Deaths count
+  # How long a player must wait before they can reset their island again in second
+  reset-wait: 300
+  make-island-if-none: false
+  # Immediately teleport player to their island (home 1 if it exists) when entering the world
+  immediate-teleport-on-island: false
+  # Have player's respawn on their island if they die
+  respawn-on-island: false
   deaths:
-    # Max deaths
-    # If player dies more than this, it doesn't count anymore
+    # Maximum number of deaths to count. The death count can be used by add-ons.
     max: 10
-    
-    # Sum team deaths - if true, all the teams deaths are summed
-    # If false, only the leader's deaths counts
     sum-team: false
-
-### Protection Settings ###
+    # When a player joins a team, reset their death count
+    team-join-reset: true
+  customranks: {}
 protection:
   # Allow pistons to push outside of the protected area (maybe to make bridges)
   allow-piston-push: true
-  
   # Restrict Wither and other flying mobs.
   # Any flying mobs that exit the island space where they were spawned will be removed.
   # Includes blaze and ghast. 
   restrict-flying-mobs: true
-  
   # Invincible visitors. List of damages that will not affect visitors.
   # Make list blank if visitors should receive all damages
   invincible-visitors:
@@ -351,44 +317,14 @@ protection:
   - HOT_FLOOR
   - CRAMMING
   - VOID
-
-  # Visitor banned commands: Visitors to islands cannot use these commands
-  visitor-banned-commands:
-  - spawner
-  - spawnmob
-
-  # PVP cooldown in seconds. Players cannot toggle PVP off and on until this timeout
-  toggle-pvp-cooldown: 60
-  
-  # TODO
-  flags: []
-  
-### Schematics Settings ###
-schematics:
-  # These are the default settings applied to the schematics
-  defaults:
-    companion:
-      # Default island companion. Set schematic-specific companions in the schematic configuration
-      # Recommended are: COW, PIG, SHEEP, CHICKEN, VILLAGER, HORSE, IRON_GOLEM, OCELOT,
-      # RABBIT, WOLF, LLAMA or NOTHING. Default is COW.
-      # If you don't want a companion to spawn, set NOTHING.
-      type: COW
-
-      # List of names, picked at random that will apply to the companion
-      # You can add more if you like. If none are listed, the companion will not be named.
-      # Set schematic-specific companion names in the schematic configuration
-      names:
-      - "&9[player]'s cow"
-      - "&cEmergency &fFood?"
-      - "&aD&6a&di&6s&9y"
-      - "&bA&cTasty&aCow"
-    
-    # Items that will be in the chest when the player starts an island
-    # TODO
-    chest-items:
-    - ICE:2
-
-# Config.yml version. DO NOT EDIT. This number only changes if the latest
-# plugin config has been updated. If a new config is detected, it will be
-# auto-saved to config.new.yml.
-version: ${version}
+togglePvPCooldown: 0
+allowEndermanGriefing: false
+endermanDeathDrop: false
+allowTNTDamage: false
+allowChestDamage: false
+allowCreeperDamage: false
+allowCreeperGriefing: false
+allowMobDamageToItemFrames: false
+panel:
+  close-on-click-outside: true
+uniqueId: config

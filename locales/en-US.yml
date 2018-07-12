@@ -270,7 +270,8 @@ ranks:
   admin: "Admin"
   mod: "Mod"
   
-protection: 
+protection:
+  command-is-banned: "Command is banned for visitors"
   flags:
     ANIMAL_SPAWN: 
       description: "Toggle spawning"

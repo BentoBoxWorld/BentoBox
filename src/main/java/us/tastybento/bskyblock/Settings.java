@@ -265,6 +265,10 @@ public class Settings implements DataObject, WorldSettings {
     @ConfigEntry(path = "world.visible-settings")
     private List<String> visibleSettings = new ArrayList<>();
 
+    @ConfigComment("Visitor banned commands - Visitors to islands cannot use these commands in this world")
+    @ConfigEntry(path = "world.visitor-banned-commands")
+    private List<String> visitorBannedCommands = new ArrayList<>();
+
     // ---------------------------------------------
 
     /*      ISLAND      */
@@ -1540,6 +1544,19 @@ public class Settings implements DataObject, WorldSettings {
 
     public boolean isTeamJoinDeathReset() {
         return teamJoinDeathReset;
+    }
+    /**
+     * @return the visitorbannedcommands
+     */
+    @Override
+    public List<String> getVisitorBannedCommands() {
+        return visitorBannedCommands;
+    }
+    /**
+     * @param visitorBannedCommands the visitorbannedcommands to set
+     */
+    public void setVisitorBannedCommands(List<String> visitorBannedCommands) {
+        this.visitorBannedCommands = visitorBannedCommands;
     }
 
 

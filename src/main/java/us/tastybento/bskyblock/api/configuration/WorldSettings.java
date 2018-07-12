@@ -208,5 +208,9 @@ public interface WorldSettings {
      */
     boolean isUseOwnGenerator();
 
+    /**
+     * @return the visitorBannedCommands
+     */
+    public List<String> getVisitorBannedCommands();
 
 }
