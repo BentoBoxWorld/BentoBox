@@ -208,8 +208,9 @@ public class TestBSkyBlock {
             }
         }
         String[] args = {""};
-        assertEquals(Arrays.asList("sub1","sub2", "help"), testCommand.tabComplete(player, "test", args));
-        assertNotSame(Arrays.asList("sub1","sub2", "help"), testCommand.tabComplete(sender, "test", args));
+        // Results are alphabetically sorted
+        assertEquals(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(player, "test", args));
+        assertNotSame(Arrays.asList("help", "sub1","sub2"), testCommand.tabComplete(sender, "test", args));
         args[0] = "su";
         assertEquals(Arrays.asList("sub1","sub2"), testCommand.tabComplete(player, "test", args));
         args[0] = "d";
@@ -217,13 +218,13 @@ public class TestBSkyBlock {
         args[0] = "sub1";
         assertEquals(Collections.emptyList(), testCommand.tabComplete(player, "test", args));
         String[] args2 = {"sub2",""};
-        assertEquals(Arrays.asList("subsub", "help"), testCommand.tabComplete(player, "test", args2));
+        assertEquals(Arrays.asList("help", "subsub"), testCommand.tabComplete(player, "test", args2));
         args2[1] = "s";
         assertEquals(Collections.singletonList("subsub"), testCommand.tabComplete(player, "test", args2));
         String[] args3 = {"sub2","subsub", ""};
-        assertEquals(Arrays.asList("subsubsub", "help"), testCommand.tabComplete(player, "test", args3));
+        assertEquals(Arrays.asList("help", "subsubsub"), testCommand.tabComplete(player, "test", args3));
         // Test for overridden tabcomplete
-        assertEquals(Arrays.asList("Florian", "Ben", "Bill", "Ted", "help"),
+        assertEquals(Arrays.asList("Ben", "Bill", "Florian", "Ted", "help"),
                 testCommand.tabComplete(player, "test", new String[] {"sub2", "subsub", "subsubsub", ""}));
         // Test for partial word
         assertEquals(Arrays.asList("Ben", "Bill"),

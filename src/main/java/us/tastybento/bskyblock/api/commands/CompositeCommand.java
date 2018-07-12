@@ -11,6 +11,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -438,6 +439,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
+        Arrays.stream(args).forEach(plugin::log);// DEBUG
         List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
         CompositeCommand cmd = getCommandFromArgs(args);
@@ -445,7 +447,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (cmd.onlyPlayer && !(sender instanceof Player)) {
             return options;
         }
-        if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
+        if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission()) && !sender.isOp()) {
             return options;
         }
         // Add any tab completion from the subcommand
@@ -472,7 +474,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
         String lastArg = args.length != 0 ? args[args.length - 1] : "";
 
-        return Util.tabLimit(options, lastArg);
+        return Util.tabLimit(options, lastArg).stream().sorted().collect(Collectors.toList());
     }
 
     /**
