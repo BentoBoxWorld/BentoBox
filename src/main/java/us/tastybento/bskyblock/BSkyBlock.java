@@ -62,8 +62,12 @@ public class BSkyBlock extends JavaPlugin {
 
     private HeadGetter headGetter;
 
+    private boolean isLoaded;
+
     @Override
     public void onEnable(){
+        // Not loaded
+        setLoaded(false);
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.
         final long startMillis = System.currentTimeMillis();
 
@@ -142,6 +146,7 @@ public class BSkyBlock extends JavaPlugin {
                 instance.log("Thanks for using our plugin !");
                 instance.log("- Tastybento and Poslovitch, 2017-2018");
                 instance.log("#############################################");
+                instance.setLoaded(true);
             });
         });
     }
@@ -182,7 +187,9 @@ public class BSkyBlock extends JavaPlugin {
             islandsManager.shutdown();
         }
         // Save settings
-        new BSBConfig<>(this, Settings.class).saveConfigObject(settings);
+        if (isEnabled()) {
+            new BSBConfig<>(this, Settings.class).saveConfigObject(settings);
+        }
     }
 
     private void registerCustomCharts(){
@@ -336,6 +343,24 @@ public class BSkyBlock extends JavaPlugin {
      */
     public SchemsManager getSchemsManager() {
         return schemsManager;
+    }
+
+
+
+    /**
+     * @return the isLoaded
+     */
+    public boolean isLoaded() {
+        return isLoaded;
+    }
+
+
+
+    /**
+     * @param isLoaded the isLoaded to set
+     */
+    public void setLoaded(boolean isLoaded) {
+        this.isLoaded = isLoaded;
     }
 
 

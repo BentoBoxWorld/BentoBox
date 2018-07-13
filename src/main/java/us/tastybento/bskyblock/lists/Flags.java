@@ -16,6 +16,7 @@ import us.tastybento.bskyblock.listeners.flags.BlockInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;
 import us.tastybento.bskyblock.listeners.flags.BucketListener;
+import us.tastybento.bskyblock.listeners.flags.CleanSuperFlatListener;
 import us.tastybento.bskyblock.listeners.flags.EggListener;
 import us.tastybento.bskyblock.listeners.flags.EnderChestListener;
 import us.tastybento.bskyblock.listeners.flags.EnterExitListener;
@@ -52,7 +53,7 @@ public class Flags {
     // TODO: add KEEP_INVENTORY - is it needed?
 
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
-    public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.BEDROCK).listener(new PlaceBlocksListener()).build();
+    public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.GRASS).listener(new PlaceBlocksListener()).build();
 
     // Block interactions - all use BlockInteractionListener()
     public static final Flag ANVIL = new FlagBuilder().id("ANVIL").icon(Material.ANVIL).listener(new BlockInteractionListener()).build();
@@ -180,7 +181,8 @@ public class Flags {
             .listener(new IslandRespawnListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("ISLAND_RESPAWN")).build();
     public static final Flag OFFLINE_REDSTONE = new FlagBuilder().id("OFFLINE_REDSTONE").icon(Material.REDSTONE_COMPARATOR).type(Type.WORLD_SETTING)
             .listener(new OfflineRedstoneListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("OFFLINE_REDSTONE")).build();
-
+    public static final Flag CLEAN_SUPER_FLAT = new FlagBuilder().id("CLEAN_SUPER_FLAT").icon(Material.BEDROCK).type(Type.WORLD_SETTING)
+            .listener(new CleanSuperFlatListener()).allowedByDefault(false).onClick(new WorldToggleClickListener("CLEAN_SUPER_FLAT")).build();
     /**
      * @return List of all the flags in this class
      */

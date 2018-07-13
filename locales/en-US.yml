@@ -320,6 +320,12 @@ protection:
       description: "Toggle teleportation"
       name: "Chorus fruits"
       hint: "No teleporting"
+    CLEAN_SUPER_FLAT:
+      description: |
+          Enable to clean any
+          super-flat chunks in
+          island worlds
+      name: "Clean Super Flat"
     COLLECT_LAVA: 
       description: |
           Toggle collecting lava
