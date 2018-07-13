@@ -19,16 +19,15 @@ public abstract class AbstractDatabaseHandler<T> {
      * The data object that should be created and filled with values
      * from the database or inserted into the database
      */
-    protected Class<T>     dataObject;
+    protected Class<T> dataObject;
 
     /**
      * Contains the settings to create a connection to the database like
      * host/port/database/user/password
      */
-    protected DatabaseConnecter     databaseConnecter;
+    protected DatabaseConnecter databaseConnecter;
 
     protected BSkyBlock plugin;
-
 
     /**
      * Constructor

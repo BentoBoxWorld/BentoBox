@@ -248,8 +248,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @SuppressWarnings("unchecked")
     @Override
     public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-
-
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
 
