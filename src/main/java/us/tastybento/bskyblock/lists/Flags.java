@@ -152,7 +152,7 @@ public class Flags {
 
     // Others
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING)
-            .listener(new MobSpawnListener()).onClick(new IslandToggleClickListener("MONSTER_SPAWN")).build();
+            .listener(new MobSpawnListener()).onClick(new IslandToggleClickListener("ANIMAL_SPAWN")).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING)
             .onClick(new IslandToggleClickListener("MONSTER_SPAWN")).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).allowedByDefault(true).type(Type.SETTING)

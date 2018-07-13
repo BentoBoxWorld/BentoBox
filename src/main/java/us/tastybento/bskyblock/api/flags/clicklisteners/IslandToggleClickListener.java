@@ -31,7 +31,6 @@ public class IslandToggleClickListener implements ClickHandler {
         this.id = id;
     }
 
-
     /* (non-Javadoc)
      * @see us.tastybento.bskyblock.api.panels.PanelItem.ClickHandler#onClick(us.tastybento.bskyblock.api.panels.Panel, us.tastybento.bskyblock.api.user.User, org.bukkit.event.inventory.ClickType, int)
      */
