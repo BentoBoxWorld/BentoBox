@@ -36,7 +36,7 @@ public class IslandGoCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, List<String> args) {
         if (getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
-            user.sendMessage(ChatColor.RED + "general.errors.no-island");
+            user.sendMessage("general.errors.no-island");
             return false;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
