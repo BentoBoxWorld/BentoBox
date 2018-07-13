@@ -117,8 +117,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         subCommandAliases = new LinkedHashMap<>();
         // Register command if it is not already registered
         if (plugin.getCommand(label) == null) {
-            plugin.getCommandsManager()
-            .registerCommand(this);
+            plugin.getCommandsManager().registerCommand(this);
         }
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
@@ -312,11 +311,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return CompositeCommand or null if none found
      */
     public Optional<CompositeCommand> getSubCommand(String label) {
-        if (subCommands.containsKey(label.toLowerCase())) {
+        label = label.toLowerCase();
+        if (subCommands.containsKey(label)) {
             return Optional.ofNullable(subCommands.get(label));
         }
         // Try aliases
-        if (subCommandAliases.containsKey(label.toLowerCase())) {
+        if (subCommandAliases.containsKey(label)) {
             return Optional.ofNullable(subCommandAliases.get(label));
         }
         return Optional.empty();
