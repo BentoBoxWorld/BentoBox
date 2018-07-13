@@ -35,7 +35,6 @@ public class IslandGoCommand extends CompositeCommand {
      */
     @Override
     public boolean execute(User user, List<String> args) {
-
         if (getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
             user.sendMessage(ChatColor.RED + "general.errors.no-island");
             return false;
@@ -43,7 +42,7 @@ public class IslandGoCommand extends CompositeCommand {
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.valueOf(args.get(0));
             int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getIWM().getMaxHomes(getWorld()));
-            if (homeValue > 1  && homeValue <= maxHomes) {
+            if (homeValue > 1 && homeValue <= maxHomes) {
                 getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
                 user.sendMessage("commands.island.go.tip", TextVariables.LABEL, getTopLabel());
                 return true;

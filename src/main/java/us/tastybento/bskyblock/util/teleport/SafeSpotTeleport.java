@@ -43,7 +43,6 @@ public class SafeSpotTeleport {
     // Locations
     private Location bestSpot;
 
-
     private BSkyBlock plugin;
     private List<Pair<Integer, Integer>> chunksToScan;
 
@@ -80,7 +79,6 @@ public class SafeSpotTeleport {
                 return;
             }
         }
-
 
         // Get chunks to scan
         chunksToScan = getChunksToScan();
@@ -124,7 +122,7 @@ public class SafeSpotTeleport {
         } else if (entity instanceof Player && !failureMessage.isEmpty()) {
             // Failed, no safe spot
             entity.sendMessage(failureMessage);
-            if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+            if (((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
                 if (plugin.getIWM().inWorld(entity.getLocation())) {
                     ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(entity.getWorld()));
                 } else {
