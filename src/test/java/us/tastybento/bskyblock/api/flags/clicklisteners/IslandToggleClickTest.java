@@ -3,6 +3,8 @@ package us.tastybento.bskyblock.api.flags.clicklisteners;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -23,19 +25,24 @@ import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.managers.FlagsManager;
 import us.tastybento.bskyblock.managers.IslandWorldManager;
+import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BSkyBlock.class, Util.class })
-public class WorldToggleClickListenerTest {
+public class IslandToggleClickTest {
 
     private IslandWorldManager iwm;
-    private WorldToggleClickListener listener;
+    private IslandToggleClick listener;
     private Panel panel;
     private User user;
     private Flag flag;
+    private IslandsManager im;
+    private Island island;
+    private UUID uuid;
 
     /**
      * @throws java.lang.Exception
@@ -52,7 +59,7 @@ public class WorldToggleClickListenerTest {
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         when(plugin.getIWM()).thenReturn(iwm);
 
-        listener = new WorldToggleClickListener("test");
+        listener = new IslandToggleClick("test");
 
         panel = mock(Panel.class);
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
@@ -61,6 +68,9 @@ public class WorldToggleClickListenerTest {
         when(user.getWorld()).thenReturn(mock(World.class));
         when(user.getLocation()).thenReturn(mock(Location.class));
         when(user.getPlayer()).thenReturn(mock(Player.class));
+        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
+        uuid = UUID.randomUUID();
+        when(user.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
 
@@ -73,6 +83,12 @@ public class WorldToggleClickListenerTest {
         when(fm.getFlagByID(Mockito.anyString())).thenReturn(flag);
         when(plugin.getFlagsManager()).thenReturn(fm);
 
+        // Island Manager
+        im = mock(IslandsManager.class);
+        island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid);
+        when(im.getIsland(Mockito.any(World.class), Mockito.any(User.class))).thenReturn(island);
+        when(plugin.getIslands()).thenReturn(im);
     }
 
     @Test
@@ -87,15 +103,32 @@ public class WorldToggleClickListenerTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
         Mockito.verify(user).sendMessage("general.errors.no-permission");
-        Mockito.verify(user).sendMessage("general.errors.you-need", "[permission]", "bskyblock.admin.world.settings.test");
+        Mockito.verify(user).sendMessage("general.errors.you-need", "[permission]", "bskyblock.settings.test");
     }
 
     @Test
     public void testOnClick() {
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         listener.onClick(panel, user, ClickType.LEFT, 0);
-        Mockito.verify(flag).setSetting(Mockito.any(), Mockito.eq(true));
-        Mockito.verify(panel).getInventory();
+        Mockito.verify(island).toggleFlag(flag);
+    }
+
+    @Test
+    public void testOnClickNoIsland() {
+        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(null);
+        listener.onClick(panel, user, ClickType.LEFT, 0);
+        Mockito.verify(island, Mockito.never()).toggleFlag(flag);
+    }
+
+    @Test
+    public void testOnClickNotOwner() {
+        // Pick a different UUID from owner
+        UUID u = UUID.randomUUID();
+        while(u.equals(uuid)) {
+            u = UUID.randomUUID();
+        }
+        when(island.getOwner()).thenReturn(u);
+        listener.onClick(panel, user, ClickType.LEFT, 0);
+        Mockito.verify(island, Mockito.never()).toggleFlag(flag);
     }
 
 }

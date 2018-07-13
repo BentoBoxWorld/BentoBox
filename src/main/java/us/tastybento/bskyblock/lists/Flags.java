@@ -10,8 +10,6 @@ import org.bukkit.Material;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.flags.FlagBuilder;
-import us.tastybento.bskyblock.api.flags.clicklisteners.IslandToggleClickListener;
-import us.tastybento.bskyblock.api.flags.clicklisteners.WorldToggleClickListener;
 import us.tastybento.bskyblock.listeners.flags.BlockInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;
@@ -144,45 +142,52 @@ public class Flags {
      */
     // PVP
     public static final Flag PVP_OVERWORLD = new FlagBuilder().id("PVP_OVERWORLD").icon(Material.ARROW).type(Type.SETTING)
-            .defaultRank(DISABLED).listener(new PVPListener()).onClick(new IslandToggleClickListener("PVP_OVERWORLD")).build();
+            .defaultRank(DISABLED).listener(new PVPListener()).build();
     public static final Flag PVP_NETHER = new FlagBuilder().id("PVP_NETHER").icon(Material.IRON_AXE).type(Type.SETTING)
-            .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_NETHER")).build();
+            .defaultRank(DISABLED).build();
     public static final Flag PVP_END = new FlagBuilder().id("PVP_END").icon(Material.END_CRYSTAL).type(Type.SETTING)
-            .defaultRank(DISABLED).onClick(new IslandToggleClickListener("PVP_END")).build();
+            .defaultRank(DISABLED).build();
 
     // Others
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING)
-            .listener(new MobSpawnListener()).onClick(new IslandToggleClickListener("ANIMAL_SPAWN")).build();
-    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING)
-            .onClick(new IslandToggleClickListener("MONSTER_SPAWN")).build();
-    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).allowedByDefault(true).type(Type.SETTING)
-            .onClick(new IslandToggleClickListener("FIRE_SPREAD")).build();
+            .listener(new MobSpawnListener()).build();
+    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).allowedByDefault(true).type(Type.SETTING).build();
+
+    /*
+     * World Settings - they apply to every island in the game worlds.
+     */
 
     // World Settings - apply to every island in the game worlds
     public static final Flag ENDER_CHEST = new FlagBuilder().id("ENDER_CHEST").icon(Material.ENDER_CHEST)
             .allowedByDefault(false).type(Type.WORLD_SETTING)
             .listener(new EnderChestListener())
-            .onClick(new WorldToggleClickListener("ENDER_CHEST"))
             .build();
+
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
-            .onClick(new WorldToggleClickListener("ENTER_EXIT_MESSAGES"))
             .build();
+
     public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON_BASE).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new PistonPushListener())
-            .onClick(new WorldToggleClickListener("PISTON_PUSH"))
             .build();
-    static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
+
+    private static InvincibleVisitorsListener ilv = new InvincibleVisitorsListener();
     public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.WORLD_SETTING)
             .listener(ilv).onClick(ilv).subPanel(true).build();
+
     public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
-            .listener(new RemoveMobsListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("REMOVE_MOBS")).build();
+            .listener(new RemoveMobsListener()).allowedByDefault(true).build();
+
     public static final Flag ISLAND_RESPAWN = new FlagBuilder().id("ISLAND_RESPAWN").icon(Material.TORCH).type(Type.WORLD_SETTING)
-            .listener(new IslandRespawnListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("ISLAND_RESPAWN")).build();
+            .listener(new IslandRespawnListener()).allowedByDefault(true).build();
+
     public static final Flag OFFLINE_REDSTONE = new FlagBuilder().id("OFFLINE_REDSTONE").icon(Material.REDSTONE_COMPARATOR).type(Type.WORLD_SETTING)
-            .listener(new OfflineRedstoneListener()).allowedByDefault(true).onClick(new WorldToggleClickListener("OFFLINE_REDSTONE")).build();
+            .listener(new OfflineRedstoneListener()).allowedByDefault(true).build();
+
     public static final Flag CLEAN_SUPER_FLAT = new FlagBuilder().id("CLEAN_SUPER_FLAT").icon(Material.BEDROCK).type(Type.WORLD_SETTING)
-            .listener(new CleanSuperFlatListener()).allowedByDefault(false).onClick(new WorldToggleClickListener("CLEAN_SUPER_FLAT")).build();
+            .listener(new CleanSuperFlatListener()).allowedByDefault(false).build();
+
     /**
      * @return List of all the flags in this class
      */

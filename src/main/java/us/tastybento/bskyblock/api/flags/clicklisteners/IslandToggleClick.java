@@ -19,7 +19,7 @@ import us.tastybento.bskyblock.util.Util;
  * @author tastybento
  *
  */
-public class IslandToggleClickListener implements ClickHandler {
+public class IslandToggleClick implements ClickHandler {
 
     private BSkyBlock plugin = BSkyBlock.getInstance();
     private String id;
@@ -27,7 +27,7 @@ public class IslandToggleClickListener implements ClickHandler {
     /**
      * @param id - the flag ID that this click listener is associated with
      */
-    public IslandToggleClickListener(String id) {
+    public IslandToggleClick(String id) {
         this.id = id;
     }
 

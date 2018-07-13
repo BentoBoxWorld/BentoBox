@@ -151,8 +151,6 @@ public class BSkyBlock extends JavaPlugin {
         });
     }
 
-
-
     /**
      * Register listeners
      */

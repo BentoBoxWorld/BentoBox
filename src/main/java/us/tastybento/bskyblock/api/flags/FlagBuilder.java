@@ -5,6 +5,8 @@ import org.bukkit.event.Listener;
 
 import us.tastybento.bskyblock.api.flags.Flag.Type;
 import us.tastybento.bskyblock.api.flags.clicklisteners.CycleClick;
+import us.tastybento.bskyblock.api.flags.clicklisteners.IslandToggleClick;
+import us.tastybento.bskyblock.api.flags.clicklisteners.WorldToggleClick;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.managers.RanksManager;
 
@@ -21,8 +23,6 @@ public class FlagBuilder {
 
     public FlagBuilder id(String string) {
         id = string;
-        // Set the default click operation to UpDownClick
-        onClick = new CycleClick(id);
         return this;
     }
 
@@ -44,6 +44,24 @@ public class FlagBuilder {
     }
 
     public Flag build() {
+        // If no onClick has been set, then apply default ones
+        if (onClick == null) {
+            switch (type){
+                case PROTECTION:
+                    onClick = new CycleClick(id);
+                    break;
+                case SETTING:
+                    onClick = new IslandToggleClick(id);
+                    break;
+                case WORLD_SETTING:
+                    onClick = new WorldToggleClick(id);
+                    break;
+                default:
+                    onClick = new CycleClick(id);
+                    break;
+            }
+        }
+
         Flag f = new Flag(id, icon, listener, type, defaultRank, onClick, subPanel);
         f.setDefaultSetting(setting);
         return f;
