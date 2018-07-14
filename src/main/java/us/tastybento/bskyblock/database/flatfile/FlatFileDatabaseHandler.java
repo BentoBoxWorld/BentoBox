@@ -162,17 +162,18 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     // collectionTypes should be 2 long
                     Type keyType = collectionTypes.get(0);
                     Type valueType = collectionTypes.get(1);
-                    // TODO: this may not work with all keys. Further serialization may be required.
                     Map<Object,Object> value = new HashMap<>();
                     if (config.getConfigurationSection(storageLocation) != null) {
                         for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
+                            // Map values can be null - it is allowed here
+                            Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
                             // Keys cannot be null - skip if they exist
+                            // Convert any serialized dots back to dots
+                            key = key.replaceAll(":dot:", ".");
                             Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
                             if (mapKey == null) {
                                 continue;
                             }
-                            // Map values can be null - it is allowed here
-                            Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
                             value.put(mapKey, mapValue);
                         }
                     }
@@ -341,7 +342,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     Map<Object, Object> result = new HashMap<>();
                     for (Entry<Object, Object> object : ((Map<Object,Object>)value).entrySet()) {
                         // Serialize all key and values
-                        result.put(serialize(object.getKey()), serialize(object.getValue()));
+                        String key = (String)serialize(object.getKey());
+                        key = key.replaceAll("\\.", ":dot:");
+                        result.put(key, serialize(object.getValue()));
                     }
                     // Save the list in the config file
                     config.set(storageLocation, result);

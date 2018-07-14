@@ -317,6 +317,10 @@ public class BSkyBlock extends JavaPlugin {
         getLogger().info(() -> string);
     }
 
+    public void logDebug(Object object) {
+        getLogger().info(() -> "DEBUG: " + object);
+    }
+
     public void logError(String error) {
         getLogger().severe(() -> error);
     }

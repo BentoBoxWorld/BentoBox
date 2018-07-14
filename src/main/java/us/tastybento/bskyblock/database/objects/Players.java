@@ -93,7 +93,7 @@ public class Players implements DataObject {
         return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(),world))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
-    
+
     /**
      * @return the homeLocations
      */

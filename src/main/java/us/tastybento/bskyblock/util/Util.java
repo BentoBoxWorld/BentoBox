@@ -69,8 +69,7 @@ public class Util {
      * Converts a serialized location to a Location. Returns null if string is
      * empty
      *
-     * @param s
-     *            - serialized location in format "world:x:y:z"
+     * @param s - serialized location in format "world:x:y:z:y:p"
      * @return Location
      */
     public static Location getLocationString(final String s) {
@@ -83,12 +82,13 @@ public class Util {
             if (w == null) {
                 return null;
             }
-            double x = Double.parseDouble(parts[1]);
-            double y = Double.parseDouble(parts[2]);
-            double z = Double.parseDouble(parts[3]);
+            // Parse string as double just in case
+            int x = (int) Double.parseDouble(parts[1]);
+            int y = (int) Double.parseDouble(parts[2]);
+            int z = (int) Double.parseDouble(parts[3]);
             final float yaw = Float.intBitsToFloat(Integer.parseInt(parts[4]));
             final float pitch = Float.intBitsToFloat(Integer.parseInt(parts[5]));
-            return new Location(w, x, y, z, yaw, pitch);
+            return new Location(w, x + 0.5D, y, z + 0.5D, yaw, pitch);
         }
         return null;
     }
@@ -96,19 +96,16 @@ public class Util {
     /**
      * Converts a location to a simple string representation
      * If location is null, returns empty string
+     * Only stores block ints. Inverse function returns block centers
      *
      * @param l - the location
-     * @return String of location
+     * @return String of location in format "world:x:y:z:y:p"
      */
     public static String getStringLocation(final Location l) {
         if (l == null || l.getWorld() == null) {
             return "";
         }
-        return l.getWorld().getName() + ":" + format(l.getX()) + ":" + format(l.getY()) + ":" + format(l.getZ()) + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
-    }
-
-    private static String format(double num) {
-        return String.valueOf(Math.round(num * 100D) / 100D);
+        return l.getWorld().getName() + ":" + l.getBlockX() + ":" + l.getBlockY() + ":" + l.getBlockZ() + ":" + Float.floatToIntBits(l.getYaw()) + ":" + Float.floatToIntBits(l.getPitch());
     }
 
     /**

@@ -57,6 +57,9 @@ public class UtilTest {
         when(location.getX()).thenReturn(500D);
         when(location.getY()).thenReturn(600D);
         when(location.getZ()).thenReturn(700D);
+        when(location.getBlockX()).thenReturn(500);
+        when(location.getBlockY()).thenReturn(600);
+        when(location.getBlockZ()).thenReturn(700);
         when(location.getYaw()).thenReturn(10F);
         when(location.getPitch()).thenReturn(20F);
 
@@ -100,11 +103,11 @@ public class UtilTest {
         assertNull(Util.getLocationString(null));
         assertNull(Util.getLocationString(""));
         assertNull(Util.getLocationString("     "));
-        Location result = Util.getLocationString("world_name:500.0:600.0:700.0:1092616192:1101004800");
+        Location result = Util.getLocationString("world_name:500:600:700.0:1092616192:1101004800");
         assertEquals(world, result.getWorld());
-        assertTrue(result.getX() == 500D);
+        assertTrue(result.getX() == 500.5D);
         assertTrue(result.getY() == 600D);
-        assertTrue(result.getZ() == 700D);
+        assertTrue(result.getZ() == 700.5D);
         assertTrue(result.getYaw() == 10F);
         assertTrue(result.getPitch() == 20F);
     }
@@ -118,7 +121,7 @@ public class UtilTest {
         when(location.getWorld()).thenReturn(null);
         assertEquals("", Util.getStringLocation(location));
         when(location.getWorld()).thenReturn(world);
-        assertEquals("world_name:500.0:600.0:700.0:1092616192:1101004800", Util.getStringLocation(location));
+        assertEquals("world_name:500:600:700:1092616192:1101004800", Util.getStringLocation(location));
     }
 
     /**
