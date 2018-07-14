@@ -21,9 +21,10 @@ A clear and concise description of what you expected to happen.
 If applicable, add screenshots to help explain your problem.
 
 **Server Information (please complete the following information):**
+ - Database being used (Flat file, MySQL, Mongo) <- VERY IMPORTANT
  - OS: [e.g. iOS]
  - Java Version: [e.g. Java 8]
- - Other plugins?
+ - Other plugins? [Do /plugins and copy and paste from the console]
 
 **Additional context**
 Add any other context about the problem here.
