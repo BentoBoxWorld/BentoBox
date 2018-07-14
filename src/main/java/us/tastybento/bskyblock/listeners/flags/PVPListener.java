@@ -43,6 +43,10 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player && getPlugin().getIWM().inWorld(e.getEntity().getLocation())) {
+            // Allow self damage
+            if (e.getEntity().equals(e.getDamager())) {
+                return;
+            }
             // Protect visitors
             if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor((Player)e.getEntity())) {
                 if (e.getDamager() instanceof Player) {
@@ -53,7 +57,7 @@ public class PVPListener extends AbstractFlagListener {
                 e.setCancelled(true);
             } else {
                 // PVP check
-                respond(e, e.getDamager(), getFlag(e.getEntity().getWorld()));
+                respond(e, e.getDamager(), e.getEntity(), getFlag(e.getEntity().getWorld()));
             }
         }
     }
@@ -64,7 +68,7 @@ public class PVPListener extends AbstractFlagListener {
      * @param damager - entity doing the damaging
      * @param flag - flag
      */
-    private void respond(Cancellable e, Entity damager, Flag flag) {
+    private void respond(Cancellable e, Entity damager, Entity hurtEntity, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
             User user = User.getInstance(damager);
@@ -76,6 +80,10 @@ public class PVPListener extends AbstractFlagListener {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
+                // Allow self damage
+                if (p.getShooter().equals(hurtEntity)) {
+                    return;
+                }
                 User user = User.getInstance((Player)p.getShooter());
                 if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
@@ -90,6 +98,10 @@ public class PVPListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onFishing(PlayerFishEvent e) {
         if (e.getCaught() instanceof Player && getPlugin().getIWM().inWorld(e.getCaught().getLocation())) {
+            // Allow self-inflicted damage
+            if (e.getCaught().equals(e.getPlayer())) {
+                return;
+            }
             // Protect visitors
             if (protectedVisitor((Player)e.getCaught())) {
                 User.getInstance(e.getPlayer()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
@@ -115,7 +127,19 @@ public class PVPListener extends AbstractFlagListener {
         }
     }
 
+    /**
+     * Check if PVP should be blocked or not
+     * @param user - user who is initiating the action
+     * @param le - Living entity involed
+     * @param e - event driving
+     * @param flag - flag to check
+     * @return true if PVP should be blocked otherwise false
+     */
     private boolean blockPVP(User user, LivingEntity le, Event e, Flag flag) {
+        // Check for self-inflicted damage
+        if (user.getPlayer().equals(le)) {
+            return false;
+        }
         if (le instanceof Player) {
             // Protect visitors
             if (protectedVisitor(le)) {

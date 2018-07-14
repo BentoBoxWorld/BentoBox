@@ -208,6 +208,19 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
+    
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamageSelfDamage() {
+        Entity damager = mock(Player.class);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(damager, damager, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                new EnumMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        assertFalse(e.isCancelled());
+    }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
@@ -456,6 +469,22 @@ public class PVPListenerTest {
         Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
 
     }
+    
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamageSelfDamageProjectile() {
+        Projectile p = mock(Projectile.class);
+        when(p.getShooter()).thenReturn(player);
+        when(p.getLocation()).thenReturn(loc);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, player, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                new EnumMap<DamageModifier, Double>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
+        new PVPListener().onEntityDamage(e);
+        // Self damage okay
+        assertFalse(e.isCancelled());
+    }
 
     /**
      * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
@@ -559,6 +588,19 @@ public class PVPListenerTest {
      * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
+    public void testOnFishingSelfDamage() {
+        // Fish hook
+        Fish hook = mock(Fish.class);
+        // Catch a player
+        PlayerFishEvent pfe = new PlayerFishEvent(player, player, hook, null);
+        assertFalse(pfe.isCancelled());
+        Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     */
+    @Test
     public void testOnFishingNoPVPProtectVisitors() {
         // Fish hook
         Fish hook = mock(Fish.class);
@@ -628,6 +670,33 @@ public class PVPListenerTest {
         new PVPListener().onSplashPotionSplash(e);
         assertTrue(e.isCancelled());
         Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+
+        // Wrong world
+        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        e = new PotionSplashEvent(tp, map);
+        new PVPListener().onSplashPotionSplash(e);
+        assertFalse(e.isCancelled());
+    }
+    
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     */
+    @Test
+    public void testOnSplashPotionSplashSelfInflicted() {
+        // Disallow PVP
+        when(island.isAllowed(Mockito.any())).thenReturn(false);
+
+        ThrownPotion tp = mock(ThrownPotion.class);
+        when(tp.getShooter()).thenReturn(player);
+        when(tp.getWorld()).thenReturn(world);
+        // Create a damage map
+        Map<LivingEntity, Double> map = new HashMap<>();
+        map.put(player, 100D);
+        map.put(zombie, 100D);
+        map.put(creeper, 10D);
+        PotionSplashEvent e = new PotionSplashEvent(tp, map);
+        new PVPListener().onSplashPotionSplash(e);
+        assertFalse(e.isCancelled());
 
         // Wrong world
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
