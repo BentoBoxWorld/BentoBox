@@ -93,15 +93,19 @@ public class LockAndBanListener implements Listener {
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
     private CheckResult check(Player player, Location loc) {
-
+        BSkyBlock plugin = BSkyBlock.getInstance();
+        // Ops are allowed everywhere
+        if (player.isOp()) {
+            return CheckResult.OPEN;
+        }
         // See if the island is locked to non-members or player is banned
-        return BSkyBlock.getInstance().getIslands().getProtectedIslandAt(loc)
+        return plugin.getIslands().getProtectedIslandAt(loc)
                 .map(is -> {
                     if (is.isBanned(player.getUniqueId())) {
-                        return CheckResult.BANNED;
+                        return player.hasPermission(plugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
                     }
                     if (!is.isAllowed(User.getInstance(player), Flags.LOCK)) {
-                        return CheckResult.LOCKED;
+                        return player.hasPermission(plugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
                     }
                     return CheckResult.OPEN;
                 }).orElse(CheckResult.OPEN);

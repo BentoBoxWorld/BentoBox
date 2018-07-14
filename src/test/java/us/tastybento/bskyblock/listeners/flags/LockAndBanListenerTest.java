@@ -40,6 +40,7 @@ import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
+import us.tastybento.bskyblock.managers.IslandWorldManager;
 import us.tastybento.bskyblock.managers.IslandsManager;
 import us.tastybento.bskyblock.managers.LocalesManager;
 import us.tastybento.bskyblock.managers.PlayersManager;
@@ -63,6 +64,7 @@ public class LockAndBanListenerTest {
     private Notifier notifier;
     private Location inside2;
     private BukkitScheduler sch;
+    private Player player;
 
     /**
      * @throws java.lang.Exception
@@ -77,6 +79,12 @@ public class LockAndBanListenerTest {
         // World
         world = mock(World.class);
         
+        // Island world manager
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        
+        when(plugin.getIWM()).thenReturn(iwm);
+        
         // Settings
         Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
@@ -84,14 +92,18 @@ public class LockAndBanListenerTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        Player p = mock(Player.class);
+        player = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         User.setPlugin(plugin);
+        // User and player are not op
         when(user.isOp()).thenReturn(false);
+        when(player.isOp()).thenReturn(false);
+        // No special perms
+        when(player.hasPermission(Mockito.anyString())).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
-        when(user.getPlayer()).thenReturn(p);
+        when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
 
         // No island for player to begin with (set it later in the tests)
@@ -424,6 +436,53 @@ public class LockAndBanListenerTest {
     }
     
     @Test
+    public void testLoginToLockedIslandAsOp() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.isOp()).thenReturn(true);
+        
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Place the player on the island
+        when(player.getLocation()).thenReturn(inside);
+        
+        // Lock island for player
+        when(island.isAllowed(Mockito.any(), Mockito.eq(Flags.LOCK))).thenReturn(false);
+        
+        // Log them in
+        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        // User should not see a message
+        Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+        // User should not be teleported somewhere 
+        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+    }
+    
+    @Test
+    public void testLoginToLockedIslandWithBypassPerm() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.isOp()).thenReturn(false);
+        when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Place the player on the island
+        when(player.getLocation()).thenReturn(inside);
+        
+        // Lock island for player
+        when(island.isAllowed(Mockito.any(), Mockito.eq(Flags.LOCK))).thenReturn(false);
+        
+        // Log them in
+        listener.onPlayerLogin(new PlayerJoinEvent(player, "join message"));
+        // User should not see a message
+        Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
+        // User should not be teleported somewhere 
+        Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
+    }
+    
+    @Test
     public void testLoginToLockedIslandAsMember() {
         // Make player
         Player player = mock(Player.class);
@@ -462,6 +521,50 @@ public class LockAndBanListenerTest {
         // User should NOT be teleported somewhere
         Mockito.verify(im, Mockito.never()).homeTeleport(Mockito.any(), Mockito.eq(player));
     }
+    
+    @Test
+    public void testPlayerMoveIntoLockedIslandAsOp() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.isOp()).thenReturn(true);
+        
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Place the player just outside island
+        when(player.getLocation()).thenReturn(outside);
+        
+        // Lock island for player
+        when(island.isAllowed(Mockito.any(), Mockito.eq(Flags.LOCK))).thenReturn(false);
+
+        // Move player
+        PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
+        listener.onPlayerMove(e);
+        assertFalse(e.isCancelled());
+    }
+    
+    @Test
+    public void testPlayerMoveIntoLockedIslandWithBypass() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.isOp()).thenReturn(false);
+        when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        
+        when(player.getUniqueId()).thenReturn(uuid);
+        // Give player an island
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Place the player just outside island
+        when(player.getLocation()).thenReturn(outside);
+        
+        // Lock island for player
+        when(island.isAllowed(Mockito.any(), Mockito.eq(Flags.LOCK))).thenReturn(false);
+
+        // Move player
+        PlayerMoveEvent e = new PlayerMoveEvent(player, outside, inside);
+        listener.onPlayerMove(e);
+        assertFalse(e.isCancelled());
+    }
+    
     
     @Test
     public void testPlayerMoveIntoLockedIslandAsMember() {
@@ -511,6 +614,48 @@ public class LockAndBanListenerTest {
         // Should not be cancelled
         assertFalse(ev.isCancelled());
     }
+    
+    @Test
+    public void testPlayerMoveInsideLockedIslandAsOp() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.isOp()).thenReturn(true);
+        // Give player an island
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Place the player inside island
+        when(player.getLocation()).thenReturn(inside);
+        
+        // Lock island for player
+        when(island.isAllowed(Mockito.any(), Mockito.eq(Flags.LOCK))).thenReturn(false);
+
+        // Move player
+        PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
+        listener.onPlayerMove(e);
+        assertFalse(e.isCancelled());
+    }
+    
+    @Test
+    public void testPlayerMoveInsideLockedIslandWithBypass() {
+        // Make player
+        Player player = mock(Player.class);
+        when(player.getUniqueId()).thenReturn(uuid);
+        when(player.isOp()).thenReturn(false);
+        when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        // Give player an island
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Place the player inside island
+        when(player.getLocation()).thenReturn(inside);
+        
+        // Lock island for player
+        when(island.isAllowed(Mockito.any(), Mockito.eq(Flags.LOCK))).thenReturn(false);
+
+        // Move player
+        PlayerMoveEvent e = new PlayerMoveEvent(player, inside, inside2);
+        listener.onPlayerMove(e);
+        assertFalse(e.isCancelled());
+    }
+    
     
     @Test
     public void testPlayerMoveInsideLockedIslandAsMember() {
