@@ -31,7 +31,6 @@ import org.powermock.reflect.Whitebox;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.flags.clicklisteners.CycleClick;
 import us.tastybento.bskyblock.api.panels.Panel;
 import us.tastybento.bskyblock.api.panels.PanelItem;
 import us.tastybento.bskyblock.api.user.Notifier;
