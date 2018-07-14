@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -226,20 +227,38 @@ public class IslandWorldManager {
      * Add world to the list of known worlds along with a friendly name that will be
      * used in commands
      *
-     * @param world
-     *            - world
+     * @param world - world
      */
     public void addWorld(World world, WorldSettings settings) {
         String friendlyName = settings.getFriendlyName().isEmpty() ? world.getName() : settings.getFriendlyName();
-        plugin.log("Adding world " + friendlyName);
         worlds.put(world, friendlyName);
         worldSettings.put(world, settings);
+        // Call Multiverse
         multiverseReg(world);
         // Set default island settings
         Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
         .forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
         Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
         .forEach(f -> settings.getDefaultIslandSettings().putIfAbsent(f, f.getDefaultRank()));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            // Set world difficulty
+            Difficulty diff = settings.getDifficulty();
+            if (diff == null) {
+                diff = Difficulty.NORMAL;
+                settings.setDifficulty(diff);
+            }
+            world.setDifficulty(diff);
+
+            // Handle nether and end difficulty levels
+            if (settings.isNetherGenerate()) {
+                this.getNetherWorld(world).setDifficulty(diff);
+            }
+            if (settings.isEndGenerate()) {
+                this.getEndWorld(world).setDifficulty(diff);
+            }
+            plugin.log("Added world " + friendlyName + " (" + world.getDifficulty() + ")");
+        });
+
     }
 
     /**

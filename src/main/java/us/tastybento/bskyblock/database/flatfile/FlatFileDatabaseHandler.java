@@ -33,6 +33,7 @@ import us.tastybento.bskyblock.Constants.GameType;
 import us.tastybento.bskyblock.api.configuration.ConfigComment;
 import us.tastybento.bskyblock.api.configuration.ConfigEntry;
 import us.tastybento.bskyblock.api.configuration.StoreAt;
+import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.database.AbstractDatabaseHandler;
 import us.tastybento.bskyblock.database.DatabaseConnecter;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
@@ -264,6 +265,19 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             path = storeAt.path();
             filename = storeAt.filename();
         }
+        // See if there are any top-level comments
+        // See if there are multiple comments
+        ConfigComment.Line comments = instance.getClass().getAnnotation(ConfigComment.Line.class);
+        if (comments != null) {
+            for (ConfigComment comment : comments.value()) {
+                setComment(comment, config, yamlComments, "");
+            }
+        }
+        // Handle single line comments
+        ConfigComment comment = instance.getClass().getAnnotation(ConfigComment.class);
+        if (comment != null) {
+            setComment(comment, config, yamlComments, "");
+        }
 
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
@@ -295,14 +309,14 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
             }
             // See if there are multiple comments
-            ConfigComment.Line comments = field.getAnnotation(ConfigComment.Line.class);
+            comments = field.getAnnotation(ConfigComment.Line.class);
             if (comments != null) {
-                for (ConfigComment comment : comments.value()) {
-                    setComment(comment, config, yamlComments, parent);
+                for (ConfigComment bodyComment : comments.value()) {
+                    setComment(bodyComment, config, yamlComments, parent);
                 }
             }
             // Handle single line comments
-            ConfigComment comment = field.getAnnotation(ConfigComment.class);
+            comment = field.getAnnotation(ConfigComment.class);
             if (comment != null) {
                 setComment(comment, config, yamlComments, parent);
             }
@@ -376,7 +390,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.value());
+        yamlComments.put(random, "# " + comment.value().replace(TextVariables.VERSION, plugin.getDescription().getVersion()));
     }
 
     /**

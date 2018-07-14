@@ -1,3 +1,8 @@
+# BSkyBlock Configuration FC-0.7
+# This config file is dynamic and saved when the server is shutdown.
+# You cannot edit it while the server is running because changes will
+# be lost! Use in-game settings GUI or edit when server is offline.
+# 
 general:
   # BSkyBlock uses bStats.org to get global data about the plugin to help improving it.
   # bStats has nearly no effect on your server's performance and the sent data is completely
@@ -63,6 +68,9 @@ world:
   # Name of the world - if it does not exist then it will be generated.
   # It acts like a prefix for nether and end (e.g. BSkyBlock, BSkyBlock_nether, BSkyBlock_end)
   world-name: BSkyBlock_world
+  # World difficulty setting - PEACEFUL, EASY, NORMAL, HARD
+  # Other plugins may override this setting
+  difficulty: NORMAL
   # Radius of island in blocks. (So distance between islands is twice this)
   # Will be rounded up to the nearest 16 blocks.
   # It is the same for every dimension : Overworld, Nether and End.
@@ -128,13 +136,15 @@ world:
   # This setting is toggled in world flags and set by the settings GUI.
   # Mob white list - these mobs will NOT be removed when logging in or doing /island
   remove-mobs-whitelist:
-  - PIG_ZOMBIE
-  - ENDERMAN
   - ZOMBIE_VILLAGER
   - WITHER
+  - PIG_ZOMBIE
+  - ENDERMAN
   # World flags. These are boolean settings for various flags for this world
   flags:
     ENTER_EXIT_MESSAGES: true
+    ISLAND_RESPAWN: true
+    OFFLINE_REDSTONE: true
     REMOVE_MOBS: true
   # These are the default protection settings for new islands.
   # The value is the minimum island rank required allowed to do the action
@@ -145,29 +155,29 @@ world:
     REDSTONE: 900
     BUCKET: 900
     BUTTON: 900
-    FIRE_EXTINGUISH: 900
     LOCK: 0
+    FIRE_EXTINGUISH: 900
     ENDER_PEARL: 900
-    BEACON: 900
     DOOR: 900
+    BEACON: 900
     TRAPDOOR: 900
-    FURNACE: 900
     PRESSURE_PLATE: 900
+    FURNACE: 900
     PLACE_BLOCKS: 900
     ANVIL: 900
     FIRE: 900
     CRAFTING: 900
     BREEDING: 900
-    HURT_VILLAGERS: 900
-    ENCHANTING: 900
     SHEARING: 900
-    BED: 900
+    ENCHANTING: 900
+    HURT_VILLAGERS: 900
     SPAWN_EGGS: 900
+    BED: 900
     COLLECT_LAVA: 900
     MILKING: 900
     LEVER: 900
-    HURT_MONSTERS: 900
     RIDING: 900
+    HURT_MONSTERS: 900
     ARMOR_STAND: 900
     GATE: 900
     TRADING: 900
@@ -177,12 +187,12 @@ world:
     CHEST: 900
     NOTE_BLOCK: 900
     LEASH: 900
-    BREAK_BLOCKS: 900
     MOUNT_INVENTORY: 900
+    BREAK_BLOCKS: 900
     CHORUS_FRUIT: 900
-    JUKEBOX: 900
-    CROP_TRAMPLE: 900
     ITEM_PICKUP: 900
+    CROP_TRAMPLE: 900
+    JUKEBOX: 900
     BREWING: 900
   # These are the default settings for new islands
   default-island-settings:

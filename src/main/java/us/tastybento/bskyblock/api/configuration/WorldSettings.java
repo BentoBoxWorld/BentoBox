@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
+import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 
@@ -19,14 +20,44 @@ import us.tastybento.bskyblock.api.flags.Flag;
 public interface WorldSettings {
 
     /**
-     * @return the friendly name of the world. Used in player commands
+     * @return the Addon that registered this world
      */
-    String getFriendlyName();
+    Optional<Addon> getAddon();
+
+    /**
+     * Get the default game mode for this game world, e.g. SURVIVAL
+     * @return game mode
+     */
+    GameMode getDefaultGameMode();
+
+    /**
+     * @return default rank settings for new islands
+     */
+    Map<Flag, Integer> getDefaultIslandFlags();
+
+    Map<Flag, Integer> getDefaultIslandSettings();
+
+    /**
+     * Get the world difficulty
+     * @return difficulty
+     */
+    Difficulty getDifficulty();
+
+    /**
+     * Set the world difficulty
+     * @param difficulty
+     */
+    void setDifficulty(Difficulty difficulty);
 
     /**
      * @return the entityLimits
      */
     Map<EntityType, Integer> getEntityLimits();
+
+    /**
+     * @return the friendly name of the world. Used in player commands
+     */
+    String getFriendlyName();
 
     /**
      * @return the islandDistance
@@ -64,14 +95,40 @@ public interface WorldSettings {
     int getIslandZOffset();
 
     /**
+     * @return Invincible Visitor setting list
+     */
+    List<String> getIvSettings();
+
+    /**
+     * @return the max homes
+     */
+    int getMaxHomes();
+
+    /**
      * @return the maxIslands
      */
     int getMaxIslands();
 
     /**
+     * @return the max team size for this world
+     */
+    int getMaxTeamSize();
+
+    /**
      * @return the netherSpawnRadius
      */
     int getNetherSpawnRadius();
+
+    /**
+     * @return the permission prefix
+     */
+    String getPermissionPrefix();
+
+    /**
+     * Get the set of entity types that should not be removed in this world when a player teleports to their island
+     * @return set of entity types
+     */
+    Set<EntityType> getRemoveMobsWhitelist();
 
     /**
      * @return the seaHeight
@@ -84,9 +141,30 @@ public interface WorldSettings {
     Map<String, Integer> getTileEntityLimits();
 
     /**
+     * @return visible settings for player
+     */
+    List<String> getVisibleSettings();
+
+    /**
+     * @return the visitorBannedCommands
+     */
+    List<String> getVisitorBannedCommands();
+
+    /**
+     * Get world flags
+     * @return Map of world flags
+     */
+    Map<String, Boolean> getWorldFlags();
+
+    /**
      * @return the worldName
      */
     String getWorldName();
+
+    /**
+     * @return the dragonSpawn
+     */
+    boolean isDragonSpawn();
 
     /**
      * @return the endGenerate
@@ -114,52 +192,9 @@ public interface WorldSettings {
     boolean isNetherTrees();
 
     /**
-     * @return the dragonSpawn
+     * @return the onJoinResetEnderChest
      */
-    boolean isDragonSpawn();
-
-    /**
-     * @return the max team size for this world
-     */
-    int getMaxTeamSize();
-
-    /**
-     * @return the max homes
-     */
-    int getMaxHomes();
-
-    /**
-     * @return the permission prefix
-     */
-    String getPermissionPrefix();
-
-    /**
-     * @return Invincible Visitor setting list
-     */
-    List<String> getIvSettings();
-
-    /**
-     * Get world flags
-     * @return Map of world flags
-     */
-    Map<String, Boolean> getWorldFlags();
-
-    /**
-     * Get the default game mode for this game world, e.g. SURVIVAL
-     * @return game mode
-     */
-    GameMode getDefaultGameMode();
-
-    /**
-     * Get the set of entity types that should not be removed in this world when a player teleports to their island
-     * @return set of entity types
-     */
-    Set<EntityType> getRemoveMobsWhitelist();
-
-    /**
-     * @return the onJoinResetMoney
-     */
-    boolean isOnJoinResetMoney();
+    boolean isOnJoinResetEnderChest();
 
     /**
      * @return the onJoinResetInventory
@@ -167,19 +202,9 @@ public interface WorldSettings {
     boolean isOnJoinResetInventory();
 
     /**
-     * @return the onJoinResetEnderChest
+     * @return the onJoinResetMoney
      */
-    boolean isOnJoinResetEnderChest();
-
-    /**
-     * @return the onLeaveResetMoney
-     */
-    boolean isOnLeaveResetMoney();
-
-    /**
-     * @return the onLeaveResetInventory
-     */
-    boolean isOnLeaveResetInventory();
+    boolean isOnJoinResetMoney();
 
     /**
      * @return the onLeaveResetEnderChest
@@ -187,30 +212,17 @@ public interface WorldSettings {
     boolean isOnLeaveResetEnderChest();
 
     /**
-     * @return the Addon that registered this world
+     * @return the onLeaveResetInventory
      */
-    Optional<Addon> getAddon();
+    boolean isOnLeaveResetInventory();
 
     /**
-     * @return default rank settings for new islands
+     * @return the onLeaveResetMoney
      */
-    Map<Flag, Integer> getDefaultIslandFlags();
-
-    /**
-     * @return visible settings for player
-     */
-    List<String> getVisibleSettings();
-
-    Map<Flag, Integer> getDefaultIslandSettings();
+    boolean isOnLeaveResetMoney();
 
     /**
      * @return true if the default world generator should not operate in this world
      */
     boolean isUseOwnGenerator();
-
-    /**
-     * @return the visitorBannedCommands
-     */
-    List<String> getVisitorBannedCommands();
-
 }

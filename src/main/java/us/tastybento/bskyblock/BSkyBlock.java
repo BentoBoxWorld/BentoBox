@@ -185,7 +185,7 @@ public class BSkyBlock extends JavaPlugin {
             islandsManager.shutdown();
         }
         // Save settings
-        if (isEnabled()) {
+        if (settings != null) {
             new BSBConfig<>(this, Settings.class).saveConfigObject(settings);
         }
     }
