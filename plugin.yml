@@ -4,7 +4,7 @@ version: ${version}
 
 authors: [tastybento, Poslovitch]
 
-softdepend: [Herochat, DeluxeChat, PlaceholderAPI, MVdWPlaceholderAPI]
+softdepend: [PlaceholderAPI, MVdWPlaceholderAPI]
 
 load: startup
 loadbefore: [Multiverse-Core]
