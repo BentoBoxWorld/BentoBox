@@ -439,7 +439,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
-        Arrays.stream(args).forEach(plugin::log);// DEBUG
         List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
         CompositeCommand cmd = getCommandFromArgs(args);

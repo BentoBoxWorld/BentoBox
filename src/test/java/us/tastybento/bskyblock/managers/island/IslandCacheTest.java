@@ -56,7 +56,7 @@ public class IslandCacheTest {
         when(iwm.getBSBNetherWorld()).thenReturn(world);
         when(iwm.getBSBEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
-        
+
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
 
@@ -78,7 +78,7 @@ public class IslandCacheTest {
         Builder<UUID> members = new ImmutableSet.Builder<>();
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());        
+        members.add(UUID.randomUUID());
         when(island.getMemberSet()).thenReturn(members.build());
         when(island.getMinX()).thenReturn(-200);
         when(island.getMinZ()).thenReturn(-200);
@@ -95,7 +95,7 @@ public class IslandCacheTest {
         IslandCache ic = new IslandCache();
         assertTrue(ic.addIsland(island));
         // Check if they are added
-        assertEquals(island, ic.get(world, owner)); 
+        assertEquals(island, ic.get(world, owner));
         assertEquals(island, ic.get(location));
     }
 
@@ -112,27 +112,27 @@ public class IslandCacheTest {
 
     @Test
     public void testClear() {
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner)); 
+        assertEquals(island, ic.get(world, owner));
         assertEquals(island, ic.get(location));
         ic.clear();
-        assertNull(ic.get(world, owner)); 
+        assertNull(ic.get(world, owner));
         assertNull(ic.get(location));
     }
 
     @Test
     public void testDeleteIslandFromCache() {
 
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner)); 
+        assertEquals(island, ic.get(world, owner));
         assertEquals(island, ic.get(location));
         boolean result = ic.deleteIslandFromCache(island);
         assertTrue(result);
-        assertNull(ic.get(world, owner)); 
+        assertNull(ic.get(world, owner));
         assertNull(ic.get(location));
 
         // Test removing an island that is not in the cache
@@ -148,7 +148,7 @@ public class IslandCacheTest {
         Builder<UUID> members = new ImmutableSet.Builder<>();
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
-        members.add(UUID.randomUUID());        
+        members.add(UUID.randomUUID());
         when(island2.getMemberSet()).thenReturn(members.build());
         when(island2.getMinX()).thenReturn(-400);
         when(island2.getMinZ()).thenReturn(-400);
@@ -159,7 +159,7 @@ public class IslandCacheTest {
 
     @Test
     public void testGetLocation() {
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
         // Check if they are added
         assertEquals(island, ic.get(location));
@@ -168,20 +168,20 @@ public class IslandCacheTest {
 
     @Test
     public void testGetUUID() {
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
         // Check if they are added
-        assertEquals(island, ic.get(world, owner)); 
+        assertEquals(island, ic.get(world, owner));
     }
 
     @Test
-    public void testGetIslandAtLocation() {        
+    public void testGetIslandAtLocation() {
         // Set coords to be in island space
         when(island.inIslandSpace(Mockito.any(Integer.class), Mockito.any(Integer.class))).thenReturn(true);
         // Set plugin
         Util.setPlugin(plugin);
         // New cache
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
         // Check exact match for location
@@ -209,7 +209,7 @@ public class IslandCacheTest {
     @Test
     public void testgetMembers() {
         // New cache
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
         assertTrue(ic.getMembers(world, null).isEmpty());
@@ -221,7 +221,7 @@ public class IslandCacheTest {
     @Test
     public void testGetTeamLeader() {
         // New cache
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
         assertEquals(owner, ic.getTeamLeader(world, owner));
@@ -234,7 +234,7 @@ public class IslandCacheTest {
     @Test
     public void testHasIsland() {
         // New cache
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
         assertTrue(ic.hasIsland(world, owner));
@@ -245,7 +245,7 @@ public class IslandCacheTest {
     @Test
     public void testRemovePlayer() {
         // New cache
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
         assertTrue(ic.hasIsland(world, owner));
@@ -260,9 +260,21 @@ public class IslandCacheTest {
     @Test
     public void testSize() {
         // New cache
-        IslandCache ic = new IslandCache();        
+        IslandCache ic = new IslandCache();
         ic.addIsland(island);
         assertEquals(1, ic.size());
     }
 
+    @Test
+    public void testSetOwner() {
+        // New cache
+        IslandCache ic = new IslandCache();
+        ic.addIsland(island);
+        UUID newOwnerUUID = UUID.randomUUID();
+        ic.setOwner(island, newOwnerUUID);
+
+        Mockito.verify(island).setOwner(newOwnerUUID);
+        assertEquals(island, ic.get(world, newOwnerUUID));
+        assertEquals(island, ic.get(island.getCenter()));
+    }
 }

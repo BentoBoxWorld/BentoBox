@@ -3,8 +3,6 @@ package us.tastybento.bskyblock.listeners.flags;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -12,13 +10,11 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
 
 import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
 import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
 /**
@@ -88,10 +84,6 @@ public class FireListener extends AbstractFlagListener {
             BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
             while (iter.hasNext()) {
                 Block lastBlock = iter.next();
-                lastBlock = iter.next();
-                if (lastBlock.equals(e.getClickedBlock())) {
-                    break;
-                }
                 if (lastBlock.getType().equals(Material.FIRE)) {
                     checkIsland(e, lastBlock.getLocation(), Flags.FIRE_EXTINGUISH);
                 }
@@ -99,46 +91,6 @@ public class FireListener extends AbstractFlagListener {
         } catch (Exception ex) {
             // To catch at block iterator exceptions that can happen in the void or at the very top of blocks
         }
-    }
-
-    /**
-     * Protect TNT.
-     * Note that allowing TNT to explode is governed by the Break Blocks flag.
-     * @param e - event
-     * @return true if cancelled
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public boolean onTNTPrimed(EntityChangeBlockEvent e) {
-        return e.getBlock().getType().equals(Material.TNT) && checkFire(e, e.getBlock().getLocation(), Flags.FIRE);
-    }
-
-    /**
-     * Protect TNT from being set light by a fire arrow
-     * @param e - event
-     * @return true if cancelled
-     */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-    public boolean onTNTDamage(EntityChangeBlockEvent e) {
-        // Check world
-        if (!e.getBlock().getType().equals(Material.TNT) || !getIWM().inWorld(e.getBlock().getLocation())) {
-            return false;
-        }
-        // Stop TNT from being damaged if it is being caused by a visitor with a flaming arrow
-        if (e.getEntity() instanceof Projectile) {
-            Projectile projectile = (Projectile) e.getEntity();
-            // Find out who fired it
-            if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0) {
-                Player shooter = (Player)projectile.getShooter();
-                setUser(User.getInstance(shooter));
-                if (!setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
-                    // Remove the arrow
-                    projectile.remove();
-                    e.setCancelled(true);
-                    return true;
-                }
-            }
-        }
-        return false;
     }
 
 }

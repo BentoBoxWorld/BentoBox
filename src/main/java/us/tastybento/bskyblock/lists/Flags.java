@@ -36,6 +36,7 @@ import us.tastybento.bskyblock.listeners.flags.PlaceBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.PortalListener;
 import us.tastybento.bskyblock.listeners.flags.RemoveMobsListener;
 import us.tastybento.bskyblock.listeners.flags.ShearingListener;
+import us.tastybento.bskyblock.listeners.flags.TNTListener;
 import us.tastybento.bskyblock.listeners.flags.TeleportationListener;
 import us.tastybento.bskyblock.managers.RanksManager;
 
@@ -187,6 +188,15 @@ public class Flags {
 
     public static final Flag CLEAN_SUPER_FLAT = new FlagBuilder().id("CLEAN_SUPER_FLAT").icon(Material.BEDROCK).type(Type.WORLD_SETTING)
             .listener(new CleanSuperFlatListener()).allowedByDefault(false).build();
+
+    public static final Flag CHEST_DAMAGE = new FlagBuilder().id("CHEST_DAMAGE").icon(Material.TRAPPED_CHEST).type(Type.WORLD_SETTING)
+            .allowedByDefault(false).build();
+    public static final Flag CREEPER_DAMAGE = new FlagBuilder().id("CREEPER_DAMAGE").icon(Material.GREEN_SHULKER_BOX).type(Type.WORLD_SETTING)
+            .allowedByDefault(true).build();
+    public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.FIREWORK).type(Type.WORLD_SETTING)
+            .allowedByDefault(false).build();
+    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.WORLD_SETTING).build();
+
 
     /**
      * @return List of all the flags in this class

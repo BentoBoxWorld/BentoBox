@@ -18,16 +18,12 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
-import org.bukkit.entity.Arrow;
 import org.bukkit.entity.Cow;
-import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
-import org.bukkit.entity.WitherSkeleton;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.block.BlockBurnEvent;
 import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
-import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
@@ -45,7 +41,6 @@ import org.powermock.reflect.Whitebox;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
-import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
 import us.tastybento.bskyblock.lists.Flags;
@@ -106,7 +101,7 @@ public class FireListenerTest {
         when(iwm.getBSBEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-                
+
         // Monsters and animals
         Zombie zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
@@ -124,26 +119,26 @@ public class FireListenerTest {
         //User user = mock(User.class);
         ///user.setPlugin(plugin);
         User.setPlugin(plugin);
-        
-        
+
+
         // Locales - final
-        
+
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
-        
+
         // Player name
         PlayersManager pm = mock(PlayersManager.class);
         when(pm.getName(Mockito.any())).thenReturn("tastybento");
         when(plugin.getPlayers()).thenReturn(pm);
-        
+
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
     }
-    
+
     @Before
     public void setUp() {
         PowerMockito.mockStatic(Util.class);
@@ -157,7 +152,7 @@ public class FireListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
-        
+
         // Block on fire
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
@@ -166,7 +161,7 @@ public class FireListenerTest {
         // Fire listener - remember to set the plugin for testing!
         FireListener listener = new FireListener();
         listener.setPlugin(plugin);
-        
+
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
@@ -174,7 +169,7 @@ public class FireListenerTest {
         assertTrue(listener.checkFire(e, location, Flags.FIRE));
         Flags.FIRE.setDefaultSetting(true);
         assertTrue(listener.checkFire(e, location, Flags.FIRE));
-        
+
         // Allow fire
         when(island.isAllowed(Mockito.any())).thenReturn(true);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -182,7 +177,7 @@ public class FireListenerTest {
         assertFalse(listener.checkFire(e, location, Flags.FIRE));
         Flags.FIRE.setDefaultSetting(true);
         assertFalse(listener.checkFire(e, location, Flags.FIRE));
-        
+
         // Check with no island
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
         // Fire is not allowed, so should be cancelled
@@ -200,7 +195,7 @@ public class FireListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
-        
+
         // Block on fire
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
@@ -209,7 +204,7 @@ public class FireListenerTest {
         // Fire listener - remember to set the plugin for testing!
         FireListener listener = new FireListener();
         listener.setPlugin(plugin);
-        
+
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
@@ -217,7 +212,7 @@ public class FireListenerTest {
         assertTrue(listener.onBlockBurn(e));
         Flags.FIRE.setDefaultSetting(true);
         assertTrue(listener.onBlockBurn(e));
-        
+
         // Allow fire
         when(island.isAllowed(Mockito.any())).thenReturn(true);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -225,7 +220,7 @@ public class FireListenerTest {
         assertFalse(listener.onBlockBurn(e));
         Flags.FIRE.setDefaultSetting(true);
         assertFalse(listener.onBlockBurn(e));
-        
+
         // Check with no island
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
         // Fire is not allowed, so should be cancelled
@@ -243,21 +238,21 @@ public class FireListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
-        
+
         // Block on fire spread
-        
+
         Block block = mock(Block.class);
         Block fire = mock(Block.class);
         when(block.getLocation()).thenReturn(location);
         when(fire.getLocation()).thenReturn(location);
         when(fire.getType()).thenReturn(Material.FIRE);
-        
+
         BlockSpreadEvent e = new BlockSpreadEvent(block, fire, null);
 
         // Fire listener - remember to set the plugin for testing!
         FireListener listener = new FireListener();
         listener.setPlugin(plugin);
-        
+
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
@@ -265,7 +260,7 @@ public class FireListenerTest {
         assertTrue(listener.onBlockSpread(e));
         Flags.FIRE_SPREAD.setDefaultSetting(true);
         assertTrue(listener.onBlockSpread(e));
-        
+
         // Allow fire spread
         when(island.isAllowed(Mockito.any())).thenReturn(true);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -273,7 +268,7 @@ public class FireListenerTest {
         assertFalse(listener.onBlockSpread(e));
         Flags.FIRE_SPREAD.setDefaultSetting(true);
         assertFalse(listener.onBlockSpread(e));
-        
+
         // Check with no island
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
         // Fire spread is not allowed, so should be cancelled
@@ -291,7 +286,7 @@ public class FireListenerTest {
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
-        
+
         // Block on fire spread
 
         Block block = mock(Block.class);
@@ -303,13 +298,13 @@ public class FireListenerTest {
         // Fire listener - remember to set the plugin for testing!
         FireListener listener = new FireListener();
         listener.setPlugin(plugin);
-        
+
         // Obsidian is okay to ignite
         assertFalse(listener.onBlockIgnite(e));
-        
+
         // Now set to something flammable
         when(block.getType()).thenReturn(Material.WOOD);
-        
+
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
@@ -317,7 +312,7 @@ public class FireListenerTest {
         assertTrue(listener.onBlockIgnite(e));
         Flags.FIRE.setDefaultSetting(true);
         assertTrue(listener.onBlockIgnite(e));
-        
+
         // Allow fire spread
         when(island.isAllowed(Mockito.any())).thenReturn(true);
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -325,7 +320,7 @@ public class FireListenerTest {
         assertFalse(listener.onBlockIgnite(e));
         Flags.FIRE.setDefaultSetting(true);
         assertFalse(listener.onBlockIgnite(e));
-        
+
         // Check with no island
         when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
         // Fire spread is not allowed, so should be cancelled
@@ -334,164 +329,6 @@ public class FireListenerTest {
         // Fire allowed
         Flags.FIRE.setDefaultSetting(true);
         assertFalse(listener.onBlockIgnite(e));
-    }
-
-    /*
-    @Test
-    public void testOnPlayerInteract() {
-        fail("Not yet implemented"); // TODO
-    }
-*/
-    @Test
-    public void testOnTNTPrimed() {
-        // Island
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
-        
-        // Block on fire spread
-        Block block = mock(Block.class);
-        when(block.getLocation()).thenReturn(location);
-        when(block.getType()).thenReturn(Material.OBSIDIAN);
-        EntityChangeBlockEvent e = mock(EntityChangeBlockEvent.class);
-        when(e.getBlock()).thenReturn(block);
-
-
-        // Fire listener - remember to set the plugin for testing!
-        FireListener listener = new FireListener();
-        listener.setPlugin(plugin);
-        
-        // Obsidian is not TNT
-        assertFalse(listener.onTNTPrimed(e));
-        // Out of world
-        when(iwm.inWorld(any())).thenReturn(false);
-        assertFalse(listener.onTNTPrimed(e));
-        
-        // Now set to TNT
-        when(block.getType()).thenReturn(Material.TNT);
-        assertFalse(listener.onTNTPrimed(e));
-        
-        // Back in world
-        when(iwm.inWorld(any())).thenReturn(true);
-
-        // Disallow fire
-        when(island.isAllowed(Mockito.any())).thenReturn(false);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
-        Flags.FIRE.setDefaultSetting(false);
-        assertTrue(listener.onTNTPrimed(e));
-        Flags.FIRE.setDefaultSetting(true);
-        assertTrue(listener.onTNTPrimed(e));
-        
-        // Allow fire spread
-        when(island.isAllowed(Mockito.any())).thenReturn(true);
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
-        Flags.FIRE.setDefaultSetting(false);
-        assertFalse(listener.onTNTPrimed(e));
-        Flags.FIRE.setDefaultSetting(true);
-        assertFalse(listener.onTNTPrimed(e));
-        
-        // Check with no island
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.empty());
-        // Fire spread is not allowed, so should be cancelled
-        Flags.FIRE.setDefaultSetting(false);
-        assertTrue(listener.onTNTPrimed(e));
-        // Fire allowed
-        Flags.FIRE.setDefaultSetting(true);
-        assertFalse(listener.onTNTPrimed(e));
-    }
-
-    @Test
-    public void testOnTNTDamage() {
-        // Notifier
-        Notifier notifier = mock(Notifier.class);
-        when(plugin.getNotifier()).thenReturn(notifier);
-        
-        // Island
-        IslandsManager im = mock(IslandsManager.class);
-        when(plugin.getIslands()).thenReturn(im);
-        Island island = mock(Island.class);
-        when(im.getIslandAt(Matchers.any())).thenReturn(Optional.of(island));
-        when(im.getProtectedIslandAt(Mockito.any())).thenReturn(Optional.of(island));
-        
-        // Block on fire
-        Block block = mock(Block.class);
-        when(block.getLocation()).thenReturn(location);
-        when(block.getType()).thenReturn(Material.OBSIDIAN);
-        EntityChangeBlockEvent e = mock(EntityChangeBlockEvent.class);
-        when(e.getBlock()).thenReturn(block);
-
-
-        // Fire listener - remember to set the plugin for testing!
-        FireListener listener = new FireListener();
-        listener.setPlugin(plugin);
-        
-        // Obsidian is not TNT
-        assertFalse(listener.onTNTDamage(e));
-        // Out of world
-        when(block.getLocation()).thenReturn(null);
-        assertFalse(listener.onTNTDamage(e));
-        
-        // Now set to TNT
-        when(block.getType()).thenReturn(Material.TNT);
-        assertFalse(listener.onTNTDamage(e));
-        
-        // Back in world
-        when(block.getLocation()).thenReturn(location);
-
-        // Entity is not a projectile
-        Player player = mock(Player.class);
-        when(e.getEntity()).thenReturn(player);
-        assertFalse(listener.onTNTDamage(e));
-        
-        // Entity is an arrow
-        Arrow arrow = mock(Arrow.class);
-        // Shooter is a skeleton
-        WitherSkeleton skeleton = mock(WitherSkeleton.class);
-        when(arrow.getShooter()).thenReturn(skeleton);
-        // No fire arrow
-        when(arrow.getFireTicks()).thenReturn(0);
-        when(e.getEntity()).thenReturn(arrow);
-        assertFalse(listener.onTNTDamage(e));
-        // Fire arrow
-        when(arrow.getFireTicks()).thenReturn(10);
-        assertFalse(listener.onTNTDamage(e));
-        
-        // Shooter is a player
-        when(arrow.getShooter()).thenReturn(player);
-        // No fire arrow
-        when(arrow.getFireTicks()).thenReturn(0);
-        when(e.getEntity()).thenReturn(arrow);
-        assertFalse(listener.onTNTDamage(e));
-
-        // Fire arrow
-        when(arrow.getFireTicks()).thenReturn(10);
-        
-        
-        // Break blocks not allowed, general flag should have no effect
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
-        Flags.BREAK_BLOCKS.setDefaultSetting(false);
-        assertTrue(listener.onTNTDamage(e));
-        Flags.BREAK_BLOCKS.setDefaultSetting(true);
-        assertTrue(listener.onTNTDamage(e));
-        
-        // Allow BREAK_BLOCKS spread
-        when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(true);
-        Flags.BREAK_BLOCKS.setDefaultSetting(false);
-        assertFalse(listener.onTNTDamage(e));
-        Flags.BREAK_BLOCKS.setDefaultSetting(true);
-        assertFalse(listener.onTNTDamage(e));
-        
-        // Check with no island
-        when(im.getProtectedIslandAt(Matchers.any())).thenReturn(Optional.empty());
-        // BREAK_BLOCKS spread is not allowed, so should be cancelled
-        Flags.BREAK_BLOCKS.setDefaultSetting(false);
-        assertTrue(listener.onTNTDamage(e));
-        // BREAK_BLOCKS allowed
-        Flags.BREAK_BLOCKS.setDefaultSetting(true);
-        assertFalse(listener.onTNTDamage(e));
-        
-
     }
 
 }
