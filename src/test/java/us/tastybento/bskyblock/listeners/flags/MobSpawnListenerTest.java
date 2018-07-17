@@ -61,7 +61,7 @@ public class MobSpawnListenerTest {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
-        
+
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
 
@@ -100,9 +100,9 @@ public class MobSpawnListenerTest {
         when(slime.getLocation()).thenReturn(location);
         cow = mock(Cow.class);
         when(cow.getLocation()).thenReturn(location);
-        
+
     }
-    
+
     @Before
     public void setUp() {
         // Worlds
@@ -113,10 +113,10 @@ public class MobSpawnListenerTest {
         when(iwm.getBSBEndWorld()).thenReturn(world);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-        
+
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
-        
+
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
@@ -126,7 +126,14 @@ public class MobSpawnListenerTest {
 
     }
 
-   
+    @Test
+    public void testNullEntity() {
+        CreatureSpawnEvent e = new CreatureSpawnEvent(null, SpawnReason.NATURAL);
+        MobSpawnListener l = new MobSpawnListener();
+        assertFalse(l.onNaturalMobSpawn(e));
+        assertFalse(e.isCancelled());
+    }
+
     @Test
     public void testNotInWorld() {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
@@ -138,7 +145,7 @@ public class MobSpawnListenerTest {
         // Set up entity
         LivingEntity entity = mock(LivingEntity.class);
         when(entity.getLocation()).thenReturn(null);
-        
+
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
         when(e.getLocation()).thenReturn(location);
@@ -153,7 +160,7 @@ public class MobSpawnListenerTest {
         // Should not be canceled
         assertFalse(l.onNaturalMobSpawn(e));
     }
-    
+
     @Test
     public void testOnNaturalMonsterSpawnBlocked() {
         IslandsManager im = mock(IslandsManager.class);
@@ -236,7 +243,7 @@ public class MobSpawnListenerTest {
         }
 
     }
-    
+
     @Test
     public void testOnNaturalMonsterSpawnBlockedNoIsland() {
         IslandsManager im = mock(IslandsManager.class);
@@ -264,7 +271,7 @@ public class MobSpawnListenerTest {
         checkBlocked(e,l);
 
     }
-    
+
     @Test
     public void testOnNaturalMobSpawnUnBlockedNoIsland() {
         IslandsManager im = mock(IslandsManager.class);
@@ -274,7 +281,7 @@ public class MobSpawnListenerTest {
         // Block mobs
         Flags.MONSTER_SPAWN.setDefaultSetting(true);
         Flags.ANIMAL_SPAWN.setDefaultSetting(true);
-        
+
         // Setup event
         CreatureSpawnEvent e = mock(CreatureSpawnEvent.class);
         when(e.getLocation()).thenReturn(location);

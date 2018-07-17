@@ -30,7 +30,7 @@ public class MobSpawnListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNaturalMobSpawn(CreatureSpawnEvent e) {
         // If not in the right world, return
-        if (!getIWM().inWorld(e.getEntity().getLocation())) {
+        if (e.getEntity() == null || !getIWM().inWorld(e.getEntity().getLocation())) {
             return false;
         }
         // Deal with natural spawning
@@ -40,7 +40,7 @@ public class MobSpawnListener extends AbstractFlagListener {
                 || e.getSpawnReason().equals(SpawnReason.DEFAULT)
                 || e.getSpawnReason().equals(SpawnReason.MOUNT)
                 || e.getSpawnReason().equals(SpawnReason.NETHER_PORTAL)) {
-            
+
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
             if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) {
