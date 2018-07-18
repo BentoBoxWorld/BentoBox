@@ -1,7 +1,4 @@
-/**
- * 
- */
-package us.tastybento.bskyblock.commands.admin.teams;
+package us.tastybento.bskyblock.commands.admin.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -12,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -44,9 +42,8 @@ import us.tastybento.bskyblock.managers.PlayersManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BSkyBlock.class, User.class })
-public class AdminTeamKickCommandTest {
-    
-    private BSkyBlock plugin;
+public class AdminTeamMakeLeaderCommandTest {
+
     private AdminCommand ac;
     private UUID uuid;
     private User user;
@@ -60,7 +57,7 @@ public class AdminTeamKickCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        BSkyBlock plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
 
         // Command manager
@@ -110,7 +107,7 @@ public class AdminTeamKickCommandTest {
         // Has team 
         pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        
+       
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -126,21 +123,21 @@ public class AdminTeamKickCommandTest {
 
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertFalse(itl.execute(user, new ArrayList<>()));
         // Show help
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
         assertFalse(itl.execute(user, Arrays.asList(name)));
@@ -148,11 +145,11 @@ public class AdminTeamKickCommandTest {
     }
         
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
@@ -161,10 +158,10 @@ public class AdminTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
-    public void testExecuteKickLeader() {
+    public void testExecuteMakeLeaderAlreadyLeader() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
@@ -173,29 +170,35 @@ public class AdminTeamKickCommandTest {
         
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
         
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertFalse(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-leader"));
-        Mockito.verify(is).showMembers(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(user).sendMessage("commands.admin.team.makeleader.already-leader");
     }
     
     /**
-     * Test method for {@link us.us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.us.tastybento.bskyblock.commands.admin.teams.AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
-    public void testExecute() {
+    public void testExecuteSuccess() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-                
+        // Leader
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
+        when(pm.getName(Mockito.eq(uuid))).thenReturn("leader");
+        // Members
+        Set<UUID> members = new HashSet<>();
+        members.add(uuid);
+        members.add(notUUID);
+        when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
-        AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
+        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertTrue(itl.execute(user, Arrays.asList(name)));
-        Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
+        // Add other verifications
+        Mockito.verify(im).makeLeader(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID), Mockito.any());
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
-
+    
 }

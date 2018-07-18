@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.admin.teams;
+package us.tastybento.bskyblock.commands.admin.team;
 
 import java.util.List;
 import java.util.UUID;
@@ -6,17 +6,17 @@ import java.util.UUID;
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 
-public class AdminTeamDisbandCommand extends CompositeCommand {
+public class AdminTeamMakeLeaderCommand extends CompositeCommand {
 
-    public AdminTeamDisbandCommand(CompositeCommand parent) {
-        super(parent, "disband");
+    public AdminTeamMakeLeaderCommand(CompositeCommand parent) {
+        super(parent, "makeleader");
     }
     
     @Override
     public void setup() {
         setPermission("admin.team");
-        setParameters("commands.admin.team.disband.parameters");
-        setDescription("commands.admin.team.disband.description");
+        setParameters("commands.admin.team.makeleader.parameters");
+        setDescription("commands.admin.team.makeleader.description");
     }
 
     @Override
@@ -40,18 +40,12 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-        if (!getIslands().getTeamLeader(getWorld(), targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", getPlayers().getName(getIslands().getTeamLeader(getWorld(), targetUUID)));
+        if (getIslands().getTeamLeader(getWorld(), targetUUID).equals(targetUUID)) {
+            user.sendMessage("commands.admin.team.makeleader.already-leader");
             return false;
         }
-        // Disband team
-        getIslands().getMembers(getWorld(), targetUUID).forEach(m -> {
-            User.getInstance(m).sendMessage("commands.admin.team.disband.disbanded");
-            // The leader gets to keep the island
-            if (!m.equals(targetUUID)) {
-                getIslands().setLeaveTeam(getWorld(), m);
-            }
-        });
+        // Make new leader
+        getIslands().makeLeader(getWorld(), user, targetUUID, getPermissionPrefix());
         user.sendMessage("general.success");
         return true;
     }

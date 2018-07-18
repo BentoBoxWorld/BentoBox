@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.admin.teams;
+package us.tastybento.bskyblock.commands.admin.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -124,7 +124,7 @@ public class AdminTeamAddCommandTest {
 
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteWrongArgs() {
@@ -142,7 +142,7 @@ public class AdminTeamAddCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -163,7 +163,7 @@ public class AdminTeamAddCommandTest {
     }
         
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteTargetTargetInTeam() {
@@ -181,7 +181,7 @@ public class AdminTeamAddCommandTest {
 
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteAddNoIsland() {
@@ -200,7 +200,7 @@ public class AdminTeamAddCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteAddNotLeader() {
@@ -225,7 +225,7 @@ public class AdminTeamAddCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteAddTargetHasIsland() {
@@ -249,7 +249,7 @@ public class AdminTeamAddCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteAddTargetHasIslandNoTeam() {

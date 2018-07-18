@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.admin.teams;
+package us.tastybento.bskyblock.commands.admin.team;
 
 import java.util.List;
 import java.util.UUID;

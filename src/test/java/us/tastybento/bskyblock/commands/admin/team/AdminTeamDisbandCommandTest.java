@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.admin.teams;
+package us.tastybento.bskyblock.commands.admin.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -123,7 +123,7 @@ public class AdminTeamDisbandCommandTest {
 
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -133,7 +133,7 @@ public class AdminTeamDisbandCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -145,7 +145,7 @@ public class AdminTeamDisbandCommandTest {
     }
         
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
@@ -158,7 +158,7 @@ public class AdminTeamDisbandCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteDisbandNotLeader() {

@@ -125,7 +125,7 @@ public class AdminRegisterCommandTest {
 
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -135,7 +135,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -147,7 +147,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecutePlayerHasIsland() {
@@ -161,7 +161,7 @@ public class AdminRegisterCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteInTeam() {
@@ -175,7 +175,7 @@ public class AdminRegisterCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminRegisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteAlreadyOwnedIsland() {

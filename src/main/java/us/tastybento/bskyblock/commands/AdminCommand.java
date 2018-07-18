@@ -14,10 +14,10 @@ import us.tastybento.bskyblock.commands.admin.AdminSetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminTeleportCommand;
 import us.tastybento.bskyblock.commands.admin.AdminUnregisterCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
-import us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand;
-import us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand;
-import us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand;
-import us.tastybento.bskyblock.commands.admin.teams.AdminTeamMakeLeaderCommand;
+import us.tastybento.bskyblock.commands.admin.team.AdminTeamAddCommand;
+import us.tastybento.bskyblock.commands.admin.team.AdminTeamDisbandCommand;
+import us.tastybento.bskyblock.commands.admin.team.AdminTeamKickCommand;
+import us.tastybento.bskyblock.commands.admin.team.AdminTeamMakeLeaderCommand;
 
 public class AdminCommand extends CompositeCommand {
 

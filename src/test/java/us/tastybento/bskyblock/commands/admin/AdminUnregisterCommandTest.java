@@ -123,7 +123,7 @@ public class AdminUnregisterCommandTest {
 
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -133,7 +133,7 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -145,7 +145,7 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecutePlayerNoIsland() {
@@ -158,7 +158,7 @@ public class AdminUnregisterCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminUnregisterCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteInTeam() {

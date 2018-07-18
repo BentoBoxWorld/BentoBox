@@ -126,7 +126,7 @@ public class AdminInfoCommandTest {
 
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTargetConsole() {
@@ -138,7 +138,7 @@ public class AdminInfoCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -150,7 +150,7 @@ public class AdminInfoCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecutePlayerHasNoIsland() {
@@ -164,7 +164,7 @@ public class AdminInfoCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -179,7 +179,7 @@ public class AdminInfoCommandTest {
     }
    
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUserNotOnIsland() {
@@ -193,7 +193,7 @@ public class AdminInfoCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.teams.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteSuccessUserOnIsland() {
