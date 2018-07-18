@@ -330,6 +330,22 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
+     * Returns a map of sub commands for this command.
+     * As it needs more calculations to handle the Help subcommand, it is preferable to use {@link #getSubCommands()} when no such distinction is needed.
+     * @param ignoreHelp Whether the Help subcommand should not be returned in the map or not.
+     * @return Map of sub commands for this command
+     * @see #hasSubCommands(boolean)
+     */
+    public Map<String, CompositeCommand> getSubCommands(boolean ignoreHelp) {
+        if (ignoreHelp && getSubCommand("help").isPresent()) {
+            Map<String, CompositeCommand> result = subCommands;
+            result.remove("help");
+            return result;
+        }
+        return getSubCommands();
+    }
+
+    /**
      * Convenience method to obtain the user's team leader
      * @param world - world to check
      * @param user - the User
@@ -344,9 +360,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return "/" + usage;
     }
 
-
     /**
-     * Check if this command has a specific sub command
+     * Check if this command has a specific sub command.
      * @param subCommand - sub command
      * @return true if this command has this sub command
      */
@@ -355,7 +370,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Check if this command has any sub commands
+     * Check if this command has any sub commands.
      * @return true if this command has subcommands
      */
     protected boolean hasSubCommands() {
@@ -363,7 +378,18 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Convenience method to check if a user has a team
+     * Check if this command has any sub commands.
+     * As it needs more calculations to handle the Help subcommand, it is preferable to use {@link #hasSubCommands()} when no such distinction is needed.
+     * @param ignoreHelp Whether the Help subcommand should not be taken into account or not.
+     * @return true if this command has subcommands
+     * @see #getSubCommands(boolean)
+     */
+    protected boolean hasSubCommands(boolean ignoreHelp) {
+        return !getSubCommands(ignoreHelp).isEmpty();
+    }
+
+    /**
+     * Convenience method to check if a user has a team.
      * @param world - the world to check
      * @param user - the User
      * @return true if player is in a team
@@ -373,7 +399,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Check if this command is only for players
+     * Check if this command is only for players.
      * @return true or false
      */
     public boolean isOnlyPlayer() {
