@@ -14,6 +14,7 @@ import us.tastybento.bskyblock.commands.admin.AdminSetRankCommand;
 import us.tastybento.bskyblock.commands.admin.AdminTeleportCommand;
 import us.tastybento.bskyblock.commands.admin.AdminUnregisterCommand;
 import us.tastybento.bskyblock.commands.admin.AdminVersionCommand;
+import us.tastybento.bskyblock.commands.admin.range.AdminRangeCommand;
 import us.tastybento.bskyblock.commands.admin.team.AdminTeamAddCommand;
 import us.tastybento.bskyblock.commands.admin.team.AdminTeamDisbandCommand;
 import us.tastybento.bskyblock.commands.admin.team.AdminTeamKickCommand;
@@ -51,10 +52,12 @@ public class AdminCommand extends CompositeCommand {
         // Register/unregister islands
         new AdminRegisterCommand(this);
         new AdminUnregisterCommand(this);
+        // Range
+        new AdminRangeCommand(this);
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (!args.isEmpty()) {
             user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
             return false;
