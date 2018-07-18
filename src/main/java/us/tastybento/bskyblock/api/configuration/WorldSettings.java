@@ -225,4 +225,9 @@ public interface WorldSettings {
      * @return true if the default world generator should not operate in this world
      */
     boolean isUseOwnGenerator();
+
+    /**
+     * @return true if water is not safe in this world, e.g, should not be a home location
+     */
+    boolean isWaterNotSafe();
 }

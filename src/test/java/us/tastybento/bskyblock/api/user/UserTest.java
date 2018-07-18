@@ -52,7 +52,7 @@ public class UserTest {
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
-        
+
         player = mock(Player.class);
         when(server.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
 
@@ -65,12 +65,12 @@ public class UserTest {
         Bukkit.setServer(server);
 
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        
+
 
     }
 
     private CommandSender sender;
-    
+
     @Before
     public void setUp() throws Exception {
         sender = mock(CommandSender.class);
@@ -80,15 +80,15 @@ public class UserTest {
 
     @Test
     public void testGetInstanceCommandSender() {
-       User user = User.getInstance(sender); 
-       assertNotNull(user);
-       assertEquals(sender,user.getSender());
+        User user = User.getInstance(sender);
+        assertNotNull(user);
+        assertEquals(sender,user.getSender());
     }
 
     @Test
     public void testGetInstancePlayer() {
         Player player = mock(Player.class);
-        User user = User.getInstance(player); 
+        User user = User.getInstance(player);
         assertNotNull(user);
         assertEquals(player,user.getPlayer());
     }
@@ -96,11 +96,11 @@ public class UserTest {
     @Test
     public void testGetInstanceUUID() {
         UUID uuid = UUID.randomUUID();
-        User user = User.getInstance(uuid); 
+        User user = User.getInstance(uuid);
         assertNotNull(user);
         assertEquals(uuid,user.getUniqueId());
     }
-    
+
     @Test
     public void testRemovePlayer() {
         User.removePlayer(player);
@@ -113,23 +113,23 @@ public class UserTest {
     }
 
     @Test
-    public void testGetEffectivePermissions() {     
+    public void testGetEffectivePermissions() {
         Set<PermissionAttachmentInfo> value = new HashSet<>();
         PermissionAttachmentInfo perm = new PermissionAttachmentInfo(sender, "perm", null, false);
         value.add(perm);
         when(sender.getEffectivePermissions()).thenReturn(value );
         User user = User.getInstance(sender);
-        assertEquals(value, user.getEffectivePermissions());      
+        assertEquals(value, user.getEffectivePermissions());
     }
 
     @Test
     public void testGetInventory() {
         PlayerInventory value = mock(PlayerInventory.class);
         when(player.getInventory()).thenReturn(value);
-        assertEquals(value, player.getInventory());     
+        assertEquals(value, player.getInventory());
         User user = User.getInstance(player);
         assertNotNull(user.getInventory());
-        assertEquals(value, user.getInventory());     
+        assertEquals(value, user.getInventory());
     }
 
     @Test
@@ -138,7 +138,7 @@ public class UserTest {
         when(player.getLocation()).thenReturn(loc);
         User user = User.getInstance(player);
         assertNotNull(user.getLocation());
-        assertEquals(loc, user.getLocation());     
+        assertEquals(loc, user.getLocation());
     }
 
     @Test
@@ -147,7 +147,7 @@ public class UserTest {
         when(player.getName()).thenReturn(name);
         User user = User.getInstance(player);
         assertNotNull(user.getName());
-        assertEquals(name, user.getName());     
+        assertEquals(name, user.getName());
 
     }
 
@@ -205,31 +205,31 @@ public class UserTest {
     public void testGetTranslation() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation [test]");
-        
+
         User user = User.getInstance(player);
         assertEquals("mock translation [test]", user.getTranslation("a.reference"));
         assertEquals("mock translation variable", user.getTranslation("a.reference", "[test]", "variable"));
-    
+
         // Test no translation found
         when(lm.get(any(), any())).thenReturn(null);
         assertEquals("a.reference", user.getTranslation("a.reference"));
-        
+
     }
 
     @Test
     public void testGetTranslationOrNothing() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         // Return the original string to pretend that a translation could not be found
         when(lm.get(any(), any())).thenReturn("fake.reference");
-        
+
         User user = User.getInstance(player);
         assertEquals("", user.getTranslationOrNothing("fake.reference"));
         assertEquals("", user.getTranslationOrNothing("fake.reference", "[test]", "variable"));
@@ -239,65 +239,65 @@ public class UserTest {
     public void testSendMessage() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         String translation = ChatColor.RED + "" + ChatColor.BOLD + "test translation";
         when(lm.get(any(), any())).thenReturn(translation);
-        
+
         Player pl = mock(Player.class);
-        
+
         User user = User.getInstance(pl);
         user.sendMessage("a.reference");
-        Mockito.verify(pl).sendMessage(translation);        
+        Mockito.verify(pl).sendMessage(translation);
     }
-    
+
     @Test
     public void testSendMessageNullUser() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         String translation = ChatColor.RED + "" + ChatColor.BOLD + "test translation";
         when(lm.get(any(), any())).thenReturn(translation);
-        
+
         Player pl = mock(Player.class);
-        
+
         User user = User.getInstance(UUID.randomUUID());
         user.sendMessage("a.reference");
         Mockito.verify(pl, Mockito.never()).sendMessage(Mockito.anyString());
-        
+
     }
-    
+
     @Test
     public void testSendMessageBlankTranslation() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         // Nothing - blank translation
         when(lm.get(any(), any())).thenReturn("");
-        when(plugin.getLocalesManager()).thenReturn(lm);  
-        
+        when(plugin.getLocalesManager()).thenReturn(lm);
+
         Player pl = mock(Player.class);
         User user = User.getInstance(pl);
         user.sendMessage("a.reference");
         Mockito.verify(pl, Mockito.never()).sendMessage(Mockito.anyString());
-        
+
     }
-    
+
     @Test
     public void testSendMessageOnlyColors() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        
+
         Player pl = mock(Player.class);
         User user = User.getInstance(pl);
-        
+
         // Nothing - just color codes
         StringBuilder allColors = new StringBuilder();
         for (ChatColor cc : ChatColor.values()) {
@@ -306,7 +306,7 @@ public class UserTest {
         when(lm.get(any(), any())).thenReturn(allColors.toString());
         user.sendMessage("a.reference");
         Mockito.verify(pl, Mockito.never()).sendMessage(Mockito.anyString());
-        
+
     }
 
     @Test
@@ -314,24 +314,24 @@ public class UserTest {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
-        
+
         Player pl = mock(Player.class);
-        
+
         User user = User.getInstance(pl);
         user.sendRawMessage(raw);
         Mockito.verify(pl).sendMessage(raw);
-        
+
 
     }
-    
+
     @Test
     public void testSendRawMessageNullUser() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         User.setPlugin(plugin);
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
-        
+
         Player pl = mock(Player.class);
-        
+
         User user = User.getInstance(UUID.randomUUID());
         user.sendRawMessage(raw);
         Mockito.verify(pl, Mockito.never()).sendMessage(Mockito.anyString());
@@ -342,62 +342,62 @@ public class UserTest {
     public void testNotifyStringStringArrayNotifyOK() {
         BSkyBlock plugin = mock(BSkyBlock.class);
         Notifier notifier = mock(Notifier.class);
-        
+
         when(plugin.getNotifier()).thenReturn(notifier);
         User.setPlugin(plugin);
-        // Locales - final        
+        // Locales - final
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         String translation = ChatColor.RED + "" + ChatColor.BOLD + "test translation";
         when(lm.get(any(), any())).thenReturn(translation);
-        
-        Player pl = mock(Player.class);        
+
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
-        
+
         // Set notify
         when(notifier.notify(Mockito.any(), Mockito.eq(translation))).thenReturn(true);
-        
+
         user.notify("a.reference");
         Mockito.verify(notifier).notify(user, translation);
-        
+
     }
-    
+
 
     @Test
     public void testSetGameMode() {
-        Player pl = mock(Player.class);        
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
         for (GameMode gm: GameMode.values()) {
             user.setGameMode(gm);
         }
         Mockito.verify(pl, Mockito.times(GameMode.values().length)).setGameMode(Mockito.any());
-        
+
     }
 
     @Test
     public void testTeleport() {
-        Player pl = mock(Player.class);        
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
         when(pl.teleport(Mockito.any(Location.class))).thenReturn(true);
         Location loc = mock(Location.class);
         user.teleport(loc);
         Mockito.verify(pl).teleport(loc);
-        
+
     }
 
     @Test
     public void testGetWorld() {
-        Player pl = mock(Player.class);               
+        Player pl = mock(Player.class);
         World world = mock(World.class);
         when(pl.getWorld()).thenReturn(world);
         User user = User.getInstance(pl);
         assertEquals(world, user.getWorld());
-        
+
     }
 
     @Test
     public void testCloseInventory() {
-        Player pl = mock(Player.class);        
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
         user.closeInventory();
         Mockito.verify(pl).closeInventory();
@@ -410,14 +410,14 @@ public class UserTest {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
         when(pm.getLocale(Mockito.any())).thenReturn("en-US");
-        
+
         // Confirm that Locale object is correctly obtained
         Locale locale = Locale.US;
-        Player pl = mock(Player.class);        
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
-        assertEquals(locale, user.getLocale());        
+        assertEquals(locale, user.getLocale());
     }
-    
+
     @Test
     public void testGetLocaleConsole() {
         BSkyBlock plugin = mock(BSkyBlock.class);
@@ -425,7 +425,7 @@ public class UserTest {
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
         when(pm.getLocale(Mockito.any())).thenReturn("en-US");
-        
+
         // Confirm that Locale object is correctly obtained
         Locale locale = Locale.US;
         // Try for console
@@ -436,10 +436,9 @@ public class UserTest {
         assertEquals(locale, console.getLocale());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testUpdateInventory() {
-        Player pl = mock(Player.class);        
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
         user.updateInventory();
         Mockito.verify(pl).updateInventory();
@@ -447,7 +446,7 @@ public class UserTest {
 
     @Test
     public void testPerformCommand() {
-        Player pl = mock(Player.class);        
+        Player pl = mock(Player.class);
         User user = User.getInstance(pl);
         user.performCommand("test");
         Mockito.verify(pl).performCommand("test");
@@ -464,7 +463,7 @@ public class UserTest {
         assertFalse(user2.equals(user1));
         assertFalse(user2.equals(null));
         assertFalse(user2.equals("a string"));
-        
+
         user1 = User.getInstance((UUID)null);
         assertFalse(user2.equals(user1));
 
@@ -478,11 +477,11 @@ public class UserTest {
         assertEquals(user1, user2);
         assertTrue(user1.hashCode() == user2.hashCode());
     }
-    
+
     @Test
     public void testNullPlayer() {
         User user = User.getInstance((Player)null);
         assertNull(user);
     }
-    
+
 }

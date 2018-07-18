@@ -1584,5 +1584,10 @@ public class Settings implements DataObject, WorldSettings {
         this.difficulty = difficulty;
     }
 
+    @Override
+    public boolean isWaterNotSafe() {
+        return false;
+    }
+
 
 }

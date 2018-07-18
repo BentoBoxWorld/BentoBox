@@ -69,6 +69,10 @@ public class IslandsManager {
         if (space1.isLiquid() && space2.isLiquid()) {
             return false;
         }
+        // Check if water is safe in this world
+        if (space1.isLiquid() && plugin.getIWM().isWaterNotSafe(l.getWorld())) {
+            return false;
+        }
 
         // Portals are not "safe"
         if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
@@ -515,7 +519,6 @@ public class IslandsManager {
      * @param number - a number - home location to do to
      * @param newIsland - true if this is a new island teleport
      */
-    @SuppressWarnings("deprecation")
     public void homeTeleport(World world, Player player, int number, boolean newIsland) {
         User user = User.getInstance(player);
         Location home = getSafeHomeLocation(world, user, number);

@@ -716,4 +716,13 @@ public class IslandWorldManager {
     public List<String> getVisitorBannedCommands(World world) {
         return worldSettings.get(Util.getWorld(world)).getVisitorBannedCommands();
     }
+
+    /**
+     * Check if water is not safe, e.g., it is acid, in the world
+     * @param world - world
+     * @return true if water is not safe, e.g.for home locations
+     */
+    public boolean isWaterNotSafe(World world) {
+        return worldSettings.get(Util.getWorld(world)).isWaterNotSafe();
+    }
 }
