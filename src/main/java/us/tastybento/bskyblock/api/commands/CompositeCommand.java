@@ -198,7 +198,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return false;
         }
         // Execute and trim args
-        return cmd.execute(user, args[cmd.subCommandLevel-1], Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
+        return cmd.execute(user, (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
     }
 
     /**
