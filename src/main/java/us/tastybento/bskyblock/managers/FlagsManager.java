@@ -56,7 +56,7 @@ public class FlagsManager {
      * Register any unregistered listeners - called after the plugin is fully loaded
      */
     public void registerListeners() {
-        registeredListeners.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).forEach(this::registerListener);
+        registeredListeners.entrySet().stream().filter(e -> !e.getValue()).map(Map.Entry::getKey).forEach(this::registerListener);
     }
 
     /**

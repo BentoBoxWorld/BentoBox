@@ -15,6 +15,7 @@ import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;
 import us.tastybento.bskyblock.listeners.flags.BucketListener;
 import us.tastybento.bskyblock.listeners.flags.CleanSuperFlatListener;
+import us.tastybento.bskyblock.listeners.flags.CreeperListener;
 import us.tastybento.bskyblock.listeners.flags.EggListener;
 import us.tastybento.bskyblock.listeners.flags.EnderChestListener;
 import us.tastybento.bskyblock.listeners.flags.EnterExitListener;
@@ -191,10 +192,16 @@ public class Flags {
 
     public static final Flag CHEST_DAMAGE = new FlagBuilder().id("CHEST_DAMAGE").icon(Material.TRAPPED_CHEST).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
-    public static final Flag CREEPER_DAMAGE = new FlagBuilder().id("CREEPER_DAMAGE").icon(Material.GREEN_SHULKER_BOX).type(Type.WORLD_SETTING)
+    public static final Flag CREEPER_DAMAGE = new FlagBuilder().id("CREEPER_DAMAGE").listener(new CreeperListener()).icon(Material.GREEN_SHULKER_BOX).type(Type.WORLD_SETTING)
             .allowedByDefault(true).build();
+    /**
+     * Prevents creeper griefing. This is where a visitor will trigger a creeper to blow up an island.
+     */
     public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.FIREWORK).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
+    /**
+     * Globally allows or disallows TNT explosion damage/pain.
+     */
     public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.WORLD_SETTING).build();
 
 
