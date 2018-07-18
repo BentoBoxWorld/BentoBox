@@ -723,6 +723,6 @@ public class IslandWorldManager {
      * @return true if water is not safe, e.g.for home locations
      */
     public boolean isWaterNotSafe(World world) {
-        return worldSettings.get(Util.getWorld(world)).isWaterNotSafe();
+        return worldSettings.get(Util.getWorld(world)).isWaterUnsafe();
     }
 }

@@ -1585,7 +1585,7 @@ public class Settings implements DataObject, WorldSettings {
     }
 
     @Override
-    public boolean isWaterNotSafe() {
+    public boolean isWaterUnsafe() {
         return false;
     }
 
