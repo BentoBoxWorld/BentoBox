@@ -1,4 +1,4 @@
-package us.tastybento.bskyblock.commands.island.teams;
+package us.tastybento.bskyblock.commands.island.team;
 
 import java.util.List;
 import java.util.Set;

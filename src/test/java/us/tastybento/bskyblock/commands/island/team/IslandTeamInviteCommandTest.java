@@ -1,7 +1,7 @@
 /**
  * 
  */
-package us.tastybento.bskyblock.commands.island.teams;
+package us.tastybento.bskyblock.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.mockito.Mockito.mock;
@@ -119,7 +119,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoIsland() {
@@ -130,7 +130,7 @@ public class IslandTeamInviteCommandTest {
     }
         
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNotTeamLeader() {
@@ -141,7 +141,7 @@ public class IslandTeamInviteCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -151,7 +151,7 @@ public class IslandTeamInviteCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -164,7 +164,7 @@ public class IslandTeamInviteCommandTest {
     
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteOfflinePlayer() {
@@ -179,7 +179,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteSamePlayer() {
@@ -195,7 +195,7 @@ public class IslandTeamInviteCommandTest {
     
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamInviteCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteDifferentPlayerInTeam() {

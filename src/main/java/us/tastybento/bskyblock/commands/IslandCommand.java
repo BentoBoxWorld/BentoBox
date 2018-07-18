@@ -18,7 +18,7 @@ import us.tastybento.bskyblock.commands.island.IslandSethomeCommand;
 import us.tastybento.bskyblock.commands.island.IslandSetnameCommand;
 import us.tastybento.bskyblock.commands.island.IslandSettingsCommand;
 import us.tastybento.bskyblock.commands.island.IslandUnbanCommand;
-import us.tastybento.bskyblock.commands.island.teams.IslandTeamCommand;
+import us.tastybento.bskyblock.commands.island.team.IslandTeamCommand;
 
 public class IslandCommand extends CompositeCommand {
 

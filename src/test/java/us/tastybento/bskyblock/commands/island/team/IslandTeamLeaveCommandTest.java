@@ -1,7 +1,7 @@
 /**
  * 
  */
-package us.tastybento.bskyblock.commands.island.teams;
+package us.tastybento.bskyblock.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -106,7 +106,7 @@ public class IslandTeamLeaveCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTeam() {
@@ -117,7 +117,7 @@ public class IslandTeamLeaveCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteInTeamLeader() {
@@ -127,7 +127,7 @@ public class IslandTeamLeaveCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoConfirmation() {
@@ -144,7 +144,7 @@ public class IslandTeamLeaveCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteWithConfirmation() {
@@ -163,7 +163,7 @@ public class IslandTeamLeaveCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamLeaveCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteTestResets() {

@@ -1,7 +1,7 @@
 /**
  * 
  */
-package us.tastybento.bskyblock.commands.island.teams;
+package us.tastybento.bskyblock.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -125,7 +125,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTeam() {
@@ -136,7 +136,7 @@ public class IslandTeamKickCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNotTeamLeader() {
@@ -147,7 +147,7 @@ public class IslandTeamKickCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -157,7 +157,7 @@ public class IslandTeamKickCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -169,7 +169,7 @@ public class IslandTeamKickCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteSamePlayer() {
@@ -182,7 +182,7 @@ public class IslandTeamKickCommandTest {
     
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteDifferentPlayerNotInTeam() {
@@ -195,7 +195,7 @@ public class IslandTeamKickCommandTest {
     }
        
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoConfirmation() {
@@ -215,7 +215,7 @@ public class IslandTeamKickCommandTest {
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteWithConfirmation() {
@@ -235,7 +235,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.teams.IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link IslandTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteTestResets() {
