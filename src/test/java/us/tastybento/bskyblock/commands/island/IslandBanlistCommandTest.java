@@ -124,14 +124,14 @@ public class IslandBanlistCommandTest {
     @Test
     public void testWithArgs() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         // Verify show help
     }
 
     @Test
     public void testNoIsland() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        assertFalse(iubc.execute(user, new ArrayList<>()));
+        assertFalse(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("general.errors.no-island");
     }
 
@@ -139,7 +139,7 @@ public class IslandBanlistCommandTest {
     public void testBanlistNooneBanned() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertTrue(iubc.execute(user, new ArrayList<>()));
+        assertTrue(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.banlist.noone");
     }
 
@@ -166,7 +166,7 @@ public class IslandBanlistCommandTest {
             }
 
         });       
-        assertTrue(iubc.execute(user, new ArrayList<>()));
+        assertTrue(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.banlist.the-following");
     }
 

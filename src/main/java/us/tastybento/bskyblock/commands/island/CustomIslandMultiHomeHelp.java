@@ -30,7 +30,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         // This will only be shown if it is for a player
         if (user.isPlayer()) {
             // Get elements

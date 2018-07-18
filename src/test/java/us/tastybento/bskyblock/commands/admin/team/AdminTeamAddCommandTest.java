@@ -124,25 +124,25 @@ public class AdminTeamAddCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteWrongArgs() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         List<String> args = new ArrayList<>();
-        assertFalse(itl.execute(user, args));
+        assertFalse(itl.execute(user, itl.getLabel(), args));
         // Show help
         args.add("arg1");
-        assertFalse(itl.execute(user, args));
+        assertFalse(itl.execute(user, itl.getLabel(), args));
      // Show help
         args.add("args2");
         args.add("args3");
-        assertFalse(itl.execute(user, args));
+        assertFalse(itl.execute(user, itl.getLabel(), args));
      // Show help
     }
     
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -152,18 +152,18 @@ public class AdminTeamAddCommandTest {
         // Unknown leader
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(null);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("general.errors.unknown-player-name", "[name]", "tastybento");
         
         // Unknown target
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("general.errors.unknown-player-name", "[name]", "poslovich");
     }
         
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteTargetTargetInTeam() {
@@ -175,13 +175,13 @@ public class AdminTeamAddCommandTest {
         
         when(im.inTeam(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);
         
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.errors.already-on-team"));
     }
 
     
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteAddNoIsland() {
@@ -194,13 +194,13 @@ public class AdminTeamAddCommandTest {
         // No island,
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("general.errors.player-has-no-island");
         
     }
     
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteAddNotLeader() {
@@ -219,13 +219,13 @@ public class AdminTeamAddCommandTest {
         Island island = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
         
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-leader", "[name]", "tastybento");
         Mockito.verify(island).showMembers(Mockito.eq(plugin), Mockito.any(), Mockito.any());
     }
     
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteAddTargetHasIsland() {
@@ -243,13 +243,13 @@ public class AdminTeamAddCommandTest {
         // Target has island
         when(im.hasIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);
         
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.add.name-has-island", "[name]", "poslovich");
         
     }
     
     /**
-     * Test method for {@link AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteAddTargetHasIslandNoTeam() {
@@ -266,13 +266,13 @@ public class AdminTeamAddCommandTest {
         // Target has island
         when(im.hasIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);
         
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.add.name-has-island", "[name]", "poslovich");
         
     }
     
     /**
-     * Test method for {@link us.us.tastybento.bskyblock.commands.admin.teams.AdminTeamAddCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -299,7 +299,7 @@ public class AdminTeamAddCommandTest {
         when(plugin.getPlayers()).thenReturn(pm);
         
         // Success
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(island).addMember(notUUID);
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }

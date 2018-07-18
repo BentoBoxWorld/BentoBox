@@ -135,13 +135,13 @@ public class IslandUnbanCommandTest {
     @Test
     public void testNoArgs() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        assertFalse(iubc.execute(user, new ArrayList<>()));
+        assertFalse(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
     }
 
     @Test
     public void testNoIsland() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.no-island");
     }
 
@@ -149,7 +149,7 @@ public class IslandUnbanCommandTest {
     public void testNotOwner() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.not-leader");
     }
 
@@ -159,7 +159,7 @@ public class IslandUnbanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.unknown-player");
     }
 
@@ -169,7 +169,7 @@ public class IslandUnbanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.unban.cannot-unban-yourself");
     }
 
@@ -181,7 +181,7 @@ public class IslandUnbanCommandTest {
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(bannedUser);
         when(island.isBanned(Mockito.eq(bannedUser))).thenReturn(false);
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.unban.player-not-banned");
     }
 
@@ -204,7 +204,7 @@ public class IslandUnbanCommandTest {
         // Allow removing from ban list
         when(island.removeFromBanList(Mockito.any())).thenReturn(true);
 
-        assertTrue(iubc.execute(user, Arrays.asList("bill")));
+        assertTrue(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.success");
         Mockito.verify(targetUser).sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
     }
@@ -228,7 +228,7 @@ public class IslandUnbanCommandTest {
         // Allow removing from ban list
         when(island.removeFromBanList(Mockito.any())).thenReturn(false);
 
-        assertFalse(iubc.execute(user, Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user, Mockito.never()).sendMessage("general.success");
         Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.unban.you-are-unbanned", "[owner]", user.getName());
     }

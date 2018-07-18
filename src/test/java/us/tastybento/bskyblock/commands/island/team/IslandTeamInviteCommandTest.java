@@ -125,7 +125,7 @@ public class IslandTeamInviteCommandTest {
     public void testExecuteNoIsland() {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
     }
         
@@ -136,7 +136,7 @@ public class IslandTeamInviteCommandTest {
     public void testExecuteNotTeamLeader() {
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
     }
     
@@ -146,7 +146,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testExecuteNoTarget() {
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
     
@@ -158,7 +158,7 @@ public class IslandTeamInviteCommandTest {
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
     
@@ -174,7 +174,7 @@ public class IslandTeamInviteCommandTest {
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(uuid);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.offline-player"));
     }
 
@@ -189,7 +189,7 @@ public class IslandTeamInviteCommandTest {
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(uuid);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.cannot-invite-self"));
     }
     
@@ -206,7 +206,7 @@ public class IslandTeamInviteCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.already-on-team"));
     }
 

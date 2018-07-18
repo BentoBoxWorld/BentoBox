@@ -130,7 +130,7 @@ public class AdminRegisterCommandTest {
     @Test
     public void testExecuteNoTarget() {
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
@@ -142,7 +142,7 @@ public class AdminRegisterCommandTest {
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
 
@@ -156,7 +156,7 @@ public class AdminRegisterCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-island"));
     }
     
@@ -170,7 +170,7 @@ public class AdminRegisterCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.register.cannot-register-team-player");
     }
     
@@ -192,7 +192,7 @@ public class AdminRegisterCommandTest {
         when(im.getIslandAt(Mockito.any())).thenReturn(opi);
         when(user.getLocation()).thenReturn(loc);
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.register.already-owned");
     }
 
@@ -215,7 +215,7 @@ public class AdminRegisterCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
         AdminRegisterCommand itl = new AdminRegisterCommand(ac);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(user).sendMessage("commands.admin.register.registered-island", "[xyz]", "123,123,432");
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));

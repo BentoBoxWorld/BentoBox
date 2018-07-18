@@ -21,7 +21,7 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;

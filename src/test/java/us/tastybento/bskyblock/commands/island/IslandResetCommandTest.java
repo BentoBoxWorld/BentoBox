@@ -123,7 +123,7 @@ public class IslandResetCommandTest {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Test the reset command
         // Does not have island
-        assertFalse(irc.execute(user, new ArrayList<>()));
+        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("general.errors.no-island");
     }
     
@@ -132,7 +132,7 @@ public class IslandResetCommandTest {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the leader
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(irc.execute(user, new ArrayList<>()));
+        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("general.errors.not-leader");
     }
     
@@ -143,7 +143,7 @@ public class IslandResetCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(irc.execute(user, new ArrayList<>()));
+        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.reset.must-remove-members");
     }
     
@@ -160,7 +160,7 @@ public class IslandResetCommandTest {
         // Block based on no resets left
         when(pm.getResetsLeft(Mockito.eq(uuid))).thenReturn(0);
         
-        assertFalse(irc.execute(user, new ArrayList<>()));
+        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.reset.none-left");
     }
     
@@ -192,7 +192,7 @@ public class IslandResetCommandTest {
         when(NewIsland.builder()).thenReturn(builder);
 
         // Reset command, no confirmation required
-        assertTrue(irc.execute(user, new ArrayList<>()));
+        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         // Verify that build new island was called and the number of resets left shown
         Mockito.verify(builder).build();
         Mockito.verify(user).sendMessage("commands.island.reset.resets-left", "[number]", "1"); 
@@ -228,7 +228,7 @@ public class IslandResetCommandTest {
         when(s.getResetLimit()).thenReturn(-1);
         
         // Reset
-        assertTrue(irc.execute(user, new ArrayList<>()));
+        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         // Verify that build new island was called and the number of resets left shown
         Mockito.verify(builder).build();
         // This should not be shown
@@ -267,12 +267,12 @@ public class IslandResetCommandTest {
         when(s.getConfirmationTime()).thenReturn(20);
 
         // Reset
-        assertTrue(irc.execute(user, new ArrayList<>()));
+        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         // Check for message
         Mockito.verify(user).sendMessage("general.confirm", "[seconds]", String.valueOf(s.getConfirmationTime()));
         
         // Send command again to confirm
-        assertTrue(irc.execute(user, new ArrayList<>()));
+        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         
     }
     
@@ -307,7 +307,7 @@ public class IslandResetCommandTest {
         when(s.isResetConfirmation()).thenReturn(false);
         
         // Reset
-        assertFalse(irc.execute(user, new ArrayList<>()));
+        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.create.unable-create-island");
         
 

@@ -26,7 +26,7 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Reject /island reject
         if (itc.getInviteCommand().getInviteList().containsKey(playerUUID)) {

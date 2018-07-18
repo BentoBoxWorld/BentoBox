@@ -35,7 +35,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
         if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {

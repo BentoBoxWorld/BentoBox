@@ -198,7 +198,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return false;
         }
         // Execute and trim args
-        return cmd.execute(user, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
+        return cmd.execute(user, args[cmd.subCommandLevel-1], Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
     }
 
     /**
@@ -508,7 +508,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return result of help command or false if no help defined
      */
     protected boolean showHelp(CompositeCommand command, User user) {
-        return command.getSubCommand("help").map(helpCommand -> helpCommand.execute(user, new ArrayList<>())).orElse(false);
+        return command.getSubCommand("help").map(helpCommand -> helpCommand.execute(user, helpCommand.getLabel(), new ArrayList<>())).orElse(false);
     }
 
     /**

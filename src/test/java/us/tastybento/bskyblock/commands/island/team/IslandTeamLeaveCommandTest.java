@@ -112,7 +112,7 @@ public class IslandTeamLeaveCommandTest {
     public void testExecuteNoTeam() {
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
     }
     
@@ -122,7 +122,7 @@ public class IslandTeamLeaveCommandTest {
     @Test
     public void testExecuteInTeamLeader() {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.leave.cannot-leave"));
     }
     
@@ -138,7 +138,7 @@ public class IslandTeamLeaveCommandTest {
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertTrue(itl.execute(user, new ArrayList<>()));
+        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(im).setLeaveTeam(Mockito.any(), Mockito.eq(uuid));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
@@ -157,7 +157,7 @@ public class IslandTeamLeaveCommandTest {
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Confirmation required
         Mockito.verify(user).sendMessage(Mockito.eq("general.confirm"), Mockito.eq("[seconds]"), Mockito.eq("0"));
     }
@@ -183,7 +183,7 @@ public class IslandTeamLeaveCommandTest {
         when(iwm.isOnLeaveResetMoney(Mockito.any())).thenReturn(true);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
-        assertTrue(itl.execute(user, new ArrayList<>()));
+        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(im).setLeaveTeam(Mockito.any(), Mockito.eq(uuid));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
         

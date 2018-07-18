@@ -58,17 +58,17 @@ public class IslandCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (user == null) {
             return false;
         }        
         if (args.isEmpty()) {
             // If user has an island, go
             if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) != null) {
-                return getSubCommand("go").map(goCmd -> goCmd.execute(user, new ArrayList<>())).orElse(false);
+                return getSubCommand("go").map(goCmd -> goCmd.execute(user, goCmd.getLabel(), new ArrayList<>())).orElse(false);
             }
             // No islands currently
-            return getSubCommand("create").map(createCmd -> createCmd.execute(user, new ArrayList<>())).orElse(false);
+            return getSubCommand("create").map(createCmd -> createCmd.execute(user, createCmd.getLabel(), new ArrayList<>())).orElse(false);
         }
         user.sendMessage("general.errors.unknown-command", TextVariables.LABEL, getTopLabel());
         return false;

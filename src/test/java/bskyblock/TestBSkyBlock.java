@@ -195,7 +195,7 @@ public class TestBSkyBlock {
         testCommand.setOnlyPlayer(true);
         testCommand.setPermission("default.permission");
         // Test basic execution
-        assertTrue(testCommand.execute(user, new ArrayList<>()));
+        assertTrue(testCommand.execute(user, testCommand.getLabel(), new ArrayList<>()));
         assertEquals("test",testCommand.getLabel());
         assertEquals(2, testCommand.getAliases().size());
         assertEquals("t", testCommand.getAliases().get(0));
@@ -259,7 +259,7 @@ public class TestBSkyBlock {
         }
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
             return true;
         }
 
@@ -284,7 +284,7 @@ public class TestBSkyBlock {
         }
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
             return true;
         }
 
@@ -298,7 +298,7 @@ public class TestBSkyBlock {
         }
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
             return true;
         }
 
@@ -317,7 +317,7 @@ public class TestBSkyBlock {
         }
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
             return true;
         }
 
@@ -339,7 +339,7 @@ public class TestBSkyBlock {
         public void setup() {}
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
 
             return args.size() == 3;
         }
@@ -362,7 +362,7 @@ public class TestBSkyBlock {
         public void setup() {}
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
             return args.size() == 3;
         }
 

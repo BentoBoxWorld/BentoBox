@@ -28,7 +28,7 @@ public class AdminTeleportCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.showHelp(this, user);
             return true;

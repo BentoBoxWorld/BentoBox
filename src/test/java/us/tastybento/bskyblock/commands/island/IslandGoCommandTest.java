@@ -129,7 +129,7 @@ public class IslandGoCommandTest {
     public void testExecuteNoArgsNoIsland() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
         IslandGoCommand igc = new IslandGoCommand(ic);
-        assertFalse(igc.execute(user, new ArrayList<>()));
+        assertFalse(igc.execute(user, igc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("general.errors.no-island");
         
     }
@@ -141,7 +141,7 @@ public class IslandGoCommandTest {
     public void testExecuteNoArgs() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
         IslandGoCommand igc = new IslandGoCommand(ic);
-        assertTrue(igc.execute(user, new ArrayList<>()));
+        assertTrue(igc.execute(user, igc.getLabel(), new ArrayList<>()));
     }
     
     /**
@@ -152,7 +152,7 @@ public class IslandGoCommandTest {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
         when(Util.getPermValue(Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
         IslandGoCommand igc = new IslandGoCommand(ic);
-        assertTrue(igc.execute(user, new ArrayList<>()));
+        assertTrue(igc.execute(user, igc.getLabel(), new ArrayList<>()));
     }
     
     /**
@@ -165,7 +165,7 @@ public class IslandGoCommandTest {
         IslandGoCommand igc = new IslandGoCommand(ic);
         List<String> args = new ArrayList<>();
         args.add("1");
-        assertTrue(igc.execute(user, args));
+        assertTrue(igc.execute(user, igc.getLabel(), args));
     }
     
     /**
@@ -178,7 +178,7 @@ public class IslandGoCommandTest {
         IslandGoCommand igc = new IslandGoCommand(ic);
         List<String> args = new ArrayList<>();
         args.add("2");
-        assertTrue(igc.execute(user, args));
+        assertTrue(igc.execute(user, igc.getLabel(), args));
         Mockito.verify(user).sendMessage("commands.island.go.tip", TextVariables.LABEL, "island");
     }
 
@@ -193,6 +193,6 @@ public class IslandGoCommandTest {
         IslandGoCommand igc = new IslandGoCommand(ic);
         List<String> args = new ArrayList<>();
         args.add("sdfsdf");
-        assertTrue(igc.execute(user, args));
+        assertTrue(igc.execute(user, igc.getLabel(), args));
     }
 }

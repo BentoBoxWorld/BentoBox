@@ -5,12 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -123,29 +118,29 @@ public class AdminTeamMakeLeaderCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTarget() {
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
     
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
         
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
@@ -153,12 +148,12 @@ public class AdminTeamMakeLeaderCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
 
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteMakeLeaderAlreadyLeader() {
@@ -171,12 +166,12 @@ public class AdminTeamMakeLeaderCommandTest {
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
         
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.makeleader.already-leader");
     }
     
     /**
-     * Test method for {@link us.us.tastybento.bskyblock.commands.admin.teams.AdminTeamMakeLeaderCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminTeamMakeLeaderCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -195,7 +190,7 @@ public class AdminTeamMakeLeaderCommandTest {
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(im).makeLeader(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID), Mockito.any());
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));

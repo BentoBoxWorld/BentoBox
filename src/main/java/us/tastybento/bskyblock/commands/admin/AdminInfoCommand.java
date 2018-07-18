@@ -21,7 +21,7 @@ public class AdminInfoCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (args.size() > 1 || (args.isEmpty() && !user.isPlayer())) {
             // Show help
             showHelp(this, user);

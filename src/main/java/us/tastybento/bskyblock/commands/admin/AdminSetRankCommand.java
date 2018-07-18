@@ -36,7 +36,7 @@ public class AdminSetRankCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.BSBCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)
      */
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (args.size() != 2) {
             // Show help
             showHelp(this, user);

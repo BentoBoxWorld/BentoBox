@@ -33,7 +33,7 @@ public class IslandResetCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         // Check cooldown
         if (getSettings().getResetWait() > 0 && onRestartWaitTime(user) > 0 && !user.isOp()) {
             user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(onRestartWaitTime(user)));

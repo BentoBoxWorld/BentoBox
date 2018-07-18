@@ -107,7 +107,7 @@ public class DefaultHelpCommandTest {
         }
 
         @Override
-        public boolean execute(User user, List<String> args) {
+        public boolean execute(User user, String label, List<String> args) {
             return false;
         }
         
@@ -145,7 +145,7 @@ public class DefaultHelpCommandTest {
         when(user.getTranslation("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
-        dhc.execute(user, new ArrayList<>());
+        dhc.execute(user, dhc.getLabel(), new ArrayList<>());
         Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
         Mockito.verify(user).getTranslation("island");
         Mockito.verify(user).getTranslation("parameters");
@@ -176,7 +176,7 @@ public class DefaultHelpCommandTest {
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         List<String> args = new ArrayList<>();
         args.add("1");
-        dhc.execute(user, args);
+        dhc.execute(user, dhc.getLabel(), args);
         // There are no header or footer shown
         Mockito.verify(user).getTranslation("island");
         Mockito.verify(user).getTranslation("parameters");
@@ -209,7 +209,7 @@ public class DefaultHelpCommandTest {
         List<String> args = new ArrayList<>();
         // Test /island help team
         args.add("team");
-        dhc.execute(user, args);
+        dhc.execute(user, dhc.getLabel(), args);
         // There are no header or footer shown
         Mockito.verify(user).getTranslation("island");
         Mockito.verify(user).getTranslation("commands.help.parameters");

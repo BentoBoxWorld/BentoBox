@@ -8,11 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -126,29 +122,29 @@ public class AdminTeamKickCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTarget() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
     
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
         
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
@@ -156,12 +152,12 @@ public class AdminTeamKickCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)} .
      */
     @Test
     public void testExecuteKickLeader() {
@@ -174,13 +170,13 @@ public class AdminTeamKickCommandTest {
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
         
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-leader"));
         Mockito.verify(is).showMembers(Mockito.any(), Mockito.any(), Mockito.any());
     }
     
     /**
-     * Test method for {@link us.us.tastybento.bskyblock.commands.admin.teams.AdminTeamKickCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminTeamKickCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecute() {
@@ -193,7 +189,7 @@ public class AdminTeamKickCommandTest {
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
         
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }

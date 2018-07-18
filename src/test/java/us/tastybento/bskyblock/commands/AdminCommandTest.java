@@ -102,11 +102,11 @@ public class AdminCommandTest {
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
         AdminCommand ac = new AdminCommand();
-        assertTrue(ac.execute(mock(User.class), new ArrayList<>()));
+        assertTrue(ac.execute(mock(User.class), ac.getLabel(), new ArrayList<>()));
         
         // No such command
         String[] args2 = {"random", "junk"};
-        assertFalse(ac.execute(mock(User.class), Arrays.asList(args2)));
+        assertFalse(ac.execute(mock(User.class), ac.getLabel(), Arrays.asList(args2)));
     }
 
 }

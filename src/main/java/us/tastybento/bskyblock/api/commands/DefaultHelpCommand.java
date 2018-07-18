@@ -37,7 +37,7 @@ public class DefaultHelpCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         int depth = 0;
         if (args.size() == 1) {
             if (NumberUtils.isDigits(args.get(0))) {
@@ -82,7 +82,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             if (!subCommand.getLabel().equals(HELP)) {
                 // Every command should have help because every command has a default help
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
-                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, Collections.singletonList(String.valueOf(newDepth))));
+                sub.ifPresent(compositeCommand -> compositeCommand.execute(user, HELP, Collections.singletonList(String.valueOf(newDepth))));
             }
         }        
     }

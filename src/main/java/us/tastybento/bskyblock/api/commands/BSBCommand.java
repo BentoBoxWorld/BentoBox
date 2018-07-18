@@ -20,11 +20,12 @@ public interface BSBCommand {
 
     /**
      * What will be executed when this command is run
-     * @param user - the User
-     * @param args - command arguments
+     * @param user the User who is executing the command
+     * @param label the label which has been used to execute the command (can be the command's label OR an alias)
+     * @param args the command arguments
      * @return true or false - true if the command executed successfully
      */
-    boolean execute(User user, List<String> args);
+    boolean execute(User user, String label, List<String> args);
 
     /**
      * Tab Completer for CompositeCommands. Note that any registered sub-commands will be automatically

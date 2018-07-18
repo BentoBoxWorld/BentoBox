@@ -27,7 +27,7 @@ public class IslandResetnameCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
 
         if (!getIslands().hasIsland(getWorld(), playerUUID)) {

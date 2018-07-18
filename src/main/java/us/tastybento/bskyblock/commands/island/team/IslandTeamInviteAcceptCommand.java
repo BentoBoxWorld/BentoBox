@@ -30,7 +30,7 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
 
         UUID playerUUID = user.getUniqueId();
         // Check if player has been invited

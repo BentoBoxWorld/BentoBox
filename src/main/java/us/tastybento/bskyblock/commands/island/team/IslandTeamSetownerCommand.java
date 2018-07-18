@@ -26,7 +26,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
         boolean inTeam = getPlugin().getIslands().inTeam(getWorld(), playerUUID);

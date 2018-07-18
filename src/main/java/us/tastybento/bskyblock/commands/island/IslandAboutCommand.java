@@ -22,7 +22,7 @@ public class IslandAboutCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         user.sendRawMessage("About " + BSkyBlock.getInstance().getDescription().getName() + " v" + BSkyBlock.getInstance().getDescription().getVersion() + ":");
         user.sendRawMessage("Copyright (c) 2017 - 2018 Tastybento, Poslovitch");
         user.sendRawMessage("All rights reserved.");

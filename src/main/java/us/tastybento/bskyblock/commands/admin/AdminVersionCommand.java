@@ -19,7 +19,7 @@ public class AdminVersionCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         return false;
     }
 

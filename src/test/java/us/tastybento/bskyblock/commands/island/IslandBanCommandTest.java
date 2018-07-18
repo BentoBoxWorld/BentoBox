@@ -123,7 +123,7 @@ public class IslandBanCommandTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.island.IslandBanCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.island.IslandBanCommand#execute(User, String, List)}.
      */
     // Island ban command by itself
 
@@ -143,13 +143,13 @@ public class IslandBanCommandTest {
     @Test
     public void testNoArgs() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        assertFalse(ibc.execute(user, new ArrayList<>()));
+        assertFalse(ibc.execute(user, ibc.getLabel(), new ArrayList<>()));
     }
     
     @Test
     public void testNoIsland() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.no-island");
     }
 
@@ -157,7 +157,7 @@ public class IslandBanCommandTest {
     public void testNotOwner() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.not-leader");
     }
 
@@ -167,7 +167,7 @@ public class IslandBanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.errors.unknown-player");
     }
 
@@ -177,7 +177,7 @@ public class IslandBanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban-yourself");
     }
 
@@ -192,7 +192,7 @@ public class IslandBanCommandTest {
         members.add(uuid);
         members.add(teamMate);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban-member");
     }
 
@@ -204,7 +204,7 @@ public class IslandBanCommandTest {
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(bannedUser);
         when(island.isBanned(Mockito.eq(bannedUser))).thenReturn(true);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.player-already-banned");
     }
 
@@ -220,7 +220,7 @@ public class IslandBanCommandTest {
         when(opUser.isOp()).thenReturn(true);
         when(opUser.isPlayer()).thenReturn(true);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(opUser);
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban");
     }
 
@@ -241,7 +241,7 @@ public class IslandBanCommandTest {
         // Allow adding to ban list
         when(island.addToBanList(Mockito.any())).thenReturn(true);
         
-        assertTrue(ibc.execute(user, Arrays.asList("bill")));
+        assertTrue(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.success");
         Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
     }
@@ -262,7 +262,7 @@ public class IslandBanCommandTest {
         // Allow adding to ban list
         when(island.addToBanList(Mockito.any())).thenReturn(true);
 
-        assertTrue(ibc.execute(user, Arrays.asList("bill")));
+        assertTrue(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user).sendMessage("general.success");
         Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
     }
@@ -283,7 +283,7 @@ public class IslandBanCommandTest {
         // Disallow adding to ban list - even cancelled
         when(island.addToBanList(Mockito.any())).thenReturn(false);
 
-        assertFalse(ibc.execute(user, Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
         Mockito.verify(user, Mockito.never()).sendMessage("general.success");
         Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
     }

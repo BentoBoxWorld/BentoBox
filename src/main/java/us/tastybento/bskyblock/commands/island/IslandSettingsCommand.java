@@ -31,7 +31,7 @@ public class IslandSettingsCommand extends CompositeCommand {
      * @see us.tastybento.bskyblock.api.commands.CommandArgument#execute(org.bukkit.command.CommandSender, java.lang.String[])
      */
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         // Settings are only shown if you are in the right world
         if (Util.getWorld(user.getWorld()).equals(getWorld())) {
             SettingsPanel.openPanel(getPlugin(), user, Flag.Type.PROTECTION, getWorld()); //TODO keep track of history?

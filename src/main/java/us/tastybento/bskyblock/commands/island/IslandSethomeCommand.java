@@ -23,7 +23,7 @@ public class IslandSethomeCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
         // Check island
         if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {

@@ -129,7 +129,7 @@ public class IslandCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
         // Setup
         IslandCommand ic = new IslandCommand();
-        assertFalse(ic.execute(null, null));
+        assertFalse(ic.execute(null, ic.getLabel(), new ArrayList<>()));
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         User user = mock(User.class);
@@ -144,7 +144,7 @@ public class IslandCommandTest {
 
         // User has an island - so go there!
         when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
-        assertTrue(ic.execute(user, new ArrayList<>()));
+        assertTrue(ic.execute(user, ic.getLabel(), new ArrayList<>()));
         when(user.getWorld()).thenReturn(world);
 
 
@@ -153,11 +153,11 @@ public class IslandCommandTest {
         // No island yet, one will be created
         when(im.createIsland(Mockito.any(), Mockito.any())).thenReturn(island);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        assertTrue(ic.execute(user, new ArrayList<>()));
+        assertTrue(ic.execute(user, ic.getLabel(), new ArrayList<>()));
         
         // No such command
         String[] args2 = {"random", "junk"};
-        assertFalse(ic.execute(user, Arrays.asList(args2)));
+        assertFalse(ic.execute(user, ic.getLabel(),  Arrays.asList(args2)));
     }
 
 }

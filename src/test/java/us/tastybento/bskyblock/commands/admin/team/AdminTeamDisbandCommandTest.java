@@ -5,12 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -123,29 +118,28 @@ public class AdminTeamDisbandCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTarget() {
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        assertFalse(itl.execute(user, new ArrayList<>()));
-        // Show help
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
     }
     
     /**
-     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
         
     /**
-     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
@@ -153,12 +147,12 @@ public class AdminTeamDisbandCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
 
     /**
-     * Test method for {@link AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteDisbandNotLeader() {
@@ -172,12 +166,12 @@ public class AdminTeamDisbandCommandTest {
         when(pm.getName(Mockito.any())).thenReturn("leader");
         
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", "leader");
     }
     
     /**
-     * Test method for {@link us.us.tastybento.bskyblock.commands.admin.teams.AdminTeamDisbandCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -195,7 +189,7 @@ public class AdminTeamDisbandCommandTest {
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(im, Mockito.never()).setLeaveTeam(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(im).setLeaveTeam(Mockito.any(), Mockito.eq(uuid));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));

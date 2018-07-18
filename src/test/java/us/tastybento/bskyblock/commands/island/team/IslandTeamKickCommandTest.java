@@ -131,7 +131,7 @@ public class IslandTeamKickCommandTest {
     public void testExecuteNoTeam() {
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
     }
     
@@ -142,7 +142,7 @@ public class IslandTeamKickCommandTest {
     public void testExecuteNotTeamLeader() {
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
     }
     
@@ -152,7 +152,7 @@ public class IslandTeamKickCommandTest {
     @Test
     public void testExecuteNoTarget() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
     
@@ -164,7 +164,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
     
@@ -176,7 +176,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(uuid);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.kick.cannot-kick"));
     }
     
@@ -190,7 +190,7 @@ public class IslandTeamKickCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
        
@@ -209,7 +209,7 @@ public class IslandTeamKickCommandTest {
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
@@ -229,7 +229,7 @@ public class IslandTeamKickCommandTest {
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Confirmation required
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.kick.type-again"));
     }
@@ -258,7 +258,7 @@ public class IslandTeamKickCommandTest {
         when(iwm.isOnLeaveResetMoney(Mockito.any())).thenReturn(true);
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
         

@@ -128,7 +128,7 @@ public class AdminUnregisterCommandTest {
     @Test
     public void testExecuteNoTarget() {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
@@ -140,7 +140,7 @@ public class AdminUnregisterCommandTest {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
 
@@ -153,7 +153,7 @@ public class AdminUnregisterCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
     }
     
@@ -166,7 +166,7 @@ public class AdminUnregisterCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.unregister.cannot-unregister-team-player");
     }
 
@@ -185,7 +185,7 @@ public class AdminUnregisterCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(user).sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", "123,123,432");
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));

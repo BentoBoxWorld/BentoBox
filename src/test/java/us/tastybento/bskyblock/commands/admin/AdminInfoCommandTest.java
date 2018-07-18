@@ -5,11 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -126,31 +122,31 @@ public class AdminInfoCommandTest {
 
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link AdminInfoCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTargetConsole() {
         AdminInfoCommand itl = new AdminInfoCommand(ac);
         CommandSender sender = mock(CommandSender.class);
         User console = User.getInstance(sender);
-        assertFalse(itl.execute(console, new ArrayList<>()));
+        assertFalse(itl.execute(console, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.AdminInfoCommand#execute(User, String, List)} .
      */
     @Test
     public void testExecuteUnknownPlayer() {
         AdminInfoCommand itl = new AdminInfoCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecutePlayerHasNoIsland() {
@@ -159,12 +155,12 @@ public class AdminInfoCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        assertFalse(itl.execute(user, Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.AdminInfoCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -174,12 +170,12 @@ public class AdminInfoCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(is);
-        assertTrue(itl.execute(user, Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(is).showInfo(Mockito.eq(plugin), Mockito.eq(user), Mockito.any());
     }
    
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.AdminInfoCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUserNotOnIsland() {
@@ -187,13 +183,13 @@ public class AdminInfoCommandTest {
         AdminInfoCommand itl = new AdminInfoCommand(ac);
         // No island here
         when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
-        assertFalse(itl.execute(user, new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Confirm other verifications
         Mockito.verify(user).sendMessage("commands.admin.info.no-island");
     }
     
     /**
-     * Test method for {@link us.tastybento.bskyblock.commands.admin.team.AdminInfoCommand#execute(us.tastybento.bskyblock.api.user.User, java.util.List)}.
+     * Test method for {@link us.tastybento.bskyblock.commands.admin.AdminInfoCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccessUserOnIsland() {
@@ -210,7 +206,7 @@ public class AdminInfoCommandTest {
         when(user.getLocation()).thenReturn(loc);
         
         
-        assertTrue(itl.execute(user, new ArrayList<>()));
+        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Confirm other verifications
         Mockito.verify(is).showInfo(Mockito.eq(plugin), Mockito.eq(user), Mockito.any());
     }

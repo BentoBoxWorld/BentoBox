@@ -26,7 +26,7 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, List<String> args) {
+    public boolean execute(User user, String label, List<String> args) {
         if (args.size() != 1) {
             // Show help
             showHelp(this, user);
