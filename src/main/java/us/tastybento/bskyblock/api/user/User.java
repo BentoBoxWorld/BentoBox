@@ -319,7 +319,6 @@ public class User {
      * Forces an update of the user's complete inventory.
      * Deprecated, but there is no current alternative.
      */
-    @SuppressWarnings("deprecation")
     public void updateInventory() {
         player.updateInventory();
 

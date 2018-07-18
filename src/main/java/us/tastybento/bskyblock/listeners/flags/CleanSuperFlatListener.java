@@ -24,9 +24,6 @@ public class CleanSuperFlatListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
         BSkyBlock plugin = BSkyBlock.getInstance();
-        if (!plugin.isLoaded()) {
-            return;
-        }
         World world = e.getWorld();
         if (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
                 || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world)

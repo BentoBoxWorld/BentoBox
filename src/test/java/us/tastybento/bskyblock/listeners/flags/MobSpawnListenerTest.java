@@ -123,7 +123,17 @@ public class MobSpawnListenerTest {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
+        // Default - plugin is loaded
+        when(plugin.isLoaded()).thenReturn(true);
+    }
 
+    @Test
+    public void testNotLoaded() {
+        when(plugin.isLoaded()).thenReturn(false);
+        CreatureSpawnEvent e = new CreatureSpawnEvent(null, SpawnReason.NATURAL);
+        MobSpawnListener l = new MobSpawnListener();
+        assertFalse(l.onNaturalMobSpawn(e));
+        assertFalse(e.isCancelled());
     }
 
     @Test

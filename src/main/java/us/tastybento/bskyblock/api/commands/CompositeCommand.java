@@ -472,7 +472,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
 
         String lastArg = args.length != 0 ? args[args.length - 1] : "";
-
         return Util.tabLimit(options, lastArg).stream().sorted().collect(Collectors.toList());
     }
 

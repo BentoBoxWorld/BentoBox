@@ -67,7 +67,7 @@ public class BSkyBlock extends JavaPlugin {
     @Override
     public void onEnable(){
         // Not loaded
-        setLoaded(false);
+        isLoaded = false;
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.
         final long startMillis = System.currentTimeMillis();
 
@@ -139,14 +139,15 @@ public class BSkyBlock extends JavaPlugin {
                     playersManager.save(true);
                     islandsManager.save(true);
                 }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
-
+                isLoaded = true;
+                flagsManager.registerListeners();
                 instance.log("#############################################");
                 instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
                 instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
                 instance.log("Thanks for using our plugin !");
                 instance.log("- Tastybento and Poslovitch, 2017-2018");
                 instance.log("#############################################");
-                instance.setLoaded(true);
+
             });
         });
     }
@@ -350,20 +351,11 @@ public class BSkyBlock extends JavaPlugin {
 
 
     /**
+     * True if the plugin is loaded and ready
      * @return the isLoaded
      */
     public boolean isLoaded() {
         return isLoaded;
     }
-
-
-
-    /**
-     * @param isLoaded the isLoaded to set
-     */
-    public void setLoaded(boolean isLoaded) {
-        this.isLoaded = isLoaded;
-    }
-
 
 }

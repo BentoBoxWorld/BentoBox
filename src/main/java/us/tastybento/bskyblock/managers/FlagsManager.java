@@ -1,7 +1,9 @@
 package us.tastybento.bskyblock.managers;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
@@ -21,8 +23,9 @@ public class FlagsManager {
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
+     * Value is true if the listener has been registered already
      */
-    private ArrayList<Listener> registeredListeners = new ArrayList<>();
+    private Map<Listener, Boolean> registeredListeners = new HashMap<>();
 
     public FlagsManager(BSkyBlock plugin) {
         this.plugin = plugin;
@@ -44,14 +47,28 @@ public class FlagsManager {
             }
         }
         flags.add(flag);
-        // If there is a listener which is not already registered, register it into Bukkit.
-        flag.getListener().ifPresent(l -> {
-            if (!registeredListeners.contains(l)) {
-                Bukkit.getServer().getPluginManager().registerEvents(l, plugin);
-                registeredListeners.add(l);
-            }
-        });
+        // If there is a listener which is not already registered, register it into Bukkit if the plugin is fully loaded
+        flag.getListener().ifPresent(this::registerListener);
         return true;
+    }
+
+    /**
+     * Register any unregistered listeners - called after the plugin is fully loaded
+     */
+    public void registerListeners() {
+        registeredListeners.entrySet().stream().filter(Map.Entry::getValue).map(Map.Entry::getKey).forEach(this::registerListener);
+    }
+
+    /**
+     * Tries to register a listener if the plugin is loaded
+     * @param l
+     */
+    private void registerListener(Listener l) {
+        registeredListeners.putIfAbsent(l, false);
+        if (BSkyBlock.getInstance().isLoaded() && !registeredListeners.get(l)) {
+            Bukkit.getServer().getPluginManager().registerEvents(l, plugin);
+            registeredListeners.put(l, true);
+        }
     }
 
     /**

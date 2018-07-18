@@ -38,7 +38,7 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Assert;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -67,7 +67,7 @@ import us.tastybento.bskyblock.managers.RanksManager;
 import us.tastybento.bskyblock.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BSkyBlock.class, Flags.class, Util.class})
+@PrepareForTest({ BSkyBlock.class, Flags.class, Util.class, Bukkit.class})
 public class TestBSkyBlock {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
@@ -82,8 +82,8 @@ public class TestBSkyBlock {
     private static Player ownerOfIsland;
     private static Player visitorToIsland;
 
-    @BeforeClass
-    public static void setUpBeforeClass() {
+    @Before
+    public void setUp() {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
@@ -101,7 +101,8 @@ public class TestBSkyBlock {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        Bukkit.setServer(server);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getServer()).thenReturn(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -117,8 +118,9 @@ public class TestBSkyBlock {
         player = mock(Player.class);
         ownerOfIsland = mock(Player.class);
         visitorToIsland = mock(Player.class);
-        Mockito.when(player.hasPermission("default.permission")).thenReturn(true);
-
+        Mockito.when(player.hasPermission(Mockito.anyString())).thenReturn(true);
+        User.getInstance(player);
+        when(Bukkit.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
 
         location = mock(Location.class);
         Mockito.when(location.getWorld()).thenReturn(world);
@@ -136,7 +138,6 @@ public class TestBSkyBlock {
 
         PowerMockito.mockStatic(Flags.class);
 
-        plugin = Mockito.mock(BSkyBlock.class);
         flagsManager = new FlagsManager(plugin);
         Mockito.when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
@@ -151,6 +152,8 @@ public class TestBSkyBlock {
         when(iwm.inWorld(any())).thenReturn(true);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
+        // We want the read tabLimit call here
+        when(Util.tabLimit(Mockito.any(), Mockito.anyString())).thenCallRealMethod();
 
         // Islands
         IslandsManager im = mock(IslandsManager.class);
@@ -337,7 +340,6 @@ public class TestBSkyBlock {
 
         @Override
         public boolean execute(User user, List<String> args) {
-            Bukkit.getLogger().info("args are " + args.toString());
 
             return args.size() == 3;
         }
@@ -361,7 +363,6 @@ public class TestBSkyBlock {
 
         @Override
         public boolean execute(User user, List<String> args) {
-            Bukkit.getLogger().info("args are " + args.toString());
             return args.size() == 3;
         }
 
@@ -471,20 +472,16 @@ public class TestBSkyBlock {
         // Test events
 
         FlagListener fl = new FlagListener(plugin);
-        Bukkit.getLogger().info("SETUP: owner UUID = " + ownerOfIsland.getUniqueId());
-        Bukkit.getLogger().info("SETUP: member UUID = " + player.getUniqueId());
-        Bukkit.getLogger().info("SETUP: visitor UUID = " + visitorToIsland.getUniqueId());
 
-        Bukkit.getLogger().info("DEBUG: checking events - vistor");
+        // checking events - vistor
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
         Assert.assertFalse(fl.checkIsland(e3, location, Flags.BREAK_BLOCKS, true));
 
-        Bukkit.getLogger().info("DEBUG: checking events - owner");
+        // checking events - owner
         Event e = new BlockBreakEvent(block, ownerOfIsland);
         Assert.assertTrue(fl.checkIsland(e, location, Flags.BREAK_BLOCKS, true));
 
-        Bukkit.getLogger().info("DEBUG: checking events - member");
-
+        // checking events - member
         Event e2 = new BlockBreakEvent(block, player);
         Assert.assertTrue(fl.checkIsland(e2, location, Flags.BREAK_BLOCKS, true));
 

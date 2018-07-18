@@ -111,17 +111,6 @@ public class CleanSuperFlatListenerTest {
      * Test method for {@link us.tastybento.bskyblock.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
     @Test
-    public void testOnChunkLoadNotLoaded() {
-        when(plugin.isLoaded()).thenReturn(false);
-        ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world, Mockito.never()).regenerateChunk(Mockito.anyInt(), Mockito.anyInt());
-    }
-
-    /**
-     * Test method for {@link us.tastybento.bskyblock.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
-     */
-    @Test
     public void testOnChunkLoadBedrock() {
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
         new CleanSuperFlatListener().onChunkLoad(e);
