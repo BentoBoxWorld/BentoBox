@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 
 import us.tastybento.bskyblock.BSkyBlock;
+import us.tastybento.bskyblock.Settings;
 import us.tastybento.bskyblock.api.flags.Flag;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.adapters.Adapter;
@@ -276,7 +277,10 @@ public class Island implements DataObject {
     }
 
     /**
+     * Returns the island range.
+     * It is a convenience method that returns the exact same value than {@link Settings#getIslandDistance()}, although it has been saved into the Island object for easier access.
      * @return the island range
+     * @see #getProtectionRange()
      */
     public int getRange(){
         return range;
@@ -587,7 +591,12 @@ public class Island implements DataObject {
     }
 
     /**
-     * @param range - the range to set
+     * Sets the island range.
+     * This method should <u><strong>NEVER</strong></u> be used except for testing purposes.
+     * <br>
+     * The range value is a copy of {@link Settings#getIslandDistance()} made when the Island got created in order to allow easier access to this value and must therefore remain <u><strong>AS IS</strong></u>.
+     * @param range the range to set
+     * @see #setProtectionRange(int)
      */
     public void setRange(int range){
         this.range = range;
