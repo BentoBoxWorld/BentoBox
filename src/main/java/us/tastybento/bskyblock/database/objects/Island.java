@@ -54,18 +54,6 @@ public class Island implements DataObject {
     @Expose
     private int range;
 
-    // Coordinates of the island area
-    @Expose
-    private int minX;
-    @Expose
-    private int minZ;
-
-    // Coordinates of minimum protected area
-    @Expose
-    private int minProtectedX;
-    @Expose
-    private int minProtectedZ;
-
     // Protection size
     @Expose
     private int protectionRange;
@@ -117,11 +105,7 @@ public class Island implements DataObject {
         // Make a copy of the location
         center = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
         range = BSkyBlock.getInstance().getIWM().getIslandDistance(world);
-        minX = center.getBlockX() - range;
-        minZ = center.getBlockZ() - range;
         this.protectionRange = protectionRange;
-        minProtectedX = center.getBlockX() - protectionRange;
-        minProtectedZ = center.getBlockZ() - protectionRange;
     }
 
     /**
@@ -225,28 +209,28 @@ public class Island implements DataObject {
      * @return the minProtectedX
      */
     public int getMinProtectedX() {
-        return minProtectedX;
+        return center.getBlockX() - protectionRange;
     }
 
     /**
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
-        return minProtectedZ;
+        return center.getBlockZ() - protectionRange;
     }
 
     /**
      * @return the minX
      */
     public int getMinX() {
-        return minX;
+        return center.getBlockX() - range;
     }
 
     /**
      * @return the minZ
      */
     public int getMinZ() {
-        return minZ;
+        return center.getBlockZ() - range;
     }
 
     /**
@@ -382,7 +366,7 @@ public class Island implements DataObject {
      * @return true if in the island space
      */
     public boolean inIslandSpace(int x, int z) {
-        return x >= minX && x < minX + range*2 && z >= minZ && z < minZ + range*2;
+        return x >= getMinX() && x < getMinX() + range*2 && z >= getMinZ() && z < getMinZ() + range*2;
     }
 
     public boolean inIslandSpace(Location location) {
@@ -442,7 +426,7 @@ public class Island implements DataObject {
      * @return true if it is, false if not
      */
     public boolean onIsland(Location target) {
-        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= minProtectedX && target.getBlockX() < (minProtectedX + protectionRange * 2) && target.getBlockZ() >= minProtectedZ && target.getBlockZ() < (minProtectedZ + protectionRange * 2);
+        return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
     }
 
     /**
@@ -521,34 +505,6 @@ public class Island implements DataObject {
      */
     public void setMembers(Map<UUID, Integer> members) {
         this.members = members;
-    }
-
-    /**
-     * @param minProtectedX the minProtectedX to set
-     */
-    public final void setMinProtectedX(int minProtectedX) {
-        this.minProtectedX = minProtectedX;
-    }
-
-    /**
-     * @param minProtectedZ the minProtectedZ to set
-     */
-    public final void setMinProtectedZ(int minProtectedZ) {
-        this.minProtectedZ = minProtectedZ;
-    }
-
-    /**
-     * @param minX the minX to set
-     */
-    public final void setMinX(int minX) {
-        this.minX = minX;
-    }
-
-    /**
-     * @param minZ the minZ to set
-     */
-    public final void setMinZ(int minZ) {
-        this.minZ = minZ;
     }
 
     /**

@@ -140,10 +140,6 @@ public class MySQLDatabaseHandlerTest {
             members.put(UUID.randomUUID(), i);
         }
         island.setMembers(members);
-        island.setMinProtectedX(-100);
-        island.setMinProtectedZ(-300);
-        island.setMinX(-121);
-        island.setMinZ(-23423);
         island.setName("ytasdgfsdfg");
         island.setOwner(UUID.randomUUID());
         island.setProtectionRange(100);
