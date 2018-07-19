@@ -82,7 +82,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
                 // Draw the island area
                 drawZone(user.getPlayer(), Particle.TOWN_AURA, island.getCenter(), island.getRange());
             });
-        }, 20, 15));
+        }, 20, 20));
     }
 
     private void hideZones(User user) {
