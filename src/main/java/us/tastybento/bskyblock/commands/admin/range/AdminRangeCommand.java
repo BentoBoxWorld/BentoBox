@@ -20,6 +20,7 @@ public class AdminRangeCommand extends CompositeCommand {
         setDescription("commands.admin.range.description");
 
         new AdminRangeDisplayCommand(this);
+        new AdminRangeSetCommand(this);
     }
 
     @Override
