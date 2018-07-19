@@ -420,12 +420,21 @@ public class PlayersManager {
     }
 
     /**
-     * Tries to get the user from this name
+     * Tries to get the user from his name
      * @param name - name
      * @return user - user
      */
     public User getUser(String name) {
-        return User.getInstance(getUUID(name));
+        return getUser(getUUID(name));
+    }
+
+    /**
+     * Tries to get the user from his UUID
+     * @param uuid - UUID
+     * @return user - user
+     */
+    public User getUser(UUID uuid) {
+        return User.getInstance(uuid);
     }
 
 }
