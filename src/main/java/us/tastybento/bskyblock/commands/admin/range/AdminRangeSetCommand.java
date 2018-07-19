@@ -67,6 +67,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
 
         // Well, now it can be applied without taking any risks !
         island.setProtectionRange(range);
+        // TODO send message?
 
         return true;
     }

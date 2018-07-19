@@ -21,6 +21,7 @@ public class AdminRangeCommand extends CompositeCommand {
 
         new AdminRangeDisplayCommand(this);
         new AdminRangeSetCommand(this);
+        new AdminRangeResetCommand(this);
     }
 
     @Override
