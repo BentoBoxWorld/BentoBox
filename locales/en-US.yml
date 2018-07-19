@@ -78,7 +78,10 @@ commands:
         already-on: "&cIndicators are already on"
         description: "Show/hide island range indicators"
         hiding: "&2Hiding range indicators"
-        hint: "&cRed &fbarrier icons show the protected range limit. Particles show the max island limit"
+        hint: |-
+          &cRed Barrier icons &fshow the current island protected range limit.
+          &7Gray Particles &fshow the max island limit.
+          &aGreen Particles &fshow the default protected range if the island protection range differs from it.
         showing: "&2Showing range indicators"
       description: "Admin island range command"
     register:
@@ -287,7 +290,7 @@ protection:
       name: "Animal spawning"
     ANVIL: 
       description: "Toggle interaction"
-      name: Anvils
+      name: "Anvils"
       hint: "Anvil use disabled"
     ARMOR_STAND: 
       description: "Toggle interaction"
@@ -295,11 +298,11 @@ protection:
       hint: "Armor stand use disabled"
     BEACON: 
       description: "Toggle interaction"
-      name: Beacons
+      name: "Beacons"
       hint: "Beacon use disabled"
     BED: 
       description: "Toggle interaction"
-      name: Beds
+      name: "Beds"
       hint: "Bed use disabled"
     BREAK_BLOCKS: 
       description: "Toggle breaking"
@@ -315,15 +318,15 @@ protection:
       hint: "No brewing allowed"
     BUCKET: 
       description: "Toggle interaction"
-      name: Buckets
+      name: "Buckets"
       hint: "No bucket use allowed"
     BUTTON: 
       description: "Toggle button use"
-      name: Buttons
+      name: "Buttons"
       hint: "No button use allowed"
     CHEST: 
       description: "Toggle chest access"
-      name: Chests
+      name: "Chests"
       hint: "Chest access disabled"
     CHEST_DAMAGE:
       description: "Toggle chest damage from explosions"
@@ -333,26 +336,26 @@ protection:
       name: "Chorus fruits"
       hint: "No teleporting"
     CLEAN_SUPER_FLAT:
-      description: |
-          Enable to clean any
-          super-flat chunks in
-          island worlds
+      description: |-
+          &aEnable to clean any
+          &asuper-flat chunks in
+          &aisland worlds
       name: "Clean Super Flat"
     COLLECT_LAVA: 
-      description: |
-          Toggle collecting lava
-          (override Buckets)
+      description: |-
+          &aToggle collecting lava
+          &a(override Buckets)
       name: "Collect lava"
       hint: "No lava collection"
     COLLECT_WATER: 
-      description: |
-          Toggle collecting water
-          (override Buckets)
+      description: |-
+          &aToggle collecting water
+          &a(override Buckets)
       name: "Collect water"
       hint: "No water collection"
     CRAFTING: 
       description: "Toggle use"
-      name: Workbenches
+      name: "Workbenches"
       hint: "No workbench use"
     CREEPER_DAMAGE:
       description: "Toggle creeper damage"
@@ -397,7 +400,7 @@ protection:
       now-leaving: "Now leaving [name]"
     FIRE: 
       description: "Allow fire to exist or not"
-      name: Fire
+      name: "Fire"
       hint: "No fire allowed"
     FIRE_EXTINGUISH: 
       description: "Toggle extinguishing"
@@ -409,11 +412,11 @@ protection:
       hint: "No fire spread allowed"
     FURNACE: 
       description: "Toggle use"
-      name: Furnace
+      name: "Furnace"
       hint: "No furnace use"
     GATE: 
       description: "Toggle use"
-      name: Gates
+      name: "Gates"
       hint: "No gate use"
     HURT_ANIMALS: 
       description: "Toggle hurting"
@@ -428,13 +431,13 @@ protection:
       name: "Hurt villagers"
       hint: "No villager hurting"
     INVINCIBLE_VISITORS: 
-      description: |
+      description: |-
           &aConfigure invincible visitor
           &asettings.
       name: "Invincible Visitors"
       hint: "&cVisitors protected"
     ISLAND_RESPAWN:
-      description: |
+      description: |-
         &aPlayers respawn
         &aon island
       name: "Island respawn"
@@ -462,13 +465,13 @@ protection:
       name: "Lock island"
     MILKING: 
       description: "Toggle cow milking"
-      name: Milking
+      name: "Milking"
       hint: "No milking allowed"
     MONSTER_SPAWN: 
       description: "Toggle spawning"
       name: "Monster spawning"
     MOUNT_INVENTORY: 
-      description: |
+      description: |-
         &aToggle access
         &ato mount inventory
       name: "Mount inventory"
@@ -478,14 +481,14 @@ protection:
       name: "Note block"
       hint: "No note block use"
     OFFLINE_REDSTONE:
-      description: |
+      description: |-
           &aWhen disabled, redstone
           &awill not operate on islands
           &awhere all members are offline.
           &aMay help reduce lag.
       name: "Offline Redstone"     
     PISTON_PUSH: 
-      description: |
+      description: |-
           &aAllow pistons to push
           &ablocks outside island
       name: "Piston Push"
@@ -495,26 +498,26 @@ protection:
       hint: "Not allowed to place blocks"
     PORTAL: 
       description: "Toggle use"
-      name: Portal
+      name: "Portal"
       hint: "Portal use is disallowed"
     PRESSURE_PLATE: 
       description: "Toggle usage"
       name: "Pressure Plates"
       hint: "No pressure plate use"
     PVP_END: 
-      description: |
+      description: |-
           &cEnable/Disable PVP
           &cin the End.
       name: "End PVP"
       hint: "No PVP allowed in the End"
     PVP_NETHER: 
-      description: |
+      description: |-
           &cEnable/Disable PVP
-          &cin nether.
+          &cin the Nether.
       name: "Nether PVP"
       hint: "No PVP allowed in the Nether"
     PVP_OVERWORLD: 
-      description: |
+      description: |-
           &cEnable/Disable PVP
           &con island.
       name: "Overworld PVP"
@@ -528,13 +531,13 @@ protection:
       name: "Animal riding"
       hint: "No animal riding allowed"
     REMOVE_MOBS: 
-      description: |
+      description: |-
         &aRemove monsters when
         &ateleporting to island
       name: "Remove monsters"
     SHEARING: 
       description: "Toggle sheering"
-      name: Shearing
+      name: "Shearing"
       hint: "No shearing"
     SPAWN_EGGS: 
       description: "Toggle use"
@@ -557,7 +560,7 @@ protection:
   panel:
     PROTECTION:
       title: "Protection"
-      description: |
+      description: |-
         Protection settings
         for this location
     SETTING:
@@ -568,7 +571,7 @@ protection:
       description: "Settings for this game world"
     flag-item:
       name-layout: "&a[name]"
-      description-layout: |+
+      description-layout: |
         &a[description]
 
         &7Allowed for:
@@ -576,7 +579,7 @@ protection:
       blocked_rank: "&3- &c"
       minimal_rank: "&3- &2"
       menu-layout: "&a[description]"
-      setting-layout: |+
+      setting-layout: |
         &a[description]
         
         &7Current setting: [setting]
