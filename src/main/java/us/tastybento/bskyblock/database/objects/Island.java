@@ -108,6 +108,7 @@ public class Island implements DataObject {
     private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
 
     public Island() {}
+
     public Island(Location location, UUID owner, int protectionRange) {
         setOwner(owner);
         createdDate = System.currentTimeMillis();
@@ -698,7 +699,7 @@ public class Island implements DataObject {
         Vector from = center.toVector().subtract(new Vector(range, 0, range)).setY(0);
         Vector to = center.toVector().add(new Vector(range-1, 0, range-1)).setY(center.getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
-        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(range));
+        user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(protectionRange));
         Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
         Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));
