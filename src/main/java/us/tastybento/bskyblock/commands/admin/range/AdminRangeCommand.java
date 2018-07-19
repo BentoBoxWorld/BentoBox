@@ -1,9 +1,9 @@
 package us.tastybento.bskyblock.commands.admin.range;
 
+import java.util.List;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
-
-import java.util.List;
 
 /**
  * @author Poslovitch
@@ -17,7 +17,6 @@ public class AdminRangeCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.range");
-        setParameters("commands.admin.range.parameters");
         setDescription("commands.admin.range.description");
 
         new AdminRangeDisplayCommand(this);

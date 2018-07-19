@@ -72,6 +72,15 @@ commands:
         parameters: "<player>"
         description: "make player the team's leader"
         already-leader: "&cPlayer is already the leader!"
+    range:
+      display:
+        already-off: "&cIndicators are already off"
+        already-on: "&cIndicators are already on"
+        description: "Show/hide island range indicators"
+        hiding: "&2Hiding range indicators"
+        hint: "&cRed &fbarrier icons show the protected range limit. Particles show the max island limit"
+        showing: "&2Showing range indicators"
+      description: "Admin island range command"
     register:
       parameters: "<player>"
       description: "register player to unowned island you are on"
@@ -316,6 +325,9 @@ protection:
       description: "Toggle chest access"
       name: Chests
       hint: "Chest access disabled"
+    CHEST_DAMAGE:
+      description: "Toggle chest damage from explosions"
+      name: "Chest Damage"
     CHORUS_FRUIT: 
       description: "Toggle teleportation"
       name: "Chorus fruits"
@@ -342,6 +354,13 @@ protection:
       description: "Toggle use"
       name: Workbenches
       hint: "No workbench use"
+    CREEPER_DAMAGE:
+      description: "Toggle creeper damage"
+      name: "Creeper damage"
+    CREEPER_GRIEFING:
+      description: "Toggle creeper griefing"
+      name: "Creeper griefing"
+      hint: "No creeper griefing allowed"
     CROP_TRAMPLE: 
       description: "Toggle crop trampling"
       name: "Trample crops"
@@ -434,10 +453,10 @@ protection:
     LEASH: 
       description: "Toggle use"
       name: "Leash use"
-    LEVER_BUTTON:
+    LEVER:
       description: "Toggle use"
-      name: "Leaver or button use"
-      hint: "No leash use"
+      name: "Leaver use"
+      hint: "No lever use"
     LOCK: 
       description: "Toggle lock"
       name: "Lock island"
@@ -521,6 +540,9 @@ protection:
       description: "Toggle use"
       name: "Spawn eggs"
       hint: "No throwing spawn eggs"
+    TNT:
+      description: "Toggle TNT damage"
+      name: "TNT damage"
     TRADING: 
       description: "Toggle trading"
       name: "Village trading"

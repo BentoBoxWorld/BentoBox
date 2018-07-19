@@ -1,15 +1,16 @@
 package us.tastybento.bskyblock.commands.admin.range;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * @author Poslovitch
@@ -24,9 +25,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setOnlyPlayer(true);
         setPermission("admin.range.display");
-        setParameters("commands.admin.range.display.parameters");
         setDescription("commands.admin.range.display.description");
     }
 
@@ -39,23 +38,23 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
         if (!display.containsKey(user)) {
             switch (label) {
-                case "display":
-                case "show":
-                    showZones(user);
-                    break;
-                case "hide":
-                    user.sendMessage("commands.admin.range.display.already-off");
-                    break;
+            case "display":
+            case "show":
+                showZones(user);
+                break;
+            case "hide":
+                user.sendMessage("commands.admin.range.display.already-off");
+                break;
             }
         } else {
             switch (label) {
-                case "display":
-                case "hide":
-                    hideZones(user);
-                    break;
-                case "show":
-                    user.sendMessage("commands.admin.range.display.already-on");
-                    break;
+            case "display":
+            case "hide":
+                hideZones(user);
+                break;
+            case "show":
+                user.sendMessage("commands.admin.range.display.already-on");
+                break;
             }
         }
 
@@ -98,10 +97,10 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         // Draw 3 "stages" (one line below, at and above player's y coordinate)
         for (int stage = -1 ; stage <= 1 ; stage++) {
             for (int i = -range ; i <= range ; i++) {
-                player.spawnParticle(particle, (double) (center.getBlockX() + i), (double) (playerY + stage), (double) (center.getBlockZ() + range), 1);
-                player.spawnParticle(particle, (double) (center.getBlockX() + i), (double) (playerY + stage), (double) (center.getBlockZ() - range), 1);
-                player.spawnParticle(particle, (double) (center.getBlockX() + range), (double) (playerY + stage), (double) (center.getBlockZ() + i), 1);
-                player.spawnParticle(particle, (double) (center.getBlockX() - range), (double) (playerY + stage), (double) (center.getBlockZ() + i), 1);
+                player.spawnParticle(particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() + range, 1);
+                player.spawnParticle(particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() - range, 1);
+                player.spawnParticle(particle, center.getBlockX() + range, playerY + stage, center.getBlockZ() + i, 1);
+                player.spawnParticle(particle, center.getBlockX() - range, playerY + stage, center.getBlockZ() + i, 1);
             }
         }
     }
