@@ -18,7 +18,6 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
 import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
-import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.lists.Flags;
 
@@ -88,7 +87,6 @@ public class BreakBlocksListener extends AbstractFlagListener {
         }
     }
 
-
     /**
      * Handles vehicle breaking
      * @param e - event
@@ -96,20 +94,8 @@ public class BreakBlocksListener extends AbstractFlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
         if (getIWM().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
-            User user = User.getInstance((Player) e.getAttacker());
-            // Get the island and if present, check the flag, react if required and return
-            getIslands().getIslandAt(e.getVehicle().getLocation()).ifPresent(x -> {
-                if (!x.isAllowed(user, Flags.BREAK_BLOCKS)) {
-                    e.setCancelled(true);
-                    user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
-                }
-            });
-
-            // The player is in the world, but not on an island, so general world settings apply
-            if (!Flags.BREAK_BLOCKS.isSetForWorld(e.getVehicle().getWorld())) {
-                e.setCancelled(true);
-                user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
-            }
+            setUser(User.getInstance((Player) e.getAttacker()));
+            checkIsland(e, e.getVehicle().getLocation(), Flags.BREAK_BLOCKS);
         }
     }
 
