@@ -483,7 +483,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             for (CompositeCommand subCommand: cmd.getSubCommands().values()) {
                 if (sender instanceof Player) {
                     // Player
-                    if (subCommand.getPermission().isEmpty() || sender.hasPermission(subCommand.getPermission())) {
+                    if (subCommand.getPermission().isEmpty() || sender.hasPermission(subCommand.getPermission()) || sender.isOp()) {
                         // Permission is okay
                         options.add(subCommand.getLabel());
                     }

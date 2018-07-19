@@ -84,14 +84,14 @@ public class DefaultHelpCommand extends CompositeCommand {
                 Optional<CompositeCommand> sub = subCommand.getSubCommand(HELP);
                 sub.ifPresent(compositeCommand -> compositeCommand.execute(user, HELP, Collections.singletonList(String.valueOf(newDepth))));
             }
-        }        
+        }
     }
 
     private boolean showPrettyHelp(User user, String usage, String params, String desc) {
         // Show the help
         if (user.isPlayer()) {
             // Player. Check perms
-            if (user.hasPermission(parent.getPermission())) {
+            if (user.isOp() || user.hasPermission(parent.getPermission())) {
                 user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
             } else {
                 // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
