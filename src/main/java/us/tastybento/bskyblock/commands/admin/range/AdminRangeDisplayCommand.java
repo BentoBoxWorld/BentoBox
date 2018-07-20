@@ -8,6 +8,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
@@ -92,17 +93,25 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     }
 
     private void drawZone(Player player, Particle particle, Location center, int range) {
+
         // Get player Y coordinate
         int playerY = player.getLocation().getBlockY() + 1;
 
         // Draw 3 "stages" (one line below, at and above player's y coordinate)
         for (int stage = -1 ; stage <= 1 ; stage++) {
             for (int i = -range ; i <= range ; i++) {
-                player.spawnParticle(particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() + range, 1);
-                player.spawnParticle(particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() - range, 1);
-                player.spawnParticle(particle, center.getBlockX() + range, playerY + stage, center.getBlockZ() + i, 1);
-                player.spawnParticle(particle, center.getBlockX() - range, playerY + stage, center.getBlockZ() + i, 1);
+                spawnParticle(player, particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() + range);
+                spawnParticle(player, particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() - range);
+                spawnParticle(player, particle, center.getBlockX() + range, playerY + stage, center.getBlockZ() + i);
+                spawnParticle(player, particle, center.getBlockX() - range, playerY + stage, center.getBlockZ() + i);
             }
+        }
+    }
+
+    private void spawnParticle(Player player, Particle particle, int i, int j, int k) {
+        // Check if this particle is beyond the viewing distance of the sever
+        if (player.getLocation().toVector().distanceSquared(new Vector(i,j,k)) < (Bukkit.getServer().getViewDistance()*256*Bukkit.getServer().getViewDistance())) {
+            player.spawnParticle(particle, i, j, k, 1);
         }
     }
 }
