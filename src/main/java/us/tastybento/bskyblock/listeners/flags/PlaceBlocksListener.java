@@ -27,7 +27,6 @@ public class PlaceBlocksListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockPlace(final BlockPlaceEvent e) {
-        getPlugin().logDebug("Place blocks " + e.getBlock().getType());
         if (e.getBlock().getType().equals(Material.FIRE)) {
             return;
         }
