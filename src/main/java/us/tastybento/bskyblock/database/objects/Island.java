@@ -10,11 +10,8 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.BlockState;
-import org.bukkit.entity.Entity;
 import org.bukkit.util.Vector;
 
 import com.google.common.collect.ImmutableSet;
