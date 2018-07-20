@@ -93,7 +93,6 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     }
 
     private void drawZone(Player player, Particle particle, Location center, int range) {
-
         // Get player Y coordinate
         int playerY = player.getLocation().getBlockY() + 1;
 
@@ -108,10 +107,10 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         }
     }
 
-    private void spawnParticle(Player player, Particle particle, int i, int j, int k) {
-        // Check if this particle is beyond the viewing distance of the sever
-        if (player.getLocation().toVector().distanceSquared(new Vector(i,j,k)) < (Bukkit.getServer().getViewDistance()*256*Bukkit.getServer().getViewDistance())) {
-            player.spawnParticle(particle, i, j, k, 1);
+    private void spawnParticle(Player player, Particle particle, int x, int y, int z) {
+        // Check if this particle is beyond the viewing distance of the server
+        if (player.getLocation().toVector().distanceSquared(new Vector(x,y,z)) < (Bukkit.getServer().getViewDistance()*256*Bukkit.getServer().getViewDistance())) {
+            player.spawnParticle(particle, x, y, z, 1);
         }
     }
 }

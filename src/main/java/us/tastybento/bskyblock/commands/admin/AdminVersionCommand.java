@@ -14,7 +14,7 @@ public class AdminVersionCommand extends CompositeCommand {
     @Override
     public void setup() {
         // Permission
-        setPermission(getPermissionPrefix() + "admin.version");
+        setPermission("admin.version");
         setDescription("commands.admin.version.description");
     }
 

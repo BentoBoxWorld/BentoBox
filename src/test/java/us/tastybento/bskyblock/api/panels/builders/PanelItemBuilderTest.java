@@ -161,7 +161,6 @@ public class PanelItemBuilderTest {
 
         @Override
         public boolean onClick(Panel panel, User user, ClickType click, int slot) {
-            
             return true;
         }
         
