@@ -3,7 +3,6 @@
  */
 package us.tastybento.bskyblock.listeners.flags;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -31,8 +30,7 @@ public class CreeperListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        Bukkit.getLogger().info(e.getEventName());
-        if (e.getEntity() == null || !e.getEntityType().equals(EntityType.CREEPER)) {
+        if (e.getEntity() == null || !e.getEntityType().equals(EntityType.CREEPER) || !getIWM().inWorld(e.getLocation())) {
             return;
         }
         // If creeper damage is not allowed in world, remove it

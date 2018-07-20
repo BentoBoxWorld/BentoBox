@@ -14,6 +14,7 @@ import us.tastybento.bskyblock.listeners.flags.BlockInteractionListener;
 import us.tastybento.bskyblock.listeners.flags.BreakBlocksListener;
 import us.tastybento.bskyblock.listeners.flags.BreedingListener;
 import us.tastybento.bskyblock.listeners.flags.BucketListener;
+import us.tastybento.bskyblock.listeners.flags.ChestDamageListener;
 import us.tastybento.bskyblock.listeners.flags.CleanSuperFlatListener;
 import us.tastybento.bskyblock.listeners.flags.CreeperListener;
 import us.tastybento.bskyblock.listeners.flags.EggListener;
@@ -155,7 +156,7 @@ public class Flags {
             .listener(new MobSpawnListener()).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).allowedByDefault(true).type(Type.SETTING).build();
-
+    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.SETTING).build();
     /*
      * World Settings - they apply to every island in the game worlds.
      */
@@ -191,7 +192,7 @@ public class Flags {
             .listener(new CleanSuperFlatListener()).allowedByDefault(false).build();
 
     public static final Flag CHEST_DAMAGE = new FlagBuilder().id("CHEST_DAMAGE").icon(Material.TRAPPED_CHEST).type(Type.WORLD_SETTING)
-            .allowedByDefault(false).build();
+            .listener(new ChestDamageListener()).allowedByDefault(false).build();
     public static final Flag CREEPER_DAMAGE = new FlagBuilder().id("CREEPER_DAMAGE").listener(new CreeperListener()).icon(Material.GREEN_SHULKER_BOX).type(Type.WORLD_SETTING)
             .allowedByDefault(true).build();
     /**
@@ -202,7 +203,7 @@ public class Flags {
     /**
      * Globally allows or disallows TNT explosion damage/pain.
      */
-    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.WORLD_SETTING).build();
+
 
 
     /**
