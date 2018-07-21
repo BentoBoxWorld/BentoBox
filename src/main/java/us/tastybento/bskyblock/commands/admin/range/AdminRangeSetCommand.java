@@ -1,13 +1,14 @@
 package us.tastybento.bskyblock.commands.admin.range;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.lang.StringUtils;
+
 import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.localization.TextVariables;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.database.objects.Island;
-
-import java.util.List;
-import java.util.UUID;
 
 public class AdminRangeSetCommand extends CompositeCommand {
 
@@ -57,7 +58,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
             return false;
         }
         if (range > island.getRange()) {
-            user.sendMessage("commands.admin.range.set.invalid-value.too-high", TextVariables.NUMBER, args.get(1));
+            user.sendMessage("commands.admin.range.set.invalid-value.too-high", TextVariables.NUMBER, String.valueOf(island.getRange()));
             return false;
         }
         if (range == island.getProtectionRange()) {
@@ -67,7 +68,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
 
         // Well, now it can be applied without taking any risks !
         island.setProtectionRange(range);
-        // TODO send message?
+        user.sendMessage("commands.admin.range.set.success", TextVariables.NUMBER, String.valueOf(range));
 
         return true;
     }

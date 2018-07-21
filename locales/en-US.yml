@@ -89,12 +89,14 @@ commands:
         description: "Sets the island protected range"
         invalid-value:
           not-numeric: "&c[number] is not a whole number!"
-          too-low: "&cThe protection range must be higher than 1!"
-          too-high: "&cThe protection range should be less than the island distance!"
+          too-low: "&cThe protection range must be greater than 1!"
+          too-high: "&cThe protection range should be equal or less than [number]!"
           same-as-before: "&cThe protection range is already set to [number]!"
+        success: "&2Set island protection range to [number]"
       reset:
         parameters: "<player>"
-        description: "Resets the island protected range to the server's default"
+        description: "Resets the island protected range to the world default"
+        success: "&2Reset island protection range to [number]"
     register:
       parameters: "<player>"
       description: "register player to unowned island you are on"

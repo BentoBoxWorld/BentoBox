@@ -1,11 +1,12 @@
 package us.tastybento.bskyblock.commands.admin.range;
 
-import us.tastybento.bskyblock.api.commands.CompositeCommand;
-import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.objects.Island;
-
 import java.util.List;
 import java.util.UUID;
+
+import us.tastybento.bskyblock.api.commands.CompositeCommand;
+import us.tastybento.bskyblock.api.localization.TextVariables;
+import us.tastybento.bskyblock.api.user.User;
+import us.tastybento.bskyblock.database.objects.Island;
 
 public class AdminRangeResetCommand extends CompositeCommand {
 
@@ -43,8 +44,9 @@ public class AdminRangeResetCommand extends CompositeCommand {
         Island island = getIslands().getIsland(getWorld(), targetUUID);
 
         // Reset the protection range
-        island.setProtectionRange(getSettings().getIslandProtectionRange());
-        // TODO send message?
+        int range = getIWM().getIslandProtectionRange(getWorld());
+        island.setProtectionRange(range);
+        user.sendMessage("commands.admin.range.reset.success", TextVariables.NUMBER, String.valueOf(range));
 
         return true;
     }
