@@ -19,6 +19,7 @@ import us.tastybento.bskyblock.listeners.flags.CleanSuperFlatListener;
 import us.tastybento.bskyblock.listeners.flags.CreeperListener;
 import us.tastybento.bskyblock.listeners.flags.EggListener;
 import us.tastybento.bskyblock.listeners.flags.EnderChestListener;
+import us.tastybento.bskyblock.listeners.flags.EndermanListener;
 import us.tastybento.bskyblock.listeners.flags.EnterExitListener;
 import us.tastybento.bskyblock.listeners.flags.EntityInteractListener;
 import us.tastybento.bskyblock.listeners.flags.FireListener;
@@ -167,6 +168,15 @@ public class Flags {
             .listener(new EnderChestListener())
             .build();
 
+    public static final Flag ENDERMAN_GRIEFING = new FlagBuilder().id("ENDERMAN_GRIEFING").icon(Material.END_BRICKS)
+            .allowedByDefault(true).type(Type.WORLD_SETTING)
+            .listener(new EndermanListener())
+            .build();
+
+    public static final Flag ENDERMAN_DEATH_DROP = new FlagBuilder().id("ENDERMAN_DEATH_DROP").icon(Material.END_ROD)
+            .allowedByDefault(true).type(Type.WORLD_SETTING)
+            .build();
+
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
             .build();
@@ -200,11 +210,6 @@ public class Flags {
      */
     public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.FIREWORK).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
-    /**
-     * Globally allows or disallows TNT explosion damage/pain.
-     */
-
-
 
     /**
      * @return List of all the flags in this class
