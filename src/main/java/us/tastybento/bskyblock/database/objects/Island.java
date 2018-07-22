@@ -543,13 +543,6 @@ public class Island implements DataObject {
     }
 
     /**
-     * Resets the flags to their default as set in config.yml for the spawn
-     */
-    public void setSpawnFlagsDefaults(){
-        //TODO default flags
-    }
-
-    /**
      * Get the default spawn location for this island. Note that this may only be valid
      * after the initial pasting because the player can change the island after that point
      * @return the spawnPoint

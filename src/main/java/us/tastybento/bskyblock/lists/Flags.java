@@ -28,6 +28,7 @@ import us.tastybento.bskyblock.listeners.flags.InventoryListener;
 import us.tastybento.bskyblock.listeners.flags.InvincibleVisitorsListener;
 import us.tastybento.bskyblock.listeners.flags.IslandRespawnListener;
 import us.tastybento.bskyblock.listeners.flags.ItemDropPickUpListener;
+import us.tastybento.bskyblock.listeners.flags.ItemFrameListener;
 import us.tastybento.bskyblock.listeners.flags.LeashListener;
 import us.tastybento.bskyblock.listeners.flags.LockAndBanListener;
 import us.tastybento.bskyblock.listeners.flags.MobSpawnListener;
@@ -191,6 +192,9 @@ public class Flags {
 
     public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
             .listener(new RemoveMobsListener()).allowedByDefault(true).build();
+
+    public static final Flag ITEM_FRAME_DAMAGE = new FlagBuilder().id("ITEM_FRAME_DAMAGE").icon(Material.ITEM_FRAME).type(Type.WORLD_SETTING)
+            .listener(new ItemFrameListener()).allowedByDefault(false).build();
 
     public static final Flag ISLAND_RESPAWN = new FlagBuilder().id("ISLAND_RESPAWN").icon(Material.TORCH).type(Type.WORLD_SETTING)
             .listener(new IslandRespawnListener()).allowedByDefault(true).build();

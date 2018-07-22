@@ -401,6 +401,17 @@ protection:
       description: "Toggle use/crafting"
       name: "Ender Chests"
       hint: "Ender chests are disabled in this world"
+    ENDERMAN_DEATH_DROP: 
+      description: |
+         Endermen will drop
+         any block they are
+         holding if killed.
+      name: "Enderman Death Drop"
+    ENDERMAN_GRIEFING: 
+      description: |
+         Endermen can remove
+         blocks from islands
+      name: "Enderman griefing"
     ENDER_PEARL: 
       description: "Toggle use"
       name: "EnderPearls"
@@ -443,6 +454,11 @@ protection:
       description: "Toggle hurting"
       name: "Hurt villagers"
       hint: "No villager hurting"
+    ITEM_FRAME_DAMAGE:
+      description: |-
+          &aMobs can damage
+          &aitem frames
+      name: "Item Frame Damage"
     INVINCIBLE_VISITORS: 
       description: |-
           &aConfigure invincible visitor

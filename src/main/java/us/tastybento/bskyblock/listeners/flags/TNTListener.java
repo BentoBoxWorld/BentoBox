@@ -28,7 +28,6 @@ public class TNTListener extends AbstractFlagListener {
     /**
      * Protect TNT from being set light by a fire arrow
      * @param e - event
-     * @return true if cancelled
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTNTDamage(EntityChangeBlockEvent e) {
@@ -47,11 +46,9 @@ public class TNTListener extends AbstractFlagListener {
                     // Remove the arrow
                     projectile.remove();
                     e.setCancelled(true);
-                    return;
                 }
             }
         }
-        return;
     }
 
 
