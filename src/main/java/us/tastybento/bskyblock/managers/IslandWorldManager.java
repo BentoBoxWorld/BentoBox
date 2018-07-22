@@ -573,7 +573,7 @@ public class IslandWorldManager {
      *
      * @param world
      *            - world
-     * @return invisible visitor settings
+     * @return invincible visitor settings
      */
     public List<String> getIvSettings(World world) {
         return worldSettings.get(Util.getWorld(world)).getIvSettings();
@@ -724,5 +724,14 @@ public class IslandWorldManager {
      */
     public boolean isWaterNotSafe(World world) {
         return worldSettings.get(Util.getWorld(world)).isWaterUnsafe();
+    }
+
+    /**
+     * Get a list of entity types that should not exit the island limits
+     * @param world - world
+     * @return list
+     */
+    public List<String> getGeoLimitSettings(World world) {
+        return worldSettings.get(Util.getWorld(world)).getGeoLimitSettings();
     }
 }

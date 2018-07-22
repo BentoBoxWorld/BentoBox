@@ -1,11 +1,13 @@
 package us.tastybento.bskyblock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import us.tastybento.bskyblock.api.configuration.BSBConfig;
 import us.tastybento.bskyblock.api.configuration.WorldSettings;
+import us.tastybento.bskyblock.api.events.BSBReadyEvent;
 import us.tastybento.bskyblock.api.placeholders.PlaceholderHandler;
 import us.tastybento.bskyblock.api.user.Notifier;
 import us.tastybento.bskyblock.commands.AdminCommand;
@@ -148,6 +150,8 @@ public class BSkyBlock extends JavaPlugin {
                 instance.log("- Tastybento and Poslovitch, 2017-2018");
                 instance.log("#############################################");
 
+                // Fire plugin ready event
+                Bukkit.getServer().getPluginManager().callEvent(new BSBReadyEvent());
             });
         });
     }

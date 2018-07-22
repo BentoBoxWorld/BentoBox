@@ -23,6 +23,7 @@ import us.tastybento.bskyblock.listeners.flags.EndermanListener;
 import us.tastybento.bskyblock.listeners.flags.EnterExitListener;
 import us.tastybento.bskyblock.listeners.flags.EntityInteractListener;
 import us.tastybento.bskyblock.listeners.flags.FireListener;
+import us.tastybento.bskyblock.listeners.flags.GeoLimitClickListener;
 import us.tastybento.bskyblock.listeners.flags.GeoLimitMobsListener;
 import us.tastybento.bskyblock.listeners.flags.HurtingListener;
 import us.tastybento.bskyblock.listeners.flags.InventoryListener;
@@ -191,9 +192,8 @@ public class Flags {
     public static final Flag INVINCIBLE_VISITORS = new FlagBuilder().id("INVINCIBLE_VISITORS").icon(Material.DIAMOND_CHESTPLATE).type(Type.WORLD_SETTING)
             .listener(ilv).onClick(ilv).subPanel(true).build();
 
-    private static GeoLimitMobsListener glm = new GeoLimitMobsListener();
-    static final Flag GEO_LIMIT_MOBS = new FlagBuilder().id("GEO_LIMIT_MOBS").icon(Material.CHAINMAIL_CHESTPLATE).type(Type.WORLD_SETTING)
-            .listener(glm).onClick(glm).subPanel(true).build();
+    public static final Flag GEO_LIMIT_MOBS = new FlagBuilder().id("GEO_LIMIT_MOBS").icon(Material.CHAINMAIL_CHESTPLATE).type(Type.WORLD_SETTING)
+            .listener(new GeoLimitMobsListener()).onClick(new GeoLimitClickListener()).subPanel(true).build();
 
     public static final Flag REMOVE_MOBS = new FlagBuilder().id("REMOVE_MOBS").icon(Material.GLOWSTONE_DUST).type(Type.WORLD_SETTING)
             .listener(new RemoveMobsListener()).allowedByDefault(true).build();

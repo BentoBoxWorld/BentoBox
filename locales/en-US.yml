@@ -442,6 +442,12 @@ protection:
       description: "Toggle use"
       name: "Gates"
       hint: "No gate use"
+    GEO_LIMIT_MOBS: 
+      description: |
+         &eRemove mobs that go
+         &eoutside protected
+         &eisland space
+      name: "Limit mobs to island"
     HURT_ANIMALS: 
       description: "Toggle hurting"
       name: "Hurt animals"

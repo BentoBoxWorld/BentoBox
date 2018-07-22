@@ -404,26 +404,12 @@ public class Settings implements DataObject, WorldSettings {
     // ---------------------------------------------
 
     /*      PROTECTION      */
-    @ConfigComment("Allow pistons to push outside of the protected area (maybe to make bridges)")
-    @ConfigEntry(path = "protection.allow-piston-push")
-    private boolean allowPistonPush = false;
-
-    @ConfigComment("Restrict Wither and other flying mobs.")
-    @ConfigComment("Any flying mobs that exit the island space where they were spawned will be removed.")
-    @ConfigComment("Includes blaze and ghast. ")
-    @ConfigEntry(path = "protection.restrict-flying-mobs")
-    private boolean restrictFlyingMobs = true;
-
     private int togglePvPCooldown;
 
-    //TODO transform these options below into flags
-    private boolean allowEndermanGriefing;
-    private boolean endermanDeathDrop;
-    private boolean allowTNTDamage;
-    private boolean allowChestDamage;
-    private boolean allowCreeperDamage;
-    private boolean allowCreeperGriefing;
-    private boolean allowMobDamageToItemFrames;
+    @ConfigComment("Geo restrict mobs.")
+    @ConfigComment("Mobs that exit the island space where they were spawned will be removed.")
+    @ConfigEntry(path = "protection.geo-limit-settings")
+    private List<String> geoLimitSettings = new ArrayList<>();
 
     // Invincible visitor settings
     @ConfigComment("Invincible visitors. List of damages that will not affect visitors.")
@@ -738,52 +724,10 @@ public class Settings implements DataObject, WorldSettings {
         return worldName;
     }
     /**
-     * @return the allowChestDamage
-     */
-    public boolean isAllowChestDamage() {
-        return allowChestDamage;
-    }
-    /**
-     * @return the allowCreeperDamage
-     */
-    public boolean isAllowCreeperDamage() {
-        return allowCreeperDamage;
-    }
-    /**
-     * @return the allowCreeperGriefing
-     */
-    public boolean isAllowCreeperGriefing() {
-        return allowCreeperGriefing;
-    }
-    /**
-     * @return the allowEndermanGriefing
-     */
-    public boolean isAllowEndermanGriefing() {
-        return allowEndermanGriefing;
-    }
-    /**
-     * @return the allowMobDamageToItemFrames
-     */
-    public boolean isAllowMobDamageToItemFrames() {
-        return allowMobDamageToItemFrames;
-    }
-    /**
      * @return the allowObsidianScooping
      */
     public boolean isAllowObsidianScooping() {
         return allowObsidianScooping;
-    }
-    /**
-     * @return the allowPistonPush
-     */
-    public boolean isAllowPistonPush() {
-        return allowPistonPush;
-    }
-    /**
-     * @return the allowTNTDamage
-     */
-    public boolean isAllowTNTDamage() {
-        return allowTNTDamage;
     }
     /**
      * @return the checkUpdates
@@ -796,12 +740,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public boolean isDeathsSumTeam() {
         return deathsSumTeam;
-    }
-    /**
-     * @return the endermanDeathDrop
-     */
-    public boolean isEndermanDeathDrop() {
-        return endermanDeathDrop;
     }
     /**
      * @return the endGenerate
@@ -899,12 +837,6 @@ public class Settings implements DataObject, WorldSettings {
         return respawnOnIsland;
     }
     /**
-     * @return the restrictFlyingMobs
-     */
-    public boolean isRestrictFlyingMobs() {
-        return restrictFlyingMobs;
-    }
-    /**
      * @return the useEconomy
      */
     public boolean isUseEconomy() {
@@ -918,52 +850,10 @@ public class Settings implements DataObject, WorldSettings {
         return useOwnGenerator;
     }
     /**
-     * @param allowChestDamage the allowChestDamage to set
-     */
-    public void setAllowChestDamage(boolean allowChestDamage) {
-        this.allowChestDamage = allowChestDamage;
-    }
-    /**
-     * @param allowCreeperDamage the allowCreeperDamage to set
-     */
-    public void setAllowCreeperDamage(boolean allowCreeperDamage) {
-        this.allowCreeperDamage = allowCreeperDamage;
-    }
-    /**
-     * @param allowCreeperGriefing the allowCreeperGriefing to set
-     */
-    public void setAllowCreeperGriefing(boolean allowCreeperGriefing) {
-        this.allowCreeperGriefing = allowCreeperGriefing;
-    }
-    /**
-     * @param allowEndermanGriefing the allowEndermanGriefing to set
-     */
-    public void setAllowEndermanGriefing(boolean allowEndermanGriefing) {
-        this.allowEndermanGriefing = allowEndermanGriefing;
-    }
-    /**
-     * @param allowMobDamageToItemFrames the allowMobDamageToItemFrames to set
-     */
-    public void setAllowMobDamageToItemFrames(boolean allowMobDamageToItemFrames) {
-        this.allowMobDamageToItemFrames = allowMobDamageToItemFrames;
-    }
-    /**
      * @param allowObsidianScooping the allowObsidianScooping to set
      */
     public void setAllowObsidianScooping(boolean allowObsidianScooping) {
         this.allowObsidianScooping = allowObsidianScooping;
-    }
-    /**
-     * @param allowPistonPush the allowPistonPush to set
-     */
-    public void setAllowPistonPush(boolean allowPistonPush) {
-        this.allowPistonPush = allowPistonPush;
-    }
-    /**
-     * @param allowTNTDamage the allowTNTDamage to set
-     */
-    public void setAllowTNTDamage(boolean allowTNTDamage) {
-        this.allowTNTDamage = allowTNTDamage;
     }
     /**
      * @param checkUpdates the checkUpdates to set
@@ -1036,12 +926,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setDefaultLanguage(String defaultLanguage) {
         this.defaultLanguage = defaultLanguage;
-    }
-    /**
-     * @param endermanDeathDrop the endermanDeathDrop to set
-     */
-    public void setEndermanDeathDrop(boolean endermanDeathDrop) {
-        this.endermanDeathDrop = endermanDeathDrop;
     }
     /**
      * @param endGenerate the endGenerate to set
@@ -1252,12 +1136,6 @@ public class Settings implements DataObject, WorldSettings {
      */
     public void setRespawnOnIsland(boolean respawnOnIsland) {
         this.respawnOnIsland = respawnOnIsland;
-    }
-    /**
-     * @param restrictFlyingMobs the restrictFlyingMobs to set
-     */
-    public void setRestrictFlyingMobs(boolean restrictFlyingMobs) {
-        this.restrictFlyingMobs = restrictFlyingMobs;
     }
     /**
      * @param seaHeight the seaHeight to set
@@ -1587,6 +1465,19 @@ public class Settings implements DataObject, WorldSettings {
     @Override
     public boolean isWaterUnsafe() {
         return false;
+    }
+    /**
+     * @return the geoLimitSettings
+     */
+    @Override
+    public List<String> getGeoLimitSettings() {
+        return geoLimitSettings;
+    }
+    /**
+     * @param geoLimitSettings the geoLimitSettings to set
+     */
+    public void setGeoLimitSettings(List<String> geoLimitSettings) {
+        this.geoLimitSettings = geoLimitSettings;
     }
 
 

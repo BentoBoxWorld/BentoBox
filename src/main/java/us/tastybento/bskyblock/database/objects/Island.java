@@ -327,6 +327,11 @@ public class Island implements DataObject {
         return x >= getMinX() && x < getMinX() + range*2 && z >= getMinZ() && z < getMinZ() + range*2;
     }
 
+    /**
+     * Checks if location is in full island space, not just protected space
+     * @param location - location
+     * @return true if in island space
+     */
     public boolean inIslandSpace(Location location) {
         return Util.sameWorld(world, location.getWorld()) && inIslandSpace(location.getBlockX(), location.getBlockZ());
     }

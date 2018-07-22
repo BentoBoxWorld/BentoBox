@@ -294,12 +294,12 @@ island:
     team-join-reset: true
   customranks: {}
 protection:
-  # Allow pistons to push outside of the protected area (maybe to make bridges)
-  allow-piston-push: true
-  # Restrict Wither and other flying mobs.
-  # Any flying mobs that exit the island space where they were spawned will be removed.
-  # Includes blaze and ghast. 
-  restrict-flying-mobs: true
+  # Geo restrict mobs.
+  # Mobs that exit the island space where they were spawned will be removed.
+  geo-limit-settings:
+  - GHAST
+  - BAT
+  - BLAZE
   # Invincible visitors. List of damages that will not affect visitors.
   # Make list blank if visitors should receive all damages
   invincible-visitors:
@@ -328,13 +328,6 @@ protection:
   - CRAMMING
   - VOID
 togglePvPCooldown: 0
-allowEndermanGriefing: false
-endermanDeathDrop: false
-allowTNTDamage: false
-allowChestDamage: false
-allowCreeperDamage: false
-allowCreeperGriefing: false
-allowMobDamageToItemFrames: false
 panel:
   close-on-click-outside: true
 uniqueId: config

@@ -230,4 +230,9 @@ public interface WorldSettings {
      * @return true if water is not safe in this world, e.g, should not be a home location
      */
     boolean isWaterUnsafe();
+
+    /**
+     * @return list of entity types that should not exit the island limits
+     */
+    List<String> getGeoLimitSettings();
 }
