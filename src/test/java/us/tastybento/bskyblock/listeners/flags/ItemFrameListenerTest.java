@@ -3,8 +3,8 @@
  */
 package us.tastybento.bskyblock.listeners.flags;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,10 +22,15 @@ import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Hanging;
 import org.bukkit.entity.ItemFrame;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.Projectile;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
+import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
@@ -151,9 +156,56 @@ public class ItemFrameListenerTest {
         Entity entity = mock(ItemFrame.class);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         @SuppressWarnings("deprecation")
-        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(entity, enderman, cause , 0);
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testNotItemFrame() {
+        ItemFrameListener ifl = new ItemFrameListener();
+        Entity entity = mock(Monster.class);
+        DamageCause cause = DamageCause.ENTITY_ATTACK;
+        @SuppressWarnings("deprecation")
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
+        ifl.onItemFrameDamage(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testProjectile() {
+        ItemFrameListener ifl = new ItemFrameListener();
+        Entity entity = mock(ItemFrame.class);
+        DamageCause cause = DamageCause.ENTITY_ATTACK;
+        Projectile p = mock(Projectile.class);
+        when(p.getShooter()).thenReturn(enderman);
+        @SuppressWarnings("deprecation")
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
+        ifl.onItemFrameDamage(e);
+        assertTrue(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link us.tastybento.bskyblock.listeners.flags.ItemFrameListener#onItemFrameDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testPlayerProjectile() {
+        ItemFrameListener ifl = new ItemFrameListener();
+        Entity entity = mock(ItemFrame.class);
+        DamageCause cause = DamageCause.ENTITY_ATTACK;
+        Projectile p = mock(Projectile.class);
+        Player player = mock(Player.class);
+        when(p.getShooter()).thenReturn(player);
+        @SuppressWarnings("deprecation")
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
+        ifl.onItemFrameDamage(e);
+        assertFalse(e.isCancelled());
     }
 
     /**
@@ -161,7 +213,11 @@ public class ItemFrameListenerTest {
      */
     @Test
     public void testOnItemFrameDamageHangingBreakByEntityEvent() {
-        fail("Not yet implemented"); // TODO
+        ItemFrameListener ifl = new ItemFrameListener();
+        Hanging hanging = mock(ItemFrame.class);
+        HangingBreakByEntityEvent e = new HangingBreakByEntityEvent(hanging, enderman);
+        ifl.onItemFrameDamage(e);
+        assertTrue(e.isCancelled());
     }
 
 }

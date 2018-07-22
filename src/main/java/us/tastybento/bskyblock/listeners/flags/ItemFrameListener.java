@@ -44,6 +44,7 @@ public class ItemFrameListener extends AbstractFlagListener {
             } else {
                 e.setCancelled(true);
             }
+            return;
         }
     }
 
