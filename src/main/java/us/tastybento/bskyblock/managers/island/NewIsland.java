@@ -5,6 +5,7 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 
@@ -220,7 +221,7 @@ public class NewIsland {
 
         if (!plugin.getIWM().isUseOwnGenerator(location.getWorld())) {
             // Block check
-            if (!location.getBlock().isEmpty() && !location.getBlock().isLiquid()) {
+            if (!location.getBlock().isEmpty() && !location.getBlock().getType().equals(Material.WATER)) {
                 plugin.getIslands().createIsland(location);
                 return Result.BLOCK_AT_CENTER;
             }
@@ -229,7 +230,7 @@ public class NewIsland {
                 for (int y = 10; y < location.getWorld().getMaxHeight(); y++) {
                     for (int z = -5; z <= 5; z++) {
                         if (!location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isEmpty()
-                                && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).isLiquid()) {
+                                && !location.getWorld().getBlockAt(x + location.getBlockX(), y, z + location.getBlockZ()).getType().equals(Material.WATER)) {
                             plugin.getIslands().createIsland(location);
                             return Result.BLOCKS_IN_AREA;
                         }

@@ -52,6 +52,7 @@ public class AddonsManager {
             plugin.logError("Cannot make addons folder!");
             return;
         }
+
         Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         addons.forEach(Addon::onLoad);
         plugin.log("Loaded " + addons.size() + " addons.");
@@ -122,12 +123,14 @@ public class AddonsManager {
                 addons.add(addon);
 
                 // Inform the console
-                plugin.log("Loaded BSkyBlock addon " + addon.getDescription().getName() + "...");               
+                plugin.log("Loaded BSkyBlock addon " + addon.getDescription().getName() + "...");
+            } catch (Exception e) {
+                plugin.log(e.getMessage());
             }
 
         } catch (Exception e) {
             if (DEBUG) {
-                plugin.log(f.getName() + "is not a jarfile, ignoring...");
+                plugin.log(f.getName() + " is not a jarfile, ignoring...");
             }
         }
     }
@@ -171,7 +174,7 @@ public class AddonsManager {
      * @param name - name of the class
      * @return Class - the class
      */
-    public Class<?> getClassByName(final String name) {        
+    public Class<?> getClassByName(final String name) {
         return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
