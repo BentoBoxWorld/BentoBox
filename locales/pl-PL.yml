@@ -263,7 +263,7 @@ commands:
 ranks:
   owner: "Lider"
   member: "Członek"
-  coop: "Coop"
+  coop: "Partner"
   visitor: "Visitor"
   banned: "Zbanowany"
   admin: "Admin"
