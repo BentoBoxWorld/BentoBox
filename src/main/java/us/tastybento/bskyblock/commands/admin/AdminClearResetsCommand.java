@@ -9,17 +9,17 @@ import us.tastybento.bskyblock.api.commands.CompositeCommand;
 import us.tastybento.bskyblock.api.user.User;
 import us.tastybento.bskyblock.util.Util;
 
-public class AdminClearResetCommand extends CompositeCommand {
+public class AdminClearResetsCommand extends CompositeCommand {
 
-    public AdminClearResetCommand(CompositeCommand parent) {
-        super(parent, "clearreset");
+    public AdminClearResetsCommand(CompositeCommand parent) {
+        super(parent, "clearresets");
     }
 
     @Override
     public void setup() {
         setPermission("admin.clearreset");
-        setParameters("commands.admin.clearreset.parameters");
-        setDescription("commands.admin.clearreset.description");
+        setParameters("commands.admin.clearresets.parameters");
+        setDescription("commands.admin.clearresets.description");
     }
 
     @Override
@@ -40,8 +40,8 @@ public class AdminClearResetCommand extends CompositeCommand {
             return false;
         }
         // Clear resets
-        user.sendMessage("commands.admin.clearreset.cleared");
-        getPlayers().setResets(getWorld(), user.getUniqueId(), 0);
+        user.sendMessage("commands.admin.clearresets.cleared");
+        getPlayers().setResets(getWorld(), targetUUID, 0);
         user.sendMessage("general.success");
         return true;
     }

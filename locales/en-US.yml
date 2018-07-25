@@ -52,6 +52,12 @@ commands:
     help:
       parameters: ""
       description: "admin command"
+    clearresets:
+      parameters: "<player>"
+      description: "clears player reset count for this world"
+      cleared: "&2Resets cleared"
+    clearresetsall:
+      description: "clears all player reset counts for this world"
     team:
       add:
         parameters: "<leader> <player>"
@@ -115,7 +121,7 @@ commands:
       owner: "Owner: [owner] ([uuid])"
       last-login: "Last login: [date]"
       deaths: "Deaths: [number]"
-      resets-left: "Resets left: [number]/[total]"
+      resets-left: "Resets: [number] (Max: [total])"
       team-members-title: "Team members:"
       team-owner-format: "&a[name] [rank]"
       team-member-format: "&b[name] [rank]"
