@@ -39,11 +39,10 @@ public class JoinLeaveListener implements Listener {
         if (plugin.getPlayers().isKnown(playerUUID)) {
             // Load player
             players.addPlayer(playerUUID);
-
-            // Reset resets if the admin changes it to or from unlimited
-            if (plugin.getSettings().getResetLimit() < players.getResetsLeft(playerUUID)  || (plugin.getSettings().getResetLimit() >= 0 && players.getResetsLeft(playerUUID) < 0)) {
-                players.setResetsLeft(playerUUID, plugin.getSettings().getResetLimit());
-            }
+            // Reset island resets if required
+            plugin.getIWM().getOverWorlds().stream()
+            .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
+            .forEach(w -> players.setResets(w, playerUUID, 0));
             // Set the player's name (it may have changed), but only if it isn't empty
             if (!user.getName().isEmpty()) {
                 players.setPlayerName(user);

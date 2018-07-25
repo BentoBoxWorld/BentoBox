@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package us.tastybento.bskyblock.managers;
 
@@ -66,7 +66,7 @@ public class PlayersManagerTest {
         // Set up plugin
         plugin = mock(BSkyBlock.class);
         Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
-        
+
         // island world mgr
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         world = mock(World.class);
@@ -80,11 +80,11 @@ public class PlayersManagerTest {
         when(iwm.getBSBNetherWorld()).thenReturn(nether);
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-        
+
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
-        
+
         // Set up spawn
         Location netherSpawn = mock(Location.class);
         when(netherSpawn.toVector()).thenReturn(new Vector(0,0,0));
@@ -106,7 +106,7 @@ public class PlayersManagerTest {
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
-        // Player has island to begin with 
+        // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -123,10 +123,10 @@ public class PlayersManagerTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
-        
+
         // Normally in world
         Util.setPlugin(plugin);
-              
+
         // Mock database
         db = mock(BSBDatabase.class);
         PowerMockito.whenNew(BSBDatabase.class).withAnyArguments().thenReturn(db);
@@ -239,7 +239,7 @@ public class PlayersManagerTest {
 
         pm.addPlayer(uuid);
         pm.addPlayer(notUUID);
-        
+
         pm.removeAllPlayers();
     }
 
@@ -324,7 +324,7 @@ public class PlayersManagerTest {
     public void testGetUUID() {
         PlayersManager pm = new PlayersManager(plugin);
         assertEquals(uuid,pm.getUUID(uuid.toString()));
-        
+
         OfflinePlayer olp = mock(OfflinePlayer.class);
         when(olp.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Bukkit.class);
@@ -339,13 +339,13 @@ public class PlayersManagerTest {
 
             @Override
             public Names answer(InvocationOnMock invocation) throws Throwable {
-                
+
                 return name;
             }
-            
+
         });
         assertEquals(uuid, pm.getUUID("tastybento"));
-        
+
     }
 
     /**
@@ -368,7 +368,7 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link us.tastybento.bskyblock.managers.PlayersManager#getResetsLeft(java.util.UUID)}.
+     * Test method for {@link us.tastybento.bskyblock.managers.PlayersManager#getResets(java.util.UUID)}.
      */
     @Test
     public void testGetSetResetsLeft() {
@@ -381,9 +381,9 @@ public class PlayersManagerTest {
 
         // Add a player
         pm.addPlayer(uuid);
-        assertEquals(0, pm.getResetsLeft(uuid));
-        pm.setResetsLeft(uuid, 20);
-        assertEquals(20, pm.getResetsLeft(uuid));
+        assertEquals(0, pm.getResets(world, uuid));
+        pm.setResets(world, uuid, 20);
+        assertEquals(20, pm.getResets(world, uuid));
     }
 
     /**

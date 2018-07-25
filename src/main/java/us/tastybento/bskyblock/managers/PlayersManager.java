@@ -145,7 +145,7 @@ public class PlayersManager {
         }
         // Try cache
         return playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString());
-// Get from the database - do not add to cache yet
+        // Get from the database - do not add to cache yet
     }
 
     /**
@@ -158,7 +158,7 @@ public class PlayersManager {
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setHomeLocation(location,number);
     }
-    
+
     /**
      * Sets the home location for the player
      * @param playerUUID - the player's UUID
@@ -202,7 +202,7 @@ public class PlayersManager {
         addPlayer(user.getUniqueId());
         return playerCache.get(user.getUniqueId()).getHomeLocation(world, number);
     }
-    
+
     /**
      * Returns the home location, or null if none
      * @param world - world
@@ -286,25 +286,27 @@ public class PlayersManager {
     }
 
     /**
-     * Gets how many island resets the player has left
+     * Gets how many island resets the player has done
+     * @param world
      *
      * @param playerUUID - the player's UUID
      * @return number of resets
      */
-    public int getResetsLeft(UUID playerUUID) {
+    public int getResets(World world, UUID playerUUID) {
         addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getResetsLeft();
+        return playerCache.get(playerUUID).getResets(world);
     }
 
     /**
-     * Sets how many resets the player has left
+     * Sets how many resets the player has performed
      *
+     * @param world - world
      * @param playerUUID - the player's UUID
      * @param resets - number of resets
      */
-    public void setResetsLeft(UUID playerUUID, int resets) {
+    public void setResets(World world, UUID playerUUID, int resets) {
         addPlayer(playerUUID);
-        playerCache.get(playerUUID).setResetsLeft(resets);
+        playerCache.get(playerUUID).setResets(world, resets);
     }
 
     /**
@@ -435,6 +437,13 @@ public class PlayersManager {
      */
     public User getUser(UUID uuid) {
         return User.getInstance(uuid);
+    }
+
+
+    public void addReset(World world, UUID playerUUID) {
+        addPlayer(playerUUID);
+        playerCache.get(playerUUID).addReset(world);
+
     }
 
 }

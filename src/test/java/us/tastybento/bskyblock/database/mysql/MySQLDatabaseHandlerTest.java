@@ -120,7 +120,7 @@ public class MySQLDatabaseHandlerTest {
         players.setLocale("sdfsd");
         players.setPlayerName("name");
         players.setPlayerUUID(UUID.randomUUID());
-        players.setResetsLeft(3);
+        players.setResets(world, 3);
 
 
         MySQLDatabaseHandler<Players> h = new MySQLDatabaseHandler<>(plugin, Players.class, dbConn);

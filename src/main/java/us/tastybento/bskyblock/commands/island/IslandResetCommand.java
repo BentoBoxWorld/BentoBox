@@ -51,13 +51,14 @@ public class IslandResetCommand extends CompositeCommand {
             user.sendMessage("commands.island.reset.must-remove-members");
             return false;
         }
-        if (getSettings().getResetLimit() >= 0 ) {
-            if (getPlayers().getResetsLeft(user.getUniqueId()) == 0) {
+        if (getIWM().getResetLimit(getWorld()) >= 0 ) {
+            int resetsLeft = getIWM().getResetLimit(getWorld()) - getPlayers().getResets(getWorld(), user.getUniqueId());
+            if (resetsLeft <= 0) {
                 user.sendMessage("commands.island.reset.none-left");
                 return false;
             } else {
                 // Notify how many resets are left
-                user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(getPlayers().getResetsLeft(user.getUniqueId())));
+                user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(resetsLeft));
             }
         }
         // Request confirmation
@@ -88,6 +89,8 @@ public class IslandResetCommand extends CompositeCommand {
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             // TODO: needs Vault
         }
+        // Add a reset
+        getPlayers().addReset(getWorld(), user.getUniqueId());
         // Create new island and then delete the old one
         try {
             NewIsland.builder()

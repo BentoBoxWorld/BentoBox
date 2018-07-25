@@ -235,4 +235,20 @@ public interface WorldSettings {
      * @return list of entity types that should not exit the island limits
      */
     List<String> getGeoLimitSettings();
+
+    /**
+     * @return reset limit for world
+     */
+    int getResetLimit();
+
+
+    /**
+     * Get the island reset time stamp. Any player who last logged in before this time will have resets zeroed
+     */
+    long getResetEpoch();
+
+    /**
+     * Set the island reset time stamp. Any player who last logged in before this time will have resets zeroed
+     */
+    void setResetEpoch(long timestamp);
 }

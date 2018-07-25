@@ -600,7 +600,7 @@ public class Island implements DataObject {
             user.sendMessage("commands.admin.info.last-login","[date]", d.toString());
 
             user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(owner)));
-            String resets = String.valueOf(plugin.getPlayers().getResetsLeft(owner));
+            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
             String total = plugin.getSettings().getResetLimit() < 0 ? "Unlimited" : String.valueOf(plugin.getSettings().getResetLimit());
             user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
             // Show team members

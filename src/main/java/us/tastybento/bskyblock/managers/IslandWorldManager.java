@@ -734,4 +734,30 @@ public class IslandWorldManager {
     public List<String> getGeoLimitSettings(World world) {
         return worldSettings.get(Util.getWorld(world)).getGeoLimitSettings();
     }
+
+    /**
+     * Get the reset limit for this world
+     * @param world - world
+     * @return number of resets allowed. -1 = unlimited
+     */
+    public int getResetLimit(World world) {
+        return worlds.containsKey(Util.getWorld(world)) ? worldSettings.get(Util.getWorld(world)).getResetLimit() : -1;
+    }
+
+
+    /**
+     * Gets the time stamp for when all player resets were zeroed
+     * @param world
+     */
+    public long getResetEpoch(World world) {
+        return worldSettings.get(Util.getWorld(world)).getResetEpoch();
+    }
+
+    /**
+     * Sets the time stamp for when all player resets were zeroed
+     * @param world
+     */
+    public void setResetEpoch(World world) {
+        worldSettings.get(Util.getWorld(world)).setResetEpoch(System.currentTimeMillis());
+    }
 }

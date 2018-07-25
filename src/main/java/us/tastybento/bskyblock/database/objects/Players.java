@@ -30,7 +30,7 @@ public class Players implements DataObject {
     @Expose
     private String playerName;
     @Expose
-    private int resetsLeft;
+    private Map<String, Integer> resets = new HashMap<>();
     @Expose
     private String locale = "";
     @Expose
@@ -52,7 +52,6 @@ public class Players implements DataObject {
     public Players(BSkyBlock plugin, UUID uniqueId) {
         this.uniqueId = uniqueId.toString();
         homeLocations = new HashMap<>();
-        resetsLeft = plugin.getSettings().getResetLimit();
         locale = "";
         kickedList = new HashMap<>();
         // Try to get player's name
@@ -142,18 +141,35 @@ public class Players implements DataObject {
     }
 
     /**
+     * Get number of resets done in this world
+     * @param world - world
      * @return the resetsLeft
      */
-    public int getResetsLeft() {
-        return resetsLeft;
+    public int getResets(World world) {
+        resets.putIfAbsent(world.getName(), 0);
+        return resets.get(world.getName());
     }
 
     /**
-     * @param resetsLeft
-     *            the resetsLeft to set
+     * @return the resets
      */
-    public void setResetsLeft(int resetsLeft) {
-        this.resetsLeft = resetsLeft;
+    public Map<String, Integer> getResets() {
+        return resets;
+    }
+
+    /**
+     * @param resets the resets to set
+     */
+    public void setResets(Map<String, Integer> resets) {
+        this.resets = resets;
+    }
+
+    /**
+     * @param resets
+     *            the resets to set
+     */
+    public void setResets(World world, int resets) {
+        this.resets.put(world.getName(), resets);
     }
 
     /**
@@ -279,6 +295,14 @@ public class Players implements DataObject {
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    /**
+     * Increments the reset counter for player in world
+     * @param world - world
+     */
+    public void addReset(World world) {
+        resets.merge(world.getName(), 1, Integer::sum);
     }
 
 }
