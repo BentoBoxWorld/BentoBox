@@ -58,4 +58,4 @@ Maven dependency:
 </dependencies>
 ```
 
-You can find the javadoc here: https://epicericee.github.io/ShopChest/javadoc/
+You can find the javadoc here: https://ci.codemc.org/job/Tastybento/job/bskyblock/javadoc/
