@@ -4,7 +4,7 @@
 	<groupId>us.tastybento</groupId>
 	<artifactId>bskyblock</artifactId>
 	<packaging>jar</packaging>
-	<version>FC-0.74</version>
+	<version>FC-0.79</version>
 	<name>BSkyBlock</name>
 	<description>The next generation of ASkyBlock</description>
 	<properties>
@@ -61,18 +61,18 @@
 					<target>1.8</target>
 				</configuration>
 			</plugin>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-shade-plugin</artifactId> 
-				<version>1.6</version> <executions> <execution> <phase>package</phase> <goals> 
-				<goal>shade</goal> </goals> <configuration> <transformers> <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer"> 
-				<mainClass>us.tastybento.bskyblock.BSkyBlock</mainClass> </transformer> </transformers> 
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-shade-plugin</artifactId>
+				<version>1.6</version> <executions> <execution> <phase>package</phase> <goals>
+				<goal>shade</goal> </goals> <configuration> <transformers> <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+				<mainClass>us.tastybento.bskyblock.BSkyBlock</mainClass> </transformer> </transformers>
 				</configuration> </execution> </executions> </plugin> -->
-			<!-- I'm going to comment out these sections for now to speed up compilation 
-				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId> 
-				<version>3.0.1</version> <executions> <execution> <id>attach-sources</id> 
-				<goals> <goal>jar-no-fork</goal> </goals> </execution> </executions> </plugin> 
-				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
-				<version>3.0.0</version> <configuration> <additionalJOption>-Xdoclint:none</additionalJOption> 
-				</configuration> <executions> <execution> <id>attach-javadocs</id> <goals> 
+			<!-- I'm going to comment out these sections for now to speed up compilation
+				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId>
+				<version>3.0.1</version> <executions> <execution> <id>attach-sources</id>
+				<goals> <goal>jar-no-fork</goal> </goals> </execution> </executions> </plugin>
+				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId>
+				<version>3.0.0</version> <configuration> <additionalJOption>-Xdoclint:none</additionalJOption>
+				</configuration> <executions> <execution> <id>attach-javadocs</id> <goals>
 				<goal>jar</goal> </goals> </execution> </executions> </plugin> -->
 		</plugins>
 		<pluginManagement>
