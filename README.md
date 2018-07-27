@@ -32,3 +32,30 @@ File bug and feature requests here: https://github.com/tastybento/bskyblock/issu
 Note for developers
 ===================
 This is an actively developed project but we are not currently accepting Pull Requests from non-collaborators. Once we have finished the main development, we'll be open to PR's.
+
+Development Builds
+==================
+Jenkins: https://ci.codemc.org/job/Tastybento/job/bskyblock/
+
+API
+===
+Maven dependency:
+```xml
+<repositories>
+  <repository>
+    <id>codemc-repo</id>
+    <url>https://repo.codemc.org/repository/maven-public/</url>
+  </repository>
+</repositories>
+
+<dependencies>
+  <dependency>
+    <groupId>us.tastybento</groupId>
+    <artifactId>bskyblock</artifactId>
+    <version>FC-0.74</version>
+    <scope>provided</scope>
+  </dependency>
+</dependencies>
+```
+
+You can find the javadoc here: https://epicericee.github.io/ShopChest/javadoc/
