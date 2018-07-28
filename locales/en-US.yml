@@ -499,7 +499,7 @@ protection:
       name: "Leash use"
     LEVER:
       description: "Toggle use"
-      name: "Leaver use"
+      name: "Lever use"
       hint: "No lever use"
     LOCK: 
       description: "Toggle lock"
