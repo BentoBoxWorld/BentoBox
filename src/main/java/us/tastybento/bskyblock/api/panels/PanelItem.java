@@ -68,6 +68,7 @@ public class PanelItem {
 
     public void setName(String name) {
         this.name = name;
+        meta.setDisplayName(name);
         meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
         icon.setItemMeta(meta);
     }
@@ -122,6 +123,6 @@ public class PanelItem {
         meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
         meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
         meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        icon.setItemMeta(meta);        
+        icon.setItemMeta(meta);
     }
 }

@@ -16,6 +16,10 @@ import us.tastybento.bskyblock.database.objects.Island;
  */
 public class IslandEvent {
 
+    /**
+     * Reason for the event
+     *
+     */
     public enum Reason {
         CREATE,
         CREATED,
@@ -34,66 +38,110 @@ public class IslandEvent {
         return new IslandEventBuilder();
     }
 
+    /**
+     * Fired when an island is going to be created. May be canceled.
+     *
+     */
     public static class IslandCreateEvent extends IslandBaseEvent {
         private IslandCreateEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an island is created.
+     *
+     */
     public static class IslandCreatedEvent extends IslandBaseEvent {
         private IslandCreatedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an island is going to be deleted. May be canceled.
+     *
+     */
     public static class IslandDeleteEvent extends IslandBaseEvent {
         private IslandDeleteEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an island is deleted.
+     *
+     */
     public static class IslandDeletedEvent extends IslandBaseEvent {
         private IslandDeletedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an a player enters an island
+     *
+     */
     public static class IslandEnterEvent extends IslandBaseEvent {
         private IslandEnterEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when a player exits and island
+     *
+     */
     public static class IslandExitEvent extends IslandBaseEvent {
         private IslandExitEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an island is locked
+     *
+     */
     public static class IslandLockEvent extends IslandBaseEvent {
         private IslandLockEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an island is unlocked
+     *
+     */
     public static class IslandUnlockEvent extends IslandBaseEvent {
         private IslandUnlockEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when an island is going to be reset. May be canceled.
+     *
+     */
     public static class IslandResetEvent extends IslandBaseEvent {
         private IslandResetEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired after an island is reset
+     *
+     */
     public static class IslandResettedEvent extends IslandBaseEvent {
         private IslandResettedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Fired when something happens to the island not covered by other events
+     *
+     */
     public static class IslandGeneralEvent extends IslandBaseEvent {
         private IslandGeneralEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constuctor

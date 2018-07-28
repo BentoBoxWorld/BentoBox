@@ -81,7 +81,7 @@ public class PVPListener extends AbstractFlagListener {
             Projectile p = (Projectile) damager;
             if (p.getShooter() instanceof Player) {
                 // Allow self damage
-                if (p.getShooter().equals(hurtEntity)) {
+                if (hurtEntity.equals(p.getShooter())) {
                     return;
                 }
                 User user = User.getInstance((Player)p.getShooter());

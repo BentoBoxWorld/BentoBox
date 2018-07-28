@@ -324,6 +324,7 @@ public class IslandsManager {
 
     /**
      * Returns a set of island member UUID's for the island of playerUUID
+     * This includes the owner of the island. If there is no island, this set will be empty.
      *
      * @param world - world to check
      * @param playerUUID - the player's UUID
