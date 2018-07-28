@@ -12,6 +12,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 
+import org.bukkit.configuration.file.YamlConfiguration;
 import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.api.localization.BSBLocale;
 import us.tastybento.bskyblock.api.user.User;
@@ -85,12 +86,22 @@ public class LocalesManager {
         // Store all the locales available
         for (File language : Objects.requireNonNull(localeDir.listFiles(ymlFilter))) {
             Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
-            if (languages.containsKey(localeObject)) {
-                // Merge into current language
-                languages.get(localeObject).merge(language);
-            } else {
-                // New language
-                languages.put(localeObject, new BSBLocale(localeObject, language));
+
+            try {
+                YamlConfiguration languageYaml = YamlConfiguration.loadConfiguration(language);
+
+                if (languages.containsKey(localeObject)) {
+                    // Merge into current language
+                    languages.get(localeObject).merge(languageYaml);
+                } else {
+                    // New language
+                    languages.put(localeObject, new BSBLocale(localeObject, languageYaml));
+                }
+            } catch (Exception e) {
+                BSkyBlock.getInstance().logError("Could not load '" + language.getName() + "' : " + e.getMessage()
+                        + " with the following cause '" + e.getCause() + "'." +
+                        " The file has likely an invalid YML format or has been made unreadable during the process."
+                );
             }
         }
     }

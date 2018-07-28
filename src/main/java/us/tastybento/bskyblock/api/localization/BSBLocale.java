@@ -6,6 +6,7 @@ import java.util.Locale;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 
+import us.tastybento.bskyblock.BSkyBlock;
 import us.tastybento.bskyblock.util.ItemParser;
 
 /**
@@ -17,9 +18,9 @@ public class BSBLocale {
     private YamlConfiguration config;
     private ItemStack banner;
 
-    public BSBLocale(Locale locale, File file) {
+    public BSBLocale(Locale locale, YamlConfiguration config) {
         this.locale = locale;
-        config = YamlConfiguration.loadConfiguration(file);
+        this.config = config;
 
         // Load the banner from the configuration
         banner = ItemParser.parse(config.getString("banner"));
@@ -79,10 +80,9 @@ public class BSBLocale {
 
     /**
      * Merges a language YAML file to this locale
-     * @param language - language file
+     * @param toBeMerged the YamlConfiguration of the language file
      */
-    public void merge(File language) {
-        YamlConfiguration toBeMerged = YamlConfiguration.loadConfiguration(language);
+    public void merge(YamlConfiguration toBeMerged) {
         for (String key : toBeMerged.getKeys(true)) {
             if (!config.contains(key)) {
                 config.set(key, toBeMerged.get(key));
@@ -93,5 +93,4 @@ public class BSBLocale {
     public boolean contains(String reference) {
         return config.contains(reference);
     }
-
 }
