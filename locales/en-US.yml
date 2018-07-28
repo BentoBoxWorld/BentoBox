@@ -631,10 +631,3 @@ language:
   panel-title: "Select your language"
   selected: "&aCurrently selected."
   edited: "&aEdited your language to &e[lang]&a."
-
-new-island:
-  sign:
-    line0: "&1%bsb_plugin_name%"
-    line1: "[name]"
-    line2: "Don't fall!"
-    line3: "Have fun! &c<3"
