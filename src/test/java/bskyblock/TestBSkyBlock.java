@@ -48,26 +48,26 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import us.tastybento.bskyblock.BSkyBlock;
-import us.tastybento.bskyblock.Settings;
-import us.tastybento.bskyblock.api.commands.CompositeCommand;
-import us.tastybento.bskyblock.api.events.IslandBaseEvent;
-import us.tastybento.bskyblock.api.events.team.TeamEvent;
-import us.tastybento.bskyblock.api.flags.AbstractFlagListener;
-import us.tastybento.bskyblock.api.flags.Flag;
-import us.tastybento.bskyblock.api.flags.FlagBuilder;
-import us.tastybento.bskyblock.api.user.User;
-import us.tastybento.bskyblock.database.objects.Island;
-import us.tastybento.bskyblock.lists.Flags;
-import us.tastybento.bskyblock.managers.CommandsManager;
-import us.tastybento.bskyblock.managers.FlagsManager;
-import us.tastybento.bskyblock.managers.IslandWorldManager;
-import us.tastybento.bskyblock.managers.IslandsManager;
-import us.tastybento.bskyblock.managers.RanksManager;
-import us.tastybento.bskyblock.util.Util;
+import world.bentobox.bbox.BentoBox;
+import world.bentobox.bbox.Settings;
+import world.bentobox.bbox.api.commands.CompositeCommand;
+import world.bentobox.bbox.api.events.IslandBaseEvent;
+import world.bentobox.bbox.api.events.team.TeamEvent;
+import world.bentobox.bbox.api.flags.AbstractFlagListener;
+import world.bentobox.bbox.api.flags.Flag;
+import world.bentobox.bbox.api.flags.FlagBuilder;
+import world.bentobox.bbox.api.user.User;
+import world.bentobox.bbox.database.objects.Island;
+import world.bentobox.bbox.lists.Flags;
+import world.bentobox.bbox.managers.CommandsManager;
+import world.bentobox.bbox.managers.FlagsManager;
+import world.bentobox.bbox.managers.IslandWorldManager;
+import world.bentobox.bbox.managers.IslandsManager;
+import world.bentobox.bbox.managers.RanksManager;
+import world.bentobox.bbox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({ BSkyBlock.class, Flags.class, Util.class, Bukkit.class})
+@PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
 public class TestBSkyBlock {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
@@ -76,7 +76,7 @@ public class TestBSkyBlock {
     private static CommandSender sender;
     private static Player player;
     private static Location location;
-    private static BSkyBlock plugin;
+    private static BentoBox plugin;
     private static FlagsManager flagsManager;
     private static Block block;
     private static Player ownerOfIsland;
@@ -85,9 +85,9 @@ public class TestBSkyBlock {
     @Before
     public void setUp() {
         // Set up plugin
-        plugin = mock(BSkyBlock.class);
+        plugin = mock(BentoBox.class);
         when(plugin.getCommandsManager()).thenReturn(mock(CommandsManager.class));
-        Whitebox.setInternalState(BSkyBlock.class, "instance", plugin);
+        Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
         World world = mock(World.class);
@@ -146,9 +146,6 @@ public class TestBSkyBlock {
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         Mockito.when(plugin.getIWM()).thenReturn(iwm);
-        Mockito.when(iwm.getBSBIslandWorld()).thenReturn(world);
-        Mockito.when(iwm.getBSBNetherWorld()).thenReturn(world);
-        Mockito.when(iwm.getBSBEndWorld()).thenReturn(world);
         when(iwm.inWorld(any())).thenReturn(true);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
@@ -519,7 +516,7 @@ public class TestBSkyBlock {
      *
      */
     private class FlagListener extends AbstractFlagListener {
-        FlagListener(BSkyBlock plugin) {
+        FlagListener(BentoBox plugin) {
             // Set the plugin explicitly
             setPlugin(plugin);
         }

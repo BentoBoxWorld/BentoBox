@@ -1,12 +1,11 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>us.tastybento</groupId>
-	<artifactId>bskyblock</artifactId>
+	<groupId>world.bentobox</groupId>
+	<artifactId>bentobox</artifactId>
 	<packaging>jar</packaging>
-	<version>FC-0.79</version>
-	<name>BSkyBlock</name>
-	<description>The next generation of ASkyBlock</description>
+	<name>BentoBox</name>
 	<properties>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
@@ -64,16 +63,38 @@
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-shade-plugin</artifactId>
 				<version>1.6</version> <executions> <execution> <phase>package</phase> <goals>
 				<goal>shade</goal> </goals> <configuration> <transformers> <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-				<mainClass>us.tastybento.bskyblock.BSkyBlock</mainClass> </transformer> </transformers>
+				<mainClass>world.bentobox.bbox.BSkyBlock</mainClass> </transformer> </transformers>
 				</configuration> </execution> </executions> </plugin> -->
-			<!-- I'm going to comment out these sections for now to speed up compilation
-				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-source-plugin</artifactId>
-				<version>3.0.1</version> <executions> <execution> <id>attach-sources</id>
-				<goals> <goal>jar-no-fork</goal> </goals> </execution> </executions> </plugin>
-				<plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId>
-				<version>3.0.0</version> <configuration> <additionalJOption>-Xdoclint:none</additionalJOption>
-				</configuration> <executions> <execution> <id>attach-javadocs</id> <goals>
-				<goal>jar</goal> </goals> </execution> </executions> </plugin> -->
+			
+				<plugin>
+				    <groupId>org.apache.maven.plugins</groupId>
+				    <artifactId>maven-source-plugin</artifactId>
+				    <version>3.0.1</version>
+				    <executions>
+				        <execution>
+				            <id>attach-sources</id>
+				            <goals>
+				                <goal>jar-no-fork</goal>
+				            </goals>
+				        </execution>
+				    </executions>
+				</plugin>
+				<plugin>
+				    <groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>3.0.0</version>
+					<configuration>
+					   <additionalJOption>-Xdoclint:none</additionalJOption>
+					</configuration>
+					<executions>
+						<execution>
+							<id>attach-javadocs</id>
+							<goals>
+							 <goal>jar</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -180,4 +201,5 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
+	<version>1.0</version>
 </project>
