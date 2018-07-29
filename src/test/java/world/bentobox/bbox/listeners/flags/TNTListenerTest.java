@@ -39,7 +39,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -66,7 +65,7 @@ import world.bentobox.bbox.managers.PlayersManager;
 import world.bentobox.bbox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class TNTListenerTest {
 
     private static Location location;
@@ -75,8 +74,8 @@ public class TNTListenerTest {
     private static IslandsManager im;
     private static Notifier notifier;
 
-    @BeforeClass
-    public static void setUpClass() {
+    @Before
+    public void setUp() {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -93,7 +92,9 @@ public class TNTListenerTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        Bukkit.setServer(server);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        //Bukkit.setServer(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -169,10 +170,7 @@ public class TNTListenerTest {
         // Notifier
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
-    }
 
-    @Before
-    public void setUp() {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
     }
