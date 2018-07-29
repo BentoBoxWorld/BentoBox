@@ -190,7 +190,7 @@ public class IslandTeamInviteCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(uuid);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.cannot-invite-self"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.errors.cannot-invite-self"));
     }
 
 
@@ -207,7 +207,7 @@ public class IslandTeamInviteCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.already-on-team"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.errors.already-on-team"));
     }
 
 }

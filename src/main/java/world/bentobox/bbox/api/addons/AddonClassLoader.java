@@ -14,7 +14,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.util.permissions.DefaultPermissions;
 
-import world.bentobox.bbox.BentoBox;
 import world.bentobox.bbox.api.addons.AddonDescription.AddonDescriptionBuilder;
 import world.bentobox.bbox.api.addons.exception.InvalidAddonFormatException;
 import world.bentobox.bbox.api.addons.exception.InvalidAddonInheritException;
@@ -45,12 +44,12 @@ public class AddonClassLoader extends URLClassLoader {
         try {
             String mainClass = data.getString("main");
             javaClass = Class.forName(mainClass, true, this);
-            if(mainClass.contains("us.tastybento")){
-                throw new InvalidAddonFormatException("Packages declaration cannot start with 'us.tastybento'");
+            if(mainClass.startsWith("world.bentobox")){
+                throw new InvalidAddonFormatException("Packages declaration cannot start with 'world.bentobox'");
             }
-        } catch (ClassNotFoundException e) {
-            BentoBox.getInstance().logError("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - invalid addon.yml");
-            throw new InvalidDescriptionException("Invalid addon.yml");
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new InvalidDescriptionException("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - " + e.getMessage());
         }
 
         Class<? extends Addon> addonClass;

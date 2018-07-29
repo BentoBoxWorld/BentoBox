@@ -71,19 +71,19 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             }
             // Player cannot invite themselves
             if (playerUUID.equals(invitedPlayerUUID)) {
-                user.sendMessage("commands.island.team.invite.cannot-invite-self");
+                user.sendMessage("commands.island.team.invite.errors.cannot-invite-self");
                 return false;
             }
             // Check if this player can be invited to this island, or
             // whether they are still on cooldown
             long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(getWorld(), playerUUID));
             if (time > 0 && !user.isOp()) {
-                user.sendMessage("commands.island.team.invite.cooldown", TextVariables.NUMBER, String.valueOf(time));
+                user.sendMessage("commands.island.team.invite.errors.cooldown", TextVariables.NUMBER, String.valueOf(time));
                 return false;
             }
             // Player cannot invite someone already on a team
             if (getIslands().inTeam(getWorld(), invitedPlayerUUID)) {
-                user.sendMessage("commands.island.team.invite.already-on-team");
+                user.sendMessage("commands.island.team.invite.errors.already-on-team");
                 return false;
             }
             return invite(user,invitedPlayer);
@@ -146,14 +146,14 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     public BiMap<UUID, UUID> getInviteList() {
         return inviteList;
     }
-    
+
     /**
-    * Gets the maximum team size for this player in this game based on the permission or the world's setting
-    * @param user - user
-    * @return max team size of user
-    */
-   public int getMaxTeamSize(User user) {
-       return Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "team.maxsize.", getIWM().getMaxTeamSize(getWorld()));
-   }
+     * Gets the maximum team size for this player in this game based on the permission or the world's setting
+     * @param user - user
+     * @return max team size of user
+     */
+    public int getMaxTeamSize(User user) {
+        return Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "team.maxsize.", getIWM().getMaxTeamSize(getWorld()));
+    }
 
 }

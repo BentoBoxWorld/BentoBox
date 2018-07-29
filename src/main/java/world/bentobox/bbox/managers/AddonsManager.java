@@ -92,8 +92,7 @@ public class AddonsManager {
                 // Obtain the addon.yml file
                 JarEntry entry = jar.getJarEntry("addon.yml");
                 if (entry == null) {
-                    throw new InvalidAddonFormatException("Addon doesn't contains description file");
-
+                    throw new InvalidAddonFormatException("Addon '" + f.getName() + "' doesn't contains addon.yml file");
                 }
                 // Open a reader to the jar
                 BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
