@@ -30,7 +30,7 @@ public class LocalesManager {
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
-        loadLocales("BSkyBlock"); // Default
+        loadLocales("BentoBox"); // Default
     }
 
     /**
@@ -100,9 +100,9 @@ public class LocalesManager {
                 }
             } catch (Exception e) {
                 BentoBox.getInstance().logError("Could not load '" + language.getName() + "' : " + e.getMessage()
-                        + " with the following cause '" + e.getCause() + "'." +
-                        " The file has likely an invalid YML format or has been made unreadable during the process."
-                );
+                + " with the following cause '" + e.getCause() + "'." +
+                " The file has likely an invalid YML format or has been made unreadable during the process."
+                        );
             }
         }
     }

@@ -32,7 +32,7 @@ public class PlayersManager {
      * This is the one-stop-shop of player info
      * If the player is not cached, then a request is made to Players to obtain it
      *
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public PlayersManager(BentoBox plugin){
         this.plugin = plugin;

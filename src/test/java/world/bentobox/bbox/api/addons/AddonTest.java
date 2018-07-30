@@ -31,8 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bbox.BentoBox;
-import world.bentobox.bbox.api.addons.Addon;
-import world.bentobox.bbox.api.addons.AddonDescription;
 import world.bentobox.bbox.managers.AddonsManager;
 import world.bentobox.bbox.managers.IslandsManager;
 import world.bentobox.bbox.managers.PlayersManager;
@@ -94,9 +92,9 @@ public class AddonTest {
     }
 
     @Test
-    public void testGetBSkyBlock() {
+    public void testGetPlugin() {
         TestClass test = new TestClass();
-        assertEquals(plugin, test.getBSkyBlock());
+        assertEquals(plugin, test.getPlugin());
     }
 
     @Test

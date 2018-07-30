@@ -29,7 +29,7 @@ public class PlaceholderHandler {
 
     /**
      * Register placeholders and hooks
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public static void register(BentoBox plugin){
 
@@ -64,7 +64,7 @@ public class PlaceholderHandler {
 
     /**
      * Unregister placeholder hooks
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public static void unregister(BentoBox plugin){
         Iterator<PlaceholderAPIInterface> it = apis.iterator();

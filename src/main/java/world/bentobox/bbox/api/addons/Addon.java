@@ -19,7 +19,7 @@ import world.bentobox.bbox.managers.IslandsManager;
 import world.bentobox.bbox.managers.PlayersManager;
 
 /**
- * Add-on class for BSkyBlock. Extend this to create an add-on. The operation
+ * Add-on class for BentoBox. Extend this to create an add-on. The operation
  * and methods are very similar to Bukkit's JavaPlugin.
  *
  * @author tastybento, ComminQ_Q
@@ -37,7 +37,7 @@ public abstract class Addon implements AddonInterface {
         enabled = false;
     }
 
-    public BentoBox getBSkyBlock() {
+    public BentoBox getPlugin() {
         return BentoBox.getInstance();
     }
 
@@ -76,7 +76,7 @@ public abstract class Addon implements AddonInterface {
      * @return Logger
      */
     public Logger getLogger() {
-        return getBSkyBlock().getLogger();
+        return getPlugin().getLogger();
     }
 
     /**
@@ -85,7 +85,7 @@ public abstract class Addon implements AddonInterface {
      * @return the server object
      */
     public Server getServer() {
-        return getBSkyBlock().getServer();
+        return getPlugin().getServer();
     }
 
     public boolean isEnabled() {
@@ -264,7 +264,7 @@ public abstract class Addon implements AddonInterface {
      * @return Players manager
      */
     public PlayersManager getPlayers() {
-        return getBSkyBlock().getPlayers();
+        return getPlugin().getPlayers();
     }
 
     /**
@@ -272,7 +272,7 @@ public abstract class Addon implements AddonInterface {
      * @return Islands manager
      */
     public IslandsManager getIslands() {
-        return getBSkyBlock().getIslands();
+        return getPlugin().getIslands();
     }
 
     /**
@@ -280,18 +280,18 @@ public abstract class Addon implements AddonInterface {
      * @return Optional Addon
      */
     public Optional<Addon> getAddonByName(String name) {
-        return getBSkyBlock().getAddonsManager().getAddonByName(name);
+        return getPlugin().getAddonsManager().getAddonByName(name);
     }
 
     public void log(String string) {
-        getBSkyBlock().log(string);
+        getPlugin().log(string);
     }
 
     public void logWarning(String string) {
-        getBSkyBlock().logWarning(string);
+        getPlugin().logWarning(string);
     }
 
     public void logError(String string) {
-        getBSkyBlock().logError(string);
+        getPlugin().logError(string);
     }
 }

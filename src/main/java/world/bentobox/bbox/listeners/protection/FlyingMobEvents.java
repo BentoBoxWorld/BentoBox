@@ -33,7 +33,7 @@ public class FlyingMobEvents implements Listener {
     private WeakHashMap<Entity, Island> mobSpawnInfo;
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public FlyingMobEvents(BentoBox plugin) {
         this.plugin = plugin;
@@ -70,8 +70,8 @@ public class FlyingMobEvents implements Listener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMobSpawn(CreatureSpawnEvent e) {
         // Only cover withers in the island world
-        if (!plugin.getIWM().inWorld(e.getEntity().getLocation()) || !(e.getEntityType().equals(EntityType.WITHER) 
-                || e.getEntityType().equals(EntityType.BLAZE) 
+        if (!plugin.getIWM().inWorld(e.getEntity().getLocation()) || !(e.getEntityType().equals(EntityType.WITHER)
+                || e.getEntityType().equals(EntityType.BLAZE)
                 || e.getEntityType().equals(EntityType.GHAST))) {
             return;
         }
@@ -109,8 +109,8 @@ public class FlyingMobEvents implements Listener {
             return false;
         }
         // The wither or wither skulls can both blow up
-        if (e.getEntityType() == EntityType.WITHER 
-                && mobSpawnInfo.containsKey(e.getEntity()) 
+        if (e.getEntityType() == EntityType.WITHER
+                && mobSpawnInfo.containsKey(e.getEntity())
                 && !mobSpawnInfo.get(e.getEntity()).inIslandSpace(e.getEntity().getLocation())) {
             // Cancel the explosion
             e.setCancelled(true);

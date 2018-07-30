@@ -35,7 +35,7 @@ public class FlagsManager {
     }
 
     /**
-     * Register a new flag with BSkyBlock
+     * Register a new flag
      * @param flag flag to be registered
      * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
      */

@@ -67,7 +67,7 @@ public class Metrics {
     /**
      * Class constructor.
      *
-     * @param plugin - BSkyBlock plugin object The plugin which stats should be submitted.
+     * @param plugin - plugin object The plugin which stats should be submitted.
      */
     public Metrics(JavaPlugin plugin) {
         if (plugin == null) {

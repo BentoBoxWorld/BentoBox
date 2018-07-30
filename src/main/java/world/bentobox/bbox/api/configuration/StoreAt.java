@@ -15,7 +15,7 @@ import java.lang.annotation.Target;
 public @interface StoreAt {
 
     /**
-     * Path where this will be stored. If blank, it will be the BSkyBlock database folder.
+     * Path where this will be stored. If blank, it will be the database folder.
      */
     String path() default "";
 

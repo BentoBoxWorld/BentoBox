@@ -6,11 +6,11 @@ import java.util.Optional;
 import world.bentobox.bbox.api.user.User;
 
 /**
- * Interface for BSkyBlock Commands
+ * Interface for BentoBox Commands
  * @author tastybento
  *
  */
-public interface BSBCommand {
+public interface BentoBoxCommand {
 
     /**
      * Anything that needs to be set up for this command.

@@ -37,7 +37,7 @@ import world.bentobox.bbox.util.Util;
  * @author tastybento
  * @author Poslovitch
  */
-public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BSBCommand {
+public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BentoBoxCommand {
 
     private final BentoBox plugin;
 

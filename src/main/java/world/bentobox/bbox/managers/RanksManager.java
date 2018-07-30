@@ -29,7 +29,7 @@ public class RanksManager {
     private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public RanksManager(BentoBox plugin) {
         super();
@@ -81,7 +81,7 @@ public class RanksManager {
         ranks = ranks.entrySet().stream()
                 .sorted(Map.Entry.comparingByValue())
                 .collect(Collectors.toMap(
-                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));   
+                        Map.Entry::getKey, Map.Entry::getValue, (e1, e2) -> e1, LinkedHashMap::new));
     }
 
     /**
@@ -128,7 +128,7 @@ public class RanksManager {
                 return x;
             }
             return OWNER_RANK;
-        }).min().orElse(currentRank);  
+        }).min().orElse(currentRank);
     }
 
     /**
@@ -142,7 +142,7 @@ public class RanksManager {
                 return x;
             }
             return VISITOR_RANK;
-        }).max().orElse(currentRank);       
+        }).max().orElse(currentRank);
     }
 
     /**

@@ -114,7 +114,7 @@ public class User {
 
     /**
      * Used for testing
-     * @param p - BSkyBlock plugin
+     * @param p - plugin
      */
     public static void setPlugin(BentoBox p) {
         plugin = p;

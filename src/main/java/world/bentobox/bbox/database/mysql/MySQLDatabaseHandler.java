@@ -45,7 +45,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
      * the class that will be stored.
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param dbConnecter - authentication details for the database
      */

@@ -122,7 +122,7 @@ public class AddonsManager {
                 addons.add(addon);
 
                 // Inform the console
-                plugin.log("Loaded BSkyBlock addon " + addon.getDescription().getName() + "...");
+                plugin.log("Loaded addon " + addon.getDescription().getName() + "...");
             } catch (Exception e) {
                 plugin.log(e.getMessage());
             }

@@ -10,7 +10,7 @@ import world.bentobox.bbox.BentoBox;
 import world.bentobox.bbox.api.addons.Addon;
 
 /**
- * Handy class to store and load Java POJOs in the BSkyBlock Database
+ * Handy class to store and load Java POJOs in the Database
  * @author tastybento
  *
  * @param <T>

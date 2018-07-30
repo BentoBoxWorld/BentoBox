@@ -18,14 +18,14 @@ public interface PlaceholderAPIInterface {
 
     /**
      * Registers the placeholder API
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      * @return true if successfully registered
      */
     boolean register(BentoBox plugin);
 
     /**
      * Unregisters the placeholder API
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     void unregister(BentoBox plugin);
 

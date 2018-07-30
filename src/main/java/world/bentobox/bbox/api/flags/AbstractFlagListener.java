@@ -35,7 +35,7 @@ public abstract class AbstractFlagListener implements Listener {
 
     /**
      * Used for unit testing only to set the plugin
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public void setPlugin(BentoBox plugin) {
         this.plugin = plugin;

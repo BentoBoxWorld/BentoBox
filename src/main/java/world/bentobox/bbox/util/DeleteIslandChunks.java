@@ -18,7 +18,7 @@ public class DeleteIslandChunks {
 
     /**
      * Deletes the island
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      * @param island - island to delete
      */
     public DeleteIslandChunks(final BentoBox plugin, final Island island) {

@@ -19,7 +19,7 @@ public class JoinLeaveListener implements Listener {
     private PlayersManager players;
 
     /**
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      */
     public JoinLeaveListener(BentoBox plugin) {
         this.plugin = plugin;

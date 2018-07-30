@@ -48,7 +48,7 @@ public class SafeSpotTeleport {
 
     /**
      * Teleports and entity to a safe spot on island
-     * @param plugin - BSkyBlock plugin object
+     * @param plugin - plugin object
      * @param entity - entity to teleport
      * @param location - the location
      * @param failureMessage - already translated failure message

@@ -18,7 +18,7 @@ public enum AddonState {
     DISABLED,
 
     /**
-     * The addon has not been loaded because it requires a different version of BSkyBlock or of the server software.
+     * The addon has not been loaded because it requires a different version of BentoBox or of the server software.
      */
     INCOMPATIBLE,
 
