@@ -28,8 +28,6 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Constants;
-import world.bentobox.bentobox.Constants.GameType;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.StoreAt;
@@ -126,9 +124,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (configEntry != null) {
                 if (!configEntry.path().isEmpty()) {
                     storageLocation = configEntry.path();
-                }
-                if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Constants.GAMETYPE)) {
-                    continue;
                 }
                 // TODO: Add handling of other ConfigEntry elements
             }
@@ -286,9 +281,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             // If there is a config path annotation then do something
             if (configEntry != null) {
-                if (!configEntry.specificTo().equals(GameType.BOTH) && !configEntry.specificTo().equals(Constants.GAMETYPE)) {
-                    continue;
-                }
                 if (!configEntry.path().isEmpty()) {
                     storageLocation = configEntry.path();
                 }

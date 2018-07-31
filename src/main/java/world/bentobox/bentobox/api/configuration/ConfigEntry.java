@@ -5,11 +5,7 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
-import world.bentobox.bentobox.Constants.GameType;
-
 /**
- *
- *
  * @author Poslovitch, tastybento
  */
 @Retention(RetentionPolicy.RUNTIME)
@@ -21,6 +17,4 @@ public @interface ConfigEntry {
     boolean overrideOnChange() default false;
     boolean experimental() default false;
     boolean needsReset() default false;
-    GameType specificTo() default GameType.BOTH;
-
 }
