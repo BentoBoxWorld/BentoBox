@@ -48,23 +48,23 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bbox.BentoBox;
-import world.bentobox.bbox.Settings;
-import world.bentobox.bbox.api.commands.CompositeCommand;
-import world.bentobox.bbox.api.events.IslandBaseEvent;
-import world.bentobox.bbox.api.events.team.TeamEvent;
-import world.bentobox.bbox.api.flags.AbstractFlagListener;
-import world.bentobox.bbox.api.flags.Flag;
-import world.bentobox.bbox.api.flags.FlagBuilder;
-import world.bentobox.bbox.api.user.User;
-import world.bentobox.bbox.database.objects.Island;
-import world.bentobox.bbox.lists.Flags;
-import world.bentobox.bbox.managers.CommandsManager;
-import world.bentobox.bbox.managers.FlagsManager;
-import world.bentobox.bbox.managers.IslandWorldManager;
-import world.bentobox.bbox.managers.IslandsManager;
-import world.bentobox.bbox.managers.RanksManager;
-import world.bentobox.bbox.util.Util;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.team.TeamEvent;
+import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.FlagBuilder;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
