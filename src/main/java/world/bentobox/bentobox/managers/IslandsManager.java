@@ -40,7 +40,6 @@ import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
  * It also handles island ownership, including team, trustees, coops, etc.
  * The data object that it uses is Island
  * @author tastybento
- *
  */
 public class IslandsManager {
 

@@ -36,7 +36,7 @@ public class HeadGetter {
                 Iterator<Entry<String, PanelItem>> it = names.entrySet().iterator();
                 if (it.hasNext()) {
                     Entry<String, PanelItem> en = it.next();
-                    ItemStack playerSkull = new ItemStack(Material.SKULL_ITEM, 1, (short) 3);
+                    ItemStack playerSkull = new ItemStack(Material.PLAYER_HEAD, 1);
                     SkullMeta meta = (SkullMeta) playerSkull.getItemMeta();
                     meta.setOwner(en.getKey());
                     playerSkull.setItemMeta(meta);

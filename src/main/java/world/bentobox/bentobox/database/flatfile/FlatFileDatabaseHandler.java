@@ -269,7 +269,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
-
             // Get the property descriptor for this field
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the read method, i.e., getXXXX();

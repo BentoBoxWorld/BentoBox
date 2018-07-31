@@ -165,8 +165,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
-
     }
+
     /*
      * This method deals with the command execution. It traverses the tree of
      * subcommands until it finds the right object and then runs execute on it.

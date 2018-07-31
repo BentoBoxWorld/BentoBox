@@ -63,29 +63,29 @@ public class Flags {
     // Block interactions - all use BlockInteractionListener()
     public static final Flag ANVIL = new FlagBuilder().id("ANVIL").icon(Material.ANVIL).listener(new BlockInteractionListener()).build();
     public static final Flag BEACON = new FlagBuilder().id("BEACON").icon(Material.BEACON).build();
-    public static final Flag BED = new FlagBuilder().id("BED").icon(Material.BED).build();
-    public static final Flag BREWING = new FlagBuilder().id("BREWING").icon(Material.BREWING_STAND_ITEM).build();
+    public static final Flag BED = new FlagBuilder().id("BED").icon(Material.RED_BED).build();
+    public static final Flag BREWING = new FlagBuilder().id("BREWING").icon(Material.BREWING_STAND).build();
     public static final Flag CHEST = new FlagBuilder().id("CHEST").icon(Material.CHEST).build();
-    public static final Flag DOOR = new FlagBuilder().id("DOOR").allowedByDefault(true).icon(Material.WOOD_DOOR).build();
-    public static final Flag TRAPDOOR = new FlagBuilder().id("TRAPDOOR").allowedByDefault(true).icon(Material.TRAP_DOOR).build();
-    public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING").allowedByDefault(true).icon(Material.WORKBENCH).build();
-    public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING").allowedByDefault(true).icon(Material.ENCHANTMENT_TABLE).build();
+    public static final Flag DOOR = new FlagBuilder().id("DOOR").allowedByDefault(true).icon(Material.OAK_DOOR).build();
+    public static final Flag TRAPDOOR = new FlagBuilder().id("TRAPDOOR").allowedByDefault(true).icon(Material.OAK_TRAPDOOR).build();
+    public static final Flag CRAFTING = new FlagBuilder().id("CRAFTING").allowedByDefault(true).icon(Material.CRAFTING_TABLE).build();
+    public static final Flag ENCHANTING = new FlagBuilder().id("ENCHANTING").allowedByDefault(true).icon(Material.ENCHANTING_TABLE).build();
     public static final Flag FURNACE = new FlagBuilder().id("FURNACE").icon(Material.FURNACE).build();
-    public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.FENCE_GATE).build();
+    public static final Flag GATE = new FlagBuilder().id("GATE").allowedByDefault(true).icon(Material.OAK_FENCE_GATE).build();
     public static final Flag NOTE_BLOCK = new FlagBuilder().id("NOTE_BLOCK").icon(Material.NOTE_BLOCK).build();
     public static final Flag JUKEBOX = new FlagBuilder().id("JUKEBOX").icon(Material.JUKEBOX).build();
     public static final Flag LEVER = new FlagBuilder().id("LEVER").icon(Material.LEVER).build();
-    public static final Flag BUTTON = new FlagBuilder().id("BUTTON").icon(Material.WOOD_BUTTON).build();
+    public static final Flag BUTTON = new FlagBuilder().id("BUTTON").icon(Material.OAK_BUTTON).build();
     public static final Flag REDSTONE = new FlagBuilder().id("REDSTONE").icon(Material.REDSTONE).build();
-    public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.MONSTER_EGG).build();
+    public static final Flag SPAWN_EGGS = new FlagBuilder().id("SPAWN_EGGS").icon(Material.COW_SPAWN_EGG).build();
 
     // Entity interactions
     public static final Flag ARMOR_STAND = new FlagBuilder().id("ARMOR_STAND").icon(Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
-    public static final Flag RIDING = new FlagBuilder().id("RIDING").icon(Material.GOLD_BARDING).build();
+    public static final Flag RIDING = new FlagBuilder().id("RIDING").icon(Material.GOLDEN_HORSE_ARMOR).build();
     public static final Flag TRADING = new FlagBuilder().id("TRADING").allowedByDefault(true).icon(Material.EMERALD).build();
 
     // Breeding
-    public static final Flag BREEDING = new FlagBuilder().id("BREEDING").icon(Material.CARROT_ITEM).listener(new BreedingListener()).build();
+    public static final Flag BREEDING = new FlagBuilder().id("BREEDING").icon(Material.CARROT).listener(new BreedingListener()).build();
 
     // Buckets. All bucket use is covered by one listener
     public static final Flag BUCKET = new FlagBuilder().id("BUCKET").icon(Material.BUCKET).listener(new BucketListener()).build();
@@ -99,7 +99,7 @@ public class Flags {
 
     // Physical interactions
     public static final Flag CROP_TRAMPLE = new FlagBuilder().id("CROP_TRAMPLE").icon(Material.WHEAT).listener(new PhysicalInteractionListener()).build();
-    public static final Flag PRESSURE_PLATE = new FlagBuilder().id("PRESSURE_PLATE").icon(Material.GOLD_PLATE).build();
+    public static final Flag PRESSURE_PLATE = new FlagBuilder().id("PRESSURE_PLATE").icon(Material.STONE_PRESSURE_PLATE).build();
 
     // Egg throwing
     public static final Flag EGGS = new FlagBuilder().id("EGGS").icon(Material.EGG).listener(new EggListener()).build();
@@ -118,15 +118,15 @@ public class Flags {
     public static final Flag FIRE_EXTINGUISH = new FlagBuilder().id("FIRE_EXTINGUISH").icon(Material.POTION).build();
 
     // Inventories
-    public static final Flag MOUNT_INVENTORY = new FlagBuilder().id("MOUNT_INVENTORY").icon(Material.IRON_BARDING).listener(new InventoryListener()).build();
+    public static final Flag MOUNT_INVENTORY = new FlagBuilder().id("MOUNT_INVENTORY").icon(Material.IRON_HORSE_ARMOR).listener(new InventoryListener()).build();
 
     // Hurting things
     public static final Flag HURT_ANIMALS = new FlagBuilder().id("HURT_ANIMALS").icon(Material.STONE_SWORD).listener(new HurtingListener()).build();
-    public static final Flag HURT_MONSTERS = new FlagBuilder().id("HURT_MONSTERS").icon(Material.WOOD_SWORD).build();
-    public static final Flag HURT_VILLAGERS = new FlagBuilder().id("HURT_VILLAGERS").icon(Material.GOLD_SWORD).build();
+    public static final Flag HURT_MONSTERS = new FlagBuilder().id("HURT_MONSTERS").icon(Material.WOODEN_SWORD).build();
+    public static final Flag HURT_VILLAGERS = new FlagBuilder().id("HURT_VILLAGERS").icon(Material.GOLDEN_SWORD).build();
 
     // Leashes
-    public static final Flag LEASH = new FlagBuilder().id("LEASH").icon(Material.LEASH).listener(new LeashListener()).build();
+    public static final Flag LEASH = new FlagBuilder().id("LEASH").icon(Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
     public static final Flag PORTAL = new FlagBuilder().id("PORTAL").icon(Material.OBSIDIAN).listener(new PortalListener()).build();
@@ -161,8 +161,8 @@ public class Flags {
     // Others
     public static final Flag ANIMAL_SPAWN = new FlagBuilder().id("ANIMAL_SPAWN").icon(Material.APPLE).allowedByDefault(true).type(Type.SETTING)
             .listener(new MobSpawnListener()).build();
-    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
-    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
+    public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_STAR).allowedByDefault(true).type(Type.SETTING).build();
 
     /*
      * World Settings - they apply to every island in the game worlds.
@@ -174,7 +174,7 @@ public class Flags {
             .listener(new EnderChestListener())
             .build();
 
-    public static final Flag ENDERMAN_GRIEFING = new FlagBuilder().id("ENDERMAN_GRIEFING").icon(Material.END_BRICKS)
+    public static final Flag ENDERMAN_GRIEFING = new FlagBuilder().id("ENDERMAN_GRIEFING").icon(Material.END_STONE_BRICKS)
             .allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EndermanListener())
             .build();
@@ -187,7 +187,7 @@ public class Flags {
             .listener(new EnterExitListener())
             .build();
 
-    public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON_BASE).allowedByDefault(true).type(Type.WORLD_SETTING)
+    public static final Flag PISTON_PUSH = new FlagBuilder().id("PISTON_PUSH").icon(Material.PISTON).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new PistonPushListener())
             .build();
 
@@ -207,7 +207,7 @@ public class Flags {
     public static final Flag ISLAND_RESPAWN = new FlagBuilder().id("ISLAND_RESPAWN").icon(Material.TORCH).type(Type.WORLD_SETTING)
             .listener(new IslandRespawnListener()).allowedByDefault(true).build();
 
-    public static final Flag OFFLINE_REDSTONE = new FlagBuilder().id("OFFLINE_REDSTONE").icon(Material.REDSTONE_COMPARATOR).type(Type.WORLD_SETTING)
+    public static final Flag OFFLINE_REDSTONE = new FlagBuilder().id("OFFLINE_REDSTONE").icon(Material.COMPARATOR).type(Type.WORLD_SETTING)
             .listener(new OfflineRedstoneListener()).allowedByDefault(true).build();
 
     public static final Flag CLEAN_SUPER_FLAT = new FlagBuilder().id("CLEAN_SUPER_FLAT").icon(Material.BEDROCK).type(Type.WORLD_SETTING)
@@ -220,7 +220,7 @@ public class Flags {
     /**
      * Prevents creeper griefing. This is where a visitor will trigger a creeper to blow up an island.
      */
-    public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.FIREWORK).type(Type.WORLD_SETTING)
+    public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
 
     /**

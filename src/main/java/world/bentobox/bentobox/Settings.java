@@ -607,8 +607,4 @@ public class Settings implements DataObject {
     public void setNameMaxLength(int nameMaxLength) {
         this.nameMaxLength = nameMaxLength;
     }
-
-    // Getters and setters
-
-
 }
