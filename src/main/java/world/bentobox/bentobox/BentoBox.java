@@ -31,11 +31,9 @@ import world.bentobox.bentobox.util.HeadGetter;
 
 /**
  * Main BentoBox class
- * @author tastybento
- * @author Poslovitch
+ * @author tastybento, Poslovitch
  */
 public class BentoBox extends JavaPlugin {
-
     private static BentoBox instance;
 
     // Databases
@@ -328,14 +326,12 @@ public class BentoBox extends JavaPlugin {
 
     /**
      * Registers a world as a world to be covered by this plugin
-     * @param world - Bukkit over world
+     * @param world - Bukkit overworld
      * @param worldSettings - settings for this world
      */
     public void registerWorld(World world, WorldSettings worldSettings) {
         islandWorldManager.addWorld(world, worldSettings);
     }
-
-
 
     /**
      * @return the schemsManager
@@ -344,8 +340,6 @@ public class BentoBox extends JavaPlugin {
         return schemsManager;
     }
 
-
-
     /**
      * True if the plugin is loaded and ready
      * @return the isLoaded
@@ -353,5 +347,4 @@ public class BentoBox extends JavaPlugin {
     public boolean isLoaded() {
         return isLoaded;
     }
-
 }
