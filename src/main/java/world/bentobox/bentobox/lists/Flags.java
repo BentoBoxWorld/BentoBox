@@ -138,6 +138,9 @@ public class Flags {
     public static final Flag ITEM_DROP = new FlagBuilder().id("ITEM_DROP").icon(Material.BEETROOT_SOUP).allowedByDefault(true).listener(new ItemDropPickUpListener()).build();
     public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
 
+    // TNT
+    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.PROTECTION).build();
+
     // Island lock
     public static final Flag LOCK = new FlagBuilder().id("LOCK")
             .icon(Material.TRIPWIRE_HOOK).type(Type.PROTECTION).allowedByDefault(true)
@@ -160,7 +163,7 @@ public class Flags {
             .listener(new MobSpawnListener()).build();
     public static final Flag MONSTER_SPAWN = new FlagBuilder().id("MONSTER_SPAWN").icon(Material.MOB_SPAWNER).allowedByDefault(true).type(Type.SETTING).build();
     public static final Flag FIRE_SPREAD = new FlagBuilder().id("FIRE_SPREAD").icon(Material.FIREWORK_CHARGE).allowedByDefault(true).type(Type.SETTING).build();
-    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.SETTING).build();
+
     /*
      * World Settings - they apply to every island in the game worlds.
      */
