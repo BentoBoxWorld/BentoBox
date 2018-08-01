@@ -180,7 +180,6 @@ public class InvincibleVisitorsListenerTest {
 
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnVisitorGetDamageNotPlayer() {
         LivingEntity le = mock(LivingEntity.class);
@@ -189,7 +188,6 @@ public class InvincibleVisitorsListenerTest {
         assertFalse(e.isCancelled());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnVisitorGetDamageNotInWorld() {
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
@@ -198,7 +196,6 @@ public class InvincibleVisitorsListenerTest {
         assertFalse(e.isCancelled());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnVisitorGetDamageNotInIvSettings() {
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
@@ -207,7 +204,6 @@ public class InvincibleVisitorsListenerTest {
         assertFalse(e.isCancelled());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnVisitorGetDamageNotVisitor() {
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
@@ -216,7 +212,6 @@ public class InvincibleVisitorsListenerTest {
         assertFalse(e.isCancelled());
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnVisitorGetDamageNotVoid() {
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
@@ -225,7 +220,6 @@ public class InvincibleVisitorsListenerTest {
         Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnVisitorGetDamageVoid() {
         // For testing, have no island to teleport to

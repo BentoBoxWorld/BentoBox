@@ -17,7 +17,6 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Enderman;
@@ -33,7 +32,6 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -115,7 +113,6 @@ public class ItemFrameListenerTest {
         enderman = mock(Enderman.class);
         when(enderman.getLocation()).thenReturn(location);
         when(enderman.getWorld()).thenReturn(world);
-        when(enderman.getCarriedMaterial()).thenReturn(new MaterialData(Material.STONE));
         slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
 
@@ -152,7 +149,6 @@ public class ItemFrameListenerTest {
         ItemFrameListener ifl = new ItemFrameListener();
         Entity entity = mock(ItemFrame.class);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        @SuppressWarnings("deprecation")
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
@@ -166,7 +162,6 @@ public class ItemFrameListenerTest {
         ItemFrameListener ifl = new ItemFrameListener();
         Entity entity = mock(Monster.class);
         DamageCause cause = DamageCause.ENTITY_ATTACK;
-        @SuppressWarnings("deprecation")
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(enderman, entity, cause , 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());
@@ -182,7 +177,6 @@ public class ItemFrameListenerTest {
         DamageCause cause = DamageCause.ENTITY_ATTACK;
         Projectile p = mock(Projectile.class);
         when(p.getShooter()).thenReturn(enderman);
-        @SuppressWarnings("deprecation")
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
         ifl.onItemFrameDamage(e);
         assertTrue(e.isCancelled());
@@ -199,7 +193,6 @@ public class ItemFrameListenerTest {
         Projectile p = mock(Projectile.class);
         Player player = mock(Player.class);
         when(p.getShooter()).thenReturn(player);
-        @SuppressWarnings("deprecation")
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(p, entity, cause , 0);
         ifl.onItemFrameDamage(e);
         assertFalse(e.isCancelled());

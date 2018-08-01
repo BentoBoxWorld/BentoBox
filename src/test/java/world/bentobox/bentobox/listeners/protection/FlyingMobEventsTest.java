@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.protection;
 
@@ -93,7 +93,7 @@ public class FlyingMobEventsTest {
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
-        // Player has island to begin with 
+        // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -111,16 +111,16 @@ public class FlyingMobEventsTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
-        
+
         // Normally in world
         Util.setPlugin(plugin);
-        
+
         // Worlds
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any())).thenReturn(true);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.protection.FlyingMobEvents#FlyingMobEvents(world.bentobox.bentobox.BentoBox)}.
      */
@@ -142,9 +142,9 @@ public class FlyingMobEventsTest {
         // Not in world
         when(iwm.inWorld(any())).thenReturn(false);
         fme.onMobSpawn(e);
-        Mockito.verify(im, Mockito.never()).getIslandAt(Mockito.any(Location.class));       
+        Mockito.verify(im, Mockito.never()).getIslandAt(Mockito.any(Location.class));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.protection.FlyingMobEvents#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */
@@ -155,9 +155,9 @@ public class FlyingMobEventsTest {
         when(le.getType()).thenReturn(EntityType.AREA_EFFECT_CLOUD);
         CreatureSpawnEvent e = new CreatureSpawnEvent(le, SpawnReason.BUILD_WITHER);
         fme.onMobSpawn(e);
-        Mockito.verify(im, Mockito.never()).getIslandAt(Mockito.any(Location.class));       
+        Mockito.verify(im, Mockito.never()).getIslandAt(Mockito.any(Location.class));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.protection.FlyingMobEvents#onMobSpawn(org.bukkit.event.entity.CreatureSpawnEvent)}.
      */
@@ -195,18 +195,18 @@ public class FlyingMobEventsTest {
         EntityExplodeEvent e = new EntityExplodeEvent(null, null, null, 0);
         // null entity
         assertFalse(fme.onMobExplosion(e));
-        
+
         // Not in world
         Entity ent = mock(Entity.class);
         when(iwm.inWorld(any())).thenReturn(false);
         e = new EntityExplodeEvent(ent, null, null, 0);
         assertFalse(fme.onMobExplosion(e));
-        
+
         // Unknown entity (not in the list)
         when(iwm.inWorld(any())).thenReturn(true);
         assertFalse(fme.onMobExplosion(e));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.protection.FlyingMobEvents#onMobExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
@@ -232,13 +232,13 @@ public class FlyingMobEventsTest {
         List<Block> affectedBlocks = new ArrayList<>();
         affectedBlocks.add(block);
         // Create event
-        EntityExplodeEvent e = new EntityExplodeEvent(le, mock(Location.class), affectedBlocks, 0);   
+        EntityExplodeEvent e = new EntityExplodeEvent(le, mock(Location.class), affectedBlocks, 0);
         // Nothing blocked
         assertFalse(fme.onMobExplosion(e));
         assertFalse(e.isCancelled());
         assertFalse(e.blockList().isEmpty());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.protection.FlyingMobEvents#onMobExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
@@ -264,7 +264,7 @@ public class FlyingMobEventsTest {
         List<Block> affectedBlocks = new ArrayList<>();
         affectedBlocks.add(block);
         // Create event
-        EntityExplodeEvent e = new EntityExplodeEvent(le, mock(Location.class), affectedBlocks, 0);   
+        EntityExplodeEvent e = new EntityExplodeEvent(le, mock(Location.class), affectedBlocks, 0);
         // Blocked
         assertTrue(fme.onMobExplosion(e));
         assertTrue(e.isCancelled());
@@ -291,12 +291,12 @@ public class FlyingMobEventsTest {
         fme.onMobSpawn(cee);
         // Make the wither explode
         // Create event
-        ExplosionPrimeEvent e = new ExplosionPrimeEvent(le, 0, false);   
+        ExplosionPrimeEvent e = new ExplosionPrimeEvent(le, 0, false);
         // Blocked
         assertTrue(fme.onWitherExplode(e));
         assertTrue(e.isCancelled());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.protection.FlyingMobEvents#onWitherExplode(org.bukkit.event.entity.ExplosionPrimeEvent)}.
      */
@@ -319,9 +319,9 @@ public class FlyingMobEventsTest {
         Projectile skull = mock(Projectile.class);
         when(skull.getType()).thenReturn(EntityType.WITHER_SKULL);
         when(skull.getShooter()).thenReturn(wither);
-        
+
         // Create event
-        ExplosionPrimeEvent e = new ExplosionPrimeEvent(skull, 0, false);   
+        ExplosionPrimeEvent e = new ExplosionPrimeEvent(skull, 0, false);
         // Blocked
         assertTrue(fme.onWitherExplode(e));
         assertTrue(e.isCancelled());
@@ -347,14 +347,13 @@ public class FlyingMobEventsTest {
         fme.onMobSpawn(cee);
         // Create event
         /**
-        *
-        * @param what the Entity causing the change
-        * @param block the block (before the change)
-        * @param to the future material being changed to
-        * @param data the future block data
-        * @deprecated Magic value
-        */
-        @SuppressWarnings("deprecation")
+         *
+         * @param what the Entity causing the change
+         * @param block the block (before the change)
+         * @param to the future material being changed to
+         * @param data the future block data
+         * @deprecated Magic value
+         */
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(wither, mock(Block.class), Material.AIR.createBlockData());
         // Blocked
         fme.onWitherChangeBlocks(e);
