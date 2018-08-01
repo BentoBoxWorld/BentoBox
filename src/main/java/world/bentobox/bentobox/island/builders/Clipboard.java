@@ -260,7 +260,9 @@ public class Clipboard {
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
         // Default type is air
-        Material material = Material.getMaterial(config.getString("type", "AIR"));
+        Material mat = Material.getMaterial(config.getString("type", "AIR"));
+        Material material = mat != null ? mat : Material.getMaterial(config.getString("type", "AIR"), true);
+        
         Block block = world.getBlockAt(x, y, z);
         if (config.getBoolean(ATTACHED)) {
             plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, material));

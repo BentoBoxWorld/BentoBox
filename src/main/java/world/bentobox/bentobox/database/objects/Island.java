@@ -260,7 +260,7 @@ public class Island implements DataObject {
 
     /**
      * Returns the island range.
-     * It is a convenience method that returns the exact same value than {@link Settings#getIslandDistance()}, although it has been saved into the Island object for easier access.
+     * It is a convenience method that returns the exact same value than island range, although it has been saved into the Island object for easier access.
      * @return the island range
      * @see #getProtectionRange()
      */
