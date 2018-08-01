@@ -1,5 +1,5 @@
 name: BentoBox
-main: world.bentobox.bbox.BentoBox
+main: world.bentobox.bentobox.BentoBox
 version: ${version}
 api-version: 1.13
 
