@@ -22,6 +22,7 @@ import org.bukkit.Material;
 import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
@@ -65,6 +66,7 @@ public class EndermanListenerTest {
     private static World world;
     private static Enderman enderman;
     private static Slime slime;
+    private BlockData bd;
 
     @Before
     public void setUp() {
@@ -111,7 +113,9 @@ public class EndermanListenerTest {
         enderman = mock(Enderman.class);
         when(enderman.getLocation()).thenReturn(location);
         when(enderman.getWorld()).thenReturn(world);
-        when(enderman.getCarriedBlock()).thenReturn(Material.STONE.createBlockData());
+        bd = mock(BlockData.class);
+        when(bd.getMaterial()).thenReturn(Material.STONE);
+        when(enderman.getCarriedBlock()).thenReturn(bd);
         slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
 
@@ -214,7 +218,7 @@ public class EndermanListenerTest {
      */
     @Test
     public void testOnEndermanDeathCarryAir() {
-        when(enderman.getCarriedBlock()).thenReturn(Material.AIR.createBlockData());
+        when(bd.getMaterial()).thenReturn(Material.AIR);
         EndermanListener listener = new EndermanListener();
         EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<ItemStack>());
         listener.onEndermanDeath(e);

@@ -51,7 +51,7 @@ public class EndermanListener extends AbstractFlagListener {
         // Get the block the enderman is holding
         Enderman ender = (Enderman) e.getEntity();
         BlockData m = ender.getCarriedBlock();
-        if (m != null && !m.getMaterial().equals(Material.AIR)) {
+        if (m != null && !m.getMaterial().equals(Material.AIR)) {            
             // Drop the item
             e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), new ItemStack(m.getMaterial()));
         }
