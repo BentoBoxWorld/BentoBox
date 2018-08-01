@@ -4,12 +4,13 @@
 package world.bentobox.bentobox.listeners.flags;
 
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Enderman;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.material.MaterialData;
+import org.bukkit.inventory.ItemStack;
 
 import world.bentobox.bentobox.api.flags.AbstractFlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -49,10 +50,10 @@ public class EndermanListener extends AbstractFlagListener {
         }
         // Get the block the enderman is holding
         Enderman ender = (Enderman) e.getEntity();
-        MaterialData m = ender.getCarriedMaterial();
-        if (m != null && !m.getItemType().equals(Material.AIR)) {
+        BlockData m = ender.getCarriedBlock();
+        if (m != null && !m.getMaterial().equals(Material.AIR)) {
             // Drop the item
-            e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), m.toItemStack(1));
+            e.getEntity().getWorld().dropItemNaturally(e.getEntity().getLocation(), new ItemStack(m.getMaterial()));
         }
     }
 
