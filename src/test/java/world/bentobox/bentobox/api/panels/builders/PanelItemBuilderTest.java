@@ -31,7 +31,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
-import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 
 @RunWith(PowerMockRunner.class)

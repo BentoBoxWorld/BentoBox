@@ -8,8 +8,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.api.flags.Flag.Type;
+import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.listeners.flags.BlockInteractionListener;
 import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.BreedingListener;

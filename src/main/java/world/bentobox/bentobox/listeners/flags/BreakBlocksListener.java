@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.listeners.flags;
 
 import org.bukkit.Material;
-import org.bukkit.World.Environment;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.ItemFrame;

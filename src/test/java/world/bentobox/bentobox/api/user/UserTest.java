@@ -36,8 +36,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.api.user.Notifier;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 

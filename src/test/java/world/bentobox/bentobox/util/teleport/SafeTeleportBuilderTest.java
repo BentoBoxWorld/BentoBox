@@ -21,8 +21,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.LocalesManager;
-import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
-import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SafeTeleportBuilder.class)

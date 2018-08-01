@@ -11,8 +11,6 @@ import java.util.UUID;
 
 import org.junit.Test;
 
-import world.bentobox.bentobox.database.objects.Names;
-
 /**
  * @author tastybento
  *

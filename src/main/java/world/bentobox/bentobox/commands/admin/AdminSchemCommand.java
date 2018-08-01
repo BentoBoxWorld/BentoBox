@@ -32,7 +32,6 @@ public class AdminSchemCommand extends CompositeCommand {
     }
 
     @Override
-    @SuppressWarnings("deprecation")
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             showHelp(this, user);
@@ -74,9 +73,9 @@ public class AdminSchemCommand extends CompositeCommand {
             Block b = user.getPlayer().getLineOfSight(null, 20).stream().filter(x -> !x.getType().equals(Material.AIR)).findFirst().orElse(null);
             if (b != null) {
                 cb.setOrigin(b.getLocation());
-                user.getPlayer().sendBlockChange(b.getLocation(), Material.STAINED_GLASS,(byte)14);
+                user.getPlayer().sendBlockChange(b.getLocation(), Material.REDSTONE_BLOCK.createBlockData());
                 Bukkit.getScheduler().runTaskLater(getPlugin(),
-                        () -> user.getPlayer().sendBlockChange(b.getLocation(), b.getType(), b.getData()), 20L);
+                        () -> user.getPlayer().sendBlockChange(b.getLocation(), b.getBlockData()), 20L);
 
                 user.sendMessage("general.success");
                 return true;

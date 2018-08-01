@@ -17,7 +17,6 @@ import org.junit.Test;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
-import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento

@@ -1,15 +1,12 @@
 package world.bentobox.bentobox.util;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
-import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.PotionMeta;
-import org.bukkit.inventory.meta.SpawnEggMeta;
 import org.bukkit.potion.PotionData;
 import org.bukkit.potion.PotionType;
 
@@ -69,9 +66,10 @@ public class ItemParser {
         if (result == null) {
             return null;
         }
+        /*
         if (StringUtils.isNumeric(part[1])) {
             result.setDurability((short) Integer.parseInt(part[1]));
-        }
+        }*/
         return result;
     }
 

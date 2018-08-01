@@ -1,10 +1,9 @@
 package world.bentobox.bentobox.managers.island;
 
 import java.util.Map.Entry;
+import java.util.TreeMap;
 
 import world.bentobox.bentobox.database.objects.Island;
-
-import java.util.TreeMap;
 
 /**
  * Handles the island location grid for each world

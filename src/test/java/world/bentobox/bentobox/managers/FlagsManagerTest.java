@@ -36,8 +36,6 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {BentoBox.class, Flags.class, Bukkit.class} )
