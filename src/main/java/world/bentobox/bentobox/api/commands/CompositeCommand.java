@@ -119,6 +119,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (plugin.getCommand(label) == null) {
             plugin.getCommandsManager().registerCommand(this);
         }
+        // Default references to description and parameters
+        setDescription("commands." + label + ".description");
+        setParameters("commands." + label + ".parameters");
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
@@ -160,6 +163,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.permissionPrefix = parent.getPermissionPrefix();
         // Inherit world
         this.world = parent.getWorld();
+        // Default references to description and parameters
+        String reference = "";
+        for (CompositeCommand p = this ; p != null ; p = getParent()) {
+            reference = "." + p.getLabel() + reference;
+        }
+        reference = "commands" + reference;
+        setDescription(reference + ".description");
+        setParameters(reference + ".parameters");
         setup();
         // If this command does not define its own help class, then use the default help command
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
