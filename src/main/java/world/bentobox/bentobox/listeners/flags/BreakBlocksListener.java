@@ -63,7 +63,7 @@ public class BreakBlocksListener extends AbstractFlagListener {
             Block lastBlock = iter.next();
             while (iter.hasNext()) {
                 lastBlock = iter.next();
-                if (lastBlock.getType().equals(Material.SKULL)) {
+                if (lastBlock.getType().toString().endsWith("_SKULL") || (lastBlock.getType().toString().endsWith("_HEAD") && !lastBlock.getType().equals(Material.PISTON_HEAD))) {
                     checkIsland(e, lastBlock.getLocation(), Flags.BREAK_BLOCKS);
                     return;
                 }
@@ -71,16 +71,10 @@ public class BreakBlocksListener extends AbstractFlagListener {
         } catch (Exception ignored) {}
 
         switch (e.getClickedBlock().getType()) {
-        case CAKE_BLOCK:
+        case CAKE:
         case DRAGON_EGG:
-        case MOB_SPAWNER:
+        case SPAWNER:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
-            return;
-        case BED_BLOCK:
-            if (e.getPlayer().getWorld().getEnvironment().equals(Environment.NETHER)) {
-                // Prevent explosions checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
-                return;
-            }
             break;
         default:
             break;

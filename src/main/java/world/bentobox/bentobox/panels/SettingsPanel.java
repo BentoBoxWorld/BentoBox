@@ -64,7 +64,7 @@ public class SettingsPanel {
         }
 
         while(panelBuilder.nextSlot() < 9) {
-            panelBuilder.item(new PanelItemBuilder().icon(new ItemStack(Material.STAINED_GLASS_PANE, 1, (short) 15)).build());
+            panelBuilder.item(new PanelItemBuilder().icon(new ItemStack(Material.LIGHT_BLUE_STAINED_GLASS_PANE, 1)).build());
         }
     }
 }

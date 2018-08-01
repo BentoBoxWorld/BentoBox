@@ -128,7 +128,7 @@ public class Panel implements HeadRequester {
         items.values().stream().filter(i -> i.getName().equals(item.getName())).forEach(i -> i = item);
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack it = inventory.getItem(i);
-            if (it != null && it.getType().equals(Material.SKULL_ITEM)) {
+            if (it != null && it.getType().equals(Material.PLAYER_HEAD)) {
                 ItemMeta meta = it.getItemMeta();
                 if (item.getName().equals(meta.getLocalizedName())) {
                     inventory.setItem(i, item.getItem());

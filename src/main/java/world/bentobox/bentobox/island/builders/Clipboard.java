@@ -282,13 +282,13 @@ public class Clipboard {
             if (rel.isEmpty() || rel.isLiquid()) {
                 rel.setType(Material.STONE);
                 block.setType(material);
-                block.setBlockData(new BlockData(d.ordinal()));
+                // FIXME block.setBlockData(new BlockData(d.ordinal()));
                 // Set the block back to what it was
                 rel.setType(rm);
                 rel.setBlockData(data);
             } else {
                 block.setType(material);
-                block.setBlockData((byte)d.ordinal());
+                // FIXME block.setBlockData((byte)d.ordinal());
             }
             return;
         }
@@ -296,7 +296,7 @@ public class Clipboard {
         block.setType(material, false);
         // Set the block data
         byte data = (byte)config.getInt("data");
-        block.setBlockData(data);
+        // FIXME block.setBlockData(data);
 
         // Get the block state
         BlockState bs = block.getState();
@@ -505,10 +505,6 @@ public class Clipboard {
         if (md instanceof Colorable) {
             Colorable c = (Colorable)md;
             s.set(COLOR, c.getColor().name());
-        }
-        if (block.getType().equals(Material.CARPET)) {
-            DyeColor c = DyeColor.getByWoolData(block.getData());
-            s.set(COLOR, c.name());
         }
         if (md instanceof Redstone) {
             Redstone r = (Redstone)md;

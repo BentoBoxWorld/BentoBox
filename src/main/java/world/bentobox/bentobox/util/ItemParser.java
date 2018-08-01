@@ -55,12 +55,7 @@ public class ItemParser {
             return null;
         }
 
-        Material reqItem = Material.getMaterial(part[0].toUpperCase() + "_ITEM");
-        if (reqItem == null) {
-            // Try the item
-            reqItem = Material.getMaterial(part[0].toUpperCase());
-        }
-
+        Material reqItem = Material.getMaterial(part[0].toUpperCase());
         if (reqItem == null) {
             return null;
         }
@@ -76,12 +71,6 @@ public class ItemParser {
         }
         if (StringUtils.isNumeric(part[1])) {
             result.setDurability((short) Integer.parseInt(part[1]));
-        } else if (result.getType().equals(Material.MONSTER_EGG)) {
-            // Check if this is a string
-            EntityType entityType = EntityType.valueOf(part[1]);
-            SpawnEggMeta meta = ((SpawnEggMeta)result.getItemMeta());
-            meta.setSpawnedType(entityType);
-            result.setItemMeta(meta);
         }
         return result;
     }
@@ -130,13 +119,12 @@ public class ItemParser {
     private static ItemStack banner(String[] part) {
         try {
             if (part.length == 2) {
-                return new ItemStack(Material.BANNER, Integer.parseInt(part[1]));
+                return new ItemStack(Material.WHITE_BANNER, Integer.parseInt(part[1]));
             }
             if (part.length >= 3) {
                 int reqAmount = Integer.parseInt(part[1]);
 
-                @SuppressWarnings("deprecation")
-                ItemStack result = new ItemStack(Material.BANNER, reqAmount, DyeColor.valueOf(part[2]).getDyeData());
+                ItemStack result = new ItemStack(Material.getMaterial(part[2] + "_BANNER"), reqAmount);
 
                 BannerMeta meta = (BannerMeta) result.getItemMeta();
                 for (int i = 3; i < part.length; i += 2) {

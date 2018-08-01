@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags;
 
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -55,15 +56,15 @@ public class PlaceBlocksListener extends AbstractFlagListener {
             return;
         }
         switch (e.getClickedBlock().getType()) {
-        case FIREWORK:
+            case FIREWORK_ROCKET:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
             return;
-        case RAILS:
+        case RAIL:
         case POWERED_RAIL:
         case DETECTOR_RAIL:
         case ACTIVATOR_RAIL:
-            if (e.getMaterial() != null && (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.STORAGE_MINECART || e.getMaterial() == Material.HOPPER_MINECART
-            || e.getMaterial() == Material.EXPLOSIVE_MINECART || e.getMaterial() == Material.POWERED_MINECART)) {
+            if (e.getMaterial() != null && (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.CHEST_MINECART || e.getMaterial() == Material.HOPPER_MINECART
+            || e.getMaterial() == Material.TNT_MINECART || e.getMaterial() == Material.FURNACE_MINECART)) {
                 checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
             }
             return;
@@ -72,9 +73,9 @@ public class PlaceBlocksListener extends AbstractFlagListener {
             // This check protects against an exploit in 1.7.9 against cactus
             // and sugar cane and placing boats on non-liquids
             if (e.getMaterial() != null
-            && (e.getMaterial().equals(Material.END_CRYSTAL) || e.getMaterial().equals(Material.WOOD_DOOR)
+                    && (e.getMaterial().equals(Material.END_CRYSTAL) || Tag.DOORS.isTagged(e.getMaterial())
                     || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)
-                    || e.getMaterial().equals(Material.IRON_DOOR) || (e.getMaterial().name().contains("BOAT")
+                    || (e.getMaterial().name().contains("BOAT")
                             && !e.getClickedBlock().isLiquid()))) {
                 checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
             }

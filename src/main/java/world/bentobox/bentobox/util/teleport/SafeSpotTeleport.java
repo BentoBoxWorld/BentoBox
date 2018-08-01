@@ -273,6 +273,7 @@ public class SafeSpotTeleport {
                 case LEVER:
                     case TALL_GRASS:
                 case PISTON_HEAD:
+                    case MOVING_PISTON:
                 case SIGN:
                 case STONE_BUTTON:
                 case TORCH:
