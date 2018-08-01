@@ -29,8 +29,8 @@ public class BreedingListener extends AbstractFlagListener {
     private static final List<Material> BREEDING_ITEMS = Arrays.asList(
             Material.EGG,
             Material.WHEAT,
-            Material.CARROT_ITEM,
-            Material.SEEDS);
+            Material.CARROT,
+            Material.WHEAT_SEEDS);
 
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)

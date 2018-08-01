@@ -258,38 +258,30 @@ public class SafeSpotTeleport {
         if (!type.equals(Material.AIR)) { // AIR
             Material space1 = chunk.getBlockType(x, Math.min(y + 1, worldHeight), z);
             Material space2 = chunk.getBlockType(x, Math.min(y + 2, worldHeight), z);
-            if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) || (space1.equals(Material.PORTAL) && space2.equals(Material.PORTAL))
+            if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL))
                     && (!type.toString().contains("FENCE") && !type.toString().contains("DOOR") && !type.toString().contains("GATE") && !type.toString().contains("PLATE"))) {
                 switch (type) {
                 // Unsafe
                 case ANVIL:
                 case BARRIER:
-                case BOAT:
                 case CACTUS:
-                case DOUBLE_PLANT:
-                case ENDER_PORTAL:
+                case END_PORTAL:
                 case FIRE:
                 case FLOWER_POT:
                 case LADDER:
                 case LAVA:
                 case LEVER:
-                case LONG_GRASS:
-                case PISTON_EXTENSION:
-                case PISTON_MOVING_PIECE:
-                case SIGN_POST:
-                case SKULL:
-                case STANDING_BANNER:
-                case STATIONARY_LAVA:
-                case STATIONARY_WATER:
+                    case TALL_GRASS:
+                case PISTON_HEAD:
+                case SIGN:
                 case STONE_BUTTON:
                 case TORCH:
                 case TRIPWIRE:
                 case WATER:
-                case WEB:
-                case WOOD_BUTTON:
+                case COBWEB:
                     //Block is dangerous
                     break;
-                case PORTAL:
+                case NETHER_PORTAL:
                     if (portal) {
                         // A portal has been found, switch to non-portal mode now
                         portal = false;

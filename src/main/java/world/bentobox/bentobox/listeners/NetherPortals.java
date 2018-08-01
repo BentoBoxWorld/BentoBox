@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockState;
@@ -231,9 +232,9 @@ public class NetherPortals implements Listener {
             return false;
         }
         for (BlockState b : e.getBlocks()) {
-            if (b.getType() == Material.LOG || b.getType() == Material.LOG_2) {
+            if (Tag.LOGS.isTagged(b.getType())) {
                 b.setType(Material.GRAVEL);
-            } else if (b.getType() == Material.LEAVES || b.getType() == Material.LEAVES_2) {
+            } else if (Tag.LEAVES.isTagged(b.getType())) {
                 b.setType(Material.GLOWSTONE);
             }
         }

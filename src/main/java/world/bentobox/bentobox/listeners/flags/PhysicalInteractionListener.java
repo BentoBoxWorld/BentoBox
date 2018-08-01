@@ -29,14 +29,19 @@ public class PhysicalInteractionListener extends AbstractFlagListener {
             return;
         }
         switch (e.getClickedBlock().getType()) {
-        case SOIL:
+        case FARMLAND:
             // Crop trample
             checkIsland(e, e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
             break;
-        case WOOD_PLATE:
-        case STONE_PLATE:
-        case GOLD_PLATE:
-        case IRON_PLATE:
+            case ACACIA_PRESSURE_PLATE:
+            case BIRCH_PRESSURE_PLATE:
+            case DARK_OAK_PRESSURE_PLATE:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case JUNGLE_PRESSURE_PLATE:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case OAK_PRESSURE_PLATE:
+            case SPRUCE_PRESSURE_PLATE:
+            case STONE_PRESSURE_PLATE:
             // Pressure plates
             checkIsland(e, e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             break;
@@ -57,14 +62,24 @@ public class PhysicalInteractionListener extends AbstractFlagListener {
             setUser(User.getInstance((Player)p.getShooter()));
 
             switch(e.getBlock().getType()) {
-            case WOOD_BUTTON:
+                case ACACIA_BUTTON:
+                case BIRCH_BUTTON:
+                case JUNGLE_BUTTON:
+                case OAK_BUTTON:
+                case SPRUCE_BUTTON:
             case STONE_BUTTON:
+                case DARK_OAK_BUTTON:
                 checkIsland(e, e.getBlock().getLocation(), Flags.BUTTON);
                 break;
-            case WOOD_PLATE:
-            case STONE_PLATE:
-            case GOLD_PLATE:
-            case IRON_PLATE:
+                case ACACIA_PRESSURE_PLATE:
+                case BIRCH_PRESSURE_PLATE:
+                case DARK_OAK_PRESSURE_PLATE:
+                case HEAVY_WEIGHTED_PRESSURE_PLATE:
+                case JUNGLE_PRESSURE_PLATE:
+                case LIGHT_WEIGHTED_PRESSURE_PLATE:
+                case OAK_PRESSURE_PLATE:
+                case SPRUCE_PRESSURE_PLATE:
+                case STONE_PRESSURE_PLATE:
                 // Pressure plates
                 checkIsland(e, e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
                 break;

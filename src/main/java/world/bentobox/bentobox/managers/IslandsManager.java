@@ -187,13 +187,13 @@ public class IslandsManager {
         }
 
         // Portals are not "safe"
-        if (space1.getType() == Material.PORTAL || ground.getType() == Material.PORTAL || space2.getType() == Material.PORTAL
-                || space1.getType() == Material.ENDER_PORTAL || ground.getType() == Material.ENDER_PORTAL || space2.getType() == Material.ENDER_PORTAL) {
+        if (space1.getType() == Material.NETHER_PORTAL || ground.getType() == Material.NETHER_PORTAL || space2.getType() == Material.NETHER_PORTAL
+                || space1.getType() == Material.END_PORTAL || ground.getType() == Material.END_PORTAL || space2.getType() == Material.END_PORTAL) {
             return false;
         }
-        if (ground.getType().equals(Material.STATIONARY_LAVA) || ground.getType().equals(Material.LAVA)
-                || space1.getType().equals(Material.STATIONARY_LAVA) || space1.getType().equals(Material.LAVA)
-                || space2.getType().equals(Material.STATIONARY_LAVA) || space2.getType().equals(Material.LAVA)) {
+        if (ground.getType().equals(Material.LAVA)
+                || space1.getType().equals(Material.LAVA)
+                || space2.getType().equals(Material.LAVA)) {
             return false;
         }
 

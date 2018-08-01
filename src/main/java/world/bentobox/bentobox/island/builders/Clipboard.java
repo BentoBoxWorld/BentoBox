@@ -30,6 +30,7 @@ import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.block.banner.Pattern;
 import org.bukkit.block.banner.PatternType;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -277,17 +278,17 @@ public class Clipboard {
             // The block below has to be set to something solid for this to work
             Block rel = block.getRelative(BlockFace.DOWN);
             Material rm = rel.getType();
-            Byte data = rel.getData();
+            BlockData data = rel.getBlockData();
             if (rel.isEmpty() || rel.isLiquid()) {
                 rel.setType(Material.STONE);
                 block.setType(material);
-                block.setData((byte)d.ordinal());
+                block.setBlockData(new BlockData(d.ordinal()));
                 // Set the block back to what it was
                 rel.setType(rm);
-                rel.setData(data);
+                rel.setBlockData(data);
             } else {
                 block.setType(material);
-                block.setData((byte)d.ordinal());
+                block.setBlockData((byte)d.ordinal());
             }
             return;
         }
@@ -295,7 +296,7 @@ public class Clipboard {
         block.setType(material, false);
         // Set the block data
         byte data = (byte)config.getInt("data");
-        block.setData(data);
+        block.setBlockData(data);
 
         // Get the block state
         BlockState bs = block.getState();

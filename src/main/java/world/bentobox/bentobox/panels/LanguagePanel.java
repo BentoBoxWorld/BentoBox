@@ -32,7 +32,7 @@ public class LanguagePanel {
             if (localeBanner != null) {
                 localeIcon.icon(localeBanner);
             } else {
-                localeIcon.icon(new ItemStack(Material.BANNER, 1)); // Set to a blank banner.
+                localeIcon.icon(new ItemStack(Material.WHITE_BANNER, 1)); // Set to a blank banner.
             }
 
             localeIcon.name(fancyLocaleDisplayName(user, locale))
