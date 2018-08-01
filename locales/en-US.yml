@@ -563,6 +563,7 @@ protection:
           &con island.
       name: "Overworld PVP"
       hint: "&cPVP is not allowed"
+      active: "&cPVP is active here!"
     REDSTONE: 
       description: "Toggle use"
       name: "Redstone items"
