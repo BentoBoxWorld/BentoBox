@@ -356,7 +356,7 @@ public class FlyingMobEventsTest {
         * @deprecated Magic value
         */
         @SuppressWarnings("deprecation")
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(wither, mock(Block.class), Material.AIR, (byte) 0);
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(wither, mock(Block.class), Material.AIR.createBlockData());
         // Blocked
         fme.onWitherChangeBlocks(e);
         assertTrue(e.isCancelled());

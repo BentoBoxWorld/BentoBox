@@ -300,7 +300,7 @@ public class FireListenerTest {
         assertFalse(listener.onBlockIgnite(e));
 
         // Now set to something flammable
-        when(block.getType()).thenReturn(Material.WOOD);
+        when(block.getType()).thenReturn(Material.OAK_PLANKS);
 
         // Disallow fire
         when(island.isAllowed(Mockito.any())).thenReturn(false);

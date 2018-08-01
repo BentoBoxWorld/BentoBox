@@ -22,17 +22,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.AreaEffectCloud;
-import org.bukkit.entity.Creeper;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.LingeringPotion;
-import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Player;
-import org.bukkit.entity.Projectile;
-import org.bukkit.entity.ThrownPotion;
-import org.bukkit.entity.Witch;
-import org.bukkit.entity.Zombie;
+import org.bukkit.entity.*;
 import org.bukkit.event.entity.AreaEffectCloudApplyEvent;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
@@ -516,14 +506,13 @@ public class PVPListenerTest {
 
     }
 
-
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishing() {
         // Fish hook
-        Fish hook = mock(Fish.class);
+        FishHook hook = mock(FishHook.class);
         // Catch a zombie - fine
         Entity caught = mock(Zombie.class);
         PlayerFishEvent pfe = new PlayerFishEvent(player, caught, hook, null);
@@ -568,7 +557,7 @@ public class PVPListenerTest {
     @Test
     public void testOnFishingProtectVisitors() {
         // Fish hook
-        Fish hook = mock(Fish.class);
+        FishHook hook = mock(FishHook.class);
         // Catch a player
         PlayerFishEvent pfe = new PlayerFishEvent(player, player2, hook, null);
 
@@ -591,7 +580,7 @@ public class PVPListenerTest {
     @Test
     public void testOnFishingSelfDamage() {
         // Fish hook
-        Fish hook = mock(Fish.class);
+        FishHook hook = mock(FishHook.class);
         // Catch a player
         PlayerFishEvent pfe = new PlayerFishEvent(player, player, hook, null);
         assertFalse(pfe.isCancelled());
@@ -604,7 +593,7 @@ public class PVPListenerTest {
     @Test
     public void testOnFishingNoPVPProtectVisitors() {
         // Fish hook
-        Fish hook = mock(Fish.class);
+        FishHook hook = mock(FishHook.class);
         // Catch a player
         PlayerFishEvent pfe = new PlayerFishEvent(player, player2, hook, null);
 

@@ -43,15 +43,11 @@ public class ItemParserTest {
         PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
-        spawnEggMeta = mock(SpawnEggMeta.class);
-        when(itemFactory.getItemMeta(Mockito.eq(Material.MONSTER_EGG))).thenReturn(spawnEggMeta);
         potionMeta = mock(PotionMeta.class);
         when(itemFactory.getItemMeta(Mockito.eq(Material.POTION))).thenReturn(potionMeta);
         when(itemFactory.getItemMeta(Mockito.eq(Material.SPLASH_POTION))).thenReturn(potionMeta);
         when(itemFactory.getItemMeta(Mockito.eq(Material.LINGERING_POTION))).thenReturn(potionMeta);
         when(itemFactory.getItemMeta(Mockito.eq(Material.TIPPED_ARROW))).thenReturn(potionMeta);
-        bannerMeta = mock(BannerMeta.class);
-        when(itemFactory.getItemMeta(Mockito.eq(Material.BANNER))).thenReturn(bannerMeta);
     }
 
     @Test
@@ -201,7 +197,7 @@ public class ItemParserTest {
     @Test
     public void testParseBannerSimple() {
         ItemStack result = ItemParser.parse("BANNER:2");
-        assertEquals(Material.BANNER, result.getType());
+        assertEquals(Material.WHITE_BANNER, result.getType());
         assertEquals(2, result.getAmount());
     }
 
@@ -210,9 +206,8 @@ public class ItemParserTest {
     public void testParseBannerThreeArgs() {
         // Germany
         ItemStack result = ItemParser.parse("BANNER:1:RED");
-        assertEquals(Material.BANNER, result.getType());
+        assertEquals(Material.RED_BANNER, result.getType());
         assertEquals(1, result.getAmount());
-        assertEquals(new MaterialData(Material.BANNER, DyeColor.RED.getDyeData()), result.getData());
     }
 
     @Test
@@ -226,7 +221,7 @@ public class ItemParserTest {
     public void testParseBannerTooManyColons() {
         ItemStack result = ItemParser.parse("BANNER:1::::::::::::::");
         Mockito.verify(bannerMeta, Mockito.never()).addPattern(Mockito.any());
-        assertEquals(Material.BANNER, result.getType());
+        assertEquals(Material.WHITE_BANNER, result.getType());
         assertEquals(1, result.getAmount());
     }
 
@@ -238,24 +233,14 @@ public class ItemParserTest {
     }
 
     @Test
-    public void testParseTwoItemWithItemSuffixMissing() {
-        for (Material mat : Material.values()) {
-            if (mat.name().endsWith("_ITEM")) {
-                ItemStack r = ItemParser.parse(mat.name().replace("_ITEM", "") + ":3");
-                assertEquals(mat, r.getType());
-            }
-        }
-    }
-
-    @Test
     public void testParseBadTwoItem() {
         assertNull(ItemParser.parse("STNE:5"));
     }
 
     @Test
     public void testParseThreeItem() {
-        ItemStack result = ItemParser.parse("LOG:3:2");
-        assertEquals(Material.LOG, result.getType());
+        ItemStack result = ItemParser.parse("WOODEN_SWORD:3:2");
+        assertEquals(Material.WOODEN_SWORD, result.getType());
         assertEquals(2, result.getAmount());
         assertEquals((short)3, result.getDurability());
     }
@@ -263,23 +248,5 @@ public class ItemParserTest {
     @Test
     public void testParseBadThreeItem() {
         assertNull(ItemParser.parse("STNE:5:5"));
-    }
-
-    @Test
-    public void testParseThreeItemWithItemSuffixMissing() {
-        for (Material mat : Material.values()) {
-            if (mat.name().endsWith("_ITEM")) {
-                ItemStack r = ItemParser.parse(mat.name().replace("_ITEM", "") + ":3:2");
-                assertEquals(mat, r.getType());
-            }
-        }
-    }
-
-    @Test
-    public void testParseMonsterEgg() {
-        ItemStack result = ItemParser.parse("MONSTER_EGG:COW:2");
-        assertEquals(Material.MONSTER_EGG, result.getType());
-        assertEquals(2, result.getAmount());
-        Mockito.verify(spawnEggMeta).setSpawnedType(EntityType.COW);
     }
 }

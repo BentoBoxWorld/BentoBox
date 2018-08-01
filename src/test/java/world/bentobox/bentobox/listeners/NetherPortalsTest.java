@@ -709,13 +709,13 @@ public class NetherPortalsTest {
         // Wrong world to start
         when(loc.getWorld()).thenReturn(world);
         BlockState log = mock(BlockState.class);
-        when(log.getType()).thenReturn(Material.LOG);
+        when(log.getType()).thenReturn(Material.OAK_LOG);
         BlockState log2 = mock(BlockState.class);
-        when(log2.getType()).thenReturn(Material.LOG_2);
+        when(log2.getType()).thenReturn(Material.ACACIA_LOG);
         BlockState leaves = mock(BlockState.class);
-        when(leaves.getType()).thenReturn(Material.LEAVES);
+        when(leaves.getType()).thenReturn(Material.OAK_LEAVES);
         BlockState leaves2 = mock(BlockState.class);
-        when(leaves2.getType()).thenReturn(Material.LEAVES_2);
+        when(leaves2.getType()).thenReturn(Material.OAK_LEAVES);
         List<BlockState> blocks = new ArrayList<>();
         blocks.add(log);
         blocks.add(log2);
@@ -738,7 +738,6 @@ public class NetherPortalsTest {
         Mockito.verify(log2).setType(Material.GRAVEL);
         Mockito.verify(leaves).setType(Material.GLOWSTONE);
         Mockito.verify(leaves2).setType(Material.GLOWSTONE);
-
     }
 
 }

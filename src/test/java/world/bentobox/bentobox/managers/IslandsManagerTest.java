@@ -220,25 +220,25 @@ public class IslandsManagerTest {
     public void testIsSafeLocationPortals() {
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.PORTAL);
+        when(space2.getType()).thenReturn(Material.NETHER_PORTAL);
         assertFalse(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
         when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.ENDER_PORTAL);
+        when(space2.getType()).thenReturn(Material.END_PORTAL);
         assertFalse(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.PORTAL);
+        when(space1.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
         assertFalse(manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.STONE);
-        when(space1.getType()).thenReturn(Material.ENDER_PORTAL);
+        when(space1.getType()).thenReturn(Material.END_PORTAL);
         when(space2.getType()).thenReturn(Material.AIR);
         assertFalse(manager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.PORTAL);
+        when(ground.getType()).thenReturn(Material.NETHER_PORTAL);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
         assertFalse(manager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.ENDER_PORTAL);
+        when(ground.getType()).thenReturn(Material.END_PORTAL);
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
         assertFalse(manager.isSafeLocation(location));
@@ -261,18 +261,6 @@ public class IslandsManagerTest {
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.LAVA);
         assertFalse("In lava", manager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.STATIONARY_LAVA);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse("In lava", manager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.AIR);
-        when(space1.getType()).thenReturn(Material.STATIONARY_LAVA);
-        when(space2.getType()).thenReturn(Material.AIR);
-        assertFalse("In lava", manager.isSafeLocation(location));
-        when(ground.getType()).thenReturn(Material.AIR);
-        when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.STATIONARY_LAVA);
-        assertFalse("In lava", manager.isSafeLocation(location));
     }
 
     /**
@@ -280,7 +268,7 @@ public class IslandsManagerTest {
      */
     @Test
     public void testTrapDoor() {
-        when(ground.getType()).thenReturn(Material.TRAP_DOOR);
+        when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
 
         // Open trapdoor
         TrapDoor trapDoor = mock(TrapDoor.class);
@@ -309,12 +297,12 @@ public class IslandsManagerTest {
             assertFalse("Fence :" + m.toString(), manager.isSafeLocation(location));
         });
         // Signs
-        when(ground.getType()).thenReturn(Material.SIGN_POST);
+        when(ground.getType()).thenReturn(Material.SIGN);
         assertFalse("Sign", manager.isSafeLocation(location));
         when(ground.getType()).thenReturn(Material.WALL_SIGN);
         assertFalse("Sign", manager.isSafeLocation(location));
         // Bad Blocks
-        Material[] badMats = {Material.CACTUS, Material.BOAT};
+        Material[] badMats = {Material.CACTUS, Material.OAK_BOAT};
         Arrays.asList(badMats).forEach(m -> {
             when(ground.getType()).thenReturn(m);
             assertFalse("Bad mat :" + m.toString(), manager.isSafeLocation(location));
@@ -342,12 +330,12 @@ public class IslandsManagerTest {
         when(space2.getType()).thenReturn(Material.WALL_SIGN);
         assertTrue("Wall sign 2", manager.isSafeLocation(location));
 
-        when(space1.getType()).thenReturn(Material.SIGN_POST);
+        when(space1.getType()).thenReturn(Material.SIGN);
         when(space2.getType()).thenReturn(Material.AIR);
         assertTrue("Wall sign 1", manager.isSafeLocation(location));
 
         when(space1.getType()).thenReturn(Material.AIR);
-        when(space2.getType()).thenReturn(Material.SIGN_POST);
+        when(space2.getType()).thenReturn(Material.SIGN);
         assertTrue("Wall sign 2", manager.isSafeLocation(location));
     }
 
@@ -456,7 +444,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(java.util.UUID)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIsland(World, UUID)}.
      */
     @Test
     public void testGetIsland() {
@@ -497,7 +485,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandLocation(java.util.UUID)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandLocation(World, UUID)}.
      */
     @Test
     public void testGetIslandLocation() {
@@ -508,7 +496,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getLast()}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getLast(World)}.
      */
     @Test
     public void testGetLast() {
@@ -519,7 +507,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMembers(java.util.UUID)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMembers(World, UUID)}.
      * @throws Exception
      */
     @Test
@@ -572,7 +560,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(java.util.UUID, int)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSafeHomeLocation(World, User, int)}.
      */
     @Test
     public void testGetSafeHomeLocation() {
@@ -585,7 +573,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSpawnPoint()}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getSpawnPoint(World)}.
      */
     @Test
     public void testGetSpawnPoint() {
@@ -602,7 +590,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(org.bukkit.entity.Player, int)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(World, Player, int)}.
      */
     @Test
     public void testHomeTeleportPlayerInt() {
@@ -618,7 +606,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(org.bukkit.entity.Player, int)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(World, Player, int)}.
      */
     @Test
     public void testHomeTeleportPlayerIntDifferentGameMode() {
@@ -648,7 +636,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isOwner(java.util.UUID)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isOwner(World, UUID)}.
      * @throws Exception
      */
     @Test
@@ -753,7 +741,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(java.util.UUID)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(World, User)}.
      */
     @Test
     public void testRemovePlayer() {

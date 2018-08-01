@@ -152,9 +152,7 @@ public class EndermanListenerTest {
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;
-        byte data = 0;
-        @SuppressWarnings("deprecation")
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(slime, to, block, data);
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(slime, to, block.createBlockData());
         listener.onEndermanGrief(e);
         assertFalse(e.isCancelled());
     }
@@ -168,9 +166,7 @@ public class EndermanListenerTest {
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;
-        byte data = 0;
-        @SuppressWarnings("deprecation")
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block, data);
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block.createBlockData());
         listener.onEndermanGrief(e);
         assertFalse(e.isCancelled());
     }
@@ -184,9 +180,7 @@ public class EndermanListenerTest {
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;
-        byte data = 0;
-        @SuppressWarnings("deprecation")
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block, data);
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block.createBlockData());
         listener.onEndermanGrief(e);
         assertFalse(e.isCancelled());
     }
@@ -199,9 +193,7 @@ public class EndermanListenerTest {
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;
-        byte data = 0;
-        @SuppressWarnings("deprecation")
-        EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block, data);
+        EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block.createBlockData());
         listener.onEndermanGrief(e);
         assertTrue(e.isCancelled());
     }

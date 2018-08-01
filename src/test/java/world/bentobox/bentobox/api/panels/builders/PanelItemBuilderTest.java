@@ -96,7 +96,7 @@ public class PanelItemBuilderTest {
         assertNotNull(item.getItem().getType());
         SkullMeta skullMeta = (SkullMeta)item.getItem().getItemMeta();
         assertEquals("tastybento",skullMeta.getOwner());
-        assertEquals(Material.SKULL_ITEM, item.getItem().getType());
+        assertEquals(Material.PLAYER_HEAD, item.getItem().getType());
     }
 
     @Test
