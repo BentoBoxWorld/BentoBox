@@ -22,15 +22,9 @@ import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.block.Banner;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
-import org.bukkit.block.banner.Pattern;
-import org.bukkit.block.banner.PatternType;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -45,15 +39,7 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Attachable;
-import org.bukkit.material.Button;
 import org.bukkit.material.Colorable;
-import org.bukkit.material.Directional;
-import org.bukkit.material.Lever;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.Openable;
-import org.bukkit.material.Redstone;
-import org.bukkit.material.Stairs;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
@@ -64,22 +50,9 @@ import world.bentobox.bentobox.util.Util;
 
 public class Clipboard {
 
-    private enum TorchDir {
-        UNUSED,
-        EAST,
-        WEST,
-        SOUTH,
-        NORTH,
-        UP
-    }
-
     private static final String ATTACHED = "attached";
 
     private static final String BLOCK = "blocks";
-
-    private static final String FACING = "facing";
-
-    private static final String POWERED = "powered";
 
     private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
 
@@ -260,17 +233,13 @@ public class Clipboard {
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
 
-        // Default type is air
-        Material mat = Material.getMaterial(config.getString("type", "AIR"));
-        Material material = mat != null ? mat : Material.getMaterial(config.getString("type", "AIR"), true);
-
         Block block = world.getBlockAt(x, y, z);
         String blockData = config.getString("bd");
         if (blockData != null) {
             if (config.getBoolean(ATTACHED)) {
                 plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, blockData));
             } else {
-                
+
                 setBlock(island, block, config, blockData);
             }
         }
@@ -278,33 +247,6 @@ public class Clipboard {
 
     private void setBlock(Island island, Block block, ConfigurationSection config, String blockData) {
         block.setBlockData(Bukkit.createBlockData(blockData));
-        // Block state
-/*
-        if (config.getBoolean(ATTACHED) && material.toString().contains("TORCH")) {
-            TorchDir d = TorchDir.valueOf(config.getString(FACING));
-            // The block below has to be set to something solid for this to work
-            Block rel = block.getRelative(BlockFace.DOWN);
-            Material rm = rel.getType();
-            BlockData data = rel.getBlockData();
-            if (rel.isEmpty() || rel.isLiquid()) {
-                rel.setType(Material.STONE);
-                block.setType(material);
-                // FIXME block.setBlockData(new BlockData(d.ordinal()));
-                // Set the block back to what it was
-                rel.setType(rm);
-                rel.setBlockData(data);
-            } else {
-                block.setType(material);
-                // FIXME block.setBlockData((byte)d.ordinal());
-            }
-            return;
-        }
-        // Set the block type
-        block.setType(material, false);
-        // Set the block data
-        byte data = (byte)config.getInt("data");
-        // FIXME block.setBlockData(data);
-*/
         // Get the block state
         BlockState bs = block.getState();
         // Signs
@@ -312,69 +254,6 @@ public class Clipboard {
             List<String> lines = config.getStringList("lines");
             writeSign(island, block, lines);
         }
-        /*
-        // Material Data
-        MaterialData md = bs.getData();
-        if (md instanceof Openable) {
-            Openable open = (Openable)md;
-            open.setOpen(config.getBoolean("open"));
-        }
-
-        if (md instanceof Directional) {
-            Directional facing = (Directional)md;
-            if (md instanceof Stairs) {
-                Stairs stairs = (Stairs)md;
-                stairs.setInverted(config.getBoolean("inverted"));
-                stairs.setFacingDirection(BlockFace.valueOf(config.getString(FACING, "NORTH")));
-            } else {
-                facing.setFacingDirection(BlockFace.valueOf(config.getString(FACING, "NORTH")));
-            }
-        }
-
-        if (md instanceof Lever) {
-            Lever r = (Lever)md;
-            r.setPowered(config.getBoolean(POWERED));
-        }
-        if (md instanceof Button) {
-            Button r = (Button)md;
-            r.setPowered(config.getBoolean(POWERED));
-        }
-
-        // Block data
-        // Signs
-        if (bs instanceof Sign) {
-            List<String> lines = config.getStringList("lines");
-            writeSign(island, block, lines);
-        }
-        // Banners
-        if (bs instanceof Banner) {
-            Banner banner = (Banner)bs;
-            DyeColor baseColor = DyeColor.valueOf(config.getString("baseColor", "RED"));
-            banner.setBaseColor(baseColor);
-            int i = 0;
-            ConfigurationSection pat = config.getConfigurationSection("pattern");
-            if (pat != null) {
-                for (String pattern : pat.getKeys(false)) {
-                    banner.setPattern(i, new Pattern(DyeColor.valueOf(pat.getString(pattern, "GREEN"))
-                            , PatternType.valueOf(pattern)));
-                    i++;
-                }
-            }
-            bs.update(true, false);
-        }
-        // Mob spawners
-        if (bs instanceof CreatureSpawner) {
-            CreatureSpawner spawner = ((CreatureSpawner) bs);
-            spawner.setSpawnedType(EntityType.valueOf(config.getString("spawnedType", "PIG")));
-            spawner.setMaxNearbyEntities(config.getInt("maxNearbyEntities", 16));
-            spawner.setMaxSpawnDelay(config.getInt("maxSpawnDelay", 2*60*20));
-            spawner.setMinSpawnDelay(config.getInt("minSpawnDelay", 5*20));
-
-            spawner.setDelay(config.getInt("delay", -1));
-            spawner.setRequiredPlayerRange(config.getInt("requiredPlayerRange", 16));
-            spawner.setSpawnRange(config.getInt("spawnRange", 4));
-            bs.update(true, false);
-        }*/
         // Chests, in general
         if (bs instanceof InventoryHolder) {
             bs.update(true, false);
@@ -480,21 +359,16 @@ public class Clipboard {
             return true;
         }
 
+        // Set block data
         s.set("bd", block.getBlockData().getAsString());
 
-        // Set the block type
-        /*
-        s.set("type", block.getType().toString());
-        if (block.getData() != 0) {
-            s.set("data", block.getData());
-        }*/
         if (block.getType().equals(Material.BEDROCK)) {
             blockConfig.set(BEDROCK, x + "," + y + "," + z);
         }
-        
+
         // Block state
         BlockState bs = block.getState();
-
+        // Chests
         if (bs instanceof InventoryHolder) {
             InventoryHolder ih = (InventoryHolder)bs;
             for (int index = 0; index < ih.getInventory().getSize(); index++) {
@@ -504,74 +378,11 @@ public class Clipboard {
                 }
             }
         }
-        
+        // Signs
         if (bs instanceof Sign) {
             Sign sign = (Sign)bs;
             s.set("lines", Arrays.asList(sign.getLines()));
         }
-
-        /*
-        // Material Data
-        MaterialData md = bs.getData();
-        if (md instanceof Openable) {
-            Openable open = (Openable)md;
-            s.set("open", open.isOpen());
-        }
-        if (md instanceof Directional) {
-            if (md instanceof Stairs) {
-                Stairs stairs = (Stairs)md;
-                s.set("inverted", stairs.isInverted());
-                s.set(FACING, stairs.getAscendingDirection().name());
-            } else {
-                Directional facing = (Directional)md;
-                s.set(FACING, facing.getFacing().name());
-            }
-        }
-        if (md instanceof Attachable) {
-            Attachable facing = (Attachable)md;
-            s.set(FACING, facing.getFacing().name());
-            s.set("attached-face", facing.getAttachedFace().name());
-            s.set(ATTACHED, true);
-        }
-        if (md instanceof Colorable) {
-            Colorable c = (Colorable)md;
-            s.set(COLOR, c.getColor().name());
-        }
-        if (md instanceof Redstone) {
-            Redstone r = (Redstone)md;
-            blockConfig.set(POWERED, r.isPowered());
-        }
-
-        // Block data
-        if (bs instanceof Sign) {
-            Sign sign = (Sign)bs;
-            s.set("lines", Arrays.asList(sign.getLines()));
-        }
-        if (bs instanceof Banner) {
-            Banner banner = (Banner)bs;
-            s.set("baseColor", banner.getBaseColor().toString());
-            banner.getPatterns().forEach(p -> s.set("pattern." + p.getPattern().toString(), p.getColor().toString()));
-        }
-        if (bs instanceof InventoryHolder) {
-            InventoryHolder ih = (InventoryHolder)bs;
-            for (int index = 0; index < ih.getInventory().getSize(); index++) {
-                ItemStack i = ih.getInventory().getItem(index);
-                if (i != null) {
-                    s.set("inventory." + index, i);
-                }
-            }
-        }
-        if (bs instanceof CreatureSpawner) {
-            CreatureSpawner spawner = (CreatureSpawner)bs;
-            s.set("spawnedType",spawner.getSpawnedType().name());
-            s.set("delay", spawner.getDelay());
-            s.set("maxNearbyEntities", spawner.getMaxNearbyEntities());
-            s.set("maxSpawnDelay", spawner.getMaxSpawnDelay());
-            s.set("minSpawnDelay", spawner.getMinSpawnDelay());
-            s.set("requiredPlayerRange", spawner.getRequiredPlayerRange());
-            s.set("spawnRange", spawner.getSpawnRange());
-        }
-         */
         return true;
     }
 
