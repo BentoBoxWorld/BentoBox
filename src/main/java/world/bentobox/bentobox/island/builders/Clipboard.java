@@ -259,22 +259,27 @@ public class Clipboard {
         int x = location.getBlockX() + Integer.valueOf(pos[0]);
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
         int z = location.getBlockZ() + Integer.valueOf(pos[2]);
+
         // Default type is air
         Material mat = Material.getMaterial(config.getString("type", "AIR"));
         Material material = mat != null ? mat : Material.getMaterial(config.getString("type", "AIR"), true);
-        
+
         Block block = world.getBlockAt(x, y, z);
-        if (config.getBoolean(ATTACHED)) {
-            plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, material));
-        } else {
-            setBlock(island, block, config, material);
+        String blockData = config.getString("bd");
+        if (blockData != null) {
+            if (config.getBoolean(ATTACHED)) {
+                plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, blockData));
+            } else {
+                
+                setBlock(island, block, config, blockData);
+            }
         }
     }
 
-    @SuppressWarnings("deprecation")
-    private void setBlock(Island island, Block block, ConfigurationSection config, Material material) {
+    private void setBlock(Island island, Block block, ConfigurationSection config, String blockData) {
+        block.setBlockData(Bukkit.createBlockData(blockData));
         // Block state
-
+/*
         if (config.getBoolean(ATTACHED) && material.toString().contains("TORCH")) {
             TorchDir d = TorchDir.valueOf(config.getString(FACING));
             // The block below has to be set to something solid for this to work
@@ -299,9 +304,15 @@ public class Clipboard {
         // Set the block data
         byte data = (byte)config.getInt("data");
         // FIXME block.setBlockData(data);
-
+*/
         // Get the block state
         BlockState bs = block.getState();
+        // Signs
+        if (bs instanceof Sign) {
+            List<String> lines = config.getStringList("lines");
+            writeSign(island, block, lines);
+        }
+        /*
         // Material Data
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
@@ -363,7 +374,7 @@ public class Clipboard {
             spawner.setRequiredPlayerRange(config.getInt("requiredPlayerRange", 16));
             spawner.setSpawnRange(config.getInt("spawnRange", 4));
             bs.update(true, false);
-        }
+        }*/
         // Chests, in general
         if (bs instanceof InventoryHolder) {
             bs.update(true, false);
@@ -416,7 +427,6 @@ public class Clipboard {
 
     }
 
-    @SuppressWarnings("deprecation")
     private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
         if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
@@ -470,18 +480,37 @@ public class Clipboard {
             return true;
         }
 
+        s.set("bd", block.getBlockData().getAsString());
+
         // Set the block type
+        /*
         s.set("type", block.getType().toString());
         if (block.getData() != 0) {
             s.set("data", block.getData());
-        }
+        }*/
         if (block.getType().equals(Material.BEDROCK)) {
             blockConfig.set(BEDROCK, x + "," + y + "," + z);
         }
-
+        
         // Block state
         BlockState bs = block.getState();
 
+        if (bs instanceof InventoryHolder) {
+            InventoryHolder ih = (InventoryHolder)bs;
+            for (int index = 0; index < ih.getInventory().getSize(); index++) {
+                ItemStack i = ih.getInventory().getItem(index);
+                if (i != null) {
+                    s.set("inventory." + index, i);
+                }
+            }
+        }
+        
+        if (bs instanceof Sign) {
+            Sign sign = (Sign)bs;
+            s.set("lines", Arrays.asList(sign.getLines()));
+        }
+
+        /*
         // Material Data
         MaterialData md = bs.getData();
         if (md instanceof Openable) {
@@ -542,7 +571,7 @@ public class Clipboard {
             s.set("requiredPlayerRange", spawner.getRequiredPlayerRange());
             s.set("spawnRange", spawner.getSpawnRange());
         }
-
+         */
         return true;
     }
 
