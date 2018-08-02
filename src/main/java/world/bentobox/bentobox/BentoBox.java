@@ -5,6 +5,7 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import world.bentobox.bentobox.api.commands.MyCommand;
 import world.bentobox.bentobox.api.configuration.BSBConfig;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
@@ -64,6 +65,7 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void onEnable(){
+
         // Not loaded
         isLoaded = false;
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.
@@ -72,7 +74,6 @@ public class BentoBox extends JavaPlugin {
         // Save the default config from config.yml
         saveDefaultConfig();
         setInstance(this);
-
         // Load Flags
         flagsManager = new FlagsManager(instance);
 
@@ -99,51 +100,56 @@ public class BentoBox extends JavaPlugin {
 
         // Set up command manager
         commandsManager = new CommandsManager();
+        new MyCommand(); // Tab Complete works in-game and in console
+        getServer().getScheduler().runTask(this, () -> new MyCommand()); // Tab complete does not work in-game, only console
 
         // These items have to be loaded when the server has done 1 tick.
         // Note Worlds are not loaded this early, so any Locations or World reference will be null
         // at this point. Therefore, the 1 tick scheduler is required.
-        getServer().getScheduler().runTask(this, () -> {
-            // Create the world if it does not exist
-            islandWorldManager = new IslandWorldManager(instance);
-            // Load schems manager
-            schemsManager = new SchemsManager(instance);
+        //getServer().getScheduler().runTask(this, () -> {
+        // Create the world if it does not exist
+        islandWorldManager = new IslandWorldManager(instance);
+        // Load schems manager
+        schemsManager = new SchemsManager(instance);
 
-            // Locales manager must be loaded before addons
-            localesManager = new LocalesManager(instance);
-            PlaceholderHandler.register(instance);
+        // Locales manager must be loaded before addons
+        localesManager = new LocalesManager(instance);
+        PlaceholderHandler.register(instance);
 
-            // Load addons. Addons may load worlds, so they must go before islands are loaded.
-            addonsManager = new AddonsManager(instance);
-            addonsManager.loadAddons();
-            // Enable addons
-            addonsManager.enableAddons();
+        // Load addons. Addons may load worlds, so they must go before islands are loaded.
+        addonsManager = new AddonsManager(instance);
+        addonsManager.loadAddons();
+        // Enable addons
+        addonsManager.enableAddons();
 
-            getServer().getScheduler().runTask(instance, () -> {
-                // Register Listeners
-                registerListeners();
+        getServer().getScheduler().runTask(instance, () -> {
+            // Register Listeners
+            registerListeners();
 
-                // Load islands from database - need to wait until all the worlds are loaded
-                islandsManager.load();
+            // Load islands from database - need to wait until all the worlds are loaded
+            islandsManager.load();
 
-                // Save islands & players data asynchronously every X minutes
-                instance.getServer().getScheduler().runTaskTimer(instance, () -> {
-                    playersManager.save(true);
-                    islandsManager.save(true);
-                }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
-                isLoaded = true;
-                flagsManager.registerListeners();
-                instance.log("#############################################");
-                instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
-                instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
-                instance.log("Thanks for using our plugin !");
-                instance.log("- Tastybento and Poslovitch, 2017-2018");
-                instance.log("#############################################");
+            // Save islands & players data asynchronously every X minutes
+            instance.getServer().getScheduler().runTaskTimer(instance, () -> {
+                playersManager.save(true);
+                islandsManager.save(true);
+            }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
+            isLoaded = true;
+            flagsManager.registerListeners();
+            instance.log("#############################################");
+            instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
+            instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
+            instance.log("Thanks for using our plugin !");
+            instance.log("- Tastybento and Poslovitch, 2017-2018");
+            instance.log("#############################################");
 
-                // Fire plugin ready event
-                Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
-            });
+            // Fire plugin ready event
+            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+
+
+
         });
+        // });
     }
 
     /**

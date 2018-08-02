@@ -105,7 +105,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param aliases - aliases
      */
     public CompositeCommand(Addon addon, String label, String... aliases) {
-        super(label);
+        super(label, "", "", Arrays.asList(aliases));
         this.addon = addon;
         this.topLabel = label;
         this.plugin = BentoBox.getInstance();
@@ -144,7 +144,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param aliases - aliases for this subcommand
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
-        super(label);
+        super(label, "", "", Arrays.asList(aliases));
         this.topLabel = parent.getTopLabel();
         this.plugin = BentoBox.getInstance();
         this.parent = parent;
@@ -478,6 +478,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     @Override
     public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
+        Bukkit.getLogger().info("DEBUG tab complete called");
         List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
         CompositeCommand cmd = getCommandFromArgs(args);
