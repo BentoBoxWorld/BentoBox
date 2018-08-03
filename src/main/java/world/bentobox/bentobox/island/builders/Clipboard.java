@@ -24,6 +24,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -263,6 +264,19 @@ public class Clipboard {
                 inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
             }
         }
+        // Mob spawners
+        if (bs instanceof CreatureSpawner) {
+            CreatureSpawner spawner = ((CreatureSpawner) bs);
+            spawner.setSpawnedType(EntityType.valueOf(config.getString("spawnedType", "PIG")));
+            spawner.setMaxNearbyEntities(config.getInt("maxNearbyEntities", 16));
+            spawner.setMaxSpawnDelay(config.getInt("maxSpawnDelay", 2*60*20));
+            spawner.setMinSpawnDelay(config.getInt("minSpawnDelay", 5*20));
+
+            spawner.setDelay(config.getInt("delay", -1));
+            spawner.setRequiredPlayerRange(config.getInt("requiredPlayerRange", 16));
+            spawner.setSpawnRange(config.getInt("spawnRange", 4));
+            bs.update(true, false);
+        }
 
         // Entities
         if (config.isConfigurationSection(ENTITY)) {
@@ -382,6 +396,16 @@ public class Clipboard {
         if (bs instanceof Sign) {
             Sign sign = (Sign)bs;
             s.set("lines", Arrays.asList(sign.getLines()));
+        }
+        if (bs instanceof CreatureSpawner) {
+            CreatureSpawner spawner = (CreatureSpawner)bs;
+            s.set("spawnedType",spawner.getSpawnedType().name());
+            s.set("delay", spawner.getDelay());
+            s.set("maxNearbyEntities", spawner.getMaxNearbyEntities());
+            s.set("maxSpawnDelay", spawner.getMaxSpawnDelay());
+            s.set("minSpawnDelay", spawner.getMinSpawnDelay());
+            s.set("requiredPlayerRange", spawner.getRequiredPlayerRange());
+            s.set("spawnRange", spawner.getSpawnRange());
         }
         return true;
     }
