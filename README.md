@@ -1,7 +1,7 @@
 BentoBox
 ========
 
-[![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/bentobox)](https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/)
+[![Build Status](https://travis-ci.org/tastybento/bskyblock.svg?branch=master)](https://travis-ci.org/tastybento/bskyblock)
 ![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=ncloc)
 ![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=sqale_rating)
 ![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=reliability_rating)
@@ -32,7 +32,7 @@ This is an actively developed project but we are not currently accepting Pull Re
 
 Development Builds
 ==================
-Jenkins: https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/
+Jenkins: https://ci.codemc.org/job/Tastybento/job/bskyblock/
 
 API
 ===
@@ -47,12 +47,12 @@ Maven dependency:
 
 <dependencies>
   <dependency>
-    <groupId>world.bentobox</groupId>
-    <artifactId>bentobox</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <groupId>us.tastybento</groupId>
+    <artifactId>bskyblock</artifactId>
+    <version>FC-0.74</version>
     <scope>provided</scope>
   </dependency>
 </dependencies>
 ```
 
-You can find the javadoc here: https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/javadoc/
+You can find the javadoc here: https://ci.codemc.org/job/Tastybento/job/bskyblock/javadoc/

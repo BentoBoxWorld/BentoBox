@@ -1,6 +1,6 @@
 name: BentoBox
 main: world.bentobox.bentobox.BentoBox
-version: ${project.version}
+version: ${version}
 api-version: 1.13
 
 authors: [tastybento, Poslovitch]
