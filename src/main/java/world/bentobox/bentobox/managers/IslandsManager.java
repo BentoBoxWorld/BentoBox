@@ -14,14 +14,13 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.SimpleAttachableMaterialData;
-import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
@@ -197,17 +196,12 @@ public class IslandsManager {
             return false;
         }
 
-        MaterialData md = ground.getState().getData();
-        if (md instanceof SimpleAttachableMaterialData) {
-            if (md instanceof TrapDoor) {
-                TrapDoor trapDoor = (TrapDoor) md;
-                if (trapDoor.isOpen()) {
-                    return false;
-                }
-            } else {
-                return false;
-            }
+        // Check for trapdoors
+        BlockData bd = ground.getBlockData();
+        if (bd instanceof Openable) {
+            return !((Openable)bd).isOpen();
         }
+
         if (ground.getType().equals(Material.CACTUS) || ground.getType().toString().contains("BOAT") || ground.getType().toString().contains("FENCE")
                 || ground.getType().equals(Material.SIGN) || ground.getType().equals(Material.WALL_SIGN)) {
             return false;

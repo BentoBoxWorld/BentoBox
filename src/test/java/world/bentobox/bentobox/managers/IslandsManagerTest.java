@@ -27,6 +27,8 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Cow;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
@@ -35,8 +37,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
-import org.bukkit.material.MaterialData;
-import org.bukkit.material.TrapDoor;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
@@ -146,8 +146,8 @@ public class IslandsManagerTest {
         // Neutral BlockState
         blockState = mock(BlockState.class);
         when(ground.getState()).thenReturn(blockState);
-        MaterialData md = mock(MaterialData.class);
-        when(blockState.getData()).thenReturn(md);
+        BlockData bd = mock(BlockData.class);
+        when(blockState.getBlockData()).thenReturn(bd);
 
         // Online players
         // Return a set of online players
@@ -271,9 +271,9 @@ public class IslandsManagerTest {
         when(ground.getType()).thenReturn(Material.OAK_TRAPDOOR);
 
         // Open trapdoor
-        TrapDoor trapDoor = mock(TrapDoor.class);
+        Openable trapDoor = mock(Openable.class);
         when(trapDoor.isOpen()).thenReturn(true);
-        when(blockState.getData()).thenReturn(trapDoor);
+        when(ground.getBlockData()).thenReturn(trapDoor);
 
         assertFalse("Open trapdoor", manager.isSafeLocation(location));
 
