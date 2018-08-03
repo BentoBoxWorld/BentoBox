@@ -5,7 +5,6 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import world.bentobox.bentobox.api.commands.MyCommand;
 import world.bentobox.bentobox.api.configuration.BSBConfig;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
@@ -100,13 +99,7 @@ public class BentoBox extends JavaPlugin {
 
         // Set up command manager
         commandsManager = new CommandsManager();
-        new MyCommand(); // Tab Complete works in-game and in console
-        getServer().getScheduler().runTask(this, () -> new MyCommand()); // Tab complete does not work in-game, only console
 
-        // These items have to be loaded when the server has done 1 tick.
-        // Note Worlds are not loaded this early, so any Locations or World reference will be null
-        // at this point. Therefore, the 1 tick scheduler is required.
-        //getServer().getScheduler().runTask(this, () -> {
         // Create the world if it does not exist
         islandWorldManager = new IslandWorldManager(instance);
         // Load schems manager
@@ -149,7 +142,6 @@ public class BentoBox extends JavaPlugin {
 
 
         });
-        // });
     }
 
     /**
