@@ -25,7 +25,6 @@ import org.bukkit.material.TrapDoor;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Constants;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.BSBDatabase;
 import world.bentobox.bentobox.database.objects.Island;
@@ -42,6 +41,8 @@ import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
  * @author tastybento
  */
 public class IslandsManager {
+
+    private static final String SPAWNCOMMAND = "spawn";
 
     private BentoBox plugin;
 
@@ -680,7 +681,7 @@ public class IslandsManager {
                         // go to island spawn
                         player.teleport(spawn.get(island.getWorld()).getSpawnPoint(island.getWorld().getEnvironment()));
                     } else {
-                        if (!player.performCommand(Constants.SPAWNCOMMAND)) {
+                        if (!player.performCommand(SPAWNCOMMAND)) {
                             plugin.logWarning("During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
                         }
                     }
