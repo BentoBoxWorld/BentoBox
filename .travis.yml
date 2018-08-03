@@ -1,23 +1,19 @@
 language: java
 sudo: false
-install: true
-before_install:
-- sed -i.bak -e 's|https://nexus.codehaus.org/snapshots/|https://oss.sonatype.org/content/repositories/codehaus-snapshots/|g'
-  ~/.m2/settings.xml
 addons:
-  sonarcloud:
-    organization: "tastybento-github"
-    token:
-      secure: $SONAR_TOKEN
-    branches:
-      - develop
-      - master
+    sonarcloud:
+        organization: "tastybento-github"
+        token:
+            secure: $SONAR_TOKEN
+        branches:
+            - develop
+            - master
 jdk:
-  - oraclejdk8
+    - oraclejdk8
 script:
-  - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package sonar:sonar
-  - echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
+    - mvn clean package -P sonar -B
+    - echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
 cache:
-  directories:
-    - '$HOME/.m2/repository'
-    - '$HOME/.sonar/cache'
+    directories:
+        - '$HOME/.m2/repository'
+        - '$HOME/.sonar/cache'
