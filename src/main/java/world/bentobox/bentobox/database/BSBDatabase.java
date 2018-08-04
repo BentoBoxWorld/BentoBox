@@ -20,16 +20,14 @@ public class BSBDatabase<T> {
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
 
-    @SuppressWarnings("unchecked")
     public BSBDatabase(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = (AbstractDatabaseHandler<T>) BSBDbSetup.getDatabase().getHandler(type);
+        handler = BSBDbSetup.getDatabase().getHandler(type);
     }
 
-    @SuppressWarnings("unchecked")
     public BSBDatabase(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = (AbstractDatabaseHandler<T>) BSBDbSetup.getDatabase().getHandler(type);
+        handler = BSBDbSetup.getDatabase().getHandler(type);
 
     }
 

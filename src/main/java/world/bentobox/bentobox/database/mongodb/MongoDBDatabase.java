@@ -8,7 +8,7 @@ import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 public class MongoDBDatabase extends BSBDbSetup{
 
     @Override
-    public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
+    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         BentoBox plugin = BentoBox.getInstance();
         // Check if the MongoDB plugin exists
         if (plugin.getServer().getPluginManager().getPlugin("BsbMongo") == null) {

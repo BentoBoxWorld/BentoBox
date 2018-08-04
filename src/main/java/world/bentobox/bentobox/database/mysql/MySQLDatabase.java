@@ -7,8 +7,12 @@ import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
 public class MySQLDatabase extends BSBDbSetup{
 
+
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.BSBDbSetup#getHandler(java.lang.Class)
+     */
     @Override
-    public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
+    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         BentoBox plugin = BentoBox.getInstance();
         return new MySQLDatabaseHandler<>(plugin, type, new MySQLDatabaseConnecter(new DatabaseConnectionSettingsImpl(
                 plugin.getSettings().getDbHost(),

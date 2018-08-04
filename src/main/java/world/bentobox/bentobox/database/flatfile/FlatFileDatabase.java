@@ -6,18 +6,19 @@ import world.bentobox.bentobox.database.BSBDbSetup;
 
 public class FlatFileDatabase extends BSBDbSetup{
 
-    @Override
-    public AbstractDatabaseHandler<?> getHandler(Class<?> type) {
-        return new FlatFileDatabaseHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnecter(BentoBox.getInstance()));
-    }
-    
     /**
      * Get the config
+     * @param <T> - Class type
      * @param type - config object type
      * @return - the config handler
      */
-    public AbstractDatabaseHandler<?> getConfig(Class<?> type) {
+    public <T> AbstractDatabaseHandler<T> getConfig(Class<T> type) {
         return new ConfigHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnecter(BentoBox.getInstance()));
+    }
+
+    @Override
+    public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
+        return new FlatFileDatabaseHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnecter(BentoBox.getInstance()));
     }
 
 }

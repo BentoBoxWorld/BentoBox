@@ -22,16 +22,14 @@ public class BSBConfig<T> {
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
 
-    @SuppressWarnings("unchecked")
     public BSBConfig(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(type);
+        handler = new FlatFileDatabase().getHandler(type);
     }
 
-    @SuppressWarnings("unchecked")
     public BSBConfig(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = (AbstractDatabaseHandler<T>) new FlatFileDatabase().getHandler(type);
+        handler = new FlatFileDatabase().getHandler(type);
     }
 
     /**

@@ -25,7 +25,7 @@ public abstract class BSBDbSetup {
         FLATFILE(new FlatFileDatabase()),
         MYSQL(new MySQLDatabase()),
         MONGO(new MongoDBDatabase());
-        
+
         BSBDbSetup database;
 
         DatabaseType(BSBDbSetup database){
@@ -35,9 +35,10 @@ public abstract class BSBDbSetup {
 
     /**
      * Gets a database handler that will store and retrieve classes of type dataObjectClass
+     * @param <T> - Class type
      * @param dataObjectClass - class of the object to be stored in the database
      * @return handler for this database object
      */
-    public abstract AbstractDatabaseHandler<?> getHandler(Class<?> dataObjectClass);
+    public abstract <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass);
 
 }
