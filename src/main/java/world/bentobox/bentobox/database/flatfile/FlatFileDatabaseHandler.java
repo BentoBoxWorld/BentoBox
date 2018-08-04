@@ -121,11 +121,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Check if there is an annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             // If there is a config annotation then do something
-            if (configEntry != null) {
-                if (!configEntry.path().isEmpty()) {
-                    storageLocation = configEntry.path();
-                }
-                // TODO: Add handling of other ConfigEntry elements
+            if (configEntry != null && !configEntry.path().isEmpty()) {
+                storageLocation = configEntry.path();
             }
             Adapter adapterNotation = field.getAnnotation(Adapter.class);
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
@@ -279,12 +276,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Check if there is an annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             // If there is a config path annotation then do something
-            if (configEntry != null) {
-                if (!configEntry.path().isEmpty()) {
-                    storageLocation = configEntry.path();
-                }
-                // TODO: add in game-specific saving
-
+            if (configEntry != null && !configEntry.path().isEmpty()) {
+                storageLocation = configEntry.path();
             }
 
             // Get path for comments

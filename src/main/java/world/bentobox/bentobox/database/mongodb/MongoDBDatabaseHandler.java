@@ -98,13 +98,10 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public T loadObject(String uniqueId) {
         Document doc = collection.find(new Document(MONGO_ID, uniqueId)).limit(1).first();
-        if (doc != null) {
-            Gson gson = getGSON();
-            String json = JSON.serialize(doc).replaceFirst(MONGO_ID, UNIQUEID);
-            // load single object
-            return gson.fromJson(json, dataObject);
-        }
-        return null;
+        Gson gson = getGSON();
+        String json = JSON.serialize(doc).replaceFirst(MONGO_ID, UNIQUEID);
+        // load single object
+        return gson.fromJson(json, dataObject);
     }
 
     @Override

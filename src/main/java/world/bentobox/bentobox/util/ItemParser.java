@@ -66,10 +66,6 @@ public class ItemParser {
         if (result == null) {
             return null;
         }
-        /*
-        if (StringUtils.isNumeric(part[1])) {
-            result.setDurability((short) Integer.parseInt(part[1]));
-        }*/
         return result;
     }
 
