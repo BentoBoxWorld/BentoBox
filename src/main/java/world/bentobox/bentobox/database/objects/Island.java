@@ -19,7 +19,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
@@ -514,7 +514,9 @@ public class Island implements DataObject {
      * Sets the island range.
      * This method should <u><strong>NEVER</strong></u> be used except for testing purposes.
      * <br>
-     * The range value is a copy of {@link Settings#getIslandDistance()} made when the Island got created in order to allow easier access to this value and must therefore remain <u><strong>AS IS</strong></u>.
+     * The range value is a copy of {@link WorldSettings#getIslandDistance()} made when the Island
+     * got created in order to allow easier access to this value and must therefore remain
+     * <u><strong>AS IS</strong></u>.
      * @param range the range to set
      * @see #setProtectionRange(int)
      */

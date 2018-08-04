@@ -12,7 +12,7 @@ import org.bukkit.block.Block;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.island.builders.Clipboard;
+import world.bentobox.bentobox.schems.Clipboard;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminSchemCommand extends CompositeCommand {
@@ -42,7 +42,7 @@ public class AdminSchemCommand extends CompositeCommand {
 
         if (args.get(0).equalsIgnoreCase("paste")) {
             if (cb.isFull()) {
-                cb.paste(user.getLocation());
+                cb.pasteClipboard(user.getLocation());
                 user.sendMessage("general.success");
                 return true;
             } else {

@@ -12,7 +12,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.island.builders.Clipboard;
+import world.bentobox.bentobox.schems.Clipboard;
 
 public class SchemsManager {
 
@@ -95,7 +95,7 @@ public class SchemsManager {
      */
     public void paste(World world, Island island, Runnable task) {
         if (islandSchems.containsKey(world)) {
-            islandSchems.get(world).paste(world, island, task);
+            islandSchems.get(world).pasteIsland(world, island, task);
         } else {
             plugin.logError("Tried to paste schem for " + world.getName() + " but it is not loaded!");
         }

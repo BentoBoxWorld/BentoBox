@@ -559,10 +559,9 @@ public class IslandWorldManager {
     }
 
     /**
-     * The data folder for the addon that registered this world, or the plugin's
-     * data folder if none found
+     * Get data folder for the addon that registered this world
      *
-     * @return
+     * @return data folder file object or the plugin's data folder if none found
      */
     public File getDataFolder(World world) {
         return worldSettings.get(Util.getWorld(world)).getAddon().map(Addon::getDataFolder)

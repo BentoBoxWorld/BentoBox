@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.island.builders;
+package world.bentobox.bentobox.schems;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -178,7 +178,7 @@ public class Clipboard {
      * @param island - location to paste
      * @param task - task to run after pasting
      */
-    public void paste(World world, Island island, Runnable task) {
+    public void pasteIsland(World world, Island island, Runnable task) {
         // Offset due to bedrock
         Vector off = new Vector(0,0,0);
         if (blockConfig.contains(BEDROCK)) {
@@ -199,7 +199,7 @@ public class Clipboard {
      * Paste clipboard at this location
      * @param location
      */
-    public void paste(Location location) {
+    public void pasteClipboard(Location location) {
         blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
 
     }
@@ -247,7 +247,69 @@ public class Clipboard {
     }
 
     private void setBlock(Island island, Block block, ConfigurationSection config, String blockData) {
+        // Set the block data
         block.setBlockData(Bukkit.createBlockData(blockData));
+        // Set the block state for chests, signs and mob spawners
+        setBlockState(island, block, config);
+        // Set entities
+        if (config.isConfigurationSection(ENTITY)) {
+            setEntity(island, block.getLocation(), config);
+        }
+    }
+
+    /**
+     * Sets any entity that is in this location
+     * @param island
+     * @param block
+     * @param config
+     */
+    private void setEntity(Island island, Location location, ConfigurationSection config) {
+        ConfigurationSection en = config.getConfigurationSection(ENTITY);
+        en.getKeys(false).forEach(k -> {
+            ConfigurationSection ent = en.getConfigurationSection(k);
+            Location center = location.add(new Vector(0.5, 0.0, 0.5));
+            LivingEntity e = (LivingEntity)island.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
+            if (e != null) {
+                e.setCustomName(ent.getString("name"));
+            }
+            if (e instanceof Colorable && ent.contains(COLOR)) {
+                ((Colorable) e).setColor(DyeColor.valueOf(ent.getString(COLOR)));
+            }
+            if (e instanceof Tameable) {
+                ((Tameable)e).setTamed(ent.getBoolean("tamed"));
+            }
+            if (e instanceof ChestedHorse) {
+                ((ChestedHorse)e).setCarryingChest(ent.getBoolean("chest"));
+            }
+            if (e instanceof Ageable) {
+                if (ent.getBoolean("adult")) {
+                    ((Ageable)e).setAdult();
+                } else {
+                    ((Ageable)e).setBaby();
+                }
+            }
+            if (e instanceof AbstractHorse) {
+                AbstractHorse horse = (AbstractHorse)e;
+                horse.setDomestication(ent.getInt("domestication"));
+                ConfigurationSection inv = ent.getConfigurationSection(INVENTORY);
+                inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+            }
+
+            if (e instanceof AbstractHorse) {
+                Horse horse = (Horse)e;
+                horse.setStyle(Horse.Style.valueOf(ent.getString("style", "NONE")));
+            }
+        });
+
+    }
+
+    /**
+     * Handles signs, chests and mob spawner blocks
+     * @param island - island
+     * @param block - block
+     * @param config - config
+     */
+    private void setBlockState(Island island, Block block, ConfigurationSection config) {
         // Get the block state
         BlockState bs = block.getState();
         // Signs
@@ -277,47 +339,6 @@ public class Clipboard {
             spawner.setSpawnRange(config.getInt("spawnRange", 4));
             bs.update(true, false);
         }
-
-        // Entities
-        if (config.isConfigurationSection(ENTITY)) {
-            ConfigurationSection en = config.getConfigurationSection(ENTITY);
-            en.getKeys(false).forEach(k -> {
-                ConfigurationSection ent = en.getConfigurationSection(k);
-                Location center = block.getLocation().add(new Vector(0.5, 0.0, 0.5));
-                LivingEntity e = (LivingEntity)block.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
-                if (e != null) {
-                    e.setCustomName(ent.getString("name"));
-                }
-                if (e instanceof Colorable && ent.contains(COLOR)) {
-                    ((Colorable) e).setColor(DyeColor.valueOf(ent.getString(COLOR)));
-                }
-                if (e instanceof Tameable) {
-                    ((Tameable)e).setTamed(ent.getBoolean("tamed"));
-                }
-                if (e instanceof ChestedHorse) {
-                    ((ChestedHorse)e).setCarryingChest(ent.getBoolean("chest"));
-                }
-                if (e instanceof Ageable) {
-                    if (ent.getBoolean("adult")) {
-                        ((Ageable)e).setAdult();
-                    } else {
-                        ((Ageable)e).setBaby();
-                    }
-                }
-                if (e instanceof AbstractHorse) {
-                    AbstractHorse horse = (AbstractHorse)e;
-                    horse.setDomestication(ent.getInt("domestication"));
-                    ConfigurationSection inv = ent.getConfigurationSection(INVENTORY);
-                    inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
-                }
-
-                if (e instanceof AbstractHorse) {
-                    Horse horse = (Horse)e;
-                    horse.setStyle(Horse.Style.valueOf(ent.getString("style", "NONE")));
-                }
-            });
-        }
-
     }
 
     private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
