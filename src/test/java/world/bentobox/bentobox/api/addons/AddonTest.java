@@ -22,10 +22,11 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -36,7 +37,7 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class })
+@PrepareForTest( { BentoBox.class, Bukkit.class })
 public class AddonTest {
 
     @Mock
@@ -44,8 +45,8 @@ public class AddonTest {
     static JavaPlugin javaPlugin;
 
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Server server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -55,8 +56,10 @@ public class AddonTest {
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
 
-        Bukkit.setServer(server);
-
+        //Bukkit.setServer(server);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        when(Bukkit.getPluginManager()).thenReturn(pluginManager);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
         plugin = mock(BentoBox.class);
@@ -100,7 +103,8 @@ public class AddonTest {
     @Test
     public void testGetConfig() {
         TestClass test = new TestClass();
-        assertNotNull(test.getConfig());
+        // No config file
+        assertNull(test.getConfig());
     }
 
     @Test
