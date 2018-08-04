@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.api.commands.island.team;
 
@@ -96,17 +96,17 @@ public class IslandTeamKickCommandTest {
         ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
-        // Player has island to begin with 
+        // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
-        // Has team 
+        // Has team
         pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        
+
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
@@ -118,7 +118,7 @@ public class IslandTeamKickCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
-        
+
         // IWM friendly name
         iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
@@ -135,7 +135,7 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
     }
-    
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
@@ -146,7 +146,7 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
     }
-    
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
@@ -156,7 +156,7 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
-    
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
@@ -168,7 +168,7 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
     }
-    
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
@@ -180,8 +180,8 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.kick.cannot-kick"));
     }
-    
-    
+
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
@@ -194,45 +194,45 @@ public class IslandTeamKickCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
-       
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteNoConfirmation() {
         when(s.isKickConfirmation()).thenReturn(false);
-        
+
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        
+
         Set<UUID> members = new HashSet<>();
         members.add(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
-        
+
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
-    
+
     /**
      * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
      */
     @Test
     public void testExecuteWithConfirmation() {
         when(s.isKickConfirmation()).thenReturn(true);
-        
+
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        
+
         Set<UUID> members = new HashSet<>();
         members.add(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
-        
+
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Confirmation required
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.kick.type-again"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.confirm"), Mockito.eq("[seconds]"), Mockito.eq("0"));
     }
 
     /**
@@ -241,14 +241,14 @@ public class IslandTeamKickCommandTest {
     @Test
     public void testExecuteTestResets() {
         when(s.isKickConfirmation()).thenReturn(false);
-        
+
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        
+
         Set<UUID> members = new HashSet<>();
         members.add(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
-        
+
         // Require resets
         when(iwm.isOnLeaveResetEnderChest(Mockito.any())).thenReturn(true);
         Inventory enderChest = mock(Inventory.class);
@@ -262,7 +262,7 @@ public class IslandTeamKickCommandTest {
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
-        
+
         Mockito.verify(enderChest).clear();
         Mockito.verify(inv).clear();
     }
