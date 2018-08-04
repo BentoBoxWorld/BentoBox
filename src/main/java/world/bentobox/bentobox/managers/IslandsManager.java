@@ -297,9 +297,14 @@ public class IslandsManager {
         return Optional.ofNullable(islandCache.getIslandAt(location));
     }
 
+    /**
+     * Used for testing only to inject the islandCache mock object
+     * @param islandCache
+     */
     public void setIslandCache(IslandCache islandCache) {
         this.islandCache = islandCache;
     }
+
     /**
      * Returns the player's island location in World
      * Returns an island location OR a team island location

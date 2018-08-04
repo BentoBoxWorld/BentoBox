@@ -44,6 +44,13 @@ public class PlayersManager {
         inTeleport = new HashSet<>();
     }
 
+    /**
+     * Used only for testing. Sets the database to a mock database.
+     * @param handler - handler
+     */
+    public void setHandler(BSBDatabase<Players> handler) {
+        this.handler = handler;
+    }
 
     /**
      * Load all players - not normally used as to load all players into memory will be wasteful

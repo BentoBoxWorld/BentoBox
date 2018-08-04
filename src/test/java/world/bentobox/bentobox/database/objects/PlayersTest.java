@@ -48,10 +48,12 @@ public class PlayersTest {
 
         Server server = mock(Server.class);
         PowerMockito.mockStatic(Bukkit.class);
+
         when(Bukkit.getServer()).thenReturn(server);
         OfflinePlayer olp = mock(OfflinePlayer.class);
         when(olp.getName()).thenReturn("tasty");
         when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+        when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
     }
 
