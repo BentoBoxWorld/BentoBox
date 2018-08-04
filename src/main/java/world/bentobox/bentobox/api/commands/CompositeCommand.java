@@ -167,14 +167,15 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
         StringBuilder reference = new StringBuilder();
         reference.append("commands");
-        /*
-        for (CompositeCommand p = this ; p != null && p != this; p = getParent()) {
-            reference = "." + p.getLabel() + reference;
+        CompositeCommand p = this;
+        int index = 0;
+        while (p.getParent() != null && index < 20) {
+            reference.append(".").append(p.getParent().getLabel());
+            p = p.getParent();
+            index++;
         }
-         */
-
-        setDescription(reference + ".description");
-        setParameters(reference + ".parameters");
+        setDescription(reference.toString() + ".description");
+        setParameters(reference.toString() + ".parameters");
 
         setup();
         // If this command does not define its own help class, then use the default help command

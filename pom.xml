@@ -201,5 +201,5 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
 		</repository>
 	</repositories>
-	<version>FC-0.8</version>
+	<version>FC-0.9</version>
 </project>
