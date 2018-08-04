@@ -12,7 +12,7 @@ jdk:
     - oraclejdk8
     
 script:
-    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -P sonar -B
+    - mvn clean org.jacoco:jacoco-maven-plugin:prepare-agent package -P sonar sonar:sonar -B
     - echo "${TRAVIS_PULL_REQUEST_BRANCH:-$TRAVIS_BRANCH}"
 cache:
     directories:
