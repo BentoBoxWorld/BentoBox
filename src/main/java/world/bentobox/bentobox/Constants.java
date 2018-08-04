@@ -5,6 +5,9 @@ package world.bentobox.bentobox;
  * @author tastybento
  */
 public class Constants {
+
+    private Constants() {}
+
     // The spawn command (Essentials spawn for example)
     public static final String SPAWNCOMMAND = "spawn";
 }

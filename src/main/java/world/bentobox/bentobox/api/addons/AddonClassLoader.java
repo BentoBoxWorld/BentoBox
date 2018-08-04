@@ -103,25 +103,23 @@ public class AddonClassLoader extends URLClassLoader {
      * @return Class - class if found
      */
     public Class<?> findClass(String name, boolean checkGlobal) {
-        if (name.startsWith("us.tastybento.")) {
+        if (name.startsWith("world.bentobox.")) {
             return null;
         }
-        Class<?> result = classes.get(name);
-        if (result == null) {
-            if (checkGlobal) {
-                result = loader.getClassByName(name);
-            }
-            if (result == null) {
+
+        Class<?> result = classes.computeIfAbsent(name, k -> {
+            if (checkGlobal && loader.getClassByName(name) != null) {
+                return loader.getClassByName(name);
+            } else {
                 try {
-                    result = super.findClass(name);
+                    return super.findClass(name);
                 } catch (ClassNotFoundException e) {
                     return null;
                 }
-                if (result != null) {
-                    loader.setClass(name, result);
-                }
-                classes.put(name, result);
             }
+        });
+        if (result != null) {
+            loader.setClass(name, result);
         }
         return result;
     }
