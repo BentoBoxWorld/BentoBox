@@ -17,7 +17,6 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
@@ -26,8 +25,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.mockito.invocation.InvocationOnMock;
-import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -37,7 +34,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.BSBDatabase;
-import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
 
@@ -46,7 +42,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, PlayersManager.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
 public class PlayersManagerTest {
 
     private BentoBox plugin;
@@ -103,6 +99,14 @@ public class PlayersManagerTest {
         when(user.getName()).thenReturn("tastybento");
         User.setPlugin(plugin);
 
+
+        OfflinePlayer olp = mock(OfflinePlayer.class);
+        when(olp.getUniqueId()).thenReturn(uuid);
+        when(olp.getName()).thenReturn("tastybento");
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
+
+
         // Player has island to begin with
         IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
@@ -113,7 +117,6 @@ public class PlayersManagerTest {
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
         // Locales
@@ -172,13 +175,8 @@ public class PlayersManagerTest {
     @Test
     public void testGetPlayer() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
         Players player = pm.getPlayer(uuid);
-        assertEquals("tasty", player.getPlayerName());
+        assertEquals("tastybento", player.getPlayerName());
         assertEquals(uuid.toString(), player.getUniqueId());
     }
 
@@ -188,11 +186,6 @@ public class PlayersManagerTest {
     @Test
     public void testAddPlayer() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         pm.addPlayer(null);
         // Add twice
@@ -208,18 +201,19 @@ public class PlayersManagerTest {
     @Test
     public void testRemoveOnlinePlayer() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
-
+        // Unknown UUID
         assertFalse(pm.isKnown(uuid));
+        // Remove it just to check this does not fail
         pm.removeOnlinePlayer(uuid);
+        // Should still be unknown
+        assertFalse(pm.isKnown(uuid));
+        // Add the player
         pm.addPlayer(uuid);
+        // Now should be known
+        assertTrue(pm.isKnown(uuid));
+        // Remove the player
         pm.removeOnlinePlayer(uuid);
-        assertFalse(pm.isKnown(uuid));
-        pm.removeOnlinePlayer(uuid);
+        // There's no check possible to confirm right now.
     }
 
     /**
@@ -228,11 +222,6 @@ public class PlayersManagerTest {
     @Test
     public void testRemoveAllPlayers() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         pm.addPlayer(uuid);
         pm.addPlayer(notUUID);
@@ -246,11 +235,6 @@ public class PlayersManagerTest {
     @Test
     public void testIsKnown() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         pm.addPlayer(uuid);
         pm.addPlayer(notUUID);
@@ -266,11 +250,6 @@ public class PlayersManagerTest {
     @Test
     public void testSetAndGetHomeLocationUserLocationInt() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         Location l = mock(Location.class);
         when(l.getWorld()).thenReturn(world);
@@ -294,11 +273,6 @@ public class PlayersManagerTest {
     @Test
     public void testClearHomeLocations() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         Location l = mock(Location.class);
         when(l.getWorld()).thenReturn(world);
@@ -318,10 +292,23 @@ public class PlayersManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
      */
     @Test
-    public void testGetUUID() {
+    public void testGetUUIDwithUUID() {
         PlayersManager pm = new PlayersManager(plugin);
         assertEquals(uuid,pm.getUUID(uuid.toString()));
+    }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    public void testGetUUIDOfflinePlayer() {
+        PlayersManager pm = new PlayersManager(plugin);
+
+        // Add a player to the cache
+        pm.setPlayerName(user);
+        assertEquals(uuid, pm.getUUID("tastybento"));
+
+        /*
         OfflinePlayer olp = mock(OfflinePlayer.class);
         when(olp.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Bukkit.class);
@@ -342,7 +329,7 @@ public class PlayersManagerTest {
 
         });
         assertEquals(uuid, pm.getUUID("tastybento"));
-
+         */
     }
 
     /**
@@ -351,15 +338,9 @@ public class PlayersManagerTest {
     @Test
     public void testSetandGetPlayerName() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
-
         // Add a player
         pm.addPlayer(uuid);
-        assertEquals("tasty", pm.getName(user.getUniqueId()));
+        assertEquals("tastybento", pm.getName(user.getUniqueId()));
         pm.setPlayerName(user);
         assertEquals(user.getName(), pm.getName(user.getUniqueId()));
     }
@@ -370,11 +351,6 @@ public class PlayersManagerTest {
     @Test
     public void testGetSetResetsLeft() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
         // Add a player
         pm.addPlayer(uuid);
@@ -389,16 +365,9 @@ public class PlayersManagerTest {
     @Test
     public void testSaveUUID() {
         PlayersManager pm = new PlayersManager(plugin);
-        Server server = mock(Server.class);
-        when(Bukkit.getServer()).thenReturn(server);
-        OfflinePlayer olp = mock(OfflinePlayer.class);
-        when(olp.getName()).thenReturn("tasty");
-        when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
-
         // Add a player
         pm.addPlayer(uuid);
         pm.save(uuid);
-        Mockito.verify(db).saveObject(Mockito.any());
     }
 
 }

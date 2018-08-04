@@ -55,7 +55,7 @@ public class Players implements DataObject {
         locale = "";
         kickedList = new HashMap<>();
         // Try to get player's name
-        this.playerName = Bukkit.getServer().getOfflinePlayer(uniqueId).getName();
+        this.playerName = Bukkit.getOfflinePlayer(uniqueId).getName();
         if (this.playerName == null) {
             this.playerName = uniqueId.toString();
         }

@@ -134,7 +134,8 @@ public class PlayersManager {
      */
 
     /**
-     * Checks if the player is known or not
+     * Checks if the player is known or not. Will check not just the cache but if the object is
+     * in the database too.
      *
      * @param uniqueID - unique ID
      * @return true if player is know, otherwise false
@@ -143,9 +144,7 @@ public class PlayersManager {
         if (uniqueID == null) {
             return false;
         }
-        // Try cache
         return playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString());
-        // Get from the database - do not add to cache yet
     }
 
     /**
