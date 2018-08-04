@@ -297,6 +297,9 @@ public class IslandsManager {
         return Optional.ofNullable(islandCache.getIslandAt(location));
     }
 
+    public void setIslandCache(IslandCache islandCache) {
+        this.islandCache = islandCache;
+    }
     /**
      * Returns the player's island location in World
      * Returns an island location OR a team island location

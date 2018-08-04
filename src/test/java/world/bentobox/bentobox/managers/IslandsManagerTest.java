@@ -62,7 +62,7 @@ import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { Bukkit.class, BentoBox.class, IslandsManager.class, Util.class, Location.class })
+@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandsManagerTest {
 
     private static BentoBox plugin;
@@ -79,6 +79,8 @@ public class IslandsManagerTest {
     private Location location;
     private BlockState blockState;
     private IslandWorldManager iwm;
+    private IslandCache islandCache;
+    private Optional<Island> optionalIsland;
 
     /**
      * @throws java.lang.Exception
@@ -151,7 +153,6 @@ public class IslandsManagerTest {
 
         // Online players
         // Return a set of online players
-        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getOnlinePlayers()).then(new Answer<Set<Player>>() {
 
             @Override
@@ -172,6 +173,14 @@ public class IslandsManagerTest {
 
         // Scheduler
         when(Bukkit.getScheduler()).thenReturn(mock(BukkitScheduler.class));
+
+        // Mock island cache
+        islandCache = mock(IslandCache.class);
+        Island is = mock(Island.class);
+        when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
+        optionalIsland = Optional.ofNullable(is);
+
+
     }
 
 
@@ -461,19 +470,14 @@ public class IslandsManagerTest {
      */
     @Test
     public void testGetIslandAtLocation() throws Exception {
-        // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
-        Island is = mock(Island.class);
-        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
-
         IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
         // In world, correct island
-        Optional<Island> oi = Optional.ofNullable(is);
-        assertEquals(oi, im.getIslandAt(location));
+        assertEquals(optionalIsland, im.getIslandAt(location));
 
         // in world, wrong island
-        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(null);
+        when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(null);
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
 
         // not in world
@@ -513,14 +517,13 @@ public class IslandsManagerTest {
     @Test
     public void testGetMembers() throws Exception {
         // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
         Set<UUID> members = new HashSet<>();
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
-        when(ic.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
+        when(islandCache.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
         IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
         assertEquals(members, im.getMembers(world, UUID.randomUUID()));
     }
 
@@ -531,19 +534,18 @@ public class IslandsManagerTest {
     @Test
     public void testGetProtectedIslandAt() throws Exception {
         // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
-
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
+        when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
 
         // In world
         IslandsManager im = new IslandsManager(plugin);
-        Optional<Island> oi = Optional.ofNullable(is);
+        im.setIslandCache(islandCache);
+
+        Optional<Island> optionalIsland = Optional.ofNullable(is);
         // In world, correct island
         when(is.onIsland(Mockito.any())).thenReturn(true);
-        assertEquals(oi, im.getProtectedIslandAt(location));
+        assertEquals(optionalIsland, im.getProtectedIslandAt(location));
 
         // Not in protected space
         when(is.onIsland(Mockito.any())).thenReturn(false);
@@ -552,7 +554,7 @@ public class IslandsManagerTest {
         im.setSpawn(is);
         // In world, correct island
         when(is.onIsland(Mockito.any())).thenReturn(true);
-        assertEquals(oi, im.getProtectedIslandAt(location));
+        assertEquals(optionalIsland, im.getProtectedIslandAt(location));
 
         // Not in protected space
         when(is.onIsland(Mockito.any())).thenReturn(false);
@@ -642,21 +644,20 @@ public class IslandsManagerTest {
     @Test
     public void testIsOwner() throws Exception {
         // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.getIslandAt(Mockito.any())).thenReturn(is);
-
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
+        when(islandCache.getIslandAt(Mockito.any())).thenReturn(is);
 
         IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
         assertFalse(im.isOwner(world, null));
 
-        when(ic.hasIsland(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(islandCache.hasIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         assertFalse(im.isOwner(world, UUID.randomUUID()));
 
-        when(ic.hasIsland(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(ic.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
+        when(islandCache.hasIsland(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(islandCache.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         UUID owner = UUID.randomUUID();
         when(is.getOwner()).thenReturn(owner);
         UUID notOwner = UUID.randomUUID();
@@ -684,12 +685,9 @@ public class IslandsManagerTest {
     @Test
     public void testLocationIsOnIsland() throws Exception {
         // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
-
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
+        when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
 
         // In world
         when(is.onIsland(Mockito.any())).thenReturn(true);
@@ -701,6 +699,8 @@ public class IslandsManagerTest {
         when(player.getUniqueId()).thenReturn(uuid);
 
         IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
         assertFalse(im.locationIsOnIsland(null, null));
 
         assertTrue(im.locationIsOnIsland(player, location));
@@ -723,14 +723,13 @@ public class IslandsManagerTest {
     @Test
     public void testUserIsOnIsland() throws Exception {
         // Mock island cache
-        IslandCache ic = mock(IslandCache.class);
         Island is = mock(Island.class);
 
-        when(ic.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
-
-        PowerMockito.whenNew(IslandCache.class).withAnyArguments().thenReturn(ic);
+        when(islandCache.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
 
         IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
         assertFalse(im.userIsOnIsland(world, null));
 
         when(is.onIsland(Mockito.any())).thenReturn(false);
