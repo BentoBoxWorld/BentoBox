@@ -9,7 +9,7 @@
     <version>FC-0.81</version>
 
     <name>BentoBox</name>
-    <description>BentoBox is an expandable Minecraft Bukkit plugin for island-type games like ASkyBlock or AcidIsland.</description>
+    <description>BentoBox is an expandable Minecraft Spigot plugin for island-type games like ASkyBlock or AcidIsland.</description>
     <url>https://github.com/BentoBoxWorld/bentobox</url>
     <inceptionYear>2018</inceptionYear>
 
