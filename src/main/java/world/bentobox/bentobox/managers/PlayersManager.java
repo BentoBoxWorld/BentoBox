@@ -316,32 +316,6 @@ public class PlayersManager {
     }
 
     /**
-     * Returns how long the player must wait before they can be invited to an
-     * island with the location
-     *
-     * @param playerUUID - the player's UUID
-     * @param location - the location
-     * @return time to wait in minutes/hours
-     */
-    public long getInviteCoolDownTime(UUID playerUUID, Location location) {
-        addPlayer(playerUUID);
-        return playerCache.get(playerUUID).getInviteCoolDownTime(location);
-    }
-
-    /**
-     * Starts the timer for the player for this location before which they can
-     * be invited
-     * Called when they are kicked from an island or leave.
-     *
-     * @param playerUUID - the player's UUID
-     * @param location - the location
-     */
-    public void startInviteCoolDownTimer(UUID playerUUID, Location location) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).startInviteCoolDownTimer(location);
-    }
-
-    /**
      * Returns the locale for this player. If missing, will return nothing
      * @param playerUUID - the player's UUID
      * @return name of the locale this player uses

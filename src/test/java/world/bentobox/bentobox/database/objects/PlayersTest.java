@@ -24,7 +24,6 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 
 @RunWith(PowerMockRunner.class)
@@ -100,21 +99,4 @@ public class PlayersTest {
         assertTrue(p.getDeaths(world) == 0);
     }
 
-    @Test
-    public void testInviteCoolDownTime() throws InterruptedException {
-        Settings settings = mock(Settings.class);
-        when(settings.getInviteWait()).thenReturn(1);
-        when(plugin.getSettings()).thenReturn(settings);
-        Players p = new Players(plugin, UUID.randomUUID());
-        // Check a null location
-        assertTrue(p.getInviteCoolDownTime(null) == 0);
-        // Real location
-        Location l = mock(Location.class);
-        // Should be no cooldown
-        assertTrue(p.getInviteCoolDownTime(l) == 0);
-        // Start the timer
-        p.startInviteCoolDownTimer(l);
-        // More than 0 cooldown
-        assertTrue(p.getInviteCoolDownTime(l) > 0);
-    }
 }

@@ -74,11 +74,8 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 user.sendMessage("commands.island.team.invite.errors.cannot-invite-self");
                 return false;
             }
-            // Check if this player can be invited to this island, or
-            // whether they are still on cooldown
-            long time = getPlayers().getInviteCoolDownTime(invitedPlayerUUID, getIslands().getIslandLocation(getWorld(), playerUUID));
-            if (time > 0 && !user.isOp()) {
-                user.sendMessage("commands.island.team.invite.errors.cooldown", TextVariables.NUMBER, String.valueOf(time));
+            // Check cool down
+            if (getSettings().getInviteWait() > 0 && !checkCooldown(user, invitedPlayerUUID)) {
                 return false;
             }
             // Player cannot invite someone already on a team

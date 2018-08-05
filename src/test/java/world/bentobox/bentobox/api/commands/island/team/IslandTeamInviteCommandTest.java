@@ -27,7 +27,6 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.IslandTeamInviteCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -49,6 +48,7 @@ public class IslandTeamInviteCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    private Settings s;
 
     /**
      * @throws java.lang.Exception
@@ -64,7 +64,7 @@ public class IslandTeamInviteCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        Settings s = mock(Settings.class);
+        s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
 
         when(plugin.getSettings()).thenReturn(s);
@@ -209,6 +209,18 @@ public class IslandTeamInviteCommandTest {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.invite.errors.already-on-team"));
+    }
+
+    /**
+     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     */
+    @Test
+    public void testExecuteCoolDownActive() {
+        // 10 minutes = 600 seconds
+        when(s.getInviteWait()).thenReturn(10);
+        IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
+        String[] name = {"tastybento"};
+        itl.execute(user, itl.getLabel(), Arrays.asList(name));
     }
 
 }

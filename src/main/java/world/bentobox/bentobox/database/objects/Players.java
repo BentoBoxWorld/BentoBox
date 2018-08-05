@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.database.objects;
 
-import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,8 +33,6 @@ public class Players implements DataObject {
     private String locale = "";
     @Expose
     private Map<String, Integer> deaths = new HashMap<>();
-    @Expose
-    private Map<Location, Long> kickedList = new HashMap<>();
 
     /**
      * This is required for database storage
@@ -53,7 +49,6 @@ public class Players implements DataObject {
         this.uniqueId = uniqueId.toString();
         homeLocations = new HashMap<>();
         locale = "";
-        kickedList = new HashMap<>();
         // Try to get player's name
         this.playerName = Bukkit.getOfflinePlayer(uniqueId).getName();
         if (this.playerName == null) {
@@ -98,20 +93,6 @@ public class Players implements DataObject {
      */
     public Map<Location, Integer> getHomeLocations() {
         return homeLocations;
-    }
-
-    /**
-     * @return the kickedList
-     */
-    public Map<Location, Long> getKickedList() {
-        return kickedList;
-    }
-
-    /**
-     * @param kickedList the kickedList to set
-     */
-    public void setKickedList(Map<Location, Long> kickedList) {
-        this.kickedList = kickedList;
     }
 
     /**
@@ -245,47 +226,6 @@ public class Players implements DataObject {
         deaths.putIfAbsent(world.getName(), 0);
         if (deaths.get(world.getName()) < getPlugin().getIWM().getDeathsMax(world)) {
             deaths.put(world.getName(), deaths.get(world.getName()) + 1);
-        }
-    }
-
-    /**
-     * Can invite or still waiting for cool down to end
-     *
-     * @param location - the location
-     *            to check
-     * @return number of mins/hours left until cool down ends
-     */
-    public long getInviteCoolDownTime(Location location) {
-        // Check the hashmap
-        if (location != null && kickedList.containsKey(location)) {
-            // The location is in the list
-            // Check the date/time
-            Date kickedDate = new Date(kickedList.get(location));
-            Calendar coolDownTime = Calendar.getInstance();
-            coolDownTime.setTime(kickedDate);
-            coolDownTime.add(Calendar.MINUTE, getPlugin().getSettings().getInviteWait());
-            // Add the invite cooldown period
-            Calendar timeNow = Calendar.getInstance();
-            if (coolDownTime.before(timeNow)) {
-                // The time has expired
-                kickedList.remove(location);
-                return 0;
-            } else {
-                // Still not there yet
-                // Time in minutes
-                return (long) Math.ceil((coolDownTime.getTimeInMillis() - timeNow.getTimeInMillis()) / (1000 * 60D));
-            }
-        }
-        return 0;
-    }
-
-    /**
-     * Starts the invite cooldown timer for location. Location should be the center of an island.
-     * @param location - the location
-     */
-    public void startInviteCoolDownTimer(Location location) {
-        if (location != null) {
-            kickedList.put(location, System.currentTimeMillis());
         }
     }
 

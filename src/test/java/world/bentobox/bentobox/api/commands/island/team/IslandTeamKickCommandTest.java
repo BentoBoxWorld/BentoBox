@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
@@ -32,7 +33,6 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.island.team.IslandTeamKickCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -57,6 +57,7 @@ public class IslandTeamKickCommandTest {
     private UUID notUUID;
     private IslandWorldManager iwm;
     private Player player;
+    private CompositeCommand subCommand;
 
     /**
      * @throws java.lang.Exception
@@ -95,6 +96,9 @@ public class IslandTeamKickCommandTest {
         // Parent command has no aliases
         ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        subCommand = mock(CompositeCommand.class);
+        Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
+        when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
@@ -265,5 +269,16 @@ public class IslandTeamKickCommandTest {
 
         Mockito.verify(enderChest).clear();
         Mockito.verify(inv).clear();
+    }
+
+    /**
+     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     */
+    @Test
+    public void testCooldown() {
+        // 10 minutes = 600 seconds
+        when(s.getInviteWait()).thenReturn(10);
+        testExecuteNoConfirmation();
+        Mockito.verify(subCommand).setCooldown(uuid, notUUID, 600);
     }
 }

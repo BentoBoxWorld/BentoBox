@@ -53,7 +53,7 @@ public class IslandTeamKickCommand extends CompositeCommand {
             kick(user, targetUUID);
             return true;
         } else {
-            this.askConfirmation(user, () -> kick(user, targetUUID));
+            askConfirmation(user, () -> kick(user, targetUUID));
             return false;
         }
     }
@@ -72,7 +72,15 @@ public class IslandTeamKickCommand extends CompositeCommand {
             // TODO: needs Vault
         }
         user.sendMessage("general.success");
-    }
 
+        // Add cooldown for this player and target
+        if (getSettings().getInviteWait() > 0) {
+            // Get the invite class from the parent
+            if (getParent() != null) {
+                getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(user.getUniqueId(), targetUUID, getSettings().getInviteWait() * 60));
+            }
+
+        }
+    }
 
 }

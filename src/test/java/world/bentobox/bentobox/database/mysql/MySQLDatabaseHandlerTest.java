@@ -121,7 +121,6 @@ public class MySQLDatabaseHandlerTest {
         players.setHomeLocation(location, 2);
         Map<Location, Long> map = new HashMap<>();
         map.put(location, 324L);
-        players.setKickedList(map);
         players.setLocale("sdfsd");
         players.setPlayerName("name");
         players.setPlayerUUID(UUID.randomUUID());

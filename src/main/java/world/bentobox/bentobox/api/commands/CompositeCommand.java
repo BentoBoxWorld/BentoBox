@@ -96,7 +96,15 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     private String topLabel = "";
 
+    /**
+     * Confirmation tracker
+     */
     private static Map<User, Confirmer> toBeConfirmed = new HashMap<>();
+
+    /**
+     * Cool down tracker
+     */
+    private Map<UUID, Map<UUID, Long>> cooldowns = new HashMap<>();
 
     /**
      * Top level command
@@ -657,5 +665,37 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return task;
         }
 
+    }
+
+    /**
+     * Set a cool down - can be set by other commands on this one
+     * @param uniqueId - the caller
+     * @param targetUUID - the target (if any)
+     * @param timeInSeconds - time in seconds to cool down
+     */
+    public void setCooldown(UUID uniqueId, UUID targetUUID, int timeInSeconds) {
+        cooldowns.putIfAbsent(uniqueId, new HashMap<>());
+        cooldowns.get(uniqueId).put(targetUUID, System.currentTimeMillis() + timeInSeconds * 1000);
+    }
+
+    /**
+     * Check if cool down has expired or not
+     * @param user - the caller of the command
+     * @param targetUUID - the target (if any)
+     * @return true if cool down does not exist, false if it is still active
+     */
+    protected boolean checkCooldown(User user, UUID targetUUID) {
+        if (!cooldowns.containsKey(user.getUniqueId()) || user.isOp() || user.hasPermission(getPermissionPrefix() + ".mod.bypasscooldowns")) {
+            return true;
+        }
+        cooldowns.putIfAbsent(user.getUniqueId(), new HashMap<>());
+        if (cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis() <= 0) {
+            // Cool down is done
+            cooldowns.get(user.getUniqueId()).remove(targetUUID);
+            return true;
+        }
+        int timeToGo = (int) ((cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis()) / 1000);
+        user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(timeToGo));
+        return false;
     }
 }

@@ -673,4 +673,5 @@ public class IslandWorldManager {
     public int getDeathsMax(World world) {
         return worldSettings.get(Util.getWorld(world)).getDeathsMax();
     }
+
 }

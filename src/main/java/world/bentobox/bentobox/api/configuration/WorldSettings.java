@@ -261,4 +261,5 @@ public interface WorldSettings {
      * @return max number of deaths for this world
      */
     int getDeathsMax();
+
 }
