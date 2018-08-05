@@ -6,11 +6,15 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * Displays generic information about BentoBox such as version and license.
+ * @author tastybento
+ */
 public class AboutCommand extends CompositeCommand {
 
     /**
      * About
-     * @param parent - parent command
+     * @param parent parent CompositeCommand
      */
     public AboutCommand(CompositeCommand parent) {
         super(parent, "about");

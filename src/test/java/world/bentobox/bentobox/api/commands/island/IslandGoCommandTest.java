@@ -52,7 +52,6 @@ public class IslandGoCommandTest {
     private IslandsManager im;
     private Island island;
 
-
     /**
      * @throws java.lang.Exception
      */
