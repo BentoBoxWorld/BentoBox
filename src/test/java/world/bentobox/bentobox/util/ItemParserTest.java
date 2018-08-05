@@ -47,22 +47,18 @@ public class ItemParserTest {
         when(itemFactory.getItemMeta(Mockito.eq(Material.TIPPED_ARROW))).thenReturn(potionMeta);
          */
         bannerMeta = mock(BannerMeta.class);
-        when(itemFactory.getItemMeta(Mockito.any())).thenAnswer(new Answer<ItemMeta>() {
-
-            @Override
-            public ItemMeta answer(InvocationOnMock invocation) throws Throwable {
-                switch (invocation.getArgumentAt(0, Material.class)) {
-                case RED_BANNER:
-                case WHITE_BANNER:
-                    return bannerMeta;
-                case POTION:
-                case SPLASH_POTION:
-                case LINGERING_POTION:
-                case TIPPED_ARROW:
-                    return potionMeta;
-                default:
-                    return mock(ItemMeta.class);
-                }
+        when(itemFactory.getItemMeta(Mockito.any())).thenAnswer((Answer<ItemMeta>) invocation -> {
+            switch (invocation.getArgumentAt(0, Material.class)) {
+            case RED_BANNER:
+            case WHITE_BANNER:
+                return bannerMeta;
+            case POTION:
+            case SPLASH_POTION:
+            case LINGERING_POTION:
+            case TIPPED_ARROW:
+                return potionMeta;
+            default:
+                return mock(ItemMeta.class);
             }
         });
 

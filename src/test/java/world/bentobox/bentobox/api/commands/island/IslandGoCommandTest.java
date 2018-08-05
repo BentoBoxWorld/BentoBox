@@ -48,12 +48,9 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({Bukkit.class, BentoBox.class, Util.class})
 public class IslandGoCommandTest {
     private CompositeCommand ic;
-    private UUID uuid;
     private User user;
     private IslandsManager im;
-    private PlayersManager pm;
     private Island island;
-    private Player player;
 
 
     /**
@@ -76,11 +73,11 @@ public class IslandGoCommandTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        player = mock(Player.class);
+        Player player = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
@@ -97,7 +94,7 @@ public class IslandGoCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
+        PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
@@ -124,7 +121,7 @@ public class IslandGoCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandGoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoArgsNoIsland() {
@@ -136,7 +133,7 @@ public class IslandGoCommandTest {
     }
     
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandGoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoArgs() {
@@ -146,7 +143,7 @@ public class IslandGoCommandTest {
     }
     
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandGoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoArgsMultipleHomes() {
@@ -157,7 +154,7 @@ public class IslandGoCommandTest {
     }
     
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandGoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteArgs1MultipleHomes() {
@@ -170,7 +167,7 @@ public class IslandGoCommandTest {
     }
     
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandGoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteArgs2MultipleHomes() {
@@ -185,7 +182,7 @@ public class IslandGoCommandTest {
 
     
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandGoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteArgsJunkMultipleHomes() {

@@ -68,7 +68,6 @@ public class IslandsManagerTest {
     private static BentoBox plugin;
     private UUID uuid;
     private User user;
-    private Settings s;
     private PlayersManager pm;
     private Player player;
     private static World world;
@@ -77,7 +76,6 @@ public class IslandsManagerTest {
     private Block ground;
     private Block space2;
     private Location location;
-    private BlockState blockState;
     private IslandWorldManager iwm;
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
@@ -98,7 +96,7 @@ public class IslandsManagerTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
 
         // Settings
-        s = mock(Settings.class);
+        Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
 
         when(plugin.getSettings()).thenReturn(s);
@@ -146,22 +144,14 @@ public class IslandsManagerTest {
         when(space1.getType()).thenReturn(Material.AIR);
         when(space2.getType()).thenReturn(Material.AIR);
         // Neutral BlockState
-        blockState = mock(BlockState.class);
+        BlockState blockState = mock(BlockState.class);
         when(ground.getState()).thenReturn(blockState);
         BlockData bd = mock(BlockData.class);
         when(blockState.getBlockData()).thenReturn(bd);
 
         // Online players
         // Return a set of online players
-        when(Bukkit.getOnlinePlayers()).then(new Answer<Set<Player>>() {
-
-            @Override
-            public Set<Player> answer(InvocationOnMock invocation) throws Throwable {
-
-                return new HashSet<>();
-            }
-
-        });
+        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> new HashSet<>());
 
         // Worlds
         iwm = mock(IslandWorldManager.class);
@@ -717,7 +707,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#userIsOnIsland(world.bentobox.bentobox.api.user.User)}.
+     * Test method for .
      * @throws Exception
      */
     @Test
@@ -767,7 +757,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#setIslandName(java.util.UUID, java.lang.String)}.
+     * Test method for .
      */
     @Test
     public void testSetIslandName() {
@@ -791,7 +781,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#setLeaveTeam(java.util.UUID)}.
+     * Test method for .
      */
     @Test
     public void testSetLeaveTeam() {

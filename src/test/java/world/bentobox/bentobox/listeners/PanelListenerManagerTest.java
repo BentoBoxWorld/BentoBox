@@ -58,11 +58,9 @@ public class PanelListenerManagerTest {
     private PanelListenerManager plm;
     private UUID uuid;
     private Panel panel;
-    private Panel wrongPanel;
     private Inventory anotherInv;
     private PanelListener pl;
     private ClickHandler ch;
-    private Settings settings;
 
     /**
      * @throws java.lang.Exception
@@ -73,7 +71,7 @@ public class PanelListenerManagerTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Settings
-        settings = mock(Settings.class);
+        Settings settings = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(settings);
         when(settings.isClosePanelOnClickOutside()).thenReturn(true);
 
@@ -108,8 +106,8 @@ public class PanelListenerManagerTest {
         when(panelItem.getClickHandler()).thenReturn(och);
         map.put(0, panelItem);
         when(panel.getItems()).thenReturn(map);
-        
-        wrongPanel = mock(Panel.class);
+
+        Panel wrongPanel = mock(Panel.class);
         anotherInv = mock(Inventory.class);
         when(anotherInv.getName()).thenReturn("another_name");
         when(wrongPanel.getInventory()).thenReturn(anotherInv);

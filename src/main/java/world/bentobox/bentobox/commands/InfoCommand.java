@@ -10,7 +10,7 @@ public class InfoCommand extends CompositeCommand {
 
     /**
      * Info command
-     * @param parent
+     * @param parent - command parent
      */
     public InfoCommand(CompositeCommand parent) {
         super(parent, "info");

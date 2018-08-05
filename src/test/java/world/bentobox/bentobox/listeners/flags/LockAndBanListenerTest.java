@@ -64,7 +64,6 @@ public class LockAndBanListenerTest {
     private Notifier notifier;
     private Location inside2;
     private BukkitScheduler sch;
-    private Player player;
 
     /**
      * @throws java.lang.Exception
@@ -92,7 +91,7 @@ public class LockAndBanListenerTest {
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
-        player = mock(Player.class);
+        Player player = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         User.setPlugin(plugin);
@@ -688,14 +687,7 @@ public class LockAndBanListenerTest {
         when(player2.getUniqueId()).thenReturn(uuid2);
         
         // Player 1 is not a member, player 2 is an island member
-        when(island.isAllowed(Mockito.any(User.class), Mockito.any())).thenAnswer(new Answer<Boolean>() {
-
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgumentAt(0, User.class).getUniqueId().equals(uuid2);
-            }
-            
-        });
+        when(island.isAllowed(Mockito.any(User.class), Mockito.any())).thenAnswer((Answer<Boolean>) invocation -> invocation.getArgumentAt(0, User.class).getUniqueId().equals(uuid2));
        
         // Create vehicle and put two players in it. One is a member, the other is not
         Vehicle vehicle = mock(Vehicle.class);

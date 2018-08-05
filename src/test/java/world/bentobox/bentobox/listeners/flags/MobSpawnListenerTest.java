@@ -54,7 +54,6 @@ public class MobSpawnListenerTest {
     private static Slime slime;
     private static Cow cow;
     private static IslandWorldManager iwm;
-    private static World world;
 
     @BeforeClass
     public static void setUpBeforeClass() {
@@ -66,7 +65,7 @@ public class MobSpawnListenerTest {
         when(plugin.getIslands()).thenReturn(im);
 
         Server server = mock(Server.class);
-        world = mock(World.class);
+        World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");

@@ -37,9 +37,6 @@ public class AdminClearResetsAllCommandTest {
 
     private CompositeCommand ac;
     private User user;
-    private IslandsManager im;
-    private PlayersManager pm;
-    private UUID notUUID;
 
     /**
      * @throws java.lang.Exception
@@ -65,7 +62,7 @@ public class AdminClearResetsAllCommandTest {
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         UUID uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
+        UUID notUUID = UUID.randomUUID();
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
@@ -83,7 +80,7 @@ public class AdminClearResetsAllCommandTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
@@ -91,7 +88,7 @@ public class AdminClearResetsAllCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
+        PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -108,7 +105,7 @@ public class AdminClearResetsAllCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminClearResetsAllCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteCheckConfirm() {

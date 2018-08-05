@@ -30,8 +30,6 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 @PrepareForTest({Bukkit.class, BentoBox.class})
 public class PlayersTest {
 
-    private IslandWorldManager s;
-
     /**
      * @throws java.lang.Exception
      */
@@ -40,7 +38,7 @@ public class PlayersTest {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        s = mock(IslandWorldManager.class);
+        IslandWorldManager s = mock(IslandWorldManager.class);
 
         when(s.getDeathsMax(Mockito.any())).thenReturn(3);
         when(plugin.getIWM()).thenReturn(s);

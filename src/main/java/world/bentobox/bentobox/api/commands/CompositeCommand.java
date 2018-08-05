@@ -676,23 +676,23 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Check if cool down has expired or not
+     * Check if cool down is in progress
      * @param user - the caller of the command
      * @param targetUUID - the target (if any)
-     * @return true if cool down does not exist, false if it is still active
+     * @return true if cool down in place, false if not
      */
     protected boolean checkCooldown(User user, UUID targetUUID) {
         if (!cooldowns.containsKey(user.getUniqueId()) || user.isOp() || user.hasPermission(getPermissionPrefix() + ".mod.bypasscooldowns")) {
-            return true;
+            return false;
         }
         cooldowns.putIfAbsent(user.getUniqueId(), new HashMap<>());
         if (cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis() <= 0) {
             // Cool down is done
             cooldowns.get(user.getUniqueId()).remove(targetUUID);
-            return true;
+            return false;
         }
         int timeToGo = (int) ((cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis()) / 1000);
         user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(timeToGo));
-        return false;
+        return true;
     }
 }

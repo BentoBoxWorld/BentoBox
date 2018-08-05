@@ -47,13 +47,11 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeSetCommandTest {
 
-    private BentoBox plugin;
     private CompositeCommand ac;
     private UUID uuid;
     private User user;
     private IslandsManager im;
     private PlayersManager pm;
-    private UUID notUUID;
 
 
     /**
@@ -62,7 +60,7 @@ public class AdminRangeSetCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
+        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
@@ -80,7 +78,7 @@ public class AdminRangeSetCommandTest {
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
+        UUID notUUID = UUID.randomUUID();
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
@@ -126,13 +124,7 @@ public class AdminRangeSetCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        Answer<String> answer = new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgumentAt(1, String.class);
-            }
-        };
+        Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
 
         when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
         when(plugin.getLocalesManager()).thenReturn(lm);

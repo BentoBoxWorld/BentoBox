@@ -8,16 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -149,7 +140,7 @@ public class IslandBanCommandTest {
     @Test
     public void testNoIsland() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.errors.no-island");
     }
 
@@ -157,7 +148,7 @@ public class IslandBanCommandTest {
     public void testNotOwner() {
         IslandBanCommand ibc = new IslandBanCommand(ic);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.errors.not-leader");
     }
 
@@ -167,7 +158,7 @@ public class IslandBanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.errors.unknown-player");
     }
 
@@ -177,7 +168,7 @@ public class IslandBanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(uuid);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban-yourself");
     }
 
@@ -192,7 +183,7 @@ public class IslandBanCommandTest {
         members.add(uuid);
         members.add(teamMate);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban-member");
     }
 
@@ -204,7 +195,7 @@ public class IslandBanCommandTest {
         UUID bannedUser = UUID.randomUUID();
         when(pm.getUUID(Mockito.anyString())).thenReturn(bannedUser);
         when(island.isBanned(Mockito.eq(bannedUser))).thenReturn(true);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.player-already-banned");
     }
 
@@ -220,7 +211,7 @@ public class IslandBanCommandTest {
         when(opUser.isOp()).thenReturn(true);
         when(opUser.isPlayer()).thenReturn(true);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(opUser);
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("commands.island.ban.cannot-ban");
     }
 
@@ -241,7 +232,7 @@ public class IslandBanCommandTest {
         // Allow adding to ban list
         when(island.addToBanList(Mockito.any())).thenReturn(true);
 
-        assertTrue(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.success");
         Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
     }
@@ -262,7 +253,7 @@ public class IslandBanCommandTest {
         // Allow adding to ban list
         when(island.addToBanList(Mockito.any())).thenReturn(true);
 
-        assertTrue(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.success");
         Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
     }
@@ -283,7 +274,7 @@ public class IslandBanCommandTest {
         // Disallow adding to ban list - even cancelled
         when(island.addToBanList(Mockito.any())).thenReturn(false);
 
-        assertFalse(ibc.execute(user, ibc.getLabel(), Arrays.asList("bill")));
+        assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user, Mockito.never()).sendMessage("general.success");
         Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
     }
@@ -309,34 +300,13 @@ public class IslandBanCommandTest {
             onlinePlayers.add(p);
         }
 
-        when(island.isBanned(Mockito.any(UUID.class))).thenAnswer(new Answer<Boolean>() {
-
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                return banned.contains(invocation.getArgumentAt(0, UUID.class));
-            }
-
-        });
+        when(island.isBanned(Mockito.any(UUID.class))).thenAnswer((Answer<Boolean>) invocation -> banned.contains(invocation.getArgumentAt(0, UUID.class)));
         // Create the names
-        when(pm.getName(Mockito.any(UUID.class))).then(new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return online.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento");
-            }
-
-        });
+        when(pm.getName(Mockito.any(UUID.class))).then((Answer<String>) invocation -> online.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento"));
 
         // Return a set of online players
         PowerMockito.mockStatic(Bukkit.class);
-        when(Bukkit.getOnlinePlayers()).then(new Answer<Set<Player>>() {
-
-            @Override
-            public Set<Player> answer(InvocationOnMock invocation) throws Throwable {
-                return onlinePlayers;
-            }
-
-        });
+        when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
 
         IslandBanCommand ibc = new IslandBanCommand(ic);
         // Set up the user
@@ -344,14 +314,9 @@ public class IslandBanCommandTest {
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
         Player player = mock(Player.class);
         // Player can see every other player except Ian
-        when(player.canSee(Mockito.any(Player.class))).thenAnswer(new Answer<Boolean>() {
-
-            @Override
-            public Boolean answer(InvocationOnMock invocation) throws Throwable {
-                Player p = invocation.getArgumentAt(0, Player.class);
-                return !p.getName().equals("ian");
-            }
-
+        when(player.canSee(Mockito.any(Player.class))).thenAnswer((Answer<Boolean>) invocation -> {
+            Player p = invocation.getArgumentAt(0, Player.class);
+            return !p.getName().equals("ian");
         });
         when(user.getPlayer()).thenReturn(player);
 

@@ -39,8 +39,6 @@ import world.bentobox.bentobox.util.Util;
 public class OfflineRedstoneListenerTest {
 
     private World world;
-    private UUID uuid;
-    private Island island;
     private IslandsManager im;
     private Location inside;
     private Block block;
@@ -54,10 +52,10 @@ public class OfflineRedstoneListenerTest {
         // World
         world = mock(World.class);
         // Owner
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
 
         // Island initialization
-        island = mock(Island.class);
+        Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         // Add members
         Builder<UUID> set = new ImmutableSet.Builder<>();

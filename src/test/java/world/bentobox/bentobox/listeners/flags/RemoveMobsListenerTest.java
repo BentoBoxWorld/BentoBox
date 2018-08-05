@@ -40,11 +40,9 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class })
 public class RemoveMobsListenerTest {
 
-    private Island island;
     private IslandsManager im;
     private World world;
     private Location inside;
-    private UUID uuid;
     private Player player;
 
     /**
@@ -60,11 +58,11 @@ public class RemoveMobsListenerTest {
         world = mock(World.class);
 
         // Owner
-        uuid = UUID.randomUUID();
+        UUID uuid1 = UUID.randomUUID();
 
         // Island initialization
-        island = mock(Island.class);
-        when(island.getOwner()).thenReturn(uuid);
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid1);
 
         im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);

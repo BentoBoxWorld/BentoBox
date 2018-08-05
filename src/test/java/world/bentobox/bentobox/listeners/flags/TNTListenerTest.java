@@ -70,8 +70,6 @@ public class TNTListenerTest {
 
     private static Location location;
     private static BentoBox plugin;
-    private static IslandWorldManager iwm;
-    private static IslandsManager im;
     private static Notifier notifier;
 
     @Before
@@ -112,7 +110,7 @@ public class TNTListenerTest {
 
 
         // Worlds
-        iwm = mock(IslandWorldManager.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
@@ -127,7 +125,7 @@ public class TNTListenerTest {
         // Fake players
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
         //User user = mock(User.class);
@@ -139,14 +137,7 @@ public class TNTListenerTest {
 
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        Answer<String> answer = new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return (String)Arrays.asList(invocation.getArguments()).get(1);
-            }
-
-        };
+        Answer<String> answer = invocation -> (String)Arrays.asList(invocation.getArguments()).get(1);
         when(lm.get(any(), any())).thenAnswer(answer);
 
         // Player name
@@ -161,7 +152,7 @@ public class TNTListenerTest {
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         // Island manager
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);

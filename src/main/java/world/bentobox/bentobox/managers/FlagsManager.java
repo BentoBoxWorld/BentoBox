@@ -61,7 +61,7 @@ public class FlagsManager {
 
     /**
      * Tries to register a listener if the plugin is loaded
-     * @param l
+     * @param l - listener
      */
     private void registerListener(Listener l) {
         registeredListeners.putIfAbsent(l, false);

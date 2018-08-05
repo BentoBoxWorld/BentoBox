@@ -148,7 +148,7 @@ public class AdminInfoCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminInfoCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecutePlayerHasNoIsland() {

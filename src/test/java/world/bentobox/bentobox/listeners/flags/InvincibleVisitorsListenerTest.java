@@ -50,10 +50,7 @@ public class InvincibleVisitorsListenerTest {
     private InvincibleVisitorsListener listener;
     private Panel panel;
     private User user;
-    private Flag flag;
     private IslandsManager im;
-    private Island island;
-    private UUID uuid;
     private List<String> ivSettings;
     private Player player;
 
@@ -86,13 +83,13 @@ public class InvincibleVisitorsListenerTest {
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         when(user.getTranslation(Mockito.anyString())).thenReturn("panel");
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
 
         FlagsManager fm = mock(FlagsManager.class);
-        flag = mock(Flag.class);
+        Flag flag = mock(Flag.class);
         when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
@@ -102,7 +99,7 @@ public class InvincibleVisitorsListenerTest {
 
         // Island Manager
         im = mock(IslandsManager.class);
-        island = mock(Island.class);
+        Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(im.getIsland(Mockito.any(World.class), Mockito.any(User.class))).thenReturn(island);
         // Visitor

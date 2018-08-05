@@ -20,7 +20,7 @@ public class SchemsManager {
     private Map<World, Clipboard> islandSchems;
 
     /**
-     * @param plugin
+     * @param plugin - plugin
      */
     public SchemsManager(BentoBox plugin) {
         this.plugin = plugin;
@@ -103,8 +103,8 @@ public class SchemsManager {
 
     /**
      * Paste the schem to world for island
-     * @param world
-     * @param island
+     * @param world - world
+     * @param island - island
      */
     public void paste(World world, Island island) {
         paste(world, island, null);

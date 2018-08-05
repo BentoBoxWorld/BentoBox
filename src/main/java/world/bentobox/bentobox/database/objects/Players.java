@@ -212,7 +212,7 @@ public class Players implements DataObject {
     }
 
     /**
-     * @param world
+     * @param world - world
      * @param deaths the deaths to set
      */
     public void setDeaths(World world, int deaths) {

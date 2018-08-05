@@ -44,7 +44,6 @@ public class CleanSuperFlatListenerTest {
     private Block block;
     private Chunk chunk;
     private IslandWorldManager iwm;
-    private BentoBox plugin;
 
     /**
      * @throws java.lang.Exception
@@ -53,7 +52,7 @@ public class CleanSuperFlatListenerTest {
     public void setUp() throws Exception {
 
         // Set up plugin
-        plugin = mock(BentoBox.class);
+        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         when(plugin.isLoaded()).thenReturn(true);

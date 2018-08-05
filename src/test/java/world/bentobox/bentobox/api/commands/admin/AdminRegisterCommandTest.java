@@ -121,7 +121,7 @@ public class AdminRegisterCommandTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminRegisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTarget() {
@@ -131,7 +131,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminRegisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -143,7 +143,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminRegisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecutePlayerHasIsland() {
@@ -157,7 +157,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminRegisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteInTeam() {
@@ -171,7 +171,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminRegisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteAlreadyOwnedIsland() {
@@ -192,9 +192,6 @@ public class AdminRegisterCommandTest {
         Mockito.verify(user).sendMessage("commands.admin.register.already-owned");
     }
 
-    /**
-     * Test method for {@link us.world.bentobox.bbox.commands.admin.teams.AdminRegisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
-     */
     @Test
     public void testExecuteSuccess() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);

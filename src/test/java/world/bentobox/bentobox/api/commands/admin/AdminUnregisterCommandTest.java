@@ -119,7 +119,7 @@ public class AdminUnregisterCommandTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminUnregisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTarget() {
@@ -129,7 +129,7 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminUnregisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -141,7 +141,7 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminUnregisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecutePlayerNoIsland() {
@@ -154,7 +154,7 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.commands.admin.team.AdminUnregisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteInTeam() {
@@ -167,7 +167,7 @@ public class AdminUnregisterCommandTest {
     }
 
     /**
-     * Test method for {@link us.world.bentobox.bbox.commands.admin.teams.AdminUnregisterCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteSuccess() {

@@ -190,16 +190,11 @@ public class FlagTest {
         
         User user = mock(User.class);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
-        Answer<String> answer = new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                StringBuilder sb = new StringBuilder();                
-                Arrays.stream(invocation.getArguments()).forEach(sb::append);
-                sb.append("mock");
-                return sb.toString();
-            }
-            
+        Answer<String> answer = invocation -> {
+            StringBuilder sb = new StringBuilder();
+            Arrays.stream(invocation.getArguments()).forEach(sb::append);
+            sb.append("mock");
+            return sb.toString();
         };
         
         when(user.getTranslation(Mockito.anyVararg())).thenAnswer(answer);
@@ -207,7 +202,7 @@ public class FlagTest {
         
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
         when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
-        Optional<Island> oL = Optional.ofNullable(island);
+        Optional<Island> oL = Optional.of(island);
         when(im.getIslandAt(Mockito.any(Location.class))).thenReturn(oL);
         when(plugin.getIslands()).thenReturn(im);
         

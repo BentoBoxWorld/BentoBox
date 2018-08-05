@@ -293,7 +293,7 @@ public class PlayersManager {
 
     /**
      * Gets how many island resets the player has done
-     * @param world
+     * @param world - world
      *
      * @param playerUUID - the player's UUID
      * @return number of resets
@@ -350,7 +350,7 @@ public class PlayersManager {
 
     /**
      * Set death number for player
-     * @param world
+     * @param world - world
      * @param playerUUID - the player's UUID
      * @param deaths - number of deaths
      */

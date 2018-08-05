@@ -43,13 +43,8 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminRangeDisplayCommandTest {
 
-    private BentoBox plugin;
     private CompositeCommand ac;
-    private UUID uuid;
     private User user;
-    private IslandsManager im;
-    private PlayersManager pm;
-    private UUID notUUID;
 
 
     /**
@@ -58,7 +53,7 @@ public class AdminRangeDisplayCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
+        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
@@ -75,8 +70,8 @@ public class AdminRangeDisplayCommandTest {
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
-        notUUID = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
+        UUID notUUID = UUID.randomUUID();
         while(notUUID.equals(uuid)) {
             notUUID = UUID.randomUUID();
         }
@@ -96,7 +91,7 @@ public class AdminRangeDisplayCommandTest {
 
 
         // Player has island to begin with
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
@@ -104,7 +99,7 @@ public class AdminRangeDisplayCommandTest {
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
-        pm = mock(PlayersManager.class);
+        PlayersManager pm = mock(PlayersManager.class);
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
 
         when(plugin.getPlayers()).thenReturn(pm);
@@ -116,12 +111,7 @@ public class AdminRangeDisplayCommandTest {
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
-        Answer<String> answer = new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgumentAt(1, String.class);
-            }};
+        Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
             when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
             when(plugin.getLocalesManager()).thenReturn(lm);
     }

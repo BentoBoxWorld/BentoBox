@@ -130,7 +130,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTeam() {
@@ -141,7 +141,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNotTeamLeader() {
@@ -152,7 +152,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTarget() {
@@ -162,7 +162,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -174,7 +174,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteSamePlayer() {
@@ -187,7 +187,7 @@ public class IslandTeamKickCommandTest {
 
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteDifferentPlayerNotInTeam() {
@@ -200,7 +200,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoConfirmation() {
@@ -220,7 +220,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteWithConfirmation() {
@@ -240,7 +240,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteTestResets() {
@@ -272,7 +272,7 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamKickCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testCooldown() {

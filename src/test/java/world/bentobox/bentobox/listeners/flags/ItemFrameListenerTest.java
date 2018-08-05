@@ -60,22 +60,16 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class ItemFrameListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
-    private static IslandWorldManager iwm;
-    private static IslandsManager im;
-    private static World world;
     private static Enderman enderman;
-    private static Slime slime;
 
     @Before
     public void setUp() {
         // Set up plugin
-        plugin = mock(BentoBox.class);
+        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
-        world = mock(World.class);
+        World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
@@ -93,7 +87,7 @@ public class ItemFrameListenerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
+        Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
@@ -105,7 +99,7 @@ public class ItemFrameListenerTest {
 
 
         // Worlds
-        iwm = mock(IslandWorldManager.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
@@ -113,13 +107,13 @@ public class ItemFrameListenerTest {
         enderman = mock(Enderman.class);
         when(enderman.getLocation()).thenReturn(location);
         when(enderman.getWorld()).thenReturn(world);
-        slime = mock(Slime.class);
+        Slime slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
 
         // Fake players
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -128,7 +122,7 @@ public class ItemFrameListenerTest {
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         // Island manager
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);

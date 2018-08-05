@@ -59,10 +59,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class EndermanListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
     private static IslandWorldManager iwm;
-    private static IslandsManager im;
     private static World world;
     private static Enderman enderman;
     private static Slime slime;
@@ -71,7 +68,7 @@ public class EndermanListenerTest {
     @Before
     public void setUp() {
         // Set up plugin
-        plugin = mock(BentoBox.class);
+        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         Server server = mock(Server.class);
@@ -93,7 +90,7 @@ public class EndermanListenerTest {
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        location = mock(Location.class);
+        Location location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
@@ -122,7 +119,7 @@ public class EndermanListenerTest {
         // Fake players
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -131,7 +128,7 @@ public class EndermanListenerTest {
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         // Island manager
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         Island island = mock(Island.class);
         Optional<Island> optional = Optional.of(island);
@@ -207,7 +204,7 @@ public class EndermanListenerTest {
     @Test
     public void testOnNotEndermanDeath() {
         EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(slime, new ArrayList<ItemStack>());
+        EntityDeathEvent e = new EntityDeathEvent(slime, new ArrayList<>());
         listener.onEndermanDeath(e);
         Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
 
@@ -220,7 +217,7 @@ public class EndermanListenerTest {
     public void testOnEndermanDeathCarryAir() {
         when(bd.getMaterial()).thenReturn(Material.AIR);
         EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<ItemStack>());
+        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
         listener.onEndermanDeath(e);
         Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
     }
@@ -232,7 +229,7 @@ public class EndermanListenerTest {
     public void testOnEndermanDeathNotInWorld() {
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
         EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<ItemStack>());
+        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
         listener.onEndermanDeath(e);
         Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
 
@@ -245,7 +242,7 @@ public class EndermanListenerTest {
     public void testOnEndermanDeathNoFlag() {
         Flags.ENDERMAN_DEATH_DROP.setSetting(world, false);
         EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<ItemStack>());
+        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
         listener.onEndermanDeath(e);
         Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
 
@@ -257,7 +254,7 @@ public class EndermanListenerTest {
     @Test
     public void testOnEndermanDeath() {
         EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<ItemStack>());
+        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
         listener.onEndermanDeath(e);
         Mockito.verify(world).dropItemNaturally(Mockito.any(), Mockito.any());
 

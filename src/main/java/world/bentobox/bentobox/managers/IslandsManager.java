@@ -299,7 +299,7 @@ public class IslandsManager {
 
     /**
      * Used for testing only to inject the islandCache mock object
-     * @param islandCache
+     * @param islandCache - island cache
      */
     public void setIslandCache(IslandCache islandCache) {
         this.islandCache = islandCache;

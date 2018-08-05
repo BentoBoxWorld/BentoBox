@@ -123,7 +123,7 @@ public class IslandResetCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandResetCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      * @throws IOException
      */
     @Test

@@ -647,7 +647,7 @@ public class IslandWorldManager {
 
     /**
      * Gets the time stamp for when all player resets were zeroed
-     * @param world
+     * @param world - world
      */
     public long getResetEpoch(World world) {
         return worldSettings.get(Util.getWorld(world)).getResetEpoch();
@@ -655,7 +655,7 @@ public class IslandWorldManager {
 
     /**
      * Sets the time stamp for when all player resets were zeroed
-     * @param world
+     * @param world - world
      */
     public void setResetEpoch(World world) {
         worldSettings.get(Util.getWorld(world)).setResetEpoch(System.currentTimeMillis());

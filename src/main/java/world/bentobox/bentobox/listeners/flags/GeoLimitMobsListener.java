@@ -66,7 +66,7 @@ public class GeoLimitMobsListener extends AbstractFlagListener {
 
     /**
      * Deal with projectiles fired by entities
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void ProjectileExplode(final ExplosionPrimeEvent e) {

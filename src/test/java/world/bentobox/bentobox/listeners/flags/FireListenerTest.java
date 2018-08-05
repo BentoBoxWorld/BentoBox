@@ -57,7 +57,6 @@ public class FireListenerTest {
 
     private static Location location;
     private static BentoBox plugin;
-    private static IslandWorldManager iwm;
 
     @BeforeClass
     public static void setUpClass() {
@@ -95,7 +94,7 @@ public class FireListenerTest {
 
 
         // Worlds
-        iwm = mock(IslandWorldManager.class);
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
@@ -110,7 +109,7 @@ public class FireListenerTest {
         // Fake players
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
-        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<String>());
+        Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
         //User user = mock(User.class);

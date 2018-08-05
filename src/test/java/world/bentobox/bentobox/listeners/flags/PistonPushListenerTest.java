@@ -39,13 +39,9 @@ import world.bentobox.bentobox.util.Util;
 public class PistonPushListenerTest {
 
     private Island island;
-    private IslandsManager im;
     private World world;
-    private Location inside;
-    private UUID uuid;
     private Block block;
     private List<Block> blocks;
-    private Block blockPushed;
 
     @Before
     public void setUp() throws Exception {
@@ -57,17 +53,17 @@ public class PistonPushListenerTest {
         world = mock(World.class);
         
         // Owner
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
         
         // Island initialization
         island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
 
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
-        inside = mock(Location.class);
+        Location inside = mock(Location.class);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
@@ -76,8 +72,8 @@ public class PistonPushListenerTest {
         block = mock(Block.class);
         when(block.getWorld()).thenReturn(world);
         when(block.getLocation()).thenReturn(inside);
-        
-        blockPushed = mock(Block.class);
+
+        Block blockPushed = mock(Block.class);
         
         when(block.getRelative(Mockito.any(BlockFace.class))).thenReturn(blockPushed);
         

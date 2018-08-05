@@ -235,7 +235,7 @@ public class Util {
      * Converts block face direction to radial degrees. Returns 0 if block face
      * is not radial.
      *
-     * @param face
+     * @param face - blockface
      * @return degrees
      */
     public static float blockFaceToFloat(BlockFace face) {

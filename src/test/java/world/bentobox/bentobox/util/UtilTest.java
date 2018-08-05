@@ -36,7 +36,6 @@ public class UtilTest {
     private World world;
     private IslandWorldManager iwm;
     private Location location;
-    private Server server;
 
     /**
      * @throws java.lang.Exception
@@ -64,7 +63,7 @@ public class UtilTest {
         when(location.getPitch()).thenReturn(20F);
 
         PowerMockito.mockStatic(Bukkit.class);
-        server = mock(Server.class);
+        Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(server.getWorld(Mockito.anyString())).thenReturn(world);
     }

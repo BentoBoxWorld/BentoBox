@@ -197,7 +197,7 @@ public class Clipboard {
 
     /**
      * Paste clipboard at this location
-     * @param location
+     * @param location - location
      */
     public void pasteClipboard(Location location) {
         blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
@@ -259,9 +259,9 @@ public class Clipboard {
 
     /**
      * Sets any entity that is in this location
-     * @param island
-     * @param block
-     * @param config
+     * @param island - island
+     * @param location - locaton
+     * @param config - config section
      */
     private void setEntity(Island island, Location location, ConfigurationSection config) {
         ConfigurationSection en = config.getConfigurationSection(ENTITY);

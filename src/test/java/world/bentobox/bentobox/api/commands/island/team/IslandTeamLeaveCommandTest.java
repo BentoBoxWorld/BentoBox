@@ -107,7 +107,7 @@ public class IslandTeamLeaveCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamLeaveCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTeam() {
@@ -118,7 +118,7 @@ public class IslandTeamLeaveCommandTest {
     }
     
     /**
-     * Test method for {@link IslandTeamLeaveCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteInTeamLeader() {
@@ -128,7 +128,7 @@ public class IslandTeamLeaveCommandTest {
     }
     
     /**
-     * Test method for {@link IslandTeamLeaveCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoConfirmation() {
@@ -145,7 +145,7 @@ public class IslandTeamLeaveCommandTest {
     }
     
     /**
-     * Test method for {@link IslandTeamLeaveCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteWithConfirmation() {
@@ -164,7 +164,7 @@ public class IslandTeamLeaveCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamLeaveCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteTestResets() {

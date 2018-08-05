@@ -8,8 +8,7 @@ import world.bentobox.bentobox.api.user.User;
 public class BentoBoxCommand extends CompositeCommand {
 
     /**
-     * About
-     * @param islandCommand - parent command
+     * BentoBox main command
      */
     public BentoBoxCommand() {
         super("bentobox", "bbox");

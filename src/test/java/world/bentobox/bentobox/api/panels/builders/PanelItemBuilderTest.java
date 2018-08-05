@@ -9,6 +9,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -127,7 +128,7 @@ public class PanelItemBuilderTest {
     @Test
     public void testDescriptionString() {
         PanelItemBuilder builder = new PanelItemBuilder();
-        List<String> test = Arrays.asList("test line 5");
+        List<String> test = Collections.singletonList("test line 5");
         builder.description("test line 5");
         PanelItem item = builder.build();
         assertEquals(test, item.getDescription());  

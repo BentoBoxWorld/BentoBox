@@ -120,7 +120,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoIsland() {
@@ -131,7 +131,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNotTeamLeader() {
@@ -142,7 +142,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTarget() {
@@ -152,7 +152,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -165,7 +165,7 @@ public class IslandTeamInviteCommandTest {
 
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteOfflinePlayer() {
@@ -180,7 +180,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteSamePlayer() {
@@ -196,7 +196,7 @@ public class IslandTeamInviteCommandTest {
 
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteDifferentPlayerInTeam() {
@@ -212,7 +212,7 @@ public class IslandTeamInviteCommandTest {
     }
 
     /**
-     * Test method for {@link IslandTeamInviteCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteCoolDownActive() {

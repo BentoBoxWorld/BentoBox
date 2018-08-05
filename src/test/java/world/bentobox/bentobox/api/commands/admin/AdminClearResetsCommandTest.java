@@ -116,7 +116,7 @@ public class AdminClearResetsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminClearResetsCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteNoTarget() {
@@ -127,7 +127,7 @@ public class AdminClearResetsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminClearResetsCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -139,7 +139,7 @@ public class AdminClearResetsCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.AdminClearResetsCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testExecutePlayerNoIsland() {
@@ -151,9 +151,6 @@ public class AdminClearResetsCommandTest {
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
     }
 
-    /**
-     * Test method for {@link us.AdminClearResetsCommand.tastybento.bskyblock.commands.admin.AdminClearResetCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
-     */
     @Test
     public void testExecuteSuccess() {
         String[] name = {"tastybento"};

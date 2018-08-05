@@ -63,7 +63,7 @@ public class CycleClickTest {
     private IslandWorldManager iwm;
 
     /**
-     * @throws java.lang.Exception
+     * @throws java.lang.Exception - exception
      */
     @Before
     public void setUp() throws Exception {

@@ -8,13 +8,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -120,12 +114,12 @@ public class IslandBanlistCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandBanlistCommand#execute(world.bentobox.bentobox.api.user.User, java.util.List)}.
+     * Test method for .
      */
     @Test
     public void testWithArgs() {
         IslandBanlistCommand iubc = new IslandBanlistCommand(ic);
-        assertFalse(iubc.execute(user, iubc.getLabel(), Arrays.asList("bill")));
+        assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
         // Verify show help
     }
 
@@ -152,21 +146,14 @@ public class IslandBanlistCommandTest {
         String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};
         Set<UUID> banned = new HashSet<>();
         Map<UUID, String> uuidToName = new HashMap<>();
-        for (int j = 0; j < names.length; j++) {
+        for (String name : names) {
             UUID uuid = UUID.randomUUID();
             banned.add(uuid);
-            uuidToName.put(uuid, names[j]);
+            uuidToName.put(uuid, name);
         }
         when(island.getBanned()).thenReturn(banned);
         // Respond to name queries
-        when(pm.getName(Mockito.any(UUID.class))).then(new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return uuidToName.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento");
-            }
-
-        });
+        when(pm.getName(Mockito.any(UUID.class))).then((Answer<String>) invocation -> uuidToName.getOrDefault(invocation.getArgumentAt(0, UUID.class), "tastybento"));
         assertTrue(iubc.execute(user, iubc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.banlist.the-following");
     }

@@ -51,15 +51,10 @@ public class EnterExitListenerTest {
     private static final Integer X = 600;
     private static final Integer Y = 120;
     private static final Integer Z = 10000;
-    private UUID uuid;
     private User user;
-    private IslandsManager im;
     private Island island;
-    private World world;
     private Location outside;
     private Location inside;
-    private Notifier notifier;
-    private Location inside2;
     private EnterExitListener listener;
     private LocalesManager lm;
     /**
@@ -73,7 +68,7 @@ public class EnterExitListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // World
-        world = mock(World.class);
+        World world = mock(World.class);
 
         // Settings
         Settings s = mock(Settings.class);
@@ -85,13 +80,13 @@ public class EnterExitListenerTest {
         user = mock(User.class);
         User.setPlugin(plugin);
         when(user.isOp()).thenReturn(false);
-        uuid = UUID.randomUUID();
+        UUID uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(p);
         when(user.getName()).thenReturn("tastybento");
 
         // No island for player to begin with (set it later in the tests)
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
 
         // Locales      
@@ -100,7 +95,7 @@ public class EnterExitListenerTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
 
         // Notifier
-        notifier = mock(Notifier.class);
+        Notifier notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
         // Island initialization
@@ -131,7 +126,7 @@ public class EnterExitListenerTest {
         when(inside.getBlockZ()).thenReturn(Z);
         when(inside.toVector()).thenReturn(new Vector(X + PROTECTION_RANGE - 1, Y, Z));
 
-        inside2 = mock(Location.class);
+        Location inside2 = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
         when(inside.getBlockX()).thenReturn(X + PROTECTION_RANGE - 2);
         when(inside.getBlockY()).thenReturn(Y);

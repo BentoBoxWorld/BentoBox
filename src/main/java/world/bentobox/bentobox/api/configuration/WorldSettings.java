@@ -45,7 +45,7 @@ public interface WorldSettings {
 
     /**
      * Set the world difficulty
-     * @param difficulty
+     * @param difficulty - difficulty
      */
     void setDifficulty(Difficulty difficulty);
 

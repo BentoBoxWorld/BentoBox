@@ -270,7 +270,7 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#clearHomeLocations(java.util.UUID)}.
+     * Test method for .
      */
     @Test
     public void testClearHomeLocations() {
@@ -326,7 +326,7 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getResets(java.util.UUID)}.
+     * Test method for .
      */
     @Test
     public void testGetSetResetsLeft() {

@@ -74,14 +74,7 @@ public class BannedVisitorCommandsTest {
             when(p.getName()).thenReturn(uuid.toString());
             onlinePlayers.add(p);
         }
-        when(server.getOnlinePlayers()).then(new Answer<Set<Player>>() {
-
-            @Override
-            public Set<Player> answer(InvocationOnMock invocation) throws Throwable {
-                return onlinePlayers;
-            }
-
-        });
+        when(server.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> onlinePlayers);
         when(player.getServer()).thenReturn(server);
 
         // Island manager

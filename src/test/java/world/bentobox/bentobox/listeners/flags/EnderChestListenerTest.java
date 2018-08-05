@@ -52,11 +52,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class, User.class })
 public class EnderChestListenerTest {
 
-    private Island island;
-    private IslandsManager im;
     private World world;
-    private Location inside;
-    private UUID uuid;
     private Player player;
     private IslandWorldManager iwm;
 
@@ -70,17 +66,17 @@ public class EnderChestListenerTest {
         world = mock(World.class);
         
         // Owner
-        uuid = UUID.randomUUID();
+        UUID uuid1 = UUID.randomUUID();
         
         // Island initialization
-        island = mock(Island.class);
-        when(island.getOwner()).thenReturn(uuid);
+        Island island = mock(Island.class);
+        when(island.getOwner()).thenReturn(uuid1);
 
-        im = mock(IslandsManager.class);
+        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
-        inside = mock(Location.class);
+        Location inside = mock(Location.class);
         when(inside.getWorld()).thenReturn(world);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
@@ -116,12 +112,7 @@ public class EnderChestListenerTest {
         // Locales - this returns the string that was requested for translation 
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
-        when(lm.get(any(), any())).thenAnswer(new Answer<String>() {
-
-            @Override
-            public String answer(InvocationOnMock invocation) throws Throwable {
-                return invocation.getArgumentAt(1, String.class);
-            }});
+        when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
         
     }
 

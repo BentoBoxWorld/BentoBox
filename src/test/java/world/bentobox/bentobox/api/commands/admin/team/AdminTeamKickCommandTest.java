@@ -47,7 +47,6 @@ import world.bentobox.bentobox.managers.PlayersManager;
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class AdminTeamKickCommandTest {
 
-    private BentoBox plugin;
     private CompositeCommand ac;
     private UUID uuid;
     private User user;
@@ -61,7 +60,7 @@ public class AdminTeamKickCommandTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
+        BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager

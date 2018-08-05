@@ -54,7 +54,7 @@ public class TNTListener extends AbstractFlagListener {
 
     /**
      * Protect against priming of TNT unless break blocks is allowed
-     * @param e
+     * @param e - event
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTNTPriming(PlayerInteractEvent e) {

@@ -97,13 +97,11 @@ public class FlagsManagerTest {
     public void testRegisterDuplicateFlagIcons() {
         FlagsManager fm = new FlagsManager(plugin);
         // Change the ID to something random, but use every icon that is already used
-        Flags.values().forEach(dupe -> {
-            assertFalse(fm.registerFlag(new FlagBuilder()
-                    .id(UUID.randomUUID().toString())
-                    .icon(dupe.getIcon())
-                    .listener(new BreakBlocksListener())
-                    .build()));
-        });
+        Flags.values().forEach(dupe -> assertFalse(fm.registerFlag(new FlagBuilder()
+                .id(UUID.randomUUID().toString())
+                .icon(dupe.getIcon())
+                .listener(new BreakBlocksListener())
+                .build())));
     }
 
     @Test
