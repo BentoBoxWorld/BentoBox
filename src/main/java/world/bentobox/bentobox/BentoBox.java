@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.placeholders.PlaceholderHandler;
 import world.bentobox.bentobox.api.user.Notifier;
+import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.database.BSBDbSetup;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
@@ -100,7 +101,10 @@ public class BentoBox extends JavaPlugin {
         // Set up command manager
         commandsManager = new CommandsManager();
 
-        // Create the world if it does not exist
+        // Load BentoBox commands
+        new BentoBoxCommand();
+
+        // Start Island Worlds Manager
         islandWorldManager = new IslandWorldManager(instance);
         // Load schems manager
         schemsManager = new SchemsManager(instance);

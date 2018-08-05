@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
@@ -69,6 +70,7 @@ public class DefaultHelpCommandTest {
         // Parent command has no aliases
         CompositeCommand ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+
 
         // No island for player to begin with (set it later in the tests)
         IslandsManager im = mock(IslandsManager.class);
@@ -139,6 +141,7 @@ public class DefaultHelpCommandTest {
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
+        when(parent.getWorld()).thenReturn(mock(World.class));
         when(user.getTranslation("island")).thenReturn("island");
         when(user.getTranslation("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");

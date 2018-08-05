@@ -48,6 +48,7 @@ commands:
     end: "&7================================="
     parameters: "[command]"
     description: "help command"
+    console: "Console"
   admin:
     help:
       parameters: ""
@@ -170,9 +171,20 @@ commands:
       look-at-a-block: "&cLook at block within 20 blocks to set"
     world:
       description: "Manage world settings"
-  island:
+  bentobox:
+    parameters: ""
+    description: "BentoBox admin command"
     about:
+      parameters: ""
       description: "display copyright and license info"
+    info:
+      parameters: ""
+      description: "display info"
+      loaded-addons: "Loaded Add-Ons"
+      loaded-game-worlds: "Loaded Game Worlds"
+      addon-syntax: "&2[name] &3[version]" 
+      game-worlds: "&2[name]" 
+  island:
     go:
       parameters: "[home number]"
       description: "teleport you to your island"

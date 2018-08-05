@@ -52,7 +52,9 @@ public class DefaultHelpCommand extends CompositeCommand {
             }
         }
         if (depth == 0) {
-            user.sendMessage("commands.help.header", TextVariables.LABEL, getIWM().getFriendlyName(getWorld()));
+            // Get the name of the world for the help header, or console if there is no world association
+            String labelText = getWorld() != null ? getIWM().getFriendlyName(getWorld()) : user.getTranslation("commands.help.console");
+            user.sendMessage("commands.help.header", TextVariables.LABEL, labelText);
         }
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {
