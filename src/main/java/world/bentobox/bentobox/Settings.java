@@ -162,6 +162,10 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
 
+    @ConfigComment("How long a player must wait until they can ban a player")
+    @ConfigComment("after unbanning them. In minutes.")
+    @ConfigEntry(path = "island.ban-wait")
+    private int banWait = 10;
 
     // Ranks
     @ConfigEntry(path = "island.customranks")
@@ -607,4 +611,19 @@ public class Settings implements DataObject {
     public void setNameMaxLength(int nameMaxLength) {
         this.nameMaxLength = nameMaxLength;
     }
+
+    /**
+     * @return the banWait
+     */
+    public int getBanWait() {
+        return banWait;
+    }
+
+    /**
+     * @param banWait the banWait to set
+     */
+    public void setBanWait(int banWait) {
+        this.banWait = banWait;
+    }
+
 }

@@ -31,7 +31,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             // Show help
             showHelp(this, user);
             return false;
-        } 
+        }
         UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island
         if (!getIslands().hasIsland(getWorld(), playerUUID)) {
@@ -55,7 +55,7 @@ public class IslandUnbanCommand extends CompositeCommand {
         }
         if (!getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.unban.player-not-banned");
-            return false; 
+            return false;
         }
         // Finished error checking - start the unbanning
         User targetUser = User.getInstance(targetUUID);
@@ -66,6 +66,11 @@ public class IslandUnbanCommand extends CompositeCommand {
         if (getIslands().getIsland(getWorld(), user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
             user.sendMessage("general.success");
             targetUser.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
+            // Set cooldown
+            if (getSettings().getBanWait() > 0 && getParent() != null) {
+                getParent().getSubCommand("ban").ifPresent(subCommand ->
+                subCommand.setCooldown(user.getUniqueId(), targetUser.getUniqueId(), getSettings().getBanWait() * 60));
+            }
             return true;
         }
         // Unbanning was blocked, maybe due to an event cancellation. Fail silently.
@@ -73,7 +78,7 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     @Override
-    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {       
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         List<String> options = island.getBanned().stream().map(getPlayers()::getName).collect(Collectors.toList());
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";

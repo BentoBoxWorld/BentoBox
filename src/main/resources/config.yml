@@ -83,6 +83,9 @@ island:
     # These set the minimum and maximum size of a name.
     min-length: 4
     max-length: 20
+  # How long a player must wait until they can ban a player
+  # after unbanning them. In minutes.
+  ban-wait: 10
   customranks: {}
 # These settings should not be edited
 uniqueId: config

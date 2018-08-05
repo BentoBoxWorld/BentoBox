@@ -59,17 +59,20 @@ public class IslandBanCommand extends CompositeCommand {
         }
         if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
             user.sendMessage("commands.island.ban.cannot-ban-member");
-            return false; 
+            return false;
         }
         if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
             user.sendMessage("commands.island.ban.player-already-banned");
-            return false; 
-        }        
+            return false;
+        }
+        if (getSettings().getBanWait() > 0 && !checkCooldown(user, targetUUID)) {
+            return false;
+        }
         User target = User.getInstance(targetUUID);
         // Cannot ban ops
         if (target.isOp()) {
             user.sendMessage("commands.island.ban.cannot-ban");
-            return false; 
+            return false;
         }
         // Finished error checking - start the banning
         return ban(user, target);
@@ -84,7 +87,7 @@ public class IslandBanCommand extends CompositeCommand {
             if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
                 getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
                 island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
-            }            
+            }
             return true;
         }
         // Banning was blocked, maybe due to an event cancellation. Fail silently.
