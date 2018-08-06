@@ -101,7 +101,6 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     *
      * Creates a list of <T>s filled with values from the provided ResultSet
      *
      * @param config - YAML config file
@@ -117,12 +116,19 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the write method
             Method method = propertyDescriptor.getWriteMethod();
+
+            // Information about the field
             String storageLocation = field.getName();
+            boolean overrideOnChange, experimental, needsReset = false;
+
             // Check if there is an annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             // If there is a config annotation then do something
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
+                overrideOnChange = configEntry.overrideOnChange();
+                experimental = configEntry.experimental();
+                needsReset = configEntry.needsReset();
             }
             Adapter adapterNotation = field.getAnnotation(Adapter.class);
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
@@ -488,6 +494,5 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public void close() {
         // Not used
-
     }
 }
