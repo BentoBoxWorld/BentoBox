@@ -56,7 +56,6 @@ public class AddonTest {
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
 
-        //Bukkit.setServer(server);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPluginManager()).thenReturn(pluginManager);
