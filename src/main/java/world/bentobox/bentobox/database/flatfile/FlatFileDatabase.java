@@ -2,9 +2,9 @@ package world.bentobox.bentobox.database.flatfile;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.BBDbSetup;
+import world.bentobox.bentobox.database.DatabaseSetup;
 
-public class FlatFileDatabase extends BBDbSetup{
+public class FlatFileDatabase extends DatabaseSetup {
 
     /**
      * Get the config

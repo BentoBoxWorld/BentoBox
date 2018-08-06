@@ -2,10 +2,10 @@ package world.bentobox.bentobox.database.mongodb;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.BBDbSetup;
+import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
-public class MongoDBDatabase extends BBDbSetup{
+public class MongoDBDatabase extends DatabaseSetup {
 
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {

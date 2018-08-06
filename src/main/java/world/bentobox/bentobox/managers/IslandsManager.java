@@ -25,7 +25,7 @@ import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.BBDatabase;
+import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -50,7 +50,7 @@ public class IslandsManager {
      */
     private Map<World, Island> spawn;
 
-    private BBDatabase<Island> handler;
+    private Database<Island> handler;
 
     /**
      * The last locations where an island were put.
@@ -73,7 +73,7 @@ public class IslandsManager {
     public IslandsManager(BentoBox plugin){
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Island classes
-        handler = new BBDatabase<>(plugin, Island.class);
+        handler = new Database<>(plugin, Island.class);
         islandCache = new IslandCache();
         spawn = new HashMap<>();
         last = new HashMap<>();

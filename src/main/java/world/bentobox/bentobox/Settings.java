@@ -8,7 +8,7 @@ import java.util.Set;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.StoreAt;
-import world.bentobox.bentobox.database.BBDbSetup.DatabaseType;
+import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**

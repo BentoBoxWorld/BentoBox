@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.configuration;
+package world.bentobox.bentobox.database;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -8,41 +8,39 @@ import java.util.logging.Logger;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.flatfile.FlatFileDatabase;
 
 /**
- * Handy config class to store and load Java POJOs as YAML configs
+ * Handy class to store and load Java POJOs in the Database
  * @author tastybento
  *
  * @param <T>
  */
-public class BBConfig<T> {
+public class Database<T> {
 
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
 
-    public BBConfig(BentoBox plugin, Class<T> type)  {
+    public Database(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = new FlatFileDatabase().getHandler(type);
+        handler = DatabaseSetup.getDatabase().getHandler(type);
     }
 
-    public BBConfig(Addon addon, Class<T> type)  {
+    public Database(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = new FlatFileDatabase().getHandler(type);
+        handler = DatabaseSetup.getDatabase().getHandler(type);
     }
 
     /**
      * Load all the config objects and supply them as a list
      * @return list of config objects or an empty list if they cannot be loaded
      */
-    public List<T> loadConfigObjects() {
+    public List<T> loadObjects() {
         List<T> result = new ArrayList<>();
         try {
             result = handler.loadObjects();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
                 | InvocationTargetException | ClassNotFoundException | IntrospectionException e) {
-            logger.severe(() -> "Could not load config! Error: " + e.getMessage());
+            logger.severe(() -> "Could not load objects from database! Error: " + e.getMessage());
         }
         return result;
     }
@@ -52,36 +50,27 @@ public class BBConfig<T> {
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
-    public T loadConfigObject(String uniqueId) {
-
+    public T loadObject(String uniqueId) {
+        T result = null;
         try {
-            return handler.loadObject(uniqueId);
+            result = handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | ClassNotFoundException | IntrospectionException e) {
-            logger.severe(() -> "Could not load config object! " + e.getMessage());
+            logger.severe(() -> "Could not load object from database! " + e.getMessage());
         }
-
-        return null;
-    }
-
-    /**
-     * Loads a config object
-     * @return the object or null if it cannot be loaded
-     */
-    public T loadConfigObject() {
-        return loadConfigObject("");
+        return result;
     }
 
     /**
      * Save config object
      * @param instance to save
      */
-    public boolean saveConfigObject(T instance) {
+    public boolean saveObject(T instance) {
         try {
             handler.saveObject(instance);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
                 | IntrospectionException e) {
-            logger.severe(() -> "Could not save config! Error: " + e.getMessage());
+            logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
             return false;
         }
         return true;
@@ -92,8 +81,28 @@ public class BBConfig<T> {
      * @param name - unique name of the config object
      * @return true if it exists
      */
-    public boolean configObjectExists(String name) {
+    public boolean objectExists(String name) {
         return handler.objectExists(name);
+    }
+
+    /**
+     * Delete object from database
+     * @param object - object to delete
+     */
+    public void deleteObject(T object) {
+        try {
+            handler.deleteObject(object);
+        } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
+                | IntrospectionException e) {
+            logger.severe(() -> "Could not delete config! Error: " + e.getMessage());
+        }
+    }
+
+    /**
+     * Close the database
+     */
+    public void close() {
+        handler.close();
     }
 
 }
