@@ -94,17 +94,6 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "general.database.backup-period")
     private int databaseBackupPeriod = 5;
 
-    @ConfigComment("Recover super flat - if the generator does not run for some reason, you can get")
-    @ConfigComment("super flat chunks (grass). To remove automatically, select this option. Turn off")
-    @ConfigComment("if there are no more because it may cause lag.")
-    @ConfigComment("This will regenerate any chunks with bedrock at y=0 when they are loaded")
-    @ConfigEntry(path = "general.recover-super-flat")
-    private boolean recoverSuperFlat = false;
-
-    @ConfigComment("Mute death messages")
-    @ConfigEntry(path = "general.mute-death-messages")
-    private boolean muteDeathMessages = false;
-
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
     @ConfigComment("Add other fake player names here if required")
     @ConfigEntry(path = "general.fakeplayers")
@@ -170,7 +159,6 @@ public class Settings implements DataObject {
     // Ranks
     @ConfigEntry(path = "island.customranks")
     private Map<String, Integer> customRanks = new HashMap<>();
-
 
     //---------------------------------------------------------------------------------------/
     @ConfigComment("These settings should not be edited")
@@ -272,20 +260,6 @@ public class Settings implements DataObject {
      */
     public int getDatabaseBackupPeriod() {
         return databaseBackupPeriod;
-    }
-
-    /**
-     * @return the recoverSuperFlat
-     */
-    public boolean isRecoverSuperFlat() {
-        return recoverSuperFlat;
-    }
-
-    /**
-     * @return the muteDeathMessages
-     */
-    public boolean isMuteDeathMessages() {
-        return muteDeathMessages;
     }
 
     /**
@@ -420,20 +394,6 @@ public class Settings implements DataObject {
      */
     public void setDatabaseBackupPeriod(int databaseBackupPeriod) {
         this.databaseBackupPeriod = databaseBackupPeriod;
-    }
-
-    /**
-     * @param recoverSuperFlat the recoverSuperFlat to set
-     */
-    public void setRecoverSuperFlat(boolean recoverSuperFlat) {
-        this.recoverSuperFlat = recoverSuperFlat;
-    }
-
-    /**
-     * @param muteDeathMessages the muteDeathMessages to set
-     */
-    public void setMuteDeathMessages(boolean muteDeathMessages) {
-        this.muteDeathMessages = muteDeathMessages;
     }
 
     /**
