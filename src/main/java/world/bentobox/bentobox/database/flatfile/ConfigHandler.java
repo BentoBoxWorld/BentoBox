@@ -4,7 +4,7 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 
 /**
  * Class handles config settings saving and loading
@@ -16,8 +16,8 @@ import world.bentobox.bentobox.database.DatabaseConnecter;
 
 public class ConfigHandler<T> extends FlatFileDatabaseHandler<T> {
 
-    public ConfigHandler(BentoBox plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
-        super(plugin, type, databaseConnecter);
+    public ConfigHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
+        super(plugin, type, databaseConnector);
     }
 
     public void saveSettings(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {

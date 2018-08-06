@@ -21,7 +21,7 @@ import com.mongodb.util.JSON;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.mysql.adapters.FlagAdapter;
 import world.bentobox.bentobox.database.mysql.adapters.LocationAdapter;
 import world.bentobox.bentobox.database.mysql.adapters.PotionEffectTypeAdapter;
@@ -43,7 +43,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String MONGO_ID = "_id";
 
     private MongoCollection<Document> collection;
-    private DatabaseConnecter dbConnecter;
+    private DatabaseConnector dbConnecter;
 
 
     /**
@@ -53,7 +53,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param dbConnecter - authentication details for the database
      */
-    public MongoDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnecter dbConnecter) {
+    public MongoDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         this.dbConnecter = dbConnecter;
         /*

@@ -45,7 +45,7 @@ public class MySQLDatabaseHandlerTest {
     private static MySQLDatabaseHandler<Island> handler;
     private static Island instance;
     private static String UNIQUE_ID = "xyz";
-    private static MySQLDatabaseConnecter dbConn;
+    private static MySQLDatabaseConnector dbConn;
     private static World world;
     @Mock
     static BentoBox plugin = mock(BentoBox.class);
@@ -81,7 +81,7 @@ public class MySQLDatabaseHandlerTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
-        dbConn = mock(MySQLDatabaseConnecter.class);
+        dbConn = mock(MySQLDatabaseConnector.class);
         Connection connection = mock(Connection.class);
         when(dbConn.createConnection()).thenReturn(connection);
         PreparedStatement ps = mock(PreparedStatement.class);

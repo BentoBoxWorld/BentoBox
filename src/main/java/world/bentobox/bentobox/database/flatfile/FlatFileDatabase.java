@@ -13,12 +13,12 @@ public class FlatFileDatabase extends DatabaseSetup {
      * @return - the config handler
      */
     public <T> AbstractDatabaseHandler<T> getConfig(Class<T> type) {
-        return new ConfigHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnecter(BentoBox.getInstance()));
+        return new ConfigHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnector(BentoBox.getInstance()));
     }
 
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
-        return new FlatFileDatabaseHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnecter(BentoBox.getInstance()));
+        return new FlatFileDatabaseHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnector(BentoBox.getInstance()));
     }
 
 }

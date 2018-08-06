@@ -15,9 +15,9 @@ import java.util.UUID;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 
-public class FlatFileDatabaseConnecter implements DatabaseConnecter {
+public class FlatFileDatabaseConnector implements DatabaseConnector {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
@@ -25,7 +25,7 @@ public class FlatFileDatabaseConnecter implements DatabaseConnecter {
     private File dataFolder;
 
 
-    public FlatFileDatabaseConnecter(BentoBox plugin) {
+    public FlatFileDatabaseConnector(BentoBox plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }

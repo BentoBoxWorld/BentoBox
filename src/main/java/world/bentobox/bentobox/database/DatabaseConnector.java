@@ -9,7 +9,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
  * Creates a connection to a database.
  *
  */
-public interface DatabaseConnecter {
+public interface DatabaseConnector {
 
     /**
      * Establishes a new connection to the database

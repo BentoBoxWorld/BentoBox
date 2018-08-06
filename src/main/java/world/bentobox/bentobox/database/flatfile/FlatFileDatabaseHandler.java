@@ -33,7 +33,7 @@ import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.AdapterInterface;
 import world.bentobox.bentobox.util.Util;
@@ -52,8 +52,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String DATABASE_FOLDER_NAME = "database";
     protected boolean configFlag;
 
-    public FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnecter dbConnecter) {
-        super(plugin, type, dbConnecter);
+    public FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
+        super(plugin, type, databaseConnector);
     }
 
     @Override
@@ -65,13 +65,13 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             path = storeAt.path();
             fileName = storeAt.filename();
         }
-        YamlConfiguration config = databaseConnecter.loadYamlFile(path, fileName);
+        YamlConfiguration config = databaseConnector.loadYamlFile(path, fileName);
         return createObject(config);
     }
 
     @Override
     public boolean objectExists(String uniqueId) {
-        return databaseConnecter.uniqueIdExists(dataObject.getSimpleName(), uniqueId);
+        return databaseConnector.uniqueIdExists(dataObject.getSimpleName(), uniqueId);
     }
 
     @Override
@@ -94,7 +94,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = databaseConnecter.loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
+            YamlConfiguration config = databaseConnector.loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -317,7 +317,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // If the object does not have a unique name assigned to it already, one is created at random
                 String id = (String)value;
                 if (value == null || id.isEmpty()) {
-                    id = databaseConnecter.getUniqueId(dataObject.getSimpleName());
+                    id = databaseConnector.getUniqueId(dataObject.getSimpleName());
                     // Set it in the class so that it will be used next time
                     propertyDescriptor.getWriteMethod().invoke(instance, id);
                 }
@@ -359,7 +359,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             throw new IllegalArgumentException("No uniqueId in class");
         }
 
-        databaseConnecter.saveYamlFile(config, path, filename, yamlComments);
+        databaseConnector.saveYamlFile(config, path, filename, yamlComments);
     }
 
     private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {

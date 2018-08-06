@@ -25,7 +25,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * Contains the settings to create a connection to the database like
      * host/port/database/user/password
      */
-    protected DatabaseConnecter databaseConnecter;
+    protected DatabaseConnector databaseConnector;
 
     protected BentoBox plugin;
 
@@ -35,13 +35,13 @@ public abstract class AbstractDatabaseHandler<T> {
      * @param type
      *            The type of the objects that should be created and filled with
      *            values from the database or inserted into the database
-     * @param databaseConnecter
+     * @param databaseConnector
      *            Contains the settings to create a connection to the database
      *            like host/port/database/user/password
      */
-    protected AbstractDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnecter databaseConnecter) {
+    protected AbstractDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         this.plugin = plugin;
-        this.databaseConnecter = databaseConnecter;
+        this.databaseConnector = databaseConnector;
         this.dataObject = type;
     }
 

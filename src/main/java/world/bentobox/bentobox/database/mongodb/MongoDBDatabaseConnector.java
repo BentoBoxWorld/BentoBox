@@ -10,10 +10,10 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
-public class MongoDBDatabaseConnecter implements DatabaseConnecter {
+public class MongoDBDatabaseConnector implements DatabaseConnector {
 
     private MongoClient client;
     private DatabaseConnectionSettingsImpl dbSettings;
@@ -22,7 +22,7 @@ public class MongoDBDatabaseConnecter implements DatabaseConnecter {
      * Class for MySQL database connections using the settings provided
      * @param dbSettings - database settings
      */
-    public MongoDBDatabaseConnecter(DatabaseConnectionSettingsImpl dbSettings) {
+    public MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
                 dbSettings.getDatabaseName(),

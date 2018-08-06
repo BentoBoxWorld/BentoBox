@@ -8,10 +8,10 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
-public class MySQLDatabaseConnecter implements DatabaseConnecter {
+public class MySQLDatabaseConnector implements DatabaseConnector {
 
     private String connectionUrl;
     private DatabaseConnectionSettingsImpl dbSettings;
@@ -21,7 +21,7 @@ public class MySQLDatabaseConnecter implements DatabaseConnecter {
      * Class for MySQL database connections using the settings provided
      * @param dbSettings - database settings
      */
-    public MySQLDatabaseConnecter(DatabaseConnectionSettingsImpl dbSettings) {
+    public MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         try {
             Class.forName("com.mysql.jdbc.Driver").newInstance();

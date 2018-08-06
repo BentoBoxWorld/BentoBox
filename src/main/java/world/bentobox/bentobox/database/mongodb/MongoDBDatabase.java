@@ -17,7 +17,7 @@ public class MongoDBDatabase extends DatabaseSetup {
             plugin.getServer().getPluginManager().disablePlugin(plugin);
             return null;
         }
-        return new MongoDBDatabaseHandler<>(plugin, type, new MongoDBDatabaseConnecter(new DatabaseConnectionSettingsImpl(
+        return new MongoDBDatabaseHandler<>(plugin, type, new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
                 plugin.getSettings().getDbHost(),
                 plugin.getSettings().getDbPort(),
                 plugin.getSettings().getDbName(),

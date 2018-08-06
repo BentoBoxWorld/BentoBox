@@ -19,7 +19,7 @@ import com.google.gson.GsonBuilder;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.DatabaseConnecter;
+import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.mysql.adapters.FlagAdapter;
 import world.bentobox.bentobox.database.mysql.adapters.LocationAdapter;
 import world.bentobox.bentobox.database.mysql.adapters.PotionEffectTypeAdapter;
@@ -49,7 +49,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param dbConnecter - authentication details for the database
      */
-    public MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnecter dbConnecter) {
+    public MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         connection = (Connection)dbConnecter.createConnection();
         // Check if the table exists in the database and if not, create it

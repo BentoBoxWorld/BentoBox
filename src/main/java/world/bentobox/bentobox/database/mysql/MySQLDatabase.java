@@ -14,7 +14,7 @@ public class MySQLDatabase extends DatabaseSetup {
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         BentoBox plugin = BentoBox.getInstance();
-        return new MySQLDatabaseHandler<>(plugin, type, new MySQLDatabaseConnecter(new DatabaseConnectionSettingsImpl(
+        return new MySQLDatabaseHandler<>(plugin, type, new MySQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
                 plugin.getSettings().getDbHost(),
                 plugin.getSettings().getDbPort(),
                 plugin.getSettings().getDbName(),
