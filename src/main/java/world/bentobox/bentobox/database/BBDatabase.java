@@ -15,19 +15,19 @@ import world.bentobox.bentobox.api.addons.Addon;
  *
  * @param <T>
  */
-public class BSBDatabase<T> {
+public class BBDatabase<T> {
 
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
 
-    public BSBDatabase(BentoBox plugin, Class<T> type)  {
+    public BBDatabase(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = BSBDbSetup.getDatabase().getHandler(type);
+        handler = BBDbSetup.getDatabase().getHandler(type);
     }
 
-    public BSBDatabase(Addon addon, Class<T> type)  {
+    public BBDatabase(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = BSBDbSetup.getDatabase().getHandler(type);
+        handler = BBDbSetup.getDatabase().getHandler(type);
 
     }
 

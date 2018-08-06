@@ -14,15 +14,15 @@ import org.bukkit.World;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.BSBDatabase;
+import world.bentobox.bentobox.database.BBDatabase;
 import world.bentobox.bentobox.database.objects.Names;
 import world.bentobox.bentobox.database.objects.Players;
 
 public class PlayersManager {
 
     private BentoBox plugin;
-    private BSBDatabase<Players> handler;
-    private BSBDatabase<Names> names;
+    private BBDatabase<Players> handler;
+    private BBDatabase<Names> names;
 
     private Map<UUID, Players> playerCache;
     private Set<UUID> inTeleport;
@@ -37,9 +37,9 @@ public class PlayersManager {
     public PlayersManager(BentoBox plugin){
         this.plugin = plugin;
         // Set up the database handler to store and retrieve Players classes
-        handler = new BSBDatabase<>(plugin, Players.class);
+        handler = new BBDatabase<>(plugin, Players.class);
         // Set up the names database
-        names = new BSBDatabase<>(plugin, Names.class);
+        names = new BBDatabase<>(plugin, Names.class);
         playerCache = new HashMap<>();
         inTeleport = new HashSet<>();
     }
@@ -48,7 +48,7 @@ public class PlayersManager {
      * Used only for testing. Sets the database to a mock database.
      * @param handler - handler
      */
-    public void setHandler(BSBDatabase<Players> handler) {
+    public void setHandler(BBDatabase<Players> handler) {
         this.handler = handler;
     }
 

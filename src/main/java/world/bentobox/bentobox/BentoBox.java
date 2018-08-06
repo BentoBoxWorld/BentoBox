@@ -5,13 +5,13 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import world.bentobox.bentobox.api.configuration.BSBConfig;
+import world.bentobox.bentobox.api.configuration.BBConfig;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.placeholders.PlaceholderHandler;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
-import world.bentobox.bentobox.database.BSBDbSetup;
+import world.bentobox.bentobox.database.BBDbSetup;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
@@ -78,7 +78,7 @@ public class BentoBox extends JavaPlugin {
         flagsManager = new FlagsManager(instance);
 
         // Load settings from config.yml. This will check if there are any issues with it too.
-        settings = new BSBConfig<>(this, Settings.class).loadConfigObject("");
+        settings = new BBConfig<>(this, Settings.class).loadConfigObject("");
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
@@ -183,7 +183,7 @@ public class BentoBox extends JavaPlugin {
         }
         // Save settings
         if (settings != null) {
-            new BSBConfig<>(this, Settings.class).saveConfigObject(settings);
+            new BBConfig<>(this, Settings.class).saveConfigObject(settings);
         }
     }
 
@@ -218,7 +218,7 @@ public class BentoBox extends JavaPlugin {
 
             @Override
             public String getValue() {
-                return BSBDbSetup.getDatabase().toString();
+                return BBDbSetup.getDatabase().toString();
             }
         });
     }

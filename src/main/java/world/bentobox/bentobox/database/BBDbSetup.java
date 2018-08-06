@@ -5,14 +5,14 @@ import world.bentobox.bentobox.database.flatfile.FlatFileDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 
-public abstract class BSBDbSetup {
+public abstract class BBDbSetup {
 
     /**
      * Gets the type of database being used. Currently supported options are
      * FLATFILE and MYSQL. Default is FLATFILE
      * @return Database type
      */
-    public static BSBDbSetup getDatabase(){
+    public static BBDbSetup getDatabase(){
         for(DatabaseType type : DatabaseType.values()){
             if(type == BentoBox.getInstance().getSettings().getDatabaseType()) {
                 return type.database;
@@ -26,9 +26,9 @@ public abstract class BSBDbSetup {
         MYSQL(new MySQLDatabase()),
         MONGO(new MongoDBDatabase());
 
-        BSBDbSetup database;
+        BBDbSetup database;
 
-        DatabaseType(BSBDbSetup database){
+        DatabaseType(BBDbSetup database){
             this.database = database;
         }
     }

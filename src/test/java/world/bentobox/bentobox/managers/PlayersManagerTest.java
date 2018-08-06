@@ -34,7 +34,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.BSBDatabase;
+import world.bentobox.bentobox.database.BBDatabase;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
 
@@ -54,7 +54,7 @@ public class PlayersManagerTest {
     private World nether;
     private World end;
     @Mock
-    private BSBDatabase<Players> db;
+    private BBDatabase<Players> db;
 
     /**
      * @throws java.lang.Exception

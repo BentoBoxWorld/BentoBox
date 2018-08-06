@@ -2,10 +2,10 @@ package world.bentobox.bentobox.database.mysql;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.BSBDbSetup;
+import world.bentobox.bentobox.database.BBDbSetup;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
-public class MySQLDatabase extends BSBDbSetup{
+public class MySQLDatabase extends BBDbSetup{
 
 
     /* (non-Javadoc)

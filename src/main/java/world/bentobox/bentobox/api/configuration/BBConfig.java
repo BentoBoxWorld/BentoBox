@@ -17,17 +17,17 @@ import world.bentobox.bentobox.database.flatfile.FlatFileDatabase;
  *
  * @param <T>
  */
-public class BSBConfig<T> {
+public class BBConfig<T> {
 
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
 
-    public BSBConfig(BentoBox plugin, Class<T> type)  {
+    public BBConfig(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
         handler = new FlatFileDatabase().getHandler(type);
     }
 
-    public BSBConfig(Addon addon, Class<T> type)  {
+    public BBConfig(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
         handler = new FlatFileDatabase().getHandler(type);
     }
@@ -62,6 +62,14 @@ public class BSBConfig<T> {
         }
 
         return null;
+    }
+
+    /**
+     * Loads a config object
+     * @return the object or null if it cannot be loaded
+     */
+    public T loadConfigObject() {
+        return loadConfigObject("");
     }
 
     /**
