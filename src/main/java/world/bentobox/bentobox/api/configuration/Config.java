@@ -24,12 +24,12 @@ public class Config<T> {
 
     public Config(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = new FlatFileDatabase().getHandler(type);
+        handler = new FlatFileDatabase().getConfig(type);
     }
 
     public Config(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = new FlatFileDatabase().getHandler(type);
+        handler = new FlatFileDatabase().getConfig(type);
     }
 
     /**
@@ -53,7 +53,6 @@ public class Config<T> {
      * @return the object or null if it cannot be loaded
      */
     public T loadConfigObject(String uniqueId) {
-
         try {
             return handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException

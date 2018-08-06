@@ -7,7 +7,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
 /**
- * Class handles config settings saving and loading
+ * Handles config settings saving and loading.
  *
  * @author tastybento
  *
