@@ -33,7 +33,7 @@ public class IslandGoCommand extends CompositeCommand {
             return false;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
-            int homeValue = Integer.valueOf(args.get(0));
+            int homeValue = Integer.parseInt(args.get(0));
             int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1 && homeValue <= maxHomes) {
                 getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);

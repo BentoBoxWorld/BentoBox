@@ -34,7 +34,7 @@ public class AdminClearResetsAllCommand extends CompositeCommand {
             Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).filter(getPlayers()::isKnown).forEach(u -> getPlayers().setResets(getWorld(), u, 0));
             user.sendMessage("general.success");
         });
-        return false;
+        return true;
     }
 
 }

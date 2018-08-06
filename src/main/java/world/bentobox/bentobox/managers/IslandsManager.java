@@ -24,6 +24,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
@@ -550,7 +551,7 @@ public class IslandsManager {
         if (number == 1) {
             user.sendMessage("commands.island.go.teleport");
         } else {
-            user.sendMessage("commands.island.go.teleported", "[number]", String.valueOf(number));
+            user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, String.valueOf(number));
         }
         // Exit spectator mode if in it
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
@@ -769,7 +770,6 @@ public class IslandsManager {
         return getMembers(world, playerUUID).size() > 1;
     }
 
-
     /**
      * Makes a new leader for an island
      * @param world - world
@@ -799,8 +799,8 @@ public class IslandsManager {
             int range = Util.getPermValue(target.getPlayer(), permPrefix + "island.range.", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
             // Range can go up or down
             if (range != island.getProtectionRange()) {
-                user.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
-                target.sendMessage("commands.admin.setrange.range-updated", "[number]", String.valueOf(range));
+                user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
                 plugin.log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
                         + range + " for " + user.getName() + " due to permission.");
             }

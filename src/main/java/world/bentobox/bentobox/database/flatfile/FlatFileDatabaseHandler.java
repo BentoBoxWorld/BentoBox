@@ -119,7 +119,9 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
             // Information about the field
             String storageLocation = field.getName();
-            boolean overrideOnChange, experimental, needsReset = false;
+            boolean overrideOnChange = false;
+            boolean experimental = false;
+            boolean needsReset = false;
 
             // Check if there is an annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);

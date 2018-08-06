@@ -47,7 +47,7 @@ public class AdminRangeSetCommand extends CompositeCommand {
             user.sendMessage("commands.admin.range.set.invalid-value.not-numeric", TextVariables.NUMBER, args.get(1));
             return false;
         }
-        int range = Integer.valueOf(args.get(1));
+        int range = Integer.parseInt(args.get(1));
 
         // Get island
         Island island = getIslands().getIsland(getWorld(), targetUUID);

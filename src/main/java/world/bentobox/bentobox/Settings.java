@@ -96,7 +96,7 @@ public class Settings implements DataObject {
 
     @ConfigComment("Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)")
     @ConfigComment("Add other fake player names here if required")
-    @ConfigEntry(path = "general.fakeplayers")
+    @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
 
     @ConfigComment("Allow obsidian to be scooped up with an empty bucket back into lava")

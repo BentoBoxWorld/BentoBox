@@ -21,6 +21,7 @@ import com.google.gson.annotations.Expose;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
@@ -623,7 +624,7 @@ public class Island implements DataObject {
         Set<UUID> banned = getBanned();
         if (!banned.isEmpty()) {
             user.sendMessage("commands.admin.info.banned-players");
-            banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", "[name]", plugin.getPlayers().getName(u)));
+            banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
         return true;
     }
@@ -639,10 +640,10 @@ public class Island implements DataObject {
             user.sendMessage("commands.admin.info.team-members-title");
             members.forEach((u, i) -> {
                 if (owner.equals(u)) {
-                    user.sendMessage("commands.admin.info.team-owner-format", "[name]", plugin.getPlayers().getName(u)
+                    user.sendMessage("commands.admin.info.team-owner-format", TextVariables.NAME, plugin.getPlayers().getName(u)
                             , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
                 } else if (i > RanksManager.VISITOR_RANK){
-                    user.sendMessage("commands.admin.info.team-member-format", "[name]", plugin.getPlayers().getName(u)
+                    user.sendMessage("commands.admin.info.team-member-format", TextVariables.NAME, plugin.getPlayers().getName(u)
                             , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
                 }
             });

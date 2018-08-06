@@ -59,10 +59,11 @@ public class DefaultHelpCommand extends CompositeCommand {
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {
 
+
                 // Get elements
-                String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
-                String params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
-                String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
+                String usage = user.getTranslationOrNothing(parent.getUsage());
+                String params = user.getTranslationOrNothing(getParameters());
+                String desc = user.getTranslationOrNothing(getDescription());
 
                 if (showPrettyHelp(user, usage, params, desc)) {
                     // No more to show

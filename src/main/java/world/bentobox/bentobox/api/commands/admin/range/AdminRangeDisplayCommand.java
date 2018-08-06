@@ -47,6 +47,9 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
             case "hide":
                 user.sendMessage("commands.admin.range.display.already-off");
                 break;
+            default:
+                showHelp(this, user);
+                break;
             }
         } else {
             switch (label) {
@@ -56,6 +59,9 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
                 break;
             case "show":
                 user.sendMessage("commands.admin.range.display.already-on");
+                break;
+            default:
+                showHelp(this, user);
                 break;
             }
         }

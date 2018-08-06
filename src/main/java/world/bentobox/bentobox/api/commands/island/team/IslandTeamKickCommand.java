@@ -74,13 +74,9 @@ public class IslandTeamKickCommand extends CompositeCommand {
         user.sendMessage("general.success");
 
         // Add cooldown for this player and target
-        if (getSettings().getInviteWait() > 0) {
+        if (getSettings().getInviteWait() > 0 && getParent() != null) {
             // Get the invite class from the parent
-            if (getParent() != null) {
-                getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(user.getUniqueId(), targetUUID, getSettings().getInviteWait() * 60));
-            }
-
+            getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(user.getUniqueId(), targetUUID, getSettings().getInviteWait() * 60));
         }
     }
-
 }
