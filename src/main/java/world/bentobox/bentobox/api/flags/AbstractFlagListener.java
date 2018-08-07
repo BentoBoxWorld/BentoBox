@@ -144,8 +144,8 @@ public abstract class AbstractFlagListener implements Listener {
             return false;
         }
 
-        // Ops or bypass mods can do anything
-        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassprotect")) {
+        // Ops or "bypass everywhere" moderators can do anything
+        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
             user = null;
             return true;
         }
@@ -154,7 +154,8 @@ public abstract class AbstractFlagListener implements Listener {
         User.setPlugin(plugin);
 
         if (island.isPresent()) {
-            if (!island.get().isAllowed(user, flag)) {
+            // If it is not allowed on the island, "bypass island" moderators can do anything
+            if (!island.get().isAllowed(user, flag) && !user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".island")) {
                 noGo(e, flag, silent);
                 // Clear the user for the next time
                 user = null;
