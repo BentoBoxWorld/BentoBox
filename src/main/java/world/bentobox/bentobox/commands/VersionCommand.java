@@ -6,14 +6,19 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
-public class InfoCommand extends CompositeCommand {
+/**
+ * Displays information about Gamemodes, Addons and versioning.
+ *
+ * @author tastybento
+ */
+public class VersionCommand extends CompositeCommand {
 
     /**
      * Info command
      * @param parent - command parent
      */
-    public InfoCommand(CompositeCommand parent) {
-        super(parent, "info");
+    public VersionCommand(CompositeCommand parent) {
+        super(parent, "version", "v", "versions", "addons");
     }
 
     @Override

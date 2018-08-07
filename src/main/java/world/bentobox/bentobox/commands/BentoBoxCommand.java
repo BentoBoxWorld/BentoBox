@@ -17,7 +17,7 @@ public class BentoBoxCommand extends CompositeCommand {
     @Override
     public void setup() {
         setDescription("commands.bentobox.description");
-        new InfoCommand(this);
+        new VersionCommand(this);
         new AboutCommand(this);
     }
 
