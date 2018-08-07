@@ -3,13 +3,12 @@
 # utilisant un parser YAML, tel que http://yaml-online-parser.appspot.com                 #
 ###########################################################################################
 
-### Credits ###
-# MrSheepSheep: translater
-# Poslovitch: maintainer
-#
-# Cette traduction est adaptée pour la version : [alpha-2]
-
-banner: "WHITE_BANNER:1:STRIPE_BOTTOM:RED:STRIPE_TOP:BLUE"
+meta:
+  authors:
+  - MrSheepSheep
+  - Poslovitch
+  banner: "WHITE_BANNER:1:STRIPE_BOTTOM:RED:STRIPE_TOP:BLUE"
+  version: "alpha-1"
 
 general:
   deaths: "morts"

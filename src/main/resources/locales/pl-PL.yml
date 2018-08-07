@@ -3,12 +3,11 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
-### Credits ###
-# RikoDEV: maintainer
-#
-# This translation is adapted to version : [alpha-2]
-
-banner: "WHITE_BANNER:1:HALF_VERTICAL:RED"
+meta:
+  authors:
+  - RikoDEV
+  banner: "WHITE_BANNER:1:HALF_VERTICAL:RED"
+  version: "FC-0.8"
 
 general:
   success: "&aSukces!"

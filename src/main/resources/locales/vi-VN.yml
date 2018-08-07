@@ -3,14 +3,11 @@
 # cái này http://yaml-online-parser.appspot.com                                           #
 ###########################################################################################
 
-### Credits ###
-# tastybento: Người cung cấp bản YML gốc
-# Poslovitch: Người cung cấp bản YML gốc
-#
-# Banbeucmas: Người dịch bản YML gốc
-# This translation is adapted to version : [alpha-2]
-
-banner: "RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED"
+meta:
+  authors:
+  - Banbeucmas
+  banner: "RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED"
+  version: "alpha-1"
 
 general:
   deaths: "Chết"

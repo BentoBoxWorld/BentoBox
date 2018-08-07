@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.localization;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Locale;
 
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -15,13 +17,22 @@ public class BentoBoxLocale {
     private Locale locale;
     private YamlConfiguration config;
     private ItemStack banner;
+    private List<String> authors;
+    private boolean obsolete;
 
     public BentoBoxLocale(Locale locale, YamlConfiguration config) {
         this.locale = locale;
         this.config = config;
 
         // Load the banner from the configuration
-        banner = ItemParser.parse(config.getString("banner"));
+        banner = ItemParser.parse(config.getString("meta.banner"));
+
+        // Load authors from the configuration
+        authors = new LinkedList<>();
+        updateAuthors(config);
+
+        // TODO Check if obsolete
+        obsolete = false;
     }
 
     /**
@@ -76,19 +87,39 @@ public class BentoBoxLocale {
         return banner;
     }
 
+    public List<String> getAuthors() {
+        return authors;
+    }
+
+    public boolean isObsolete() {
+        return obsolete;
+    }
+
     /**
      * Merges a language YAML file to this locale
      * @param toBeMerged the YamlConfiguration of the language file
      */
     public void merge(YamlConfiguration toBeMerged) {
         for (String key : toBeMerged.getKeys(true)) {
-            if (!config.contains(key)) {
+            if (!key.startsWith("meta") && !config.contains(key)) {
                 config.set(key, toBeMerged.get(key));
             }
         }
+        updateAuthors(toBeMerged);
     }
 
     public boolean contains(String reference) {
         return config.contains(reference);
+    }
+
+    private void updateAuthors(YamlConfiguration yamlConfiguration) {
+        List<String> list = yamlConfiguration.getStringList("meta.authors");
+        if (!list.isEmpty()) {
+            for (String author : list) {
+                if (!authors.contains(author)) {
+                    authors.add(author);
+                }
+            }
+        }
     }
 }

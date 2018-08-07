@@ -3,14 +3,11 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
-### Credits ###
-# Tastybento:    maintainer
-# Poslovitch:    maintainer
-# markusmarkusz: translator
-#
-# This translation is adapted to version : [alpha-1]
-
-banner: "RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW"
+meta:
+  authors:
+    - markusmarkusz
+  banner: "RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW"
+  version: "alpha-1"
 
 not-setup:
   header: |-
