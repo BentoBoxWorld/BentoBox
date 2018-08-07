@@ -112,16 +112,11 @@ public class ItemParser {
 
     private static ItemStack banner(String[] part) {
         try {
-            if (part.length == 2) {
-                return new ItemStack(Material.WHITE_BANNER, Integer.parseInt(part[1]));
-            }
-            if (part.length >= 3) {
-                int reqAmount = Integer.parseInt(part[1]);
-
-                ItemStack result = new ItemStack(Material.getMaterial(part[2] + "_BANNER"), reqAmount);
+            if (part.length >= 2) {
+                ItemStack result = new ItemStack(Material.getMaterial(part[0]), Integer.parseInt(part[1]));
 
                 BannerMeta meta = (BannerMeta) result.getItemMeta();
-                for (int i = 3; i < part.length; i += 2) {
+                for (int i = 2; i < part.length; i += 2) {
                     meta.addPattern(new Pattern(DyeColor.valueOf(part[i + 1]), PatternType.valueOf(part[i])));
                 }
 

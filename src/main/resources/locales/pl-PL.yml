@@ -8,7 +8,7 @@
 #
 # This translation is adapted to version : [alpha-2]
 
-banner: "BANNER:1:WHITE:HALF_VERTICAL:RED"
+banner: "WHITE_BANNER:1:HALF_VERTICAL:RED"
 
 general:
   success: "&aSukces!"

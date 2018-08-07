@@ -214,8 +214,6 @@ public class ItemParserTest {
         assertEquals(2, result.getAmount());
     }
 
-    /*
-     * Commenting out to get build to work
     @Test
     public void testParseBannerThreeArgs() {
         // Germany
@@ -230,7 +228,7 @@ public class ItemParserTest {
         ItemParser.parse("RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW");
         Mockito.verify(bannerMeta, Mockito.times(2)).addPattern(Mockito.any());
     }
-     */
+
     @Test
     public void testParseBannerTooManyColons() {
         ItemStack result = ItemParser.parse("WHITE_BANNER:1:::::::::::::");

@@ -9,7 +9,7 @@
 #
 # This translation is adapted to version : [alpha-2]
 
-banner: "BANNER:1:WHITE:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
+banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
 
 general:
   success: "&aSuccess!"
