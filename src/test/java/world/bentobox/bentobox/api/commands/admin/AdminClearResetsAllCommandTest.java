@@ -1,10 +1,12 @@
 package world.bentobox.bentobox.api.commands.admin;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -109,7 +111,8 @@ public class AdminClearResetsAllCommandTest {
     @Test
     public void testExecuteCheckConfirm() {
         AdminClearResetsAllCommand itl = new AdminClearResetsAllCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>(Arrays.asList("tastybento", "bobby"))));
+        assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.confirm"), Mockito.eq("[seconds]"), Mockito.any());
     }
 

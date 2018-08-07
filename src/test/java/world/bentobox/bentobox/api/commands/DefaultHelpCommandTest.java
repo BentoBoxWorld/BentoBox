@@ -112,16 +112,7 @@ public class DefaultHelpCommandTest {
         }
 
     }
-    /*
-    @Test
-    public void testDefaultHelpCommand() throws Exception {
-        //CompositeCommand cc = mock(CompositeCommand.class);
 
-        //DefaultHelpCommand dhc = new DefaultHelpCommand(cc);
-        //assertNotNull(dhc);
-        //Mockito.verify(cc).getSubCommands();
-    }
-     */
     @Test
     public void testSetup() {
         CompositeCommand cc = mock(CompositeCommand.class);
@@ -142,15 +133,15 @@ public class DefaultHelpCommandTest {
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
         when(parent.getWorld()).thenReturn(mock(World.class));
-        when(user.getTranslation("island")).thenReturn("island");
-        when(user.getTranslation("parameters")).thenReturn("");
-        when(user.getTranslation("description")).thenReturn("the main island command");
+        when(user.getTranslationOrNothing("island")).thenReturn("island");
+        when(user.getTranslationOrNothing("parameters")).thenReturn("");
+        when(user.getTranslationOrNothing("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         dhc.execute(user, dhc.getLabel(), new ArrayList<>());
         Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
-        Mockito.verify(user).getTranslation("island");
-        Mockito.verify(user).getTranslation("parameters");
-        Mockito.verify(user).getTranslation("description");
+        Mockito.verify(user).getTranslationOrNothing("island");
+        Mockito.verify(user).getTranslationOrNothing("parameters");
+        Mockito.verify(user).getTranslationOrNothing("description");
         Mockito.verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
@@ -171,17 +162,17 @@ public class DefaultHelpCommandTest {
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
-        when(user.getTranslation("island")).thenReturn("island");
-        when(user.getTranslation("parameters")).thenReturn("");
-        when(user.getTranslation("description")).thenReturn("the main island command");
+        when(user.getTranslationOrNothing("island")).thenReturn("island");
+        when(user.getTranslationOrNothing("parameters")).thenReturn("");
+        when(user.getTranslationOrNothing("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         List<String> args = new ArrayList<>();
         args.add("1");
         dhc.execute(user, dhc.getLabel(), args);
         // There are no header or footer shown
-        Mockito.verify(user).getTranslation("island");
-        Mockito.verify(user).getTranslation("parameters");
-        Mockito.verify(user).getTranslation("description");
+        Mockito.verify(user).getTranslationOrNothing("island");
+        Mockito.verify(user).getTranslationOrNothing("parameters");
+        Mockito.verify(user).getTranslationOrNothing("description");
         Mockito.verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
@@ -193,28 +184,25 @@ public class DefaultHelpCommandTest {
                 );
     }
 
+    // FIXME Tastybento, I need help with this one! :(
     @Test
     public void testExecuteDirectHelpHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
         when(parent.getLabel()).thenReturn("island");
-        when(parent.getUsage()).thenReturn("island");
-        when(parent.getParameters()).thenReturn("parameters");
-        when(parent.getDescription()).thenReturn("description");
-        when(parent.getPermission()).thenReturn("permission");
         when(user.getTranslation("island")).thenReturn("island");
-        when(user.getTranslation("parameters")).thenReturn("");
-        when(user.getTranslation("description")).thenReturn("the main island command");
+        when(user.getTranslationOrNothing("island")).thenReturn("island");
         when(user.getTranslation("commands.help.parameters")).thenReturn("help-parameters");
+        when(user.getTranslationOrNothing("commands.help.parameters")).thenReturn("help-parameters");
         when(user.getTranslation("commands.help.description")).thenReturn("the help command");
+        when(user.getTranslationOrNothing("commands.help.description")).thenReturn("the help command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         List<String> args = new ArrayList<>();
         // Test /island help team
         args.add("team");
         dhc.execute(user, dhc.getLabel(), args);
         // There are no header or footer shown
-        Mockito.verify(user).getTranslation("island");
-        Mockito.verify(user).getTranslation("commands.help.parameters");
-        Mockito.verify(user).getTranslation("commands.help.description");
+        Mockito.verify(user).getTranslationOrNothing("commands.help.parameters");
+        Mockito.verify(user).getTranslationOrNothing("commands.help.description");
         Mockito.verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
