@@ -34,61 +34,81 @@ public class TeamEvent {
 
     public static class TeamJoinEvent extends IslandBaseEvent {
         private TeamJoinEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamInviteEvent extends IslandBaseEvent {
         private TeamInviteEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamLeaveEvent extends IslandBaseEvent {
         private TeamLeaveEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamRejectEvent extends IslandBaseEvent {
         private TeamRejectEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamKickEvent extends IslandBaseEvent {
         private TeamKickEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
+    /**
+     * Event fires before a make leader is performed on an island.
+     * To get the old owner, get from the island object. The new leader is the player's UUID.
+     * @author tastybento
+     *
+     */
     public static class TeamMakeLeaderEvent extends IslandBaseEvent {
         private TeamMakeLeaderEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+        }
+        /**
+         * Convenience method to get the old owner of the island
+         * @return UUID of old owner
+         */
+        public UUID getOldOwner() {
+            return island.getOwner();
+        }
+        /**
+         * Convenience method to get the new owner of the island
+         * @return UUID of new owner
+         */
+        public UUID getNewOwner() {
+            return playerUUID;
         }
     }
     public static class TeamInfoEvent extends IslandBaseEvent {
         private TeamInfoEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamDeleteEvent extends IslandBaseEvent {
         private TeamDeleteEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamUninviteEvent extends IslandBaseEvent {
         private TeamUninviteEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
     public static class TeamGeneralEvent extends IslandBaseEvent {
         private TeamGeneralEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }

@@ -15,10 +15,10 @@ import world.bentobox.bentobox.database.objects.Island;
 public class IslandBaseEvent extends PremadeEvent implements Cancellable {
     private boolean cancelled;
 
-    private final Island island;
-    private final UUID playerUUID;
-    private final boolean admin;
-    private final Location location;
+    protected final Island island;
+    protected final UUID playerUUID;
+    protected final boolean admin;
+    protected final Location location;
 
     public IslandBaseEvent(Island island) {
         super();
