@@ -51,7 +51,7 @@ public class AdminDeleteCommand extends CompositeCommand {
     
     private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
-        user.sendMessage("commands.admin.delete.delete-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
+        user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
         getIslands().deleteIsland(getIslands().getIsland(getWorld(), targetUUID), true);
         getIslands().removePlayer(getWorld(), targetUUID);
         getPlayers().clearHomeLocations(getWorld(), targetUUID);        
