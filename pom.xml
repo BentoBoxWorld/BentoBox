@@ -6,7 +6,7 @@
 
     <groupId>world.bentobox</groupId>
     <artifactId>bentobox</artifactId>
-    <version>FC-0.81</version>
+    <version>FC-0.9</version>
 
     <name>BentoBox</name>
     <description>BentoBox is an expandable Minecraft Spigot plugin for island-type games like ASkyBlock or AcidIsland.</description>
