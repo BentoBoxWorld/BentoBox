@@ -49,7 +49,7 @@ Maven dependency:
   <dependency>
     <groupId>world.bentobox</groupId>
     <artifactId>bentobox</artifactId>
-    <version>0.8.0-SNAPSHOT</version>
+    <version>FC-0.9</version>
     <scope>provided</scope>
   </dependency>
 </dependencies>
