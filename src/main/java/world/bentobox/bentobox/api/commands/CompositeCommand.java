@@ -129,7 +129,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         // Default references to description and parameters
         setDescription("commands." + label + ".description");
-        setParameters("commands." + label + ".parameters");
+        setParametersHelp("commands." + label + ".parameters");
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
@@ -183,7 +183,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             index++;
         }
         setDescription(reference.toString() + ".description");
-        setParameters(reference.toString() + ".parameters");
+        setParametersHelp(reference.toString() + ".parameters");
 
         setup();
         // If this command does not define its own help class, then use the default help command
@@ -449,11 +449,99 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Sets the command parameters to be shown in help
-     * @param parameters - string of parameters
+     * Sets locale reference to this command's description.
+     * It is used to display the help of this command.
+     *
+     * <br/><br/>
+     *
+     * A default value is provided when instantiating this CompositeCommand:
+     *
+     * <ul>
+     *     <li>{@code "commands." + getLabel() + ".description"} if this is a top-level command;</li>
+     *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".description"} if this is a sub-command.
+     *     <br/>
+     *     Note that it can have up to 20 parent commands' labels being appended before this sub-command's label.
+     *     Here are a few examples :
+     *     <ul>
+     *         <li>/bentobox info : {@code "commands.bentobox.info.description"};</li>
+     *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.description"};</li>
+     *         <li>/mycommand sub1 sub2 sub3 [...] sub33 : {@code "commands.mycommand.sub1.sub2.sub3.[...].sub19.sub33.description}.</li>
+     *     </ul>
+     *     </li>
+     * </ul>
+     *
+     * This method should therefore only be used in case you want to provide a different value than the default one.
+     *
+     * @param description The locale command's description reference to set.
+     * @return The instance of this {@link Command}.
      */
+    @Override
+    public Command setDescription(String description) {
+        super.setDescription(description);
+        return this;
+    }
+
+    /**
+     * Sets locale reference to this command's parameters.
+     * It is used to display the help of this command.
+     *
+     * <br/><br/>
+     *
+     * A default value is provided when instantiating this CompositeCommand:
+     *
+     * <ul>
+     *     <li>{@code "commands." + getLabel() + ".parameters"} if this is a top-level command;</li>
+     *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".parameters"} if this is a sub-command.
+     *     <br/>
+     *     Note that it can have up to 20 parent commands' labels being appended before this sub-command's label.
+     *     Here are a few examples :
+     *     <ul>
+     *         <li>/bentobox info : {@code "commands.bentobox.info.parameters"};</li>
+     *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.parameters"};</li>
+     *         <li>/mycommand sub1 sub2 sub3 [...] sub33 : {@code "commands.mycommand.sub1.sub2.sub3.[...].sub19.sub33.paramaters}.</li>
+     *     </ul>
+     *     </li>
+     *</ul>
+     *
+     * This method should therefore only be used in case you want to provide a different value than the default one.
+     *
+     * @param parameters The locale command's paramaters reference to set.
+     * @deprecated This method has been deprecated to avoid upcoming ambiguity as we will be using Mojang's Brigadier library.
+     * Use {@link #setParametersHelp(String)} instead.
+     */
+    @Deprecated
     public void setParameters(String parameters) {
         this.parameters = parameters;
+    }
+
+    /**
+     * Sets locale reference to this command's parameters.
+     * It is used to display the help of this command.
+     *
+     * <br/><br/>
+     *
+     * A default value is provided when instantiating this CompositeCommand:
+     *
+     * <ul>
+     *     <li>{@code "commands." + getLabel() + ".parameters"} if this is a top-level command;</li>
+     *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".parameters"} if this is a sub-command.
+     *     <br/>
+     *     Note that it can have up to 20 parent commands' labels being appended before this sub-command's label.
+     *     Here are a few examples :
+     *     <ul>
+     *         <li>/bentobox info : {@code "commands.bentobox.info.parameters"};</li>
+     *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.parameters"};</li>
+     *         <li>/mycommand sub1 sub2 sub3 [...] sub33 : {@code "commands.mycommand.sub1.sub2.sub3.[...].sub19.sub33.paramaters}.</li>
+     *     </ul>
+     *     </li>
+     *</ul>
+     *
+     * This method should therefore only be used in case you want to provide a different value than the default one.
+     *
+     * @param parametersHelp The locale command's paramaters reference to set.
+     */
+    public void setParametersHelp(String parametersHelp) {
+        this.parameters = parametersHelp;
     }
 
     /* (non-Javadoc)
