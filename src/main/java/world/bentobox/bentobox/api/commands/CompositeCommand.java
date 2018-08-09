@@ -223,7 +223,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return false;
         }
         // Execute and trim args
-        return cmd.execute(user, (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
+        if (!cmd.execute(user, (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label, Arrays.asList(args).subList(cmd.subCommandLevel, args.length))) {
+            // If it returned false, then show help for this command
+            // showHelp(cmd, user);
+            return false; // And return false (it basically does nothing, but let's be compliant with Bukkit's javadoc)
+        } else {
+            return true;
+        }
     }
 
     /**
@@ -441,8 +447,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Set whether this command is only for players
-     * @param onlyPlayer - true if command only for players
+     * Sets whether this command should only be run by players.
+     * If this is set to {@code true}, this command will only be runnable by objects implementing {@link Player}.
+     * <br/><br/>
+     * The default value provided when instantiating this CompositeCommand is {@code false}.
+     * Therefore, this method should only be used in case you want to explicitly edit the value.
+     * @param onlyPlayer {@code true} if this command should only be run by players.
      */
     public void setOnlyPlayer(boolean onlyPlayer) {
         this.onlyPlayer = onlyPlayer;
