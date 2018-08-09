@@ -17,7 +17,6 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.team");
         setOnlyPlayer(true);
-        setDescription("commands.island.team.leave.description");
     }
 
     @Override

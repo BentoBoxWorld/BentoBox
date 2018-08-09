@@ -23,8 +23,6 @@ public class AdminRegisterCommand extends CompositeCommand {
     public void setup() {
         setPermission("admin.register");
         setOnlyPlayer(true);
-        setParameters("commands.admin.register.parameters");
-        setDescription("commands.admin.register.description");
     }
 
     @Override

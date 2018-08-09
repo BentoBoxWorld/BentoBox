@@ -18,8 +18,6 @@ public class AdminDeleteCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.delete");
-        setParameters("commands.admin.delete.parameters");
-        setDescription("commands.admin.delete.description");
     }
 
     @Override

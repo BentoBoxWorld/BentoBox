@@ -23,8 +23,6 @@ public class AdminTeleportCommand extends CompositeCommand {
         // Permission
         setPermission(getPermissionPrefix() + "admin.tp");
         setOnlyPlayer(true);
-        setParameters("commands.admin.tp.parameters");
-        setDescription("commands.admin.tp.description");
     }
 
     @Override

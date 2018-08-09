@@ -16,8 +16,6 @@ public class IslandTeamKickCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.team");
         setOnlyPlayer(true);
-        setParameters("commands.island.team.kick.parameters");
-        setDescription("commands.island.team.kick.description");
     }
 
     @Override

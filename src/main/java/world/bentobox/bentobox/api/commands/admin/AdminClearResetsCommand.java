@@ -18,8 +18,6 @@ public class AdminClearResetsCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.clearreset");
-        setParameters("commands.admin.clearresets.parameters");
-        setDescription("commands.admin.clearresets.description");
     }
 
     @Override

@@ -30,7 +30,6 @@ public class IslandTeamInviteCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.team");
         setOnlyPlayer(true);
-        setDescription("commands.island.team.invite.description");
         inviteList = HashBiMap.create();
     }
 
