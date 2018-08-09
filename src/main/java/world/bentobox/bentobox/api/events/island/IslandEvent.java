@@ -44,7 +44,7 @@ public class IslandEvent {
      */
     public static class IslandCreateEvent extends IslandBaseEvent {
         private IslandCreateEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -54,7 +54,7 @@ public class IslandEvent {
      */
     public static class IslandCreatedEvent extends IslandBaseEvent {
         private IslandCreatedEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -64,7 +64,7 @@ public class IslandEvent {
      */
     public static class IslandDeleteEvent extends IslandBaseEvent {
         private IslandDeleteEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -74,7 +74,7 @@ public class IslandEvent {
      */
     public static class IslandDeletedEvent extends IslandBaseEvent {
         private IslandDeletedEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -84,7 +84,7 @@ public class IslandEvent {
      */
     public static class IslandEnterEvent extends IslandBaseEvent {
         private IslandEnterEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -94,7 +94,7 @@ public class IslandEvent {
      */
     public static class IslandExitEvent extends IslandBaseEvent {
         private IslandExitEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -104,7 +104,7 @@ public class IslandEvent {
      */
     public static class IslandLockEvent extends IslandBaseEvent {
         private IslandLockEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -114,7 +114,7 @@ public class IslandEvent {
      */
     public static class IslandUnlockEvent extends IslandBaseEvent {
         private IslandUnlockEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -124,7 +124,7 @@ public class IslandEvent {
      */
     public static class IslandResetEvent extends IslandBaseEvent {
         private IslandResetEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -134,7 +134,7 @@ public class IslandEvent {
      */
     public static class IslandResettedEvent extends IslandBaseEvent {
         private IslandResettedEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
@@ -144,7 +144,7 @@ public class IslandEvent {
      */
     public static class IslandGeneralEvent extends IslandBaseEvent {
         private IslandGeneralEvent(Island island, UUID player, boolean admin, Location location) {
-            // Final variables have to be declared in the constuctor
+            // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
     }
