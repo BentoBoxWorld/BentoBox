@@ -24,6 +24,8 @@ public class IslandSetnameCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.name");
         setOnlyPlayer(true);
+        setParameters("commands.island.setname.parameters");
+        setDescription("commands.island.setname.description");
     }
 
     @Override

@@ -22,6 +22,7 @@ public class IslandTeamCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.team");
         setOnlyPlayer(true);
+        setDescription("commands.island.team.description");
         // Register commands
         inviteCommand = new IslandTeamInviteCommand(this);
         new IslandTeamLeaveCommand(this);

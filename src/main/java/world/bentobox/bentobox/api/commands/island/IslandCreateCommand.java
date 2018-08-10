@@ -27,6 +27,7 @@ public class IslandCreateCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.create");
         setOnlyPlayer(true);
+        setDescription("commands.island.create.description");
     }
 
     @Override

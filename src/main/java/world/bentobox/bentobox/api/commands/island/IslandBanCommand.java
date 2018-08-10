@@ -25,6 +25,8 @@ public class IslandBanCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.ban");
         setOnlyPlayer(true);
+        setParameters("commands.island.ban.parameters");
+        setDescription("commands.island.ban.description");
     }
 
     @Override

@@ -20,7 +20,7 @@ public class AdminReloadCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-
+        setDescription("commands.admin.reload.description");
     }
 
     @Override

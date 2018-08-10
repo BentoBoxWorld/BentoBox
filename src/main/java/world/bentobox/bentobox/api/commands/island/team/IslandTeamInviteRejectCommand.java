@@ -22,6 +22,7 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.team");
         setOnlyPlayer(true);
+        setDescription("commands.island.team.invite.reject.description");
     }
 
     @Override

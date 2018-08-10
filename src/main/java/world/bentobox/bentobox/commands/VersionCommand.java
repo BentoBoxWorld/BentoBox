@@ -23,7 +23,7 @@ public class VersionCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-
+        setDescription("commands.bentobox.info.description");
     }
 
     @Override

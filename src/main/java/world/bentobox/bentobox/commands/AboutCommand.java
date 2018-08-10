@@ -22,7 +22,7 @@ public class AboutCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-
+        setDescription("commands.bentobox.about.description");
     }
 
     @Override

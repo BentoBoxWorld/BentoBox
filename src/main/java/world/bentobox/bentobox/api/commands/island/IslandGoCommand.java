@@ -22,6 +22,7 @@ public class IslandGoCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.home");
         setOnlyPlayer(true);
+        setDescription("commands.island.go.description");
         new CustomIslandMultiHomeHelp(this);
     }
 

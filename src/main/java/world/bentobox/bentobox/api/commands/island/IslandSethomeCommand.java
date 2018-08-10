@@ -18,6 +18,7 @@ public class IslandSethomeCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.sethome");
         setOnlyPlayer(true);
+        setDescription("commands.island.sethome.description");
         new CustomIslandMultiHomeHelp(this);
     }
 
