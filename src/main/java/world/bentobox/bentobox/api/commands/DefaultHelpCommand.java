@@ -58,6 +58,8 @@ public class DefaultHelpCommand extends CompositeCommand {
         }
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {
+
+
                 // Get elements
                 String usage = user.getTranslationOrNothing(parent.getUsage());
                 String params = user.getTranslationOrNothing(getParameters());

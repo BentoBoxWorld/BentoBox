@@ -10,8 +10,8 @@ import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
-import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
 public class MongoDBDatabaseConnector implements DatabaseConnector {
 
