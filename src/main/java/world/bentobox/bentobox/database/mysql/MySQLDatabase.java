@@ -2,8 +2,8 @@ package world.bentobox.bentobox.database.mysql;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
+import world.bentobox.bentobox.database.DatabaseSetup;
 
 public class MySQLDatabase extends DatabaseSetup {
 
