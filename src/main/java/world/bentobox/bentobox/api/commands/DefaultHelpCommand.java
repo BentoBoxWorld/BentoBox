@@ -44,7 +44,7 @@ public class DefaultHelpCommand extends CompositeCommand {
                 // Converts first argument into an int, or returns -1 if it cannot. Avoids exceptions.
                 depth = Optional.ofNullable(args.get(0)).map(NumberUtils::toInt).orElse(-1);
             } else {
-                String usage = user.getTranslation(parent.getUsage());
+                String usage = parent.getUsage();
                 String params = user.getTranslation("commands.help.parameters");
                 String desc = user.getTranslation("commands.help.description");
                 user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
@@ -61,7 +61,7 @@ public class DefaultHelpCommand extends CompositeCommand {
 
 
                 // Get elements
-                String usage = user.getTranslationOrNothing(parent.getUsage());
+                String usage = parent.getUsage();
                 String params = user.getTranslationOrNothing(getParameters());
                 String desc = user.getTranslationOrNothing(getDescription());
 
