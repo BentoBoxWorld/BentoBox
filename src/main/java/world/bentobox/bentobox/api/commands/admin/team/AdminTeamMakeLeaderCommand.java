@@ -15,7 +15,7 @@ public class AdminTeamMakeLeaderCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.team");
-        setParameters("commands.admin.team.makeleader.parameters");
+        setParametersHelp("commands.admin.team.makeleader.parameters");
         setDescription("commands.admin.team.makeleader.description");
     }
 
