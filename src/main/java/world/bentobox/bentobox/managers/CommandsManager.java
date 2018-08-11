@@ -15,8 +15,7 @@ public class CommandsManager {
 
     public void registerCommand(CompositeCommand command) {
         commands.put(command.getLabel(), command);
-        // Use reflection to obtain the commandMap method in Bukkit's server. It used to be visible, but isn't anymore.
-
+        // Use reflection to obtain the commandMap method in Bukkit's server.
         try{
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);

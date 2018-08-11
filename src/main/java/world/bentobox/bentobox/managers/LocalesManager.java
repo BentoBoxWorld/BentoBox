@@ -62,7 +62,7 @@ public class LocalesManager {
     public void loadLocales(String parent) {
         // Describe the filter - we only want files that are correctly named
         // Files must be 9 chars long
-        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase().endsWith(".yml") && name.length() == 9;
+        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml") && name.length() == 9;
 
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);

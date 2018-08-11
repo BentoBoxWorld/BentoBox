@@ -37,7 +37,7 @@ public class BannedVisitorCommands implements Listener {
             return;
         }
         // Check banned commands
-        String[] args = e.getMessage().substring(1).toLowerCase().split(" ");
+        String[] args = e.getMessage().substring(1).toLowerCase(java.util.Locale.ENGLISH).split(" ");
         if (plugin.getIWM().getVisitorBannedCommands(e.getPlayer().getWorld()).contains(args[0])) {
             User user = User.getInstance(e.getPlayer());
             user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation("protection.command-is-banned"));

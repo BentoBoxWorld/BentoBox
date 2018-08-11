@@ -77,7 +77,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
         List<T> list = new ArrayList<>();
-        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase().endsWith(".yml");
+        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml");
         String path = dataObject.getSimpleName();
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
         if (storeAt != null) {

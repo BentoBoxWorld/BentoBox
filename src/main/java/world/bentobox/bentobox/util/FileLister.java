@@ -39,7 +39,7 @@ public class FileLister{
         // Check if the folder exists
         File localeDir = new File(plugin.getDataFolder(), folderPath);
         if (localeDir.exists()) {
-            FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase().endsWith(".yml");
+            FilenameFilter ymlFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml");
             return Arrays.asList(Objects.requireNonNull(localeDir.list(ymlFilter)));
         } else if (checkJar) {
             // Else look in the JAR

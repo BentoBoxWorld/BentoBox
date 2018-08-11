@@ -5,6 +5,8 @@ import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import me.lucko.commodore.Commodore;
+import me.lucko.commodore.CommodoreProvider;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
@@ -63,8 +65,18 @@ public class BentoBox extends JavaPlugin {
 
     private boolean isLoaded;
 
+    private Commodore commodore;
+    
     @Override
     public void onEnable(){
+        // check if brigadier is supported
+        if (CommodoreProvider.isSupported()) {           
+            // get a commodore instance
+            commodore = CommodoreProvider.getCommodore(this);
+        }
+    
+    
+
 
         // Not loaded
         isLoaded = false;
@@ -143,6 +155,13 @@ public class BentoBox extends JavaPlugin {
             // Fire plugin ready event
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
         });
+    }
+
+    /**
+     * @return the commodore
+     */
+    public Commodore getCommodore() {
+        return commodore;
     }
 
     /**

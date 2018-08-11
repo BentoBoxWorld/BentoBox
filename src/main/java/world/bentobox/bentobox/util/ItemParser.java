@@ -52,7 +52,7 @@ public class ItemParser {
             return null;
         }
 
-        Material reqItem = Material.getMaterial(part[0].toUpperCase());
+        Material reqItem = Material.getMaterial(part[0].toUpperCase(java.util.Locale.ENGLISH));
         if (reqItem == null) {
             return null;
         }
@@ -100,7 +100,7 @@ public class ItemParser {
             result = new ItemStack(Material.TIPPED_ARROW);
         }
         PotionMeta potionMeta = (PotionMeta)(result.getItemMeta());
-        PotionType type = PotionType.valueOf(part[1].toUpperCase());
+        PotionType type = PotionType.valueOf(part[1].toUpperCase(java.util.Locale.ENGLISH));
         boolean isUpgraded = !part[2].isEmpty() && !part[2].equalsIgnoreCase("1");
         boolean isExtended = part[3].equalsIgnoreCase("EXTENDED");
         PotionData data = new PotionData(type, isExtended, isUpgraded);

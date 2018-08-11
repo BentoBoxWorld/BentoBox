@@ -119,7 +119,7 @@ public class Util {
      */
     public static String prettifyText(String ugly) {
         StringBuilder fin = new StringBuilder();
-        ugly = ugly.toLowerCase();
+        ugly = ugly.toLowerCase(java.util.Locale.ENGLISH);
         if (ugly.contains("_")) {
             String[] splt = ugly.split("_");
             int i = 0;
@@ -164,7 +164,7 @@ public class Util {
             if (s == null) {
                 continue;
             }
-            if (s.toLowerCase().startsWith(start.toLowerCase())) {
+            if (s.toLowerCase(java.util.Locale.ENGLISH).startsWith(start.toLowerCase(java.util.Locale.ENGLISH))) {
                 returned.add(s);
             }
         }

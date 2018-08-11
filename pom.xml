@@ -51,6 +51,10 @@
 			<id>spigot-repo</id>
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
 		</repository>
+		<repository>
+			<id>luck-repo</id>
+			<url>https://repo.lucko.me/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -83,6 +87,12 @@
 			<artifactId>mongodb-driver</artifactId>
 			<version>3.8.0</version>
 		</dependency>
+		<dependency>
+			<groupId>me.lucko</groupId>
+			<artifactId>commodore</artifactId>
+			<version>1.0</version>
+			<scope>compile</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -99,6 +109,33 @@
 			</resource>
 		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>3.1.1</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<artifactSet>
+								<includes>
+									<include>me.lucko:commodore</include>
+								</includes>
+							</artifactSet>
+							<relocations>
+								<relocation>
+									<pattern>me.lucko.commodore</pattern>
+									<!-- vvv Replace with the package of your plugin vvv -->
+									<shadedPattern>com.yourdomain.yourplugin.commodore</shadedPattern>
+								</relocation>
+							</relocations>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-clean-plugin</artifactId>
@@ -184,7 +221,8 @@
 				<configuration>
 					<append>true</append>
 					<excludes>
-					<!-- This is required to prevent Jacoco from adding synthetic fields to a JavaBean class (causes errors in testing) -->
+						<!-- This is required to prevent Jacoco from adding synthetic fields 
+							to a JavaBean class (causes errors in testing) -->
 						<exclude>**/*Names*</exclude>
 					</excludes>
 				</configuration>

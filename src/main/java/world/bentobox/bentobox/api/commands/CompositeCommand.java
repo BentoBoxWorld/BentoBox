@@ -17,10 +17,16 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import com.mojang.brigadier.arguments.BoolArgumentType;
+import com.mojang.brigadier.builder.LiteralArgumentBuilder;
+import com.mojang.brigadier.builder.RequiredArgumentBuilder;
+
+import me.lucko.commodore.Commodore;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -126,6 +132,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Register command if it is not already registered
         if (plugin.getCommand(label) == null) {
             plugin.getCommandsManager().registerCommand(this);
+            // register your completions.
+            //registerCompletions(plugin.getCommodore(), this);
         }
         // Default references to description and parameters
         setDescription("commands." + label + ".description");
@@ -134,8 +142,19 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
-    }
+        
 
+    }
+    
+/*
+ * This will eventually need to replace the tabComplete method
+    private static void registerCompletions(Commodore commodore, CompositeCommand command) {
+        commodore.register(command, LiteralArgumentBuilder.literal(command.getLabel())
+                .then(RequiredArgumentBuilder.argument("some-argument", com.mojang.brigadier.arguments.StringArgumentType.string()))
+                .then(RequiredArgumentBuilder.argument("some-other-argument", BoolArgumentType.bool()))
+        );
+    }
+*/
     /**
      * This is the top-level command constructor for commands that have no parent.
      * @param label - string for this command
@@ -352,7 +371,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return CompositeCommand or null if none found
      */
     public Optional<CompositeCommand> getSubCommand(String label) {
-        label = label.toLowerCase();
+        label = label.toLowerCase(java.util.Locale.ENGLISH);
         if (subCommands.containsKey(label)) {
             return Optional.ofNullable(subCommands.get(label));
         }
