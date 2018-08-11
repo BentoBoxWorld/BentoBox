@@ -17,10 +17,10 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         setPermission("island.team");
         setOnlyPlayer(true);
         if (this.getLabel().equals("promote")) {
-            setParameters("commands.island.team.promote.parameters");
+            setParametersHelp("commands.island.team.promote.parameters");
             setDescription("commands.island.team.promote.description");
         } else {
-            setParameters("commands.island.team.demote.parameters");
+            setParametersHelp("commands.island.team.demote.parameters");
             setDescription("commands.island.team.demote.description"); 
         }
     }

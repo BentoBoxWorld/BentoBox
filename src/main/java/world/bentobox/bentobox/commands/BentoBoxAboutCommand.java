@@ -10,19 +10,19 @@ import world.bentobox.bentobox.api.user.User;
  * Displays generic information about BentoBox such as version and license.
  * @author tastybento
  */
-public class AboutCommand extends CompositeCommand {
+public class BentoBoxAboutCommand extends CompositeCommand {
 
     /**
      * About
      * @param parent parent CompositeCommand
      */
-    public AboutCommand(CompositeCommand parent) {
+    public BentoBoxAboutCommand(CompositeCommand parent) {
         super(parent, "about");
     }
 
     @Override
     public void setup() {
-        setDescription("commands.bentobox.about.description");
+
     }
 
     @Override

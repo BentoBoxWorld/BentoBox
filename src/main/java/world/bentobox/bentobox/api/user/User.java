@@ -326,12 +326,11 @@ public class User {
 
     /**
      * Performs a command as the player
-     * @param cmd - command to execute
+     * @param command - command to execute
      * @return true if the command was successful, otherwise false
      */
-    public boolean performCommand(String cmd) {
-        return player.performCommand(cmd);
-
+    public boolean performCommand(String command) {
+        return player.performCommand(command);
     }
 
     /* (non-Javadoc)

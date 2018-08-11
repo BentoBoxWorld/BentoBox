@@ -16,7 +16,7 @@ public class AdminInfoCommand extends CompositeCommand {
     public void setup() {
         setPermission("admin.info");
         setOnlyPlayer(false);
-        setParameters("commands.admin.info.parameters");
+        setParametersHelp("commands.admin.info.parameters");
         setDescription("commands.admin.info.description");
     }
 

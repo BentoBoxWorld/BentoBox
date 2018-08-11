@@ -18,7 +18,7 @@ public class AdminUnregisterCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.unregister");
-        setParameters("commands.admin.unregister.parameters");
+        setParametersHelp("commands.admin.unregister.parameters");
         setDescription("commands.admin.unregister.description");
     }
 

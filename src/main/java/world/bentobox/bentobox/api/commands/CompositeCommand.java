@@ -185,11 +185,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Default references to description and parameters
 
         StringBuilder reference = new StringBuilder();
-        reference.append("commands");
+        reference.append(label);
         CompositeCommand p = this;
         int index = 0;
         while (p.getParent() != null && index < 20) {
-            reference.append(".").append(p.getParent().getLabel());
+            reference.insert(0, p.getParent().getLabel() + ".");
             p = p.getParent();
             index++;
         }
@@ -480,12 +480,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      *     <li>{@code "commands." + getLabel() + ".description"} if this is a top-level command;</li>
      *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".description"} if this is a sub-command.
      *     <br/>
-     *     Note that it can have up to 20 parent commands' labels being appended before this sub-command's label.
+     *     Note that it can have up to 20 parent commands' labels being inserted before this sub-command's label.
      *     Here are a few examples :
      *     <ul>
      *         <li>/bentobox info : {@code "commands.bentobox.info.description"};</li>
      *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.description"};</li>
-     *         <li>/mycommand sub1 sub2 sub3 [...] sub33 : {@code "commands.mycommand.sub1.sub2.sub3.[...].sub19.sub33.description}.</li>
+     *         <li>/mycommand sub1 sub2 sub3 [...] sub22 : {@code "commands.sub3.[...].sub20.sub21.sub22.description"}.</li>
      *     </ul>
      *     </li>
      * </ul>
@@ -513,15 +513,15 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      *     <li>{@code "commands." + getLabel() + ".parameters"} if this is a top-level command;</li>
      *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".parameters"} if this is a sub-command.
      *     <br/>
-     *     Note that it can have up to 20 parent commands' labels being appended before this sub-command's label.
+     *     Note that it can have up to 20 parent commands' labels being inserted before this sub-command's label.
      *     Here are a few examples :
      *     <ul>
      *         <li>/bentobox info : {@code "commands.bentobox.info.parameters"};</li>
      *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.parameters"};</li>
-     *         <li>/mycommand sub1 sub2 sub3 [...] sub33 : {@code "commands.mycommand.sub1.sub2.sub3.[...].sub19.sub33.paramaters}.</li>
+     *         <li>/mycommand sub1 sub2 sub3 [...] sub22 : {@code "commands.sub3.[...].sub20.sub21.sub22.parameters"}.</li>
      *     </ul>
      *     </li>
-     *</ul>
+     * </ul>
      *
      * This method should therefore only be used in case you want to provide a different value than the default one.
      *
@@ -546,15 +546,15 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      *     <li>{@code "commands." + getLabel() + ".parameters"} if this is a top-level command;</li>
      *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".parameters"} if this is a sub-command.
      *     <br/>
-     *     Note that it can have up to 20 parent commands' labels being appended before this sub-command's label.
+     *     Note that it can have up to 20 parent commands' labels being inserted before this sub-command's label.
      *     Here are a few examples :
      *     <ul>
      *         <li>/bentobox info : {@code "commands.bentobox.info.parameters"};</li>
      *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.parameters"};</li>
-     *         <li>/mycommand sub1 sub2 sub3 [...] sub33 : {@code "commands.mycommand.sub1.sub2.sub3.[...].sub19.sub33.paramaters}.</li>
+     *         <li>/mycommand sub1 sub2 sub3 [...] sub22 : {@code "commands.sub3.[...].sub20.sub21.sub22.parameters"}.</li>
      *     </ul>
      *     </li>
-     *</ul>
+     * </ul>
      *
      * This method should therefore only be used in case you want to provide a different value than the default one.
      *

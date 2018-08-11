@@ -31,7 +31,7 @@ public class DefaultHelpCommand extends CompositeCommand {
     @Override
     public void setup() {
         // Set the usage to what the parent's command is
-        setParameters(parent.getParameters());
+        setParametersHelp(parent.getParameters());
         setDescription(parent.getDescription());
         inheritPermission();
     }
@@ -58,12 +58,10 @@ public class DefaultHelpCommand extends CompositeCommand {
         }
         if (depth < MAX_DEPTH) {
             if (!parent.getLabel().equals(HELP)) {
-
-
                 // Get elements
                 String usage = parent.getUsage();
                 String params = user.getTranslationOrNothing(getParameters());
-                String desc = user.getTranslationOrNothing(getDescription());
+                String desc = user.getTranslation(getDescription());
 
                 if (showPrettyHelp(user, usage, params, desc)) {
                     // No more to show

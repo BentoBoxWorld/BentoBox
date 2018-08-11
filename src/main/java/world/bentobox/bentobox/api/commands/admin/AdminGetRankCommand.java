@@ -28,7 +28,7 @@ public class AdminGetRankCommand extends CompositeCommand {
     public void setup() {
         setPermission("admin.setrank");
         setOnlyPlayer(false);
-        setParameters("commands.admin.getrank.parameters");
+        setParametersHelp("commands.admin.getrank.parameters");
         setDescription("commands.admin.getrank.description");
     }
 

@@ -11,29 +11,29 @@ import world.bentobox.bentobox.api.user.User;
  *
  * @author tastybento
  */
-public class VersionCommand extends CompositeCommand {
+public class BentoBoxVersionCommand extends CompositeCommand {
 
     /**
      * Info command
      * @param parent - command parent
      */
-    public VersionCommand(CompositeCommand parent) {
+    public BentoBoxVersionCommand(CompositeCommand parent) {
         super(parent, "version", "v", "versions", "addons");
     }
 
     @Override
     public void setup() {
-        setDescription("commands.bentobox.info.description");
+
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        user.sendMessage("commands.bentobox.info.loaded-game-worlds");
-        getIWM().getOverWorldNames().forEach(n -> user.sendMessage("commands.bentobox.info.game-worlds", TextVariables.NAME, n));
-        user.sendMessage("commands.bentobox.info.loaded-addons");
+        user.sendMessage("commands.bentobox.version.loaded-game-worlds");
+        getIWM().getOverWorldNames().forEach(n -> user.sendMessage("commands.bentobox.version.game-worlds", TextVariables.NAME, n));
+        user.sendMessage("commands.bentobox.version.loaded-addons");
         getPlugin().getAddonsManager()
         .getAddons()
-        .forEach(a -> user.sendMessage("commands.bentobox.info.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
+        .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
                 TextVariables.VERSION, a.getDescription().getVersion()));
 
         return true;

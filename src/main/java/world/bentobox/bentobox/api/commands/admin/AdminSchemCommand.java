@@ -25,7 +25,7 @@ public class AdminSchemCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.schem");
-        setParameters("commands.admin.schem.parameters");
+        setParametersHelp("commands.admin.schem.parameters");
         setDescription("commands.admin.schem.description");
         setOnlyPlayer(true);
         clipboards = new HashMap<>();

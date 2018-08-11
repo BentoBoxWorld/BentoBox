@@ -15,7 +15,7 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
     @Override
     public void setup() {
         setPermission("admin.team");
-        setParameters("commands.admin.team.disband.parameters");
+        setParametersHelp("commands.admin.team.disband.parameters");
         setDescription("commands.admin.team.disband.description");
     }
 
