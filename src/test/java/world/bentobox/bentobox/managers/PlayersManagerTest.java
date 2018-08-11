@@ -7,12 +7,19 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.Comparator;
 import java.util.UUID;
+import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -21,6 +28,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,7 +51,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class, Logger.class})
 public class PlayersManagerTest {
 
     private BentoBox plugin;
@@ -61,6 +69,8 @@ public class PlayersManagerTest {
      */
     @Before
     public void setUp() throws Exception {
+        // Clear any lingering database
+        clear();
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -75,7 +85,7 @@ public class PlayersManagerTest {
         when(end.getName()).thenReturn("world_the_end");
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-
+        
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
@@ -129,6 +139,20 @@ public class PlayersManagerTest {
         // Normally in world
         Util.setPlugin(plugin);
 
+    }
+
+    @After
+    public void clear() throws IOException{
+        //remove any database data
+        File file = new File("database");
+        Path pathToBeDeleted = file.toPath();
+        if (file.exists()) {
+            Files.walk(pathToBeDeleted)
+            .sorted(Comparator.reverseOrder())
+            .map(Path::toFile)
+            .forEach(File::delete);
+            System.out.println(file.exists());
+        }
     }
 
     /**
@@ -269,9 +293,6 @@ public class PlayersManagerTest {
         assertNotEquals(l, pm.getHomeLocation(world, uuid, 20));
     }
 
-    /**
-     * Test method for .
-     */
     @Test
     public void testClearHomeLocations() {
         PlayersManager pm = new PlayersManager(plugin);
@@ -308,7 +329,8 @@ public class PlayersManagerTest {
         pm.setHandler(db);
         // Add a player to the cache
         pm.addPlayer(uuid);
-        //assertEquals(uuid, pm.getUUID("tastybento")); TODO Fix NPE
+        UUID uuidResult = pm.getUUID("tastybento");
+        assertEquals(uuid, uuidResult); 
     }
 
     /**
@@ -321,8 +343,21 @@ public class PlayersManagerTest {
         // Add a player
         pm.addPlayer(uuid);
         assertEquals("tastybento", pm.getName(user.getUniqueId()));
-        //pm.setPlayerName(user); TODO: fine NPE
+        pm.setPlayerName(user); 
         assertEquals(user.getName(), pm.getName(user.getUniqueId()));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#getUUID(java.lang.String)}.
+     */
+    @Test
+    public void testGetUUIDUnknownPlayer() {
+        PlayersManager pm = new PlayersManager(plugin);
+        pm.setHandler(db);
+        // Add a player to the cache
+        pm.addPlayer(uuid);
+        // Unknown player should return null
+        assertNull(pm.getUUID("tastybento123")); 
     }
 
     /**

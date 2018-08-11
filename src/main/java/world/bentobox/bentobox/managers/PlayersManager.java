@@ -269,8 +269,9 @@ public class PlayersManager {
     public void setPlayerName(User user) {
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
+        Names newName = new Names(user.getName(), user.getUniqueId());
         // Add to names database
-        names.saveObject(new Names(user.getName(), user.getUniqueId()));
+        names.saveObject(newName);
     }
 
     /**
