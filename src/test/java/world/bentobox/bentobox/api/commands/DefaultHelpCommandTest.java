@@ -133,15 +133,13 @@ public class DefaultHelpCommandTest {
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
         when(parent.getWorld()).thenReturn(mock(World.class));
-        when(user.getTranslationOrNothing("island")).thenReturn("island");
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
-        when(user.getTranslationOrNothing("description")).thenReturn("the main island command");
+        when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         dhc.execute(user, dhc.getLabel(), new ArrayList<>());
         Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
-        Mockito.verify(user).getTranslationOrNothing("island");
         Mockito.verify(user).getTranslationOrNothing("parameters");
-        Mockito.verify(user).getTranslationOrNothing("description");
+        Mockito.verify(user).getTranslation("description");
         Mockito.verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
@@ -162,17 +160,15 @@ public class DefaultHelpCommandTest {
         when(parent.getParameters()).thenReturn("parameters");
         when(parent.getDescription()).thenReturn("description");
         when(parent.getPermission()).thenReturn("permission");
-        when(user.getTranslationOrNothing("island")).thenReturn("island");
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
-        when(user.getTranslationOrNothing("description")).thenReturn("the main island command");
+        when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
         List<String> args = new ArrayList<>();
         args.add("1");
         dhc.execute(user, dhc.getLabel(), args);
         // There are no header or footer shown
-        Mockito.verify(user).getTranslationOrNothing("island");
         Mockito.verify(user).getTranslationOrNothing("parameters");
-        Mockito.verify(user).getTranslationOrNothing("description");
+        Mockito.verify(user).getTranslation("description");
         Mockito.verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
