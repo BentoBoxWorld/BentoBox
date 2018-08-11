@@ -8,7 +8,7 @@ meta:
   - tastybento
   - Poslovitch
   banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
-  version: "FC-0.81"
+  version: "FC-0.92"
 
 general:
   success: "&aSuccess!"
@@ -170,14 +170,16 @@ commands:
       look-at-a-block: "&cLook at block within 20 blocks to set"
     world:
       description: "Manage world settings"
+    delete:
+      parameters: ""
+      description: "deletes a player's island"
+      cannot-delete-team-leader: "&cAll island members have to be kicked from the island before deleting it."
+      deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."
   bentobox:
-    parameters: ""
     description: "BentoBox admin command"
     about:
-      parameters: ""
       description: "display copyright and license info"
-    info:
-      parameters: ""
+    version:
       description: "display info"
       loaded-addons: "Loaded Add-Ons"
       loaded-game-worlds: "Loaded Game Worlds"
