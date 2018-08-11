@@ -11,19 +11,19 @@ import world.bentobox.bentobox.api.user.User;
  *
  * @author tastybento
  */
-public class VersionCommand extends CompositeCommand {
+public class BentoBoxVersionCommand extends CompositeCommand {
 
     /**
      * Info command
      * @param parent - command parent
      */
-    public VersionCommand(CompositeCommand parent) {
+    public BentoBoxVersionCommand(CompositeCommand parent) {
         super(parent, "version", "v", "versions", "addons");
     }
 
     @Override
     public void setup() {
-        setDescription("commands.bentobox.info.description");
+
     }
 
     @Override
