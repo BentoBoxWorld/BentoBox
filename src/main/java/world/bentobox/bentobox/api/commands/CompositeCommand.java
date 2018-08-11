@@ -152,9 +152,20 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param aliases - aliases for this subcommand
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
+        this(null, parent, label, aliases);
+    }
+
+    /**
+     * Command to register a command from an addon under a parent command (that could be from another addon)
+     * @param addon - this command's addon
+     * @param parent - parent command
+     * @param aliases - aliases for this command
+     */
+    public CompositeCommand(Addon addon, CompositeCommand parent, String label, String... aliases ) {
         super(label, "", "", Arrays.asList(aliases));
         this.topLabel = parent.getTopLabel();
         this.plugin = BentoBox.getInstance();
+        this.addon = addon;
         this.parent = parent;
         subCommandLevel = parent.getLevel() + 1;
         // Add this sub-command to the parent
@@ -184,7 +195,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         setDescription(reference.toString() + ".description");
         setParametersHelp(reference.toString() + ".parameters");
-
         setup();
         // If this command does not define its own help class, then use the default help command
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
