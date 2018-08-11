@@ -247,7 +247,6 @@ public class PlayersManager {
      * @param name - name of player
      * @return UUID of player or null if unknown
      */
-    @SuppressWarnings("deprecation")
     public UUID getUUID(String name) {
         // See if this is a UUID
         // example: 5988eecd-1dcd-4080-a843-785b62419abb
@@ -256,13 +255,11 @@ public class PlayersManager {
                 return UUID.fromString(name);
             } catch (Exception ignored) {}
         }
-        // Look in the name cache, then the data base and finally Bukkit blocking request
+        // Look in the name cache, then the data base and then give up
         return playerCache.values().stream()
                 .filter(p -> p.getPlayerName().equalsIgnoreCase(name)).findFirst()
                 .map(p -> UUID.fromString(p.getUniqueId()))
-                .orElse(names.objectExists(name)
-                        ? names.loadObject(name).getUuid()
-                                : Bukkit.getOfflinePlayer(name).getUniqueId());
+                .orElse(names.objectExists(name) ? names.loadObject(name).getUuid() : null);
     }
 
     /**
