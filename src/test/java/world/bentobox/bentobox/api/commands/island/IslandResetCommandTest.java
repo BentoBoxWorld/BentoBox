@@ -276,7 +276,7 @@ public class IslandResetCommandTest {
         // Reset
         assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         // Check for message
-        Mockito.verify(user).sendMessage("general.confirm", "[seconds]", String.valueOf(s.getConfirmationTime()));
+        Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(s.getConfirmationTime()));
 
         // Send command again to confirm
         assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));

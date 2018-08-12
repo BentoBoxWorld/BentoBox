@@ -22,7 +22,6 @@ public class AdminClearResetsAllCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // If args are not right, show help
         if (!args.isEmpty()) {
             showHelp(this, user);
             return false;

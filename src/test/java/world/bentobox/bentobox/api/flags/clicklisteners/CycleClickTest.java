@@ -207,8 +207,7 @@ public class CycleClickTest {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         CycleClick udc = new CycleClick("LOCK");
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.you-need"), Mockito.eq("[permission]"), Mockito.eq("bskyblock.settings.LOCK"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"), Mockito.eq("[permission]"), Mockito.eq("bskyblock.settings.LOCK"));
     }
 
     @Test

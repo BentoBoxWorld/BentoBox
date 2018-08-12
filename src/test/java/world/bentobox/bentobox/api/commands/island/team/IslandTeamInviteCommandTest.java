@@ -28,11 +28,13 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -49,6 +51,7 @@ public class IslandTeamInviteCommandTest {
     private PlayersManager pm;
     private UUID notUUID;
     private Settings s;
+    private Island island;
 
     /**
      * @throws java.lang.Exception
@@ -66,6 +69,7 @@ public class IslandTeamInviteCommandTest {
         // Settings
         s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
+        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
 
         when(plugin.getSettings()).thenReturn(s);
 
@@ -91,8 +95,12 @@ public class IslandTeamInviteCommandTest {
         // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
         when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        island = mock(Island.class);
+        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -125,6 +133,7 @@ public class IslandTeamInviteCommandTest {
     @Test
     public void testExecuteNoIsland() {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.inTeam(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-island"));
@@ -134,11 +143,11 @@ public class IslandTeamInviteCommandTest {
      * Test method for .
      */
     @Test
-    public void testExecuteNotTeamLeader() {
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
+    public void testExecuteLowRank() {
+        when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"));
     }
 
     /**
