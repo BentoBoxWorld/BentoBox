@@ -12,12 +12,9 @@ meta:
 
 general:
   success: "&aSuccess!"
-  request-cancelled: "&cConfirmation timeout - &brequest cancelled"
-  previous-request-cancelled: "&6Previous confirmation request cancelled"
-  confirm: "&cType command again within &b[seconds]s&c to confirm"
   errors:
     command-cancelled: "&cCommand cancelled"
-    no-permission: "&cYou don't have permission to execute this command."
+    no-permission: "&cYou don't have the permission to execute this command (&7[permission])&c."
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
     no-island: "&cYou do not have an island!"
@@ -35,7 +32,6 @@ general:
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
     you-must-wait: "&cYou must wait [number]s before you can do that command again"
-    you-need: "&cYou need [permission]"
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
@@ -184,7 +180,11 @@ commands:
       loaded-addons: "Loaded Add-Ons"
       loaded-game-worlds: "Loaded Game Worlds"
       addon-syntax: "&2[name] &3[version]" 
-      game-worlds: "&2[name]" 
+      game-worlds: "&2[name]"
+  confirmation:
+    confirm: "&cType command again within &b[seconds]s&c to confirm"
+    previous-request-cancelled: "&6Previous confirmation request cancelled"
+    request-cancelled: "&cConfirmation timeout - &brequest cancelled"
   island:
     go:
       parameters: "[home number]"
@@ -635,9 +635,9 @@ protection:
         &a[description]
 
         &7Allowed for:
-      allowed_rank: "&3- &a"
-      blocked_rank: "&3- &c"
-      minimal_rank: "&3- &2"
+      allowed-rank: "&3- &a"
+      blocked-rank: "&3- &c"
+      minimal-rank: "&3- &2"
       menu-layout: "&a[description]"
       setting-layout: |
         &a[description]

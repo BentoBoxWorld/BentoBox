@@ -242,8 +242,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         // Check perms, but only if this isn't the console
         if ((sender instanceof Player) && !sender.isOp() && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
-            user.sendMessage("general.errors.no-permission");
-            user.sendMessage("general.errors.you-need", TextVariables.PERMISSION, cmd.getPermission());
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, cmd.getPermission());
             return false;
         }
         // Fire an event to see if this command should be cancelled
@@ -747,14 +746,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
                 return;
             } else {
                 // Player has another outstanding confirmation request that will now be cancelled
-                user.sendMessage("general.previous-request-cancelled");
+                user.sendMessage("commands.confirmation.previous-request-cancelled");
             }
         }
         // Tell user that they need to confirm
-        user.sendMessage("general.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
+        user.sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
         // Set up a cancellation task
         BukkitTask task = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            user.sendMessage("general.request-cancelled");
+            user.sendMessage("commands.confirmation.request-cancelled");
             toBeConfirmed.remove(user);
         }, getPlugin().getSettings().getConfirmationTime() * 20L);
 
