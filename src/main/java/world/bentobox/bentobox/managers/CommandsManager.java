@@ -44,4 +44,11 @@ public class CommandsManager {
         return commands.keySet();
     }
 
+    /**
+     * @return the commands
+     */
+    public HashMap<String, CompositeCommand> getCommands() {
+        return commands;
+    }
+
 }

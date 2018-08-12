@@ -13,13 +13,19 @@ public class RanksManager {
     public static final String ADMIN_RANK_REF = "ranks.admin";
     public static final String MOD_RANK_REF = "ranks.mod";
     public static final String OWNER_RANK_REF = "ranks.owner";
+    public static final String SUB_OWNER_RANK_REF = "ranks.sub-owner";
     public static final String MEMBER_RANK_REF = "ranks.member";
+    public static final String TRUSTED_RANK_REF = "ranks.trusted";
+    public static final String COOP_RANK_REF = "ranks.coop";
     public static final String VISITOR_RANK_REF = "ranks.visitor";
     public static final String BANNED_RANK_REF = "ranks.banned";
     public static final int ADMIN_RANK = 10000;
     public static final int MOD_RANK = 5000;
     public static final int OWNER_RANK = 1000;
-    public static final int MEMBER_RANK = 900;
+    public static final int SUB_OWNER_RANK = 900;
+    public static final int MEMBER_RANK = 500;
+    public static final int TRUSTED_RANK = 400;
+    public static final int COOP_RANK = 200;
     public static final int VISITOR_RANK = 0;
     public static final int BANNED_RANK = -1;
 
@@ -38,7 +44,10 @@ public class RanksManager {
         ranksPut(ADMIN_RANK_REF, ADMIN_RANK);
         ranksPut(MOD_RANK_REF, MOD_RANK);
         ranksPut(OWNER_RANK_REF, OWNER_RANK);
+        ranksPut(SUB_OWNER_RANK_REF, SUB_OWNER_RANK);
         ranksPut(MEMBER_RANK_REF, MEMBER_RANK);
+        ranksPut(TRUSTED_RANK_REF, TRUSTED_RANK);
+        ranksPut(COOP_RANK_REF, COOP_RANK);
         ranksPut(VISITOR_RANK_REF, VISITOR_RANK);
         ranksPut(BANNED_RANK_REF, BANNED_RANK);
         loadCustomRanks();

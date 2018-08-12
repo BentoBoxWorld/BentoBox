@@ -16,6 +16,7 @@ import world.bentobox.bentobox.listeners.flags.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.BucketListener;
 import world.bentobox.bentobox.listeners.flags.ChestDamageListener;
 import world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener;
+import world.bentobox.bentobox.listeners.flags.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.CreeperListener;
 import world.bentobox.bentobox.listeners.flags.EggListener;
 import world.bentobox.bentobox.listeners.flags.EnderChestListener;
@@ -222,6 +223,9 @@ public class Flags {
      */
     public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
+    
+    public static final Flag COMMAND_RANKS = new FlagBuilder().id("COMMAND_RANKS").icon(Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
+            .onClick(new CommandRankClickListener()).subPanel(true).build();
 
     /**
      * @return List of all the flags in this class

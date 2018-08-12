@@ -27,6 +27,7 @@ public class IslandBanCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setParametersHelp("commands.island.ban.parameters");
         setDescription("commands.island.ban.description");
+        setConfigurableRankCommand();
     }
 
     @Override
@@ -42,8 +43,9 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(getWorld(), playerUUID)) {
-            user.sendMessage("general.errors.not-leader");
+        // Check rank to use command
+        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.no-permission");
             return false;
         }
         // Get target player

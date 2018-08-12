@@ -307,7 +307,9 @@ commands:
 
 ranks:
   owner: "Owner"
+  sub-owner: "Sub-Owner"
   member: "Member"
+  trusted: "Trusted"
   coop: "Coop"
   visitor: "Visitor"
   banned: "Banned"
@@ -385,6 +387,9 @@ protection:
           &a(override Buckets)
       name: "Collect water"
       hint: "No water collection"
+    COMMAND_RANKS:
+      name: "Command Ranks"
+      description: "&aConfigure command ranks"
     CRAFTING: 
       description: "Toggle use"
       name: "Workbenches"

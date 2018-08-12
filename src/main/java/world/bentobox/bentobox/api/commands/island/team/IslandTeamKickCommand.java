@@ -18,6 +18,7 @@ public class IslandTeamKickCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setParametersHelp("commands.island.team.kick.parameters");
         setDescription("commands.island.team.kick.description");
+        setConfigurableRankCommand();
     }
 
     @Override
