@@ -1,7 +1,7 @@
 /**
  *
  */
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.Arrays;
 import java.util.Comparator;

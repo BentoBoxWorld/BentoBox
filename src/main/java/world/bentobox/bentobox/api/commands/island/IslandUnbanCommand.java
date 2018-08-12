@@ -34,8 +34,8 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         UUID playerUUID = user.getUniqueId();
-        // Player issuing the command must have an island
-        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
+        // Player issuing the command must have an island or be in a team
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }

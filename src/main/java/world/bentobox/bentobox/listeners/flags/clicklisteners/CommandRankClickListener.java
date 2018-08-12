@@ -1,7 +1,7 @@
 /**
  * 
  */
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -94,11 +94,11 @@ public class CommandRankClickListener implements ClickHandler {
         pib.description(d);
         plugin.getRanksManager().getRanks().forEach((reference, score) -> {
             if (score >= RanksManager.MEMBER_RANK && score < plugin.getSettings().getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.blocked_rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
             } else if (score <= RanksManager.OWNER_RANK && score > plugin.getSettings().getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.allowed_rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
             } else if (score == plugin.getSettings().getRankCommand(c)) {
-                pib.description(user.getTranslation("protection.panel.flag-item.minimal_rank") + user.getTranslation(reference));
+                pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
             }
         });
         return pib.build();

@@ -16,7 +16,6 @@ import world.bentobox.bentobox.listeners.flags.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.BucketListener;
 import world.bentobox.bentobox.listeners.flags.ChestDamageListener;
 import world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener;
-import world.bentobox.bentobox.listeners.flags.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.CreeperListener;
 import world.bentobox.bentobox.listeners.flags.EggListener;
 import world.bentobox.bentobox.listeners.flags.EnderChestListener;
@@ -24,7 +23,6 @@ import world.bentobox.bentobox.listeners.flags.EndermanListener;
 import world.bentobox.bentobox.listeners.flags.EnterExitListener;
 import world.bentobox.bentobox.listeners.flags.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.FireListener;
-import world.bentobox.bentobox.listeners.flags.GeoLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.GeoLimitMobsListener;
 import world.bentobox.bentobox.listeners.flags.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.InventoryListener;
@@ -45,6 +43,8 @@ import world.bentobox.bentobox.listeners.flags.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.ShearingListener;
 import world.bentobox.bentobox.listeners.flags.TNTListener;
 import world.bentobox.bentobox.listeners.flags.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
 public class Flags {

@@ -145,6 +145,7 @@ public class IslandUnbanCommandTest {
 
     @Test
     public void testNoIsland() {
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.errors.no-island");

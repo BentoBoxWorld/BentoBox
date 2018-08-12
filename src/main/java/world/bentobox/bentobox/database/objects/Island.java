@@ -403,8 +403,8 @@ public class Island implements DataObject {
     }
 
     /**
-     * Removes a player from the team member map. Do not call this directly.
-     * Use {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(World, UUID)}
+     * Removes a player from the team member map. Generally, you should
+     * use {@link world.bentobox.bentobox.managers.IslandsManager#removePlayer(World, UUID)}
      * @param playerUUID - uuid of player
      */
     public void removeMember(UUID playerUUID) {
@@ -636,20 +636,16 @@ public class Island implements DataObject {
      * @param world - world to check
      */
     public void showMembers(BentoBox plugin, User user, World world) {
-        if (plugin.getIslands().inTeam(world, user.getUniqueId())) {
-            user.sendMessage("commands.admin.info.team-members-title");
-            members.forEach((u, i) -> {
-                if (owner.equals(u)) {
-                    user.sendMessage("commands.admin.info.team-owner-format", TextVariables.NAME, plugin.getPlayers().getName(u)
-                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
-                } else if (i > RanksManager.VISITOR_RANK){
-                    user.sendMessage("commands.admin.info.team-member-format", TextVariables.NAME, plugin.getPlayers().getName(u)
-                            , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
-                }
-            });
-        }
-
-
+        user.sendMessage("commands.admin.info.team-members-title");
+        members.forEach((u, i) -> {
+            if (owner.equals(u)) {
+                user.sendMessage("commands.admin.info.team-owner-format", TextVariables.NAME, plugin.getPlayers().getName(u)
+                        , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
+            } else if (i > RanksManager.VISITOR_RANK){
+                user.sendMessage("commands.admin.info.team-member-format", TextVariables.NAME, plugin.getPlayers().getName(u)
+                        , "[rank]", user.getTranslation(plugin.getRanksManager().getRank(i)));
+            }
+        });
     }
 
     /**
