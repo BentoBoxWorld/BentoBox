@@ -192,7 +192,6 @@ public class AddonsManager {
      * @param jar - the jar file
      * @param folderPath - the path within the jar
      * @return a list of files
-      - if the file cannot be read
      */
     public List<String> listJarYamlFiles(JarFile jar, String folderPath) {
         List<String> result = new ArrayList<>();

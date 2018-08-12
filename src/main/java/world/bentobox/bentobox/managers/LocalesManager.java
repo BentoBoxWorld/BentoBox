@@ -30,6 +30,7 @@ public class LocalesManager {
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
+        loadLocalesFromJar("BentoBox");
         loadLocales("BentoBox"); // Default
     }
 
@@ -55,15 +56,7 @@ public class LocalesManager {
         return null;
     }
 
-    /**
-     * Loads all the locales available. If the locale folder does not exist, one will be created and
-     * filled with locale files from the jar.
-     */
-    public void loadLocales(String parent) {
-        // Describe the filter - we only want files that are correctly named
-        // Files must be 9 chars long
-        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml") && name.length() == 9;
-
+    public void loadLocalesFromJar(String parent) {
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);
         // If the folder does not exist, then make it and fill with the locale files from the jar
@@ -83,6 +76,19 @@ public class LocalesManager {
                 plugin.logError("Could not copy locale files from jar " + e.getMessage());
             }
         }
+    }
+    
+    /**
+     * Loads all the locales available. If the locale folder does not exist, one will be created and
+     * filled with locale files from the jar.
+     */
+    public void loadLocales(String parent) {
+        // Describe the filter - we only want files that are correctly named
+        // Files must be 9 chars long
+        FilenameFilter ymlFilter = (dir, name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml") && name.length() == 9;
+
+        // Run through the files and store the locales
+        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);
 
         // Store all the locales available
         for (File language : Objects.requireNonNull(localeDir.listFiles(ymlFilter))) {
