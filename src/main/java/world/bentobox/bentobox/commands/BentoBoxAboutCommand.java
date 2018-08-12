@@ -22,16 +22,12 @@ public class BentoBoxAboutCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-
+        // Useless : this command uses the default values.
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        user.sendRawMessage("About " + BentoBox
-                .getInstance()
-        .getDescription()
-        .getName() + " v" +
-        BentoBox.getInstance().getDescription().getVersion() + ":");
+        user.sendRawMessage("About " + BentoBox.getInstance().getDescription().getName() + " v" + BentoBox.getInstance().getDescription().getVersion() + ":");
         user.sendRawMessage("Copyright (c) 2017 - 2018 Tastybento, Poslovitch");
         user.sendRawMessage("See https://www.eclipse.org/legal/epl-2.0/ for license information.");
         return true;

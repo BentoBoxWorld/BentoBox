@@ -44,8 +44,8 @@ public class AddonClassLoader extends URLClassLoader {
         try {
             String mainClass = data.getString("main");
             javaClass = Class.forName(mainClass, true, this);
-            if(mainClass.startsWith("world.bentobox")){
-                throw new InvalidAddonFormatException("Packages declaration cannot start with 'world.bentobox'");
+            if(mainClass.startsWith("world.bentobox.bentobox")){
+                throw new InvalidAddonFormatException("Packages declaration cannot start with 'world.bentobox.bentobox'");
             }
         } catch (Exception e) {
             throw new InvalidDescriptionException("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - " + e.getMessage());
@@ -103,7 +103,7 @@ public class AddonClassLoader extends URLClassLoader {
      * @return Class - class if found
      */
     public Class<?> findClass(String name, boolean checkGlobal) {
-        if (name.startsWith("world.bentobox.")) {
+        if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
 
