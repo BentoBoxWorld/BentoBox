@@ -49,21 +49,19 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * @author tastybento
+ */
 public class Clipboard {
 
+    // Commonly used texts along this class.
     private static final String ATTACHED = "attached";
-
     private static final String BLOCK = "blocks";
-
-    private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
-
     private static final String BEDROCK = "bedrock";
-
     private static final String INVENTORY = "inventory";
-
     private static final String ENTITY = "entity";
-
     private static final String COLOR = "color";
+    private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
 
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
@@ -289,14 +287,10 @@ public class Clipboard {
                 }
             }
             if (e instanceof AbstractHorse) {
-                AbstractHorse horse = (AbstractHorse)e;
+                Horse horse = (Horse)e;
                 horse.setDomestication(ent.getInt("domestication"));
                 ConfigurationSection inv = ent.getConfigurationSection(INVENTORY);
                 inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
-            }
-
-            if (e instanceof AbstractHorse) {
-                Horse horse = (Horse)e;
                 horse.setStyle(Horse.Style.valueOf(ent.getString("style", "NONE")));
             }
         });
