@@ -221,11 +221,11 @@ public class Flag implements Comparable<Flag> {
                 pib.description(d);
                 plugin.getRanksManager().getRanks().forEach((reference, score) -> {
                     if (score > RanksManager.BANNED_RANK && score < island.getFlag(this)) {
-                        pib.description(user.getTranslation("protection.panel.flag-item.blocked_rank") + user.getTranslation(reference));
+                        pib.description(user.getTranslation("protection.panel.flag-item.blocked-rank") + user.getTranslation(reference));
                     } else if (score <= RanksManager.OWNER_RANK && score > island.getFlag(this)) {
-                        pib.description(user.getTranslation("protection.panel.flag-item.allowed_rank") + user.getTranslation(reference));
+                        pib.description(user.getTranslation("protection.panel.flag-item.allowed-rank") + user.getTranslation(reference));
                     } else if (score == island.getFlag(this)) {
-                        pib.description(user.getTranslation("protection.panel.flag-item.minimal_rank") + user.getTranslation(reference));
+                        pib.description(user.getTranslation("protection.panel.flag-item.minimal-rank") + user.getTranslation(reference));
                     }
                 });
             }
