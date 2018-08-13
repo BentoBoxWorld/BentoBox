@@ -89,7 +89,9 @@ public class LocalesManager {
 
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + parent);
-
+        if (!localeDir.exists()) {
+            return;
+        }
         // Store all the locales available
         for (File language : Objects.requireNonNull(localeDir.listFiles(ymlFilter))) {
             Locale localeObject = Locale.forLanguageTag(language.getName().substring(0, language.getName().length() - 4));
