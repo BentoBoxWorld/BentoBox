@@ -41,6 +41,7 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * @author tastybento
@@ -73,6 +74,7 @@ public class IslandUnbanCommandTest {
         // Settings
         Settings s = mock(Settings.class);
         when(s.getResetWait()).thenReturn(0L);
+        when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
 
         when(plugin.getSettings()).thenReturn(s);
 
@@ -110,6 +112,8 @@ public class IslandUnbanCommandTest {
         island = mock(Island.class);
         when(island.getBanned()).thenReturn(new HashSet<>());
         when(island.isBanned(Mockito.any())).thenReturn(false);
+        when(island.getRank(Mockito.any())).thenReturn(RanksManager.OWNER_RANK);
+        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
         // IWM friendly name
@@ -141,17 +145,19 @@ public class IslandUnbanCommandTest {
 
     @Test
     public void testNoIsland() {
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.errors.no-island");
     }
 
     @Test
-    public void testNotOwner() {
+    public void testTooLowRank() {
         IslandUnbanCommand iubc = new IslandUnbanCommand(ic);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(island.getRank(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
         assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.errors.not-leader");
+        Mockito.verify(user).sendMessage("general.errors.no-permission");
     }
 
     @Test

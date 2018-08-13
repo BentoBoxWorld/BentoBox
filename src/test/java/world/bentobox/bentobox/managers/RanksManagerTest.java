@@ -89,8 +89,8 @@ public class RanksManagerTest {
     public void testGetNextRankValue() {
         assertEquals(RanksManager.BANNED_RANK, ranksManager.getRankUpValue(-20));
         assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankUpValue(RanksManager.BANNED_RANK));
-        assertEquals(RanksManager.MEMBER_RANK, ranksManager.getRankUpValue(RanksManager.VISITOR_RANK));
-        assertEquals(RanksManager.OWNER_RANK, ranksManager.getRankUpValue(RanksManager.MEMBER_RANK));
+        assertEquals(RanksManager.COOP_RANK, ranksManager.getRankUpValue(RanksManager.VISITOR_RANK));
+        assertEquals(RanksManager.SUB_OWNER_RANK, ranksManager.getRankUpValue(RanksManager.MEMBER_RANK));
         assertEquals(RanksManager.OWNER_RANK, ranksManager.getRankUpValue(RanksManager.OWNER_RANK));
         assertEquals(RanksManager.OWNER_RANK, ranksManager.getRankUpValue(2000));
     }
@@ -103,8 +103,8 @@ public class RanksManagerTest {
         // Lowest rank is Visitor
         assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankDownValue(-20));
         assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankDownValue(RanksManager.VISITOR_RANK));
-        assertEquals(RanksManager.VISITOR_RANK, ranksManager.getRankDownValue(RanksManager.MEMBER_RANK));
-        assertEquals(RanksManager.MEMBER_RANK, ranksManager.getRankDownValue(RanksManager.OWNER_RANK));
+        assertEquals(RanksManager.TRUSTED_RANK, ranksManager.getRankDownValue(RanksManager.MEMBER_RANK));
+        assertEquals(RanksManager.SUB_OWNER_RANK, ranksManager.getRankDownValue(RanksManager.OWNER_RANK));
     }
 
     /**

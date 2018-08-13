@@ -32,19 +32,20 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setDescription("commands.island.team.invite.description");
         inviteList = HashBiMap.create();
+        setConfigurableRankCommand();
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
         UUID playerUUID = user.getUniqueId();
-        // Player issuing the command must have an island
-        if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
+        // Player issuing the command must have an island or be in a team
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        UUID teamLeaderUUID = getTeamLeader(getWorld(), user);
-        if (!(teamLeaderUUID.equals(playerUUID))) {
-            user.sendMessage("general.errors.not-leader");
+        // Check rank to use command
+        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.no-permission");
             return false;
         }
         if (args.isEmpty() || args.size() > 1) {

@@ -17,16 +17,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.PluginCommand;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
-import com.mojang.brigadier.arguments.BoolArgumentType;
-import com.mojang.brigadier.builder.LiteralArgumentBuilder;
-import com.mojang.brigadier.builder.RequiredArgumentBuilder;
-
-import me.lucko.commodore.Commodore;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -51,6 +45,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * True if the command is for the player only (not for the console)
      */
     private boolean onlyPlayer = false;
+    
+    /**
+     * True if the command is only for the console to use
+     */
+    private boolean onlyConsole = false;
+    
+    /**
+     * True if command is a configurable rank
+     */
+    private boolean configurableRankCommand = false;
+    
     /**
      * The parameters string for this command. It is the commands followed by a locale reference.
      */
@@ -201,8 +206,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.permissionPrefix = parent.getPermissionPrefix();
         // Inherit world
         this.world = parent.getWorld();
+        
         // Default references to description and parameters
-
         StringBuilder reference = new StringBuilder();
         reference.append(label);
         CompositeCommand p = this;
@@ -419,6 +424,16 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return "/" + usage;
     }
 
+    public String getFullUsage() {
+       String result = usage;
+       CompositeCommand c = this.parent;
+       while (c != null) {
+          result = c.getUsage() + " " + result;
+          c = c.getParent();
+       }
+       return "/" + result;
+    }
+    
     /**
      * Check if this command has a specific sub command.
      * @param subCommand - sub command
@@ -821,4 +836,33 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(timeToGo));
         return true;
     }
+
+    /**
+     * @return the onlyConsole
+     */
+    public boolean isOnlyConsole() {
+        return onlyConsole;
+    }
+
+    /**
+     * This command is only for console use
+     */
+    public void setOnlyConsole() {
+        this.onlyConsole = true;
+    }
+
+    /**
+     * @return the configurableRankCommand
+     */
+    public boolean isConfigurableRankCommand() {
+        return configurableRankCommand;
+    }
+
+    /**
+     * This command can be configured for use by different ranks
+     */
+    public void setConfigurableRankCommand() {
+        this.configurableRankCommand = true;
+    }
+
 }

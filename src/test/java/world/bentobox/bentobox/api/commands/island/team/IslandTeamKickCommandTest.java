@@ -236,7 +236,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Confirmation required
-        Mockito.verify(user).sendMessage(Mockito.eq("general.confirm"), Mockito.eq("[seconds]"), Mockito.eq("0"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.confirmation.confirm"), Mockito.eq("[seconds]"), Mockito.eq("0"));
     }
 
     /**

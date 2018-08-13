@@ -189,7 +189,7 @@ public class AdminDeleteCommandTest {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         // First requires confirmation
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.confirm", "[seconds]", "0");
+        Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
         // Confirm
         itl.execute(user, itl.getLabel(), Arrays.asList(name));
     }

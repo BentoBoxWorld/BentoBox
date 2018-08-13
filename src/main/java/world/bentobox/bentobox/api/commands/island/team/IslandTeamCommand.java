@@ -30,6 +30,13 @@ public class IslandTeamCommand extends CompositeCommand {
         new IslandTeamKickCommand(this);
         new IslandTeamInviteAcceptCommand(this);
         new IslandTeamInviteRejectCommand(this);
+        new IslandTeamCoopCommand(this);
+        new IslandTeamUncoopCommand(this);
+        new IslandTeamTrustCommand(this);
+        new IslandTeamUntrustCommand(this);
+        new IslandTeamPromoteCommand(this, "promote");
+        new IslandTeamPromoteCommand(this, "demote");
+        
     }
 
     @Override

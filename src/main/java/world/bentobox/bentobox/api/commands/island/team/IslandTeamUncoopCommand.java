@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.island;
+package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,27 +6,32 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
-import org.bukkit.entity.Player;
+import org.bukkit.OfflinePlayer;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-public class IslandBanCommand extends CompositeCommand {
+/**
+ * Command to uncoop a player
+ * @author tastybento
+ *
+ */
+public class IslandTeamUncoopCommand extends CompositeCommand {
 
-    public IslandBanCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "ban");
+    public IslandTeamUncoopCommand(CompositeCommand parentCommand) {
+        super(parentCommand, "uncoop");
     }
 
     @Override
     public void setup() {
-        setPermission("island.ban");
+        setPermission("island.team.coop");
         setOnlyPlayer(true);
-        setParametersHelp("commands.island.ban.parameters");
-        setDescription("commands.island.ban.description");
+        setParametersHelp("commands.island.team.uncoop.parameters");
+        setDescription("commands.island.team.uncoop.description");
         setConfigurableRankCommand();
     }
 
@@ -37,7 +42,6 @@ public class IslandBanCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island or be in a team
         if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
@@ -54,46 +58,42 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        // Player cannot ban themselves
-        if (playerUUID.equals(targetUUID)) {
-            user.sendMessage("commands.island.ban.cannot-ban-yourself");
+        // Uncoop
+        return unCoopCmd(user, targetUUID);
+    }
+
+    private boolean unCoopCmd(User user, UUID targetUUID) {
+        // Player cannot uncoop themselves
+        if (user.getUniqueId().equals(targetUUID)) {
+            user.sendMessage("commands.island.team.uncoop.cannot-uncoop-yourself");
             return false;
         }
         if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
-            user.sendMessage("commands.island.ban.cannot-ban-member");
-            return false;
-        }
-        if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
-            user.sendMessage("commands.island.ban.player-already-banned");
-            return false;
-        }
-        if (getSettings().getBanWait() > 0 && checkCooldown(user, targetUUID)) {
+            user.sendMessage("commands.island.team.uncoop.cannot-uncoop-member");
             return false;
         }
         User target = User.getInstance(targetUUID);
-        // Cannot ban ops
-        if (target.isOp()) {
-            user.sendMessage("commands.island.ban.cannot-ban");
+        int rank = getIslands().getIsland(getWorld(), user).getRank(target);
+        if (rank != RanksManager.COOP_RANK) {
+            user.sendMessage("commands.island.team.uncoop.player-not-coop");
             return false;
         }
-        // Finished error checking - start the banning
-        return ban(user, target);
-    }
-
-    private boolean ban(User user, User targetUser) {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island.addToBanList(targetUser.getUniqueId())) {
+        if (island != null) {
+            island.removeMember(targetUUID);
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
-            // If the player is online, has an island and on the banned island, move them home immediately
-            if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
-                getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
-                island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+            target.sendMessage("commands.island.team.uncoop.you-are-no-longer-a-coop-member", TextVariables.NAME, user.getName());
+            // Set cooldown
+            if (getSettings().getInviteWait() > 0 && getParent() != null) {
+                getParent().getSubCommand("coop").ifPresent(subCommand ->
+                subCommand.setCooldown(user.getUniqueId(), targetUUID, getSettings().getInviteWait() * 60));
             }
             return true;
+        } else {
+            // Should not happen
+            user.sendMessage("general.errors.general");
+            return false;
         }
-        // Banning was blocked, maybe due to an event cancellation. Fail silently.
-        return false;
     }
 
     @Override
@@ -103,11 +103,11 @@ public class IslandBanCommand extends CompositeCommand {
             return Optional.empty();
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        List<String> options = Bukkit.getOnlinePlayers().stream()
-                .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
-                .filter(p -> !island.isBanned(p.getUniqueId()))
-                .filter(p -> user.getPlayer().canSee(p))
-                .map(Player::getName).collect(Collectors.toList());
+        List<String> options = island.getMemberSet().stream()
+                .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.COOP_RANK)
+                .map(Bukkit::getOfflinePlayer)
+                .map(OfflinePlayer::getName).collect(Collectors.toList());  
+
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         return Optional.of(Util.tabLimit(options, lastArg));
     }
