@@ -11,6 +11,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -23,7 +24,6 @@ import world.bentobox.bentobox.lists.Flags;
 public class EnterExitListener extends AbstractFlagListener {
 
     private static final Vector XZ = new Vector(1,0,1);
-    private static final String NAME = "[name]";
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
@@ -33,6 +33,7 @@ public class EnterExitListener extends AbstractFlagListener {
                 || !Flags.ENTER_EXIT_MESSAGES.isSetForWorld(e.getFrom().getWorld())) {
             return;
         }
+
         Optional<Island> from = this.getIslands().getProtectedIslandAt(e.getFrom());
         Optional<Island> to = this.getIslands().getProtectedIslandAt(e.getTo());
 
@@ -48,14 +49,16 @@ public class EnterExitListener extends AbstractFlagListener {
         if (from.equals(to)) {
             return;
         }
+
         User user = User.getInstance(e.getPlayer());
         // Send message if island is owned by someone
-        from.filter(i -> i.getOwner() != null).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", NAME, !i.getName().isEmpty() ? i.getName() :
-            user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", NAME, getPlugin().getPlayers().getName(i.getOwner()))));
-        to.filter(i -> i.getOwner() != null).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", NAME, !i.getName().isEmpty() ? i.getName() :
-            user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", NAME, getPlugin().getPlayers().getName(i.getOwner()))));
+        from.filter(i -> i.getOwner() != null).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, (i.getName() != null) ? i.getName() :
+            user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner()))));
+        to.filter(i -> i.getOwner() != null).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, (i.getName() != null) ? i.getName() :
+            user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner()))));
+
         // Send message if island is unowned, but has a name
-        from.filter(i -> i.getOwner() == null && !i.getName().isEmpty()).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", NAME, i.getName()));
-        to.filter(i -> i.getOwner() == null && !i.getName().isEmpty()).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", NAME, i.getName()));
+        from.filter(i -> i.getOwner() == null && (i.getName() != null)).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, i.getName()));
+        to.filter(i -> i.getOwner() == null && (i.getName() != null)).ifPresent(i -> user.sendMessage("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, i.getName()));
     }
 }

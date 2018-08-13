@@ -62,7 +62,7 @@ public class Island implements DataObject {
 
     // Display name
     @Expose
-    private String name = "";
+    private String name;
 
     // Time parameters
     @Expose
@@ -232,7 +232,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return the island display name or the owner's name if none is set
+     * @return the island display name. Might be {@code null} if none is set.
      */
     public String getName() {
         return name;
@@ -472,11 +472,13 @@ public class Island implements DataObject {
     }
 
     /**
-     * @param name - the display name to set
-     *               Set to null to remove the display name
+     * Sets the display name of this Island.
+     * <br/><br/>
+     * An empty String or {@code null} will remove the display name.
+     * @param name The display name to set.
      */
     public void setName(String name){
-        this.name = name;
+        this.name = (name != null && !name.equals("")) ? name : null;
     }
 
     /**
