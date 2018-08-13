@@ -3,10 +3,6 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
-import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -94,13 +90,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        List<String> options  = Bukkit.getOnlinePlayers().stream()
-                .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
-                .filter(p -> !island.getMemberSet().contains(p.getUniqueId()))
-                .filter(p -> user.getPlayer().canSee(p))
-                .map(Player::getName).collect(Collectors.toList());
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        return Optional.of(Util.tabLimit(options, lastArg));
+        return Optional.of(Util.tabLimit(Util.getOnlinePlayerList(user), lastArg));
     }
 }

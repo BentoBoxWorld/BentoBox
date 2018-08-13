@@ -65,11 +65,11 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
     private boolean unCoopCmd(User user, UUID targetUUID) {
         // Player cannot uncoop themselves
         if (user.getUniqueId().equals(targetUUID)) {
-            user.sendMessage("commands.island.team.coop.cannot-uncoop-yourself");
+            user.sendMessage("commands.island.team.uncoop.cannot-uncoop-yourself");
             return false;
         }
         if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
-            user.sendMessage("commands.island.team.coop.cannot-uncoop-member");
+            user.sendMessage("commands.island.team.uncoop.cannot-uncoop-member");
             return false;
         }
         User target = User.getInstance(targetUUID);
@@ -82,7 +82,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
         if (island != null) {
             island.removeMember(targetUUID);
             user.sendMessage("general.success");
-            target.sendMessage("commands.island.team.coop.you-are-no-longer-a-coop-member", TextVariables.NAME, user.getName());
+            target.sendMessage("commands.island.team.uncoop.you-are-no-longer-a-coop-member", TextVariables.NAME, user.getName());
             // Set cooldown
             if (getSettings().getInviteWait() > 0 && getParent() != null) {
                 getParent().getSubCommand("coop").ifPresent(subCommand ->
