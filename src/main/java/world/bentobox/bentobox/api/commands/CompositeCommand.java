@@ -47,11 +47,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private boolean onlyPlayer = false;
     
     /**
-     * True if the command is only for the console to use
-     */
-    private boolean onlyConsole = false;
-    
-    /**
      * True if command is a configurable rank
      */
     private boolean configurableRankCommand = false;
@@ -256,13 +251,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             return false;
         }
         // Execute and trim args
-        if (!cmd.execute(user, (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label, Arrays.asList(args).subList(cmd.subCommandLevel, args.length))) {
-            // If it returned false, then show help for this command
-            // showHelp(cmd, user);
-            return false; // And return false (it basically does nothing, but let's be compliant with Bukkit's javadoc)
-        } else {
-            return true;
-        }
+        return cmd.execute(user, (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
     }
 
     /**
@@ -548,39 +537,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      *
      * This method should therefore only be used in case you want to provide a different value than the default one.
      *
-     * @param parameters The locale command's paramaters reference to set.
-     * @deprecated This method has been deprecated to avoid upcoming ambiguity as we will be using Mojang's Brigadier library.
-     * Use {@link #setParametersHelp(String)} instead.
-     */
-    @Deprecated
-    public void setParameters(String parameters) {
-        this.parameters = parameters;
-    }
-
-    /**
-     * Sets locale reference to this command's parameters.
-     * It is used to display the help of this command.
-     *
-     * <br/><br/>
-     *
-     * A default value is provided when instantiating this CompositeCommand:
-     *
-     * <ul>
-     *     <li>{@code "commands." + getLabel() + ".parameters"} if this is a top-level command;</li>
-     *     <li>{@code "commands." + getParent.getLabel() + getLabel() + ".parameters"} if this is a sub-command.
-     *     <br/>
-     *     Note that it can have up to 20 parent commands' labels being inserted before this sub-command's label.
-     *     Here are a few examples :
-     *     <ul>
-     *         <li>/bentobox info : {@code "commands.bentobox.info.parameters"};</li>
-     *         <li>/bsbadmin range set : {@code "commands.bsbadmin.range.set.parameters"};</li>
-     *         <li>/mycommand sub1 sub2 sub3 [...] sub22 : {@code "commands.sub3.[...].sub20.sub21.sub22.parameters"}.</li>
-     *     </ul>
-     *     </li>
-     * </ul>
-     *
-     * This method should therefore only be used in case you want to provide a different value than the default one.
-     *
      * @param parametersHelp The locale command's paramaters reference to set.
      */
     public void setParametersHelp(String parametersHelp) {
@@ -625,7 +581,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Get command object based on args entered so far
         CompositeCommand cmd = getCommandFromArgs(args);
         // Check for console and permissions
-        if ((cmd.onlyPlayer && !(sender instanceof Player)) || (cmd.onlyConsole && sender instanceof Player)) {
+        if ((cmd.onlyPlayer && !(sender instanceof Player))) {
             return options;
         }
         if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission()) && !sender.isOp()) {
@@ -792,7 +748,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         public BukkitTask getTask() {
             return task;
         }
-
     }
 
     /**
@@ -825,20 +780,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         int timeToGo = (int) ((cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis()) / 1000);
         user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(timeToGo));
         return true;
-    }
-
-    /**
-     * @return the onlyConsole
-     */
-    public boolean isOnlyConsole() {
-        return onlyConsole;
-    }
-
-    /**
-     * This command is only for console use
-     */
-    public void setOnlyConsole() {
-        this.onlyConsole = true;
     }
 
     /**
