@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.island;
+package world.bentobox.bentobox.api.commands.island.team;
 
 import java.util.List;
 import java.util.Optional;
@@ -6,27 +6,32 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
-public class IslandBanCommand extends CompositeCommand {
+/**
+ * Command to trust another player
+ * @author tastybento
+ *
+ */
+public class IslandTeamTrustCommand extends CompositeCommand {
 
-    public IslandBanCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "ban");
+    public IslandTeamTrustCommand(CompositeCommand parentCommand) {
+        super(parentCommand, "trust");
     }
 
     @Override
     public void setup() {
-        setPermission("island.ban");
+        setPermission("island.team.trust");
         setOnlyPlayer(true);
-        setParametersHelp("commands.island.ban.parameters");
-        setDescription("commands.island.ban.description");
+        setParametersHelp("commands.island.team.trust.parameters");
+        setDescription("commands.island.team.trust.description");
         setConfigurableRankCommand();
     }
 
@@ -37,7 +42,6 @@ public class IslandBanCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        UUID playerUUID = user.getUniqueId();
         // Player issuing the command must have an island or be in a team
         if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
@@ -54,46 +58,39 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        // Player cannot ban themselves
-        if (playerUUID.equals(targetUUID)) {
-            user.sendMessage("commands.island.ban.cannot-ban-yourself");
+        if (getSettings().getInviteWait() > 0 && checkCooldown(user, targetUUID)) {
+            return false;
+        }
+        return trustCmd(user, targetUUID);
+    }
+
+    private boolean trustCmd(User user, UUID targetUUID) {
+        // Player cannot trust themselves
+        if (user.getUniqueId().equals(targetUUID)) {
+            user.sendMessage("commands.island.team.trust.trust-in-yourself");
             return false;
         }
         if (getIslands().getMembers(getWorld(), user.getUniqueId()).contains(targetUUID)) {
-            user.sendMessage("commands.island.ban.cannot-ban-member");
-            return false;
-        }
-        if (getIslands().getIsland(getWorld(), playerUUID).isBanned(targetUUID)) {
-            user.sendMessage("commands.island.ban.player-already-banned");
-            return false;
-        }
-        if (getSettings().getBanWait() > 0 && checkCooldown(user, targetUUID)) {
+            user.sendMessage("commands.island.team.trust.members-trusted");
             return false;
         }
         User target = User.getInstance(targetUUID);
-        // Cannot ban ops
-        if (target.isOp()) {
-            user.sendMessage("commands.island.ban.cannot-ban");
+        int rank = getIslands().getIsland(getWorld(), user).getRank(target);
+        if (rank >= RanksManager.TRUSTED_RANK) {
+            user.sendMessage("commands.island.team.trust.player-already-trusted");
             return false;
         }
-        // Finished error checking - start the banning
-        return ban(user, target);
-    }
-
-    private boolean ban(User user, User targetUser) {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island.addToBanList(targetUser.getUniqueId())) {
+        if (island != null) {
+            island.setRank(target, RanksManager.TRUSTED_RANK);
             user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
-            // If the player is online, has an island and on the banned island, move them home immediately
-            if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
-                getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
-                island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
-            }
+            target.sendMessage("commands.island.team.trust.you-are-trusted", TextVariables.NAME, user.getName());
             return true;
+        } else {
+            // Should not happen
+            user.sendMessage("general.errors.general");
+            return false;
         }
-        // Banning was blocked, maybe due to an event cancellation. Fail silently.
-        return false;
     }
 
     @Override
@@ -103,9 +100,9 @@ public class IslandBanCommand extends CompositeCommand {
             return Optional.empty();
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        List<String> options = Bukkit.getOnlinePlayers().stream()
+        List<String> options  = Bukkit.getOnlinePlayers().stream()
                 .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
-                .filter(p -> !island.isBanned(p.getUniqueId()))
+                .filter(p -> !island.getMemberSet().contains(p.getUniqueId()))
                 .filter(p -> user.getPlayer().canSee(p))
                 .map(Player::getName).collect(Collectors.toList());
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";

@@ -26,7 +26,9 @@ public class SettingsPanel {
     /**
      * Dynamically creates the panel.
      * @param plugin - plugin
-     * @param user the User to show the panel to
+     * @param user - user to show panel to
+     * @param flagType - initial view
+     * @param world - world
      */
     public static void openPanel(BentoBox plugin, User user, Flag.Type flagType, World world) {
         String friendlyWorldName = plugin.getIWM().getFriendlyName(world);

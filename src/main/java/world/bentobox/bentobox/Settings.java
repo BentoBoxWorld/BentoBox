@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * All the plugin settings are here
@@ -109,6 +110,10 @@ public class Settings implements DataObject {
     @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset")
     @ConfigEntry(path = "general.confirmation-time")
     private int confirmationTime = 20;
+    
+    @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
+    @ConfigEntry(path = "general.rank-command")
+    private Map<String, Integer> rankCommand = new HashMap<>();
 
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
@@ -584,6 +589,30 @@ public class Settings implements DataObject {
      */
     public void setBanWait(int banWait) {
         this.banWait = banWait;
+    }
+
+    public int getRankCommand(String command) {
+        return rankCommand.getOrDefault(command, RanksManager.OWNER_RANK);
+        
+    }
+
+    public void setRankCommand(String command, int rank) {
+        rankCommand.put(command, rank);
+        
+    }
+
+    /**
+     * @return the rankCommand
+     */
+    public Map<String, Integer> getRankCommand() {
+        return rankCommand;
+    }
+
+    /**
+     * @param rankCommand the rankCommand to set
+     */
+    public void setRankCommand(Map<String, Integer> rankCommand) {
+        this.rankCommand = rankCommand;
     }
 
 }

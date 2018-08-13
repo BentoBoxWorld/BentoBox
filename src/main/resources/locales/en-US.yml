@@ -175,6 +175,8 @@ commands:
     description: "BentoBox admin command"
     about:
       description: "display copyright and license info"
+    reload:
+      description: "reloads all locale files"
     version:
       description: "display info"
       loaded-addons: "Loaded Add-Ons"
@@ -226,12 +228,39 @@ commands:
       description: "manage your team"
       info:
         description: "display detailed info about your team"
+      coop:
+        description: "make a player coop rank on your island"
+        paramters: "<player>"
+        cannot-coop-yourself: "&cYou cannot coop yourself!"
+        already-has-rank: "&cPlayer already has a rank!"
+        you-are-a-coop-member: "&2You were cooped by [name]"
+      uncoop:
+        description: "remove a coop rank from player"
+        paramters: "<player>"
+        cannot-uncoop-yourself: "&cYou cannot uncoop yourself!"
+        cannot-uncoop-member: "&cYou cannot uncoop a team member!"
+        player-not-cooped: "&cPlayer is not cooped!"
+        you-are-no-longer-a-coop-member: "&cYou are no longer a coop member of [name]'s island"
+      trust:
+        description: "give a player trusted rank on your island"
+        paramters: "<player>"
+        trust-in-yourself: "&cTrust in yourself!"
+        members-trusted: "&cMembers are already trusted"
+        player-already-trusted: "&cPlayer is already trusted!"
+        you-are-trusted: "&2You are trusted by [name]!"
+      untrust:
+        description: "remove trusted player rank from player"
+        paramters: "<player>"
+        cannot-untrust-yourself: "&cYou cannot untrust yourself!"
+        cannot-untrust-member: "&cYou cannot untrust a team member!"
+        player-not-trusted: "&cPlayer is not trusted!"
+        you-are-no-longer-trusted: "&cYou are no longer trusted by [name]!"
       invite:
         description: "invite a player to join your island"
         invitation-sent: "Invitation sent to [name]"
         removing-invite: "Removing invite"
         name-has-invited-you: "[name] has invited you to join their island."
-        to-accept-or-reject: "Do /island team accept to accept, or /island team reject to reject"
+        to-accept-or-reject: "Do /[label] team accept to accept, or /[label] team reject to reject"
         you-will-lose-your-island: "&cWARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&cYou cannot invite yourself!"
@@ -307,7 +336,9 @@ commands:
 
 ranks:
   owner: "Owner"
+  sub-owner: "Sub-Owner"
   member: "Member"
+  trusted: "Trusted"
   coop: "Coop"
   visitor: "Visitor"
   banned: "Banned"
@@ -385,6 +416,9 @@ protection:
           &a(override Buckets)
       name: "Collect water"
       hint: "No water collection"
+    COMMAND_RANKS:
+      name: "Command Ranks"
+      description: "&aConfigure command ranks"
     CRAFTING: 
       description: "Toggle use"
       name: "Workbenches"

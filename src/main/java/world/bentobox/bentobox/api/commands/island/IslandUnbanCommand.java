@@ -23,6 +23,7 @@ public class IslandUnbanCommand extends CompositeCommand {
         setOnlyPlayer(true);
         setParametersHelp("commands.island.unban.parameters");
         setDescription("commands.island.unban.description");
+        setConfigurableRankCommand();
     }
 
     @Override
@@ -33,13 +34,14 @@ public class IslandUnbanCommand extends CompositeCommand {
             return false;
         }
         UUID playerUUID = user.getUniqueId();
-        // Player issuing the command must have an island
-        if (!getIslands().hasIsland(getWorld(), playerUUID)) {
+        // Player issuing the command must have an island or be in a team
+        if (!getIslands().inTeam(getWorld(), user.getUniqueId()) && !getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getIslands().isOwner(getWorld(), playerUUID)) {
-            user.sendMessage("general.errors.not-leader");
+        // Check rank to use command
+        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.no-permission");
             return false;
         }
         // Get target player

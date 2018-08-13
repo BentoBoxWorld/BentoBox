@@ -74,10 +74,6 @@ public class BentoBox extends JavaPlugin {
             // get a commodore instance
             commodore = CommodoreProvider.getCommodore(this);
         }
-    
-    
-
-
         // Not loaded
         isLoaded = false;
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.

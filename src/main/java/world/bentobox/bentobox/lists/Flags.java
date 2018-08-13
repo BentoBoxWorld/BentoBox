@@ -23,7 +23,6 @@ import world.bentobox.bentobox.listeners.flags.EndermanListener;
 import world.bentobox.bentobox.listeners.flags.EnterExitListener;
 import world.bentobox.bentobox.listeners.flags.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.FireListener;
-import world.bentobox.bentobox.listeners.flags.GeoLimitClickListener;
 import world.bentobox.bentobox.listeners.flags.GeoLimitMobsListener;
 import world.bentobox.bentobox.listeners.flags.HurtingListener;
 import world.bentobox.bentobox.listeners.flags.InventoryListener;
@@ -44,6 +43,8 @@ import world.bentobox.bentobox.listeners.flags.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.ShearingListener;
 import world.bentobox.bentobox.listeners.flags.TNTListener;
 import world.bentobox.bentobox.listeners.flags.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
+import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
 public class Flags {
@@ -222,6 +223,9 @@ public class Flags {
      */
     public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
+    
+    public static final Flag COMMAND_RANKS = new FlagBuilder().id("COMMAND_RANKS").icon(Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
+            .onClick(new CommandRankClickListener()).subPanel(true).build();
 
     /**
      * @return List of all the flags in this class

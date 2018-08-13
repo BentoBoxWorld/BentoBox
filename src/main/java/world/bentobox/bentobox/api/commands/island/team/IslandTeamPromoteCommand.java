@@ -5,6 +5,7 @@ import java.util.List;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.RanksManager;
 
 public class IslandTeamPromoteCommand extends CompositeCommand {
 
@@ -31,10 +32,12 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-team");
             return true;
         }
-        if (!getTeamLeader(getWorld(), user).equals(user.getUniqueId())) {
-            user.sendMessage("general.errors.not-leader");
-            return true;
+        // Check rank to use command
+        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+            user.sendMessage("general.errors.no-permission");
+            return false;
         }
+
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
@@ -58,7 +61,8 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         int currentRank = getIslands().getIsland(getWorld(), user.getUniqueId()).getRank(target);
         if (this.getLabel().equals("promote")) {
             int nextRank = getPlugin().getRanksManager().getRankUpValue(currentRank);
-            if (nextRank > currentRank) {
+            // Stop short of owner
+            if (nextRank != RanksManager.OWNER_RANK && nextRank > currentRank) {
                 getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, nextRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(nextRank));
                 user.sendMessage("commands.island.team.promote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);
@@ -70,7 +74,8 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         } else {
             // Demote
             int prevRank = getPlugin().getRanksManager().getRankDownValue(currentRank);
-            if (prevRank < currentRank) {
+            // Lowest is Member
+            if (prevRank >= RanksManager.MEMBER_RANK && prevRank < currentRank) {
                 getIslands().getIsland(getWorld(), user.getUniqueId()).setRank(target, prevRank);
                 String rankName = user.getTranslation(getPlugin().getRanksManager().getRank(prevRank));
                 user.sendMessage("commands.island.team.demote.success", TextVariables.NAME, target.getName(), TextVariables.RANK, rankName);

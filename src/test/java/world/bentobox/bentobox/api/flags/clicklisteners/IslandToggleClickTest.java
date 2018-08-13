@@ -102,8 +102,7 @@ public class IslandToggleClickTest {
     public void testOnClickNoPermission() {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         listener.onClick(panel, user, ClickType.LEFT, 0);
-        Mockito.verify(user).sendMessage("general.errors.no-permission");
-        Mockito.verify(user).sendMessage("general.errors.you-need", "[permission]", "bskyblock.settings.test");
+        Mockito.verify(user).sendMessage("general.errors.no-permission", "[permission]", "bskyblock.settings.test");
     }
 
     @Test
