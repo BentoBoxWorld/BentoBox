@@ -252,7 +252,7 @@ public class TestBSkyBlock {
 
         public TestCommand() {
             super("test", "t", "tt");
-            setParameters("test.params");
+            setParametersHelp("test.params");
         }
 
         @Override
@@ -277,7 +277,7 @@ public class TestBSkyBlock {
 
         @Override
         public void setup() {
-            setParameters("sub.params");
+            setParametersHelp("sub.params");
         }
 
         @Override
