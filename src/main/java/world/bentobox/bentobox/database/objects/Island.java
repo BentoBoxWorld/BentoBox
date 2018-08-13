@@ -239,7 +239,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return the owner (team leader)
+     * @return the owner
      */
     public UUID getOwner(){
         return owner;
