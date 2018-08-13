@@ -424,16 +424,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         return "/" + usage;
     }
 
-    public String getFullUsage() {
-       String result = usage;
-       CompositeCommand c = this.parent;
-       while (c != null) {
-          result = c.getUsage() + " " + result;
-          c = c.getParent();
-       }
-       return "/" + result;
-    }
-    
     /**
      * Check if this command has a specific sub command.
      * @param subCommand - sub command
@@ -635,7 +625,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Get command object based on args entered so far
         CompositeCommand cmd = getCommandFromArgs(args);
         // Check for console and permissions
-        if (cmd.onlyPlayer && !(sender instanceof Player)) {
+        if ((cmd.onlyPlayer && !(sender instanceof Player)) || (cmd.onlyConsole && sender instanceof Player)) {
             return options;
         }
         if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission()) && !sender.isOp()) {
