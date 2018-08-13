@@ -115,7 +115,7 @@ public class AddonsManager {
                 for (String localeFile : listJarYamlFiles(jar, LOCALE_FOLDER)) {
                     addon.saveResource(localeFile, localeDir, false, true);
                 }
-                plugin.getLocalesManager().loadLocales(addon.getDescription().getName());
+                plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
                 // Fire the load event
                 Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
                 // Add it to the list of addons

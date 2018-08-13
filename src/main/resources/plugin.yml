@@ -8,3 +8,8 @@ authors: [tastybento, Poslovitch]
 softdepend: [PlaceholderAPI, MVdWPlaceholderAPI]
 
 loadbefore: [Multiverse-Core]
+
+permissions:    
+  bentobox.admin:
+   description: Allow bentobox command usage
+   default: op

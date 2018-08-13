@@ -16,8 +16,10 @@ public class BentoBoxCommand extends CompositeCommand {
 
     @Override
     public void setup() {
+        setPermission("bentobox.admin");
         new BentoBoxVersionCommand(this);
         new BentoBoxAboutCommand(this);
+        new BentoBoxReloadCommand(this);
     }
 
     @Override

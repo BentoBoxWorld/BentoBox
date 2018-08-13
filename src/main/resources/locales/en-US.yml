@@ -175,6 +175,8 @@ commands:
     description: "BentoBox admin command"
     about:
       description: "display copyright and license info"
+    reload:
+      description: "reloads all locale files"
     version:
       description: "display info"
       loaded-addons: "Loaded Add-Ons"
