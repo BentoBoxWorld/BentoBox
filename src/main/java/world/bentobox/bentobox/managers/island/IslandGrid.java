@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.managers.island;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
+import org.apache.commons.lang.Validate;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
@@ -61,12 +63,12 @@ public class IslandGrid {
     public Island getIslandAt(int x, int z) {
         Table.Cell<Integer, Integer, Cell> tableCell = grid.cellSet()
                 .stream()
-                .filter(cell -> (cell.getValue().getState().equals(CellState.OCCUPIED)))
-                .filter(cell -> ((Island) cell.getValue().getObject()).inIslandSpace(x, z))
+                .filter(cell -> cell.getValue().getState().equals(CellState.OCCUPIED))
+                .filter(cell -> cell.getValue().getIsland().inIslandSpace(x, z))
                 .findFirst().orElse(null);
 
         if (tableCell != null) {
-            return (Island) tableCell.getValue().getObject();
+            return tableCell.getValue().getIsland();
         }
         return null;
     }
@@ -75,20 +77,24 @@ public class IslandGrid {
      * @author Poslovitch
      */
     private class Cell {
-        private CellState state;
-        private Object object;
+        private final CellState state;
+        private final Island island;
 
-        private Cell(CellState state, Object object) {
+        private Cell(CellState state, Island island) {
+            // Make sure the hard way that none of the parameters are null
+            Validate.notNull(state, "Cell state cannot be null");
+            Validate.notNull(island, "Island cannot be null");
+
             this.state = state;
-            this.object = object;
+            this.island = island;
         }
 
         private CellState getState() {
             return state;
         }
 
-        private Object getObject() {
-            return object;
+        private Island getIsland() {
+            return island;
         }
     }
 
@@ -96,7 +102,6 @@ public class IslandGrid {
      * @author Poslovitch
      */
     private enum CellState {
-        //RESERVED,
         OCCUPIED
     }
 }
