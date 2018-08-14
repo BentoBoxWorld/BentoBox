@@ -54,10 +54,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        if (getSettings().getInviteWait() > 0 && checkCooldown(user, targetUUID)) {
-            return false;
-        }
-        return coopCmd(user, targetUUID);
+        return (getSettings().getInviteWait() <= 0 || !checkCooldown(user, targetUUID)) && coopCmd(user, targetUUID);
     }
 
     private boolean coopCmd(User user, UUID targetUUID) {
@@ -90,7 +87,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             // Don't show every player on the server. Require at least the first letter
             return Optional.empty();
         }
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+        String lastArg = args.get(args.size()-1);
         return Optional.of(Util.tabLimit(Util.getOnlinePlayerList(user), lastArg));
     }
 }

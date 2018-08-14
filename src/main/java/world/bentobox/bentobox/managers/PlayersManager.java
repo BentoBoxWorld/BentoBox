@@ -148,10 +148,7 @@ public class PlayersManager {
      * @return true if player is know, otherwise false
      */
     public boolean isKnown(UUID uniqueID) {
-        if (uniqueID == null) {
-            return false;
-        }
-        return playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString());
+        return uniqueID != null && (playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString()));
     }
 
     /**
