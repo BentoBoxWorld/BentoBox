@@ -49,46 +49,75 @@ import world.bentobox.bentobox.util.Util;
 
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
+    /**
+     * This is the name of the folder where the flat file databases will live
+     */
     private static final String DATABASE_FOLDER_NAME = "database";
+    /**
+     * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
+     */
     protected boolean configFlag;
 
+    /**
+     * Constructor
+     * @param plugin - plugin
+     * @param type - class to store in the database
+     * @param databaseConnector - the database credentials, in this case, just the YAML functions
+     */
     public FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
+     */
     @Override
     public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+        // Objects are loaded from a folder named after the simple name of the class being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
-        String fileName = key;
+        // This path and key can be overridden by the StoreAt annotation in the code
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
         if (storeAt != null) {
             path = storeAt.path();
-            fileName = storeAt.filename();
+            key = storeAt.filename();
         }
-        YamlConfiguration config = databaseConnector.loadYamlFile(path, fileName);
+        // Load the YAML file at the location.
+        YamlConfiguration config = databaseConnector.loadYamlFile(path, key);
+        // Use the createObject method to turn a YAML config into an Java object
         return createObject(config);
     }
 
     @Override
     public boolean objectExists(String uniqueId) {
+        // Check if the uniqueId (key) exists in the file system
         return databaseConnector.uniqueIdExists(dataObject.getSimpleName(), uniqueId);
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObjects()
+     */
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+        // In this case, all the objects of a specific type are being loaded.
         List<T> list = new ArrayList<>();
+        // Look for any files that end in .yml in the folder
         FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml");
+        // The path is the simple name of the class
         String path = dataObject.getSimpleName();
+        // The storeAt annotation may override the path
         StoreAt storeAt = dataObject.getAnnotation(StoreAt.class);
         if (storeAt != null) {
             path = storeAt.path();
         }
+        // The database folder name is in the plugin's data folder
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
+        // The folder for the objects (tables in database terminology) is here
         File tableFolder = new File(dataFolder, path);
         if (!tableFolder.exists()) {
             // Nothing there...
             tableFolder.mkdirs();
         }
+        // Load each object from the file system, filtered, non-null
         for (File file: Objects.requireNonNull(tableFolder.listFiles(ymlFilter))) {
             String fileName = file.getName();
             if (storeAt != null) {
@@ -101,30 +130,34 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     * Creates a list of <T>s filled with values from the provided ResultSet
+     * Creates a list of <T>s filled with values from the provided YamlConfiguration
      *
      * @param config - YAML config file
      *
      * @return <T> filled with values
      */
     private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException {
+        // Create a new instance of the dataObject of type T (which can be any class)
         T instance = dataObject.newInstance();
 
         // Run through all the fields in the object
         for (Field field : dataObject.getDeclaredFields()) {
-            // Gets the getter and setters for this field
+            // Gets the getter and setters for this field using the JavaBeans system
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
             // Get the write method
             Method method = propertyDescriptor.getWriteMethod();
 
             // Information about the field
             String storageLocation = field.getName();
+            /*
+             * Field annotation checks
+             */
+            // Check if there is a ConfigEntry annotation on the field
+            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             boolean overrideOnChange = false;
             boolean experimental = false;
             boolean needsReset = false;
 
-            // Check if there is an annotation on the field
-            ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
             // If there is a config annotation then do something
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
@@ -132,16 +165,21 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 experimental = configEntry.experimental();
                 needsReset = configEntry.needsReset();
             }
+            // Some fields need custom handling to serialize or deserialize and the programmer will need to
+            // define them herself. She can add an annotation to do that.
             Adapter adapterNotation = field.getAnnotation(Adapter.class);
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
                 // A conversion adapter has been defined
-                // Get the original value
+                // Get the original value to be stored
                 Object value = config.get(storageLocation);
+                // Invoke the deserialization on this value
                 method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
-                // We are done here
+                // We are done here. If a custom adapter was defined, the rest of this method does not need to be run
                 continue;
             }
-
+            /*
+             * What follows is general deserialization code
+             */
             // Look in the YAML Config to see if this field exists (it should)
             if (config.contains(storageLocation)) {
                 // Check for null values
@@ -149,66 +187,77 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     method.invoke(instance, (Object)null);
                     continue;
                 }
-                // Handle storage of maps. Check if this type is a Map
+                // Handle storage of maps. Check if this field type is a Map
                 if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                    // Note that we have no idea what type this is
+                    // Note that we have no idea what type of map this is, so we need to find out
                     List<Type> collectionTypes = getCollectionParameterTypes(method);
-                    // collectionTypes should be 2 long
+                    // collectionTypes should be 2 long because there are two parameters in a Map (key, value)
                     Type keyType = collectionTypes.get(0);
                     Type valueType = collectionTypes.get(1);
+                    // Create a map that we'll put the values into
                     Map<Object,Object> value = new HashMap<>();
+                    // Map values are stored in a configuration section in the YAML. Check that it exists
                     if (config.getConfigurationSection(storageLocation) != null) {
+                        // Run through the values stored
                         for (String key : config.getConfigurationSection(storageLocation).getKeys(false)) {
                             // Map values can be null - it is allowed here
                             Object mapValue = deserialize(config.get(storageLocation + "." + key), Class.forName(valueType.getTypeName()));
                             // Keys cannot be null - skip if they exist
                             // Convert any serialized dots back to dots
+                            // In YAML dots . cause a lot of problems, so I serialize them as :dot:
+                            // There may be a better way to do this.
                             key = key.replaceAll(":dot:", ".");
                             Object mapKey = deserialize(key,Class.forName(keyType.getTypeName()));
                             if (mapKey == null) {
                                 continue;
                             }
+                            // Put the value in the map
                             value.put(mapKey, mapValue);
                         }
                     }
+                    // Invoke the setter in the class (this is why JavaBeans requires getters and setters for every field)
                     method.invoke(instance, value);
                 } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                    // Loop through the collection resultset
-                    // Note that we have no idea what type this is
+                    // Note that we have no idea what type this set is
                     List<Type> collectionTypes = getCollectionParameterTypes(method);
                     // collectionTypes should be only 1 long
                     Type setType = collectionTypes.get(0);
+                    // Create an empty set to fill
                     Set<Object> value = new HashSet<>();
-                    for (Object listValue: config.getList(storageLocation)) {
-                        value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
-                    }
-
-                    // TODO: this may not work with all keys. Further serialization may be required.
-                    method.invoke(instance, value);
-                } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
-                    // Loop through the collection resultset
-                    // Note that we have no idea what type this is
-                    List<Type> collectionTypes = getCollectionParameterTypes(method);
-                    // collectionTypes should be only 1 long
-                    Type setType = collectionTypes.get(0);
-                    List<Object> value = new ArrayList<>();
+                    // Sets are stored as a list in YAML
                     if (config.getList(storageLocation) != null) {
                         for (Object listValue: config.getList(storageLocation)) {
                             value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
                         }
                     }
-                    // TODO: this may not work with all keys. Further serialization may be required.
+                    // Store the set using the setter in the class
+                    method.invoke(instance, value);
+                } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
+                    // Note that we have no idea what type of List this is
+                    List<Type> collectionTypes = getCollectionParameterTypes(method);
+                    // collectionTypes should be only 1 long
+                    Type setType = collectionTypes.get(0);
+                    // Create an empty list
+                    List<Object> value = new ArrayList<>();
+                    // Lists are stored as lists in YAML
+                    if (config.getList(storageLocation) != null) {
+                        for (Object listValue: config.getList(storageLocation)) {
+                            value.add(deserialize(listValue,Class.forName(setType.getTypeName())));
+                        }
+                    }
+                    // Store the list using the setting
                     method.invoke(instance, value);
                 } else {
-                    // Not a collection
+                    // Not a collection. Get the value and rely on YAML to supply it
                     Object value = config.get(storageLocation);
+                    // If the value is a yaml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
                     if (value != null && !value.getClass().equals(MemorySection.class)) {
                         method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
                     }
                 }
             }
         }
-
+        // After deserialization is complete, return the instance of the class we have created
         return instance;
     }
 
