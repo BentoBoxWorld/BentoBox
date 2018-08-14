@@ -57,6 +57,7 @@ public class EnterExitListenerTest {
     private Location inside;
     private EnterExitListener listener;
     private LocalesManager lm;
+
     /**
      * @throws java.lang.Exception
      */
@@ -194,7 +195,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // The island owner needs to be checked
-        Mockito.verify(island, Mockito.times(3)).getOwner();
+        Mockito.verify(island, Mockito.times(2)).getOwner();
     }
     
     /**
@@ -223,7 +224,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // The island owner needs to be checked
-        Mockito.verify(island, Mockito.times(3)).getOwner();
+        Mockito.verify(island, Mockito.times(2)).getOwner();
     }
     
     /**
