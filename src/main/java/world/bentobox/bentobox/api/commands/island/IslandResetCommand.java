@@ -19,15 +19,12 @@ import world.bentobox.bentobox.managers.island.NewIsland;
 
 public class IslandResetCommand extends ConfirmableCommand {
 
-    private Map<UUID, Long> cooldown;
-
     public IslandResetCommand(CompositeCommand islandCommand) {
         super(islandCommand, "reset", "restart");
     }
 
     @Override
     public void setup() {
-        cooldown = new HashMap<>();
         setPermission("island.create");
         setOnlyPlayer(true);
         setDescription("commands.island.reset.description");
@@ -36,10 +33,10 @@ public class IslandResetCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Check cooldown
-        if (getSettings().getResetWait() > 0 && onRestartWaitTime(user) > 0 && !user.isOp()) {
-            user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(onRestartWaitTime(user)));
+        if (getSettings().getResetWait() > 0 && checkCooldown(user, null)) {
             return false;
         }
+
         if (!getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -104,18 +101,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.create.unable-create-island");
             return false;
         }
-        setCooldown(user);
+        setCooldown(user.getUniqueId(), null, getSettings().getResetWait());
         return true;
-    }
-
-    private int onRestartWaitTime(User user) {
-        if (!cooldown.containsKey(user.getUniqueId())) {
-            return 0;
-        }
-        return (int) (System.currentTimeMillis() - cooldown.get(user.getUniqueId()) / 1000);
-    }
-
-    private void setCooldown(User user) {
-        cooldown.put(user.getUniqueId(), System.currentTimeMillis() + (getIWM().getResetLimit(getWorld()) * 1000L));
     }
 }

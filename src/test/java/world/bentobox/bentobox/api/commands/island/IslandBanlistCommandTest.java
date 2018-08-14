@@ -69,8 +69,6 @@ public class IslandBanlistCommandTest {
 
         // Settings
         Settings s = mock(Settings.class);
-        when(s.getResetWait()).thenReturn(0L);
-
         when(plugin.getSettings()).thenReturn(s);
 
         // Player

@@ -65,11 +65,6 @@ public class AdminRegisterCommandTest {
         CommandsManager cm = mock(CommandsManager.class);
         when(plugin.getCommandsManager()).thenReturn(cm);
 
-        // Settings
-        Settings s = mock(Settings.class);
-        when(s.getResetWait()).thenReturn(0L);
-        when(plugin.getSettings()).thenReturn(s);
-
         // Player
         Player p = mock(Player.class);
         // Sometimes use Mockito.withSettings().verboseLogging()

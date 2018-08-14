@@ -54,7 +54,7 @@ public class AdminClearResetsAllCommandTest {
 
         // Settings
         Settings s = mock(Settings.class);
-        when(s.getResetWait()).thenReturn(0L);
+        when(s.getResetWait()).thenReturn(0);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player

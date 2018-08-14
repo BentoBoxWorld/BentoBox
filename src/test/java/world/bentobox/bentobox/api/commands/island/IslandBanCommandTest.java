@@ -76,7 +76,6 @@ public class IslandBanCommandTest {
 
         // Settings
         Settings s = mock(Settings.class);
-        when(s.getResetWait()).thenReturn(0L);
         when(s.getRankCommand(Mockito.anyString())).thenReturn(RanksManager.OWNER_RANK);
         when(plugin.getSettings()).thenReturn(s);
 

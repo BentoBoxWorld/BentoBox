@@ -135,20 +135,20 @@ public class Settings implements DataObject {
     private boolean kickConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.kick-wait")
-    private long kickWait = 10L;
+    private int kickWait = 10;
 
     @ConfigEntry(path = "island.require-confirmation.leave")
     private boolean leaveConfirmation = true;
 
     @ConfigEntry(path = "island.require-confirmation.leave-wait")
-    private long leaveWait = 10L;
+    private int leaveWait = 10;
 
     @ConfigEntry(path = "island.require-confirmation.reset")
     private boolean resetConfirmation = true;
 
     @ConfigComment("How long a player must wait before they can reset their island again in seconds")
     @ConfigEntry(path = "island.reset-wait")
-    private long resetWait = 300;
+    private int resetWait = 300;
 
     @ConfigComment("These set the minimum and maximum size of a name.")
     @ConfigEntry(path = "island.name.min-length")
@@ -475,7 +475,7 @@ public class Settings implements DataObject {
     /**
      * @return the kickWait
      */
-    public long getKickWait() {
+    public int getKickWait() {
         return kickWait;
     }
 
@@ -489,7 +489,7 @@ public class Settings implements DataObject {
     /**
      * @return the leaveWait
      */
-    public long getLeaveWait() {
+    public int getLeaveWait() {
         return leaveWait;
     }
 
@@ -503,7 +503,7 @@ public class Settings implements DataObject {
     /**
      * @param kickWait the kickWait to set
      */
-    public void setKickWait(long kickWait) {
+    public void setKickWait(int kickWait) {
         this.kickWait = kickWait;
     }
 
@@ -517,21 +517,21 @@ public class Settings implements DataObject {
     /**
      * @param leaveWait the leaveWait to set
      */
-    public void setLeaveWait(long leaveWait) {
+    public void setLeaveWait(int leaveWait) {
         this.leaveWait = leaveWait;
     }
 
     /**
      * @return the resetWait
      */
-    public long getResetWait() {
+    public int getResetWait() {
         return resetWait;
     }
 
     /**
      * @param resetWait the resetWait to set
      */
-    public void setResetWait(long resetWait) {
+    public void setResetWait(int resetWait) {
         this.resetWait = resetWait;
     }
 
