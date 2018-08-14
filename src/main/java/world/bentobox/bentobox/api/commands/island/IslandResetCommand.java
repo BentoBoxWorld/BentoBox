@@ -10,13 +10,14 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
-public class IslandResetCommand extends CompositeCommand {
+public class IslandResetCommand extends ConfirmableCommand {
 
     private Map<UUID, Long> cooldown;
 

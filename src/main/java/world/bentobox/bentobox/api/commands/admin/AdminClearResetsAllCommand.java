@@ -6,9 +6,10 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
-public class AdminClearResetsAllCommand extends CompositeCommand {
+public class AdminClearResetsAllCommand extends ConfirmableCommand {
 
     public AdminClearResetsAllCommand(CompositeCommand parent) {
         super(parent, "clearresetsall");

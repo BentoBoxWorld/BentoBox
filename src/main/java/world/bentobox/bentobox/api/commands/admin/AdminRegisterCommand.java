@@ -9,16 +9,17 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
-public class AdminRegisterCommand extends CompositeCommand {
+public class AdminRegisterCommand extends ConfirmableCommand {
 
     public AdminRegisterCommand(CompositeCommand parent) {
         super(parent, "register");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.register");
@@ -47,8 +48,8 @@ public class AdminRegisterCommand extends CompositeCommand {
         if (getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("commands.admin.register.cannot-register-team-player");
             return false;
-        }        
-        
+        }
+
         // Check if island is owned
         Optional<Island> island = getIslands().getIslandAt(user.getLocation());
         if (island.map(i -> i.getOwner() != null).orElse(false)) {
@@ -66,7 +67,7 @@ public class AdminRegisterCommand extends CompositeCommand {
             // Island does not exist
             user.sendMessage("commands.admin.register.no-island-here");
             this.askConfirmation(user, () -> {
-                // Make island here                
+                // Make island here
                 Island i = getIslands().createIsland(getClosestIsland(user.getLocation()), targetUUID);
                 getIslands().makeLeader(user, targetUUID, i, getPermissionPrefix());
                 getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
@@ -77,7 +78,7 @@ public class AdminRegisterCommand extends CompositeCommand {
         }
         return true;
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
@@ -88,7 +89,7 @@ public class AdminRegisterCommand extends CompositeCommand {
         List<String> options = new ArrayList<>(Util.getOnlinePlayerList(user));
         return Optional.of(Util.tabLimit(options, lastArg));
     }
-    
+
     /**
      * This returns the coordinate of where an island should be on the grid.
      *

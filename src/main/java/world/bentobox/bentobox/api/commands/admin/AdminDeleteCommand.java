@@ -6,15 +6,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
-public class AdminDeleteCommand extends CompositeCommand {
+public class AdminDeleteCommand extends ConfirmableCommand {
 
     public AdminDeleteCommand(CompositeCommand parent) {
         super(parent, "delete");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.delete");
@@ -48,13 +49,13 @@ public class AdminDeleteCommand extends CompositeCommand {
         askConfirmation(user, () -> deletePlayer(user, targetUUID));
         return false;
     }
-    
+
     private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
         user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
         getIslands().deleteIsland(getIslands().getIsland(getWorld(), targetUUID), true);
         getIslands().removePlayer(getWorld(), targetUUID);
-        getPlayers().clearHomeLocations(getWorld(), targetUUID);        
+        getPlayers().clearHomeLocations(getWorld(), targetUUID);
         user.sendMessage("general.success");
     }
 
