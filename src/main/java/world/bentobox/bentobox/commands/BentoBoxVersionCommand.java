@@ -23,7 +23,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        setPermission("bentobox.admin");
+        // Not used
     }
 
     @Override
