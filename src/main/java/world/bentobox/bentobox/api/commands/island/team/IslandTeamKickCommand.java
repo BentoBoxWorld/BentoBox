@@ -4,9 +4,10 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
-public class IslandTeamKickCommand extends CompositeCommand {
+public class IslandTeamKickCommand extends ConfirmableCommand {
 
     public IslandTeamKickCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "kick");

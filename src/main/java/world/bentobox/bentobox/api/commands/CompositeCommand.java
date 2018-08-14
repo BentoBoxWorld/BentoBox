@@ -13,13 +13,11 @@ import java.util.UUID;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -45,12 +43,12 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * True if the command is for the player only (not for the console)
      */
     private boolean onlyPlayer = false;
-    
+
     /**
      * True if command is a configurable rank
      */
     private boolean configurableRankCommand = false;
-    
+
     /**
      * The parameters string for this command. It is the commands followed by a locale reference.
      */
@@ -103,11 +101,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     private String topLabel = "";
 
     /**
-     * Confirmation tracker
-     */
-    private static Map<User, Confirmer> toBeConfirmed = new HashMap<>();
-
-    /**
      * Cool down tracker
      */
     private Map<UUID, Map<UUID, Long>> cooldowns = new HashMap<>();
@@ -142,19 +135,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
-        
+    }
 
-    }
-    
-/*
- * This will eventually need to replace the tabComplete method
-    private static void registerCompletions(Commodore commodore, CompositeCommand command) {
-        commodore.register(command, LiteralArgumentBuilder.literal(command.getLabel())
-                .then(RequiredArgumentBuilder.argument("some-argument", com.mojang.brigadier.arguments.StringArgumentType.string()))
-                .then(RequiredArgumentBuilder.argument("some-other-argument", BoolArgumentType.bool()))
-        );
-    }
-*/
     /**
      * This is the top-level command constructor for commands that have no parent.
      * @param label - string for this command
@@ -201,7 +183,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         this.permissionPrefix = parent.getPermissionPrefix();
         // Inherit world
         this.world = parent.getWorld();
-        
+
         // Default references to description and parameters
         StringBuilder reference = new StringBuilder();
         reference.append(label);
@@ -675,79 +657,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public String getTopLabel() {
         return topLabel;
-    }
-
-    /**
-     * Tells user to confirm command by retyping
-     * @param user - user
-     * @param confirmed - runnable to be executed if confirmed
-     */
-    public void askConfirmation(User user, Runnable confirmed) {
-        // Check for pending confirmations
-        if (toBeConfirmed.containsKey(user)) {
-            if (toBeConfirmed.get(user).getTopLabel().equals(getTopLabel()) && toBeConfirmed.get(user).getLabel().equalsIgnoreCase(getLabel())) {
-                toBeConfirmed.get(user).getTask().cancel();
-                Bukkit.getScheduler().runTask(getPlugin(), toBeConfirmed.get(user).getRunnable());
-                toBeConfirmed.remove(user);
-                return;
-            } else {
-                // Player has another outstanding confirmation request that will now be cancelled
-                user.sendMessage("commands.confirmation.previous-request-cancelled");
-            }
-        }
-        // Tell user that they need to confirm
-        user.sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
-        // Set up a cancellation task
-        BukkitTask task = Bukkit.getScheduler().runTaskLater(getPlugin(), () -> {
-            user.sendMessage("commands.confirmation.request-cancelled");
-            toBeConfirmed.remove(user);
-        }, getPlugin().getSettings().getConfirmationTime() * 20L);
-
-        // Add to the global confirmation map
-        toBeConfirmed.put(user, new Confirmer(getTopLabel(), getLabel(), confirmed, task));
-    }
-
-    private class Confirmer {
-        private final String topLabel;
-        private final String label;
-        private final Runnable runnable;
-        private final BukkitTask task;
-
-        /**
-         * @param label - command label
-         * @param runnable - runnable to run when confirmed
-         * @param task - task ID to cancel when confirmed
-         */
-        Confirmer(String topLabel, String label, Runnable runnable, BukkitTask task) {
-            this.topLabel = topLabel;
-            this.label = label;
-            this.runnable = runnable;
-            this.task = task;
-        }
-        /**
-         * @return the topLabel
-         */
-        public String getTopLabel() {
-            return topLabel;
-        }
-        /**
-         * @return the label
-         */
-        public String getLabel() {
-            return label;
-        }
-        /**
-         * @return the runnable
-         */
-        public Runnable getRunnable() {
-            return runnable;
-        }
-        /**
-         * @return the task
-         */
-        public BukkitTask getTask() {
-            return task;
-        }
     }
 
     /**

@@ -4,10 +4,11 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
-public class IslandTeamLeaveCommand extends CompositeCommand {
+public class IslandTeamLeaveCommand extends ConfirmableCommand {
 
     public IslandTeamLeaveCommand(CompositeCommand islandTeamCommand) {
         super(islandTeamCommand, "leave");
@@ -25,7 +26,7 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
         if (!getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-team");
             return false;
-        }       
+        }
         if (getIslands().hasIsland(getWorld(), user.getUniqueId())) {
             user.sendMessage("commands.island.team.leave.cannot-leave");
             return false;
@@ -36,7 +37,7 @@ public class IslandTeamLeaveCommand extends CompositeCommand {
         } else {
             this.askConfirmation(user, () -> leave(user));
             return false;
-        }        
+        }
     }
 
     private void leave(User user) {

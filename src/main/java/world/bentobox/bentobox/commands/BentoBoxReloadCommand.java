@@ -3,6 +3,7 @@ package world.bentobox.bentobox.commands;
 import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
 /**
@@ -10,7 +11,7 @@ import world.bentobox.bentobox.api.user.User;
  *
  * @author tastybento
  */
-public class BentoBoxReloadCommand extends CompositeCommand {
+public class BentoBoxReloadCommand extends ConfirmableCommand {
 
     /**
      * Reloads locales command
@@ -19,7 +20,7 @@ public class BentoBoxReloadCommand extends CompositeCommand {
     public BentoBoxReloadCommand(CompositeCommand parent) {
         super(parent, "reload");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.reload");
@@ -34,7 +35,7 @@ public class BentoBoxReloadCommand extends CompositeCommand {
 
     /**
      * Reloads the languages
-     * @param user 
+     * @param user
      */
     public void reloadLocales(User user) {
         getPlugin().getLocalesManager().reloadLanguages();
