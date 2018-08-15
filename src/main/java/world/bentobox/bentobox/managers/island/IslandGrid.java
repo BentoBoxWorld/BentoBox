@@ -1,10 +1,15 @@
 package world.bentobox.bentobox.managers.island;
 
+<<<<<<< HEAD
 import org.apache.commons.lang.Validate;
 
 import com.google.common.collect.Table;
 import com.google.common.collect.TreeBasedTable;
 
+=======
+import com.google.common.collect.Table;
+import com.google.common.collect.TreeBasedTable;
+>>>>>>> parent of bfff61e... Rewrote IslandGrid.Cell
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
@@ -64,12 +69,12 @@ public class IslandGrid {
     public Island getIslandAt(int x, int z) {
         Table.Cell<Integer, Integer, Cell> tableCell = grid.cellSet()
                 .stream()
-                .filter(cell -> cell.getValue().getState().equals(CellState.OCCUPIED))
-                .filter(cell -> cell.getValue().getIsland().inIslandSpace(x, z))
+                .filter(cell -> (cell.getValue().getState().equals(CellState.OCCUPIED)))
+                .filter(cell -> ((Island) cell.getValue().getObject()).inIslandSpace(x, z))
                 .findFirst().orElse(null);
 
         if (tableCell != null) {
-            return tableCell.getValue().getIsland();
+            return (Island) tableCell.getValue().getObject();
         }
         return null;
     }
@@ -78,24 +83,20 @@ public class IslandGrid {
      * @author Poslovitch
      */
     private class Cell {
-        private final CellState state;
-        private final Island island;
+        private CellState state;
+        private Object object;
 
-        private Cell(CellState state, Island island) {
-            // Make sure the hard way that none of the parameters are null
-            Validate.notNull(state, "Cell state cannot be null");
-            Validate.notNull(island, "Island cannot be null");
-
+        private Cell(CellState state, Object object) {
             this.state = state;
-            this.island = island;
+            this.object = object;
         }
 
         private CellState getState() {
             return state;
         }
 
-        private Island getIsland() {
-            return island;
+        private Object getObject() {
+            return object;
         }
     }
 
@@ -103,6 +104,7 @@ public class IslandGrid {
      * @author Poslovitch
      */
     private enum CellState {
+        //RESERVED,
         OCCUPIED
     }
 }
