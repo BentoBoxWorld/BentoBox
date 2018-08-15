@@ -1,7 +1,11 @@
 package world.bentobox.bentobox.database.flatfile;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
@@ -86,23 +90,17 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
             tableFolder.mkdirs();
         }
         try {
-            // Approach is save to temp file (saving is not necessarily atomic), then move file atomically
-            // This has best chance of no file corruption
-
-            File tmpFile = File.createTempFile("yaml", null, tableFolder);
-            yamlConfig.save(tmpFile);
-            if (tmpFile.exists()) {
-                Files.copy(tmpFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
-                Files.delete(tmpFile.toPath());
-            } else {
-                throw new IOException();
-            }
+            // Make a backup of file
+            File tmpFile = new File(tableFolder, fileName + ".bak");
+            Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            yamlConfig.save(file.toPath().toString());
+            Files.deleteIfExists(tmpFile.toPath());
         } catch (Exception e) {
             plugin.logError("Could not save yaml file: " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
-            commentFile(file, commentMap);
+            commentFile(new File(tableFolder, fileName), commentMap);
         }
     }
 
@@ -134,9 +132,34 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
                 newFile.add(nextLine);
             }
             Files.write(commentedFile.toPath(), (Iterable<String>)newFile.stream()::iterator);
-            Files.move(commentedFile.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            copyFileUsingStream(commentedFile, file);
+            Files.delete(commentedFile.toPath());
         } catch (IOException e1) {
             plugin.logError("Could not comment config file " + file.getName() + " " + e1.getMessage());
+            e1.printStackTrace();
+        }
+    }
+    
+    /**
+     * This method is necessary because Windows has problems with Files.copy and file locking.
+     * @param source - file
+     * @param dest - file
+     * @throws IOException - exception
+     */
+    private void copyFileUsingStream(File source, File dest) throws IOException {
+        InputStream is = null;
+        OutputStream os = null;
+        try {
+            is = new FileInputStream(source);
+            os = new FileOutputStream(dest);
+            byte[] buffer = new byte[1024];
+            int length;
+            while ((length = is.read(buffer)) > 0) {
+                os.write(buffer, 0, length);
+            }
+        } finally {
+            is.close();
+            os.close();
         }
     }
 

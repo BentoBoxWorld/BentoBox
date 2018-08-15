@@ -362,7 +362,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 continue;
             }
 
-            // Depending on the vale type, it'll need serializing differently
+            // Depending on the value type, it'll need serializing differently
             // Check if this field is the mandatory UniqueId field. This is used to identify this instantiation of the class
             if (method.getName().equals("getUniqueId")) {
                 // If the object does not have a unique name assigned to it already, one is created at random
