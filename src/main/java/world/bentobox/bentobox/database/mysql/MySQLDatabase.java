@@ -5,7 +5,7 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
-public class MySQLDatabase extends DatabaseSetup {
+public class MySQLDatabase implements DatabaseSetup {
 
 
     /* (non-Javadoc)

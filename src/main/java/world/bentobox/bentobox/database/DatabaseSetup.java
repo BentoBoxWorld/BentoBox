@@ -5,14 +5,15 @@ import world.bentobox.bentobox.database.flatfile.FlatFileDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 
-public abstract class DatabaseSetup {
+public interface DatabaseSetup {
 
     /**
-     * Gets the type of database being used. Currently supported options are
-     * FLATFILE and MYSQL. Default is FLATFILE
+     * Gets the type of database being used.
+     * Currently supported options are FLATFILE and MYSQL.
+     * Default is FLATFILE.
      * @return Database type
      */
-    public static DatabaseSetup getDatabase(){
+    static DatabaseSetup getDatabase() {
         for(DatabaseType type : DatabaseType.values()){
             if(type == BentoBox.getInstance().getSettings().getDatabaseType()) {
                 return type.database;
@@ -21,7 +22,7 @@ public abstract class DatabaseSetup {
         return DatabaseType.FLATFILE.database;
     }
 
-    public enum DatabaseType{
+    enum DatabaseType {
         FLATFILE(new FlatFileDatabase()),
         MYSQL(new MySQLDatabase()),
         MONGO(new MongoDBDatabase());
@@ -39,6 +40,6 @@ public abstract class DatabaseSetup {
      * @param dataObjectClass - class of the object to be stored in the database
      * @return handler for this database object
      */
-    public abstract <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass);
+    <T> AbstractDatabaseHandler<T> getHandler(Class<T> dataObjectClass);
 
 }

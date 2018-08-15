@@ -5,7 +5,7 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 
-public class MongoDBDatabase extends DatabaseSetup {
+public class MongoDBDatabase implements DatabaseSetup {
 
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {

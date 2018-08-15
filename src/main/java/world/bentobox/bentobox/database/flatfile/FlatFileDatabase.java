@@ -4,7 +4,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 
-public class FlatFileDatabase extends DatabaseSetup {
+public class FlatFileDatabase implements DatabaseSetup {
 
     /**
      * Get the config
