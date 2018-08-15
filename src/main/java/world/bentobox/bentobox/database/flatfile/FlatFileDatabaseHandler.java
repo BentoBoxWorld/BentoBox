@@ -161,8 +161,12 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // If there is a config annotation then do something
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
+                // TODO: Not sure what to do with this one
                 overrideOnChange = configEntry.overrideOnChange();
+                // TODO: Not sure what to do with this one
                 experimental = configEntry.experimental();
+                // If this value has changed, then the addon will need a full reset
+                // TODO: Inform addon if this value is different to a value stored in the database?
                 needsReset = configEntry.needsReset();
             }
             // Some fields need custom handling to serialize or deserialize and the programmer will need to
@@ -428,23 +432,28 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     /**
-     * Serialize an object if required
+     * Serialize an object if required. This means that an object will be turned into text to store in YAML
      * @param object - object to serialize
      * @return - serialized object
      */
     private Object serialize(Object object) {
+        // Null is a value object and is serialized as the string "null"
         if (object == null) {
             return "null";
         }
+        // UUID has it's own serialization, that is not picked up automatically
         if (object instanceof UUID) {
             return ((UUID)object).toString();
         }
+        // Only the world name is needed for worlds
         if (object instanceof World) {
             return ((World)object).getName();
         }
+        // Location
         if (object instanceof Location) {
             return Util.getStringLocation((Location)object);
         }
+        // Enums
         if (object instanceof Enum) {
             //Custom enums are a child of the Enum class. Just get the names of each one.
             return ((Enum<?>)object).name();
@@ -520,19 +529,24 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return value;
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteObject(java.lang.Object)
+     */
     @Override
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
-        // The file name of the Yaml file.
+        // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();
         String fileName = (String) method.invoke(instance);
+        // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
         }
+        // Get the database and table folders
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
         File tableFolder = new File(dataFolder, dataObject.getSimpleName());
         if (tableFolder.exists()) {
-
+            // Obtain the file and delete it
             File file = new File(tableFolder, fileName);
             try {
                 Files.delete(file.toPath());
