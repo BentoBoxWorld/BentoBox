@@ -21,6 +21,7 @@ public class DeleteIslandChunks {
      * @param plugin - plugin object
      * @param island - island to delete
      */
+    @SuppressWarnings("deprecation")
     public DeleteIslandChunks(final BentoBox plugin, final Island island) {
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();

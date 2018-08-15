@@ -21,6 +21,7 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 public class CleanSuperFlatListener extends AbstractFlagListener {
+    @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
         BentoBox plugin = BentoBox.getInstance();
