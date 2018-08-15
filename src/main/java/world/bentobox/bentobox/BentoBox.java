@@ -18,7 +18,6 @@ import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.NetherPortals;
 import world.bentobox.bentobox.listeners.ObsidianToLava;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
-import world.bentobox.bentobox.listeners.protection.FlyingMobEvents;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
@@ -157,8 +156,6 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new NetherPortals(this), this);
         // Obsidian to lava helper
         manager.registerEvents(new ObsidianToLava(this), this);
-        // Flying mobs protection
-        manager.registerEvents(new FlyingMobEvents(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
@@ -196,8 +193,8 @@ public class BentoBox extends JavaPlugin {
 
             @Override
             public int getValue() {
-                int created = islandsManager.metrics_getCreatedCount();
-                islandsManager.metrics_setCreatedCount(0);
+                int created = islandsManager.metricsGetCreatedCount();
+                islandsManager.metricsSetCreatedCount(0);
                 return created;
             }
         });

@@ -58,14 +58,15 @@ public class IslandsManager {
      * This is not stored persistently and resets when the server starts
      */
     private Map<World,Location> last;
-    // Metrics data
-    private int metrics_createdcount = 0;
 
     // Island Cache
     private IslandCache islandCache;
 
     // Async database saving semaphore
     private boolean midSave;
+
+    // Metrics data
+    private int metricsCreatedCount = 0;
 
     /**
      * Islands Manager
@@ -623,12 +624,12 @@ public class IslandsManager {
         return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.getMemberSet().contains(player.getUniqueId())).orElse(false);
     }
 
-    public int metrics_getCreatedCount(){
-        return metrics_createdcount;
+    public int metricsGetCreatedCount(){
+        return metricsCreatedCount;
     }
 
-    public void metrics_setCreatedCount(int count){
-        metrics_createdcount = count;
+    public void metricsSetCreatedCount(int count){
+        metricsCreatedCount = count;
     }
 
     /**
