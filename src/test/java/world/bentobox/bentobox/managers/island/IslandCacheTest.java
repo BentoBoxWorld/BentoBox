@@ -61,6 +61,8 @@ public class IslandCacheTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
 
+
+
         island = mock(Island.class);
         when(island.getWorld()).thenReturn(world);
         location = mock(Location.class);
@@ -195,8 +197,14 @@ public class IslandCacheTest {
         assertNull(ic.getIslandAt(location2));
     }
 
+    /*
     @Test
-    public void testGetMembers() {
+    public void testGetIslands() {
+        fail("Not yet implemented"); // TODO
+    }
+     */
+    @Test
+    public void testgetMembers() {
         // New cache
         IslandCache ic = new IslandCache();
         ic.addIsland(island);

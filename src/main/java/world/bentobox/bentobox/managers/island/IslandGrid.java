@@ -67,14 +67,11 @@ public class IslandGrid {
      * @return Island or null
      */
     public Island getIslandAt(int x, int z) {
-        Table.Cell<Integer, Integer, Cell> tableCell = grid.cellSet()
-                .stream()
-                .filter(cell -> (cell.getValue().getState().equals(CellState.OCCUPIED)))
-                .filter(cell -> ((Island) cell.getValue().getObject()).inIslandSpace(x, z))
-                .findFirst().orElse(null);
-
-        if (tableCell != null) {
-            return (Island) tableCell.getValue().getObject();
+        if (grid.contains(x, z)) {
+            Cell cell = grid.get(x, z);
+            if (cell.getState().equals(CellState.OCCUPIED)) {
+                return (Island) cell.getObject();
+            }
         }
         return null;
     }
@@ -104,7 +101,7 @@ public class IslandGrid {
      * @author Poslovitch
      */
     private enum CellState {
-        //RESERVED,
+        RESERVED,
         OCCUPIED
     }
 }
