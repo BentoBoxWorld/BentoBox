@@ -16,21 +16,20 @@ import world.bentobox.bentobox.lists.Flags;
 public class ItemDropPickUpListener extends AbstractFlagListener {
 
     /*
-     * Handle item drop by visitors
+     * Handle item drop
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVisitorDrop(PlayerDropItemEvent e) {
+    public void onDrop(PlayerDropItemEvent e) {
         checkIsland(e, e.getItemDrop().getLocation(), Flags.ITEM_DROP);
     }
 
     /*
-     * Handle item pickup by visitors
+     * Handle item pickup
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onVisitorPickup(EntityPickupItemEvent e) {
+    public void onPickup(EntityPickupItemEvent e) {
         if (e.getEntity() instanceof Player) {
-            // Disallow, but don't tell the player an error
-            setUser(User.getInstance(e.getEntity())).checkIsland(e, e.getItem().getLocation(), Flags.ITEM_PICKUP, false);
+            setUser(User.getInstance(e.getEntity())).checkIsland(e, e.getItem().getLocation(), Flags.ITEM_PICKUP);
         }
     }
 }

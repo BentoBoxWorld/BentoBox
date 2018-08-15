@@ -53,11 +53,11 @@ public class PhysicalInteractionListener extends AbstractFlagListener {
 
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileHit(EntityInteractEvent e) {
-        if (e.getEntity() == null || !(e.getEntity() instanceof Projectile)) {
+        if (!(e.getEntity() instanceof Projectile)) {
             return;
         }
         Projectile p = (Projectile)e.getEntity();
-        if (p.getShooter() != null && p.getShooter() instanceof Player && e.getBlock() != null) {
+        if (p.getShooter() instanceof Player && e.getBlock() != null) {
             // Set the user to the shooter
             setUser(User.getInstance((Player)p.getShooter()));
 

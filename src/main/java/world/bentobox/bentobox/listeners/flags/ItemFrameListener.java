@@ -22,6 +22,7 @@ import world.bentobox.bentobox.lists.Flags;
  *
  */
 public class ItemFrameListener extends AbstractFlagListener {
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onItemFrameDamage(final EntityDamageByEntityEvent e) {
         check(e, e.getEntity(), e.getDamager());

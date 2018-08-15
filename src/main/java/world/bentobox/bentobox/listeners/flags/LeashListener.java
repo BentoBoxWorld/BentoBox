@@ -22,10 +22,9 @@ public class LeashListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onLeashUse(PlayerLeashEntityEvent e) {
+    public void onLeash(PlayerLeashEntityEvent e) {
         checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
     }
-
 
     /**
      * Prevents unleashing
@@ -33,7 +32,7 @@ public class LeashListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onLeashUse(PlayerUnleashEntityEvent e) {
+    public void onUnleash(PlayerUnleashEntityEvent e) {
         checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
     }
 

@@ -33,7 +33,7 @@ public class GeoLimitMobsListener extends AbstractFlagListener {
      * Start the tracker when the plugin is loaded
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void pluginReady(BentoBoxReadyEvent event) {
+    public void onPluginReady(BentoBoxReadyEvent event) {
         // Kick off the task to remove entities that go outside island boundaries
         Bukkit.getScheduler().runTaskTimer(getPlugin(), () -> {
             mobSpawnTracker.entrySet().stream()
@@ -49,7 +49,7 @@ public class GeoLimitMobsListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void mobSpawn(CreatureSpawnEvent e) {
+    public void onMobSpawn(CreatureSpawnEvent e) {
         if (getIWM().inWorld(e.getLocation())
                 && getIWM().getGeoLimitSettings(e.getLocation().getWorld()).contains(e.getEntityType().name())) {
             getIslands().getIslandAt(e.getLocation()).ifPresent(i -> mobSpawnTracker.put(e.getEntity(), i));
@@ -60,7 +60,7 @@ public class GeoLimitMobsListener extends AbstractFlagListener {
      * Clean up the map when entity dies (does not handle entity removal)
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void MobDeath(final EntityDeathEvent e) {
+    public void onMobDeath(final EntityDeathEvent e) {
         mobSpawnTracker.remove(e.getEntity());
     }
 
@@ -69,7 +69,7 @@ public class GeoLimitMobsListener extends AbstractFlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void ProjectileExplode(final ExplosionPrimeEvent e) {
+    public void onProjectileExplode(final ExplosionPrimeEvent e) {
         if (e.getEntity() instanceof Projectile && getIWM().inWorld(e.getEntity().getLocation())) {
             ProjectileSource source = ((Projectile)e.getEntity()).getShooter();
             if (source instanceof Entity) {

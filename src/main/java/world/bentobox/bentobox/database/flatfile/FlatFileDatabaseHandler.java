@@ -319,7 +319,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         for (Field field : dataObject.getDeclaredFields()) {
             // Get the property descriptor for this field
             PropertyDescriptor propertyDescriptor = new PropertyDescriptor(field.getName(), dataObject);
-            // Get the read method, i.e., getXXXX();
+            // Get the read method
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);

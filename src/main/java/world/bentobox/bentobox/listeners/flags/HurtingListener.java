@@ -71,11 +71,9 @@ public class HurtingListener extends AbstractFlagListener {
         } else if (damager instanceof Projectile) {
             // Find out who fired the projectile
             Projectile p = (Projectile) damager;
-            if (p.getShooter() instanceof Player) {
-                if (!setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, damager.getLocation(), flag)) {
-                    e.getEntity().setFireTicks(0);
-                    damager.remove();
-                }
+            if (p.getShooter() instanceof Player && !setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, damager.getLocation(), flag)) {
+                e.getEntity().setFireTicks(0);
+                damager.remove();
             }
         }
     }
@@ -103,11 +101,10 @@ public class HurtingListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerFeedParrots(PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof Parrot) {
-            if ((e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
-                    || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
-            }
+        if (e.getRightClicked() instanceof Parrot
+                && (e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
+                || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
         }
     }
 
@@ -128,20 +125,18 @@ public class HurtingListener extends AbstractFlagListener {
                     continue;
                 }
                 // Monsters being hurt
-                if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
-                    if (!setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), Flags.HURT_MONSTERS)) {
-                        for (PotionEffect effect : e.getPotion().getEffects()) {
-                            entity.removePotionEffect(effect.getType());
-                        }
+                if ((entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
+                        && !setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                    for (PotionEffect effect : e.getPotion().getEffects()) {
+                        entity.removePotionEffect(effect.getType());
                     }
                 }
 
                 // Mobs being hurt
-                if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman) {
-                    if (!checkIsland(e, entity.getLocation(), Flags.HURT_ANIMALS)) {
-                        for (PotionEffect effect : e.getPotion().getEffects()) {
-                            entity.removePotionEffect(effect.getType());
-                        }
+                if ((entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman)
+                        && !checkIsland(e, entity.getLocation(), Flags.HURT_ANIMALS)) {
+                    for (PotionEffect effect : e.getPotion().getEffects()) {
+                        entity.removePotionEffect(effect.getType());
                     }
                 }
 
@@ -172,7 +167,7 @@ public class HurtingListener extends AbstractFlagListener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
-    public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) { //FIXME No need of #setCancelled() there?
+    public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
         if (e.getEntity() == null || e.getEntity().getUniqueId() == null) {
             return;
         }

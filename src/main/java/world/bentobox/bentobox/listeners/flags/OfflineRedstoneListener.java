@@ -11,6 +11,7 @@ import world.bentobox.bentobox.api.flags.AbstractFlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 public class OfflineRedstoneListener extends AbstractFlagListener {
+
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockRedstone(BlockRedstoneEvent e) {
         // If offline redstone is allowed then return
