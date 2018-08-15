@@ -125,8 +125,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Register command if it is not already registered
         if (plugin.getCommand(label) == null) {
             plugin.getCommandsManager().registerCommand(this);
-            // register your completions.
-            //registerCompletions(plugin.getCommodore(), this);
         }
         // Default references to description and parameters
         setDescription("commands." + label + ".description");

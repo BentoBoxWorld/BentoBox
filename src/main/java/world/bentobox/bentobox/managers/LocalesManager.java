@@ -30,8 +30,8 @@ public class LocalesManager {
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
-        copyLocalesFromJar("BentoBox");
-        loadLocalesFromFile("BentoBox"); // Default
+        copyLocalesFromJar(plugin.getName());
+        loadLocalesFromFile(plugin.getName()); // Default
     }
 
     /**
@@ -157,7 +157,7 @@ public class LocalesManager {
      */
     public void reloadLanguages() {
         languages.clear();
-        loadLocalesFromFile("BentoBox");
+        loadLocalesFromFile(plugin.getName());
         plugin.getAddonsManager().getAddons().forEach(addon -> loadLocalesFromFile(addon.getDescription().getName()));
     }
 }

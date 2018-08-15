@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -188,7 +189,7 @@ public class AdminDeleteCommandTest {
 
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         // First requires confirmation
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", "0");
         // Confirm
         itl.execute(user, itl.getLabel(), Arrays.asList(name));

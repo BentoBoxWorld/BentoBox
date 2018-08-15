@@ -47,7 +47,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
         }
         // Confirm
         askConfirmation(user, () -> deletePlayer(user, targetUUID));
-        return false;
+        return true;
     }
 
     private void deletePlayer(User user, UUID targetUUID) {

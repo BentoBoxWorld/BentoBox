@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Set;
 
 import org.bukkit.Bukkit;
@@ -11,7 +12,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 
 public class CommandsManager {
 
-    private HashMap<String, CompositeCommand> commands = new HashMap<>();
+    private Map<String, CompositeCommand> commands = new HashMap<>();
 
     public void registerCommand(CompositeCommand command) {
         commands.put(command.getLabel(), command);
@@ -37,18 +38,18 @@ public class CommandsManager {
     }
 
     /**
+     * @return the commands
+     */
+    public Map<String, CompositeCommand> getCommands() {
+        return commands;
+    }
+
+    /**
      * List all commands registered so far
      * @return set of commands
      */
     public Set<String> listCommands() {
         return commands.keySet();
-    }
-
-    /**
-     * @return the commands
-     */
-    public HashMap<String, CompositeCommand> getCommands() {
-        return commands;
     }
 
 }

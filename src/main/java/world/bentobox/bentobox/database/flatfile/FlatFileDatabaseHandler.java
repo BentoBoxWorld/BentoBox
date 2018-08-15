@@ -154,20 +154,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
              */
             // Check if there is a ConfigEntry annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
-            boolean overrideOnChange = false;
-            boolean experimental = false;
-            boolean needsReset = false;
 
             // If there is a config annotation then do something
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
-                // TODO: Not sure what to do with this one
-                overrideOnChange = configEntry.overrideOnChange();
-                // TODO: Not sure what to do with this one
-                experimental = configEntry.experimental();
-                // If this value has changed, then the addon will need a full reset
-                // TODO: Inform addon if this value is different to a value stored in the database?
-                needsReset = configEntry.needsReset();
             }
             // Some fields need custom handling to serialize or deserialize and the programmer will need to
             // define them herself. She can add an annotation to do that.

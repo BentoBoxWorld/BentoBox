@@ -54,10 +54,6 @@ public class Flags {
     // Disabled setting 'rank'
     private static final int DISABLED = -1;
 
-    // TODO: add ELYTRA
-    // TODO: add FISHING
-    // TODO: add KEEP_INVENTORY - is it needed?
-
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
     public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.GRASS).listener(new PlaceBlocksListener()).build();
 
