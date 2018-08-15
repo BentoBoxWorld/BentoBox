@@ -1,21 +1,8 @@
 package world.bentobox.bentobox.managers.island;
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-import org.apache.commons.lang.Validate;
-
-import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
-
-=======
-import com.google.common.collect.Table;
-import com.google.common.collect.TreeBasedTable;
->>>>>>> parent of bfff61e... Rewrote IslandGrid.Cell
-=======
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
->>>>>>> parent of b54c7ad... Rewrote IslandGrid to use Table<> from Guava
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
