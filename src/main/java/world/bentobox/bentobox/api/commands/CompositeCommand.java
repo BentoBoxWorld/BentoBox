@@ -151,7 +151,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param aliases - aliases for this subcommand
      */
     public CompositeCommand(CompositeCommand parent, String label, String... aliases) {
-        this(null, parent, label, aliases);
+        this(parent.getAddon(), parent, label, aliases);
     }
 
     /**
