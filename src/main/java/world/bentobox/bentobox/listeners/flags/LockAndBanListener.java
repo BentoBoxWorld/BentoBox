@@ -35,13 +35,13 @@ public class LockAndBanListener implements Listener {
 
 
     // Teleport check
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerTeleport(PlayerTeleportEvent e) {
         e.setCancelled(!checkAndNotify(e.getPlayer(), e.getTo()).equals(CheckResult.OPEN));
     }
 
     // Movement check
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerMove(PlayerMoveEvent e) {
         // Ignore only vertical movement
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
@@ -61,7 +61,7 @@ public class LockAndBanListener implements Listener {
     }
 
     // Vehicle move check
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onVehicleMove(VehicleMoveEvent e) {
         // Ignore only vertical movement
         if (e.getFrom().getBlockX() - e.getTo().getBlockX() == 0 && e.getFrom().getBlockZ() - e.getTo().getBlockZ() == 0) {
@@ -79,7 +79,7 @@ public class LockAndBanListener implements Listener {
     }
 
     // Login check
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerLogin(PlayerJoinEvent e) {
         if (!checkAndNotify(e.getPlayer(), e.getPlayer().getLocation()).equals(CheckResult.OPEN)) {
             eject(e.getPlayer());
