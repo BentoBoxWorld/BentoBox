@@ -25,8 +25,8 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
-    private BentoBox plugin;
-    private File dataFolder;
+    private final BentoBox plugin;
+    private final File dataFolder;
 
 
     public FlatFileDatabaseConnector(BentoBox plugin) {
@@ -147,19 +147,12 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
      * @throws IOException - exception
      */
     private void copyFileUsingStream(File source, File dest) throws IOException {
-        InputStream is = null;
-        OutputStream os = null;
-        try {
-            is = new FileInputStream(source);
-            os = new FileOutputStream(dest);
+        try (InputStream is = new FileInputStream(source); OutputStream os = new FileOutputStream(dest)) {
             byte[] buffer = new byte[1024];
             int length;
             while ((length = is.read(buffer)) > 0) {
                 os.write(buffer, 0, length);
             }
-        } finally {
-            is.close();
-            os.close();
         }
     }
 
