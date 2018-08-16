@@ -201,21 +201,21 @@ commands:
       description: "teleport you to the spawn"
     create:
       description: "create an island"
-      unable-create-island: "Your island could not be generated, please contact an administrator."
-      creating-island: "Creating your island..."
+      unable-create-island: "&cYour island could not be generated, please contact an administrator."
+      creating-island: "&aCreating your island..."
       pick-world: "&cPick a world from [worlds]"
     info:
       description: "display info about your island"
     reset:
       description: "restart your island and remove the old one"
-      must-remove-members: "You must remove all members from your island before you can restart it (/island kick <player>)."
+      must-remove-members: "&cYou must remove all members from your island before you can restart it (/island kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
     sethome:
       description: "set your teleport point for /island"
-      must-be-on-your-island: "You must be on your island to set home!"
-      num-homes: "Homes can be 1 to [number]."
-      home-set: "Your island home has been set to your current location."
+      must-be-on-your-island: "&cYou must be on your island to set home!"
+      num-homes: "&cHomes can be 1 to [number]."
+      home-set: "&6Your island home has been set to your current location."
       parameters: "[home number]"
     setname:
       description: "set a name for your island"
@@ -257,10 +257,10 @@ commands:
         you-are-no-longer-trusted: "&cYou are no longer trusted by [name]!"
       invite:
         description: "invite a player to join your island"
-        invitation-sent: "Invitation sent to [name]"
-        removing-invite: "Removing invite"
-        name-has-invited-you: "[name] has invited you to join their island."
-        to-accept-or-reject: "Do /[label] team accept to accept, or /[label] team reject to reject"
+        invitation-sent: "&aInvitation sent to [name]"
+        removing-invite: "&cRemoving invite"
+        name-has-invited-you: "&a[name] has invited you to join their island."
+        to-accept-or-reject: "&aDo /[label] team accept to accept, or /[label] team reject to reject"
         you-will-lose-your-island: "&cWARNING! You will lose your island if you accept!"
         errors:
           cannot-invite-self: "&cYou cannot invite yourself!"
@@ -271,7 +271,7 @@ commands:
           already-on-team: "&cThat player is already on a team!"
           invalid-invite: "&cThat invite is no longer valid, sorry."
         parameters: "<player>"
-        you-can-invite: "You can invite [number] more players."
+        you-can-invite: "&aYou can invite [number] more players."
         accept:
           description: "accept an invitation"
           you-joined-island: "&aYou joined an island! Use /[label] team info to see the other members."
@@ -285,7 +285,7 @@ commands:
       leave:
         cannot-leave: "&cTeamleaders cannot leave! Become a member first, or kick all members."
         description: "leave your island"
-        left-your-island: "&c[name] left your island"
+        left-your-island: "&c[name] &cleft your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
@@ -295,12 +295,12 @@ commands:
         description: "demote a player on your island down a rank"
         parameters: "<player>"
         failure: "&cPlayer cannot be demoted any further!"
-        success: "Demoted [name] to [rank]"      
+        success: "&aDemoted [name] to [rank]"      
       promote:
         description: "promote a player on your island up a rank"
         parameters: "<player>"
         failure: "&cPlayer cannot be promoted any further!"
-        success: "Promoted [name] to [rank]"
+        success: "&aPromoted [name] to [rank]"
       setowner:
         description: "transfer your island ownership to a member"
         errors:
@@ -473,8 +473,8 @@ protection:
       description: "Display entry and exit messages"
       island: "[name]'s island"
       name: "Enter/Exit messages"
-      now-entering: "Now entering [name]"
-      now-leaving: "Now leaving [name]"
+      now-entering: "&bNow entering [name]"
+      now-leaving: "&bNow leaving [name]"
     FIRE: 
       description: "Allow fire to exist or not"
       name: "Fire"
