@@ -1,6 +1,5 @@
 package world.bentobox.bentobox;
 
-import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
@@ -9,10 +8,8 @@ import org.bukkit.plugin.java.JavaPlugin;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.placeholders.PlaceholderHandler;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
-import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
@@ -109,7 +106,6 @@ public class BentoBox extends JavaPlugin {
 
         // Locales manager must be loaded before addons
         localesManager = new LocalesManager(instance);
-        PlaceholderHandler.register(instance);
 
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
         addonsManager = new AddonsManager(instance);
