@@ -128,7 +128,7 @@ commands:
       is-spawn: "Island is a spawn island"
       banned-players: "Banned players:"
       banned-format: "&c[name]"
-      unowned: "&cUnonwed"
+      unowned: "&cUnowned"
     version:
       description: "display %bsb_plugin_name% and addons versions"
     setrange:
@@ -177,6 +177,7 @@ commands:
       description: "display copyright and license info"
     reload:
       description: "reloads all locale files"
+      locales-reloaded: "&2Languages reloaded"
     version:
       description: "display info"
       loaded-addons: "Loaded Add-Ons"
@@ -188,6 +189,8 @@ commands:
     previous-request-cancelled: "&6Previous confirmation request cancelled"
     request-cancelled: "&cConfirmation timeout - &brequest cancelled"
   island:
+    about:
+      description: "About this addon"
     go:
       parameters: "[home number]"
       description: "teleport you to your island"
@@ -208,11 +211,11 @@ commands:
       description: "display info about your island"
     reset:
       description: "restart your island and remove the old one"
-      must-remove-members: "&cYou must remove all members from your island before you can restart it (/island kick <player>)."
+      must-remove-members: "&cYou must remove all members from your island before you can restart it (/island team kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
     sethome:
-      description: "set your teleport point for /island"
+      description: "set your home teleport point"
       must-be-on-your-island: "&cYou must be on your island to set home!"
       num-homes: "&cHomes can be 1 to [number]."
       home-set: "&6Your island home has been set to your current location."
@@ -283,7 +286,7 @@ commands:
         cancel:
           description: "cancel the pending invite to join your island"
       leave:
-        cannot-leave: "&cTeamleaders cannot leave! Become a member first, or kick all members."
+        cannot-leave: "&cTeam leaders cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         left-your-island: "&c[name] &cleft your island"
       kick:
@@ -625,7 +628,7 @@ protection:
         &ateleporting to island
       name: "Remove monsters"
     SHEARING: 
-      description: "Toggle sheering"
+      description: "Toggle shearing"
       name: "Shearing"
       hint: "No shearing"
     SPAWN_EGGS: 
@@ -637,7 +640,7 @@ protection:
       name: "TNT damage"
     TRADING: 
       description: "Toggle trading"
-      name: "Village trading"
+      name: "Villager trading"
       hint: "No villager trading"
     TRAPDOOR:
       description: "Toggle access"
@@ -678,4 +681,4 @@ protection:
 language:
   panel-title: "Select your language"
   selected: "&aCurrently selected."
-  edited: "&aEdited your language to &e[lang]&a."
+  edited: "&aChanged your language to &e[lang]&a."
