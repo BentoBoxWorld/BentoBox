@@ -3,12 +3,13 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
+# This locale is always current with the latest version
+
 meta:
   authors:
   - tastybento
   - Poslovitch
   banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:SQUARE_TOP_RIGHT:CYAN:SQUARE_TOP_RIGHT:BLUE"
-  version: "FC-0.92"
 
 general:
   success: "&aSuccess!"

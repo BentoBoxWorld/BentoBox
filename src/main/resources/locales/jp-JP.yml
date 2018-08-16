@@ -3,12 +3,12 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
+# Updated for <FC-1>
+
 meta:
   authors:
   - tastybento
-  - Poslovitch
   banner: "WHITE_BANNER:1:CIRCLE_MIDDLE:RED"
-  version: "FC-1"
 
 general:
   success: "&a成否"

@@ -3,11 +3,12 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
+# Updated for <pre-FC version>
+
 meta:
   authors:
     - markusmarkusz
   banner: "RED_BANNER:1:STRIPE_RIGHT:BLACK:STRIPE_LEFT:YELLOW"
-  version: "alpha-1"
 
 not-setup:
   header: |-

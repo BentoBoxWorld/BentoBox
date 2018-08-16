@@ -18,7 +18,6 @@ public class BentoBoxLocale {
     private YamlConfiguration config;
     private ItemStack banner;
     private List<String> authors;
-    private boolean obsolete;
 
     public BentoBoxLocale(Locale locale, YamlConfiguration config) {
         this.locale = locale;
@@ -30,9 +29,6 @@ public class BentoBoxLocale {
         // Load authors from the configuration
         authors = new LinkedList<>();
         updateAuthors(config);
-
-        // TODO Check if obsolete
-        obsolete = false;
     }
 
     /**
@@ -89,10 +85,6 @@ public class BentoBoxLocale {
 
     public List<String> getAuthors() {
         return authors;
-    }
-
-    public boolean isObsolete() {
-        return obsolete;
     }
 
     /**

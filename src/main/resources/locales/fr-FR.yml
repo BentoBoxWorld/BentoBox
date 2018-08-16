@@ -3,12 +3,13 @@
 # utilisant un parser YAML, tel que http://yaml-online-parser.appspot.com                 #
 ###########################################################################################
 
+# Updated for <pre-FC version>
+
 meta:
   authors:
   - MrSheepSheep
   - Poslovitch
   banner: "WHITE_BANNER:1:STRIPE_BOTTOM:RED:STRIPE_TOP:BLUE"
-  version: "alpha-1"
 
 general:
   deaths: "morts"

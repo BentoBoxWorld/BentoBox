@@ -3,11 +3,13 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
+# Updated for <FC-0.8>
+
+
 meta:
   authors:
   - RikoDEV
   banner: "WHITE_BANNER:1:HALF_VERTICAL:RED"
-  version: "FC-0.8"
 
 general:
   success: "&aSukces!"

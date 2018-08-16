@@ -3,11 +3,12 @@
 # cái này http://yaml-online-parser.appspot.com                                           #
 ###########################################################################################
 
+# Updated for <pre-FC version>
+
 meta:
   authors:
   - Banbeucmas
   banner: "RED_BANNER:1:CREEPER:YELLOW:RHOMBUS_MIDDLE:YELLOW:TRIANGLES_BOTTOM:RED:SQUARE_BOTTOM_LEFT:RED:SQUARE_BOTTOM_RIGHT:RED"
-  version: "alpha-1"
 
 general:
   deaths: "Chết"
