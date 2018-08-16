@@ -39,7 +39,8 @@ public class IslandEvent {
     }
 
     /**
-     * Fired when an island is going to be created. May be canceled.
+     * Fired when an island is going to be created.
+     * May be cancelled.
      *
      */
     public static class IslandCreateEvent extends IslandBaseEvent {
@@ -59,7 +60,8 @@ public class IslandEvent {
         }
     }
     /**
-     * Fired when an island is going to be deleted. May be canceled.
+     * Fired when an island is going to be deleted.
+     * May be cancelled.
      *
      */
     public static class IslandDeleteEvent extends IslandBaseEvent {
@@ -79,8 +81,8 @@ public class IslandEvent {
         }
     }
     /**
-     * Fired when an a player enters an island
-     *
+     * Fired when an a player enters an island.
+     * Cancellation has no effect.
      */
     public static class IslandEnterEvent extends IslandBaseEvent {
         private IslandEnterEvent(Island island, UUID player, boolean admin, Location location) {
@@ -89,8 +91,8 @@ public class IslandEvent {
         }
     }
     /**
-     * Fired when a player exits and island
-     *
+     * Fired when a player exits an island.
+     * Cancellation has no effect.
      */
     public static class IslandExitEvent extends IslandBaseEvent {
         private IslandExitEvent(Island island, UUID player, boolean admin, Location location) {
@@ -119,8 +121,8 @@ public class IslandEvent {
         }
     }
     /**
-     * Fired when an island is going to be reset. May be canceled.
-     *
+     * Fired when an island is going to be reset.
+     * May be cancelled.
      */
     public static class IslandResetEvent extends IslandBaseEvent {
         private IslandResetEvent(Island island, UUID player, boolean admin, Location location) {
