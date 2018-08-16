@@ -10,7 +10,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-public class IslandGrid {
+class IslandGrid {
     private TreeMap<Integer, TreeMap<Integer, Island>> grid = new TreeMap<>();
 
     /**

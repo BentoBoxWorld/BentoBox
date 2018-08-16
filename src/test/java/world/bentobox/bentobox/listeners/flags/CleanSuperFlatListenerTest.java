@@ -96,6 +96,7 @@ public class CleanSuperFlatListenerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadNotBedrockNoFlsg() {
         when(block.getType()).thenReturn(Material.AIR);
@@ -109,6 +110,7 @@ public class CleanSuperFlatListenerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrock() {
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
@@ -119,6 +121,7 @@ public class CleanSuperFlatListenerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrockNoClean() {
         Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
@@ -131,6 +134,7 @@ public class CleanSuperFlatListenerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrockNether() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
@@ -150,6 +154,7 @@ public class CleanSuperFlatListenerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrockEnd() {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);

@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import org.bukkit.ChatColor;
 
@@ -48,7 +47,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
 
         // Naming the island - join all the arguments with spaces.
-        String name = args.stream().collect(Collectors.joining( " " ));
+        String name = String.join(" ", args);
 
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength()) {

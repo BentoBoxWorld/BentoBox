@@ -20,11 +20,21 @@ public class Database<T> {
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
 
+    /**
+     * Construct a database
+     * @param plugin - plugin
+     * @param type - to store this type
+     */
     public Database(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
         handler = DatabaseSetup.getDatabase().getHandler(type);
     }
 
+    /**
+     * Construct a database
+     * @param addon - addon requesting
+     * @param type - to store this type
+     */
     public Database(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
         handler = DatabaseSetup.getDatabase().getHandler(type);
@@ -64,6 +74,7 @@ public class Database<T> {
     /**
      * Save config object
      * @param instance to save
+     * @return true if successfully saved
      */
     public boolean saveObject(T instance) {
         try {

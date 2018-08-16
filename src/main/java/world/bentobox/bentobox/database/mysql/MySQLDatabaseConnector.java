@@ -8,8 +8,8 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 
-import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
+import world.bentobox.bentobox.database.DatabaseConnector;
 
 public class MySQLDatabaseConnector implements DatabaseConnector {
 

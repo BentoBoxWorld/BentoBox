@@ -15,7 +15,6 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.util.permissions.DefaultPermissions;
 
 import world.bentobox.bentobox.api.addons.AddonDescription.AddonDescriptionBuilder;
-import world.bentobox.bentobox.api.addons.exception.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.addons.exception.InvalidAddonInheritException;
 import world.bentobox.bentobox.managers.AddonsManager;
 
@@ -32,7 +31,6 @@ public class AddonClassLoader extends URLClassLoader {
     public AddonClassLoader(AddonsManager addonsManager, YamlConfiguration data, File path, ClassLoader parent)
             throws InvalidAddonInheritException,
             MalformedURLException,
-            InvalidAddonFormatException,
             InvalidDescriptionException,
             InstantiationException,
             IllegalAccessException {
@@ -45,7 +43,7 @@ public class AddonClassLoader extends URLClassLoader {
             String mainClass = data.getString("main");
             javaClass = Class.forName(mainClass, true, this);
             if(mainClass.startsWith("world.bentobox.bentobox")){
-                throw new InvalidAddonFormatException("Packages declaration cannot start with 'world.bentobox.bentobox'");
+                throw new Exception("Packages declaration cannot start with 'world.bentobox.bentobox'");
             }
         } catch (Exception e) {
             throw new InvalidDescriptionException("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - " + e.getMessage());
