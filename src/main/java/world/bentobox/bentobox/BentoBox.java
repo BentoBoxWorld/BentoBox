@@ -39,9 +39,6 @@ public class BentoBox extends JavaPlugin {
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
 
-    // bStats
-    private BStats bStats;
-
     // Managers
     private CommandsManager commandsManager;
     private LocalesManager localesManager;
@@ -89,7 +86,7 @@ public class BentoBox extends JavaPlugin {
         headGetter = new HeadGetter(this);
 
         // Load metrics
-        bStats = new BStats(this);
+        BStats bStats = new BStats(this);
 
         // Load Notifier
         notifier = new Notifier();

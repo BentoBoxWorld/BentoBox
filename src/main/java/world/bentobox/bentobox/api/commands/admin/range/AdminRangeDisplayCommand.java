@@ -18,10 +18,11 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class AdminRangeDisplayCommand extends CompositeCommand {
 
+    private static final String DISPLAY = "display";
     private Map<User, Integer> display = new HashMap<>();
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
-        super(parent, "display", "show", "hide");
+        super(parent, DISPLAY, "show", "hide");
     }
 
     @Override
@@ -40,7 +41,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
         if (!display.containsKey(user)) {
             switch (label) {
-            case "display":
+            case DISPLAY:
             case "show":
                 showZones(user);
                 break;
@@ -53,7 +54,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
             }
         } else {
             switch (label) {
-            case "display":
+            case DISPLAY:
             case "hide":
                 hideZones(user);
                 break;

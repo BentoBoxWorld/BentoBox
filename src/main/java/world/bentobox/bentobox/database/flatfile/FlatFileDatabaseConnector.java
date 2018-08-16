@@ -136,7 +136,6 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
             Files.delete(commentedFile.toPath());
         } catch (IOException e1) {
             plugin.logError("Could not comment config file " + file.getName() + " " + e1.getMessage());
-            e1.printStackTrace();
         }
     }
     

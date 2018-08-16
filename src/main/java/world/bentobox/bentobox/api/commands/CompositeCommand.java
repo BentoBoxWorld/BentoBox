@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -36,6 +37,8 @@ import world.bentobox.bentobox.util.Util;
  * @author Poslovitch
  */
 public abstract class CompositeCommand extends Command implements PluginIdentifiableCommand, BentoBoxCommand {
+
+    private static final String COMMANDS = "commands.";
 
     private final BentoBox plugin;
 
@@ -127,8 +130,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             plugin.getCommandsManager().registerCommand(this);
         }
         // Default references to description and parameters
-        setDescription("commands." + label + ".description");
-        setParametersHelp("commands." + label + ".parameters");
+        setDescription(COMMANDS + label + ".description");
+        setParametersHelp(COMMANDS + label + ".parameters");
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
@@ -192,8 +195,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
             p = p.getParent();
             index++;
         }
-        setDescription("commands." + reference.toString() + ".description");
-        setParametersHelp("commands." + reference.toString() + ".parameters");
+        setDescription(COMMANDS + reference.toString() + ".description");
+        setParametersHelp(COMMANDS + reference.toString() + ".parameters");
         setup();
         // If this command does not define its own help class, then use the default help command
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
@@ -569,28 +572,17 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         }
         // Add any tab completion from the subcommand
         options.addAll(cmd.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElse(new ArrayList<>()));
-        // Add any sub-commands automatically
         if (cmd.hasSubCommands()) {
-            // Check if subcommands are visible to this sender
-            for (CompositeCommand subCommand: cmd.getSubCommands().values()) {
-                if (sender instanceof Player) {
-                    // Player
-                    if (subCommand.getPermission().isEmpty() || sender.hasPermission(subCommand.getPermission()) || sender.isOp()) {
-                        // Permission is okay
-                        options.add(subCommand.getLabel());
-                    }
-                } else {
-                    // Console
-                    if (!subCommand.onlyPlayer) {
-                        // Not a player command
-                        options.add(subCommand.getLabel());
-                    }
-                }
-            }
+            options.addAll(getSubCommandLabels(sender, cmd));
         }
-
         String lastArg = args.length != 0 ? args[args.length - 1] : "";
         return Util.tabLimit(options, lastArg).stream().sorted().collect(Collectors.toList());
+    }
+
+    private List<String> getSubCommandLabels(CommandSender sender, CompositeCommand cmd) {
+        return cmd.getSubCommands().values().stream().filter(c -> !c.isOnlyPlayer() || sender.isOp()
+                || (sender instanceof Player && (c.getPermission().isEmpty() || sender.hasPermission(c.getPermission()))) )
+                .map(CompositeCommand::getLabel).collect(Collectors.toList());
     }
 
     /**
