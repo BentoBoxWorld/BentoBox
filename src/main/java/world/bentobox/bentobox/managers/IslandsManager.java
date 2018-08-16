@@ -65,9 +65,6 @@ public class IslandsManager {
     // Async database saving semaphore
     private boolean midSave;
 
-    // Metrics data
-    private int metricsCreatedCount = 0;
-
     /**
      * Islands Manager
      * @param plugin - plugin
@@ -622,14 +619,6 @@ public class IslandsManager {
         }
         // Get the player's island
         return getIslandAt(loc).filter(i -> i.onIsland(loc)).map(i -> i.getMemberSet().contains(player.getUniqueId())).orElse(false);
-    }
-
-    public int metricsGetCreatedCount(){
-        return metricsCreatedCount;
-    }
-
-    public void metricsSetCreatedCount(int count){
-        metricsCreatedCount = count;
     }
 
     /**

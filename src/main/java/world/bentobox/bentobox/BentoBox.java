@@ -1,5 +1,6 @@
 package world.bentobox.bentobox;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
@@ -40,8 +41,8 @@ public class BentoBox extends JavaPlugin {
     private PlayersManager playersManager;
     private IslandsManager islandsManager;
 
-    // Metrics
-    private Metrics metrics;
+    // bStats
+    private BStats bStats;
 
     // Managers
     private CommandsManager commandsManager;
@@ -73,7 +74,7 @@ public class BentoBox extends JavaPlugin {
         saveDefaultConfig();
         setInstance(this);
         // Load Flags
-        flagsManager = new FlagsManager(instance);
+        flagsManager = new FlagsManager(this);
 
         // Load settings from config.yml. This will check if there are any issues with it too.
         settings = new Config<>(this, Settings.class).loadConfigObject("");
@@ -90,8 +91,7 @@ public class BentoBox extends JavaPlugin {
         headGetter = new HeadGetter(this);
 
         // Load metrics
-        metrics = new Metrics(instance);
-        registerCustomCharts();
+        bStats = new BStats(this);
 
         // Load Notifier
         notifier = new Notifier();
@@ -138,6 +138,9 @@ public class BentoBox extends JavaPlugin {
             instance.log("- Tastybento and Poslovitch, 2017-2018");
             instance.log("#############################################");
 
+            // Register metrics
+            bStats.registerMetrics();
+
             // Fire plugin ready event
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
         });
@@ -178,42 +181,6 @@ public class BentoBox extends JavaPlugin {
         if (settings != null) {
             new Config<>(this, Settings.class).saveConfigObject(settings);
         }
-    }
-
-    private void registerCustomCharts(){
-        metrics.addCustomChart(new Metrics.SingleLineChart("islands_count") {
-
-            @Override
-            public int getValue() {
-                return islandsManager.getCount();
-            }
-        });
-
-        metrics.addCustomChart(new Metrics.SingleLineChart("created_islands") {
-
-            @Override
-            public int getValue() {
-                int created = islandsManager.metricsGetCreatedCount();
-                islandsManager.metricsSetCreatedCount(0);
-                return created;
-            }
-        });
-
-        metrics.addCustomChart(new Metrics.SimplePie("default_locale") {
-
-            @Override
-            public String getValue() {
-                return getSettings().getDefaultLanguage();
-            }
-        });
-
-        metrics.addCustomChart(new Metrics.SimplePie("database") {
-
-            @Override
-            public String getValue() {
-                return DatabaseSetup.getDatabase().toString();
-            }
-        });
     }
 
     /**
