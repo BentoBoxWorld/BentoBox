@@ -8,7 +8,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.placeholders.PlaceholderHandler;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
@@ -104,7 +103,6 @@ public class BentoBox extends JavaPlugin {
 
         // Locales manager must be loaded before addons
         localesManager = new LocalesManager(instance);
-        PlaceholderHandler.register(instance);
 
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
         addonsManager = new AddonsManager(instance);
