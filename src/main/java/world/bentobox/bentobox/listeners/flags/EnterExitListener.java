@@ -10,6 +10,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.flags.AbstractFlagListener;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -34,8 +35,8 @@ public class EnterExitListener extends AbstractFlagListener {
             return;
         }
 
-        Optional<Island> from = this.getIslands().getProtectedIslandAt(e.getFrom());
-        Optional<Island> to = this.getIslands().getProtectedIslandAt(e.getTo());
+        Optional<Island> from = getIslands().getProtectedIslandAt(e.getFrom());
+        Optional<Island> to = getIslands().getProtectedIslandAt(e.getTo());
 
         /*
          * Options:
@@ -51,14 +52,47 @@ public class EnterExitListener extends AbstractFlagListener {
         }
 
         User user = User.getInstance(e.getPlayer());
-        // Send message if island is owned by someone
-        from.filter(i -> i.getOwner() != null).ifPresent(i -> user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, (i.getName() != null) ? i.getName() :
-            user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner()))));
-        to.filter(i -> i.getOwner() != null).ifPresent(i -> user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, (i.getName() != null) ? i.getName() :
-            user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner()))));
 
-        // Send message if island is unowned, but has a name
-        from.filter(i -> i.getOwner() == null && (i.getName() != null)).ifPresent(i -> user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, i.getName()));
-        to.filter(i -> i.getOwner() == null && (i.getName() != null)).ifPresent(i -> user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, i.getName()));
+        from.ifPresent(i -> {
+            // Fire the IslandExitEvent
+            new IslandEvent.IslandEventBuilder()
+                    .island(i)
+                    .involvedPlayer(user.getUniqueId())
+                    .reason(IslandEvent.Reason.EXIT)
+                    .admin(false)
+                    .location(user.getLocation())
+                    .build();
+
+            // Send message if island is owned by someone
+            if (i.getOwner() != null) {
+                user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, (i.getName() != null) ? i.getName() :
+                        user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner())));
+            }
+            // Send message if island is unowned, but has a name
+            else if (i.getName() != null) {
+                user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, i.getName());
+            }
+        });
+
+        to.ifPresent(i -> {
+            // Fire the IslandEnterEvent
+            new IslandEvent.IslandEventBuilder()
+                    .island(i)
+                    .involvedPlayer(user.getUniqueId())
+                    .reason(IslandEvent.Reason.ENTER)
+                    .admin(false)
+                    .location(user.getLocation())
+                    .build();
+
+            // Send message if island is owned by someone
+            if (i.getOwner() != null) {
+                user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, (i.getName() != null) ? i.getName() :
+                        user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner())));
+            }
+            // Send message if island is unowned, but has a name
+            else if (i.getName() != null) {
+                user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, i.getName());
+            }
+        });
     }
 }

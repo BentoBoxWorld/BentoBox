@@ -14,9 +14,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.util.Vector;
 import org.junit.Before;
 import org.junit.Test;
@@ -70,6 +72,13 @@ public class EnterExitListenerTest {
 
         // World
         World world = mock(World.class);
+        
+        // Server
+        Server server = mock(Server.class);
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
 
         // Settings
         Settings s = mock(Settings.class);
@@ -195,7 +204,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // The island owner needs to be checked
-        Mockito.verify(island, Mockito.times(2)).getOwner();
+        Mockito.verify(island).getOwner();
     }
     
     /**
@@ -209,7 +218,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-entering"));
         // No owner check
-        Mockito.verify(island, Mockito.times(2)).getOwner();
+        Mockito.verify(island).getOwner();
         Mockito.verify(island, Mockito.times(2)).getName();
     }
 
@@ -224,7 +233,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // The island owner needs to be checked
-        Mockito.verify(island, Mockito.times(2)).getOwner();
+        Mockito.verify(island).getOwner();
     }
     
     /**
@@ -238,7 +247,7 @@ public class EnterExitListenerTest {
         // Moving into the island should show a message
         Mockito.verify(lm).get(Mockito.any(), Mockito.eq("protection.flags.ENTER_EXIT_MESSAGES.now-leaving"));
         // No owner check
-        Mockito.verify(island, Mockito.times(2)).getOwner();
+        Mockito.verify(island).getOwner();
         Mockito.verify(island, Mockito.times(2)).getName();
     }
 
