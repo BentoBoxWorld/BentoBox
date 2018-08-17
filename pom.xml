@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
@@ -175,29 +176,27 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-shade-plugin</artifactId>
-				<version>3.1.1</version>
+				<version>3.1.0</version>
 				<configuration>
-					<minimizeJar>false</minimizeJar>
+					<minimizeJar>true</minimizeJar>
+					<relocations>
+						<relocation>
+							<pattern>org.bstats</pattern>
+							<shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
+						</relocation>
+					</relocations>
+					<artifactSet>
+                <excludes>
+                  <exclude>org.mongodb:*</exclude>
+                </excludes>
+              </artifactSet>
 				</configuration>
 				<executions>
 					<execution>
-						<configuration>
-							<phase>package</phase>
-							<goals>
-								<goal>shade</goal>
-							</goals>
-							<artifactSet>
-								<includes>
-									<include>org.bstats:bstats-bukkit</include>
-								</includes>
-							</artifactSet>
-							<relocations>
-								<relocation>
-									<pattern>org.bstats</pattern>
-									<shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
-								</relocation>
-							</relocations>
-						</configuration>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
 					</execution>
 				</executions>
 			</plugin>
