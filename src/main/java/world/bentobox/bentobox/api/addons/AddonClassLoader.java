@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -80,10 +81,14 @@ public class AddonClassLoader extends URLClassLoader {
         DefaultPermissions.registerPermission(perm, desc, pd);
     }
 
-    private AddonDescription asDescription(YamlConfiguration data){
-        return new AddonDescriptionBuilder(data.getString("name"))
+    private AddonDescription asDescription(YamlConfiguration data) {
+        AddonDescriptionBuilder adb = new AddonDescriptionBuilder(data.getString("name"))
                 .withVersion(data.getString("version"))
-                .withAuthor(data.getString("authors")).build();
+                .withAuthor(data.getString("authors"));
+        if (data.getString("depend") != null) {
+            adb.withDepend(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
+        }
+        return adb.build();
     }
 
 

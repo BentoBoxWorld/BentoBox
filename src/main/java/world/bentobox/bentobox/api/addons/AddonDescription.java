@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.addons;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -12,16 +13,18 @@ public final class AddonDescription {
     private String name;
     private String version;
     private String description;
-    private List<String> authors;
+    private List<String> authors = new ArrayList<>();
+    private List<String> depend = new ArrayList<>();
 
     public AddonDescription() {}
 
-    public AddonDescription(String main, String name, String version, String description, List<String> authors) {
+    public AddonDescription(String main, String name, String version, String description, List<String> authors, List<String> depend) {
         this.main = main;
         this.name = name;
         this.version = version;
         this.description = description;
         this.authors = authors;
+        this.depend = depend;
     }
 
     /**
@@ -57,6 +60,20 @@ public final class AddonDescription {
      */
     public void setAuthors(List<String> authors) {
         this.authors = authors;
+    }
+
+    /**
+     * @return the loadAfter
+     */
+    public List<String> getDependencies() {
+        return depend;
+    }
+
+    /**
+     * @param loadAfter the loadAfter to set
+     */
+    public void setLoadAfter(List<String> loadAfter) {
+        this.depend = loadAfter;
     }
 
     public String getName() {
@@ -100,6 +117,11 @@ public final class AddonDescription {
 
         public AddonDescriptionBuilder withVersion(String version){
             description.setVersion(version);
+            return this;
+        }
+
+        public AddonDescriptionBuilder withDepend(List<String> addons) {
+            description.setLoadAfter(addons);
             return this;
         }
 

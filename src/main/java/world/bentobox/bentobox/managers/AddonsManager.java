@@ -8,14 +8,18 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
@@ -29,7 +33,6 @@ import world.bentobox.bentobox.api.events.addon.AddonEvent;
  */
 public class AddonsManager {
 
-    private static final boolean DEBUG = false;
     private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
     private List<AddonClassLoader> loader;
@@ -40,21 +43,30 @@ public class AddonsManager {
         this.plugin = plugin;
         addons = new ArrayList<>();
         loader = new ArrayList<>();
+        loadAddonsFromFile();
     }
 
-    /**
-     * Loads all the addons from the addons folder
-     */
-    public void loadAddons() {
+    public void loadAddonsFromFile() {
         plugin.log("Loading addons...");
         File f = new File(plugin.getDataFolder(), "addons");
         if (!f.exists() && !f.mkdirs()) {
             plugin.logError("Cannot make addons folder!");
             return;
         }
-
         Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
-        addons.forEach(Addon::onLoad);
+        sortAddons();
+    }
+
+    /**
+     * Loads all the addons from the addons folder
+     */
+    public void loadAddons() {
+        // Run each onLoad
+        addons.forEach(addon -> {
+            addon.onLoad();
+            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+            plugin.log("Loading " + addon.getDescription().getName() + "...");
+        });
         plugin.log("Loaded " + addons.size() + " addons.");
     }
 
@@ -81,56 +93,48 @@ public class AddonsManager {
         return addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst();
     }
 
+    private YamlConfiguration addonDescription(JarFile jar) throws InvalidAddonFormatException, IOException, InvalidConfigurationException {
+        // Obtain the addon.yml file
+        JarEntry entry = jar.getJarEntry("addon.yml");
+        if (entry == null) {
+            throw new InvalidAddonFormatException("Addon '" + jar.getName() + "' doesn't contains addon.yml file");
+        }
+        // Open a reader to the jar
+        BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
+        // Grab the description in the addon.yml file
+        YamlConfiguration data = new YamlConfiguration();
+        data.load(reader);
+        return data;
+    }
+
     private void loadAddon(File f) {
-        try {
-            Addon addon;
-            // Check that this is a jar
-            if (!f.getName().endsWith(".jar")) {
-                throw new IOException("Filename must end in .jar. Name is '" + f.getName() + "'");
+        Addon addon;
+        try (JarFile jar = new JarFile(f)) {
+            // Get description in the addon.yml file
+            YamlConfiguration data = addonDescription(jar);
+            // Load the addon
+            AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+            // Add to the list of loaders
+            loader.add(addonClassLoader);
+
+            // Get the addon itself
+            addon = addonClassLoader.getAddon();
+            // Initialize some settings
+            addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
+            addon.setAddonFile(f);
+
+            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
+            // Obtain any locale files and save them
+            for (String localeFile : listJarYamlFiles(jar, LOCALE_FOLDER)) {
+                addon.saveResource(localeFile, localeDir, false, true);
             }
-            try (JarFile jar = new JarFile(f)) {
-                // Obtain the addon.yml file
-                JarEntry entry = jar.getJarEntry("addon.yml");
-                if (entry == null) {
-                    throw new InvalidAddonFormatException("Addon '" + f.getName() + "' doesn't contains addon.yml file");
-                }
-                // Open a reader to the jar
-                BufferedReader reader = new BufferedReader(new InputStreamReader(jar.getInputStream(entry)));
-                // Grab the description in the addon.yml file
-                YamlConfiguration data = new YamlConfiguration();
-                data.load(reader);
-                // Load the addon
-                AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
-                // Add to the list of loaders
-                loader.add(addonClassLoader);
-
-                // Get the addon itself
-                addon = addonClassLoader.getAddon();
-                // Initialize some settings
-                addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-                addon.setAddonFile(f);
-
-                File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
-                // Obtain any locale files and save them
-                for (String localeFile : listJarYamlFiles(jar, LOCALE_FOLDER)) {
-                    addon.saveResource(localeFile, localeDir, false, true);
-                }
-                plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
-                // Fire the load event
-                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-                // Add it to the list of addons
-                addons.add(addon);
-
-                // Inform the console
-                plugin.log("Loaded addon " + addon.getDescription().getName() + "...");
-            } catch (Exception e) {
-                plugin.log(e.getMessage());
-            }
-
+            plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
+            // Fire the load event
+            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+            // Add it to the list of addons
+            addons.add(addon);
         } catch (Exception e) {
-            if (DEBUG) {
-                plugin.log(f.getName() + " is not a jarfile, ignoring...");
-            }
+            plugin.log(e.getMessage());
         }
     }
 
@@ -211,5 +215,42 @@ public class AddonsManager {
 
         }
         return result;
+    }
+
+    private void sortAddons() {
+        Map<String,Addon> sortedAddons = new LinkedHashMap<>();
+        Map<Addon, List<String>> remaining = new HashMap<>();
+        // Start with nodes with no dependencies
+        addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty()).forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
+        // Fill remaining
+        addons.stream().filter(a -> !a.getDescription().getDependencies().isEmpty()).forEach(a -> remaining.put(a, a.getDescription().getDependencies()));
+        // Run through remaining addons
+        int index = 0;
+        while (index < 10 && !remaining.isEmpty()) {
+            index++;
+            Iterator<Entry<Addon, List<String>>> it = remaining.entrySet().iterator();
+            while (it.hasNext()) {
+                Entry<Addon, List<String>> a = it.next();
+                // If the dependent addon is loaded
+                List<String> deps = new ArrayList<>(a.getValue());
+                Iterator<String> depIt = deps.iterator();
+                while(depIt.hasNext()) {
+                    String dep = depIt.next();
+                    if (sortedAddons.containsKey(dep)) {
+                        depIt.remove();
+                    }
+                }
+                if (deps.isEmpty()) {
+                    // Add addons loaded
+                    sortedAddons.put(a.getKey().getDescription().getName(), a.getKey());
+                    it.remove();
+                }
+            }
+        }
+        if (index == 10) {
+            plugin.logError("Circular dependency reference when loading addons");
+        }
+        addons.clear();
+        sortedAddons.values().forEach(addons::add);
     }
 }
