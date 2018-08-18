@@ -14,17 +14,19 @@ public final class AddonDescription {
     private String version;
     private String description;
     private List<String> authors = new ArrayList<>();
-    private List<String> depend = new ArrayList<>();
+    private List<String> dependencies = new ArrayList<>();
+    private List<String> softDependencies = new ArrayList<>();
 
     public AddonDescription() {}
 
-    public AddonDescription(String main, String name, String version, String description, List<String> authors, List<String> depend) {
+    public AddonDescription(String main, String name, String version, String description, List<String> authors, List<String> dependencies, List<String> softDependencies) {
         this.main = main;
         this.name = name;
         this.version = version;
         this.description = description;
         this.authors = authors;
-        this.depend = depend;
+        this.dependencies = dependencies;
+        this.softDependencies = softDependencies;
     }
 
     /**
@@ -63,17 +65,31 @@ public final class AddonDescription {
     }
 
     /**
-     * @return the loadAfter
+     * @return the dependencies
      */
     public List<String> getDependencies() {
-        return depend;
+        return dependencies;
     }
 
     /**
-     * @param loadAfter the loadAfter to set
+     * @return the softDependencies
      */
-    public void setLoadAfter(List<String> loadAfter) {
-        this.depend = loadAfter;
+    public List<String> getSoftDependencies() {
+        return softDependencies;
+    }
+
+    /**
+     * @param dependencies the dependencies to set
+     */
+    public void setDependencies(List<String> dependencies) {
+        this.dependencies = dependencies;
+    }
+
+    /**
+     * @param softDependencies the softDependencies to set
+     */
+    public void setSoftDependencies(List<String> softDependencies) {
+        this.softDependencies = softDependencies;
     }
 
     public String getName() {
@@ -121,7 +137,12 @@ public final class AddonDescription {
         }
 
         public AddonDescriptionBuilder withDepend(List<String> addons) {
-            description.setLoadAfter(addons);
+            description.setDependencies(addons);
+            return this;
+        }
+
+        public AddonDescriptionBuilder withSoftDepend(List<String> addons) {
+            description.setSoftDependencies(addons);
             return this;
         }
 
@@ -130,4 +151,5 @@ public final class AddonDescription {
         }
 
     }
+
 }

@@ -88,6 +88,9 @@ public class AddonClassLoader extends URLClassLoader {
         if (data.getString("depend") != null) {
             adb.withDepend(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
         }
+        if (data.getString("softdepend") != null) {
+            adb.withSoftDepend(Arrays.asList(data.getString("softdepend").split("\\s*,\\s*")));
+        }
         return adb.build();
     }
 

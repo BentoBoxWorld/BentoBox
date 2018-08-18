@@ -12,11 +12,11 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -218,21 +218,38 @@ public class AddonsManager {
     }
 
     private void sortAddons() {
+        // Check that any dependencies exist
+        List<String> names = addons.stream().map(a -> a.getDescription().getName()).collect(Collectors.toList());
+        Iterator<Addon> ita = addons.iterator();
+        while (ita.hasNext()) {
+            Addon a = ita.next();
+            for (String dep : a.getDescription().getDependencies()) {
+                if (!names.contains(dep)) {
+                    plugin.logError(a.getDescription().getName() + " has dependency on " + dep + " that does not exist. Addon will not load!");
+                    ita.remove();
+                    break;
+                }
+            }
+        }
+        // Load dependencies or soft dependencies
         Map<String,Addon> sortedAddons = new LinkedHashMap<>();
-        Map<Addon, List<String>> remaining = new HashMap<>();
+        List<Addon> remaining = new ArrayList<>();
         // Start with nodes with no dependencies
-        addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty()).forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
+        addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty() && a.getDescription().getSoftDependencies().isEmpty())
+        .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
         // Fill remaining
-        addons.stream().filter(a -> !a.getDescription().getDependencies().isEmpty()).forEach(a -> remaining.put(a, a.getDescription().getDependencies()));
+        remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
+
         // Run through remaining addons
         int index = 0;
         while (index < 10 && !remaining.isEmpty()) {
             index++;
-            Iterator<Entry<Addon, List<String>>> it = remaining.entrySet().iterator();
+            Iterator<Addon> it = remaining.iterator();
             while (it.hasNext()) {
-                Entry<Addon, List<String>> a = it.next();
-                // If the dependent addon is loaded
-                List<String> deps = new ArrayList<>(a.getValue());
+                Addon a = it.next();
+                // Check if dependencies are loaded - make a list of all hard and soft deps
+                List<String> deps = new ArrayList<>(a.getDescription().getDependencies());
+                deps.addAll(a.getDescription().getSoftDependencies());
                 Iterator<String> depIt = deps.iterator();
                 while(depIt.hasNext()) {
                     String dep = depIt.next();
@@ -240,15 +257,12 @@ public class AddonsManager {
                         depIt.remove();
                     }
                 }
-                if (deps.isEmpty()) {
+                if (deps.stream().allMatch(s -> !a.getDescription().getDependencies().contains(s))) {
                     // Add addons loaded
-                    sortedAddons.put(a.getKey().getDescription().getName(), a.getKey());
+                    sortedAddons.put(a.getDescription().getName(), a);
                     it.remove();
                 }
             }
-        }
-        if (index == 10) {
-            plugin.logError("Circular dependency reference when loading addons");
         }
         addons.clear();
         sortedAddons.values().forEach(addons::add);
