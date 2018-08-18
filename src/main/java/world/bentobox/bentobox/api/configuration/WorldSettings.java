@@ -50,11 +50,6 @@ public interface WorldSettings {
     void setDifficulty(Difficulty difficulty);
 
     /**
-     * @return the entityLimits
-     */
-    Map<EntityType, Integer> getEntityLimits();
-
-    /**
      * @return the friendly name of the world. Used in player commands
      */
     String getFriendlyName();
@@ -134,11 +129,6 @@ public interface WorldSettings {
      * @return the seaHeight
      */
     int getSeaHeight();
-
-    /**
-     * @return the tileEntityLimits
-     */
-    Map<String, Integer> getTileEntityLimits();
 
     /**
      * @return visible settings for player

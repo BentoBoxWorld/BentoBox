@@ -186,13 +186,6 @@ public class IslandWorldManager {
     }
 
     /**
-     * @return the entityLimits
-     */
-    public Map<EntityType, Integer> getEntityLimits(World world) {
-        return worldSettings.get(Util.getWorld(world)).getEntityLimits();
-    }
-
-    /**
      * @return the islandDistance
      */
     public int getIslandDistance(World world) {
@@ -260,13 +253,6 @@ public class IslandWorldManager {
      */
     public int getSeaHeight(World world) {
         return worldSettings.get(Util.getWorld(world)).getSeaHeight();
-    }
-
-    /**
-     * @return the tileEntityLimits
-     */
-    public Map<String, Integer> getTileEntityLimits(World world) {
-        return worldSettings.get(Util.getWorld(world)).getTileEntityLimits();
     }
 
     /**
