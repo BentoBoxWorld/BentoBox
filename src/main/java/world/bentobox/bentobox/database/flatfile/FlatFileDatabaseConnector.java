@@ -90,9 +90,11 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
             tableFolder.mkdirs();
         }
         try {
-            // Make a backup of file
             File tmpFile = new File(tableFolder, fileName + ".bak");
-            Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            if (file.exists()) {
+                // Make a backup of file
+                Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+            }
             yamlConfig.save(file.toPath().toString());
             Files.deleteIfExists(tmpFile.toPath());
         } catch (Exception e) {
@@ -138,7 +140,7 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
             plugin.logError("Could not comment config file " + file.getName() + " " + e1.getMessage());
         }
     }
-    
+
     /**
      * This method is necessary because Windows has problems with Files.copy and file locking.
      * @param source - file
