@@ -8,6 +8,7 @@ import java.util.UUID;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminDeleteCommand extends ConfirmableCommand {
@@ -53,8 +54,28 @@ public class AdminDeleteCommand extends ConfirmableCommand {
     private void deletePlayer(User user, UUID targetUUID) {
         // Delete player and island
         user.sendMessage("commands.admin.delete.deleted-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
-        getIslands().deleteIsland(getIslands().getIsland(getWorld(), targetUUID), true);
-        getIslands().removePlayer(getWorld(), targetUUID);
+
+        // Get the target's island
+        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        if (oldIsland != null) {
+            // Check if player is online and on the island
+            User target = User.getInstance(targetUUID);
+            // Remove them from this island (it still exists and will be deleted later)
+            getIslands().removePlayer(getWorld(), targetUUID);
+            if (target.isOnline()) {
+                // Remove money inventory etc.
+                if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
+                    target.getPlayer().getEnderChest().clear();
+                }
+                if (getIWM().isOnLeaveResetInventory(getWorld())) {
+                    target.getPlayer().getInventory().clear();
+                }
+                if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
+                    // TODO: needs Vault
+                }
+            }
+            getIslands().deleteIsland(oldIsland, true);
+        }
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
         user.sendMessage("general.success");
     }

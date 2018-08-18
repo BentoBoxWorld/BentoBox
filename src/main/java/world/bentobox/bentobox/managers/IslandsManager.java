@@ -42,8 +42,6 @@ import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
  */
 public class IslandsManager {
 
-    private static final String SPAWNCOMMAND = "spawn";
-
     private BentoBox plugin;
 
     /**
@@ -250,12 +248,12 @@ public class IslandsManager {
         island.setOwner(null);
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
         if (removeBlocks) {
-            // Remove players from island
-            removePlayersFromIsland(island);
             // Remove island from the cache
             islandCache.deleteIslandFromCache(island);
             // Remove the island from the database
             handler.deleteObject(island);
+            // Remove players from island
+            removePlayersFromIsland(island);
             // Remove blocks from world
             new DeleteIslandChunks(plugin, island);
         }
@@ -623,7 +621,7 @@ public class IslandsManager {
 
     /**
      * Checks if an online player is in the protected area of their island, a team island or a
-     * coop island in the specific world in the arguments. Note that the user
+     * coop island in the specific world in the arguments.
      *
      * @param world - the world to check
      * @param user - the user
@@ -674,9 +672,9 @@ public class IslandsManager {
                         // go to island spawn
                         player.teleport(spawn.get(island.getWorld()).getSpawnPoint(island.getWorld().getEnvironment()));
                     } else {
-                        if (!player.performCommand(SPAWNCOMMAND)) {
-                            plugin.logWarning("During island deletion player " + player.getName() + " could not be sent to spawn so was dropped, sorry.");
-                        }
+                        plugin.logWarning("During island deletion player " + player.getName() + " could not be sent home so was placed into spectator mode.");
+                        player.setGameMode(GameMode.SPECTATOR);
+                        player.getPlayer().setFlying(true);
                     }
                 }
             }
