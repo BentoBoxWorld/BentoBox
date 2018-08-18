@@ -118,29 +118,6 @@ public class PlayersManager {
     }
 
     /**
-     * Stores the player's info and removes the player from the cache
-     *
-     * @param playerUUID - the player - UUID of player
-     *
-     */
-    public void removeOnlinePlayer(UUID playerUUID) {
-        save(playerUUID);
-        playerCache.remove(playerUUID);
-    }
-
-    /**
-     * Saves all players on the server and clears the cache
-     */
-    public void removeAllPlayers() {
-        playerCache.keySet().forEach(this::save);
-        playerCache.clear();
-    }
-
-    /*
-     * Player info query methods
-     */
-
-    /**
      * Checks if the player is known or not. Will check not just the cache but if the object is
      * in the database too.
      *

@@ -165,7 +165,8 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
             Method getUniqueId = dataObject.getMethod("getUniqueId");
             String uniqueId = (String) getUniqueId.invoke(instance);
-            preparedStatement.setString(1, uniqueId);
+            // UniqueId needs to be placed in quotes
+            preparedStatement.setString(1, "\"" + uniqueId + "\"");
             preparedStatement.execute();
         } catch (Exception e) {
             plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
@@ -180,10 +181,12 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 "` WHERE `uniqueId` = ?), 1, 0)";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-            preparedStatement.setString(1, uniqueId);
+            // UniqueId needs to be placed in quotes
+            preparedStatement.setString(1, "\"" + uniqueId + "\"");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    return resultSet.getBoolean(1);
+                    boolean result = resultSet.getBoolean(1);
+                    return result;
                 }
             }
         } catch (SQLException e) {

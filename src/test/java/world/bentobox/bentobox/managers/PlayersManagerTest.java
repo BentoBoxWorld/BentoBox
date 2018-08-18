@@ -85,7 +85,7 @@ public class PlayersManagerTest {
         when(end.getName()).thenReturn("world_the_end");
         when(iwm.inWorld(any())).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-        
+
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
@@ -220,42 +220,6 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#removeOnlinePlayer(java.util.UUID)}.
-     */
-    @Test
-    public void testRemoveOnlinePlayer() {
-        PlayersManager pm = new PlayersManager(plugin);
-        pm.setHandler(db);
-        // Unknown UUID
-        assertFalse(pm.isKnown(uuid));
-        // Remove it just to check this does not fail
-        pm.removeOnlinePlayer(uuid);
-        // Should still be unknown
-        assertFalse(pm.isKnown(uuid));
-        // Add the player
-        pm.addPlayer(uuid);
-        // Now should be known
-        assertTrue(pm.isKnown(uuid));
-        // Remove the player
-        pm.removeOnlinePlayer(uuid);
-        // There's no check possible to confirm right now.
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#removeAllPlayers()}.
-     */
-    @Test
-    public void testRemoveAllPlayers() {
-        PlayersManager pm = new PlayersManager(plugin);
-        pm.setHandler(db);
-
-        pm.addPlayer(uuid);
-        pm.addPlayer(notUUID);
-
-        pm.removeAllPlayers();
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#isKnown(java.util.UUID)}.
      */
     @Test
@@ -330,7 +294,7 @@ public class PlayersManagerTest {
         // Add a player to the cache
         pm.addPlayer(uuid);
         UUID uuidResult = pm.getUUID("tastybento");
-        assertEquals(uuid, uuidResult); 
+        assertEquals(uuid, uuidResult);
     }
 
     /**
@@ -343,7 +307,7 @@ public class PlayersManagerTest {
         // Add a player
         pm.addPlayer(uuid);
         assertEquals("tastybento", pm.getName(user.getUniqueId()));
-        pm.setPlayerName(user); 
+        pm.setPlayerName(user);
         assertEquals(user.getName(), pm.getName(user.getUniqueId()));
     }
 
@@ -357,7 +321,7 @@ public class PlayersManagerTest {
         // Add a player to the cache
         pm.addPlayer(uuid);
         // Unknown player should return null
-        assertNull(pm.getUUID("tastybento123")); 
+        assertNull(pm.getUUID("tastybento123"));
     }
 
     /**
