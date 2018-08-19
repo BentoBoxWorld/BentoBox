@@ -59,5 +59,6 @@ public class JoinLeaveListener implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
         players.save(event.getPlayer().getUniqueId());
+        User.removePlayer(event.getPlayer());
     }
 }
