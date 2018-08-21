@@ -238,9 +238,12 @@ public class Clipboard {
             if (config.getBoolean(ATTACHED)) {
                 plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, blockData));
             } else {
-
                 setBlock(island, block, config, blockData);
             }
+        }
+        // Entities
+        if (config.isConfigurationSection(ENTITY)) {
+            setEntity(island, block.getLocation(), config);
         }
     }
 
@@ -249,10 +252,6 @@ public class Clipboard {
         block.setBlockData(Bukkit.createBlockData(blockData));
         // Set the block state for chests, signs and mob spawners
         setBlockState(island, block, config);
-        // Set entities
-        if (config.isConfigurationSection(ENTITY)) {
-            setEntity(island, block.getLocation(), config);
-        }
     }
 
     /**
@@ -266,7 +265,7 @@ public class Clipboard {
         en.getKeys(false).forEach(k -> {
             ConfigurationSection ent = en.getConfigurationSection(k);
             Location center = location.add(new Vector(0.5, 0.0, 0.5));
-            LivingEntity e = (LivingEntity)island.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
+            LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
             if (e != null) {
                 e.setCustomName(ent.getString("name"));
             }
