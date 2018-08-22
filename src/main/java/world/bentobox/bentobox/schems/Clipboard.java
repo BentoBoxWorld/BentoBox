@@ -186,7 +186,11 @@ public class Clipboard {
         // Calculate location for pasting
         Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
         // Paste
-        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        if (blockConfig.contains(BLOCK)) {
+            blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        } else {
+            plugin.logError("Clipboard has no block data in it to paste!");
+        }
         // Run follow on task if it exists
         if (task != null) {
             Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
@@ -198,8 +202,11 @@ public class Clipboard {
      * @param location - location
      */
     public void pasteClipboard(Location location) {
-        blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
-
+        if (blockConfig.contains(BLOCK)) {
+            blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        } else {
+            plugin.logError("Clipboard has no block data in it to paste!");
+        }
     }
 
     private void writeSign(Island island, Block block, List<String> lines) {
