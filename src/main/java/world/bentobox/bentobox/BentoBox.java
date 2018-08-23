@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
+import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.NetherPortals;
 import world.bentobox.bentobox.listeners.ObsidianToLava;
@@ -156,6 +157,8 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
         manager.registerEvents(new BannedVisitorCommands(this), this);
+        // Death counter
+        manager.registerEvents(new DeathListener(this), this);
     }
 
     @Override
