@@ -38,7 +38,8 @@ public class CycleClick implements PanelItem.ClickHandler {
             return true;
         }
         String reqPerm = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".settings." + id;
-        if (!user.hasPermission(reqPerm)) {
+        String allPerms = plugin.getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".settings.*";
+        if (!user.hasPermission(reqPerm) && !user.hasPermission(allPerms)) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
