@@ -20,7 +20,7 @@ Welcome WarpSigns - an add-on that enables players to plant a warp sign
 
 Bentobox represents a turning point on ASkyBlock's history : Tastybento and Poslovitch thought up and designed this complete rewrite in order to provide a whole new way to play Skyblock and other island-style games.
 
-**Discover BSkyBlock todfay, its gameplay overhaul, and enjoy the Skyblock revival!**
+**Discover BSkyBlock today, its gameplay overhaul, and enjoy the Skyblock revival!**
 
 Bugs and Feature requests
 =========================
