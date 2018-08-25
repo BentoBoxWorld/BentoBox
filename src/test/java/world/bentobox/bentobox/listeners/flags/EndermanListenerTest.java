@@ -9,7 +9,6 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,7 +25,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Enderman;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
@@ -137,9 +135,6 @@ public class EndermanListenerTest {
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
         // Not allowed to start
         Flags.ENDERMAN_GRIEFING.setSetting(world, false);
-        // Allowed to start
-        Flags.ENDERMAN_DEATH_DROP.setSetting(world, true);
-
     }
 
 
@@ -195,68 +190,6 @@ public class EndermanListenerTest {
         EntityChangeBlockEvent e = new EntityChangeBlockEvent(enderman, to, block.createBlockData());
         listener.onEndermanGrief(e);
         assertTrue(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanDeath(org.bukkit.event.entity.EntityDeathEvent)}.
-     */
-    @Test
-    public void testOnNotEndermanDeath() {
-        EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(slime, new ArrayList<>());
-        listener.onEndermanDeath(e);
-        Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanDeath(org.bukkit.event.entity.EntityDeathEvent)}.
-     */
-    @Test
-    public void testOnEndermanDeathCarryAir() {
-        when(bd.getMaterial()).thenReturn(Material.AIR);
-        EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
-        listener.onEndermanDeath(e);
-        Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanDeath(org.bukkit.event.entity.EntityDeathEvent)}.
-     */
-    @Test
-    public void testOnEndermanDeathNotInWorld() {
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
-        EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
-        listener.onEndermanDeath(e);
-        Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanDeath(org.bukkit.event.entity.EntityDeathEvent)}.
-     */
-    @Test
-    public void testOnEndermanDeathNoFlag() {
-        Flags.ENDERMAN_DEATH_DROP.setSetting(world, false);
-        EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
-        listener.onEndermanDeath(e);
-        Mockito.verify(world, Mockito.never()).dropItemNaturally(Mockito.any(), Mockito.any());
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanDeath(org.bukkit.event.entity.EntityDeathEvent)}.
-     */
-    @Test
-    public void testOnEndermanDeath() {
-        EndermanListener listener = new EndermanListener();
-        EntityDeathEvent e = new EntityDeathEvent(enderman, new ArrayList<>());
-        listener.onEndermanDeath(e);
-        Mockito.verify(world).dropItemNaturally(Mockito.any(), Mockito.any());
-
     }
 
 }
