@@ -18,9 +18,9 @@ Admins can assemble the game or games how they like with a variety of add-ons. T
 * Challenges - an add-on that gives you challenges to accomplish
 * Welcome WarpSigns - an add-on that enables players to plant a warp sign
 
-Bentobox represents a turning point on ASkyBlock's history : Tastybento and Poslovitch thought and designed together this complete rewrite in order to provide a whole new way to play Skyblock.
+Bentobox represents a turning point on ASkyBlock's history : Tastybento and Poslovitch thought up and designed this complete rewrite in order to provide a whole new way to play Skyblock and other island-style games.
 
-**Discover today BSkyBlock, its gameplay overhaul, and enjoy the Skyblock revival!**
+**Discover BSkyBlock todfay, its gameplay overhaul, and enjoy the Skyblock revival!**
 
 Bugs and Feature requests
 =========================
@@ -28,7 +28,7 @@ File bug and feature requests here: https://github.com/BentoBoxWorld/bentobox/is
 
 Note for developers
 ===================
-This is an actively developed project but we are not currently accepting Pull Requests from non-collaborators. Once we have finished the main development, we'll be open to PR's.
+We consider Pull Requests from non-collaborators that contain actual code improvements or bug fixes. Do not submit PRs that only address code formatting because they will not be accepted.
 
 Development Builds
 ==================
@@ -49,7 +49,7 @@ Maven dependency:
   <dependency>
     <groupId>world.bentobox</groupId>
     <artifactId>bentobox</artifactId>
-    <version>FC-1</version>
+    <version>PUT-VERSION-HERE</version>
     <scope>provided</scope>
   </dependency>
 </dependencies>
