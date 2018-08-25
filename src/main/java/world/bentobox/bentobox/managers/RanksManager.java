@@ -72,6 +72,9 @@ public class RanksManager {
      */
     public boolean addRank(String reference, int value) {
         if (reference.equalsIgnoreCase(OWNER_RANK_REF)
+                || reference.equalsIgnoreCase(SUB_OWNER_RANK_REF)
+                || reference.equalsIgnoreCase(TRUSTED_RANK_REF)
+                || reference.equalsIgnoreCase(COOP_RANK_REF)
                 || reference.equalsIgnoreCase(MEMBER_RANK_REF)
                 || reference.equalsIgnoreCase(VISITOR_RANK_REF)
                 || reference.equalsIgnoreCase(BANNED_RANK_REF)
@@ -100,6 +103,9 @@ public class RanksManager {
      */
     public boolean removeRank(String reference) {
         return !reference.equalsIgnoreCase(OWNER_RANK_REF)
+                && !reference.equalsIgnoreCase(SUB_OWNER_RANK_REF)
+                && !reference.equalsIgnoreCase(TRUSTED_RANK_REF)
+                && !reference.equalsIgnoreCase(COOP_RANK_REF)
                 && !reference.equalsIgnoreCase(MEMBER_RANK_REF)
                 && !reference.equalsIgnoreCase(VISITOR_RANK_REF)
                 && !reference.equalsIgnoreCase(BANNED_RANK_REF)

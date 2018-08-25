@@ -1,8 +1,12 @@
 package world.bentobox.bentobox.listeners.flags;
 
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.AbstractFlagListener;
@@ -23,136 +27,8 @@ public class BlockInteractionListener extends AbstractFlagListener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
-        switch (e.getClickedBlock().getType()) {
-        case ANVIL:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ANVIL);
-            break;
-        case BEACON:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BEACON);
-            break;
-        case BLACK_BED:
-        case BLUE_BED:
-        case BROWN_BED:
-        case CYAN_BED:
-        case GRAY_BED:
-        case GREEN_BED:
-        case LIGHT_BLUE_BED:
-        case LIGHT_GRAY_BED:
-        case LIME_BED:
-        case MAGENTA_BED:
-        case ORANGE_BED:
-        case PINK_BED:
-        case PURPLE_BED:
-        case RED_BED:
-        case WHITE_BED:
-        case YELLOW_BED:
+        checkClickedBlock(e, e.getClickedBlock().getLocation(), e.getClickedBlock().getType());
 
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BED);
-            break;
-        case BREWING_STAND:
-        case CAULDRON:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREWING);
-            break;
-        case CHEST:
-        case CHEST_MINECART:
-        case TRAPPED_CHEST:
-        case BLACK_SHULKER_BOX:
-        case BLUE_SHULKER_BOX:
-        case BROWN_SHULKER_BOX:
-        case CYAN_SHULKER_BOX:
-        case GRAY_SHULKER_BOX:
-        case GREEN_SHULKER_BOX:
-        case LIGHT_BLUE_SHULKER_BOX:
-        case LIME_SHULKER_BOX:
-        case PINK_SHULKER_BOX:
-        case MAGENTA_SHULKER_BOX:
-        case ORANGE_SHULKER_BOX:
-        case PURPLE_SHULKER_BOX:
-        case RED_SHULKER_BOX:
-        case LIGHT_GRAY_SHULKER_BOX:
-        case WHITE_SHULKER_BOX:
-        case YELLOW_SHULKER_BOX:
-        case DISPENSER:
-        case DROPPER:
-        case HOPPER:
-        case HOPPER_MINECART:
-
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.CHEST);
-            break;
-
-        case ACACIA_DOOR:
-        case BIRCH_DOOR:
-        case DARK_OAK_DOOR:
-        case IRON_DOOR:
-        case JUNGLE_DOOR:
-        case SPRUCE_DOOR:
-        case OAK_DOOR:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.DOOR);
-            break;
-        case ACACIA_TRAPDOOR:
-        case BIRCH_TRAPDOOR:
-        case DARK_OAK_TRAPDOOR:
-        case OAK_TRAPDOOR:
-        case JUNGLE_TRAPDOOR:
-        case SPRUCE_TRAPDOOR:
-        case IRON_TRAPDOOR:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.TRAPDOOR);
-            break;
-        case ACACIA_FENCE_GATE:
-        case BIRCH_FENCE_GATE:
-        case DARK_OAK_FENCE_GATE:
-        case OAK_FENCE_GATE:
-        case JUNGLE_FENCE_GATE:
-        case SPRUCE_FENCE_GATE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.GATE);
-            break;
-
-        case FURNACE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.FURNACE);
-            break;
-        case ENCHANTING_TABLE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENCHANTING);
-            break;
-        case ENDER_CHEST:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENDER_CHEST);
-            break;
-        case JUKEBOX:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.JUKEBOX);
-            break;
-        case NOTE_BLOCK:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.NOTE_BLOCK);
-            break;
-        case CRAFTING_TABLE:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.CRAFTING);
-            break;
-        case STONE_BUTTON:
-        case ACACIA_BUTTON:
-        case BIRCH_BUTTON:
-        case DARK_OAK_BUTTON:
-        case JUNGLE_BUTTON:
-        case OAK_BUTTON:
-        case SPRUCE_BUTTON:
-
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BUTTON);
-            break;
-        case LEVER:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.LEVER);
-            break;
-        case REPEATER:
-        case COMPARATOR:
-        case DAYLIGHT_DETECTOR:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.REDSTONE);
-            break;
-        case DRAGON_EGG:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
-            break;
-        case END_PORTAL_FRAME:
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
-            break;
-        default:
-            break;
-
-        }
         // Now check for in-hand items
         if (e.getItem() != null) {
             switch (e.getItem().getType()) {
@@ -217,5 +93,150 @@ public class BlockInteractionListener extends AbstractFlagListener {
 
             }
         }
+    }
+    
+    /**
+     * Check if an action can occur on a clicked block
+     * @param e - event called
+     * @param loc - location of clicked block
+     * @param type - material type of clicked block
+     */
+    private void checkClickedBlock(Event e, Location loc, Material type) {
+        switch (type) {
+        case ANVIL:
+            checkIsland(e, loc, Flags.ANVIL);
+            break;
+        case BEACON:
+            checkIsland(e, loc, Flags.BEACON);
+            break;
+        case BLACK_BED:
+        case BLUE_BED:
+        case BROWN_BED:
+        case CYAN_BED:
+        case GRAY_BED:
+        case GREEN_BED:
+        case LIGHT_BLUE_BED:
+        case LIGHT_GRAY_BED:
+        case LIME_BED:
+        case MAGENTA_BED:
+        case ORANGE_BED:
+        case PINK_BED:
+        case PURPLE_BED:
+        case RED_BED:
+        case WHITE_BED:
+        case YELLOW_BED:
+            checkIsland(e, loc, Flags.BED);
+            break;
+        case BREWING_STAND:
+        case CAULDRON:
+            checkIsland(e, loc, Flags.BREWING);
+            break;
+        case CHEST:
+        case CHEST_MINECART:
+        case TRAPPED_CHEST:
+        case BLACK_SHULKER_BOX:
+        case BLUE_SHULKER_BOX:
+        case BROWN_SHULKER_BOX:
+        case CYAN_SHULKER_BOX:
+        case GRAY_SHULKER_BOX:
+        case GREEN_SHULKER_BOX:
+        case LIGHT_BLUE_SHULKER_BOX:
+        case LIME_SHULKER_BOX:
+        case PINK_SHULKER_BOX:
+        case MAGENTA_SHULKER_BOX:
+        case ORANGE_SHULKER_BOX:
+        case PURPLE_SHULKER_BOX:
+        case RED_SHULKER_BOX:
+        case LIGHT_GRAY_SHULKER_BOX:
+        case WHITE_SHULKER_BOX:
+        case YELLOW_SHULKER_BOX:
+        case DISPENSER:
+        case DROPPER:
+        case HOPPER:
+        case HOPPER_MINECART:
+            checkIsland(e, loc, Flags.CHEST);
+            break;
+        case ACACIA_DOOR:
+        case BIRCH_DOOR:
+        case DARK_OAK_DOOR:
+        case IRON_DOOR:
+        case JUNGLE_DOOR:
+        case SPRUCE_DOOR:
+        case OAK_DOOR:
+            checkIsland(e, loc, Flags.DOOR);
+            break;
+        case ACACIA_TRAPDOOR:
+        case BIRCH_TRAPDOOR:
+        case DARK_OAK_TRAPDOOR:
+        case OAK_TRAPDOOR:
+        case JUNGLE_TRAPDOOR:
+        case SPRUCE_TRAPDOOR:
+        case IRON_TRAPDOOR:
+            checkIsland(e, loc, Flags.TRAPDOOR);
+            break;
+        case ACACIA_FENCE_GATE:
+        case BIRCH_FENCE_GATE:
+        case DARK_OAK_FENCE_GATE:
+        case OAK_FENCE_GATE:
+        case JUNGLE_FENCE_GATE:
+        case SPRUCE_FENCE_GATE:
+            checkIsland(e, loc, Flags.GATE);
+            break;
+        case FURNACE:
+            checkIsland(e, loc, Flags.FURNACE);
+            break;
+        case ENCHANTING_TABLE:
+            checkIsland(e, loc, Flags.ENCHANTING);
+            break;
+        case ENDER_CHEST:
+            checkIsland(e, loc, Flags.ENDER_CHEST);
+            break;
+        case JUKEBOX:
+            checkIsland(e, loc, Flags.JUKEBOX);
+            break;
+        case NOTE_BLOCK:
+            checkIsland(e, loc, Flags.NOTE_BLOCK);
+            break;
+        case CRAFTING_TABLE:
+            checkIsland(e, loc, Flags.CRAFTING);
+            break;
+        case STONE_BUTTON:
+        case ACACIA_BUTTON:
+        case BIRCH_BUTTON:
+        case DARK_OAK_BUTTON:
+        case JUNGLE_BUTTON:
+        case OAK_BUTTON:
+        case SPRUCE_BUTTON:
+            checkIsland(e, loc, Flags.BUTTON);
+            break;
+        case LEVER:
+            checkIsland(e, loc, Flags.LEVER);
+            break;
+        case REPEATER:
+        case COMPARATOR:
+        case DAYLIGHT_DETECTOR:
+            checkIsland(e, loc, Flags.REDSTONE);
+            break;
+        case DRAGON_EGG:
+            checkIsland(e, loc, Flags.BREAK_BLOCKS);
+            break;
+        case END_PORTAL_FRAME:
+            checkIsland(e, loc, Flags.PLACE_BLOCKS);
+            break;
+        default:
+            break;
+
+        }
+        
+    }
+
+    /**
+     * Prevents blocks that are protected from being broken, which would bypass the protection
+     *
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent e) {
+        checkClickedBlock(e, e.getBlock().getLocation(), e.getBlock().getType());
     }
 }

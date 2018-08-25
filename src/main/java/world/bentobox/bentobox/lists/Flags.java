@@ -176,10 +176,6 @@ public class Flags {
             .listener(new EndermanListener())
             .build();
 
-    public static final Flag ENDERMAN_DEATH_DROP = new FlagBuilder().id("ENDERMAN_DEATH_DROP").icon(Material.END_ROD)
-            .allowedByDefault(true).type(Type.WORLD_SETTING)
-            .build();
-
     public static final Flag ENTER_EXIT_MESSAGES = new FlagBuilder().id("ENTER_EXIT_MESSAGES").icon(Material.DIRT).allowedByDefault(true).type(Type.WORLD_SETTING)
             .listener(new EnterExitListener())
             .build();

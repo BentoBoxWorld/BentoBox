@@ -55,7 +55,7 @@ public class RanksManagerTest {
      */
     @Test
     public void testRemoveRank() {
-        ranksManager.addRank("test.rank.reference2", 650);
+        assertTrue(ranksManager.addRank("test.rank.reference2", 650));
         assertTrue(ranksManager.removeRank("test.rank.reference2"));
         // Second time should fail
         assertFalse(ranksManager.removeRank("test.rank.reference2"));
