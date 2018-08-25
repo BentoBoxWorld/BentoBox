@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -141,6 +142,10 @@ public class NewIsland {
             if (island.getSpawnPoint(Environment.NORMAL) != null) {
                 plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
             }
+            // Stop the player from falling or moving if they are
+            user.getPlayer().setVelocity(new Vector(0,0,0));
+            user.getPlayer().setFallDistance(0F);
+            
             // Teleport player after this island is built
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
         });
