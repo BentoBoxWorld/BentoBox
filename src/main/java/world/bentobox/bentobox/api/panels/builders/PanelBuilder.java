@@ -70,14 +70,15 @@ public class PanelBuilder {
     }
 
     /**
-     * Get the next free slot number
+     * Get the next free slot number after the largest slot
      * @return next slot number, or -1 in case none has been found.
      */
     public int nextSlot() {
-        for (int i = 0 ; i < (size == 0 ? 54 : size) ; i++) {
-            if (!slotOccupied(i)) return i;
-        }
-        return -1;
+        return items.isEmpty() ? 0 : items.lastKey() + 1;
+        //for (int i = 0 ; i < (size == 0 ? 54 : size) ; i++) {
+        //    if (!slotOccupied(i)) return i;
+        //}
+        //return -1;
     }
 
     /**
