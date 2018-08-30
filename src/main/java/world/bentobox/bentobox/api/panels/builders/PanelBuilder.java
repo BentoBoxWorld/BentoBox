@@ -94,6 +94,7 @@ public class PanelBuilder {
      * @return Panel
      */
     public Panel build() {
-        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey()), user, listener);
+        // items.lastKey() is a slot position, so the panel size is this value + 1
+        return new Panel(name, items, Math.max(size, items.isEmpty() ? size : items.lastKey() + 1), user, listener);
     }
 }
