@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.addons;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -35,7 +36,7 @@ public class AddonClassLoader extends URLClassLoader {
             MalformedURLException,
             InvalidDescriptionException,
             InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         super(new URL[]{path.toURI().toURL()}, parent);
 
         loader = addonsManager;
@@ -58,7 +59,7 @@ public class AddonClassLoader extends URLClassLoader {
             throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
         }
 
-        addon = addonClass.newInstance();
+        addon = addonClass.getDeclaredConstructor().newInstance();
         addon.setDescription(asDescription(data));
         // Set permissions
         if (data.isConfigurationSection("permissions")) {

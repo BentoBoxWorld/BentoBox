@@ -49,7 +49,8 @@ public class Database<T> {
         try {
             result = handler.loadObjects();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | ClassNotFoundException | IntrospectionException e) {
+                | InvocationTargetException | ClassNotFoundException | IntrospectionException
+                | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load objects from database! Error: " + e.getMessage());
         }
         return result;
@@ -65,7 +66,7 @@ public class Database<T> {
         try {
             result = handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | ClassNotFoundException | IntrospectionException e) {
+                | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load object from database! " + e.getMessage());
         }
         return result;

@@ -41,7 +41,8 @@ public class Config<T> {
         try {
             result = handler.loadObjects();
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException
-                | InvocationTargetException | ClassNotFoundException | IntrospectionException e) {
+                | InvocationTargetException | ClassNotFoundException | IntrospectionException
+                | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load config! Error: " + e.getMessage());
         }
         return result;
@@ -56,7 +57,7 @@ public class Config<T> {
         try {
             return handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | ClassNotFoundException | IntrospectionException e) {
+                | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load config object! " + e.getMessage());
         }
 

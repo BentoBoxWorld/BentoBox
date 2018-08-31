@@ -72,7 +72,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
     @Override
-    public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException {
         // Objects are loaded from a folder named after the simple name of the class being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         // This path and key can be overridden by the StoreAt annotation in the code
@@ -97,7 +97,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObjects()
      */
     @Override
-    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException {
         // In this case, all the objects of a specific type are being loaded.
         List<T> list = new ArrayList<>();
         // Look for any files that end in .yml in the folder
@@ -135,10 +135,13 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param config - YAML config file
      *
      * @return <T> filled with values
+     * @throws SecurityException
+     * @throws NoSuchMethodException
+     * @throws IllegalArgumentException
      */
-    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException {
+    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException, IllegalArgumentException, NoSuchMethodException, SecurityException {
         // Create a new instance of the dataObject of type T (which can be any class)
-        T instance = dataObject.newInstance();
+        T instance = dataObject.getDeclaredConstructor().newInstance();
 
         // Run through all the fields in the object
         for (Field field : dataObject.getDeclaredFields()) {
@@ -167,7 +170,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Get the original value to be stored
                 Object value = config.get(storageLocation);
                 // Invoke the deserialization on this value
-                method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).deserialize(value));
+                method.invoke(instance, ((AdapterInterface<?,?>)adapterNotation.value().getDeclaredConstructor().newInstance()).deserialize(value));
                 // We are done here. If a custom adapter was defined, the rest of this method does not need to be run
                 continue;
             }
@@ -354,8 +357,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
                 // A conversion adapter has been defined
                 try {
-                    config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().newInstance()).serialize(value));
-                } catch (InstantiationException e) {
+                    config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().getDeclaredConstructor().newInstance()).serialize(value));
+                } catch (InstantiationException | IllegalArgumentException | NoSuchMethodException | SecurityException e) {
                     plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                 }
                 // We are done here
