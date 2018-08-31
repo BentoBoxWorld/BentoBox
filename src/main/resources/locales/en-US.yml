@@ -15,7 +15,7 @@ general:
   success: "&aSuccess!"
   errors:
     command-cancelled: "&cCommand cancelled"
-    no-permission: "&cYou don't have the permission to execute this command (&7[permission])&c."
+    no-permission: "&cYou don't have the permission to execute this command (&7[permission]&c)."
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
     no-island: "&cYou do not have an island!"
