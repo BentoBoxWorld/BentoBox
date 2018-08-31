@@ -21,7 +21,7 @@ public class Flag implements Comparable<Flag> {
     public enum Type {
         PROTECTION(Material.SHIELD),
         SETTING(Material.COMMAND_BLOCK),
-        WORLD_SETTING(Material.GRASS);
+        WORLD_SETTING(Material.GRASS_BLOCK);
 
         private Material icon;
 
