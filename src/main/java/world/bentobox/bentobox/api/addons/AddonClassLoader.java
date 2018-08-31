@@ -113,20 +113,24 @@ public class AddonClassLoader extends URLClassLoader {
         if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
+        Class<?> result = classes.get(name);
+        if (result == null) {
+            if (checkGlobal) {
+                result = loader.getClassByName(name);
+            }
 
-        Class<?> result = classes.computeIfAbsent(name, k -> {
-            if (checkGlobal && loader.getClassByName(name) != null) {
-                return loader.getClassByName(name);
-            } else {
+            if (result == null) {
                 try {
-                    return super.findClass(name);
+                    result = super.findClass(name);
                 } catch (ClassNotFoundException e) {
-                    return null;
+                    result = null;
+                }
+                if (result != null) {
+                    loader.setClass(name, result);
+
                 }
             }
-        });
-        if (result != null) {
-            loader.setClass(name, result);
+            classes.put(name, result);
         }
         return result;
     }

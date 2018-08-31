@@ -130,11 +130,12 @@ public class BentoBox extends JavaPlugin {
             instance.log("#############################################");
 
             // Load metrics
+            /*
             if (settings.isMetrics()) {
                 BStats bStats = new BStats(this);
                 bStats.registerMetrics();
             }
-
+             */
             // Fire plugin ready event
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
         });
