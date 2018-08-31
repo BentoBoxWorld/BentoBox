@@ -47,7 +47,9 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.reject.you-rejected-invite");
 
             User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
-            inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName());
+            if (inviter != null) {
+                inviter.sendMessage("commands.island.team.invite.reject.name-rejected-your-invite", TextVariables.NAME, user.getName());
+            }
         } else {
             // Someone typed /island reject and had not been invited
             // TODO: make the error nicer if there are invites in other worlds
