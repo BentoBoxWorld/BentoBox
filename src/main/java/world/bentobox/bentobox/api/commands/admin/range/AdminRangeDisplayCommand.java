@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Particle;
 import org.bukkit.entity.Player;
@@ -18,11 +19,16 @@ import world.bentobox.bentobox.api.user.User;
  */
 public class AdminRangeDisplayCommand extends CompositeCommand {
 
+    // Command aliases
     private static final String DISPLAY = "display";
+    private static final String SHOW = "show";
+    private static final String HIDE = "hide";
+
+    // Map of users to which ranges must be displayed
     private Map<User, Integer> display = new HashMap<>();
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
-        super(parent, DISPLAY, "show", "hide");
+        super(parent, DISPLAY, SHOW, HIDE);
     }
 
     @Override
@@ -42,10 +48,10 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         if (!display.containsKey(user)) {
             switch (label) {
             case DISPLAY:
-            case "show":
+            case SHOW:
                 showZones(user);
                 break;
-            case "hide":
+            case HIDE:
                 user.sendMessage("commands.admin.range.display.already-off");
                 break;
             default:
@@ -55,10 +61,10 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         } else {
             switch (label) {
             case DISPLAY:
-            case "hide":
+            case HIDE:
                 hideZones(user);
                 break;
-            case "show":
+            case SHOW:
                 user.sendMessage("commands.admin.range.display.already-on");
                 break;
             default:
@@ -80,15 +86,15 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
             getIslands().getIslandAt(user.getLocation()).ifPresent(island -> {
                 // Draw the island protected area
-                drawZone(user.getPlayer(), Particle.BARRIER, island.getCenter(), island.getProtectionRange());
+                drawZone(user.getPlayer(), Particle.BARRIER, null, island.getCenter(), island.getProtectionRange());
 
                 // Draw the default protected area if island protected zone is different
                 if (island.getProtectionRange() != getPlugin().getIWM().getIslandProtectionRange(getWorld())) {
-                    drawZone(user.getPlayer(), Particle.VILLAGER_HAPPY, island.getCenter(), getPlugin().getIWM().getIslandProtectionRange(getWorld()));
+                    drawZone(user.getPlayer(), Particle.VILLAGER_HAPPY, null, island.getCenter(), getPlugin().getIWM().getIslandProtectionRange(getWorld()));
                 }
 
                 // Draw the island area
-                drawZone(user.getPlayer(), Particle.TOWN_AURA, island.getCenter(), island.getRange());
+                drawZone(user.getPlayer(), Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F),island.getCenter(), island.getRange());
             });
         }, 20, 30));
     }
@@ -99,25 +105,34 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         display.remove(user);
     }
 
-    private void drawZone(Player player, Particle particle, Location center, int range) {
+    private void drawZone(Player player, Particle particle, Particle.DustOptions dustOptions, Location center, int range) {
+        if (particle.equals(Particle.REDSTONE) && dustOptions == null) {
+            // Security check that will avoid later unexpected exceptions.
+            throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE.");
+        }
+
         // Get player Y coordinate
         int playerY = player.getLocation().getBlockY() + 1;
 
         // Draw 3 "stages" (one line below, at and above player's y coordinate)
         for (int stage = -1 ; stage <= 1 ; stage++) {
             for (int i = -range ; i <= range ; i++) {
-                spawnParticle(player, particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() + range);
-                spawnParticle(player, particle, center.getBlockX() + i, playerY + stage, center.getBlockZ() - range);
-                spawnParticle(player, particle, center.getBlockX() + range, playerY + stage, center.getBlockZ() + i);
-                spawnParticle(player, particle, center.getBlockX() - range, playerY + stage, center.getBlockZ() + i);
+                spawnParticle(player, particle, dustOptions, center.getBlockX() + i, playerY + stage, center.getBlockZ() + range);
+                spawnParticle(player, particle, dustOptions, center.getBlockX() + i, playerY + stage, center.getBlockZ() - range);
+                spawnParticle(player, particle, dustOptions, center.getBlockX() + range, playerY + stage, center.getBlockZ() + i);
+                spawnParticle(player, particle, dustOptions, center.getBlockX() - range, playerY + stage, center.getBlockZ() + i);
             }
         }
     }
 
-    private void spawnParticle(Player player, Particle particle, int x, int y, int z) {
+    private void spawnParticle(Player player, Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
         // Check if this particle is beyond the viewing distance of the server
         if (player.getLocation().toVector().distanceSquared(new Vector(x,y,z)) < (Bukkit.getServer().getViewDistance()*256*Bukkit.getServer().getViewDistance())) {
-            player.spawnParticle(particle, x, y, z, 1);
+            if (particle.equals(Particle.REDSTONE)) {
+                player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
+            } else {
+                player.spawnParticle(particle, x, y, z, 1);
+            }
         }
     }
 }

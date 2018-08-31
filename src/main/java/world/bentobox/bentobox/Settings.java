@@ -33,12 +33,6 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "general.metrics")
     private boolean metrics = true;
 
-    @ConfigComment("Check for updates - this will tell Ops and the console if there is a new")
-    @ConfigComment("version available. It contacts dev.bukkit.org to request the latest version")
-    @ConfigComment("info. It does not download the latest version or change any files")
-    @ConfigEntry(path = "general.check-updates")
-    private boolean checkUpdates = true;
-
     @ConfigComment("Default language for new players.")
     @ConfigComment("This is the filename in the locale folder without .yml.")
     @ConfigComment("If this does not exist, the default en-US will be used.")
@@ -177,13 +171,6 @@ public class Settings implements DataObject {
     }
 
     /**
-     * @return the checkUpdates
-     */
-    public boolean isCheckUpdates() {
-        return checkUpdates;
-    }
-
-    /**
      * @return the defaultLanguage
      */
     public String getDefaultLanguage() {
@@ -308,13 +295,6 @@ public class Settings implements DataObject {
      */
     public void setMetrics(boolean metrics) {
         this.metrics = metrics;
-    }
-
-    /**
-     * @param checkUpdates the checkUpdates to set
-     */
-    public void setCheckUpdates(boolean checkUpdates) {
-        this.checkUpdates = checkUpdates;
     }
 
     /**

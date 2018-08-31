@@ -85,9 +85,6 @@ public class BentoBox extends JavaPlugin {
         // Start head getter
         headGetter = new HeadGetter(this);
 
-        // Load metrics
-        BStats bStats = new BStats(this);
-
         // Load Notifier
         notifier = new Notifier();
 
@@ -132,8 +129,11 @@ public class BentoBox extends JavaPlugin {
             instance.log("- Tastybento and Poslovitch, 2017-2018");
             instance.log("#############################################");
 
-            // Register metrics
-            bStats.registerMetrics();
+            // Load metrics
+            if (settings.isMetrics()) {
+                BStats bStats = new BStats(this);
+                bStats.registerMetrics();
+            }
 
             // Fire plugin ready event
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
