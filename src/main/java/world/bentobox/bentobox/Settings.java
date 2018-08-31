@@ -49,17 +49,6 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "general.starting-money")
     private double startingMoney = 10.0;
 
-    // Purge
-    @ConfigComment("Only islands below this level will be removed if they are abandoned and admins issue the purge command")
-    @ConfigEntry(path = "general.purge.max-island-level")
-    private int purgeMaxIslandLevel = 50;
-
-    @ConfigComment("Remove user data when its island gets purged.")
-    @ConfigComment("Helps a lot to avoid huge backups and can save some performance on startup,")
-    @ConfigComment("but the player settings and data will be reset.")
-    @ConfigEntry(path = "general.purge.remove-user-data")
-    private boolean purgeRemoveUserData = false;
-
     // Database
     @ConfigComment("FLATFILE, MYSQL, MONGO")
     @ConfigComment("if you use MONGO, you must also run the BSBMongo plugin (not addon)")
@@ -68,20 +57,20 @@ public class Settings implements DataObject {
     private DatabaseType databaseType = DatabaseType.FLATFILE;
 
     @ConfigEntry(path = "general.database.host")
-    private String dbHost = "localhost";
+    private String databaseHost = "localhost";
 
     @ConfigComment("Port 3306 is MySQL's default. Port 27017 is MongoDB's default.")
     @ConfigEntry(path = "general.database.port")
-    private int dbPort = 3306;
+    private int databasePort = 3306;
 
     @ConfigEntry(path = "general.database.name")
-    private String dbName = "bentobox";
+    private String databaseName = "bentobox";
 
     @ConfigEntry(path = "general.database.username")
-    private String dbUsername = "username";
+    private String databaseUsername = "username";
 
     @ConfigEntry(path = "general.database.password")
-    private String dbPassword = "password";
+    private String databasePassword = "password";
 
     @ConfigComment("How often the data will be saved to file in mins. Default is 5 minutes.")
     @ConfigComment("This helps prevent issues if the server crashes.")
@@ -100,10 +89,6 @@ public class Settings implements DataObject {
     @ConfigComment("island unnecessarily.")
     @ConfigEntry(path = "general.allow-obsidian-scooping")
     private boolean allowObsidianScooping = true;
-
-    @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset")
-    @ConfigEntry(path = "general.confirmation-time")
-    private int confirmationTime = 20;
     
     @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
     @ConfigEntry(path = "general.rank-command")
@@ -115,45 +100,43 @@ public class Settings implements DataObject {
     /*
      * Island
      */
-    // Invites
+    // Cooldowns
     @ConfigComment("How long a player must wait until they can rejoin a team island after being")
     @ConfigComment("kicked in minutes. This slows the effectiveness of players repeating challenges")
     @ConfigComment("by repetitively being invited to a team island.")
-    @ConfigEntry(path = "island.invite-wait")
-    private int inviteWait = 60;
+    @ConfigEntry(path = "island.cooldown.invite")
+    private int inviteCooldown = 60;
+
+    @ConfigComment("How long a player must wait until they can ban a player")
+    @ConfigComment("after unbanning them. In minutes.")
+    @ConfigEntry(path = "island.cooldown.ban")
+    private int banCooldown = 10;
+
+    @ConfigComment("How long a player must wait before they can reset their island again in seconds.")
+    @ConfigEntry(path = "island.cooldown.reset")
+    private int resetCooldown = 300;
 
     // Timeout for team kick and leave commands
+    @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset")
+    @ConfigEntry(path = "island.confirmation.time")
+    private int confirmationTime = 10;
+
     @ConfigComment("Ask the player to confirm the command he is using by typing it again.")
     @ConfigComment("The 'wait' value is the number of seconds to wait for confirmation.")
-    @ConfigEntry(path = "island.require-confirmation.kick")
+    @ConfigEntry(path = "island.confirmation.commands.kick")
     private boolean kickConfirmation = true;
 
-    @ConfigEntry(path = "island.require-confirmation.kick-wait")
-    private int kickWait = 10;
-
-    @ConfigEntry(path = "island.require-confirmation.leave")
+    @ConfigEntry(path = "island.confirmation.commands.leave")
     private boolean leaveConfirmation = true;
 
-    @ConfigEntry(path = "island.require-confirmation.leave-wait")
-    private int leaveWait = 10;
-
-    @ConfigEntry(path = "island.require-confirmation.reset")
+    @ConfigEntry(path = "island.confirmation.commands.reset")
     private boolean resetConfirmation = true;
-
-    @ConfigComment("How long a player must wait before they can reset their island again in seconds")
-    @ConfigEntry(path = "island.reset-wait")
-    private int resetWait = 300;
 
     @ConfigComment("These set the minimum and maximum size of a name.")
     @ConfigEntry(path = "island.name.min-length")
     private int nameMinLength = 4;
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
-
-    @ConfigComment("How long a player must wait until they can ban a player")
-    @ConfigComment("after unbanning them. In minutes.")
-    @ConfigEntry(path = "island.ban-wait")
-    private int banWait = 10;
 
     // Ranks
     @ConfigEntry(path = "island.customranks")
@@ -163,123 +146,216 @@ public class Settings implements DataObject {
     @ConfigComment("These settings should not be edited")
     private String uniqueId = "config";
 
-    /**
-     * @return the metrics
-     */
+    //---------------------------------------------------------------------------------------/
+    // Getters and setters
+
+
     public boolean isMetrics() {
         return metrics;
     }
 
-    /**
-     * @return the defaultLanguage
-     */
+    public void setMetrics(boolean metrics) {
+        this.metrics = metrics;
+    }
+
     public String getDefaultLanguage() {
         return defaultLanguage;
     }
 
-    /**
-     * @return the useEconomy
-     */
+    public void setDefaultLanguage(String defaultLanguage) {
+        this.defaultLanguage = defaultLanguage;
+    }
+
     public boolean isUseEconomy() {
         return useEconomy;
     }
 
-    /**
-     * @return the startingMoney
-     */
+    public void setUseEconomy(boolean useEconomy) {
+        this.useEconomy = useEconomy;
+    }
+
     public double getStartingMoney() {
         return startingMoney;
     }
 
-    /**
-     * @return the purgeMaxIslandLevel
-     */
-    public int getPurgeMaxIslandLevel() {
-        return purgeMaxIslandLevel;
+    public void setStartingMoney(double startingMoney) {
+        this.startingMoney = startingMoney;
     }
 
-    /**
-     * @return the purgeRemoveUserData
-     */
-    public boolean isPurgeRemoveUserData() {
-        return purgeRemoveUserData;
-    }
-
-    /**
-     * @return the databaseType
-     */
     public DatabaseType getDatabaseType() {
         return databaseType;
     }
 
-    /**
-     * @return the dbHost
-     */
-    public String getDbHost() {
-        return dbHost;
+    public void setDatabaseType(DatabaseType databaseType) {
+        this.databaseType = databaseType;
     }
 
-    /**
-     * @return the dbPort
-     */
-    public int getDbPort() {
-        return dbPort;
+    public String getDatabaseHost() {
+        return databaseHost;
     }
 
-    /**
-     * @return the dbName
-     */
-    public String getDbName() {
-        return dbName;
+    public void setDatabaseHost(String databaseHost) {
+        this.databaseHost = databaseHost;
     }
 
-    /**
-     * @return the dbUsername
-     */
-    public String getDbUsername() {
-        return dbUsername;
+    public int getDatabasePort() {
+        return databasePort;
     }
 
-    /**
-     * @return the dbPassword
-     */
-    public String getDbPassword() {
-        return dbPassword;
+    public void setDatabasePort(int databasePort) {
+        this.databasePort = databasePort;
     }
 
-    /**
-     * @return the databaseBackupPeriod
-     */
+    public String getDatabaseName() {
+        return databaseName;
+    }
+
+    public void setDatabaseName(String databaseName) {
+        this.databaseName = databaseName;
+    }
+
+    public String getDatabaseUsername() {
+        return databaseUsername;
+    }
+
+    public void setDatabaseUsername(String databaseUsername) {
+        this.databaseUsername = databaseUsername;
+    }
+
+    public String getDatabasePassword() {
+        return databasePassword;
+    }
+
+    public void setDatabasePassword(String databasePassword) {
+        this.databasePassword = databasePassword;
+    }
+
     public int getDatabaseBackupPeriod() {
         return databaseBackupPeriod;
     }
 
-    /**
-     * @return the fakePlayers
-     */
+    public void setDatabaseBackupPeriod(int databaseBackupPeriod) {
+        this.databaseBackupPeriod = databaseBackupPeriod;
+    }
+
     public Set<String> getFakePlayers() {
         return fakePlayers;
     }
 
-    /**
-     * @return the allowObsidianScooping
-     */
+    public void setFakePlayers(Set<String> fakePlayers) {
+        this.fakePlayers = fakePlayers;
+    }
+
     public boolean isAllowObsidianScooping() {
         return allowObsidianScooping;
     }
 
-    /**
-     * @return the confirmationTime
-     */
+    public void setAllowObsidianScooping(boolean allowObsidianScooping) {
+        this.allowObsidianScooping = allowObsidianScooping;
+    }
+
+    public Map<String, Integer> getRankCommand() {
+        return rankCommand;
+    }
+
+    public int getRankCommand(String command) {
+        return rankCommand.getOrDefault(command, RanksManager.OWNER_RANK);
+    }
+
+    public void setRankCommand(String command, int rank) {
+        rankCommand.put(command, rank);
+    }
+
+    public void setRankCommand(Map<String, Integer> rankCommand) {
+        this.rankCommand = rankCommand;
+    }
+
+    public boolean isClosePanelOnClickOutside() {
+        return closePanelOnClickOutside;
+    }
+
+    public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
+        this.closePanelOnClickOutside = closePanelOnClickOutside;
+    }
+
+    public int getInviteCooldown() {
+        return inviteCooldown;
+    }
+
+    public void setInviteCooldown(int inviteCooldown) {
+        this.inviteCooldown = inviteCooldown;
+    }
+
+    public int getBanCooldown() {
+        return banCooldown;
+    }
+
+    public void setBanCooldown(int banCooldown) {
+        this.banCooldown = banCooldown;
+    }
+
+    public int getResetCooldown() {
+        return resetCooldown;
+    }
+
+    public void setResetCooldown(int resetCooldown) {
+        this.resetCooldown = resetCooldown;
+    }
+
     public int getConfirmationTime() {
         return confirmationTime;
     }
 
-    /**
-     * @return the closePanelOnClickOutside
-     */
-    public boolean isClosePanelOnClickOutside() {
-        return closePanelOnClickOutside;
+    public void setConfirmationTime(int confirmationTime) {
+        this.confirmationTime = confirmationTime;
+    }
+
+    public boolean isKickConfirmation() {
+        return kickConfirmation;
+    }
+
+    public void setKickConfirmation(boolean kickConfirmation) {
+        this.kickConfirmation = kickConfirmation;
+    }
+
+    public boolean isLeaveConfirmation() {
+        return leaveConfirmation;
+    }
+
+    public void setLeaveConfirmation(boolean leaveConfirmation) {
+        this.leaveConfirmation = leaveConfirmation;
+    }
+
+    public boolean isResetConfirmation() {
+        return resetConfirmation;
+    }
+
+    public void setResetConfirmation(boolean resetConfirmation) {
+        this.resetConfirmation = resetConfirmation;
+    }
+
+    public int getNameMinLength() {
+        return nameMinLength;
+    }
+
+    public void setNameMinLength(int nameMinLength) {
+        this.nameMinLength = nameMinLength;
+    }
+
+    public int getNameMaxLength() {
+        return nameMaxLength;
+    }
+
+    public void setNameMaxLength(int nameMaxLength) {
+        this.nameMaxLength = nameMaxLength;
+    }
+
+    public Map<String, Integer> getCustomRanks() {
+        return customRanks;
+    }
+
+    public void setCustomRanks(Map<String, Integer> customRanks) {
+        this.customRanks = customRanks;
     }
 
     /**
@@ -291,308 +367,11 @@ public class Settings implements DataObject {
     }
 
     /**
-     * @param metrics the metrics to set
-     */
-    public void setMetrics(boolean metrics) {
-        this.metrics = metrics;
-    }
-
-    /**
-     * @param defaultLanguage the defaultLanguage to set
-     */
-    public void setDefaultLanguage(String defaultLanguage) {
-        this.defaultLanguage = defaultLanguage;
-    }
-
-    /**
-     * @param useEconomy the useEconomy to set
-     */
-    public void setUseEconomy(boolean useEconomy) {
-        this.useEconomy = useEconomy;
-    }
-
-    /**
-     * @param startingMoney the startingMoney to set
-     */
-    public void setStartingMoney(double startingMoney) {
-        this.startingMoney = startingMoney;
-    }
-
-    /**
-     * @param purgeMaxIslandLevel the purgeMaxIslandLevel to set
-     */
-    public void setPurgeMaxIslandLevel(int purgeMaxIslandLevel) {
-        this.purgeMaxIslandLevel = purgeMaxIslandLevel;
-    }
-
-    /**
-     * @param purgeRemoveUserData the purgeRemoveUserData to set
-     */
-    public void setPurgeRemoveUserData(boolean purgeRemoveUserData) {
-        this.purgeRemoveUserData = purgeRemoveUserData;
-    }
-
-    /**
-     * @param databaseType the databaseType to set
-     */
-    public void setDatabaseType(DatabaseType databaseType) {
-        this.databaseType = databaseType;
-    }
-
-    /**
-     * @param dbHost the dbHost to set
-     */
-    public void setDbHost(String dbHost) {
-        this.dbHost = dbHost;
-    }
-
-    /**
-     * @param dbPort the dbPort to set
-     */
-    public void setDbPort(int dbPort) {
-        this.dbPort = dbPort;
-    }
-
-    /**
-     * @param dbName the dbName to set
-     */
-    public void setDbName(String dbName) {
-        this.dbName = dbName;
-    }
-
-    /**
-     * @param dbUsername the dbUsername to set
-     */
-    public void setDbUsername(String dbUsername) {
-        this.dbUsername = dbUsername;
-    }
-
-    /**
-     * @param dbPassword the dbPassword to set
-     */
-    public void setDbPassword(String dbPassword) {
-        this.dbPassword = dbPassword;
-    }
-
-    /**
-     * @param databaseBackupPeriod the databaseBackupPeriod to set
-     */
-    public void setDatabaseBackupPeriod(int databaseBackupPeriod) {
-        this.databaseBackupPeriod = databaseBackupPeriod;
-    }
-
-    /**
-     * @param fakePlayers the fakePlayers to set
-     */
-    public void setFakePlayers(Set<String> fakePlayers) {
-        this.fakePlayers = fakePlayers;
-    }
-
-    /**
-     * @param allowObsidianScooping the allowObsidianScooping to set
-     */
-    public void setAllowObsidianScooping(boolean allowObsidianScooping) {
-        this.allowObsidianScooping = allowObsidianScooping;
-    }
-
-    /**
-     * @param confirmationTime the confirmationTime to set
-     */
-    public void setConfirmationTime(int confirmationTime) {
-        this.confirmationTime = confirmationTime;
-    }
-
-    /**
-     * @param closePanelOnClickOutside the closePanelOnClickOutside to set
-     */
-    public void setClosePanelOnClickOutside(boolean closePanelOnClickOutside) {
-        this.closePanelOnClickOutside = closePanelOnClickOutside;
-    }
-
-    /**
      * @param uniqueId the uniqueId to set
      */
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
-    }
-
-    /**
-     * @return the customRanks
-     */
-    public Map<String, Integer> getCustomRanks() {
-        return customRanks;
-    }
-
-    /**
-     * @param customRanks the customRanks to set
-     */
-    public void setCustomRanks(Map<String, Integer> customRanks) {
-        this.customRanks = customRanks;
-    }
-
-    /**
-     * @return the inviteWait
-     */
-    public int getInviteWait() {
-        return inviteWait;
-    }
-
-    /**
-     * @param inviteWait the inviteWait to set
-     */
-    public void setInviteWait(int inviteWait) {
-        this.inviteWait = inviteWait;
-    }
-
-    /**
-     * @return the kickConfirmation
-     */
-    public boolean isKickConfirmation() {
-        return kickConfirmation;
-    }
-
-    /**
-     * @return the kickWait
-     */
-    public int getKickWait() {
-        return kickWait;
-    }
-
-    /**
-     * @return the leaveConfirmation
-     */
-    public boolean isLeaveConfirmation() {
-        return leaveConfirmation;
-    }
-
-    /**
-     * @return the leaveWait
-     */
-    public int getLeaveWait() {
-        return leaveWait;
-    }
-
-    /**
-     * @param kickConfirmation the kickConfirmation to set
-     */
-    public void setKickConfirmation(boolean kickConfirmation) {
-        this.kickConfirmation = kickConfirmation;
-    }
-
-    /**
-     * @param kickWait the kickWait to set
-     */
-    public void setKickWait(int kickWait) {
-        this.kickWait = kickWait;
-    }
-
-    /**
-     * @param leaveConfirmation the leaveConfirmation to set
-     */
-    public void setLeaveConfirmation(boolean leaveConfirmation) {
-        this.leaveConfirmation = leaveConfirmation;
-    }
-
-    /**
-     * @param leaveWait the leaveWait to set
-     */
-    public void setLeaveWait(int leaveWait) {
-        this.leaveWait = leaveWait;
-    }
-
-    /**
-     * @return the resetWait
-     */
-    public int getResetWait() {
-        return resetWait;
-    }
-
-    /**
-     * @param resetWait the resetWait to set
-     */
-    public void setResetWait(int resetWait) {
-        this.resetWait = resetWait;
-    }
-
-    /**
-     * @return the resetConfirmation
-     */
-    public boolean isResetConfirmation() {
-        return resetConfirmation;
-    }
-
-    /**
-     * @param resetConfirmation the resetConfirmation to set
-     */
-    public void setResetConfirmation(boolean resetConfirmation) {
-        this.resetConfirmation = resetConfirmation;
-    }
-
-    /**
-     * @return the nameMinLength
-     */
-    public int getNameMinLength() {
-        return nameMinLength;
-    }
-
-    /**
-     * @return the nameMaxLength
-     */
-    public int getNameMaxLength() {
-        return nameMaxLength;
-    }
-
-    /**
-     * @param nameMinLength the nameMinLength to set
-     */
-    public void setNameMinLength(int nameMinLength) {
-        this.nameMinLength = nameMinLength;
-    }
-
-    /**
-     * @param nameMaxLength the nameMaxLength to set
-     */
-    public void setNameMaxLength(int nameMaxLength) {
-        this.nameMaxLength = nameMaxLength;
-    }
-
-    /**
-     * @return the banWait
-     */
-    public int getBanWait() {
-        return banWait;
-    }
-
-    /**
-     * @param banWait the banWait to set
-     */
-    public void setBanWait(int banWait) {
-        this.banWait = banWait;
-    }
-
-    public int getRankCommand(String command) {
-        return rankCommand.getOrDefault(command, RanksManager.OWNER_RANK);
-        
-    }
-
-    public void setRankCommand(String command, int rank) {
-        rankCommand.put(command, rank);
-        
-    }
-
-    /**
-     * @return the rankCommand
-     */
-    public Map<String, Integer> getRankCommand() {
-        return rankCommand;
-    }
-
-    /**
-     * @param rankCommand the rankCommand to set
-     */
-    public void setRankCommand(Map<String, Integer> rankCommand) {
-        this.rankCommand = rankCommand;
     }
 
 }

@@ -275,7 +275,7 @@ public class IslandTeamKickCommandTest {
     @Test
     public void testCooldown() {
         // 10 minutes = 600 seconds
-        when(s.getInviteWait()).thenReturn(10);
+        when(s.getInviteCooldown()).thenReturn(10);
         testExecuteNoConfirmation();
         Mockito.verify(subCommand).setCooldown(uuid, notUUID, 600);
     }

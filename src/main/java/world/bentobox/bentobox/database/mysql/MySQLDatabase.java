@@ -15,11 +15,11 @@ public class MySQLDatabase implements DatabaseSetup {
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
         BentoBox plugin = BentoBox.getInstance();
         return new MySQLDatabaseHandler<>(plugin, type, new MySQLDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDbHost(),
-                plugin.getSettings().getDbPort(),
-                plugin.getSettings().getDbName(),
-                plugin.getSettings().getDbUsername(),
-                plugin.getSettings().getDbPassword()
+                plugin.getSettings().getDatabaseHost(),
+                plugin.getSettings().getDatabasePort(),
+                plugin.getSettings().getDatabaseName(),
+                plugin.getSettings().getDatabaseUsername(),
+                plugin.getSettings().getDatabasePassword()
                 )));
     }
 

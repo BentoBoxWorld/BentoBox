@@ -67,7 +67,7 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false;
         }
-        if (getSettings().getBanWait() > 0 && checkCooldown(user, targetUUID)) {
+        if (getSettings().getBanCooldown() > 0 && checkCooldown(user, targetUUID)) {
             return false;
         }
         User target = User.getInstance(targetUUID);

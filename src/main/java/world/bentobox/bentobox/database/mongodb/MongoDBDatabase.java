@@ -18,11 +18,11 @@ public class MongoDBDatabase implements DatabaseSetup {
             return null;
         }
         return new MongoDBDatabaseHandler<>(plugin, type, new MongoDBDatabaseConnector(new DatabaseConnectionSettingsImpl(
-                plugin.getSettings().getDbHost(),
-                plugin.getSettings().getDbPort(),
-                plugin.getSettings().getDbName(),
-                plugin.getSettings().getDbUsername(),
-                plugin.getSettings().getDbPassword()
+                plugin.getSettings().getDatabaseHost(),
+                plugin.getSettings().getDatabasePort(),
+                plugin.getSettings().getDatabaseName(),
+                plugin.getSettings().getDatabaseUsername(),
+                plugin.getSettings().getDatabasePassword()
                 )));
     }
 

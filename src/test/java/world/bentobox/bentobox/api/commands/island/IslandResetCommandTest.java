@@ -70,7 +70,7 @@ public class IslandResetCommandTest {
 
         // Settings
         s = mock(Settings.class);
-        when(s.getResetWait()).thenReturn(0);
+        when(s.getResetCooldown()).thenReturn(0);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player

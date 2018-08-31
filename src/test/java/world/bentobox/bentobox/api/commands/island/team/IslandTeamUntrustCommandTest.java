@@ -209,7 +209,7 @@ public class IslandTeamUntrustCommandTest {
     @Test
     public void testExecuteCoolDownActive() {
         // 10 minutes = 600 seconds
-        when(s.getInviteWait()).thenReturn(10);
+        when(s.getInviteCooldown()).thenReturn(10);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         String[] name = {"tastybento"};
         itl.execute(user, itl.getLabel(), Arrays.asList(name));

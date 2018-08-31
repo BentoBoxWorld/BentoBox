@@ -66,7 +66,7 @@ public class IslandTeamLeaveCommandTest {
 
         // Settings
         s = mock(Settings.class);
-        when(s.getResetWait()).thenReturn(0);
+        when(s.getResetCooldown()).thenReturn(0);
         when(plugin.getSettings()).thenReturn(s);
 
         // Player
@@ -149,7 +149,7 @@ public class IslandTeamLeaveCommandTest {
     public void testExecuteWithConfirmation() {
         when(s.isLeaveConfirmation()).thenReturn(true);
         // 3 second timeout
-        when(s.getLeaveWait()).thenReturn(3);
+        when(s.getConfirmationTime()).thenReturn(3);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team leader - null
@@ -158,7 +158,7 @@ public class IslandTeamLeaveCommandTest {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Confirmation required
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.confirmation.confirm"), Mockito.eq("[seconds]"), Mockito.eq("0"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.confirmation.confirm"), Mockito.eq("[seconds]"), Mockito.eq("3"));
     }
 
     /**

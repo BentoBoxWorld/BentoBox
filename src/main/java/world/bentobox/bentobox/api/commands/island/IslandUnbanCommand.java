@@ -69,9 +69,9 @@ public class IslandUnbanCommand extends CompositeCommand {
             user.sendMessage("general.success");
             targetUser.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
             // Set cooldown
-            if (getSettings().getBanWait() > 0 && getParent() != null) {
+            if (getSettings().getBanCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("ban").ifPresent(subCommand ->
-                subCommand.setCooldown(user.getUniqueId(), targetUser.getUniqueId(), getSettings().getBanWait() * 60));
+                subCommand.setCooldown(user.getUniqueId(), targetUser.getUniqueId(), getSettings().getBanCooldown() * 60));
             }
             return true;
         }

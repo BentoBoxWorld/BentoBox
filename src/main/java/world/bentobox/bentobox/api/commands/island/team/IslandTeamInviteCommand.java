@@ -76,7 +76,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                 return false;
             }
             // Check cool down
-            if (getSettings().getInviteWait() > 0 && checkCooldown(user, invitedPlayerUUID)) {
+            if (getSettings().getInviteCooldown() > 0 && checkCooldown(user, invitedPlayerUUID)) {
                 return false;
             }
             // Player cannot invite someone already on a team

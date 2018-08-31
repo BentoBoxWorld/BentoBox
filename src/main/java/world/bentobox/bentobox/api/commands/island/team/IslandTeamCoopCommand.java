@@ -54,7 +54,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        return (getSettings().getInviteWait() <= 0 || !checkCooldown(user, targetUUID)) && coopCmd(user, targetUUID);
+        return (getSettings().getInviteCooldown() <= 0 || !checkCooldown(user, targetUUID)) && coopCmd(user, targetUUID);
     }
 
     private boolean coopCmd(User user, UUID targetUUID) {
