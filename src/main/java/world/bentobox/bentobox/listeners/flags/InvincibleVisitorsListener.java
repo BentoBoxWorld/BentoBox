@@ -42,8 +42,7 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
         }
         String reqPerm = getIWM().getPermissionPrefix(Util.getWorld(user.getWorld())) + ".admin.settings.INVINCIBLE_VISITORS";
         if (!user.hasPermission(reqPerm)) {
-            user.sendMessage("general.errors.no-permission");
-            user.sendMessage("general.errors.you-need", "[permission]", reqPerm);
+            user.sendMessage("general.errors.no-permission", "[permission]", reqPerm);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
             return true;
         }
@@ -76,7 +75,6 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
         // Make panel items
         Arrays.stream(EntityDamageEvent.DamageCause.values()).forEach(c -> pb.item(getPanelItem(c, user)));
         pb.build();
-
     }
 
     private PanelItem getPanelItem(DamageCause c, User user) {
@@ -116,8 +114,5 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
             getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeTeleportBuilder(getPlugin()).entity(p).island(i).build());
         }
     }
-
-
-
 }
 
