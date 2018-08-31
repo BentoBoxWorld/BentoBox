@@ -25,7 +25,7 @@ public class ConfigHandler<T> extends FlatFileDatabaseHandler<T> {
         saveObject(instance);
     }
 
-    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException {
+    public T loadSettings(String uniqueId, T dbConfig) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException {
         if (dbConfig == null) {
             return loadObject(uniqueId);
         }

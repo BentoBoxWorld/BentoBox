@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.addons;
 
 import java.io.File;
+import java.lang.reflect.InvocationTargetException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
@@ -35,7 +36,7 @@ public class AddonClassLoader extends URLClassLoader {
             MalformedURLException,
             InvalidDescriptionException,
             InstantiationException,
-            IllegalAccessException {
+            IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
         super(new URL[]{path.toURI().toURL()}, parent);
 
         loader = addonsManager;
@@ -58,7 +59,7 @@ public class AddonClassLoader extends URLClassLoader {
             throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
         }
 
-        addon = addonClass.newInstance();
+        addon = addonClass.getDeclaredConstructor().newInstance();
         addon.setDescription(asDescription(data));
         // Set permissions
         if (data.isConfigurationSection("permissions")) {
@@ -113,20 +114,24 @@ public class AddonClassLoader extends URLClassLoader {
         if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
+        Class<?> result = classes.get(name);
+        if (result == null) {
+            if (checkGlobal) {
+                result = loader.getClassByName(name);
+            }
 
-        Class<?> result = classes.computeIfAbsent(name, k -> {
-            if (checkGlobal && loader.getClassByName(name) != null) {
-                return loader.getClassByName(name);
-            } else {
+            if (result == null) {
                 try {
-                    return super.findClass(name);
+                    result = super.findClass(name);
                 } catch (ClassNotFoundException e) {
-                    return null;
+                    result = null;
+                }
+                if (result != null) {
+                    loader.setClass(name, result);
+
                 }
             }
-        });
-        if (result != null) {
-            loader.setClass(name, result);
+            classes.put(name, result);
         }
         return result;
     }
