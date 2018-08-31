@@ -5,9 +5,11 @@ package world.bentobox.bentobox.listeners.flags;
 
 import java.util.Optional;
 
+import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerMoveEvent;
+import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -28,15 +30,24 @@ public class EnterExitListener extends AbstractFlagListener {
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onMove(PlayerMoveEvent e) {
+        handleEnterExitNotification(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    public void onTeleport(PlayerTeleportEvent e) {
+        handleEnterExitNotification(User.getInstance(e.getPlayer()), e.getFrom(), e.getTo());
+    }
+
+    private void handleEnterExitNotification(User user, Location from, Location to) {
         // Only process if Enter Exit flags are active, we are in the right world and there is a change in X or Z coords
-        if (!getIWM().inWorld(e.getFrom())
-                || e.getFrom().toVector().multiply(XZ).equals(e.getTo().toVector().multiply(XZ))
-                || !Flags.ENTER_EXIT_MESSAGES.isSetForWorld(e.getFrom().getWorld())) {
+        if (!getIWM().inWorld(from)
+                || from.toVector().multiply(XZ).equals(to.toVector().multiply(XZ))
+                || !Flags.ENTER_EXIT_MESSAGES.isSetForWorld(from.getWorld())) {
             return;
         }
 
-        Optional<Island> from = getIslands().getProtectedIslandAt(e.getFrom());
-        Optional<Island> to = getIslands().getProtectedIslandAt(e.getTo());
+        Optional<Island> islandFrom = getIslands().getProtectedIslandAt(from);
+        Optional<Island> islandTo = getIslands().getProtectedIslandAt(to);
 
         /*
          * Options:
@@ -51,9 +62,7 @@ public class EnterExitListener extends AbstractFlagListener {
             return;
         }
 
-        User user = User.getInstance(e.getPlayer());
-
-        from.ifPresent(i -> {
+        islandFrom.ifPresent(i -> {
             // Fire the IslandExitEvent
             new IslandEvent.IslandEventBuilder()
                     .island(i)
@@ -74,7 +83,7 @@ public class EnterExitListener extends AbstractFlagListener {
             }
         });
 
-        to.ifPresent(i -> {
+        islandTo.ifPresent(i -> {
             // Fire the IslandEnterEvent
             new IslandEvent.IslandEventBuilder()
                     .island(i)
