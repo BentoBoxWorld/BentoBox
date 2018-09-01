@@ -40,7 +40,8 @@ public class Notifier {
         try {
             Notification lastNotification = notificationCache.get(user);
             long now = System.currentTimeMillis();
-            if (now >= lastNotification.getTime() + NOTIFICATION_DELAY * 1000 || !message.equals(lastNotification.getMessage())) {
+
+            if (now >= lastNotification.getTime() + (NOTIFICATION_DELAY * 1000) || !message.equals(lastNotification.getMessage())) {
                 notificationCache.put(user, new Notification(message, now));
                 user.sendRawMessage(message);
                 return true;
@@ -51,11 +52,11 @@ public class Notifier {
         }
     }
 
-    public class Notification {
+    private class Notification {
         private final String message;
         private final long time;
 
-        public Notification(String message, long time) {
+        private Notification(String message, long time) {
             this.message = message;
             this.time = time;
         }
