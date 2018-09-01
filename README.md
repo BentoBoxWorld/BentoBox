@@ -43,7 +43,7 @@ https://github.com/BentoBoxWorld/bentobox/releases
 
 Development Builds
 ==================
-**These development builds are not eligible to any kind of support. Use them at your own discretion or only under our approval.**
+**These development builds are not eligible to any kind of support. Use them at your own discretion or only under our approval.** *Most of them are __untested__. In the worst cases, they can even __corrupt your worlds and/or your databases__.*
 
 Jenkins: https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/
 
