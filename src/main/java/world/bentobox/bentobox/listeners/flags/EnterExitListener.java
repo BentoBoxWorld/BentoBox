@@ -58,7 +58,7 @@ public class EnterExitListener extends AbstractFlagListener {
          * from = empty, to = empty
          * from = island, to = island
          */
-        if (from.equals(to)) {
+        if (islandFrom.equals(islandTo)) {
             return;
         }
 
