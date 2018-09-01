@@ -32,9 +32,11 @@ public class Panel implements HeadRequester {
         }
         // Create panel
         if (size > 0) {
-            // Make sure size is a multiple of 9
+            // Make sure size is a multiple of 9 and is 54 max.
             size = size + 8;
             size -= (size % 9);
+            if (size > 54) size = 54;
+
             inventory = Bukkit.createInventory(null, size, name);
             // Fill the inventory and return
             for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
