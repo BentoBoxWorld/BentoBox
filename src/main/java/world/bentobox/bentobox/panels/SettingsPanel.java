@@ -67,7 +67,7 @@ public class SettingsPanel {
 
         for (int i = 0; i < 9; i++) {
             if (!panelBuilder.slotOccupied(i)) {
-                panelBuilder.item(new PanelItemBuilder().icon(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name("").build());
+                panelBuilder.item(i, new PanelItemBuilder().icon(Material.LIGHT_GRAY_STAINED_GLASS_PANE).name(" ").build());
             }
         }
     }
