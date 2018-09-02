@@ -122,7 +122,7 @@ public class PlayersManager {
      * in the database too.
      *
      * @param uniqueID - unique ID
-     * @return true if player is know, otherwise false
+     * @return true if player is known, otherwise false
      */
     public boolean isKnown(UUID uniqueID) {
         return uniqueID != null && (playerCache.containsKey(uniqueID) || handler.objectExists(uniqueID.toString()));
