@@ -58,7 +58,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player");
             return false;
         }
-        return (getSettings().getInviteCooldown() <= 0 || !checkCooldown(user, targetUUID)) && trustCmd(user, targetUUID);
+        return (getSettings().getTrustCooldown() <= 0 || !checkCooldown(user, targetUUID)) && trustCmd(user, targetUUID);
     }
 
     private boolean trustCmd(User user, UUID targetUUID) {

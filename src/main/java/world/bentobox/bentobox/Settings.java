@@ -107,6 +107,14 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.cooldown.invite")
     private int inviteCooldown = 60;
 
+    @ConfigComment("How long a player must wait until they can coop a player in minutes.")
+    @ConfigEntry(path = "island.cooldown.coop")
+    private int coopCooldown = 5;
+
+    @ConfigComment("How long a player must wait until they can trust a player in minutes.")
+    @ConfigEntry(path = "island.cooldown.trust")
+    private int trustCooldown = 5;
+
     @ConfigComment("How long a player must wait until they can ban a player")
     @ConfigComment("after unbanning them. In minutes.")
     @ConfigEntry(path = "island.cooldown.ban")
@@ -284,6 +292,22 @@ public class Settings implements DataObject {
 
     public void setInviteCooldown(int inviteCooldown) {
         this.inviteCooldown = inviteCooldown;
+    }
+
+    public int getCoopCooldown() {
+        return coopCooldown;
+    }
+
+    public void setCoopCooldown(int coopCooldown) {
+        this.coopCooldown = coopCooldown;
+    }
+
+    public int getTrustCooldown() {
+        return trustCooldown;
+    }
+
+    public void setTrustCooldown(int trustCooldown) {
+        this.trustCooldown = trustCooldown;
     }
 
     public int getBanCooldown() {
