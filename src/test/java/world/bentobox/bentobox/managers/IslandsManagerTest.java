@@ -78,6 +78,7 @@ public class IslandsManagerTest {
     private IslandWorldManager iwm;
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
+    private Island is;
 
     /**
      * @throws java.lang.Exception
@@ -163,7 +164,7 @@ public class IslandsManagerTest {
 
         // Mock island cache
         islandCache = mock(IslandCache.class);
-        Island is = mock(Island.class);
+        is = mock(Island.class);
         when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
         optionalIsland = Optional.ofNullable(is);
 
@@ -704,26 +705,30 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for .
+     * Test method for user is on island
      * @throws Exception
      */
     @Test
     public void testUserIsOnIsland() throws Exception {
-        // Mock island cache
-        Island is = mock(Island.class);
-
-        when(islandCache.get(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
-
         IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
 
+        // Null user
         assertFalse(im.userIsOnIsland(world, null));
 
-        when(is.onIsland(Mockito.any())).thenReturn(false);
+
+        // User is on island is determined by whether the user's location is on
+        // an island that has them as a memebr (rank > 0)
+        when(is.onIsland(Mockito.any())).thenReturn(true);
+        Map<UUID, Integer> members = new HashMap<>();
+        when(is.getMembers()).thenReturn(members);
         assertFalse(im.userIsOnIsland(world, user));
 
-        when(is.onIsland(Mockito.any())).thenReturn(true);
+        members.put(user.getUniqueId(), RanksManager.MEMBER_RANK);
         assertTrue(im.userIsOnIsland(world, user));
+
+        members.put(user.getUniqueId(), RanksManager.BANNED_RANK);
+        assertFalse(im.userIsOnIsland(world, user));
     }
 
     /**

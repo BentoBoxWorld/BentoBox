@@ -64,6 +64,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -91,6 +92,7 @@ public class PVPListenerTest {
     private Zombie zombie;
     private Creeper creeper;
     private World world;
+    private Notifier notifier;
 
     /**
      * @throws java.lang.Exception
@@ -100,6 +102,8 @@ public class PVPListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        // Make sure you set the plung for the User class otherwise it'll use an old object
+        User.setPlugin(plugin);
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(Mockito.any())).thenReturn(true);
@@ -184,6 +188,10 @@ public class PVPListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
+
+        // Notifier
+        notifier = mock(Notifier.class);
+        when(plugin.getNotifier()).thenReturn(notifier);
     }
 
     /**
@@ -199,7 +207,7 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         assertFalse(e.isCancelled());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
@@ -387,7 +395,6 @@ public class PVPListenerTest {
      */
     @Test
     public void testOnEntityDamagePVPNotAllowed() {
-
         // No visitor protection
         EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
                 new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
@@ -395,7 +402,18 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         // PVP should be banned
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
+
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     */
+    @Test
+    public void testOnEntityDamagePVPNotAllowedInvVisitor() {
+        EntityDamageByEntityEvent e = new EntityDamageByEntityEvent(player, player2, EntityDamageEvent.DamageCause.ENTITY_ATTACK,
+                new EnumMap<>(ImmutableMap.of(DamageModifier.BASE, 0D)),
+                new EnumMap<DamageModifier, Function<? super Double, Double>>(ImmutableMap.of(DamageModifier.BASE, Functions.constant(-0.0))));
 
         // Enable visitor protection
         // This player is a visitor and any damage is not allowed
@@ -404,7 +422,7 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         // visitor should be protected
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
     }
 
     /**
@@ -429,7 +447,7 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         // visitor should be protected
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
 
     }
 
@@ -447,7 +465,7 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         // PVP should be banned
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
 
         // Visitor protection
         // This player is a visitor and any damage is not allowed
@@ -457,10 +475,10 @@ public class PVPListenerTest {
         // visitor should be protected
         assertTrue(e.isCancelled());
         // PVP trumps visitor protection
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
 
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
@@ -502,7 +520,7 @@ public class PVPListenerTest {
         new PVPListener().onEntityDamage(e);
         // visitor should be protected
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
 
     }
 
@@ -525,7 +543,7 @@ public class PVPListenerTest {
 
         // PVP should be banned
         assertTrue(pfe.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
         // Hook should be removed
         Mockito.verify(hook).remove();
 
@@ -571,7 +589,7 @@ public class PVPListenerTest {
         new PVPListener().onFishing(pfe);
         // visitor should be protected
         assertTrue(pfe.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
     }
 
     /**
@@ -607,7 +625,7 @@ public class PVPListenerTest {
         new PVPListener().onFishing(pfe);
         // visitor should be protected
         assertTrue(pfe.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
     }
 
     /**
@@ -659,7 +677,7 @@ public class PVPListenerTest {
         PotionSplashEvent e = new PotionSplashEvent(tp, map);
         new PVPListener().onSplashPotionSplash(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
 
         // Wrong world
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
@@ -667,7 +685,7 @@ public class PVPListenerTest {
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
@@ -742,7 +760,7 @@ public class PVPListenerTest {
         new PVPListener().onSplashPotionSplash(e);
         // visitor should be protected
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
 
         // Wrong world
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
@@ -813,14 +831,14 @@ public class PVPListenerTest {
         listener.onLingeringPotionDamage(ae);
         assertEquals(3, ae.getAffectedEntities().size());
         assertFalse(ae.getAffectedEntities().contains(player2));
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
         // Wrong world
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
         listener.onLingeringPotionSplash(e);
         // No change to results
         assertEquals(3, ae.getAffectedEntities().size());
         assertFalse(ae.getAffectedEntities().contains(player2));
-        Mockito.verify(player).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.PVP_OVERWORLD.getHintReference()));
     }
 
     /**
@@ -888,13 +906,13 @@ public class PVPListenerTest {
         listener.onLingeringPotionDamage(ae);
         assertEquals(3, ae.getAffectedEntities().size());
         assertFalse(ae.getAffectedEntities().contains(player2));
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
         // Wrong world
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
         listener.onLingeringPotionSplash(e);
         assertEquals(3, ae.getAffectedEntities().size());
         assertFalse(ae.getAffectedEntities().contains(player2));
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
     }
 
     /**
@@ -928,12 +946,12 @@ public class PVPListenerTest {
         listener.onLingeringPotionDamage(ae);
         assertEquals(3, ae.getAffectedEntities().size());
         assertFalse(ae.getAffectedEntities().contains(player2));
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
         // Wrong world
         when(iwm.inWorld(Mockito.any())).thenReturn(false);
         listener.onLingeringPotionSplash(e);
         assertEquals(3, ae.getAffectedEntities().size());
         assertFalse(ae.getAffectedEntities().contains(player2));
-        Mockito.verify(player).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq(Flags.INVINCIBLE_VISITORS.getHintReference()));
     }
 }
