@@ -190,6 +190,7 @@ public class Island implements DataObject {
     }
 
     /**
+     * Members > MEMBER_RANK
      * @return the members of the island (owner included)
      */
     public ImmutableSet<UUID> getMemberSet(){
@@ -605,14 +606,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (plugin.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     plugin.getServer().getOfflinePlayer(owner).getLastPlayed() : plugin.getServer().getOfflinePlayer(owner).getFirstPlayed();
-            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-            // Show team members
-            showMembers(plugin, user, world);
+                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+                    // Show team members
+                    showMembers(plugin, user, world);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));

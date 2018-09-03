@@ -50,9 +50,9 @@ public class PVPListener extends AbstractFlagListener {
             // Protect visitors
             if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && protectedVisitor((Player)e.getEntity())) {
                 if (e.getDamager() instanceof Player) {
-                    User.getInstance(e.getDamager()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                    User.getInstance(e.getDamager()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 } else if (e.getDamager() instanceof Projectile && ((Projectile)e.getDamager()).getShooter() instanceof Player) {
-                    User.getInstance((Player)((Projectile)e.getDamager()).getShooter()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                    User.getInstance((Player)((Projectile)e.getDamager()).getShooter()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 }
                 e.setCancelled(true);
             } else {
@@ -73,7 +73,7 @@ public class PVPListener extends AbstractFlagListener {
         if (damager instanceof Player) {
             User user = User.getInstance(damager);
             if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
-                user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                user.notify(Flags.PVP_OVERWORLD.getHintReference());
                 e.setCancelled(true);
             }
         } else if (damager instanceof Projectile) {
@@ -88,7 +88,7 @@ public class PVPListener extends AbstractFlagListener {
                 if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     damager.remove();
-                    user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                    user.notify(Flags.PVP_OVERWORLD.getHintReference());
                     e.setCancelled(true);
                 }
             }
@@ -104,11 +104,11 @@ public class PVPListener extends AbstractFlagListener {
             }
             // Protect visitors
             if (protectedVisitor((Player)e.getCaught())) {
-                User.getInstance(e.getPlayer()).sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                User.getInstance(e.getPlayer()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 e.setCancelled(true);
             } else if (!checkIsland(e, e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
                 e.getHook().remove();
-                User.getInstance(e.getPlayer()).sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                User.getInstance(e.getPlayer()).notify(Flags.PVP_OVERWORLD.getHintReference());
                 e.setCancelled(true);
             }
         }
@@ -143,12 +143,12 @@ public class PVPListener extends AbstractFlagListener {
         if (le instanceof Player) {
             // Protect visitors
             if (protectedVisitor(le)) {
-                user.sendMessage(Flags.INVINCIBLE_VISITORS.getHintReference());
+                user.notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 return true;
             }
             // Check if PVP is allowed or not
             if (!checkIsland(e, le.getLocation(), flag)) {
-                user.sendMessage(Flags.PVP_OVERWORLD.getHintReference());
+                user.notify(Flags.PVP_OVERWORLD.getHintReference());
                 return true;
             }
         }
