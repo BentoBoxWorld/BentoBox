@@ -36,9 +36,9 @@ public class JoinLeaveListener implements Listener {
             return;
         }
         UUID playerUUID = user.getUniqueId();
+        // Load player
+        players.addPlayer(playerUUID);
         if (plugin.getPlayers().isKnown(playerUUID)) {
-            // Load player
-            players.addPlayer(playerUUID);
             // Reset island resets if required
             plugin.getIWM().getOverWorlds().stream()
             .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))

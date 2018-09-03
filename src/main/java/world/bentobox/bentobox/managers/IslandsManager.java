@@ -285,7 +285,9 @@ public class IslandsManager {
 
     /**
      * Returns the island at the location or Optional empty if there is none.
-     * This includes the full island space, not just the protected area
+     * This includes the full island space, not just the protected area.
+     * Use {@link #getProtectedIslandAt(Location)} for only the protected
+     * island space.
      *
      * @param location - the location
      * @return Optional Island object
@@ -334,7 +336,9 @@ public class IslandsManager {
     }
 
     /**
-     * Returns the island being public at the location or Optional Empty if there is none
+     * Returns the island at the location or Optional empty if there is none.
+     * This includes only the protected area. Use {@link #getIslandAt(Location)}
+     * for the full island space.
      *
      * @param location - the location
      * @return Optional Island object
@@ -631,7 +635,11 @@ public class IslandsManager {
         if (user == null) {
             return false;
         }
-        return Optional.ofNullable(getIsland(world, user)).map(i -> i.onIsland(user.getLocation())).orElse(false);
+        return getProtectedIslandAt(user.getLocation())
+                .map(i -> i.getMembers().entrySet().stream()
+                        .map(en -> en.getKey().equals(user.getUniqueId()) && en.getValue() > RanksManager.VISITOR_RANK)
+                        .findAny().orElse(false))
+                .orElse(false);
     }
 
     /**

@@ -48,11 +48,12 @@ public abstract class ConfirmableCommand extends CompositeCommand {
     }
 
     /**
-     * Tells user to confirm command by retyping
-     * @param user - user
-     * @param confirmed - runnable to be executed if confirmed
+     * Tells user to confirm command by retyping it.
+     * @param user User to ask confirmation to.
+     * @param message Optional message to send to the user to give them a bit more context. It must already be translated.
+     * @param confirmed Runnable to be executed if successfully confirmed.
      */
-    public void askConfirmation(User user, Runnable confirmed) {
+    public void askConfirmation(User user, String message, Runnable confirmed) {
         // Check for pending confirmations
         if (toBeConfirmed.containsKey(user)) {
             if (toBeConfirmed.get(user).getTopLabel().equals(getTopLabel()) && toBeConfirmed.get(user).getLabel().equalsIgnoreCase(getLabel())) {
@@ -65,6 +66,10 @@ public abstract class ConfirmableCommand extends CompositeCommand {
                 user.sendMessage("commands.confirmation.previous-request-cancelled");
             }
         }
+        // Send user the context message if it is not empty
+        if (!message.trim().isEmpty()) {
+            user.sendRawMessage(message);
+        }
         // Tell user that they need to confirm
         user.sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(getSettings().getConfirmationTime()));
         // Set up a cancellation task
@@ -75,6 +80,15 @@ public abstract class ConfirmableCommand extends CompositeCommand {
 
         // Add to the global confirmation map
         toBeConfirmed.put(user, new Confirmer(getTopLabel(), getLabel(), confirmed, task));
+    }
+
+    /**
+     * Tells user to confirm command by retyping it.
+     * @param user User to ask confirmation to.
+     * @param confirmed Runnable to be executed if successfully confirmed.
+     */
+    public void askConfirmation(User user, Runnable confirmed) {
+        askConfirmation(user, "", confirmed);
     }
 
     private class Confirmer {

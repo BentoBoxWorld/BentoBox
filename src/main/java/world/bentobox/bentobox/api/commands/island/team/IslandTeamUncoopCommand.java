@@ -84,9 +84,9 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             user.sendMessage("general.success");
             target.sendMessage("commands.island.team.uncoop.you-are-no-longer-a-coop-member", TextVariables.NAME, user.getName());
             // Set cooldown
-            if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
+            if (getSettings().getCoopCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("coop").ifPresent(subCommand ->
-                subCommand.setCooldown(user.getUniqueId(), targetUUID, getSettings().getInviteCooldown() * 60));
+                subCommand.setCooldown(user.getUniqueId(), targetUUID, getSettings().getCoopCooldown() * 60));
             }
             return true;
         } else {
