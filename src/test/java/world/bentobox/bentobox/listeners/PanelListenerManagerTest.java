@@ -114,7 +114,6 @@ public class PanelListenerManagerTest {
         
         // Clear the static panels
         PanelListenerManager.getOpenPanels().clear();
-        
     }
 
     /**
