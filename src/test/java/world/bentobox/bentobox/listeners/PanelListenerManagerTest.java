@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners;
 
@@ -80,7 +80,7 @@ public class PanelListenerManagerTest {
         when(player.getUniqueId()).thenReturn(uuid);
         view = mock(InventoryView.class);
         when(view.getPlayer()).thenReturn(player);
-        
+
         User.getInstance(player);
         Inventory top = mock(Inventory.class);
         when(top.getSize()).thenReturn(9);
@@ -90,7 +90,7 @@ public class PanelListenerManagerTest {
         inv = InventoryAction.UNKNOWN;
 
         plm = new PanelListenerManager();
-        
+
         // Panel
         panel = mock(Panel.class);
         pl = mock(PanelListener.class);
@@ -111,7 +111,7 @@ public class PanelListenerManagerTest {
         anotherInv = mock(Inventory.class);
         when(anotherInv.getName()).thenReturn("another_name");
         when(wrongPanel.getInventory()).thenReturn(anotherInv);
-        
+
         // Clear the static panels
         PanelListenerManager.getOpenPanels().clear();
     }
@@ -120,7 +120,20 @@ public class PanelListenerManagerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
     @Test
-    public void testOnInventoryClickOutside() {
+    public void testOnInventoryClickOutsideUnknownPanel() {
+        SlotType type = SlotType.OUTSIDE;
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        plm.onInventoryClick(e);
+        Mockito.verify(player, Mockito.never()).closeInventory();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
+     */
+    @Test
+    public void testOnInventoryClickOutsideKnownPanel() {
+        // Put a panel in the list
+        PanelListenerManager.getOpenPanels().put(uuid, panel);
         SlotType type = SlotType.OUTSIDE;
         InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
@@ -150,7 +163,7 @@ public class PanelListenerManagerTest {
         // Panel should be removed
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
@@ -163,7 +176,7 @@ public class PanelListenerManagerTest {
         assertTrue(e.isCancelled());
         Mockito.verify(pl).onInventoryClick(Mockito.any(), Mockito.any());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
@@ -177,7 +190,7 @@ public class PanelListenerManagerTest {
         Mockito.verify(ch).onClick(Mockito.eq(panel), Mockito.any(User.class), Mockito.eq(click), Mockito.eq(0));
         Mockito.verify(pl).onInventoryClick(Mockito.any(), Mockito.any());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
      */
@@ -188,9 +201,9 @@ public class PanelListenerManagerTest {
         // No panels for this player
         InventoryCloseEvent event = new InventoryCloseEvent(view);
         plm.onInventoryClose(event);
-        assertTrue(PanelListenerManager.getOpenPanels().size() == 1);        
+        assertTrue(PanelListenerManager.getOpenPanels().size() == 1);
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClose(org.bukkit.event.inventory.InventoryCloseEvent)}.
      */
@@ -202,7 +215,7 @@ public class PanelListenerManagerTest {
         plm.onInventoryClose(event);
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
         Mockito.verify(pl).onInventoryClose(event);
-        
+
     }
 
     /**
@@ -210,16 +223,16 @@ public class PanelListenerManagerTest {
      */
     @Test
     public void testOnLogOut() {
-     // Add a panel for player
+        // Add a panel for player
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Unknown player logs out
-        
+
         Player unknown = mock(Player.class);
         when(unknown.getUniqueId()).thenReturn(UUID.randomUUID());
         PlayerQuitEvent event = new PlayerQuitEvent(unknown, "");
         plm.onLogOut(event);
         assertFalse(PanelListenerManager.getOpenPanels().isEmpty());
-        
+
         // Real log out
         event = new PlayerQuitEvent(player, "");
         plm.onLogOut(event);
