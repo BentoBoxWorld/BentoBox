@@ -24,18 +24,19 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
-        // Close inventory if clicked outside and if setting is true
-        if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
-            event.getWhoClicked().closeInventory();
-            return;
-        }
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
-        Inventory inventory = event.getInventory(); // The inventory that was
+        Inventory inventory = event.getInventory(); // The inventory that was clicked on
         // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(user.getUniqueId())) {
             // Check the name of the panel
             if (inventory.getName().equals(openPanels.get(user.getUniqueId()).getInventory().getName())) {
-                // Cancel the event. If they don't want it to be canceled then the click handler(s) should uncancel it
+                // Close inventory if clicked outside and if setting is true
+                if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
+                    event.getWhoClicked().closeInventory();
+                    return;
+                }
+
+                // Cancel the event. If they don't want it to be cancelled then the click handler(s) should uncancel it
                 event.setCancelled(true);
                 // Get the panel itself
                 Panel panel = openPanels.get(user.getUniqueId());
@@ -67,9 +68,7 @@ public class PanelListenerManager implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogOut(PlayerQuitEvent event) {
-        if (openPanels.containsKey(event.getPlayer().getUniqueId())) {
-            openPanels.remove(event.getPlayer().getUniqueId());
-        }
+        openPanels.remove(event.getPlayer().getUniqueId());
     }
 
     /**
