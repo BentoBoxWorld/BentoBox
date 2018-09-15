@@ -24,7 +24,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * Listener for invincible visitor settings. Handles click listening and damage events
@@ -111,7 +111,7 @@ public class InvincibleVisitorsListener extends AbstractFlagListener implements 
         if(e.getCause().equals(DamageCause.VOID)) {
             // Will be set back after the teleport
             p.setGameMode(GameMode.SPECTATOR);
-            getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeTeleportBuilder(getPlugin()).entity(p).island(i).build());
+            getIslands().getIslandAt(p.getLocation()).ifPresent(i -> new SafeSpotTeleport.Builder(getPlugin()).entity(p).island(i).build());
         }
     }
 }

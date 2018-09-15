@@ -114,7 +114,8 @@ public class SafeSpotTeleportTest {
         when(loc.getBlock()).thenReturn(block);
         boolean portal = false;
         int homeNumber = 1;
-        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber);
+        boolean overrideGamemode = true;
+        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, true);
 
     }
 
