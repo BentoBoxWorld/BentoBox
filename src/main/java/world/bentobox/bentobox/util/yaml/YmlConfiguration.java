@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.util;
+package world.bentobox.bentobox.util.yaml;
 
 import java.util.Map;
 
