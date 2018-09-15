@@ -32,11 +32,8 @@ public class IslandCreateCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        if (getIslands().hasIsland(getWorld(), user.getUniqueId())) {
-            user.sendMessage("general.errors.already-have-island");
-            return false;
-        }
-        if (getIslands().inTeam(getWorld(), user.getUniqueId())) {
+        if (getIslands().hasIsland(getWorld(), user.getUniqueId())
+                || getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
