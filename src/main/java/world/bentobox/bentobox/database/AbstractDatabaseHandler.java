@@ -48,22 +48,16 @@ public abstract class AbstractDatabaseHandler<T> {
     /**
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws IllegalArgumentException
      */
-    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException;
+    public abstract List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException;
 
     /**
      * Creates a <T> filled with values from the corresponding
      * database file
      * @param uniqueId - unique ID
      * @return <T>
-     * @throws SecurityException
-     * @throws NoSuchMethodException
-     * @throws IllegalArgumentException
      */
-    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException;
+    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException;
 
     /**
      * Save T into the corresponding database

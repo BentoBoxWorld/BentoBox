@@ -233,12 +233,11 @@ public class AddonsManager {
         }
         // Load dependencies or soft dependencies
         Map<String,Addon> sortedAddons = new LinkedHashMap<>();
-        List<Addon> remaining = new ArrayList<>();
         // Start with nodes with no dependencies
         addons.stream().filter(a -> a.getDescription().getDependencies().isEmpty() && a.getDescription().getSoftDependencies().isEmpty())
         .forEach(a -> sortedAddons.put(a.getDescription().getName(), a));
         // Fill remaining
-        remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
+        List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
 
         // Run through remaining addons
         int index = 0;
@@ -257,7 +256,7 @@ public class AddonsManager {
                         depIt.remove();
                     }
                 }
-                if (deps.stream().allMatch(s -> !a.getDescription().getDependencies().contains(s))) {
+                if (deps.stream().noneMatch(s -> a.getDescription().getDependencies().contains(s))) {
                     // Add addons loaded
                     sortedAddons.put(a.getDescription().getName(), a);
                     it.remove();

@@ -72,7 +72,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObject(java.lang.String)
      */
     @Override
-    public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+    public T loadObject(String key) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // Objects are loaded from a folder named after the simple name of the class being stored
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         // This path and key can be overridden by the StoreAt annotation in the code
@@ -97,7 +97,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#loadObjects()
      */
     @Override
-    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+    public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
         // In this case, all the objects of a specific type are being loaded.
         List<T> list = new ArrayList<>();
         // Look for any files that end in .yml in the folder
@@ -139,7 +139,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @throws NoSuchMethodException
      * @throws IllegalArgumentException
      */
-    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException, IllegalArgumentException, NoSuchMethodException, SecurityException {
+    private T createObject(YamlConfiguration config) throws InstantiationException, IllegalAccessException, IntrospectionException, InvocationTargetException, ClassNotFoundException, NoSuchMethodException {
         // Create a new instance of the dataObject of type T (which can be any class)
         T instance = dataObject.getDeclaredConstructor().newInstance();
 

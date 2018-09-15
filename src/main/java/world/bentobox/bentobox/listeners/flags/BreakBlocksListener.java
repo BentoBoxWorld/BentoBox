@@ -58,16 +58,17 @@ public class BreakBlocksListener extends AbstractFlagListener {
 
         // Look along player's sight line to see if any blocks are skulls
         try {
-            BlockIterator iter = new BlockIterator(e.getPlayer(), 10);
-            Block lastBlock = iter.next();
-            while (iter.hasNext()) {
-                lastBlock = iter.next();
+            BlockIterator iterator = new BlockIterator(e.getPlayer(), 10);
+            while (iterator.hasNext()) {
+                Block lastBlock = iterator.next();
                 if (lastBlock.getType().toString().endsWith("_SKULL") || (lastBlock.getType().toString().endsWith("_HEAD") && !lastBlock.getType().equals(Material.PISTON_HEAD))) {
                     checkIsland(e, lastBlock.getLocation(), Flags.BREAK_BLOCKS);
                     return;
                 }
             }
-        } catch (Exception ignored) {}
+        } catch (Exception ignored) {
+            // We can ignore this exception
+        }
 
         switch (e.getClickedBlock().getType()) {
         case CAKE:

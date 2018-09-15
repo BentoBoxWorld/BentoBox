@@ -185,8 +185,7 @@ public class MySQLDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             try (ResultSet resultSet = preparedStatement.executeQuery()) {
                 if (resultSet.next()) {
-                    boolean result = resultSet.getBoolean(1);
-                    return result;
+                    return resultSet.getBoolean(1);
                 }
             }
         } catch (SQLException e) {
