@@ -6,10 +6,7 @@ package world.bentobox.bentobox.api.commands.admin.range;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -153,10 +150,9 @@ public class AdminRangeResetCommandTest {
     @Test
     public void testExecuteUnknownPlayer() {
         AdminRangeResetCommand arc = new AdminRangeResetCommand(ac);
-        List<String> args = new ArrayList<>();
-        args.add("tastybento");
-        arc.execute(user, "", args);
-        Mockito.verify(user).sendMessage("general.errors.unknown-player");
+        String[] name = {"tastybento"};
+        arc.execute(user, "", Arrays.asList(name));
+        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
     /**

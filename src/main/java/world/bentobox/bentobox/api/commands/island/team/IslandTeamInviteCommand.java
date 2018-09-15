@@ -62,7 +62,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             // Only online players can be invited
             UUID invitedPlayerUUID = getPlayers().getUUID(args.get(0));
             if (invitedPlayerUUID == null) {
-                user.sendMessage("general.errors.unknown-player");
+                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
                 return false;
             }
             User invitedPlayer = User.getInstance(invitedPlayerUUID);

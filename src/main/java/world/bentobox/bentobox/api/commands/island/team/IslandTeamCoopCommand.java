@@ -51,7 +51,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
         // Get target player
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player");
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
         return (getSettings().getCoopCooldown() <= 0 || !checkCooldown(user, targetUUID)) && coopCmd(user, targetUUID);

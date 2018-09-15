@@ -30,12 +30,12 @@ public class AdminTeamAddCommand extends CompositeCommand {
         // Get leader and target
         UUID leaderUUID = getPlayers().getUUID(args.get(0));
         if (leaderUUID == null) {
-            user.sendMessage("general.errors.unknown-player-name", TextVariables.NAME, args.get(0));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
         UUID targetUUID = getPlayers().getUUID(args.get(1));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player-name", TextVariables.NAME, args.get(1));
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
             return false;
         }
         if (!getIslands().hasIsland(getWorld(), leaderUUID)) {

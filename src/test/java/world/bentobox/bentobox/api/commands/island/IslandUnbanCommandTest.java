@@ -166,7 +166,7 @@ public class IslandUnbanCommandTest {
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(pm.getUUID(Mockito.anyString())).thenReturn(null);
         assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player");
+        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "bill");
     }
 
     @Test

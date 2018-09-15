@@ -142,7 +142,7 @@ public class AdminDeleteCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.unknown-player"));
+        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
     /**

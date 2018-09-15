@@ -30,7 +30,6 @@ general:
     not-in-team: "&cTen gracz nie jest w twojej drużynie."
     offline-player: "&cTen gracz jest offline lub nie istnieje."
     unknown-player: "&cNieznany gracz!"
-    unknown-player-name: "&c[name] jest nieznanym graczem!"
     general: "&cTo polecenie nie jest jeszcze gotowe - skontaktuj się z administratorem"
     unknown-command: "&cNieznane polecenie. Wpisz &b/[label] help &caby wyświetlić pomoc."
     warp-not-safe: "&cTen warp nie jest teraz bezpieczny!"

@@ -46,7 +46,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
         // Get target
         User target = getPlayers().getUser(args.get(0));
         if (target == null) {
-            user.sendMessage("general.errors.unknown-player");
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return true;
         }
         if (!inTeam(getWorld(), target) || !getTeamLeader(getWorld(), user).equals(getTeamLeader(getWorld(), target))) {

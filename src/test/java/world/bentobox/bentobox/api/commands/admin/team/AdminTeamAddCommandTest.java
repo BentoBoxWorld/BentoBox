@@ -143,13 +143,13 @@ public class AdminTeamAddCommandTest {
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(null);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player-name", "[name]", "tastybento");
+        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "tastybento");
 
         // Unknown target
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(null);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player-name", "[name]", "poslovich");
+        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovich");
     }
 
     /**

@@ -8,6 +8,7 @@ import java.util.UUID;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
@@ -42,7 +43,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         }
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
-            user.sendMessage("general.errors.unknown-player");
+            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
         if (!getIslands().inTeam(getWorld(), playerUUID)) {
