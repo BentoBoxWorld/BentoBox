@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.util;
+package world.bentobox.bentobox.util.heads;
 
 import java.util.HashMap;
 import java.util.HashSet;
