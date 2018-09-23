@@ -64,11 +64,11 @@ public class SchemsManager {
         }
         if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)
                 && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getNetherWorld(world), "nether-island")) {
-            plugin.logError("Could not load nether_island.schem for " + plugin.getIWM().getFriendlyName(world));
+            plugin.logError("Could not load nether-island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
         if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)
                 && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getEndWorld(world), "end-island")) {
-            plugin.logError("Could not load end_island.schem for " + plugin.getIWM().getFriendlyName(world));
+            plugin.logError("Could not load end-island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
     }
 

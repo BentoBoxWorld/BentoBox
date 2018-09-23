@@ -6,17 +6,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.GameMode;
-import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 
+import org.bukkit.util.Vector;
 import world.bentobox.bentobox.BentoBox;
 
 /**
@@ -329,6 +325,40 @@ public class User {
         return player.performCommand(command);
     }
 
+    /**
+     * Checks if a user is in one of the game worlds
+     * @return true if user is, false if not
+     */
+    public boolean inWorld() {
+        return plugin.getIWM().inWorld(getLocation());
+    }
+
+    /**
+     * Spawn particles to the player.
+     * They are only displayed if they are within the server's view distance.
+     * @param particle Particle to display.
+     * @param dustOptions Particle.DustOptions for the particle to display.
+     *                    Cannot be null when particle is {@link Particle#REDSTONE}.
+     * @param x X coordinate of the particle to display.
+     * @param y Y coordinate of the particle to display.
+     * @param z Z coordinate of the particle to display.
+     */
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
+        if (particle.equals(Particle.REDSTONE) && dustOptions == null) {
+            // Security check that will avoid later unexpected exceptions.
+            throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
+        }
+
+        // Check if this particle is beyond the viewing distance of the server
+        if (player.getLocation().toVector().distanceSquared(new Vector(x,y,z)) < (Bukkit.getServer().getViewDistance()*256*Bukkit.getServer().getViewDistance())) {
+            if (particle.equals(Particle.REDSTONE)) {
+                player.spawnParticle(particle, x, y, z, 1, 0, 0, 0, 1, dustOptions);
+            } else {
+                player.spawnParticle(particle, x, y, z, 1);
+            }
+        }
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
@@ -357,13 +387,5 @@ public class User {
         if (playerUUID == null) {
             return other.playerUUID == null;
         } else return playerUUID.equals(other.playerUUID);
-    }
-
-    /**
-     * Checks if a user is in one of the game worlds
-     * @return true if user is, false if not
-     */
-    public boolean inWorld() {
-        return plugin.getIWM().inWorld(getLocation());
     }
 }
