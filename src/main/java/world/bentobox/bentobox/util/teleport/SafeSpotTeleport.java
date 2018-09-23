@@ -39,6 +39,7 @@ public class SafeSpotTeleport {
     private final Location location;
     private boolean portal;
     private final int homeNumber;
+    private final boolean overrideGamemode;
 
     // Locations
     private Location bestSpot;
@@ -55,16 +56,16 @@ public class SafeSpotTeleport {
      * @param portal - true if this is a portal teleport
      * @param homeNumber - home number to go to
      */
-    protected SafeSpotTeleport(BentoBox plugin, final Entity entity, final Location location, final String failureMessage, boolean portal,
-            int homeNumber) {
+    public SafeSpotTeleport(BentoBox plugin, final Entity entity, final Location location, final String failureMessage, boolean portal, int homeNumber, boolean overrideGamemode) {
         this.plugin = plugin;
         this.entity = entity;
         this.location = location;
         this.portal = portal;
         this.homeNumber = homeNumber;
+        this.overrideGamemode = overrideGamemode;
 
         // Put player into spectator mode
-        if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SURVIVAL)) {
+        if (overrideGamemode && entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SURVIVAL)) {
             ((Player)entity).setGameMode(GameMode.SPECTATOR);
         }
 
@@ -116,13 +117,13 @@ public class SafeSpotTeleport {
         if (portal && bestSpot != null) {
             // No portals found, teleport to the best spot we found
             teleportEntity(bestSpot);
-            if (entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+            if (overrideGamemode && entity instanceof Player && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
                 ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(bestSpot.getWorld()));
             }
         } else if (entity instanceof Player && !failureMessage.isEmpty()) {
             // Failed, no safe spot
             entity.sendMessage(failureMessage);
-            if (((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
+            if (overrideGamemode && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
                 if (plugin.getIWM().inWorld(entity.getLocation())) {
                     ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(entity.getWorld()));
                 } else {
@@ -233,7 +234,7 @@ public class SafeSpotTeleport {
             // Exit spectator mode if in it
             if (entity instanceof Player) {
                 Player player = (Player)entity;
-                if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                if (overrideGamemode && player.getGameMode().equals(GameMode.SPECTATOR)) {
                     player.setGameMode(plugin.getIWM().getDefaultGameMode(loc.getWorld()));
                 }
             } else {
@@ -307,6 +308,109 @@ public class SafeSpotTeleport {
         } else {
             teleportEntity(newSpot.toLocation(world));
             return true;
+        }
+    }
+
+    public static class Builder {
+        private BentoBox plugin;
+        private Entity entity;
+        private int homeNumber = 0;
+        private boolean portal = false;
+        private String failureMessage = "";
+        private Location location;
+        private boolean overrideGamemode = true;
+
+        public Builder(BentoBox plugin) {
+            this.plugin = plugin;
+        }
+
+        /**
+         * Set who or what is going to teleport
+         * @param entity entity to teleport
+         * @return Builder
+         */
+        public Builder entity(Entity entity) {
+            this.entity = entity;
+            return this;
+        }
+
+        /**
+         * Set the island to teleport to
+         * @param island island destination
+         * @return Builder
+         */
+        public Builder island(Island island) {
+            this.location = island.getCenter();
+            return this;
+        }
+
+        /**
+         * Set the home number to this number
+         * @param homeNumber home number
+         * @return Builder
+         */
+        public Builder homeNumber(int homeNumber) {
+            this.homeNumber = homeNumber;
+            return this;
+        }
+
+        /**
+         * This is a portal teleportation
+         * @return Builder
+         */
+        public Builder portal() {
+            this.portal = true;
+            return this;
+        }
+
+        /**
+         * Set the failure message if this teleport cannot happen
+         * @param failureMessage failure message to report to user
+         * @return Builder
+         */
+        public Builder failureMessage(String failureMessage) {
+            this.failureMessage = failureMessage;
+            return this;
+        }
+
+        /**
+         * Set the desired location
+         * @param location the location
+         * @return Builder
+         */
+        public Builder location(Location location) {
+            this.location = location;
+            return this;
+        }
+
+        /**
+         * Sets whether the player's gamemode should be overridden.
+         * @param overrideGamemode whether the player's gamemode should be overridden.
+         * @return Builder
+         */
+        public Builder overrideGamemode(boolean overrideGamemode) {
+            this.overrideGamemode = overrideGamemode;
+            return this;
+        }
+
+        /**
+         * Try to teleport the player
+         * @return SafeSpotTeleport
+         */
+        public SafeSpotTeleport build() {
+            // Error checking
+            if (entity == null) {
+                plugin.logError("Attempt to safe teleport a null entity!");
+                return null;
+            }
+            if (location == null) {
+                plugin.logError("Attempt to safe teleport to a null location!");
+                return null;
+            }
+            if (failureMessage.isEmpty() && entity instanceof Player) {
+                failureMessage = User.getInstance(entity).getTranslation("general.errors.warp-not-safe");
+            }
+            return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber, overrideGamemode);
         }
     }
 }

@@ -12,8 +12,8 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
-import world.bentobox.bentobox.util.HeadGetter;
-import world.bentobox.bentobox.util.HeadRequester;
+import world.bentobox.bentobox.util.heads.HeadGetter;
+import world.bentobox.bentobox.util.heads.HeadRequester;
 
 public class Panel implements HeadRequester {
 

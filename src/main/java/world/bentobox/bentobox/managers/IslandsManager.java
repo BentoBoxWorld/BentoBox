@@ -32,7 +32,7 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 /**
  * The job of this class is manage all island related data.
@@ -541,10 +541,11 @@ public class IslandsManager {
         }
         if (home == null) {
             // Try to fix this teleport location and teleport the player if possible
-            new SafeTeleportBuilder(plugin).entity(player)
-            .island(plugin.getIslands().getIsland(world, user))
-            .homeNumber(number)
-            .build();
+            new SafeSpotTeleport.Builder(plugin)
+                    .entity(player)
+                    .island(plugin.getIslands().getIsland(world, user))
+                    .homeNumber(number)
+                    .build();
             return;
         }
         player.teleport(home);

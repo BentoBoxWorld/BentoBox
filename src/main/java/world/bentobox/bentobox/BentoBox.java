@@ -26,7 +26,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
-import world.bentobox.bentobox.util.HeadGetter;
+import world.bentobox.bentobox.util.heads.HeadGetter;
 
 /**
  * Main BentoBox class

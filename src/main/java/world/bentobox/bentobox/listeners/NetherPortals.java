@@ -24,7 +24,7 @@ import org.bukkit.util.Vector;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 public class NetherPortals implements Listener {
     private static final String ERROR_NO_PERMISSION = "general.errors.no-permission";
@@ -120,7 +120,7 @@ public class NetherPortals implements Listener {
             // End exists and end islands are being used
             Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
             e.setCancelled(true);
-            new SafeTeleportBuilder(plugin)
+            new SafeSpotTeleport.Builder(plugin)
             .entity(e.getPlayer())
             .location(to)
             .build();
@@ -183,7 +183,7 @@ public class NetherPortals implements Listener {
 
                     e.setCancelled(true);
                     // Else other worlds teleport to the nether
-                    new SafeTeleportBuilder(plugin)
+                    new SafeSpotTeleport.Builder(plugin)
                     .entity(e.getPlayer())
                     .location(to)
                     .portal()
@@ -197,7 +197,7 @@ public class NetherPortals implements Listener {
                         : nether.getSpawnLocation();
                 e.setCancelled(true);
                 // Else other worlds teleport to the nether
-                new SafeTeleportBuilder(plugin)
+                new SafeSpotTeleport.Builder(plugin)
                 .entity(e.getPlayer())
                 .location(to)
                 .portal()

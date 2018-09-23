@@ -11,7 +11,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
-import world.bentobox.bentobox.util.teleport.SafeTeleportBuilder;
+import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 public class AdminTeleportCommand extends CompositeCommand {
 
@@ -51,10 +51,13 @@ public class AdminTeleportCommand extends CompositeCommand {
                 // Other wise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                         + warpSpot.getBlockZ());
-                new SafeTeleportBuilder(getPlugin()).entity(user.getPlayer())
-                .location(warpSpot)
-                .failureMessage(failureMessage)
-                .build();
+
+                new SafeSpotTeleport.Builder(getPlugin())
+                        .entity(user.getPlayer())
+                        .location(warpSpot)
+                        .failureMessage(failureMessage)
+                        .overrideGamemode(false)
+                        .build();
                 return true;
             }
             user.sendMessage("general.errors.player-has-no-island");
