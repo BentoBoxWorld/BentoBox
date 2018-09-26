@@ -87,6 +87,7 @@ public class IslandsManagerTest {
     public void setUp() throws Exception {
         // World
         world = mock(World.class);
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -168,6 +169,8 @@ public class IslandsManagerTest {
         when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
         optionalIsland = Optional.ofNullable(is);
 
+        // User location
+        when(user.getLocation()).thenReturn(location);
 
     }
 
@@ -477,6 +480,107 @@ public class IslandsManagerTest {
     }
 
     /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
+     * @throws Exception
+     */
+    @Test
+    public void testGetIslandAtLocationNether() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
+        // In nether world, so answer should be empty
+        assertEquals(optionalIsland, im.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
+     * @throws Exception
+     */
+    @Test
+    public void testGetIslandAtLocationNetherNoNether() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
+        // In nether world, so answer should be empty
+        assertEquals(Optional.empty(), im.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
+     * @throws Exception
+     */
+    @Test
+    public void testGetIslandAtLocationNetherNoNetherIslands() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
+        // In nether world, so answer should be empty
+        assertEquals(Optional.empty(), im.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
+     * @throws Exception
+     */
+    @Test
+    public void testGetIslandAtLocationEnd() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
+        when(iwm.isEndIslands(Mockito.any())).thenReturn(true);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
+        // In nether world, so answer should be empty
+        assertEquals(optionalIsland, im.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
+     * @throws Exception
+     */
+    @Test
+    public void testGetIslandAtLocationEndNoEnd() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
+        // In nether world, so answer should be empty
+        assertEquals(Optional.empty(), im.getIslandAt(location));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
+     * @throws Exception
+     */
+    @Test
+    public void testGetIslandAtLocationEndNoEndIslands() throws Exception {
+        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
+        when(iwm.isEndIslands(Mockito.any())).thenReturn(false);
+
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+
+        // In nether world, so answer should be empty
+        assertEquals(Optional.empty(), im.getIslandAt(location));
+    }
+
+
+    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandLocation(World, UUID)}.
      */
     @Test
@@ -718,7 +822,7 @@ public class IslandsManagerTest {
 
 
         // User is on island is determined by whether the user's location is on
-        // an island that has them as a memebr (rank > 0)
+        // an island that has them as a member (rank > 0)
         when(is.onIsland(Mockito.any())).thenReturn(true);
         Map<UUID, Integer> members = new HashMap<>();
         when(is.getMembers()).thenReturn(members);

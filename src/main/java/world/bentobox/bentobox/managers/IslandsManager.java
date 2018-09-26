@@ -293,6 +293,13 @@ public class IslandsManager {
      * @return Optional Island object
      */
     public Optional<Island> getIslandAt(Location location) {
+        // Do not return an island if there is no nether or end or islands in them
+        if ((location.getWorld().getEnvironment().equals(World.Environment.NETHER) &&
+                (!plugin.getIWM().isNetherGenerate(location.getWorld()) || !plugin.getIWM().isNetherIslands(location.getWorld())))
+                || (location.getWorld().getEnvironment().equals(World.Environment.THE_END) &&
+                        (!plugin.getIWM().isEndGenerate(location.getWorld()) || !plugin.getIWM().isEndIslands(location.getWorld())))) {
+            return Optional.empty();
+        }
         return Optional.ofNullable(islandCache.getIslandAt(location));
     }
 
@@ -542,10 +549,10 @@ public class IslandsManager {
         if (home == null) {
             // Try to fix this teleport location and teleport the player if possible
             new SafeSpotTeleport.Builder(plugin)
-                    .entity(player)
-                    .island(plugin.getIslands().getIsland(world, user))
-                    .homeNumber(number)
-                    .build();
+            .entity(player)
+            .island(plugin.getIslands().getIsland(world, user))
+            .homeNumber(number)
+            .build();
             return;
         }
         player.teleport(home);
