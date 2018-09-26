@@ -22,12 +22,14 @@ import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 public class NetherPortals implements Listener {
-    private static final String ERROR_NO_PERMISSION = "general.errors.no-permission";
+    private static final String SPAWN_PROTECTED = "protection.spawn-protected";
     private final BentoBox plugin;
 
     public NetherPortals(BentoBox plugin) {
@@ -44,7 +46,7 @@ public class NetherPortals implements Listener {
     private boolean atSpawn(Location location) {
         Vector p = location.toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
-        int radiusSquared = plugin.getIWM().getNetherSpawnRadius(location.getWorld()) ^ 2;
+        int radiusSquared = plugin.getIWM().getNetherSpawnRadius(location.getWorld()) * plugin.getIWM().getNetherSpawnRadius(location.getWorld());
         return (spawn.distanceSquared(p) < radiusSquared);
     }
 
@@ -76,7 +78,8 @@ public class NetherPortals implements Listener {
             return;
         }
         if (atSpawn(e.getBlock().getLocation())) {
-            User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
+            User user = User.getInstance(e.getPlayer());
+            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.BREAK_BLOCKS.getHintReference()));
             e.setCancelled(true);
         }
     }
@@ -91,7 +94,8 @@ public class NetherPortals implements Listener {
             return;
         }
         if (atSpawn(e.getBlockClicked().getLocation())) {
-            User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
+            User user = User.getInstance(e.getPlayer());
+            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.BUCKET.getHintReference()));
             e.setCancelled(true);
         }
     }
@@ -187,6 +191,9 @@ public class NetherPortals implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNetherPortal(PlayerPortalEvent e) {
+        if (e.getFrom() == null) {
+            return false;
+        }
         World fromWorld = e.getFrom().getWorld();
         if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !plugin.getIWM().inWorld(e.getFrom())) {
             // Do nothing special
@@ -243,7 +250,8 @@ public class NetherPortals implements Listener {
             return;
         }
         if (atSpawn(e.getBlock().getLocation())) {
-            User.getInstance(e.getPlayer()).sendMessage(ERROR_NO_PERMISSION);
+            User user = User.getInstance(e.getPlayer());
+            user.sendMessage(SPAWN_PROTECTED, TextVariables.DESCRIPTION, user.getTranslation(Flags.PLACE_BLOCKS.getHintReference()));
             e.setCancelled(true);
         }
     }

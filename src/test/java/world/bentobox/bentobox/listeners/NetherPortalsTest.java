@@ -85,7 +85,6 @@ public class NetherPortalsTest {
         when(world.getEnvironment()).thenReturn(Environment.NORMAL);
         nether = mock(World.class);
         when(nether.getEnvironment()).thenReturn(Environment.NETHER);
-        when(nether.getSpawnLocation()).thenReturn(mock(Location.class));
         end = mock(World.class);
         when(end.getEnvironment()).thenReturn(Environment.THE_END);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(end);
@@ -102,9 +101,10 @@ public class NetherPortalsTest {
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
 
-        // Set up spawn
+        // Set up nether spawn
         Location netherSpawn = mock(Location.class);
         when(netherSpawn.toVector()).thenReturn(new Vector(0,0,0));
+        when(netherSpawn.getWorld()).thenReturn(nether);
         when(nether.getSpawnLocation()).thenReturn(netherSpawn);
 
         // Player
@@ -531,8 +531,8 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
-        when(iwm.isNetherIslands(world)).thenReturn(true);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         assertTrue(np.onNetherPortal(e));
         // Verify
         assertTrue(e.isCancelled());
@@ -554,8 +554,8 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
-        when(iwm.isNetherIslands(world)).thenReturn(true);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
 
         Island island = mock(Island.class);
         Location spawnLoc = mock(Location.class);
@@ -586,8 +586,8 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
-        when(iwm.isNetherIslands(world)).thenReturn(true);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
 
         Island island = mock(Island.class);
         when(island.getSpawnPoint(Mockito.any())).thenReturn(null);
@@ -617,14 +617,11 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
         // Nether islands inactive
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
-        assertTrue(np.onNetherPortal(e));
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
+        assertFalse(np.onNetherPortal(e));
         // Verify
-        assertTrue(e.isCancelled());
-        // If regular nether, then to = spawn point of nether
-        Mockito.verify(from, Mockito.never()).toVector();
-        Mockito.verify(nether).getSpawnLocation();
+        assertFalse(e.isCancelled());
     }
 
     /**
@@ -643,16 +640,13 @@ public class NetherPortalsTest {
 
         PlayerPortalEvent e = new PlayerPortalEvent(p, from, null, null, TeleportCause.NETHER_PORTAL);
         // Nether islands inactive
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
 
         // Player should be teleported to their island
-        assertTrue(np.onNetherPortal(e));
+        assertFalse(np.onNetherPortal(e));
         // Verify
-        assertTrue(e.isCancelled());
-        // If regular nether, then to = island location
-        Mockito.verify(from, Mockito.never()).toVector();
-        Mockito.verify(im).getIslandLocation(Mockito.any(), Mockito.any());
+        assertFalse(e.isCancelled());
     }
 
     /**
@@ -667,8 +661,8 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.NETHER_PORTAL);
         // Nether islands active
-        when(iwm.isNetherIslands(world)).thenReturn(true);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
+        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         assertTrue(np.onNetherPortal(e));
         // Verify
         assertTrue(e.isCancelled());

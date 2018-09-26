@@ -122,8 +122,11 @@ public abstract class AbstractFlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
-        // If this is not an Island World, skip
-        if (!plugin.getIWM().inWorld(loc)) {
+        // If this is not an Island World or a standard Nether or End, skip
+        if (!plugin.getIWM().inWorld(loc)
+                || (plugin.getIWM().isNether(loc.getWorld()) && !plugin.getIWM().isNetherIslands(loc.getWorld()))
+                || (plugin.getIWM().isEnd(loc.getWorld()) && !plugin.getIWM().isEndIslands(loc.getWorld()))
+                ) {
             return true;
         }
         // Get the island and if present

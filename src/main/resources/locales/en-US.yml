@@ -648,6 +648,7 @@ protection:
       hint: "No trapdoor use"
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
+  spawn-protected: "&cSpawn protected: [description]"
 
   panel:
     PROTECTION:
