@@ -164,45 +164,72 @@ public class NetherPortals implements Listener {
     }
 
     /**
+     * When returning from the standard nether, teleport to the player's island
+     * @param e
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onNetherPortalStandardNether(PlayerPortalEvent e) {
+        World fromWorld = e.getFrom().getWorld();
+        if (e.getCause().equals(TeleportCause.NETHER_PORTAL)
+                && plugin.getIWM().inWorld(e.getFrom())
+                && !plugin.getIWM().isNetherIslands(fromWorld)
+                && fromWorld.getEnvironment().equals(Environment.NETHER)) {
+            if (plugin.getPlayers().isKnown(e.getPlayer().getUniqueId())) {
+                e.setCancelled(true);
+                plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
+            }
+        }
+    }
+
+    /**
      * Handle nether portals
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNetherPortal(PlayerPortalEvent e) {
+        World fromWorld = e.getFrom().getWorld();
         if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !plugin.getIWM().inWorld(e.getFrom())) {
+            // Do nothing special
             return false;
         }
-        // Get the overworld, which may be the same world
-        World overWorld = Util.getWorld(e.getFrom().getWorld());
-        // If entering a portal in the nether, teleport to portal in overworld if there is one
-        if (e.getFrom().getWorld().getEnvironment().equals(Environment.NETHER)) {
-            // If this is from the island nether, then go to the same vector, otherwise try island home location
-            Location to = plugin.getIWM().isNetherIslands(overWorld)
-                    ? plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld))
-                            : plugin.getIslands().getIslandLocation(overWorld, e.getPlayer().getUniqueId());
 
-                    e.setCancelled(true);
-                    // Else other worlds teleport to the nether
-                    new SafeSpotTeleport.Builder(plugin)
-                    .entity(e.getPlayer())
-                    .location(to)
-                    .portal()
-                    .build();
-                    return true;
+        // STANDARD NETHER
+        if (plugin.getIWM().isNetherGenerate(fromWorld) && !plugin.getIWM().isNetherIslands(fromWorld)) {
+            if (fromWorld.getEnvironment().equals(Environment.NORMAL)) {
+                // To Standard Nether
+                e.setTo(plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation());
+                e.useTravelAgent(true);
+            }
+            return false;
         }
+
+        // FROM NETHER
+        World overWorld = Util.getWorld(fromWorld);
+        // If entering a nether portal in the nether, teleport to portal in overworld if there is one
+        if (fromWorld.getEnvironment().equals(Environment.NETHER)) {
+            // If this is from the island nether, then go to the same vector, otherwise try island home location
+            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
+            e.setCancelled(true);
+            // Else other worlds teleport to the nether
+            new SafeSpotTeleport.Builder(plugin)
+            .entity(e.getPlayer())
+            .location(to)
+            .portal()
+            .build();
+            return true;
+        }
+        // TO NETHER
         World nether = plugin.getIWM().getNetherWorld(overWorld);
         // If this is to island nether, then go to the same vector, otherwise try spawn
-        Location to = (plugin.getIWM().isNetherIslands(overWorld) && plugin.getIWM().isNetherGenerate(overWorld))
-                ? plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether))
-                        : nether.getSpawnLocation();
-                e.setCancelled(true);
-                // Else other worlds teleport to the nether
-                new SafeSpotTeleport.Builder(plugin)
-                .entity(e.getPlayer())
-                .location(to)
-                .portal()
-                .build();
-                return true;
+        Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
+        e.setCancelled(true);
+        // Else other worlds teleport to the nether
+        new SafeSpotTeleport.Builder(plugin)
+        .entity(e.getPlayer())
+        .location(to)
+        .portal()
+        .build();
+        return true;
     }
 
     /**
