@@ -83,7 +83,8 @@ public class PlayersManagerTest {
         when(nether.getName()).thenReturn("world_nether");
         end = mock(World.class);
         when(end.getName()).thenReturn("world_the_end");
-        when(iwm.inWorld(any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Settings

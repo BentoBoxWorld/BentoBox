@@ -52,7 +52,8 @@ public class IslandCacheTest {
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.inWorld(any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);

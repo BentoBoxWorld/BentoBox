@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -65,7 +66,8 @@ public class InvincibleVisitorsListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         when(plugin.getIWM()).thenReturn(iwm);
 
@@ -186,7 +188,8 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnVisitorGetDamageNotInWorld() {
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.CRAMMING, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());
@@ -194,7 +197,8 @@ public class InvincibleVisitorsListenerTest {
 
     @Test
     public void testOnVisitorGetDamageNotInIvSettings() {
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.BLOCK_EXPLOSION, 0D);
         listener.onVisitorGetDamage(e);
         assertFalse(e.isCancelled());

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.flags;
 
@@ -72,7 +72,7 @@ public class EnterExitListenerTest {
 
         // World
         World world = mock(World.class);
-        
+
         // Server
         Server server = mock(Server.class);
         PowerMockito.mockStatic(Bukkit.class);
@@ -99,7 +99,7 @@ public class EnterExitListenerTest {
         IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
 
-        // Locales      
+        // Locales
         lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
@@ -147,12 +147,13 @@ public class EnterExitListenerTest {
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
-        
+
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-        
+
         // Player's manager
         PlayersManager pm = mock(PlayersManager.class);
         when(pm.getName(Mockito.any())).thenReturn("tastybento");
@@ -163,7 +164,7 @@ public class EnterExitListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
-        
+
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
@@ -175,7 +176,7 @@ public class EnterExitListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveInsideIsland() {        
+    public void testOnMoveInsideIsland() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, inside);
         listener.onMove(e);
         // Moving in the island should result in no messages to the user
@@ -186,7 +187,7 @@ public class EnterExitListenerTest {
      * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
-    public void testOnMoveOutsideIsland() {        
+    public void testOnMoveOutsideIsland() {
         PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), outside, outside);
         listener.onMove(e);
         // Moving outside the island should result in no messages to the user
@@ -206,7 +207,7 @@ public class EnterExitListenerTest {
         // The island owner needs to be checked
         Mockito.verify(island).getOwner();
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
@@ -235,7 +236,7 @@ public class EnterExitListenerTest {
         // The island owner needs to be checked
         Mockito.verify(island).getOwner();
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */

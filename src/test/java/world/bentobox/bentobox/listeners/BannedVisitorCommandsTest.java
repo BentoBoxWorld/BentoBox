@@ -52,7 +52,8 @@ public class BannedVisitorCommandsTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(new ArrayList<>());
         when(plugin.getIWM()).thenReturn(iwm);
@@ -105,13 +106,15 @@ public class BannedVisitorCommandsTest {
         BannedVisitorCommands bvc = new BannedVisitorCommands(plugin);
 
         // Not in world
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
 
         bvc.onVisitorCommand(e);
         assertFalse(e.isCancelled());
 
         // In world
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         // Op
         when(player.isOp()).thenReturn(true);
         bvc.onVisitorCommand(e);

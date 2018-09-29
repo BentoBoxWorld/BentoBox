@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners;
 
 import static org.junit.Assert.assertNotNull;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -41,7 +42,8 @@ public class DeathListenerTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         when(iwm.getVisitorBannedCommands(Mockito.any())).thenReturn(new ArrayList<>());
         when(plugin.getIWM()).thenReturn(iwm);
@@ -53,13 +55,13 @@ public class DeathListenerTest {
         when(player.getLocation()).thenReturn(mock(Location.class));
         UUID uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
-       
+
         PlayersManager pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
-        
+
         // Test
         DeathListener dl = new DeathListener(plugin);
-              
+
         PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
         dl.onPlayerDeathEvent(e);
         Mockito.verify(pm).addDeath(world, uuid);

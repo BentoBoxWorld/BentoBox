@@ -117,7 +117,8 @@ public class ObsidianToLavaTest {
         User.setPlugin(plugin);
 
         // Put player in world
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         // Put player on island
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(true);
         // Set as survival
@@ -165,10 +166,12 @@ public class ObsidianToLavaTest {
         PlayerInteractEvent event = new PlayerInteractEvent(who, action, item, clickedBlock, BlockFace.EAST);
 
         // Test not in world
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         assertFalse(listener.onPlayerInteract(event));
         // Put player in world
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         // Test different game modes
         for (GameMode gm : GameMode.values()) {

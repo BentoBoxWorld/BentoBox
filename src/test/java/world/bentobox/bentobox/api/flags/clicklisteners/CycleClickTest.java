@@ -184,7 +184,8 @@ public class CycleClickTest {
         // IslandWorldManager
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
 
         // Util
@@ -195,7 +196,8 @@ public class CycleClickTest {
 
     @Test
     public void testNotInWorld() {
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         CycleClick udc = new CycleClick("LOCK");
         assertTrue(udc.onClick(panel, user, ClickType.LEFT, 5));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.wrong-world"));

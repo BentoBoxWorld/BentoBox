@@ -60,13 +60,13 @@ public class EnderChestListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         // World
         world = mock(World.class);
-        
+
         // Owner
         UUID uuid1 = UUID.randomUUID();
-        
+
         // Island initialization
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid1);
@@ -85,7 +85,7 @@ public class EnderChestListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
-                
+
         // World Settings
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -94,11 +94,12 @@ public class EnderChestListenerTest {
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
         // By default everything is in world
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
-        
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
+
         // Ender chest use is not allowed by default
         Flags.ENDER_CHEST.setSetting(world, false);
-        
+
         // Sometimes use Mockito.withSettings().verboseLogging()
         player = mock(Player.class);
         UUID uuid = UUID.randomUUID();
@@ -108,11 +109,11 @@ public class EnderChestListenerTest {
         when(player.hasPermission(Mockito.anyString())).thenReturn(false);
         when(player.getWorld()).thenReturn(world);
 
-        // Locales - this returns the string that was requested for translation 
+        // Locales - this returns the string that was requested for translation
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
-        
+
     }
 
     @Test
@@ -125,7 +126,7 @@ public class EnderChestListenerTest {
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnEnderChestOpenNotEnderChest() {
         Action action = Action.RIGHT_CLICK_BLOCK;
@@ -137,7 +138,7 @@ public class EnderChestListenerTest {
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnEnderChestOpenEnderChestNotInWorld() {
         Action action = Action.RIGHT_CLICK_BLOCK;
@@ -147,11 +148,12 @@ public class EnderChestListenerTest {
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Not in world
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnEnderChestOpenEnderChestOpPlayer() {
         Action action = Action.RIGHT_CLICK_BLOCK;
@@ -165,7 +167,7 @@ public class EnderChestListenerTest {
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnEnderChestOpenEnderChestHasBypassPerm() {
         Action action = Action.RIGHT_CLICK_BLOCK;
@@ -179,7 +181,7 @@ public class EnderChestListenerTest {
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnEnderChestOpenEnderChestOkay() {
         Action action = Action.RIGHT_CLICK_BLOCK;
@@ -193,7 +195,7 @@ public class EnderChestListenerTest {
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnEnderChestOpenEnderChestBlocked() {
         Action action = Action.RIGHT_CLICK_BLOCK;
@@ -227,7 +229,7 @@ public class EnderChestListenerTest {
         new EnderChestListener().onCraft(e);
         assertFalse(e.isCancelled());
     }
-    
+
     @Test
     public void testOnCraftEnderChest() {
         Recipe recipe = mock(Recipe.class);

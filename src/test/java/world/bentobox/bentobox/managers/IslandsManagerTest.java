@@ -155,7 +155,8 @@ public class IslandsManagerTest {
         // Worlds
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.inWorld(any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
@@ -472,7 +473,8 @@ public class IslandsManagerTest {
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
 
         // not in world
-        when(iwm.inWorld(any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
         assertEquals(Optional.empty(), im.getIslandAt(location));
 

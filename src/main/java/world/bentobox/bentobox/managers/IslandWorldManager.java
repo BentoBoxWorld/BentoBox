@@ -78,7 +78,17 @@ public class IslandWorldManager {
      * @return true if in a world or false if not
      */
     public boolean inWorld(Location loc) {
-        return worlds.containsKey(Util.getWorld(loc.getWorld()));
+        return inWorld(loc.getWorld());
+    }
+
+    /**
+     * Checks if a world is any of the island worlds
+     *
+     * @param world world
+     * @return true if in a world or false if not
+     */
+    public boolean inWorld(World world) {
+        return worlds.containsKey(Util.getWorld(world));
     }
 
     /**

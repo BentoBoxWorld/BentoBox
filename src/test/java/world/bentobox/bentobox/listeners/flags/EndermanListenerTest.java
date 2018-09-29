@@ -100,7 +100,8 @@ public class EndermanListenerTest {
 
         // Worlds
         iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Monsters and animals
@@ -156,7 +157,8 @@ public class EndermanListenerTest {
      */
     @Test
     public void testOnEndermanGriefWrongWorld() {
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         EndermanListener listener = new EndermanListener();
         Block to = mock(Block.class);
         Material block = Material.ACACIA_DOOR;

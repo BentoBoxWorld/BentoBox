@@ -100,7 +100,8 @@ public class ItemFrameListenerTest {
 
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(iwm.inWorld(any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Monsters and animals

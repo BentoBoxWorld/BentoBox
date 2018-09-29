@@ -1,9 +1,10 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.flags;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -76,12 +77,13 @@ public class IslandRespawnListenerTest {
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
         // All locations are in world by default
-        when(iwm.inWorld(Mockito.any())).thenReturn(true);
+        when(iwm.inWorld(any(World.class))).thenReturn(true);
+        when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
-        
+
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
@@ -94,8 +96,8 @@ public class IslandRespawnListenerTest {
         safeLocation = mock(Location.class);
         when(safeLocation.getWorld()).thenReturn(world);
         when(im.getSafeHomeLocation(Mockito.any(), Mockito.any(), Mockito.anyInt())).thenReturn(safeLocation);
-        
-     // Sometimes use Mockito.withSettings().verboseLogging()
+
+        // Sometimes use Mockito.withSettings().verboseLogging()
         User.setPlugin(plugin);
         User.getInstance(player);
     }
@@ -129,7 +131,7 @@ public class IslandRespawnListenerTest {
         l.onPlayerRespawn(ev);
         assertEquals(safeLocation, ev.getRespawnLocation());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
@@ -146,13 +148,14 @@ public class IslandRespawnListenerTest {
         assertEquals(location, ev.getRespawnLocation());
     }
 
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
     @Test
     public void testOnPlayerRespawnWrongWorld() {
-        when(iwm.inWorld(Mockito.any())).thenReturn(false);
+        when(iwm.inWorld(any(World.class))).thenReturn(false);
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
         // Die
         List<ItemStack> drops = new ArrayList<>();
         PlayerDeathEvent e = new PlayerDeathEvent(player, drops, 0, 0, 0, 0, "");
@@ -167,7 +170,7 @@ public class IslandRespawnListenerTest {
         l.onPlayerRespawn(ev);
         assertEquals(location, ev.getRespawnLocation());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
