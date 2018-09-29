@@ -46,17 +46,17 @@ public class AddonClassLoader extends URLClassLoader {
             String mainClass = data.getString("main");
             javaClass = Class.forName(mainClass, true, this);
             if(mainClass.startsWith("world.bentobox.bentobox")){
-                throw new InvalidAddonFormatException("Packages declaration cannot start with 'world.bentobox.bentobox'");
+                throw new InvalidAddonFormatException("Package declaration cannot start with 'world.bentobox.bentobox'");
             }
         } catch (Exception e) {
             throw new InvalidDescriptionException("Could not load '" + path.getName() + "' in folder '" + path.getParent() + "' - " + e.getMessage());
         }
 
         Class<? extends Addon> addonClass;
-        try{
+        try {
             addonClass = javaClass.asSubclass(Addon.class);
-        } catch(ClassCastException e){
-            throw new InvalidAddonInheritException("Main class doesn't not extends super class 'Addon'");
+        } catch (ClassCastException e) {
+            throw new InvalidAddonInheritException("Main class does not extend 'Addon'");
         }
 
         addon = addonClass.getDeclaredConstructor().newInstance();
@@ -123,7 +123,7 @@ public class AddonClassLoader extends URLClassLoader {
             if (result == null) {
                 try {
                     result = super.findClass(name);
-                } catch (ClassNotFoundException e) {
+                } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     result = null;
                 }
                 if (result != null) {
