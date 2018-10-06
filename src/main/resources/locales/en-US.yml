@@ -179,6 +179,7 @@ commands:
       description: "reloads all locale files"
       locales-reloaded: "&2Languages reloaded"
     version:
+      plugin-version: "&2Bentobox version: &3[name]"
       description: "display info"
       loaded-addons: "Loaded Add-Ons"
       loaded-game-worlds: "Loaded Game Worlds"
