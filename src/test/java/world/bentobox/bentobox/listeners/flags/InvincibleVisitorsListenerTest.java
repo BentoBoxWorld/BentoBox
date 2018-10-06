@@ -54,6 +54,7 @@ public class InvincibleVisitorsListenerTest {
     private IslandsManager im;
     private List<String> ivSettings;
     private Player player;
+    private Optional<Island> optionalIsland;
 
     /**
      * @throws java.lang.Exception
@@ -104,6 +105,7 @@ public class InvincibleVisitorsListenerTest {
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(im.getIsland(Mockito.any(World.class), Mockito.any(User.class))).thenReturn(island);
+        optionalIsland = Optional.of(island);
         // Visitor
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
@@ -220,15 +222,39 @@ public class InvincibleVisitorsListenerTest {
         Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
     }
 
+
     @Test
-    public void testOnVisitorGetDamageVoid() {
-        // For testing, have no island to teleport to
-        when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
+    public void testOnVisitorGetDamageVoidIslandHere() {
+        when(im.getIslandAt(Mockito.any())).thenReturn(optionalIsland);
         EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
+        // Player should be teleported to this island
         listener.onVisitorGetDamage(e);
         assertTrue(e.isCancelled());
         Mockito.verify(player).setGameMode(Mockito.eq(GameMode.SPECTATOR));
-        Mockito.verify(im).getIslandAt(Mockito.any());
     }
+
+    @Test
+    public void testOnVisitorGetDamageVoidNoIslandHerePlayerHasNoIsland() {
+        when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
+        // Player should die
+        listener.onVisitorGetDamage(e);
+        assertFalse(e.isCancelled());
+        Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
+    }
+
+    @Test
+    public void testOnVisitorGetDamageVoidPlayerHasIsland() {
+        when(im.getIslandAt(Mockito.any())).thenReturn(Optional.empty());
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
+        EntityDamageEvent e = new EntityDamageEvent(player, EntityDamageEvent.DamageCause.VOID, 0D);
+        // Player should be teleported to their island
+        listener.onVisitorGetDamage(e);
+        assertTrue(e.isCancelled());
+        Mockito.verify(player, Mockito.never()).setGameMode(Mockito.eq(GameMode.SPECTATOR));
+        Mockito.verify(im).homeTeleport(Mockito.any(), Mockito.eq(player));
+    }
+
 
 }
