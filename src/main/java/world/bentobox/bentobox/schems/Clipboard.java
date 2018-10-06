@@ -361,7 +361,9 @@ public class Clipboard {
             en.set("name", e.getCustomName());
             if (e instanceof Colorable) {
                 Colorable c = (Colorable)e;
-                en.set(COLOR, c.getColor().name());
+                if (c.getColor() != null) {
+                    en.set(COLOR, c.getColor().name());
+                }
             }
             if (e instanceof Tameable && ((Tameable)e).isTamed()) {
                 en.set("tamed", true);
