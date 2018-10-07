@@ -251,5 +251,10 @@ public interface WorldSettings {
      * @return max number of deaths for this world
      */
     int getDeathsMax();
+    
+    /**
+     * @return whether deaths should be counted.
+     */
+    boolean isDeathsCounted();
 
 }
