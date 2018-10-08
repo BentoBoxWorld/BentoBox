@@ -320,10 +320,8 @@ public class IslandsManager {
      * @return Location of player's island or null if one does not exist
      */
     public Location getIslandLocation(World world, UUID uuid) {
-        if (hasIsland(world, uuid)) {
-            return getIsland(world, uuid).getCenter();
-        }
-        return null;
+        Island island = getIsland(world, uuid);
+        return island != null ? island.getCenter() : null;
     }
 
     public Location getLast(World world) {
@@ -477,7 +475,7 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if a player has an island in the world
+     * Checks if a player has an island in the world and owns it
      * @param world - world to check
      * @param uuid - the user's uuid
      * @return true if player has island and owns it

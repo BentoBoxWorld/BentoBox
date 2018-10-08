@@ -143,6 +143,9 @@ public class SafeSpotTeleport {
         List<Pair<Integer, Integer>> result = new ArrayList<>();
         // Get island if available
         Optional<Island> island = plugin.getIslands().getIslandAt(location);
+        if (!island.isPresent()) {
+            return new ArrayList<>();
+        }
         int maxRadius = island.map(Island::getProtectionRange).orElse(plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         maxRadius = maxRadius > MAX_RADIUS ? MAX_RADIUS : maxRadius;
 
@@ -272,9 +275,9 @@ public class SafeSpotTeleport {
                 case LADDER:
                 case LAVA:
                 case LEVER:
-                    case TALL_GRASS:
+                case TALL_GRASS:
                 case PISTON_HEAD:
-                    case MOVING_PISTON:
+                case MOVING_PISTON:
                 case SIGN:
                 case STONE_BUTTON:
                 case TORCH:

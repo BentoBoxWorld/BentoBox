@@ -32,7 +32,7 @@ public class AdminTeleportCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.showHelp(this, user);
-            return true;
+            return false;
         }
 
         // Convert name to a UUID
@@ -48,16 +48,16 @@ public class AdminTeleportCommand extends CompositeCommand {
                 } else if (getLabel().equals("tpend")) {
                     warpSpot = getIslands().getIslandLocation(getWorld(), targetUUID).toVector().toLocation(getPlugin().getIWM().getEndWorld(getWorld()));
                 }
-                // Other wise, go to a safe spot
+                // Otherwise, go to a safe spot
                 String failureMessage = user.getTranslation("commands.admin.tp.manual", "[location]", warpSpot.getBlockX() + " " + warpSpot.getBlockY() + " "
                         + warpSpot.getBlockZ());
-
+                // Teleport
                 new SafeSpotTeleport.Builder(getPlugin())
-                        .entity(user.getPlayer())
-                        .location(warpSpot)
-                        .failureMessage(failureMessage)
-                        .overrideGamemode(false)
-                        .build();
+                .entity(user.getPlayer())
+                .location(warpSpot)
+                .failureMessage(failureMessage)
+                .overrideGamemode(false)
+                .build();
                 return true;
             }
             user.sendMessage("general.errors.player-has-no-island");
