@@ -13,6 +13,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -21,6 +22,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
@@ -29,19 +31,21 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class DeathListenerTest {
 
+    private Player player;
+    private BentoBox plugin;
+    private PlayersManager pm;
+    private WorldSettings worldSettings;
+    private World world;
+    private UUID uuid;
+    private IslandWorldManager iwm;
 
-    @Test
-    public void testDeathListener() {
-        assertNotNull(new DeathListener(mock(BentoBox.class)));
-    }
-
-    @Test
-    public void testOnPlayerDeathEvent() {
+    @Before
+    public void setUp() {
         // Set up plugin
-        BentoBox plugin = mock(BentoBox.class);
+        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
@@ -49,15 +53,31 @@ public class DeathListenerTest {
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Player
-        Player player = mock(Player.class);
-        World world = mock(World.class);
+        player = mock(Player.class);
+        world = mock(World.class);
         when(player.getWorld()).thenReturn(world);
         when(player.getLocation()).thenReturn(mock(Location.class));
-        UUID uuid = UUID.randomUUID();
+        uuid = UUID.randomUUID();
         when(player.getUniqueId()).thenReturn(uuid);
 
-        PlayersManager pm = mock(PlayersManager.class);
+        pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
+
+        worldSettings = mock(WorldSettings.class);
+        when(worldSettings.isDeathsCounted()).thenReturn(true);
+        // Deaths counted
+        when(iwm.getWorldSettings(Mockito.any())).thenReturn(worldSettings );
+
+    }
+
+
+    @Test
+    public void testDeathListener() {
+        assertNotNull(new DeathListener(mock(BentoBox.class)));
+    }
+
+    @Test
+    public void testOnPlayerDeathEventDeathsCounted() {
 
         // Test
         DeathListener dl = new DeathListener(plugin);
@@ -66,5 +86,28 @@ public class DeathListenerTest {
         dl.onPlayerDeathEvent(e);
         Mockito.verify(pm).addDeath(world, uuid);
     }
+
+    @Test
+    public void testOnPlayerDeathEventDeathsNotCounted() {
+        when(worldSettings.isDeathsCounted()).thenReturn(false);
+        // Test
+        DeathListener dl = new DeathListener(plugin);
+
+        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        dl.onPlayerDeathEvent(e);
+        Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
+    }
+
+    @Test
+    public void testOnPlayerDeathEventDeathsCountedNotInWorld() {
+        when(iwm.inWorld(any(Location.class))).thenReturn(false);
+        // Test
+        DeathListener dl = new DeathListener(plugin);
+
+        PlayerDeathEvent e = new PlayerDeathEvent(player, new ArrayList<>(), 0, 0, 0, 0, "died");
+        dl.onPlayerDeathEvent(e);
+        Mockito.verify(pm, Mockito.never()).addDeath(world, uuid);
+    }
+
 
 }
