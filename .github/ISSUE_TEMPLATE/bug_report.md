@@ -4,11 +4,10 @@ about: Create a report to help us improve
 
 ---
 
-**Describe the bug**
+**Description**
 A clear and concise description of what the bug is.
 
-**To Reproduce**
-Steps to reproduce the behavior:
+**Steps to reproduce the behavior:**
 1. Go to '...'
 2. Click on '....'
 3. Scroll down to '....'
@@ -20,11 +19,15 @@ A clear and concise description of what you expected to happen.
 **Screenshots**
 If applicable, add screenshots to help explain your problem.
 
-**Server Information (please complete the following information):**
- - Database being used (Flat file, MySQL, Mongo) <- VERY IMPORTANT
+**Server Information:**
+
+[Please complete the following information:]
+ - Database being used (Flat file, MySQL, Mongo): []
  - OS: [e.g. iOS]
  - Java Version: [e.g. Java 8]
- - Other plugins? [Do /plugins and copy and paste from the console]
+ - BentoBox version: [e.g. 1.7.2.21]
+ - Addons installed? [Do '/bentobox version' and copy/paste from the console]
+ - Other plugins? [Do '/plugins' and copy/paste from the console]
 
 **Additional context**
 Add any other context about the problem here.
