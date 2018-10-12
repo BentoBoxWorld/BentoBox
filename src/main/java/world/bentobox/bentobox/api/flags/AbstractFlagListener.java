@@ -205,7 +205,8 @@ public abstract class AbstractFlagListener implements Listener {
                 user = null;
                 return true;
             } 
-            report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);  
+            report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
+            noGo(e, flag, silent);
             // Clear the user for the next time
             user = null;
             return false;
@@ -224,7 +225,7 @@ public abstract class AbstractFlagListener implements Listener {
     }
 
     private void report(User user, Event e, Location loc, Flag flag, Why why) {
-        if (user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+        if (user != null && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(p -> p.asBoolean()).orElse(false)) {
             plugin.log("Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector()));
             plugin.log("Why: " + (user == null ? "Unknown" : user.getName()) + " " + flag.getID() + " - " + why.name());
