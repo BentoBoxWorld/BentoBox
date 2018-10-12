@@ -23,8 +23,29 @@ import world.bentobox.bentobox.managers.IslandsManager;
  */
 public abstract class AbstractFlagListener implements Listener {
 
+    /**
+     * Reason for why flag was allowed or disallowed
+     * Used by admins for debugging player actions
+     *
+     */
+    enum Why {
+
+        UNPROTECTED_WORLD,
+        OP,
+        BYPASS_EVERYWHERE,
+        BYPASS_ISLAND,
+        RANK_ALLOWED,
+        ALLOWED_IN_WORLD,
+        ALLOWED_ON_ISLAND,
+        NOT_ALLOWED_ON_ISLAND,
+        NOT_ALLOWED_IN_WORLD,
+        ERROR_NO_ASSOCIATED_USER,
+        NOT_SET
+    }
+
     private BentoBox plugin = BentoBox.getInstance();
     private User user = null;
+    private Why why;
 
     /**
      * @return the plugin
@@ -122,11 +143,13 @@ public abstract class AbstractFlagListener implements Listener {
      * @return true if the check is okay, false if it was disallowed
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
+        why = Why.NOT_SET;
         // If this is not an Island World or a standard Nether or End, skip
         if (!plugin.getIWM().inWorld(loc)
                 || (plugin.getIWM().isNether(loc.getWorld()) && !plugin.getIWM().isNetherIslands(loc.getWorld()))
                 || (plugin.getIWM().isEnd(loc.getWorld()) && !plugin.getIWM().isEndIslands(loc.getWorld()))
                 ) {
+            why = Why.UNPROTECTED_WORLD;
             return true;
         }
         // Get the island and if present
@@ -134,6 +157,11 @@ public abstract class AbstractFlagListener implements Listener {
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
+            if (island.isPresent()) {
+                why = island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.ALLOWED_ON_ISLAND : Why.NOT_ALLOWED_ON_ISLAND;
+            } else {
+                why = flag.isSetForWorld(loc.getWorld()) ? Why.ALLOWED_IN_WORLD : Why.NOT_ALLOWED_IN_WORLD;
+            }
             return island.map(x -> x.isAllowed(flag)).orElse(flag.isSetForWorld(loc.getWorld()));
         }
 
@@ -144,12 +172,18 @@ public abstract class AbstractFlagListener implements Listener {
         // TODO: is this the correct handling here?
         if (user == null && !createEventUser(e)) {
             plugin.logError("Check island had no associated user! " + e.getEventName());
+            why = Why.ERROR_NO_ASSOCIATED_USER;
             return false;
         }
 
         // Ops or "bypass everywhere" moderators can do anything
         if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
             user = null;
+            if (user.isOp()) {
+                why = Why.OP;
+            } else {
+                why = Why.BYPASS_EVERYWHERE;
+            }
             return true;
         }
 
@@ -158,24 +192,27 @@ public abstract class AbstractFlagListener implements Listener {
 
         if (island.isPresent()) {
             // If it is not allowed on the island, "bypass island" moderators can do anything
-            if (!island.get().isAllowed(user, flag) && !user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".island")) {
-                noGo(e, flag, silent);
-                // Clear the user for the next time
-                user = null;
-                return false;
-            } else {
-                user = null;
-                return true;
+            if (island.get().isAllowed(user, flag)) {
+                why = Why.RANK_ALLOWED;
             }
+            if (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".island")) {
+                why = Why.BYPASS_ISLAND;
+            }
+            // Clear the user for the next time
+            why = Why.NOT_ALLOWED_ON_ISLAND;
+            user = null;
+            return false;
         }
         // The player is in the world, but not on an island, so general world settings apply
-        if (!flag.isSetForWorld(loc.getWorld())) {
+        if (flag.isSetForWorld(loc.getWorld())) {
+            why = Why.ALLOWED_IN_WORLD;
+            user = null;
+            return true;
+        } else {
+            why = Why.NOT_ALLOWED_IN_WORLD;
             noGo(e, flag, silent);
             user = null;
             return false;
-        } else {
-            user = null;
-            return true;
         }
     }
 
@@ -202,5 +239,13 @@ public abstract class AbstractFlagListener implements Listener {
      */
     protected IslandWorldManager getIWM() {
         return plugin.getIWM();
+    }
+
+    /**
+     * Get why the flag was allowed or not allowed
+     * @return the why - reason
+     */
+    public Why getWhy() {
+        return why;
     }
 }
