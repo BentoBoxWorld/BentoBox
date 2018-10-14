@@ -15,6 +15,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * Abstract class for flag listeners. Provides common code.
@@ -23,8 +24,33 @@ import world.bentobox.bentobox.managers.IslandsManager;
  */
 public abstract class AbstractFlagListener implements Listener {
 
+    /**
+     * Reason for why flag was allowed or disallowed
+     * Used by admins for debugging player actions
+     *
+     */
+    enum Why {
+
+        UNPROTECTED_WORLD,
+        OP,
+        BYPASS_EVERYWHERE,
+        BYPASS_ISLAND,
+        RANK_ALLOWED,
+        ALLOWED_IN_WORLD,
+        ALLOWED_ON_ISLAND,
+        NOT_ALLOWED_ON_ISLAND,
+        NOT_ALLOWED_IN_WORLD,
+        ERROR_NO_ASSOCIATED_USER,
+        NOT_SET,
+        SETTING_ALLOWED_ON_ISLAND,
+        SETTING_NOT_ALLOWED_ON_ISLAND,
+        SETTING_ALLOWED_IN_WORLD,
+        SETTING_NOT_ALLOWED_IN_WORLD
+    }
+
     private BentoBox plugin = BentoBox.getInstance();
     private User user = null;
+    private Why why;
 
     /**
      * @return the plugin
@@ -127,6 +153,7 @@ public abstract class AbstractFlagListener implements Listener {
                 || (plugin.getIWM().isNether(loc.getWorld()) && !plugin.getIWM().isNetherIslands(loc.getWorld()))
                 || (plugin.getIWM().isEnd(loc.getWorld()) && !plugin.getIWM().isEndIslands(loc.getWorld()))
                 ) {
+            report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);
             return true;
         }
         // Get the island and if present
@@ -134,6 +161,11 @@ public abstract class AbstractFlagListener implements Listener {
         // Handle Settings Flag
         if (flag.getType().equals(Flag.Type.SETTING)) {
             // If the island exists, return the setting, otherwise return the default setting for this flag
+            if (island.isPresent()) {
+                report(user, e, loc, flag,  island.map(x -> x.isAllowed(flag)).orElse(false) ? Why.SETTING_ALLOWED_ON_ISLAND : Why.SETTING_NOT_ALLOWED_ON_ISLAND);
+            } else {
+                report(user, e, loc, flag,  flag.isSetForWorld(loc.getWorld()) ? Why.SETTING_ALLOWED_IN_WORLD : Why.SETTING_NOT_ALLOWED_IN_WORLD);
+            }
             return island.map(x -> x.isAllowed(flag)).orElse(flag.isSetForWorld(loc.getWorld()));
         }
 
@@ -144,11 +176,17 @@ public abstract class AbstractFlagListener implements Listener {
         // TODO: is this the correct handling here?
         if (user == null && !createEventUser(e)) {
             plugin.logError("Check island had no associated user! " + e.getEventName());
+            report(user, e, loc, flag,  Why.ERROR_NO_ASSOCIATED_USER);
             return false;
         }
 
         // Ops or "bypass everywhere" moderators can do anything
-        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
+        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {            
+            if (user.isOp()) {
+                report(user, e, loc, flag,  Why.OP);
+            } else {
+                report(user, e, loc, flag,  Why.BYPASS_EVERYWHERE);
+            }
             user = null;
             return true;
         }
@@ -158,25 +196,41 @@ public abstract class AbstractFlagListener implements Listener {
 
         if (island.isPresent()) {
             // If it is not allowed on the island, "bypass island" moderators can do anything
-            if (!island.get().isAllowed(user, flag) && !user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".island")) {
-                noGo(e, flag, silent);
-                // Clear the user for the next time
-                user = null;
-                return false;
-            } else {
+            if (island.get().isAllowed(user, flag)) {
+                report(user, e, loc, flag,  Why.RANK_ALLOWED);
                 user = null;
                 return true;
-            }
+            } else if (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".island")) {
+                report(user, e, loc, flag,  Why.BYPASS_ISLAND);
+                user = null;
+                return true;
+            } 
+            report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
+            noGo(e, flag, silent);
+            // Clear the user for the next time
+            user = null;
+            return false;
         }
         // The player is in the world, but not on an island, so general world settings apply
-        if (!flag.isSetForWorld(loc.getWorld())) {
+        if (flag.isSetForWorld(loc.getWorld())) {
+            report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
+            user = null;
+            return true;
+        } else {
+            report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
             noGo(e, flag, silent);
             user = null;
             return false;
-        } else {
-            user = null;
-            return true;
         }
+    }
+
+    private void report(User user, Event e, Location loc, Flag flag, Why why) {
+        if (user != null && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
+                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(p -> p.asBoolean()).orElse(false)) {
+            plugin.log("Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector()));
+            plugin.log("Why: " + (user == null ? "Unknown" : user.getName()) + " " + flag.getID() + " - " + why.name());
+        }
+
     }
 
     /**
@@ -202,5 +256,13 @@ public abstract class AbstractFlagListener implements Listener {
      */
     protected IslandWorldManager getIWM() {
         return plugin.getIWM();
+    }
+
+    /**
+     * Get why the flag was allowed or not allowed
+     * @return the why - reason
+     */
+    public Why getWhy() {
+        return why;
     }
 }
