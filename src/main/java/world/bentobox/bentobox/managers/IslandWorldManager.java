@@ -106,7 +106,7 @@ public class IslandWorldManager {
      */
     public Map<String, String> getOverWorldNames() {
         return worldSettings.values().stream()
-                .collect(Collectors.toMap(ws -> ws.getWorldName(), ws -> ws.getAddon().map(a -> a.getDescription().getName()).orElse("None")));
+                .collect(Collectors.toMap(WorldSettings::getWorldName, ws -> ws.getAddon().map(a -> a.getDescription().getName()).orElse("None")));
     }
 
     /**

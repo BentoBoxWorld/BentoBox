@@ -7,6 +7,7 @@ import java.util.UUID;
 
 import org.bukkit.metadata.FixedMetadataValue;
 
+import org.bukkit.metadata.MetadataValue;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -47,7 +48,7 @@ public class AdminWhyCommand extends ConfirmableCommand {
         }
         // Determine the debug mode and toggle if required
         boolean newValue = !target.getPlayer().getMetadata(getWorld().getName() + "_why_debug").stream()
-                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(p -> p.asBoolean()).orElse(false);
+                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false);
         if (newValue) {
             user.sendMessage("commands.admin.why.turning-on", TextVariables.NAME, target.getName());
         } else {

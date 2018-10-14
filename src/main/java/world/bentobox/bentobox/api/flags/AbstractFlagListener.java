@@ -9,6 +9,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 
+import org.bukkit.metadata.MetadataValue;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -30,7 +31,6 @@ public abstract class AbstractFlagListener implements Listener {
      *
      */
     enum Why {
-
         UNPROTECTED_WORLD,
         OP,
         BYPASS_EVERYWHERE,
@@ -226,9 +226,9 @@ public abstract class AbstractFlagListener implements Listener {
 
     private void report(User user, Event e, Location loc, Flag flag, Why why) {
         if (user != null && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
-                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(p -> p.asBoolean()).orElse(false)) {
+                .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
             plugin.log("Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector()));
-            plugin.log("Why: " + (user == null ? "Unknown" : user.getName()) + " " + flag.getID() + " - " + why.name());
+            plugin.log("Why: " + user.getName() + " " + flag.getID() + " - " + why.name());
         }
 
     }

@@ -20,8 +20,8 @@ public class AdminSchemCommand extends ConfirmableCommand {
 
     // Map containing selection cuboid display tasks
     private Map<User, Integer> display;
-    private final Particle PARTICLE = Particle.REDSTONE;
-    private final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
+    private static final Particle PARTICLE = Particle.REDSTONE;
+    private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
     public AdminSchemCommand(CompositeCommand parent) {
         super(parent, "schem");

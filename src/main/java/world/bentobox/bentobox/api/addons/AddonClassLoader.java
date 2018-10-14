@@ -36,7 +36,7 @@ public class AddonClassLoader extends URLClassLoader {
             MalformedURLException,
             InvalidDescriptionException,
             InstantiationException,
-            IllegalAccessException, IllegalArgumentException, InvocationTargetException, NoSuchMethodException, SecurityException {
+            IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         super(new URL[]{path.toURI().toURL()}, parent);
 
         loader = addonsManager;
