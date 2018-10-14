@@ -92,7 +92,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
                 }
 
                 // Draw the island area
-                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F),island.getCenter(), island.getRange());
+                drawZone(user, Particle.REDSTONE, new Particle.DustOptions(Color.GRAY, 1.0F), island.getCenter(), island.getRange());
             });
         }, 20, 30));
     }
