@@ -203,9 +203,9 @@ commands:
       plugin-version: "&2Bentobox version: &3[name]"
       description: "display info"
       loaded-addons: "Loaded Add-Ons"
-      loaded-game-worlds: "Loaded Game Worlds"
+      loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version]" 
-      game-worlds: "&2[name]"
+      game-worlds: "&2[name] &3([addon])"
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm"
     previous-request-cancelled: "&6Previous confirmation request cancelled"

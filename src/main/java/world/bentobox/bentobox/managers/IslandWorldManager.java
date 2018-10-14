@@ -100,13 +100,13 @@ public class IslandWorldManager {
     }
 
     /**
-     * Get friendly names of all the over worlds
+     * Get friendly names of all the over worlds and associated addon
      *
-     * @return Set of world names
+     * @return Map of world names and associated addon or if it's a built-in world "none"
      */
-    public Set<String> getOverWorldNames() {
-        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
-                .map(Map.Entry::getValue).collect(Collectors.toSet());
+    public Map<String, String> getOverWorldNames() {
+        return worldSettings.values().stream()
+                .collect(Collectors.toMap(ws -> ws.getWorldName(), ws -> ws.getAddon().map(a -> a.getDescription().getName()).orElse("None")));
     }
 
     /**
