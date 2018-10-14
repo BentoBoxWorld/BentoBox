@@ -164,6 +164,27 @@ commands:
       need-pos1-pos2: "&cSet pos1 and pos2 first!"
       copied-blocks: "&bCopied [number] blocks to clipboard"
       look-at-a-block: "&cLook at block within 20 blocks to set"
+      copy:
+        parameters: "[air]"
+        description: "copy the clipboard set by pos1 and pos2 and optionally the air blocks"
+      load:
+        parameters: "<schem name>"
+        description: "load schem into the clipboard"
+      origin:
+        parameters: ""
+        description: "set the schem's origin to your position"
+      paste:
+        parameters: ""
+        description: "paste the clipboard to your location"
+      pos1:
+        parameters: ""
+        description: "set 1st corner of cuboid clipboard"
+      pos2:
+        parameters: ""
+        description: "set 2nd corner of cuboid clipboard"
+      save:
+        parameters: "<schem name>"
+        description: "save the copied clipboard"      
     world:
       description: "Manage world settings"
     delete:
