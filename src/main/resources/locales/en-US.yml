@@ -151,7 +151,7 @@ commands:
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
     schem:
-      parameters: "<load><copy><paste><pos1><pos2><save>"
+      parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate schems"
       copy-first: "&cCopy a schem first!"
       file-exists: "&cFile already exists, overwrite?"
