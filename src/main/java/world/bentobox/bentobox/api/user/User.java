@@ -343,7 +343,7 @@ public class User {
      * @param y Y coordinate of the particle to display.
      * @param z Z coordinate of the particle to display.
      */
-    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, double x, double y, double z) {
         if (particle.equals(Particle.REDSTONE) && dustOptions == null) {
             // Security check that will avoid later unexpected exceptions.
             throw new IllegalArgumentException("A non-null Particle.DustOptions must be provided when using Particle.REDSTONE as particle.");
