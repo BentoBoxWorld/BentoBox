@@ -31,6 +31,7 @@ public class AdminSchemPos1Command extends CompositeCommand {
         clipboard.setPos1(user.getLocation());
         user.sendMessage("commands.admin.schem.set-pos1", "[vector]", Util.xyz(user.getLocation().toVector()));
         parent.getClipboards().put(user.getUniqueId(), clipboard);
+        parent.showClipboard(user);
         return true;
     }
 }

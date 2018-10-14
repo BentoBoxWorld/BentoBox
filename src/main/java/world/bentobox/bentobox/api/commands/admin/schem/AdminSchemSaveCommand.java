@@ -33,9 +33,13 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
             // Check if file exists
             File newFile = new File(parent.getSchemsFolder(), args.get(0) + ".schem");
             if (newFile.exists()) {
-                this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> clipboard.save(user, args.get(0)));
+                this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
+                    parent.hideClipboard(user);
+                    clipboard.save(user, args.get(0));
+                });
                 return false;
             } else {
+                parent.hideClipboard(user);
                 return clipboard.save(user, args.get(0));
             }
         } else {
