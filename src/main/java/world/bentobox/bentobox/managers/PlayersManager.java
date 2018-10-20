@@ -227,7 +227,9 @@ public class PlayersManager {
         if (name.length() == 36 && name.contains("-")) {
             try {
                 return UUID.fromString(name);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+                // Not used
+            }
         }
         // Look in the name cache, then the data base and then give up
         return playerCache.values().stream()

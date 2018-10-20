@@ -250,7 +250,7 @@ public class Clipboard {
         }
         // Entities
         if (config.isConfigurationSection(ENTITY)) {
-            setEntity(island, block.getLocation(), config);
+            setEntity(block.getLocation(), config);
         }
     }
 
@@ -263,11 +263,10 @@ public class Clipboard {
 
     /**
      * Sets any entity that is in this location
-     * @param island - island
      * @param location - locaton
      * @param config - config section
      */
-    private void setEntity(Island island, Location location, ConfigurationSection config) {
+    private void setEntity(Location location, ConfigurationSection config) {
         ConfigurationSection en = config.getConfigurationSection(ENTITY);
         en.getKeys(false).forEach(k -> {
             ConfigurationSection ent = en.getConfigurationSection(k);

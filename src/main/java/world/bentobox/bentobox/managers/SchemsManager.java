@@ -19,6 +19,8 @@ public class SchemsManager {
     private BentoBox plugin;
     private Map<World, Clipboard> islandSchems;
 
+    private static final String SCHEM = ".schem";
+
     /**
      * @param plugin - plugin
      */
@@ -37,16 +39,16 @@ public class SchemsManager {
             plugin.logError("Could not make schems folder!");
             return;
         }
-        File schem = new File(schems, name + ".schem");
+        File schem = new File(schems, name + SCHEM);
         if (schem.exists()) {
             // No overwriting
             return;
         }
         Optional<Addon> addon = plugin.getIWM().getAddon(world);
         if (addon.isPresent()) {
-            addon.get().saveResource("schems/" + name + ".schem", false);
+            addon.get().saveResource("schems/" + name + SCHEM, false);
         } else {
-            plugin.saveResource("schems/" + name + ".schem", false);
+            plugin.saveResource("schems/" + name + SCHEM, false);
         }
     }
 

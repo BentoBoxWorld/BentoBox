@@ -174,12 +174,8 @@ public class IslandsManager {
         if (!ground.getType().isSolid()) {
             return false;
         }
-        // Cannot be submerged
-        if (space1.isLiquid() && space2.isLiquid()) {
-            return false;
-        }
-        // Check if water is safe in this world
-        if (space1.isLiquid() && plugin.getIWM().isWaterNotSafe(l.getWorld())) {
+        // Cannot be submerged or water cannot be dangerous
+        if (space1.isLiquid() && (space2.isLiquid() || plugin.getIWM().isWaterNotSafe(l.getWorld()))) {
             return false;
         }
 
@@ -205,9 +201,7 @@ public class IslandsManager {
             return false;
         }
         // Check that the space is not solid
-        // The isSolid function is not fully accurate (yet) so we have to
-        // check
-        // a few other items
+        // The isSolid function is not fully accurate (yet) so we have to check a few other items
         // isSolid thinks that PLATEs and SIGNS are solid, but they are not
         return (!space1.getType().isSolid() || space1.getType().equals(Material.SIGN) || space1.getType().equals(Material.WALL_SIGN)) && (!space2.getType().isSolid() || space2.getType().equals(Material.SIGN) || space2.getType().equals(Material.WALL_SIGN));
     }

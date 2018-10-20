@@ -75,10 +75,6 @@ public class PanelBuilder {
      */
     public int nextSlot() {
         return items.isEmpty() ? 0 : items.lastKey() + 1;
-        //for (int i = 0 ; i < (size == 0 ? 54 : size) ; i++) {
-        //    if (!slotOccupied(i)) return i;
-        //}
-        //return -1;
     }
 
     /**

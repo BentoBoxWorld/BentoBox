@@ -72,12 +72,11 @@ public class TNTListener extends AbstractFlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        if (e.getEntity() != null && e.getEntityType().equals(EntityType.PRIMED_TNT)) {
-            // Remove any blocks from the explosion list if they are inside a protected area
-            if (e.blockList().removeIf(b -> getIslands().getProtectedIslandAt(b.getLocation()).map(i -> !i.isAllowed(Flags.TNT)).orElse(false))) {
-                // If any were removed, then prevent damage too
-                e.setCancelled(true);
-            }
+        // Remove any blocks from the explosion list if they are inside a protected area and if the entity was a TNT
+        if (e.getEntity() != null && e.getEntityType().equals(EntityType.PRIMED_TNT)
+                && e.blockList().removeIf(b -> getIslands().getProtectedIslandAt(b.getLocation()).map(i -> !i.isAllowed(Flags.TNT)).orElse(false))) {
+            // If any were removed, then prevent damage too
+            e.setCancelled(true);
         }
     }
 

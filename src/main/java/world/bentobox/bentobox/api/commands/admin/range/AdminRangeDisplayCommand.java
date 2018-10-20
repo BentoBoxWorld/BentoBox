@@ -23,7 +23,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private static final String HIDE = "hide";
 
     // Map of users to which ranges must be displayed
-    private Map<User, Integer> display = new HashMap<>();
+    private Map<User, Integer> displayRanges = new HashMap<>();
 
     public AdminRangeDisplayCommand(CompositeCommand parent) {
         super(parent, DISPLAY, SHOW, HIDE);
@@ -43,7 +43,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
         // - show : only set on - and send "error" if already on
         // - hide : only set off - same if already off
 
-        if (!display.containsKey(user)) {
+        if (!displayRanges.containsKey(user)) {
             switch (label) {
             case DISPLAY:
             case SHOW:
@@ -77,7 +77,7 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
     private void showZones(User user) {
         user.sendMessage("commands.admin.range.display.showing");
         user.sendMessage("commands.admin.range.display.hint");
-        display.put(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
+        displayRanges.put(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
             if (!user.getPlayer().isOnline()) {
                 hideZones(user);
             }
@@ -99,8 +99,8 @@ public class AdminRangeDisplayCommand extends CompositeCommand {
 
     private void hideZones(User user) {
         user.sendMessage("commands.admin.range.display.hiding");
-        Bukkit.getScheduler().cancelTask(display.get(user));
-        display.remove(user);
+        Bukkit.getScheduler().cancelTask(displayRanges.get(user));
+        displayRanges.remove(user);
     }
 
     private void drawZone(User user, Particle particle, Particle.DustOptions dustOptions, Location center, int range) {

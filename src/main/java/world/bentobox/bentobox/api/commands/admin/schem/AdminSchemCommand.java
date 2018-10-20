@@ -19,7 +19,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
     private Map<UUID, Clipboard> clipboards;
 
     // Map containing selection cuboid display tasks
-    private Map<User, Integer> display;
+    private Map<User, Integer> displayClipboards;
     private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
@@ -35,7 +35,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         setOnlyPlayer(true);
 
         clipboards = new HashMap<>();
-        display = new HashMap<>();
+        displayClipboards = new HashMap<>();
 
         new AdminSchemLoadCommand(this);
         new AdminSchemPasteCommand(this);
@@ -57,7 +57,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
     }
 
     void showClipboard(User user) {
-        display.putIfAbsent(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
+        displayClipboards.putIfAbsent(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
             if (!user.getPlayer().isOnline()) {
                 hideClipboard(user);
             }
@@ -107,8 +107,8 @@ public class AdminSchemCommand extends ConfirmableCommand {
     }
 
     void hideClipboard(User user) {
-        Bukkit.getScheduler().cancelTask(display.get(user));
-        display.remove(user);
+        Bukkit.getScheduler().cancelTask(displayClipboards.get(user));
+        displayClipboards.remove(user);
     }
 
     File getSchemsFolder() {

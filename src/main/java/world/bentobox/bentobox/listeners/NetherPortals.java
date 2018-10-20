@@ -177,11 +177,10 @@ public class NetherPortals implements Listener {
         if (e.getCause().equals(TeleportCause.NETHER_PORTAL)
                 && plugin.getIWM().inWorld(e.getFrom())
                 && !plugin.getIWM().isNetherIslands(fromWorld)
-                && fromWorld.getEnvironment().equals(Environment.NETHER)) {
-            if (plugin.getPlayers().isKnown(e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-                plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
-            }
+                && fromWorld.getEnvironment().equals(Environment.NETHER)
+                && plugin.getPlayers().isKnown(e.getPlayer().getUniqueId())) {
+            e.setCancelled(true);
+            plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
         }
     }
 
