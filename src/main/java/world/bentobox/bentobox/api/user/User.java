@@ -359,6 +359,20 @@ public class User {
         }
     }
 
+    /**
+     * Spawn particles to the player.
+     * They are only displayed if they are within the server's view distance.
+     * @param particle Particle to display.
+     * @param dustOptions Particle.DustOptions for the particle to display.
+     *                    Cannot be null when particle is {@link Particle#REDSTONE}.
+     * @param x X coordinate of the particle to display.
+     * @param y Y coordinate of the particle to display.
+     * @param z Z coordinate of the particle to display.
+     */
+    public void spawnParticle(Particle particle, Particle.DustOptions dustOptions, int x, int y, int z) {
+        spawnParticle(particle, dustOptions, (double) x, (double) y, (double) z);
+    }
+
     /* (non-Javadoc)
      * @see java.lang.Object#hashCode()
      */
