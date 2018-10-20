@@ -6,7 +6,6 @@ import java.util.UUID;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.Util;
 
 public class IslandSethomeCommand extends CompositeCommand {
 
@@ -40,7 +39,7 @@ public class IslandSethomeCommand extends CompositeCommand {
             user.sendMessage("commands.island.sethome.home-set");
         } else {
             // Dynamic home sizes with permissions
-            int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getIWM().getMaxHomes(getWorld()));
+            int maxHomes = user.getPermissionValue("island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (maxHomes > 1) {
                 // Check the number given is a number
                 int number;

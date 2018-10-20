@@ -792,7 +792,7 @@ public class IslandsManager {
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
         if (target.isOnline()) {
             // Check if new leader has a different range permission than the island size
-            int range = Util.getPermValue(target.getPlayer(), permPrefix + "island.range.", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+            int range = target.getPermissionValue(permPrefix + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
             // Range can go up or down
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
@@ -801,7 +801,6 @@ public class IslandsManager {
                         + range + " for " + user.getName() + " due to permission.");
             }
             island.setProtectionRange(range);
-
         }
     }
 

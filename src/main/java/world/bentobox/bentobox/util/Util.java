@@ -172,43 +172,9 @@ public class Util {
         return returned;
     }
 
-    /**
-     * Get the maximum value of a numerical perm setting
-     * @param player - the player - the player to check
-     * @param perm - the start of the perm, e.g., bskyblock.maxhomes
-     * @param permValue - the default value - the result may be higher or lower than this
-     * @return max value
-     */
-    public static int getPermValue(Player player, String perm, int permValue) {
-        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-            if (perms.getPermission().startsWith(perm + ".")) {
-                // Get the max value should there be more than one
-                if (perms.getPermission().contains(perm + ".*")) {
-                    return permValue;
-                } else {
-                    String[] spl = perms.getPermission().split(perm + ".");
-                    if (spl.length > 1) {
-                        if (!NumberUtils.isDigits(spl[1])) {
-                            plugin.logError("Player " + player.getName() + " has permission: " + perms.getPermission() + " <-- the last part MUST be a number! Ignoring...");
-
-                        } else {
-                            permValue = Math.max(permValue, Integer.valueOf(spl[1]));
-                        }
-                    }
-                }
-            }
-            // Do some sanity checking
-            if (permValue < 1) {
-                permValue = 1;
-            }
-        }
-        return permValue;
-    }
-
     public static String xyz(Vector location) {
         return location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ();
     }
-
 
     /**
      * Checks is world = world2 irrespective of the world type

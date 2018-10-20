@@ -152,7 +152,6 @@ public class PlayersManagerTest {
             .sorted(Comparator.reverseOrder())
             .map(Path::toFile)
             .forEach(File::delete);
-            System.out.println(file.exists());
         }
     }
 

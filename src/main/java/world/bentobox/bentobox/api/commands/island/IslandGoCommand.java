@@ -7,7 +7,6 @@ import org.apache.commons.lang.math.NumberUtils;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento
@@ -34,7 +33,7 @@ public class IslandGoCommand extends CompositeCommand {
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.parseInt(args.get(0));
-            int maxHomes = Util.getPermValue(user.getPlayer(), "island.maxhomes", getIWM().getMaxHomes(getWorld()));
+            int maxHomes = user.getPermissionValue("island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1 && homeValue <= maxHomes) {
                 getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
                 user.sendMessage("commands.island.go.tip", TextVariables.LABEL, getTopLabel());

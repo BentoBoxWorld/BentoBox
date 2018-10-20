@@ -151,7 +151,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
      * @return max team size of user
      */
     public int getMaxTeamSize(User user) {
-        return Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "team.maxsize.", getIWM().getMaxTeamSize(getWorld()));
+        return user.getPermissionValue(getPermissionPrefix() + "team.maxsize.", getIWM().getMaxTeamSize(getWorld()));
     }
 
 }

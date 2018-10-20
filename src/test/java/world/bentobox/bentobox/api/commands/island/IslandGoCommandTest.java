@@ -113,7 +113,7 @@ public class IslandGoCommandTest {
         // Number of homes
         PowerMockito.mockStatic(Util.class);
         // 1 home for now
-        when(Util.getPermValue(Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(1);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(1);
     }
 
     /**
@@ -125,7 +125,6 @@ public class IslandGoCommandTest {
         IslandGoCommand igc = new IslandGoCommand(ic);
         assertFalse(igc.execute(user, igc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("general.errors.no-island");
-        
     }
     
     /**
@@ -144,7 +143,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteNoArgsMultipleHomes() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
-        when(Util.getPermValue(Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
         IslandGoCommand igc = new IslandGoCommand(ic);
         assertTrue(igc.execute(user, igc.getLabel(), new ArrayList<>()));
     }
@@ -155,7 +154,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteArgs1MultipleHomes() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
-        when(Util.getPermValue(Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
         IslandGoCommand igc = new IslandGoCommand(ic);
         List<String> args = new ArrayList<>();
         args.add("1");
@@ -168,7 +167,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteArgs2MultipleHomes() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
-        when(Util.getPermValue(Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
         IslandGoCommand igc = new IslandGoCommand(ic);
         List<String> args = new ArrayList<>();
         args.add("2");
@@ -183,7 +182,7 @@ public class IslandGoCommandTest {
     @Test
     public void testExecuteArgsJunkMultipleHomes() {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
-        when(Util.getPermValue(Mockito.any(Player.class), Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(3);
         IslandGoCommand igc = new IslandGoCommand(ic);
         List<String> args = new ArrayList<>();
         args.add("sdfsdf");

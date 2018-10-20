@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
+import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.*;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -180,6 +181,38 @@ public class User {
             }
         }
         return false;
+    }
+
+    /**
+     * Get the maximum value of a numerical permission setting
+     * @param permissionPrefix the start of the perm, e.g., bskyblock.maxhomes
+     * @param defaultValue the default value; the result may be higher or lower than this
+     * @return max value
+     */
+    public int getPermissionValue(String permissionPrefix, int defaultValue) {
+        int value = defaultValue;
+        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
+            if (perms.getPermission().startsWith(permissionPrefix + ".")) {
+                // Get the max value should there be more than one
+                if (perms.getPermission().contains(permissionPrefix + ".*")) {
+                    return value;
+                } else {
+                    String[] spl = perms.getPermission().split(permissionPrefix + ".");
+                    if (spl.length > 1) {
+                        if (!NumberUtils.isDigits(spl[1])) {
+                            plugin.logError("Player " + player.getName() + " has permission: '" + perms.getPermission() + "' <-- the last part MUST be a number! Ignoring...");
+                        } else {
+                            value = Math.max(value, Integer.valueOf(spl[1]));
+                        }
+                    }
+                }
+            }
+            // Do some sanity checking
+            if (value < 1) {
+                value = 1;
+            }
+        }
+        return value;
     }
 
     /**

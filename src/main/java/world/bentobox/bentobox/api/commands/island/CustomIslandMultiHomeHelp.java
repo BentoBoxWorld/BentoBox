@@ -4,7 +4,6 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * This is a custom help for the /island go and /island sethome commands. It overrides the default help sub command.
@@ -12,7 +11,6 @@ import world.bentobox.bentobox.util.Util;
  * This is an example of a custom help as much as anything.
  *
  * @author tastybento
- *
  */
 public class CustomIslandMultiHomeHelp extends CompositeCommand {
 
@@ -47,7 +45,7 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
     private void showPrettyHelp(User user, String usage, String params, String desc) {
         // Player. Check perms
         if (user.hasPermission(getPermission())) {
-            int maxHomes = Util.getPermValue(user.getPlayer(), getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
+            int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (maxHomes > 1) {
                 params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
             }
