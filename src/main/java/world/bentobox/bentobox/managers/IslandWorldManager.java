@@ -330,7 +330,7 @@ public class IslandWorldManager {
      *
      * @param world
      *            - world
-     * @return true if world is a known and valid nether world
+     * @return true if world is a known and valid end world
      */
     public boolean isEnd(World world) {
         World w = Util.getWorld(world);
