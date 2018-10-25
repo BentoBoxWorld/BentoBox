@@ -1,4 +1,4 @@
-# BentoBox Configuration FC
+# BentoBox Configuration 0.11.0-SNAPSHOT
 # This config file is dynamic and saved when the server is shutdown.
 # You cannot edit it while the server is running because changes will
 # be lost! Use in-game settings GUI or edit when server is offline.
@@ -8,10 +8,6 @@ general:
   # bStats has nearly no effect on your server's performance and the sent data is completely
   # anonymous so please consider twice if you really want to disable it.
   metrics: true
-  # Check for updates - this will tell Ops and the console if there is a new
-  # version available. It contacts dev.bukkit.org to request the latest version
-  # info. It does not download the latest version or change any files
-  check-updates: true
   # Default language for new players.
   # This is the filename in the locale folder without .yml.
   # If this does not exist, the default en-US will be used.
@@ -22,13 +18,6 @@ general:
   # Starting money - this is how much money new players will have as their
   # balance at the start of an island.
   starting-money: 10.0
-  purge:
-    # Only islands below this level will be removed if they are abandoned and admins issue the purge command
-    max-island-level: 50
-    # Remove user data when its island gets purged.
-    # Helps a lot to avoid huge backups and can save some performance on startup,
-    # but the player settings and data will be reset.
-    remove-user-data: false
   database:
     # FLATFILE, MYSQL, MONGO
     # if you use MONGO, you must also run the BSBMongo plugin (not addon)
@@ -44,13 +33,6 @@ general:
     # This helps prevent issues if the server crashes.
     # Data is also saved at important points in the game.
     backup-period: 5
-  # Recover super flat - if the generator does not run for some reason, you can get
-  # super flat chunks (grass). To remove automatically, select this option. Turn off
-  # if there are no more because it may cause lag.
-  # This will regenerate any chunks with bedrock at y=0 when they are loaded
-  recover-super-flat: false
-  # Mute death messages
-  mute-death-messages: false
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
   fakeplayers:
@@ -60,32 +42,38 @@ general:
   # Recommendation is to keep this true so that newbies don't bother you or reset their
   # island unnecessarily.
   allow-obsidian-scooping: true
-  # Time in seconds that players have to confirm sensitive commands, e.g. island reset
-  confirmation-time: 20
+  # Rank required to use a command. e.g., use the invite command. Default is owner rank is required.
+  rank-command: {}
 panel:
   close-on-click-outside: true
 island:
-  # How long a player must wait until they can rejoin a team island after being
-  # kicked in minutes. This slows the effectiveness of players repeating challenges
-  # by repetitively being invited to a team island.
-  invite-wait: 60
-  require-confirmation:
-    # Ask the player to confirm the command he is using by typing it again.
-    # The 'wait' value is the number of seconds to wait for confirmation.
-    kick: true
-    kick-wait: 10
-    leave: true
-    leave-wait: 10
-    reset: true
-  # How long a player must wait before they can reset their island again in seconds
-  reset-wait: 300
+  cooldown:
+    # How long a player must wait until they can rejoin a team island after being
+    # kicked in minutes. This slows the effectiveness of players repeating challenges
+    # by repetitively being invited to a team island.
+    invite: 60
+    # How long a player must wait until they can coop a player in minutes.
+    coop: 5
+    # How long a player must wait until they can trust a player in minutes.
+    trust: 5
+    # How long a player must wait until they can ban a player
+    # after unbanning them. In minutes.
+    ban: 10
+    # How long a player must wait before they can reset their island again in seconds.
+    reset: 300
+  confirmation:
+    # Time in seconds that players have to confirm sensitive commands, e.g. island reset
+    time: 10
+    commands:
+      # Ask the player to confirm the command he is using by typing it again.
+      # The 'wait' value is the number of seconds to wait for confirmation.
+      kick: true
+      leave: true
+      reset: true
   name:
     # These set the minimum and maximum size of a name.
     min-length: 4
     max-length: 20
-  # How long a player must wait until they can ban a player
-  # after unbanning them. In minutes.
-  ban-wait: 10
   customranks: {}
 # These settings should not be edited
 uniqueId: config
