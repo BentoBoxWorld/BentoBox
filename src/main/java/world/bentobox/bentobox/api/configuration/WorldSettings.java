@@ -257,4 +257,24 @@ public interface WorldSettings {
      */
     boolean isDeathsCounted();
 
+    /**
+     * @return whether a player can set their home in the Nether or not.
+     */
+    boolean isAllowSetHomeInNether();
+
+    /**
+     * @return whether a player can set their home in the End or not.
+     */
+    boolean isAllowSetHomeInTheEnd();
+
+    /**
+     * @return whether a confirmation is required when a player tries to set their home in the Nether.
+     */
+    boolean isRequireConfirmationToSetHomeInNether();
+
+    /**
+     * @return whether a confirmation is required when a player tries to set their home in the End.
+     */
+    boolean isRequireConfirmationToSetHomeInTheEnd();
+
 }

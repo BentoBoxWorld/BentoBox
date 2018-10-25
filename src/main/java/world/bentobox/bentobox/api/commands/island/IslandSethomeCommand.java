@@ -1,13 +1,13 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.util.List;
-import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
-public class IslandSethomeCommand extends CompositeCommand {
+public class IslandSethomeCommand extends ConfirmableCommand {
 
     public IslandSethomeCommand(CompositeCommand islandCommand) {
         super(islandCommand, "sethome");
@@ -23,7 +23,6 @@ public class IslandSethomeCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        UUID playerUUID = user.getUniqueId();
         // Check island
         if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
@@ -35,8 +34,8 @@ public class IslandSethomeCommand extends CompositeCommand {
         }
         if (args.isEmpty()) {
             // island sethome
-            getPlugin().getPlayers().setHomeLocation(playerUUID, user.getLocation());
-            user.sendMessage("commands.island.sethome.home-set");
+            setHome(user, 1);
+            return true;
         } else {
             // Dynamic home sizes with permissions
             int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
@@ -49,8 +48,8 @@ public class IslandSethomeCommand extends CompositeCommand {
                         user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
                         return false;
                     } else {
-                        getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
-                        user.sendMessage("commands.island.sethome.home-set");
+                        setHome(user, number);
+                        return true;
                     }
                 } catch (Exception e) {
                     user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
@@ -61,7 +60,45 @@ public class IslandSethomeCommand extends CompositeCommand {
                 return false;
             }
         }
-        return true;
+    }
+
+    private void setHome(User user, int number) {
+        // Define a runnable as we will be using it often in the code below.
+        Runnable setHomeRunnable = () -> {
+            getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
+            user.sendMessage("commands.island.sethome.home-set");
+        };
+
+        // Check if the player is in the Nether
+        if (getIWM().isNether(user.getLocation().getWorld())) {
+            // Check if he is (not) allowed to set his home here
+            if (!getIWM().getWorldSettings(user.getLocation().getWorld()).isAllowSetHomeInNether()) {
+                user.sendMessage("commands.island.sethome.nether.not-allowed");
+                return;
+            }
+
+            // Check if a confirmation is required
+            if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInNether()) {
+                askConfirmation(user, "commands.island.sethome.nether.confirmation", setHomeRunnable);
+            } else {
+                setHomeRunnable.run();
+            }
+        } else if (getIWM().isEnd(user.getLocation().getWorld())) { // Check if the player is in the End
+            // Check if he is (not) allowed to set his home here
+            if (!getIWM().getWorldSettings(user.getLocation().getWorld()).isAllowSetHomeInTheEnd()) {
+                user.sendMessage("commands.island.sethome.the-end.not-allowed");
+                return;
+            }
+
+            // Check if a confirmation is required
+            if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInTheEnd()) {
+                askConfirmation(user, "commands.island.sethome.the-end.confirmation", setHomeRunnable);
+            } else {
+                setHomeRunnable.run();
+            }
+        } else { // The player is in the Overworld, no need to run a check
+            setHomeRunnable.run();
+        }
     }
 
 }

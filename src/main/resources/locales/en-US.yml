@@ -246,6 +246,12 @@ commands:
       must-be-on-your-island: "&cYou must be on your island to set home!"
       num-homes: "&cHomes can be 1 to [number]."
       home-set: "&6Your island home has been set to your current location."
+      nether:
+        not-allowed: "&cYou are not allowed to set your home in the Nether."
+        confirmation: "&cAre you sure you want to set your home in the Nether?"
+      the-end:
+        not-allowed: "&cYou are not allowed to set your home in the End."
+        confirmation: "&cAre you sure you want to set your home in the End?"
       parameters: "[home number]"
     setname:
       description: "set a name for your island"
