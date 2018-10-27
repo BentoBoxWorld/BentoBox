@@ -131,6 +131,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Default references to description and parameters
         setDescription(COMMANDS + label + ".description");
         setParametersHelp(COMMANDS + label + ".parameters");
+        permissionPrefix = (addon != null) ? addon.getPermissionPrefix() : "";
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
@@ -607,16 +608,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     public String getPermissionPrefix() {
         return permissionPrefix;
-    }
-
-    /**
-     * Set the permission prefix. This will be added automatically to the permission
-     * and will apply to any sub commands too.
-     * Do not put a dot on the end of it.
-     * @param permissionPrefix the permissionPrefix to set
-     */
-    public void setPermissionPrefix(String permissionPrefix) {
-        this.permissionPrefix = permissionPrefix + ".";
     }
 
     /**
