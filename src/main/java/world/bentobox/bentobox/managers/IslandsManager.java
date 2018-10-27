@@ -769,7 +769,7 @@ public class IslandsManager {
      * Makes a new leader for an island
      * @param world - world
      * @param user - the user who is issuing the command
-     * @param targetUUID - the current island member who is going to become the leader
+     * @param targetUUID - the current island member who is going to become the new owner
      */
     public void setOwner(World world, User user, UUID targetUUID) {
         setOwner(user, targetUUID, getIsland(world, targetUUID));
@@ -778,7 +778,7 @@ public class IslandsManager {
     /**
      * Makes a new leader for an island
      * @param user - requester
-     * @param targetUUID - new leader
+     * @param targetUUID - new owner
      * @param island - island to register
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
@@ -791,7 +791,7 @@ public class IslandsManager {
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
         if (target.isOnline()) {
             // Check if new leader has a different range permission than the island size
-            int range = target.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getDescription().getName().toLowerCase() + ".island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+            int range = target.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
             // Range can go up or down
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));

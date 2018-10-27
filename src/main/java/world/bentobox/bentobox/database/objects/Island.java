@@ -692,6 +692,4 @@ public class Island implements DataObject {
     public Location getSpawnPoint(Environment islandType) {
         return spawnPoint.get(islandType);
     }
-
-
 }
