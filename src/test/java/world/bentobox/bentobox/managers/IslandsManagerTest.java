@@ -434,14 +434,14 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getCount()}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandCount()}.
      */
     @Test
     public void testGetCount() {
         IslandsManager im = new IslandsManager(plugin);
-        assertTrue(im.getCount() == 0);
+        assertTrue(im.getIslandCount() == 0);
         im.createIsland(location, UUID.randomUUID());
-        assertTrue(im.getCount() == 1);
+        assertTrue(im.getIslandCount() == 1);
     }
 
     /**

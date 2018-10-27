@@ -46,7 +46,7 @@ public class AdminTeamMakeLeaderCommand extends CompositeCommand {
             return false;
         }
         // Make new leader
-        getIslands().makeLeader(getWorld(), user, targetUUID, getPermissionPrefix());
+        getIslands().setOwner(getWorld(), user, targetUUID);
         user.sendMessage("general.success");
         return true;
     }

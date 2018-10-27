@@ -188,7 +188,7 @@ public class AdminTeamMakeLeaderCommandTest {
         AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
-        Mockito.verify(im).makeLeader(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID), Mockito.any());
+        Mockito.verify(im).setOwner(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
 

@@ -60,7 +60,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
         // Register island if it exists
         if (!island.map(i -> {
             // Island exists
-            getIslands().makeLeader(user, targetUUID, i, getPermissionPrefix());
+            getIslands().setOwner(user, targetUUID, i);
             user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
             user.sendMessage("general.success");
             return true;
@@ -70,7 +70,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             this.askConfirmation(user, () -> {
                 // Make island here
                 Island i = getIslands().createIsland(getClosestIsland(user.getLocation()), targetUUID);
-                getIslands().makeLeader(user, targetUUID, i, getPermissionPrefix());
+                getIslands().setOwner(user, targetUUID, i);
                 getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
                 user.sendMessage("general.success");
