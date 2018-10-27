@@ -326,4 +326,13 @@ public abstract class Addon implements AddonInterface {
     public void logError(String string) {
         getPlugin().logError(string);
     }
+
+    /**
+     * Returns the permission prefix corresponding to this addon.
+     * It contains the addon's name plus a trailing dot.
+     * @return
+     */
+    public String getPermissionPrefix() {
+        return this.getDescription().getName().toLowerCase() + ".";
+    }
 }
