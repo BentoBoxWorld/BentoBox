@@ -253,12 +253,12 @@ public class IslandsManager {
         }
     }
 
-    public int getCount(){
+    public int getIslandCount(){
         return islandCache.size();
     }
 
     /**
-     * Gets the island for this player. If they are in a team, the team island is returned
+     * Gets the island for this player. If they are in a team, the team island is returned.
      * @param world - world to check
      * @param user - user
      * @return Island or null
@@ -268,7 +268,7 @@ public class IslandsManager {
     }
 
     /**
-     * Gets the island for this player. If they are in a team, the team island is returned
+     * Gets the island for this player. If they are in a team, the team island is returned.
      * @param world - world to check
      * @param uuid - user's uuid
      * @return Island or null
@@ -280,8 +280,7 @@ public class IslandsManager {
     /**
      * Returns the island at the location or Optional empty if there is none.
      * This includes the full island space, not just the protected area.
-     * Use {@link #getProtectedIslandAt(Location)} for only the protected
-     * island space.
+     * Use {@link #getProtectedIslandAt(Location)} for only the protected island space.
      *
      * @param location - the location
      * @return Optional Island object
@@ -593,7 +592,7 @@ public class IslandsManager {
 
     /**
      * @param uniqueId - unique ID
-     * @return true if the player is the owner of their island, i.e., owner or team leader
+     * @return true if the player is the owner of their island.
      */
     public boolean isOwner(World world, UUID uniqueId) {
         return hasIsland(world, uniqueId) && getIsland(world, uniqueId).getOwner().equals(uniqueId);
@@ -772,8 +771,8 @@ public class IslandsManager {
      * @param user - the user who is issuing the command
      * @param targetUUID - the current island member who is going to become the leader
      */
-    public void makeLeader(World world, User user, UUID targetUUID, String permPrefix) {
-        makeLeader(user, targetUUID, getIsland(world, targetUUID), permPrefix);
+    public void setOwner(World world, User user, UUID targetUUID) {
+        setOwner(user, targetUUID, getIsland(world, targetUUID));
     }
 
     /**
@@ -782,7 +781,7 @@ public class IslandsManager {
      * @param targetUUID - new leader
      * @param island - island to register
      */
-    public void makeLeader(User user, UUID targetUUID, Island island, String permPrefix) {
+    public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
 
         user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
@@ -792,7 +791,7 @@ public class IslandsManager {
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
         if (target.isOnline()) {
             // Check if new leader has a different range permission than the island size
-            int range = target.getPermissionValue(permPrefix + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+            int range = target.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getDescription().getName().toLowerCase() + ".island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
             // Range can go up or down
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
