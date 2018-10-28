@@ -21,7 +21,7 @@ public class TeamEvent {
         REJECT,
         LEAVE,
         KICK,
-        MAKELEADER,
+        SETOWNER,
         INFO,
         DELETE,
         UNKNOWN,
@@ -63,13 +63,13 @@ public class TeamEvent {
         }
     }
     /**
-     * Event fires before a make leader is performed on an island.
-     * To get the old owner, get from the island object. The new leader is the player's UUID.
+     * Event fires before a setowner is performed on an island.
+     * To get the old owner, get from the island object. The new owner is the player's UUID.
      * @author tastybento
      *
      */
-    public static class TeamMakeLeaderEvent extends IslandBaseEvent {
-        private TeamMakeLeaderEvent(Island island, UUID player, boolean admin, Location location) {
+    public static class TeamSetOwnerEvent extends IslandBaseEvent {
+        private TeamSetOwnerEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
@@ -170,8 +170,8 @@ public class TeamEvent {
                 return new TeamRejectEvent(island, player, admin, location);
             case KICK:
                 return new TeamKickEvent(island, player, admin, location);
-            case MAKELEADER:
-                return new TeamMakeLeaderEvent(island, player, admin, location);
+            case SETOWNER:
+                return new TeamSetOwnerEvent(island, player, admin, location);
             case INFO:
                 return new TeamInfoEvent(island, player, admin, location);
             case DELETE:

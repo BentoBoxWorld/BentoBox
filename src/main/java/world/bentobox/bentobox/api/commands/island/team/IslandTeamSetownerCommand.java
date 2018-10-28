@@ -62,7 +62,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
                         .getIsland(getWorld(), playerUUID))
-                .reason(TeamEvent.Reason.MAKELEADER)
+                .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
                 .build();
         getPlugin().getServer().getPluginManager().callEvent(event);
