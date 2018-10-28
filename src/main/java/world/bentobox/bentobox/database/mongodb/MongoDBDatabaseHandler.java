@@ -36,7 +36,6 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private MongoCollection<Document> collection;
     private DatabaseConnector dbConnecter;
 
-
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
      * the class that will be stored.
@@ -44,7 +43,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param dbConnecter - authentication details for the database
      */
-    public MongoDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
+    MongoDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         this.dbConnecter = dbConnecter;
 

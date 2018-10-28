@@ -64,7 +64,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param type - class to store in the database
      * @param databaseConnector - the database credentials, in this case, just the YAML functions
      */
-    public FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
+    FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
     }
 

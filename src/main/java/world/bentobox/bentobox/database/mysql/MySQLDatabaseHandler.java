@@ -42,7 +42,6 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      */
     private Connection connection;
 
-
     /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
      * the class that will be stored.
@@ -50,7 +49,7 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      * @param type - the type of class to be stored in the database. Must inherit DataObject
      * @param dbConnecter - authentication details for the database
      */
-    public MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
+    MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         connection = (Connection)dbConnecter.createConnection();
         // Check if the table exists in the database and if not, create it
