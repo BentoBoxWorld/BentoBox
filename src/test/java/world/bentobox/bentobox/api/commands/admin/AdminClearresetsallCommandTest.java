@@ -34,7 +34,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminClearResetsAllCommandTest {
+public class AdminClearresetsallCommandTest {
 
     private CompositeCommand ac;
     private User user;
