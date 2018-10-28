@@ -16,6 +16,11 @@ import world.bentobox.bentobox.BentoBox;
 public abstract class AbstractDatabaseHandler<T> {
 
     /**
+     * Name of the folder where databases using files will live
+     */
+    protected static final String DATABASE_FOLDER_NAME = "database";
+
+    /**
      * The data object that should be created and filled with values
      * from the database or inserted into the database
      */

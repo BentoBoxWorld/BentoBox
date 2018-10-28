@@ -50,10 +50,6 @@ import world.bentobox.bentobox.util.Util;
 public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     /**
-     * This is the name of the folder where the flat file databases will live
-     */
-    private static final String DATABASE_FOLDER_NAME = "database";
-    /**
      * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
      */
     protected boolean configFlag;
