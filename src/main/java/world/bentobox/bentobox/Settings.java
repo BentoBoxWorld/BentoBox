@@ -50,11 +50,12 @@ public class Settings implements DataObject {
     private double startingMoney = 10.0;
 
     // Database
-    @ConfigComment("FLATFILE, MYSQL, MONGO")
-    @ConfigComment("if you use MONGO, you must also run the BSBMongo plugin (not addon)")
-    @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/")
+    @ConfigComment("YAML, JSON, MYSQL, MONGODB.")
+    @ConfigComment("YAML and JSON are both file-based databases.")
+    @ConfigComment("if you use MONGODB, you must also run the BSBMongo plugin (not addon).")
+    @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
     @ConfigEntry(path = "general.database.type")
-    private DatabaseType databaseType = DatabaseType.FLATFILE;
+    private DatabaseType databaseType = DatabaseType.YAML;
 
     @ConfigEntry(path = "general.database.host")
     private String databaseHost = "localhost";
