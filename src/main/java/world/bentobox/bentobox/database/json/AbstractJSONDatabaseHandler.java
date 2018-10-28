@@ -24,6 +24,8 @@ import world.bentobox.bentobox.database.json.adapters.WorldAdapter;
  */
 public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
+    private Gson gson;
+
     /**
      * Constructor
      *
@@ -34,9 +36,9 @@ public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHan
      */
     protected AbstractJSONDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
-    }
 
-    protected Gson getGson() {
+        // Build the Gson
+
         // excludeFieldsWithoutExposeAnnotation - this means that every field to be stored should use @Expose
         // enableComplexMapKeySerialization - forces GSON to use TypeAdapters even for Map keys
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization();
@@ -49,6 +51,11 @@ public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHan
         builder.serializeNulls();
         // Allow characters like < or > without escaping them
         builder.disableHtmlEscaping();
-        return builder.create();
+
+        gson = builder.create();
+    }
+
+    protected Gson getGson() {
+        return gson;
     }
 }
