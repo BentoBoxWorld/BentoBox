@@ -3,10 +3,8 @@ package world.bentobox.bentobox.database.mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;

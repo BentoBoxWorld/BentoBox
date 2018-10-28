@@ -1,9 +1,5 @@
 package world.bentobox.bentobox.database.mongodb;
 
-import java.util.Map;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;

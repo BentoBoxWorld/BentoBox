@@ -25,6 +25,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
+    private static final String YML = ".yml";
     private final BentoBox plugin;
     private final File dataFolder;
 
@@ -45,8 +46,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     public YamlConfiguration loadYamlFile(String tableName, String fileName) {
-        if (!fileName.endsWith(".yml")) {
-            fileName = fileName + ".yml";
+        if (!fileName.endsWith(YML)) {
+            fileName = fileName + YML;
         }
         File yamlFile = new File(plugin.getDataFolder(), tableName + File.separator + fileName);
 
@@ -79,8 +80,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName, Map<String, String> commentMap) {
-        if (!fileName.endsWith(".yml")) {
-            fileName = fileName + ".yml";
+        if (!fileName.endsWith(YML)) {
+            fileName = fileName + YML;
         }
         File tableFolder = new File(plugin.getDataFolder(), tableName);
         File file = new File(tableFolder, fileName);
@@ -158,18 +159,18 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     @Override
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
-        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".yml");
+        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
         int limit = 0;
         while (file.exists() && limit++ < MAX_LOOPS) {
             uuid = UUID.randomUUID();
-            file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".yml");
+            file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
         }
         return uuid.toString();
     }
 
     @Override
     public boolean uniqueIdExists(String tableName, String key) {
-        File file = new File(dataFolder, tableName + File.separator + key + ".yml");
+        File file = new File(dataFolder, tableName + File.separator + key + YML);
         return file.exists();
     }
 

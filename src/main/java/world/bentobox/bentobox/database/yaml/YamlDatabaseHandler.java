@@ -49,6 +49,8 @@ import world.bentobox.bentobox.util.Util;
 
 public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
+    private static final String YML = ".yml";
+
     /**
      * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
      */
@@ -97,7 +99,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // In this case, all the objects of a specific type are being loaded.
         List<T> list = new ArrayList<>();
         // Look for any files that end in .yml in the folder
-        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml");
+        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(YML);
         // The path is the simple name of the class
         String path = dataObject.getSimpleName();
         // The storeAt annotation may override the path
@@ -528,8 +530,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Method method = propertyDescriptor.getReadMethod();
         String fileName = (String) method.invoke(instance);
         // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
-        if (!fileName.endsWith(".yml")) {
-            fileName = fileName + ".yml";
+        if (!fileName.endsWith(YML)) {
+            fileName = fileName + YML;
         }
         // Get the database and table folders
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);

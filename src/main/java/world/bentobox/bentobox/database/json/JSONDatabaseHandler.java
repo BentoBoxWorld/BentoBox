@@ -6,9 +6,7 @@ import world.bentobox.bentobox.database.DatabaseConnector;
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -22,6 +20,8 @@ import java.util.Locale;
 import java.util.Objects;
 
 public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
+
+    private static final String JSON = ".json";
 
     /**
      * Constructor
@@ -52,7 +52,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             tableFolder.mkdirs();
         }
         // Load each object from the file system, filtered, non-null
-        for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(".json")))) {
+        for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(JSON)))) {
             try {
                 list.add(getGson().fromJson(new FileReader(file), dataObject));
             } catch (FileNotFoundException e) {
@@ -68,8 +68,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
 
         String fileName = path + File.separator + uniqueId;
-        if (!fileName.endsWith(".json")) {
-            fileName = fileName + ".json";
+        if (!fileName.endsWith(JSON)) {
+            fileName = fileName + JSON;
         }
 
         T result = null;
@@ -122,8 +122,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String fileName = (String) method.invoke(instance);
 
         // The filename of the JSON file is the value of uniqueId field plus .json. Sometimes the .json is already appended.
-        if (!fileName.endsWith(".json")) {
-            fileName = fileName + ".json";
+        if (!fileName.endsWith(JSON)) {
+            fileName = fileName + JSON;
         }
 
         // Get the database and table folders

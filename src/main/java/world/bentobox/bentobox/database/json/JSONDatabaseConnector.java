@@ -10,29 +10,28 @@ public class JSONDatabaseConnector implements DatabaseConnector {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
-    private final BentoBox plugin;
+    private static final String JSON = ".json";
     private final File dataFolder;
 
     public JSONDatabaseConnector(BentoBox plugin) {
-        this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }
 
     @Override
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
-        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".json");
+        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + JSON);
         int limit = 0;
         while (file.exists() && limit++ < MAX_LOOPS) {
             uuid = UUID.randomUUID();
-            file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".json");
+            file = new File(dataFolder, tableName + File.separator + uuid.toString() + JSON);
         }
         return uuid.toString();
     }
 
     @Override
     public boolean uniqueIdExists(String tableName, String key) {
-        File file = new File(dataFolder, tableName + File.separator + key + ".json");
+        File file = new File(dataFolder, tableName + File.separator + key + JSON);
         return file.exists();
     }
 
