@@ -82,7 +82,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             key = storeAt.filename();
         }
         // Load the YAML file at the location.
-        YamlConfiguration config = databaseConnector.loadYamlFile(path, key);
+        YamlConfiguration config = ((FlatFileDatabaseConnector)databaseConnector).loadYamlFile(path, key);
         // Use the createObject method to turn a YAML config into an Java object
         return createObject(config);
     }
@@ -123,7 +123,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = databaseConnector.loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
+            YamlConfiguration config = ((FlatFileDatabaseConnector)databaseConnector).loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -413,7 +413,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             throw new IllegalArgumentException("No uniqueId in class");
         }
 
-        databaseConnector.saveYamlFile(config, path, filename, yamlComments);
+        ((FlatFileDatabaseConnector)databaseConnector).saveYamlFile(config, path, filename, yamlComments);
     }
 
     private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {

@@ -44,7 +44,6 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
         return null; // Not used
     }
 
-    @Override
     public YamlConfiguration loadYamlFile(String tableName, String fileName) {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";
@@ -79,7 +78,6 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
         return config;
     }
 
-    @Override
     public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName, Map<String, String> commentMap) {
         if (!fileName.endsWith(".yml")) {
             fileName = fileName + ".yml";

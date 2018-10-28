@@ -48,28 +48,14 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public YamlConfiguration loadYamlFile(String string, String key) {
-        // Not used
-        return null;
-    }
-
-    @Override
     public boolean uniqueIdExists(String tableName, String key) {
         // Not used
         return false;
     }
 
     @Override
-    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName,
-            Map<String, String> commentMap) {
-        // Not used
-        
-    }
-
-    @Override
     public void closeConnection() {
         client.close();
-        
     }
 
 }
