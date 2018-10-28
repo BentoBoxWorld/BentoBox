@@ -76,10 +76,25 @@ public class AddonsManager {
     public void enableAddons() {
         plugin.log("Enabling addons...");
         addons.forEach(addon -> {
-            addon.onEnable();
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
-            addon.setEnabled(true);
-            plugin.log("Enabling " + addon.getDescription().getName() + "...");
+            try {
+                addon.onEnable();
+                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
+                addon.setState(Addon.State.ENABLED);
+                plugin.log("Enabling " + addon.getDescription().getName() + "...");
+            } catch (NoClassDefFoundError e) {
+                // Looks like the addon is outdated, because it tries to refer to missing classes.
+                // Set the AddonState as "INCOMPATIBLE".
+                addon.setState(Addon.State.INCOMPATIBLE);
+                plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
+                plugin.log("NOTE: The addon is referring to no longer existing classes.");
+                plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+            } catch (Exception e) {
+                // Unhandled exception. We'll give a bit of debug here.
+                // Set the AddonState as "ERROR".
+                addon.setState(Addon.State.ERROR);
+                plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
+                plugin.log("STACKTRACE: " + e.getMessage() + " - " + e.getCause());
+            }
         });
         plugin.log("Addons successfully enabled.");
     }

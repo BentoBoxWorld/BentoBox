@@ -27,14 +27,14 @@ import world.bentobox.bentobox.managers.PlayersManager;
 public abstract class Addon implements AddonInterface {
 
     private static final String ADDON_CONFIG_FILENAME = "config.yml";
-    private boolean enabled;
+    private State state;
     private AddonDescription description;
     private FileConfiguration config;
     private File dataFolder;
     private File file;
 
     public Addon() {
-        enabled = false;
+        state = State.DISABLED;
     }
 
     public BentoBox getPlugin() {
@@ -46,7 +46,7 @@ public abstract class Addon implements AddonInterface {
      *
      * @author Poslovitch
      */
-    enum State {
+    public enum State {
         /**
          * The addon has been correctly enabled and is now fully working.
          */
@@ -121,7 +121,7 @@ public abstract class Addon implements AddonInterface {
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return state == State.ENABLED;
     }
 
     /**
@@ -276,19 +276,18 @@ public abstract class Addon implements AddonInterface {
     /**
      * Set this addons description
      *
-     * @param desc - description
+     * @param description - description
      */
-    public void setDescription(AddonDescription desc) {
-        description = desc;
+    public void setDescription(AddonDescription description) {
+        this.description = description;
     }
 
     /**
-     * Set whether this addon is enabled or not
-     *
-     * @param enabled - true if enabled
+     * Sets the addon's state.
+     * @param state the state to set
      */
-    public void setEnabled(boolean enabled) {
-        this.enabled = enabled;
+    public void setState(State state) {
+        this.state = state;
     }
 
     /**

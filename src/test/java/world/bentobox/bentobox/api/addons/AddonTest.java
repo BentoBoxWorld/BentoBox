@@ -250,9 +250,9 @@ public class AddonTest {
     @Test
     public void testSetEnabled() {
         TestClass test = new TestClass();
-        test.setEnabled(false);
+        test.setState(Addon.State.DISABLED);
         assertFalse(test.isEnabled());
-        test.setEnabled(true);
+        test.setState(Addon.State.ENABLED);
         assertTrue(test.isEnabled());
     }
 
