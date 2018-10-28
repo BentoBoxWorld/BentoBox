@@ -15,7 +15,7 @@ import world.bentobox.bentobox.util.Util;
 public class IslandTeamSetownerCommand extends CompositeCommand {
 
     public IslandTeamSetownerCommand(CompositeCommand islandTeamCommand) {
-        super(islandTeamCommand, "setleader");
+        super(islandTeamCommand, "setowner");
     }
 
     @Override
