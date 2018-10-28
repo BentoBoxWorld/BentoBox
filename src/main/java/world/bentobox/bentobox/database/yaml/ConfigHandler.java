@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.flatfile;
+package world.bentobox.bentobox.database.yaml;
 
 import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
@@ -14,7 +14,7 @@ import world.bentobox.bentobox.database.DatabaseConnector;
  * @param <T> Handles config files for Class <T>
  */
 
-public class ConfigHandler<T> extends FlatFileDatabaseHandler<T> {
+public class ConfigHandler<T> extends YamlDatabaseHandler<T> {
 
     public ConfigHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);

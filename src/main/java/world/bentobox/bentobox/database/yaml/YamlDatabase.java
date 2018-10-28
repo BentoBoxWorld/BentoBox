@@ -1,10 +1,10 @@
-package world.bentobox.bentobox.database.flatfile;
+package world.bentobox.bentobox.database.yaml;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
 
-public class FlatFileDatabase implements DatabaseSetup {
+public class YamlDatabase implements DatabaseSetup {
 
     /**
      * Get the config
@@ -13,12 +13,12 @@ public class FlatFileDatabase implements DatabaseSetup {
      * @return - the config handler
      */
     public <T> AbstractDatabaseHandler<T> getConfig(Class<T> type) {
-        return new ConfigHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnector(BentoBox.getInstance()));
+        return new ConfigHandler<>(BentoBox.getInstance(), type, new YamlDatabaseConnector(BentoBox.getInstance()));
     }
 
     @Override
     public <T> AbstractDatabaseHandler<T> getHandler(Class<T> type) {
-        return new FlatFileDatabaseHandler<>(BentoBox.getInstance(), type, new FlatFileDatabaseConnector(BentoBox.getInstance()));
+        return new YamlDatabaseHandler<>(BentoBox.getInstance(), type, new YamlDatabaseConnector(BentoBox.getInstance()));
     }
 
 }

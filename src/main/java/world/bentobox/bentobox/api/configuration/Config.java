@@ -9,7 +9,7 @@ import java.util.logging.Logger;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.flatfile.FlatFileDatabase;
+import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 /**
  * Handy config class to store and load Java POJOs as YAML configs
@@ -24,12 +24,12 @@ public class Config<T> {
 
     public Config(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
-        handler = new FlatFileDatabase().getConfig(type);
+        handler = new YamlDatabase().getConfig(type);
     }
 
     public Config(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
-        handler = new FlatFileDatabase().getConfig(type);
+        handler = new YamlDatabase().getConfig(type);
     }
 
     /**

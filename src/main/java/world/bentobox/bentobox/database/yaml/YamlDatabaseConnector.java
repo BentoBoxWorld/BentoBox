@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.flatfile;
+package world.bentobox.bentobox.database.yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,7 +21,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
-public class FlatFileDatabaseConnector implements DatabaseConnector {
+public class YamlDatabaseConnector implements DatabaseConnector {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
@@ -29,7 +29,7 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
     private final File dataFolder;
 
 
-    public FlatFileDatabaseConnector(BentoBox plugin) {
+    public YamlDatabaseConnector(BentoBox plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }
@@ -56,7 +56,7 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                plugin.logError("Could not load yaml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
             }
         } else {
             // Create the missing file
@@ -96,7 +96,7 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
             yamlConfig.save(file.toPath().toString());
             Files.deleteIfExists(tmpFile.toPath());
         } catch (Exception e) {
-            plugin.logError("Could not save yaml file: " + tableName + " " + fileName + " " + e.getMessage());
+            plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {

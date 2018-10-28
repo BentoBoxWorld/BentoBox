@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.flatfile;
+package world.bentobox.bentobox.database.yaml;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -47,7 +47,7 @@ import world.bentobox.bentobox.util.Util;
  * @param <T> Handles flat files for Class <T>
  */
 
-public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
+public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     /**
      * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
@@ -60,7 +60,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param type - class to store in the database
      * @param databaseConnector - the database credentials, in this case, just the YAML functions
      */
-    FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
+    YamlDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
     }
 
@@ -78,7 +78,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             key = storeAt.filename();
         }
         // Load the YAML file at the location.
-        YamlConfiguration config = ((FlatFileDatabaseConnector)databaseConnector).loadYamlFile(path, key);
+        YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(path, key);
         // Use the createObject method to turn a YAML config into an Java object
         return createObject(config);
     }
@@ -119,7 +119,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = ((FlatFileDatabaseConnector)databaseConnector).loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
+            YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -243,7 +243,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 } else {
                     // Not a collection. Get the value and rely on YAML to supply it
                     Object value = config.get(storageLocation);
-                    // If the value is a yaml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
+                    // If the value is a yml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
                     if (value != null && !value.getClass().equals(MemorySection.class)) {
                         method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
                     }
@@ -355,7 +355,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 try {
                     config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().getDeclaredConstructor().newInstance()).serialize(value));
                 } catch (InstantiationException | IllegalArgumentException | NoSuchMethodException | SecurityException e) {
-                    plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
+                    plugin.logError("Could not instantiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                 }
                 // We are done here
                 continue;
@@ -409,7 +409,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             throw new IllegalArgumentException("No uniqueId in class");
         }
 
-        ((FlatFileDatabaseConnector)databaseConnector).saveYamlFile(config, path, filename, yamlComments);
+        ((YamlDatabaseConnector)databaseConnector).saveYamlFile(config, path, filename, yamlComments);
     }
 
     private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
@@ -540,7 +540,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                plugin.logError("Could not delete yaml database object! " + file.getName() + " - " + e.getMessage());
+                plugin.logError("Could not delete yml database object! " + file.getName() + " - " + e.getMessage());
             }
         }
     }
