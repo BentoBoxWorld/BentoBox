@@ -35,26 +35,14 @@ public class AddonsManager {
 
     private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
-    private List<AddonClassLoader> loader;
+    private List<AddonClassLoader> loaders;
     private final Map<String, Class<?>> classes = new HashMap<>();
     private BentoBox plugin;
 
     public AddonsManager(BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
-        loader = new ArrayList<>();
-        loadAddonsFromFile();
-    }
-
-    public void loadAddonsFromFile() {
-        plugin.log("Loading addons...");
-        File f = new File(plugin.getDataFolder(), "addons");
-        if (!f.exists() && !f.mkdirs()) {
-            plugin.logError("Cannot make addons folder!");
-            return;
-        }
-        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
-        sortAddons();
+        loaders = new ArrayList<>();
     }
 
     /**
@@ -62,13 +50,14 @@ public class AddonsManager {
      */
     public void loadAddons() {
         plugin.log("Loading addons...");
-        // Run each onLoad
-        addons.forEach(addon -> {
-            addon.onLoad();
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-            plugin.log("Loading " + addon.getDescription().getName() + "...");
-        });
+        File f = new File(plugin.getDataFolder(), "addons");
+        if (!f.exists() && !f.mkdirs()) {
+            plugin.logError("Cannot create addons folder!");
+            return;
+        }
+        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         plugin.log("Loaded " + addons.size() + " addons.");
+        sortAddons();
     }
 
     /**
@@ -82,19 +71,19 @@ public class AddonsManager {
                 Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
                 addon.setState(Addon.State.ENABLED);
                 plugin.log("Enabling " + addon.getDescription().getName() + "...");
-            } catch (NoClassDefFoundError e) {
+            } catch (NoClassDefFoundError | NoSuchMethodError e) {
                 // Looks like the addon is outdated, because it tries to refer to missing classes.
                 // Set the AddonState as "INCOMPATIBLE".
                 addon.setState(Addon.State.INCOMPATIBLE);
                 plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
                 plugin.log("NOTE: The addon is referring to no longer existing classes.");
                 plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
-            } catch (Exception e) {
+            } catch (Exception | Error e) {
                 // Unhandled exception. We'll give a bit of debug here.
                 // Set the AddonState as "ERROR".
                 addon.setState(Addon.State.ERROR);
                 plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
-                plugin.log("STACKTRACE: " + e.getMessage() + " - " + e.getCause());
+                plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
             }
         });
         plugin.log("Addons successfully enabled.");
@@ -131,7 +120,7 @@ public class AddonsManager {
             // Load the addon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
             // Add to the list of loaders
-            loader.add(addonClassLoader);
+            loaders.add(addonClassLoader);
 
             // Get the addon itself
             addon = addonClassLoader.getAddon();
@@ -149,6 +138,8 @@ public class AddonsManager {
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
             // Add it to the list of addons
             addons.add(addon);
+            // Run the onLoad.
+            addon.onLoad();
         } catch (Exception e) {
             plugin.log(e.getMessage());
         }
@@ -161,12 +152,14 @@ public class AddonsManager {
         plugin.log("Disabling addons...");
         // Unload addons
         addons.forEach(addon -> {
-            addon.onDisable();
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-            plugin.log("Disabling " + addon.getDescription().getName() + "...");
+            if (addon.isEnabled()) {
+                addon.onDisable();
+                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
+                plugin.log("Disabling " + addon.getDescription().getName() + "...");
+            }
         });
 
-        loader.forEach(l -> {
+        loaders.forEach(l -> {
             try {
                 l.close();
             } catch (IOException ignore) {
@@ -180,12 +173,12 @@ public class AddonsManager {
         return addons;
     }
 
-    public List<AddonClassLoader> getLoader() {
-        return loader;
+    public List<AddonClassLoader> getLoaders() {
+        return loaders;
     }
 
-    public void setLoader(List<AddonClassLoader> loader) {
-        this.loader = loader;
+    public void setLoaders(List<AddonClassLoader> loaders) {
+        this.loaders = loaders;
     }
 
     /**
@@ -194,7 +187,7 @@ public class AddonsManager {
      * @return Class - the class
      */
     public Class<?> getClassByName(final String name) {
-        return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
+        return classes.getOrDefault(name, loaders.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
     /**
