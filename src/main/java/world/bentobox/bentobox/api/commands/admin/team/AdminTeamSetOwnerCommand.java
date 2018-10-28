@@ -1,23 +1,23 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
-import java.util.List;
-import java.util.UUID;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
-public class AdminTeamMakeLeaderCommand extends CompositeCommand {
+import java.util.List;
+import java.util.UUID;
 
-    public AdminTeamMakeLeaderCommand(CompositeCommand parent) {
-        super(parent, "makeleader");
+public class AdminTeamSetOwnerCommand extends CompositeCommand {
+
+    public AdminTeamSetOwnerCommand(CompositeCommand parent) {
+        super(parent, "setowner");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.team");
-        setParametersHelp("commands.admin.team.makeleader.parameters");
-        setDescription("commands.admin.team.makeleader.description");
+        setParametersHelp("commands.admin.team.setowner.parameters");
+        setDescription("commands.admin.team.setowner.description");
     }
 
     @Override
@@ -42,10 +42,10 @@ public class AdminTeamMakeLeaderCommand extends CompositeCommand {
             return false;
         }
         if (getIslands().getTeamLeader(getWorld(), targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.team.makeleader.already-leader");
+            user.sendMessage("commands.admin.team.setowner.already-owner");
             return false;
         }
-        // Make new leader
+        // Make new owner
         getIslands().setOwner(getWorld(), user, targetUUID);
         user.sendMessage("general.success");
         return true;

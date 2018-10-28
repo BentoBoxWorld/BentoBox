@@ -70,10 +70,10 @@ commands:
         description: "kick a player from a team"
         cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
         admin-kicked: "&cThe admin kicked you from the team."
-      makeleader:
+      setowner:
         parameters: "<player>"
-        description: "make player the team's leader"
-        already-leader: "&cPlayer is already the leader!"
+        description: "transfers island ownership to the player"
+        already-owner: "&cPlayer is already the owner of this island!"
     range:
       description: "Admin island range command"
       display:

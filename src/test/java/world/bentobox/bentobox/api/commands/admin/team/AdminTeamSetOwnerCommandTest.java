@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminTeamMakeLeaderCommandTest {
+public class AdminTeamSetOwnerCommandTest {
 
     private CompositeCommand ac;
     private UUID uuid;
@@ -114,21 +114,21 @@ public class AdminTeamMakeLeaderCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTarget() {
-        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
+        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
-        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
+        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
@@ -136,11 +136,11 @@ public class AdminTeamMakeLeaderCommandTest {
     }
 
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
-        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
+        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
@@ -149,7 +149,7 @@ public class AdminTeamMakeLeaderCommandTest {
     }
 
     /**
-     * Test method for {@link AdminTeamMakeLeaderCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteMakeLeaderAlreadyLeader() {
@@ -161,13 +161,13 @@ public class AdminTeamMakeLeaderCommandTest {
 
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
 
-        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
+        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.makeleader.already-leader");
+        Mockito.verify(user).sendMessage("commands.admin.team.setowner.already-owner");
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.team.AdminTeamMakeLeaderCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -178,14 +178,14 @@ public class AdminTeamMakeLeaderCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         // Leader
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
-        when(pm.getName(Mockito.eq(uuid))).thenReturn("leader");
+        when(pm.getName(Mockito.eq(uuid))).thenReturn("owner");
         // Members
         Set<UUID> members = new HashSet<>();
         members.add(uuid);
         members.add(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
 
-        AdminTeamMakeLeaderCommand itl = new AdminTeamMakeLeaderCommand(ac);
+        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(im).setOwner(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID));
