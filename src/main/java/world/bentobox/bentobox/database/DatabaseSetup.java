@@ -9,7 +9,7 @@ public interface DatabaseSetup {
 
     /**
      * Gets the type of database being used.
-     * Currently supported options are FLATFILE and MYSQL.
+     * Currently supported options are FLATFILE, MYSQL and MONGODB.
      * Default is FLATFILE.
      * @return Database type
      */
@@ -25,7 +25,7 @@ public interface DatabaseSetup {
     enum DatabaseType {
         FLATFILE(new FlatFileDatabase()),
         MYSQL(new MySQLDatabase()),
-        MONGO(new MongoDBDatabase());
+        MONGODB(new MongoDBDatabase());
 
         DatabaseSetup database;
 
