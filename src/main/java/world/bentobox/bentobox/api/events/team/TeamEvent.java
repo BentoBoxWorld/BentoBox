@@ -68,8 +68,8 @@ public class TeamEvent {
      * @author tastybento
      *
      */
-    public static class TeamSetOwnerEvent extends IslandBaseEvent {
-        private TeamSetOwnerEvent(Island island, UUID player, boolean admin, Location location) {
+    public static class TeamSetownerEvent extends IslandBaseEvent {
+        private TeamSetownerEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
@@ -171,7 +171,7 @@ public class TeamEvent {
             case KICK:
                 return new TeamKickEvent(island, player, admin, location);
             case SETOWNER:
-                return new TeamSetOwnerEvent(island, player, admin, location);
+                return new TeamSetownerEvent(island, player, admin, location);
             case INFO:
                 return new TeamInfoEvent(island, player, admin, location);
             case DELETE:
