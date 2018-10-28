@@ -61,6 +61,7 @@ public class AddonsManager {
      * Loads all the addons from the addons folder
      */
     public void loadAddons() {
+        plugin.log("Loading addons...");
         // Run each onLoad
         addons.forEach(addon -> {
             addon.onLoad();
