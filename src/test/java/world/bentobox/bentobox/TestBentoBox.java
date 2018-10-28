@@ -1,4 +1,4 @@
-package bskyblock;
+package world.bentobox.bentobox;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -68,7 +68,7 @@ import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Flags.class, Util.class, Bukkit.class})
-public class TestBSkyBlock {
+public class TestBentoBox {
     private static final UUID MEMBER_UUID = UUID.randomUUID();
     private static final UUID OWNER_UUID = UUID.randomUUID();
     private static final UUID VISITOR_UUID = UUID.randomUUID();
@@ -93,7 +93,7 @@ public class TestBSkyBlock {
         World world = mock(World.class);
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
-        Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
+        Mockito.when(server.getVersion()).thenReturn("BentoBox_Mocking");
 
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
@@ -175,7 +175,6 @@ public class TestBSkyBlock {
 
     @Test
     public void testIslandEvent() {
-
         // Test island events
         IslandBaseEvent event = TeamEvent.builder()
                 //.island(getIslands().getIsland(playerUUID))
@@ -368,7 +367,7 @@ public class TestBSkyBlock {
 
     // Protection tests
     @Test
-    public void TestProtection() {
+    public void testProtection() {
         User owner = User.getInstance(playerUUID);
         Island island = new Island();
         island.setOwner(playerUUID);
@@ -466,7 +465,7 @@ public class TestBSkyBlock {
     }
 
     @Test
-    public void TestEventProtection() {
+    public void testEventProtection() {
         // Test events
 
         FlagListener fl = new FlagListener(plugin);
@@ -486,7 +485,7 @@ public class TestBSkyBlock {
     }
 
     @Test
-    public void TestDefaultFlags() {
+    public void testDefaultFlags() {
         // Check all the default flags
         FlagsManager fm = new FlagsManager(plugin);
         Collection<Flag> defaultFlags = Flags.values();
@@ -500,7 +499,7 @@ public class TestBSkyBlock {
     }
 
     @Test
-    public void TestCustomFlags() {
+    public void testCustomFlags() {
         // Custom
         FlagListener fl = new FlagListener(plugin);
         Flag customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
