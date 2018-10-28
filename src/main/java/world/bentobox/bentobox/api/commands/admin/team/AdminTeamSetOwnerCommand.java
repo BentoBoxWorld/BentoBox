@@ -7,9 +7,9 @@ import world.bentobox.bentobox.api.user.User;
 import java.util.List;
 import java.util.UUID;
 
-public class AdminTeamSetOwnerCommand extends CompositeCommand {
+public class AdminTeamSetownerCommand extends CompositeCommand {
 
-    public AdminTeamSetOwnerCommand(CompositeCommand parent) {
+    public AdminTeamSetownerCommand(CompositeCommand parent) {
         super(parent, "setowner");
     }
 

@@ -9,9 +9,9 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
-public class AdminClearResetsAllCommand extends ConfirmableCommand {
+public class AdminClearresetsallCommand extends ConfirmableCommand {
 
-    public AdminClearResetsAllCommand(CompositeCommand parent) {
+    public AdminClearresetsallCommand(CompositeCommand parent) {
         super(parent, "clearresetsall");
     }
 

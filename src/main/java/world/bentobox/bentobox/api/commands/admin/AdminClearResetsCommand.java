@@ -10,9 +10,9 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
-public class AdminClearResetsCommand extends CompositeCommand {
+public class AdminClearresetsCommand extends CompositeCommand {
 
-    public AdminClearResetsCommand(CompositeCommand parent) {
+    public AdminClearresetsCommand(CompositeCommand parent) {
         super(parent, "clearresets");
     }
 

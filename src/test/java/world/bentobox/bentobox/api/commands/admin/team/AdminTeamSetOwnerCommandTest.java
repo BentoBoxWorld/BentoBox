@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminTeamSetOwnerCommandTest {
+public class AdminTeamSetownerCommandTest {
 
     private CompositeCommand ac;
     private UUID uuid;
@@ -114,21 +114,21 @@ public class AdminTeamSetOwnerCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteNoTarget() {
-        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
+        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
     /**
-     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
-        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
+        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
@@ -136,11 +136,11 @@ public class AdminTeamSetOwnerCommandTest {
     }
 
     /**
-     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecutePlayerNotInTeam() {
-        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
+        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
@@ -149,7 +149,7 @@ public class AdminTeamSetOwnerCommandTest {
     }
 
     /**
-     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteMakeLeaderAlreadyLeader() {
@@ -161,13 +161,13 @@ public class AdminTeamSetOwnerCommandTest {
 
         when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
 
-        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
+        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.setowner.already-owner");
     }
 
     /**
-     * Test method for {@link AdminTeamSetOwnerCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
     public void testExecuteSuccess() {
@@ -185,7 +185,7 @@ public class AdminTeamSetOwnerCommandTest {
         members.add(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
 
-        AdminTeamSetOwnerCommand itl = new AdminTeamSetOwnerCommand(ac);
+        AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(im).setOwner(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID));

@@ -41,7 +41,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminClearResetsCommandTest {
+public class AdminClearresetsCommandTest {
 
     private CompositeCommand ac;
     private User user;
@@ -119,7 +119,7 @@ public class AdminClearResetsCommandTest {
      */
     @Test
     public void testExecuteNoTarget() {
-        AdminClearResetsCommand itl = new AdminClearResetsCommand(ac);
+        AdminClearresetsCommand itl = new AdminClearresetsCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
         Mockito.verify(user).sendMessage(Mockito.eq("commands.help.header"), Mockito.eq("[label]"), Mockito.any());
@@ -130,7 +130,7 @@ public class AdminClearResetsCommandTest {
      */
     @Test
     public void testExecuteUnknownPlayer() {
-        AdminClearResetsCommand itl = new AdminClearResetsCommand(ac);
+        AdminClearresetsCommand itl = new AdminClearresetsCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
@@ -142,7 +142,7 @@ public class AdminClearResetsCommandTest {
      */
     @Test
     public void testExecutePlayerNoIsland() {
-        AdminClearResetsCommand itl = new AdminClearResetsCommand(ac);
+        AdminClearresetsCommand itl = new AdminClearresetsCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
@@ -155,7 +155,7 @@ public class AdminClearResetsCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
-        AdminClearResetsCommand itl = new AdminClearResetsCommand(ac);
+        AdminClearresetsCommand itl = new AdminClearresetsCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(user).sendMessage("commands.admin.clearresets.cleared");

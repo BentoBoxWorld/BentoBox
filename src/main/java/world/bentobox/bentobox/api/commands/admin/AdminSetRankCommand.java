@@ -16,9 +16,9 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-public class AdminSetRankCommand extends CompositeCommand {
+public class AdminSetrankCommand extends CompositeCommand {
 
-    public AdminSetRankCommand(CompositeCommand adminCommand) {
+    public AdminSetrankCommand(CompositeCommand adminCommand) {
         super(adminCommand, "setrank");
     }
 

@@ -110,7 +110,7 @@ public class AdminClearResetsAllCommandTest {
      */
     @Test
     public void testExecuteCheckConfirm() {
-        AdminClearResetsAllCommand itl = new AdminClearResetsAllCommand(ac);
+        AdminClearresetsallCommand itl = new AdminClearresetsallCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>(Arrays.asList("tastybento", "bobby"))));
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.confirmation.confirm"), Mockito.eq("[seconds]"), Mockito.any());
