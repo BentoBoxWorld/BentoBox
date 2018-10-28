@@ -30,6 +30,7 @@ public class NewIsland {
     private final User user;
     private final Reason reason;
     private final World world;
+    private final String name;
     private enum Result {
         ISLAND_FOUND,
         BLOCK_AT_CENTER,
@@ -37,12 +38,19 @@ public class NewIsland {
         FREE
     }
 
-    private NewIsland(Island oldIsland, User user, Reason reason, World world) {
+    private NewIsland(Island oldIsland, User user, Reason reason, World world, String name) {
         super();
         plugin = BentoBox.getInstance();
         this.user = user;
         this.reason = reason;
         this.world = world;
+        if(name == null || name.isEmpty()) {
+        	name = BentoBox.DefaultSchemsName;
+        }
+        if(!plugin.getSchematics().containsKey(name)) {
+        	name = BentoBox.DefaultSchemsName;
+        }
+        this.name = name;
         newIsland();
         if (oldIsland != null) {
             // Delete the old island
@@ -75,6 +83,7 @@ public class NewIsland {
         private User user2;
         private Reason reason2;
         private World world2;
+        private String name2;
 
         public Builder oldIsland(Island oldIsland) {
             this.oldIsland2 = oldIsland;
@@ -97,10 +106,15 @@ public class NewIsland {
             this.world2 = world;
             return this;
         }
+        
+        public Builder name(String name) {
+            this.name2 = name;
+            return this;
+        }
 
         public Island build() throws IOException {
             if (user2 != null) {
-                NewIsland newIsland = new NewIsland(oldIsland2, user2, reason2, world2);
+                NewIsland newIsland = new NewIsland(oldIsland2, user2, reason2, world2, name2);
                 return newIsland.getIsland();
             }
             throw new IOException("Insufficient parameters. Must have a schematic and a player");
@@ -137,7 +151,7 @@ public class NewIsland {
             return;
         }
         // Create island
-        plugin.getSchemsManager().paste(world, island, () -> {
+        plugin.getSchematics().get(name).paste(world, island, () -> {
             // Set initial spawn point if one exists
             if (island.getSpawnPoint(Environment.NORMAL) != null) {
                 plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
@@ -151,12 +165,12 @@ public class NewIsland {
         });
         // Make nether island
         if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {
-            plugin.getSchemsManager().paste(plugin.getIWM().getNetherWorld(world), island);
+            plugin.getSchematics().get(name).paste(plugin.getIWM().getNetherWorld(world), island);
         }
 
         // Make end island
         if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world) && plugin.getIWM().getEndWorld(world) != null) {
-            plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island);
+            plugin.getSchematics().get(name).paste(plugin.getIWM().getEndWorld(world), island);
         }
 
         // Set default settings

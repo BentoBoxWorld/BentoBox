@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
@@ -39,10 +40,12 @@ public class IslandCreateCommand extends CompositeCommand {
         }
         user.sendMessage("commands.island.create.creating-island");
         try {
+        	String isName = args.size() > 0 ? args.get(0) : BentoBox.DefaultSchemsName;
             NewIsland.builder()
             .player(user)
             .world(getWorld())
             .reason(Reason.CREATE)
+            .name(isName)
             .build();
             return true;
         } catch (IOException e) {

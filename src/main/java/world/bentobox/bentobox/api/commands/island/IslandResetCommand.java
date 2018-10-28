@@ -6,6 +6,7 @@ import java.util.List;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -57,16 +58,17 @@ public class IslandResetCommand extends ConfirmableCommand {
             }
         }
         // Request confirmation
+    	String isName = args.size() > 0 ? args.get(0) : BentoBox.DefaultSchemsName;
         if (getSettings().isResetConfirmation()) {
-            this.askConfirmation(user, () -> resetIsland(user));
+            this.askConfirmation(user, () -> resetIsland(user, isName));
             return true;
         } else {
-            return resetIsland(user);
+            return resetIsland(user, isName);
         }
 
     }
 
-    private boolean resetIsland(User user) {
+    private boolean resetIsland(User user, String isName) {
         // Reset the island
         Player player = user.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
@@ -92,6 +94,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             .player(user)
             .reason(Reason.RESET)
             .oldIsland(oldIsland)
+            .name(isName)
             .build();
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());

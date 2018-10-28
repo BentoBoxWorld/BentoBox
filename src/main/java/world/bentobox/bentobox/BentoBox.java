@@ -1,5 +1,8 @@
 package world.bentobox.bentobox;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
@@ -46,7 +49,9 @@ public class BentoBox extends JavaPlugin {
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
-    private SchemsManager schemsManager;
+    // Global schems
+    private Map<String, SchemsManager> schematics;
+    public static final String DefaultSchemsName = "default";
 
     // Settings
     private Settings settings;
@@ -59,7 +64,7 @@ public class BentoBox extends JavaPlugin {
     private boolean isLoaded;
 
     @Override
-    public void onEnable(){
+    public void onEnable() {
         // Not loaded
         isLoaded = false;
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.
@@ -97,7 +102,9 @@ public class BentoBox extends JavaPlugin {
         // Start Island Worlds Manager
         islandWorldManager = new IslandWorldManager(instance);
         // Load schems manager
-        schemsManager = new SchemsManager(instance);
+        schematics = new HashMap<>();
+        schematics.put(DefaultSchemsName, new SchemsManager(instance));
+//        schemsManager = new SchemsManager(instance);
 
         // Locales manager must be loaded before addons
         localesManager = new LocalesManager(instance);
@@ -295,9 +302,12 @@ public class BentoBox extends JavaPlugin {
     /**
      * @return the schemsManager
      */
-    public SchemsManager getSchemsManager() {
-        return schemsManager;
+    public Map<String, SchemsManager> getSchematics() {
+    	return schematics;
     }
+    /*public SchemsManager getSchemsManager() {
+        return schemsManager;
+    }*/
 
     /**
      * True if the plugin is loaded and ready

@@ -34,7 +34,7 @@ public class SchemsManager {
      * @param world - world
      * @param name - name of the schem to save (excluding .schem)
      */
-    private void copySchems(File schems, World world, String name) {
+    private void copySchems(File schems, World world, String subFolder, String name) {
         if (!schems.exists() && !schems.mkdirs()) {
             plugin.logError("Could not make schems folder!");
             return;
@@ -46,9 +46,9 @@ public class SchemsManager {
         }
         Optional<Addon> addon = plugin.getIWM().getAddon(world);
         if (addon.isPresent()) {
-            addon.get().saveResource("schems/" + name + SCHEM, false);
+            addon.get().saveResource("schems/" + subFolder + "/" + name + SCHEM, false);
         } else {
-            plugin.saveResource("schems/" + name + SCHEM, false);
+            plugin.saveResource("schems/" + subFolder + "/"  + name + SCHEM, false);
         }
     }
 
@@ -60,30 +60,31 @@ public class SchemsManager {
      * Load schems for world. Will try and load nether and end schems too if settings are set.
      * @param world - world
      */
-    public void loadIslands(World world) {
-        if (!plugin.getSchemsManager().loadSchem(world, "island")) {
+    public void loadIslands(World world, String subFolder) {
+        if (!loadSchem(world, subFolder, "island")) {
             plugin.logError("Could not load island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
         if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)
-                && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getNetherWorld(world), "nether-island")) {
+                && !loadSchem(plugin.getIWM().getNetherWorld(world), subFolder, "nether-island")) {
             plugin.logError("Could not load nether-island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
         if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)
-                && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getEndWorld(world), "end-island")) {
+                && !loadSchem(plugin.getIWM().getEndWorld(world), subFolder, "end-island")) {
             plugin.logError("Could not load end-island.schem for " + plugin.getIWM().getFriendlyName(world));
         }
     }
 
-    private boolean loadSchem(World world, String name) {
-        plugin.log("Loading " + name + ".schem for " + world.getName());
+    private boolean loadSchem(World world, String subFolder, String name) {
+        plugin.log("Loading " + subFolder + "/" + name + ".schem for " + world.getName());
         File schems = new File(plugin.getIWM().getDataFolder(world), "schems");
-        copySchems(schems, world, name);
+        File subSchems = new File(schems, subFolder);
+        copySchems(subSchems, world, subFolder, name);
         try {
-            Clipboard cb = new Clipboard(plugin, schems);
+            Clipboard cb = new Clipboard(plugin, subSchems);
             cb.load(name);
             islandSchems.put(world, cb);
         } catch (IOException | InvalidConfigurationException e) {
-            plugin.logError("Could not load " + name + " schem");
+            plugin.logError("Could not load " + name + " schem in folder " + subFolder);
             return false;
         }
         return true;
