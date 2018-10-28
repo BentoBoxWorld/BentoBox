@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database;
+package world.bentobox.bentobox.database.json;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -7,10 +7,12 @@ import org.bukkit.World;
 import org.bukkit.potion.PotionEffectType;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.database.mysql.adapters.FlagAdapter;
-import world.bentobox.bentobox.database.mysql.adapters.LocationAdapter;
-import world.bentobox.bentobox.database.mysql.adapters.PotionEffectTypeAdapter;
-import world.bentobox.bentobox.database.mysql.adapters.WorldAdapter;
+import world.bentobox.bentobox.database.AbstractDatabaseHandler;
+import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.json.adapters.FlagAdapter;
+import world.bentobox.bentobox.database.json.adapters.LocationAdapter;
+import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.WorldAdapter;
 
 /**
  * Abstract class that handles insert/select-operations into/from a database.

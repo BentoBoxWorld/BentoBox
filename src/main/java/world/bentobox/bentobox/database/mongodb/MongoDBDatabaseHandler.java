@@ -15,7 +15,7 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.util.JSON;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.AbstractJSONDatabaseHandler;
+import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.objects.DataObject;
 

@@ -9,22 +9,11 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.potion.PotionEffectType;
-
 import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.database.AbstractDatabaseHandler;
-import world.bentobox.bentobox.database.AbstractJSONDatabaseHandler;
+import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnector;
-import world.bentobox.bentobox.database.mysql.adapters.FlagAdapter;
-import world.bentobox.bentobox.database.mysql.adapters.LocationAdapter;
-import world.bentobox.bentobox.database.mysql.adapters.PotionEffectTypeAdapter;
-import world.bentobox.bentobox.database.mysql.adapters.WorldAdapter;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**

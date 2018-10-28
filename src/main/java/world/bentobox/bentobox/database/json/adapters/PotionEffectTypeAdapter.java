@@ -1,25 +1,18 @@
-package world.bentobox.bentobox.database.mysql.adapters;
+package world.bentobox.bentobox.database.json.adapters;
 
 import java.io.IOException;
 
-import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-public class WorldAdapter extends TypeAdapter<World> {
-
-    private Plugin plugin;
-
-    public WorldAdapter(Plugin plugin) {
-        this.plugin = plugin;
-    }
+public class PotionEffectTypeAdapter extends TypeAdapter<PotionEffectType> {
 
     @Override
-    public void write(JsonWriter out, World value) throws IOException {
+    public void write(JsonWriter out, PotionEffectType value) throws IOException {
         if (value == null) {
             out.nullValue();
             return;
@@ -29,11 +22,11 @@ public class WorldAdapter extends TypeAdapter<World> {
     }
     
     @Override
-    public World read(JsonReader reader) throws IOException {
+    public PotionEffectType read(JsonReader reader) throws IOException {
         if (reader.peek() == JsonToken.NULL) {
             reader.nextNull();
             return null;
         }
-        return plugin.getServer().getWorld(reader.nextString());
+        return PotionEffectType.getByName(reader.nextString());
     }
 }
