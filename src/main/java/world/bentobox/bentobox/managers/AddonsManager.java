@@ -227,19 +227,22 @@ public class AddonsManager {
     }
 
     private void sortAddons() {
-        // Check that any dependencies exist
+        // Lists all available addons as names.
         List<String> names = addons.stream().map(a -> a.getDescription().getName()).collect(Collectors.toList());
-        Iterator<Addon> ita = addons.iterator();
-        while (ita.hasNext()) {
-            Addon a = ita.next();
-            for (String dep : a.getDescription().getDependencies()) {
-                if (!names.contains(dep)) {
-                    plugin.logError(a.getDescription().getName() + " has dependency on " + dep + " that does not exist. Addon will not load!");
-                    ita.remove();
+
+        // Check that any dependencies exist
+        Iterator<Addon> addonsIterator = addons.iterator();
+        while (addonsIterator.hasNext()) {
+            Addon a = addonsIterator.next();
+            for (String dependency : a.getDescription().getDependencies()) {
+                if (!names.contains(dependency)) {
+                    plugin.logError(a.getDescription().getName() + " has dependency on " + dependency + " that does not exist. Addon will not load!");
+                    addonsIterator.remove();
                     break;
                 }
             }
         }
+
         // Load dependencies or soft dependencies
         Map<String,Addon> sortedAddons = new LinkedHashMap<>();
         // Start with nodes with no dependencies
@@ -249,30 +252,20 @@ public class AddonsManager {
         List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
 
         // Run through remaining addons
-        int index = 0;
-        while (index < 10 && !remaining.isEmpty()) {
-            index++;
-            Iterator<Addon> it = remaining.iterator();
-            while (it.hasNext()) {
-                Addon a = it.next();
-                // Check if dependencies are loaded - make a list of all hard and soft deps
-                List<String> deps = new ArrayList<>(a.getDescription().getDependencies());
-                deps.addAll(a.getDescription().getSoftDependencies());
-                Iterator<String> depIt = deps.iterator();
-                while(depIt.hasNext()) {
-                    String dep = depIt.next();
-                    if (sortedAddons.containsKey(dep)) {
-                        depIt.remove();
-                    }
-                }
-                if (deps.stream().noneMatch(s -> a.getDescription().getDependencies().contains(s))) {
-                    // Add addons loaded
-                    sortedAddons.put(a.getDescription().getName(), a);
-                    it.remove();
-                }
+        remaining.forEach(addon -> {
+            // Get the addon's dependencies.
+            List<String> dependencies = new ArrayList<>(addon.getDescription().getDependencies());
+            dependencies.addAll(addon.getDescription().getSoftDependencies());
+
+            // Remove already sorted addons (dependencies) from the list
+            dependencies.removeIf(sortedAddons::containsKey);
+
+            if (dependencies.stream().noneMatch(dependency -> addon.getDescription().getDependencies().contains(dependency))) {
+                sortedAddons.put(addon.getDescription().getName(), addon);
             }
-        }
+        });
+
         addons.clear();
-        sortedAddons.values().forEach(addons::add);
+        addons.addAll(sortedAddons.values());
     }
 }
