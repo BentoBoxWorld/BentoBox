@@ -99,15 +99,13 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
         String toStore = getGson().toJson(instance);
 
-        try {
+        try (FileWriter fileWriter = new FileWriter(file)) {
             File tmpFile = new File(tableFolder, fileName + ".bak");
             if (file.exists()) {
                 // Make a backup of file
                 Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
             }
-            FileWriter fileWriter = new FileWriter(file);
             fileWriter.write(toStore);
-            fileWriter.close();
             Files.deleteIfExists(tmpFile.toPath());
         } catch (IOException e) {
             plugin.logError("Could not save json file: " + path + " " + fileName + " " + e.getMessage());
