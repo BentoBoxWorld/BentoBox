@@ -78,7 +78,7 @@ public class AddonsManager {
                 plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
                 plugin.log("NOTE: The addon is referring to no longer existing classes.");
                 plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
-            } catch (Exception | Error e) {
+            } catch (Exception e) {
                 // Unhandled exception. We'll give a bit of debug here.
                 // Set the AddonState as "ERROR".
                 addon.setState(Addon.State.ERROR);
