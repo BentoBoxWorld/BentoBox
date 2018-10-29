@@ -19,7 +19,7 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
      * Class for MySQL database connections using the settings provided
      * @param dbSettings - database settings
      */
-    public MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
+    MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         try {
             Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();

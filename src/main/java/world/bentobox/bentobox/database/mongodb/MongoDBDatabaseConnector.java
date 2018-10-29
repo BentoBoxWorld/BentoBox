@@ -18,7 +18,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
      * Class for MySQL database connections using the settings provided
      * @param dbSettings - database settings
      */
-    public MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
+    MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
                 dbSettings.getDatabaseName(),

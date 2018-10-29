@@ -29,8 +29,7 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     private final BentoBox plugin;
     private final File dataFolder;
 
-
-    public YamlDatabaseConnector(BentoBox plugin) {
+    YamlDatabaseConnector(BentoBox plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }

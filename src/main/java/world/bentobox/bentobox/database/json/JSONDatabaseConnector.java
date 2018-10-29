@@ -13,7 +13,7 @@ public class JSONDatabaseConnector implements DatabaseConnector {
     private static final String JSON = ".json";
     private final File dataFolder;
 
-    public JSONDatabaseConnector(BentoBox plugin) {
+    JSONDatabaseConnector(BentoBox plugin) {
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }
 
