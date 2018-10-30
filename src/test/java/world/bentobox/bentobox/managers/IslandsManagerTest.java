@@ -830,9 +830,29 @@ public class IslandsManagerTest {
         when(is.getMembers()).thenReturn(members);
         assertFalse(im.userIsOnIsland(world, user));
 
+        // One member, just the owner
         members.put(user.getUniqueId(), RanksManager.MEMBER_RANK);
         assertTrue(im.userIsOnIsland(world, user));
 
+        // Add some members
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        assertTrue(im.userIsOnIsland(world, user));
+
+        // Add some other ranks
+        members.put(UUID.randomUUID(), RanksManager.BANNED_RANK);
+        members.put(UUID.randomUUID(), RanksManager.BANNED_RANK);
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
+        members.put(UUID.randomUUID(), RanksManager.BANNED_RANK);
+        assertTrue(im.userIsOnIsland(world, user));
+
+        // Confirm that if user is not above Member rank then it fails
         members.put(user.getUniqueId(), RanksManager.BANNED_RANK);
         assertFalse(im.userIsOnIsland(world, user));
     }

@@ -636,8 +636,7 @@ public class IslandsManager {
         }
         return getProtectedIslandAt(user.getLocation())
                 .map(i -> i.getMembers().entrySet().stream()
-                        .map(en -> en.getKey().equals(user.getUniqueId()) && en.getValue() > RanksManager.VISITOR_RANK)
-                        .findAny().orElse(false))
+                        .anyMatch(en -> en.getKey().equals(user.getUniqueId()) && en.getValue() > RanksManager.VISITOR_RANK))
                 .orElse(false);
     }
 
