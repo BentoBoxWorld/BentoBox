@@ -5,7 +5,7 @@ api-version: 1.13
 
 authors: [tastybento, Poslovitch]
 
-softdepend: [PlaceholderAPI, MVdWPlaceholderAPI]
+softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI]
 
 loadbefore: [Multiverse-Core]
 

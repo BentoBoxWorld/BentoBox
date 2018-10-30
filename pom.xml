@@ -56,6 +56,10 @@
 			<id>bstats-repo</id>
 			<url>http://repo.bstats.org/content/repositories/releases/</url>
 		</repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -96,6 +100,13 @@
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
 			<version>3.8.0</version>
+		</dependency>
+		<!-- Vault -->
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>VaultAPI</artifactId>
+			<version>1.7</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

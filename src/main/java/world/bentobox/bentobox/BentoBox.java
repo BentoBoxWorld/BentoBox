@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
@@ -135,6 +136,7 @@ public class BentoBox extends JavaPlugin {
 
             // Load hooks
             hooksManager = new HooksManager(this);
+            hooksManager.registerHook(new VaultHook());
 
             // Fire plugin ready event
             isLoaded = true;
@@ -320,6 +322,14 @@ public class BentoBox extends JavaPlugin {
      */
     public HooksManager getHooks() {
         return hooksManager;
+    }
+
+    /**
+     * Convenience method to get the VaultHook.
+     * @return the Vault hook
+     */
+    public Optional<VaultHook> getVault() {
+        return Optional.ofNullable((VaultHook) hooksManager.getHook("Vault").orElse(null));
     }
 
 }
