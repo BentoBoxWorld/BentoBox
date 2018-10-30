@@ -21,6 +21,7 @@ public class Config<T> {
 
     private AbstractDatabaseHandler<T> handler;
     private Logger logger;
+    private Addon addon;
 
     public Config(BentoBox plugin, Class<T> type)  {
         this.logger = plugin.getLogger();
@@ -29,6 +30,7 @@ public class Config<T> {
 
     public Config(Addon addon, Class<T> type)  {
         this.logger = addon.getLogger();
+        this.addon = addon;
         handler = new YamlDatabase().getConfig(type);
     }
 
@@ -77,6 +79,8 @@ public class Config<T> {
      * @param instance to save
      */
     public boolean saveConfigObject(T instance) {
+        // Set the addon (may be null)
+        handler.setAddon(addon);
         try {
             handler.saveObject(instance);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
