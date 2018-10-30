@@ -1,8 +1,7 @@
-# BentoBox Configuration 0.11.0-SNAPSHOT
+# BentoBox Configuration 0.12.0-SNAPSHOT
 # This config file is dynamic and saved when the server is shutdown.
 # You cannot edit it while the server is running because changes will
 # be lost! Use in-game settings GUI or edit when server is offline.
-# 
 general:
   # BentoBox uses bStats.org to get global data about the plugin to help improving it.
   # bStats has nearly no effect on your server's performance and the sent data is completely
@@ -19,10 +18,11 @@ general:
   # balance at the start of an island.
   starting-money: 10.0
   database:
-    # FLATFILE, MYSQL, MONGO
-    # if you use MONGO, you must also run the BSBMongo plugin (not addon)
-    # See https://github.com/tastybento/bsbMongo/releases/
-    type: FLATFILE
+    # YAML, JSON, MYSQL, MONGODB.
+    # YAML and JSON are both file-based databases.
+    # if you use MONGODB, you must also run the BSBMongo plugin (not addon).
+    # See https://github.com/tastybento/bsbMongo/releases/.
+    type: YAML
     host: localhost
     # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.
     port: 3306
@@ -35,6 +35,7 @@ general:
     backup-period: 5
   # Allow FTB Autonomous Activator to work (will allow a pseudo player [CoFH] to place and break blocks and hang items)
   # Add other fake player names here if required
+  # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
   - '[CoFH]'
   # Allow obsidian to be scooped up with an empty bucket back into lava
@@ -74,6 +75,7 @@ island:
     # These set the minimum and maximum size of a name.
     min-length: 4
     max-length: 20
-  customranks: {}
+  # /!\ This feature is experimental and might not work as expected or might not work at all.
+  custom-ranks: {}
 # These settings should not be edited
 uniqueId: config
