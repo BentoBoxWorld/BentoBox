@@ -62,7 +62,8 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
     }
 
     private void kick(User user, UUID targetUUID) {
-        User.getInstance(targetUUID).sendMessage("commands.island.team.kick.leader-kicked");
+        User target = User.getInstance(targetUUID);
+        target.sendMessage("commands.island.team.kick.leader-kicked");
         getIslands().removePlayer(getWorld(), targetUUID);
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
@@ -72,7 +73,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.getPlayer().getInventory().clear();
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-            // TODO: needs Vault
+            getPlugin().getVault().ifPresent(vault -> vault.getEconomy().withdrawPlayer(target.getPlayer(), vault.getEconomy().getBalance(target.getPlayer())));
         }
         user.sendMessage("general.success");
 

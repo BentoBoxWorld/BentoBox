@@ -72,7 +72,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
                     target.getPlayer().getInventory().clear();
                 }
                 if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-                    // TODO: needs Vault
+                    getPlugin().getVault().ifPresent(vault -> vault.getEconomy().withdrawPlayer(target.getPlayer(), vault.getEconomy().getBalance(target.getPlayer())));
                 }
             }
             getIslands().deleteIsland(oldIsland, true);
