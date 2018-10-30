@@ -324,12 +324,17 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
+
             String storageLocation = field.getName();
+
             // Check if there is an annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+
             // If there is a config path annotation then do something
+            boolean experimental = false;
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
+                experimental = configEntry.experimental();
             }
 
             // Get path for comments
@@ -348,6 +353,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             comment = field.getAnnotation(ConfigComment.class);
             if (comment != null) {
                 setComment(comment, config, yamlComments, parent);
+            }
+
+            // If the configEntry is experimental, then tell it
+            if (experimental) {
+                setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.", config, yamlComments, parent);
             }
 
             // Adapter
@@ -415,11 +425,15 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
+        setComment(comment.value(), config, yamlComments, parent);
+    }
+
+    private void setComment(String comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
         String random = "comment-" + UUID.randomUUID().toString();
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.value().replace(TextVariables.VERSION, plugin.getDescription().getVersion()));
+        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, plugin.getDescription().getVersion()));
     }
 
     /**
