@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.database;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.yaml.YamlDatabase;
 import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 public interface DatabaseSetup {
 
@@ -15,8 +15,9 @@ public interface DatabaseSetup {
      * @return Database type
      */
     static DatabaseSetup getDatabase() {
+        BentoBox plugin = BentoBox.getInstance();
         for(DatabaseType type : DatabaseType.values()){
-            if(type == BentoBox.getInstance().getSettings().getDatabaseType()) {
+            if(type == plugin.getSettings().getDatabaseType()) {
                 return type.database;
             }
         }

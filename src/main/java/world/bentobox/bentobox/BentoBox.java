@@ -1,5 +1,7 @@
 package world.bentobox.bentobox;
 
+import java.util.Optional;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
@@ -29,8 +31,6 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
-
-import java.util.Optional;
 
 /**
  * Main BentoBox class
@@ -78,6 +78,12 @@ public class BentoBox extends JavaPlugin {
 
         // Load settings from config.yml. This will check if there are any issues with it too.
         settings = new Config<>(this, Settings.class).loadConfigObject("");
+        if (settings == null) {
+            // Settings did no load correctly. Disable plugin.
+            logError("Settings did not load correctly - disabling plugin - please check config.yml");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
