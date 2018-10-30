@@ -21,7 +21,6 @@ import world.bentobox.bentobox.managers.RanksManager;
 @ConfigComment("This config file is dynamic and saved when the server is shutdown.")
 @ConfigComment("You cannot edit it while the server is running because changes will")
 @ConfigComment("be lost! Use in-game settings GUI or edit when server is offline.")
-@ConfigComment("")
 public class Settings implements DataObject {
 
     // ---------------------------------------------
@@ -148,7 +147,7 @@ public class Settings implements DataObject {
     private int nameMaxLength = 20;
 
     // Ranks
-    @ConfigEntry(path = "island.customranks")
+    @ConfigEntry(path = "island.custom-ranks", experimental = true)
     private Map<String, Integer> customRanks = new HashMap<>();
 
     //---------------------------------------------------------------------------------------/
@@ -157,7 +156,6 @@ public class Settings implements DataObject {
 
     //---------------------------------------------------------------------------------------/
     // Getters and setters
-
 
     public boolean isMetrics() {
         return metrics;
