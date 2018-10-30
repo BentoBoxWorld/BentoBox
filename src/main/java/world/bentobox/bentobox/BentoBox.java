@@ -20,6 +20,7 @@ import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -27,6 +28,8 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
+
+import java.util.Optional;
 
 /**
  * Main BentoBox class
@@ -47,6 +50,7 @@ public class BentoBox extends JavaPlugin {
     private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
     private SchemsManager schemsManager;
+    private HooksManager hooksManager;
 
     // Settings
     private Settings settings;
@@ -120,24 +124,28 @@ public class BentoBox extends JavaPlugin {
                 playersManager.save(true);
                 islandsManager.save(true);
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
-            isLoaded = true;
+
             flagsManager.registerListeners();
+
+            // Load metrics
+            if (settings.isMetrics()) {
+                BStats bStats = new BStats(this);
+                bStats.registerMetrics();
+            }
+
+            // Load hooks
+            hooksManager = new HooksManager(this);
+
+            // Fire plugin ready event
+            isLoaded = true;
+            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+
             instance.log("#############################################");
             instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
             instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
             instance.log("Thanks for using our plugin !");
             instance.log("- Tastybento and Poslovitch, 2017-2018");
             instance.log("#############################################");
-
-            // Load metrics
-
-            if (settings.isMetrics()) {
-                BStats bStats = new BStats(this);
-                bStats.registerMetrics();
-            }
-
-            // Fire plugin ready event
-            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
         });
     }
 
@@ -306,4 +314,12 @@ public class BentoBox extends JavaPlugin {
     public boolean isLoaded() {
         return isLoaded;
     }
+
+    /**
+     * @return the HooksManager
+     */
+    public HooksManager getHooks() {
+        return hooksManager;
+    }
+
 }

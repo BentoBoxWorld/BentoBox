@@ -11,7 +11,19 @@ public abstract class Hook {
     private String pluginName;
 
     public Hook(String pluginName) {
+        if (pluginName == null || pluginName.isEmpty()) {
+            throw new IllegalArgumentException("Plugin name cannot be null nor empty.");
+        }
         this.pluginName = pluginName;
+    }
+
+    /**
+     * Returns the name of the plugin related to this Hook.
+     * Cannot be null.
+     * @return the plugin name.
+     */
+    public String getPluginName() {
+        return pluginName;
     }
 
     /**
