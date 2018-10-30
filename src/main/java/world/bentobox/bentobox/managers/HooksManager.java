@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,7 @@ public class HooksManager {
 
     public HooksManager(BentoBox plugin) {
         this.plugin = plugin;
+        this.hooks = new ArrayList<>();
     }
 
     public void registerHook(Hook hook) {
@@ -24,7 +26,7 @@ public class HooksManager {
             if (hook.hook()) {
                 hooks.add(hook);
             } else {
-                plugin.log("Could not hook with " + hook.getPluginName() + ". Skipping...");
+                plugin.log("Could not hook with " + hook.getPluginName() + " because: " + hook.getFailureCause() + ". Skipping...");
             }
         }
     }

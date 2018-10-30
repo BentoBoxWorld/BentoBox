@@ -47,4 +47,10 @@ public abstract class Hook {
      * @return true if it successfully hooked into the plugin, false otherwise.
      */
     public abstract boolean hook();
+
+    /**
+     * Returns an explanation that will be sent to the user to tell them why the hook process did not succeed.
+     * @return the probable causes why the hook process did not succeed.
+     */
+    public abstract String getFailureCause();
 }
