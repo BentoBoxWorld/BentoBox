@@ -247,7 +247,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     Object value = config.get(storageLocation);
                     // If the value is a yml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
                     if (value != null && !value.getClass().equals(MemorySection.class)) {
-                        method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
+                        Object setTo = deserialize(value,propertyDescriptor.getPropertyType());
+                        if (!(Enum.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && setTo == null)) {
+                            // Do not invoke null on Enums
+                            method.invoke(instance, setTo);
+                        } else {
+                            plugin.logError("Default setting value will be used: " + propertyDescriptor.getReadMethod().invoke(instance));
+                        }
                     }
                 }
             }
@@ -520,15 +526,10 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Show what is available and pick one at random
                 plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
                 plugin.logError("Options are : ");
-                boolean isSet = false;
                 for (Field fields : enumClass.getFields()) {
                     plugin.logError(fields.getName());
-                    if (!isSet && !((String)value).isEmpty() && fields.getName().substring(0, 1).equals(((String)value).substring(0, 1))) {
-                        value = Enum.valueOf(enumClass, fields.getName());
-                        plugin.logError("Setting to " + fields.getName() + " because it starts with the same letter");
-                        isSet = true;
-                    }
                 }
+                value = null;
             }
         }
         return value;
