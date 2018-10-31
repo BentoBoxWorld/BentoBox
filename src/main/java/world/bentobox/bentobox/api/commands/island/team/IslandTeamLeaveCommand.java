@@ -54,7 +54,7 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             user.getPlayer().getInventory().clear();
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-            getPlugin().getVault().ifPresent(vault -> vault.getEconomy().withdrawPlayer(user.getPlayer(), vault.getEconomy().getBalance(user.getPlayer())));
+            getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
         user.sendMessage("general.success");
     }

@@ -73,7 +73,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.getPlayer().getInventory().clear();
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-            getPlugin().getVault().ifPresent(vault -> vault.getEconomy().withdrawPlayer(target.getPlayer(), vault.getEconomy().getBalance(target.getPlayer())));
+            getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
         }
         user.sendMessage("general.success");
 

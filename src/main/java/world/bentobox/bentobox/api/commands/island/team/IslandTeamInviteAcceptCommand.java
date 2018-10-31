@@ -85,7 +85,7 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
             user.getPlayer().getInventory().clear();
         }
         if (getSettings().isUseEconomy() && (getIWM().isOnLeaveResetMoney(getWorld()) || getIWM().isOnJoinResetMoney(getWorld()))) {
-            getPlugin().getVault().ifPresent(vault -> vault.getEconomy().withdrawPlayer(user.getPlayer(), vault.getEconomy().getBalance(user.getPlayer())));
+            getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
         // Add the player as a team member of the new island
         getIslands().setJoinTeam(teamIsland, playerUUID);

@@ -568,7 +568,7 @@ public class IslandsManager {
                 user.getPlayer().getInventory().clear();
             }
             if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnJoinResetMoney(world)) {
-                plugin.getVault().ifPresent(vault -> vault.getEconomy().withdrawPlayer(user.getPlayer(), vault.getEconomy().getBalance(user.getPlayer())));
+                plugin.getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
             }
         }
     }
