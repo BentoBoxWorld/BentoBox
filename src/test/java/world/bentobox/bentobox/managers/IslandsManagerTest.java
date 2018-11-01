@@ -811,30 +811,46 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for user is on island
-     * @throws Exception
+     * Test method for {@link IslandsManager#userIsOnIsland(World, User)}.
      */
     @Test
-    public void testUserIsOnIsland() throws Exception {
+    public void testUserIsOnIsland() {
         IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
+
+        // ----- CHECK INVALID ARGUMENTS -----
 
         // Null user
         assertFalse(im.userIsOnIsland(world, null));
 
+        // Null world
+        assertFalse(im.userIsOnIsland(null, user));
 
-        // User is on island is determined by whether the user's location is on
-        // an island that has them as a member (rank > 0)
+        // Both null user and null world
+        assertFalse(im.userIsOnIsland(null, null));
+
+        // User is not a player
+        when(user.isPlayer()).thenReturn(false);
+        assertFalse(im.userIsOnIsland(world, user));
+
+        // ----- CHECK MEMBERSHIP -----
+        // We assume there that the User is in the good World.
+        when(user.getLocation().getWorld()).thenReturn(world);
+        when(user.isPlayer()).thenReturn(true);
+
+        // The method returns true if the user's location is on an island that has them as member (rank >= MEMBER)
         when(is.onIsland(Mockito.any())).thenReturn(true);
         Map<UUID, Integer> members = new HashMap<>();
         when(is.getMembers()).thenReturn(members);
+
+        // -- The user is not part of the island --
         assertFalse(im.userIsOnIsland(world, user));
 
-        // One member, just the owner
-        members.put(user.getUniqueId(), RanksManager.MEMBER_RANK);
+        // -- The user is the owner of the island --
+        members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
         assertTrue(im.userIsOnIsland(world, user));
 
-        // Add some members
+        // Add some members to see if it still works
         members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
         members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
         members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
@@ -844,7 +860,7 @@ public class IslandsManagerTest {
         members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
         assertTrue(im.userIsOnIsland(world, user));
 
-        // Add some other ranks
+        // Add some other ranks to see if it still works
         members.put(UUID.randomUUID(), RanksManager.BANNED_RANK);
         members.put(UUID.randomUUID(), RanksManager.BANNED_RANK);
         members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
@@ -852,8 +868,38 @@ public class IslandsManagerTest {
         members.put(UUID.randomUUID(), RanksManager.BANNED_RANK);
         assertTrue(im.userIsOnIsland(world, user));
 
-        // Confirm that if user is not above Member rank then it fails
+        // -- The user is a sub-owner on the island --
+        members.put(user.getUniqueId(), RanksManager.SUB_OWNER_RANK);
+        assertTrue(im.userIsOnIsland(world, user));
+
+        // -- The user is a member on the island --
+        members.put(user.getUniqueId(), RanksManager.MEMBER_RANK);
+        assertTrue(im.userIsOnIsland(world, user));
+
+        // -- The user is a trusted on the island --
+        members.put(user.getUniqueId(), RanksManager.TRUSTED_RANK);
+        assertTrue(im.userIsOnIsland(world, user));
+
+        // -- The user is a coop on the island --
+        members.put(user.getUniqueId(), RanksManager.COOP_RANK);
+        assertTrue(im.userIsOnIsland(world, user));
+
+        // -- The user is a visitor on the island --
+        members.remove(user.getUniqueId());
+        assertFalse(im.userIsOnIsland(world, user));
+
+        // -- The user is explicitly a visitor on the island --
+        members.put(user.getUniqueId(), RanksManager.VISITOR_RANK);
+        assertFalse(im.userIsOnIsland(world, user));
+
+        // -- The user is banned from the island --
         members.put(user.getUniqueId(), RanksManager.BANNED_RANK);
+        assertFalse(im.userIsOnIsland(world, user));
+
+        // ----- CHECK WORLD -----
+        // Assertions above succeeded, so let's check that again with the User being a MEMBER and being in the wrong world.
+        when(user.getLocation().getWorld()).thenReturn(mock(World.class));
+        members.put(user.getUniqueId(), RanksManager.MEMBER_RANK);
         assertFalse(im.userIsOnIsland(world, user));
     }
 
