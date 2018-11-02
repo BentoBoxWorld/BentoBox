@@ -26,7 +26,7 @@ public class HooksManager {
             if (hook.hook()) {
                 hooks.add(hook);
             } else {
-                plugin.log("Could not hook with " + hook.getPluginName() + " because: " + hook.getFailureCause() + ". Skipping...");
+                plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
             }
         }
     }
