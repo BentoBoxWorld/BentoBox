@@ -345,4 +345,10 @@ public class BentoBox extends JavaPlugin {
         return Optional.ofNullable((VaultHook) hooksManager.getHook("Vault").orElse(null));
     }
 
+    /**
+     * @return the PlaceholdersManager.
+     */
+    public PlaceholdersManager getPlaceholdersManager() {
+        return placeholdersManager;
+    }
 }
