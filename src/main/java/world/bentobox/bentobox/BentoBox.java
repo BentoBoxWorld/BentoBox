@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
@@ -27,6 +28,7 @@ import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
@@ -52,6 +54,7 @@ public class BentoBox extends JavaPlugin {
     private RanksManager ranksManager;
     private SchemsManager schemsManager;
     private HooksManager hooksManager;
+    private PlaceholdersManager placeholdersManager;
 
     // Settings
     private Settings settings;
@@ -143,6 +146,10 @@ public class BentoBox extends JavaPlugin {
             // Load hooks
             hooksManager = new HooksManager(this);
             hooksManager.registerHook(new VaultHook());
+            hooksManager.registerHook(new PlaceholderAPIHook());
+
+            // Setup the Placeholders manager
+            placeholdersManager = new PlaceholdersManager(this);
 
             // Fire plugin ready event
             isLoaded = true;
