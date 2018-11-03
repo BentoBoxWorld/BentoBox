@@ -104,20 +104,9 @@ public class FlagsManagerTest {
                 .build())));
     }
 
-    @Test
-    public void testRegisteroriginalFlagPluginNotLoaded() {
-        when(plugin.isLoaded()).thenReturn(false);
-        FlagsManager fm = new FlagsManager(plugin);
-        // This should pass
-        Flag originalFlag = new FlagBuilder().id("ORIGINAL").icon(Material.EMERALD_BLOCK).listener(new BreakBlocksListener()).build();
-        assertTrue(fm.registerFlag(originalFlag));
-        // Verify no Bukkit listener registered
-        Mockito.verify(server, Mockito.never()).getPluginManager();
-    }
-
 
     @Test
-    public void testRegisteroriginalFlagPluginLoadedOriginalListener() {
+    public void testRegisterOriginalFlagOriginalListener() {
         when(plugin.isLoaded()).thenReturn(true);
         FlagsManager fm = new FlagsManager(plugin);
         // This should pass

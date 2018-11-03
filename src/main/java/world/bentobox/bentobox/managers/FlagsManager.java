@@ -53,19 +53,20 @@ public class FlagsManager {
     }
 
     /**
-     * Register any unregistered listeners - called after the plugin is fully loaded
+     * Register any unregistered listeners.
+     * This helps to make sure each flag listener is correctly loaded.
      */
     public void registerListeners() {
         registeredListeners.entrySet().stream().filter(e -> !e.getValue()).map(Map.Entry::getKey).forEach(this::registerListener);
     }
 
     /**
-     * Tries to register a listener if the plugin is loaded
+     * Tries to register a listener
      * @param l - listener
      */
     private void registerListener(Listener l) {
         registeredListeners.putIfAbsent(l, false);
-        if (BentoBox.getInstance().isLoaded() && !registeredListeners.get(l)) {
+        if (!registeredListeners.get(l)) {
             Bukkit.getServer().getPluginManager().registerEvents(l, plugin);
             registeredListeners.put(l, true);
         }

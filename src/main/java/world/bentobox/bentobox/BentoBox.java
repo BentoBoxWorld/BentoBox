@@ -135,6 +135,7 @@ public class BentoBox extends JavaPlugin {
                 islandsManager.save(true);
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
+            // Make sure all flag listeners are ready.
             flagsManager.registerListeners();
 
             // Load metrics
