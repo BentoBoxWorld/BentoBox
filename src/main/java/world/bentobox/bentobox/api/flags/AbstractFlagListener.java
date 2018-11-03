@@ -50,7 +50,6 @@ public abstract class AbstractFlagListener implements Listener {
 
     private BentoBox plugin = BentoBox.getInstance();
     private User user = null;
-    private Why why;
 
     /**
      * @return the plugin
@@ -256,13 +255,5 @@ public abstract class AbstractFlagListener implements Listener {
      */
     protected IslandWorldManager getIWM() {
         return plugin.getIWM();
-    }
-
-    /**
-     * Get why the flag was allowed or not allowed
-     * @return the why - reason
-     */
-    public Why getWhy() {
-        return why;
     }
 }
