@@ -9,14 +9,14 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
  *
  */
-public class BlockInteractionListener extends AbstractFlagListener {
+public class BlockInteractionListener extends FlagListener {
 
     /**
      * Handle interaction with blocks

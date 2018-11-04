@@ -17,7 +17,7 @@ import org.bukkit.event.entity.ExplosionPrimeEvent;
 import org.bukkit.projectiles.ProjectileSource;
 
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
@@ -25,7 +25,7 @@ import world.bentobox.bentobox.database.objects.Island;
  * @author tastybento
  *
  */
-public class GeoLimitMobsListener extends AbstractFlagListener {
+public class GeoLimitMobsListener extends FlagListener {
 
     private Map<Entity, Island> mobSpawnTracker = new WeakHashMap<>();
 

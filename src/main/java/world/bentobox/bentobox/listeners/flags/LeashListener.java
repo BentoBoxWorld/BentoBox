@@ -7,14 +7,14 @@ import org.bukkit.event.entity.PlayerLeashEntityEvent;
 import org.bukkit.event.hanging.HangingPlaceEvent;
 import org.bukkit.event.player.PlayerUnleashEntityEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
  *
  */
-public class LeashListener extends AbstractFlagListener {
+public class LeashListener extends FlagListener {
 
     /**
      * Prevents leashing
