@@ -147,7 +147,10 @@ public class BentoBox extends JavaPlugin {
             // Load hooks
             hooksManager = new HooksManager(this);
             hooksManager.registerHook(new VaultHook());
-            hooksManager.registerHook(new PlaceholderAPIHook());
+            if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")
+                    || getServer().getPluginManager().isPluginEnabled("MVdWPlaceholderAPI")) {
+                hooksManager.registerHook(new PlaceholderAPIHook());
+            }
 
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);
