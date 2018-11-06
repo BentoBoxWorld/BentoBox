@@ -24,7 +24,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
  *
  * @author tastybento, ComminQ_Q
  */
-public abstract class Addon implements AddonInterface {
+public abstract class Addon {
 
     private static final String ADDON_CONFIG_FILENAME = "config.yml";
     private State state;
@@ -36,6 +36,10 @@ public abstract class Addon implements AddonInterface {
     public Addon() {
         state = State.DISABLED;
     }
+
+    public abstract void onEnable();
+    public abstract void onDisable();
+    public void onLoad() {}
 
     public BentoBox getPlugin() {
         return BentoBox.getInstance();

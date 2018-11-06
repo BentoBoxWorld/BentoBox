@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.flatfile;
+package world.bentobox.bentobox.database.yaml;
 
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
@@ -47,12 +47,10 @@ import world.bentobox.bentobox.util.Util;
  * @param <T> Handles flat files for Class <T>
  */
 
-public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
+public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
-    /**
-     * This is the name of the folder where the flat file databases will live
-     */
-    private static final String DATABASE_FOLDER_NAME = "database";
+    private static final String YML = ".yml";
+
     /**
      * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
      */
@@ -64,7 +62,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param type - class to store in the database
      * @param databaseConnector - the database credentials, in this case, just the YAML functions
      */
-    public FlatFileDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
+    YamlDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
     }
 
@@ -82,7 +80,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             key = storeAt.filename();
         }
         // Load the YAML file at the location.
-        YamlConfiguration config = databaseConnector.loadYamlFile(path, key);
+        YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(path, key);
         // Use the createObject method to turn a YAML config into an Java object
         return createObject(config);
     }
@@ -101,7 +99,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // In this case, all the objects of a specific type are being loaded.
         List<T> list = new ArrayList<>();
         // Look for any files that end in .yml in the folder
-        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".yml");
+        FilenameFilter ymlFilter = (dir, name) ->  name.toLowerCase(java.util.Locale.ENGLISH).endsWith(YML);
         // The path is the simple name of the class
         String path = dataObject.getSimpleName();
         // The storeAt annotation may override the path
@@ -123,7 +121,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storeAt != null) {
                 fileName = storeAt.filename();
             }
-            YamlConfiguration config = databaseConnector.loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
+            YamlConfiguration config = ((YamlDatabaseConnector)databaseConnector).loadYamlFile(DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName(), fileName);
             list.add(createObject(config));
         }
         return list;
@@ -247,9 +245,15 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 } else {
                     // Not a collection. Get the value and rely on YAML to supply it
                     Object value = config.get(storageLocation);
-                    // If the value is a yaml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
+                    // If the value is a yml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
                     if (value != null && !value.getClass().equals(MemorySection.class)) {
-                        method.invoke(instance, deserialize(value,propertyDescriptor.getPropertyType()));
+                        Object setTo = deserialize(value,propertyDescriptor.getPropertyType());
+                        if (!(Enum.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && setTo == null)) {
+                            // Do not invoke null on Enums
+                            method.invoke(instance, setTo);
+                        } else {
+                            plugin.logError("Default setting value will be used: " + propertyDescriptor.getReadMethod().invoke(instance));
+                        }
                     }
                 }
             }
@@ -326,12 +330,17 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             Method method = propertyDescriptor.getReadMethod();
             // Invoke the read method to get the value. We have no idea what type of value it is.
             Object value = method.invoke(instance);
+
             String storageLocation = field.getName();
+
             // Check if there is an annotation on the field
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
+
             // If there is a config path annotation then do something
+            boolean experimental = false;
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
+                experimental = configEntry.experimental();
             }
 
             // Get path for comments
@@ -352,6 +361,11 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 setComment(comment, config, yamlComments, parent);
             }
 
+            // If the configEntry is experimental, then tell it
+            if (experimental) {
+                setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.", config, yamlComments, parent);
+            }
+
             // Adapter
             Adapter adapterNotation = field.getAnnotation(Adapter.class);
             if (adapterNotation != null && AdapterInterface.class.isAssignableFrom(adapterNotation.value())) {
@@ -359,7 +373,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 try {
                     config.set(storageLocation, ((AdapterInterface<?,?>)adapterNotation.value().getDeclaredConstructor().newInstance()).serialize(value));
                 } catch (InstantiationException | IllegalArgumentException | NoSuchMethodException | SecurityException e) {
-                    plugin.logError("Could not instatiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
+                    plugin.logError("Could not instantiate adapter " + adapterNotation.value().getName() + " " + e.getMessage());
                 }
                 // We are done here
                 continue;
@@ -413,15 +427,19 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             throw new IllegalArgumentException("No uniqueId in class");
         }
 
-        databaseConnector.saveYamlFile(config, path, filename, yamlComments);
+        ((YamlDatabaseConnector)databaseConnector).saveYamlFile(config, path, filename, yamlComments);
     }
 
     private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
+        setComment(comment.value(), config, yamlComments, parent);
+    }
+
+    private void setComment(String comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
         String random = "comment-" + UUID.randomUUID().toString();
         // Store placeholder
         config.set(parent + random, " ");
         // Create comment
-        yamlComments.put(random, "# " + comment.value().replace(TextVariables.VERSION, plugin.getDescription().getVersion()));
+        yamlComments.put(random, "# " + comment.replace(TextVariables.VERSION, Objects.isNull(getAddon()) ? plugin.getDescription().getVersion() : getAddon().getDescription().getVersion()));
     }
 
     /**
@@ -508,15 +526,10 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 // Show what is available and pick one at random
                 plugin.logError("Error in YML file: " + value + " is not a valid value in the enum " + clazz.getCanonicalName() + "!");
                 plugin.logError("Options are : ");
-                boolean isSet = false;
                 for (Field fields : enumClass.getFields()) {
                     plugin.logError(fields.getName());
-                    if (!isSet && !((String)value).isEmpty() && fields.getName().substring(0, 1).equals(((String)value).substring(0, 1))) {
-                        value = Enum.valueOf(enumClass, fields.getName());
-                        plugin.logError("Setting to " + fields.getName() + " because it starts with the same letter");
-                        isSet = true;
-                    }
                 }
+                value = null;
             }
         }
         return value;
@@ -532,8 +545,8 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         Method method = propertyDescriptor.getReadMethod();
         String fileName = (String) method.invoke(instance);
         // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
-        if (!fileName.endsWith(".yml")) {
-            fileName = fileName + ".yml";
+        if (!fileName.endsWith(YML)) {
+            fileName = fileName + YML;
         }
         // Get the database and table folders
         File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
@@ -544,7 +557,7 @@ public class FlatFileDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             try {
                 Files.delete(file.toPath());
             } catch (IOException e) {
-                plugin.logError("Could not delete yaml database object! " + file.getName() + " - " + e.getMessage());
+                plugin.logError("Could not delete yml database object! " + file.getName() + " - " + e.getMessage());
             }
         }
     }

@@ -23,7 +23,7 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-public abstract class AbstractFlagListener implements Listener {
+public abstract class FlagListener implements Listener {
 
     /**
      * Reason for why flag was allowed or disallowed
@@ -50,7 +50,6 @@ public abstract class AbstractFlagListener implements Listener {
 
     private BentoBox plugin = BentoBox.getInstance();
     private User user = null;
-    private Why why;
 
     /**
      * @return the plugin
@@ -90,7 +89,7 @@ public abstract class AbstractFlagListener implements Listener {
      * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
      * @param user - the User
      */
-    public AbstractFlagListener setUser(User user) {
+    public FlagListener setUser(User user) {
         if (!plugin.getSettings().getFakePlayers().contains(user.getName())) {
             this.user = user;
         }
@@ -256,13 +255,5 @@ public abstract class AbstractFlagListener implements Listener {
      */
     protected IslandWorldManager getIWM() {
         return plugin.getIWM();
-    }
-
-    /**
-     * Get why the flag was allowed or not allowed
-     * @return the why - reason
-     */
-    public Why getWhy() {
-        return why;
     }
 }

@@ -13,7 +13,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -22,7 +22,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class InventoryListener extends AbstractFlagListener {
+public class InventoryListener extends FlagListener {
 
     /**
      * Prevents visitors picking items from inventories

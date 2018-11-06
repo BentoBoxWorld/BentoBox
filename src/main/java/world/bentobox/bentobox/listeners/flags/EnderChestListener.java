@@ -11,7 +11,7 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.CraftItemEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
@@ -21,7 +21,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class EnderChestListener extends AbstractFlagListener {
+public class EnderChestListener extends FlagListener {
 
     /**
      * Prevents opening ender chest unless player has permission

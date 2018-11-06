@@ -115,7 +115,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.invitation-sent", TextVariables.NAME, invitedPlayer.getName());
             // Send message to online player
             invitedPlayer.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, user.getName());
-            invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getLabel());
+            invitedPlayer.sendMessage("commands.island.team.invite.to-accept-or-reject", TextVariables.LABEL, getTopLabel());
             if (getIslands().hasIsland(getWorld(), invitedPlayer.getUniqueId())) {
                 invitedPlayer.sendMessage("commands.island.team.invite.you-will-lose-your-island");
             }

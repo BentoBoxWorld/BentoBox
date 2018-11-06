@@ -84,7 +84,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.getPlayer().getInventory().clear();
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
-            // TODO: needs Vault
+            getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
         // Add a reset
         getPlayers().addReset(getWorld(), user.getUniqueId());

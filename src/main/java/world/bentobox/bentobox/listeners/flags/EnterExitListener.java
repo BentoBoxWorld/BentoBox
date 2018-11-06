@@ -13,7 +13,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.api.events.island.IslandEvent;
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -24,7 +24,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class EnterExitListener extends AbstractFlagListener {
+public class EnterExitListener extends FlagListener {
 
     private static final Vector XZ = new Vector(1,0,1);
 

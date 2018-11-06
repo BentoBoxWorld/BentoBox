@@ -3,10 +3,8 @@ package world.bentobox.bentobox.database.mysql;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Map;
 
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseConnector;
@@ -21,7 +19,7 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
      * Class for MySQL database connections using the settings provided
      * @param dbSettings - database settings
      */
-    public MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
+    MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         try {
             Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
@@ -54,22 +52,9 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public YamlConfiguration loadYamlFile(String string, String key) {
-        // Not used
-        return null;
-    }
-
-    @Override
     public boolean uniqueIdExists(String tableName, String key) {
         // Not used
         return false;
-    }
-
-    @Override
-    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName,
-            Map<String, String> commentMap) {
-        // Not used
-
     }
 
     @Override

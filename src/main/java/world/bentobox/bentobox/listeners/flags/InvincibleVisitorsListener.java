@@ -17,7 +17,7 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -32,7 +32,7 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
  * @author tastybento
  *
  */
-public class InvincibleVisitorsListener extends AbstractFlagListener implements ClickHandler {
+public class InvincibleVisitorsListener extends FlagListener implements ClickHandler {
 
     @Override
     public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {

@@ -20,7 +20,7 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
@@ -30,7 +30,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class PVPListener extends AbstractFlagListener {
+public class PVPListener extends FlagListener {
 
     private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
 

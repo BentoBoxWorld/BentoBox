@@ -322,7 +322,10 @@ public class Clipboard {
             Inventory ih = ((InventoryHolder)bs).getInventory();
             if (config.isConfigurationSection(INVENTORY)) {
                 ConfigurationSection inv = config.getConfigurationSection(INVENTORY);
-                inv.getKeys(false).forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+                // Double chests are pasted as two blocks so inventory is filled twice. This code stops over filling for the first block.
+                inv.getKeys(false).stream()
+                .filter(i -> Integer.valueOf(i) < ih.getSize())
+                .forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
             }
         }
         // Mob spawners

@@ -8,14 +8,14 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityExplodeEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
  *
  */
-public class ChestDamageListener extends AbstractFlagListener {
+public class ChestDamageListener extends FlagListener {
     /**
      * Prevent chest damage from explosion
      * @param e - event

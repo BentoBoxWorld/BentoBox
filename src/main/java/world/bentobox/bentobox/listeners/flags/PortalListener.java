@@ -5,7 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -13,7 +13,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class PortalListener extends AbstractFlagListener {
+public class PortalListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent e) {

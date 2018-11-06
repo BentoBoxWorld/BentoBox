@@ -48,14 +48,12 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagBuilder;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -468,7 +466,7 @@ public class TestBentoBox {
     public void testEventProtection() {
         // Test events
 
-        FlagListener fl = new FlagListener(plugin);
+        TestFlagListener fl = new TestFlagListener(plugin);
 
         // checking events - vistor
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
@@ -501,7 +499,7 @@ public class TestBentoBox {
     @Test
     public void testCustomFlags() {
         // Custom
-        FlagListener fl = new FlagListener(plugin);
+        TestFlagListener fl = new TestFlagListener(plugin);
         Flag customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
         assertEquals("CUSTOM_FLAG", customFlag.getID());
         assertEquals(Material.DIAMOND, customFlag.getIcon());
@@ -515,8 +513,8 @@ public class TestBentoBox {
      * Dummy flag listener
      *
      */
-    private class FlagListener extends AbstractFlagListener {
-        FlagListener(BentoBox plugin) {
+    private class TestFlagListener extends FlagListener {
+        TestFlagListener(BentoBox plugin) {
             // Set the plugin explicitly
             setPlugin(plugin);
         }

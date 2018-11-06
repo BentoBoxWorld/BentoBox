@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.mysql.adapters;
+package world.bentobox.bentobox.database.json.adapters;
 
 import java.io.IOException;
 

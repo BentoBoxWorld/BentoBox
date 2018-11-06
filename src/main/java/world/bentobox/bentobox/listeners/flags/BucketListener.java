@@ -7,7 +7,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -16,7 +16,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class BucketListener extends AbstractFlagListener {
+public class BucketListener extends FlagListener {
 
     /**
      * Prevents emptying of buckets

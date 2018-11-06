@@ -5,7 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -13,7 +13,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class TeleportationListener extends AbstractFlagListener {
+public class TeleportationListener extends FlagListener {
 
     /**
      * Ender pearl and chorus fruit teleport checks

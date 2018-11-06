@@ -16,11 +16,11 @@ import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
-public class BreakBlocksListener extends AbstractFlagListener {
+public class BreakBlocksListener extends FlagListener {
 
     /**
      * Prevents blocks from being broken

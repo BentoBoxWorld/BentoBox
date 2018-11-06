@@ -21,7 +21,6 @@ import world.bentobox.bentobox.managers.RanksManager;
 @ConfigComment("This config file is dynamic and saved when the server is shutdown.")
 @ConfigComment("You cannot edit it while the server is running because changes will")
 @ConfigComment("be lost! Use in-game settings GUI or edit when server is offline.")
-@ConfigComment("")
 public class Settings implements DataObject {
 
     // ---------------------------------------------
@@ -50,11 +49,12 @@ public class Settings implements DataObject {
     private double startingMoney = 10.0;
 
     // Database
-    @ConfigComment("FLATFILE, MYSQL, MONGO")
-    @ConfigComment("if you use MONGO, you must also run the BSBMongo plugin (not addon)")
-    @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/")
+    @ConfigComment("YAML, JSON, MYSQL, MONGODB.")
+    @ConfigComment("YAML and JSON are both file-based databases.")
+    @ConfigComment("if you use MONGODB, you must also run the BSBMongo plugin (not addon).")
+    @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
     @ConfigEntry(path = "general.database.type")
-    private DatabaseType databaseType = DatabaseType.FLATFILE;
+    private DatabaseType databaseType = DatabaseType.YAML;
 
     @ConfigEntry(path = "general.database.host")
     private String databaseHost = "localhost";
@@ -89,7 +89,7 @@ public class Settings implements DataObject {
     @ConfigComment("island unnecessarily.")
     @ConfigEntry(path = "general.allow-obsidian-scooping")
     private boolean allowObsidianScooping = true;
-    
+
     @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
     @ConfigEntry(path = "general.rank-command")
     private Map<String, Integer> rankCommand = new HashMap<>();
@@ -147,7 +147,7 @@ public class Settings implements DataObject {
     private int nameMaxLength = 20;
 
     // Ranks
-    @ConfigEntry(path = "island.customranks")
+    @ConfigEntry(path = "island.custom-ranks", experimental = true)
     private Map<String, Integer> customRanks = new HashMap<>();
 
     //---------------------------------------------------------------------------------------/
@@ -156,7 +156,6 @@ public class Settings implements DataObject {
 
     //---------------------------------------------------------------------------------------/
     // Getters and setters
-
 
     public boolean isMetrics() {
         return metrics;

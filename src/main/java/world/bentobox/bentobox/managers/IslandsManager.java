@@ -568,7 +568,7 @@ public class IslandsManager {
                 user.getPlayer().getInventory().clear();
             }
             if (plugin.getSettings().isUseEconomy() && plugin.getIWM().isOnJoinResetMoney(world)) {
-                // TODO: needs Vault
+                plugin.getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
             }
         }
     }
@@ -623,21 +623,22 @@ public class IslandsManager {
     }
 
     /**
-     * Checks if an online player is in the protected area of their island, a team island or a
-     * coop island in the specific world in the arguments.
+     * Checks if an online player is in the protected area of an island he owns or he is part of.
      *
-     * @param world - the world to check
-     * @param user - the user
-     * @return true if on their island in world, false if not
+     * @param world the World to check, if null the method will always return {@code false}.
+     * @param user the User to check, if null or if this is not a Player the method will always return {@code false}.
+     *
+     * @return {@code true} if this User is located within the protected area of an island he owns or he is part of,
+     *          {@code false} otherwise or if this User is not located in this World.
      */
     public boolean userIsOnIsland(World world, User user) {
-        if (user == null) {
+        if (user == null || !user.isPlayer() || world == null) {
             return false;
         }
-        return getProtectedIslandAt(user.getLocation())
+        return (user.getLocation().getWorld() == world)
+               && getProtectedIslandAt(user.getLocation())
                 .map(i -> i.getMembers().entrySet().stream()
-                        .map(en -> en.getKey().equals(user.getUniqueId()) && en.getValue() > RanksManager.VISITOR_RANK)
-                        .findAny().orElse(false))
+                        .anyMatch(en -> en.getKey().equals(user.getUniqueId()) && en.getValue() > RanksManager.VISITOR_RANK))
                 .orElse(false);
     }
 

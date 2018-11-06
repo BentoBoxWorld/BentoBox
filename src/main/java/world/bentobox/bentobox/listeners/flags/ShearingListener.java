@@ -4,7 +4,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerShearEntityEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -12,7 +12,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class ShearingListener extends AbstractFlagListener {
+public class ShearingListener extends FlagListener {
 
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)

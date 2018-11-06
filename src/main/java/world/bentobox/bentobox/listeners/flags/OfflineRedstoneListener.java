@@ -7,10 +7,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.BlockRedstoneEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
-public class OfflineRedstoneListener extends AbstractFlagListener {
+public class OfflineRedstoneListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockRedstone(BlockRedstoneEvent e) {

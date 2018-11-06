@@ -2,6 +2,7 @@ package world.bentobox.bentobox;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,6 +14,8 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
+import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
@@ -23,9 +26,11 @@ import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
+import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
+import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
@@ -49,9 +54,13 @@ public class BentoBox extends JavaPlugin {
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
+  
     // Global schems
     private Map<String, SchemsManager> schematics;
     public static final String DefaultSchemsName = "default";
+  
+    private HooksManager hooksManager;
+    private PlaceholdersManager placeholdersManager;
 
     // Settings
     private Settings settings;
@@ -78,6 +87,12 @@ public class BentoBox extends JavaPlugin {
 
         // Load settings from config.yml. This will check if there are any issues with it too.
         settings = new Config<>(this, Settings.class).loadConfigObject("");
+        if (settings == null) {
+            // Settings did no load correctly. Disable plugin.
+            logError("Settings did not load correctly - disabling plugin - please check config.yml");
+            getPluginLoader().disablePlugin(this);
+            return;
+        }
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
@@ -127,24 +142,34 @@ public class BentoBox extends JavaPlugin {
                 playersManager.save(true);
                 islandsManager.save(true);
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
-            isLoaded = true;
+
+            // Make sure all flag listeners are ready.
             flagsManager.registerListeners();
+
+            // Load metrics
+            if (settings.isMetrics()) {
+                BStats bStats = new BStats(this);
+                bStats.registerMetrics();
+            }
+
+            // Load hooks
+            hooksManager = new HooksManager(this);
+            hooksManager.registerHook(new VaultHook());
+            hooksManager.registerHook(new PlaceholderAPIHook());
+
+            // Setup the Placeholders manager
+            placeholdersManager = new PlaceholdersManager(this);
+
+            // Fire plugin ready event
+            isLoaded = true;
+            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+
             instance.log("#############################################");
             instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
             instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
             instance.log("Thanks for using our plugin !");
             instance.log("- Tastybento and Poslovitch, 2017-2018");
             instance.log("#############################################");
-
-            // Load metrics
-
-            if (settings.isMetrics()) {
-                BStats bStats = new BStats(this);
-                bStats.registerMetrics();
-            }
-
-            // Fire plugin ready event
-            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
         });
     }
 
@@ -315,5 +340,27 @@ public class BentoBox extends JavaPlugin {
      */
     public boolean isLoaded() {
         return isLoaded;
+    }
+
+    /**
+     * @return the HooksManager
+     */
+    public HooksManager getHooks() {
+        return hooksManager;
+    }
+
+    /**
+     * Convenience method to get the VaultHook.
+     * @return the Vault hook
+     */
+    public Optional<VaultHook> getVault() {
+        return Optional.ofNullable((VaultHook) hooksManager.getHook("Vault").orElse(null));
+    }
+
+    /**
+     * @return the PlaceholdersManager.
+     */
+    public PlaceholdersManager getPlaceholdersManager() {
+        return placeholdersManager;
     }
 }

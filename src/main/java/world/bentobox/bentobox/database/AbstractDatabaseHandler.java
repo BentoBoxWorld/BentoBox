@@ -5,6 +5,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * An abstract class that handles insert/select-operations into/from a database
@@ -14,6 +15,11 @@ import world.bentobox.bentobox.BentoBox;
  * @param <T>
  */
 public abstract class AbstractDatabaseHandler<T> {
+
+    /**
+     * Name of the folder where databases using files will live
+     */
+    protected static final String DATABASE_FOLDER_NAME = "database";
 
     /**
      * The data object that should be created and filled with values
@@ -28,6 +34,27 @@ public abstract class AbstractDatabaseHandler<T> {
     protected DatabaseConnector databaseConnector;
 
     protected BentoBox plugin;
+
+    /**
+     * The addon that is accessing the database, if any.
+     */
+    private Addon addon;
+
+    /**
+     * Get the addon that is accessing the database, if any. May be null.
+     * @return the addon
+     */
+    public Addon getAddon() {
+        return addon;
+    }
+
+    /**
+     * Set the addon that is accessing the database, if any.
+     * @param addon the addon to set
+     */
+    public void setAddon(Addon addon) {
+        this.addon = addon;
+    }
 
     /**
      * Constructor

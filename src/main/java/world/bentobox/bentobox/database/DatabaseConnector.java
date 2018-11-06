@@ -1,9 +1,5 @@
 package world.bentobox.bentobox.database;
 
-import java.util.Map;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
 /**
  *
  * Creates a connection to a database.
@@ -44,23 +40,6 @@ public interface DatabaseConnector {
      * @return true if it exists
      */
      boolean uniqueIdExists(String tableName, String key);
-
-    /**
-     * Loads a YAML file. Used by the flat file database
-     * @param tableName - the table name to load
-     * @param fileName - the filename
-     * @return Yaml Configuration
-     */
-     YamlConfiguration loadYamlFile(String tableName, String fileName);
-
-    /**
-     * Save the Yaml Config
-     * @param yamlConfig - the YAML config
-     * @param path - analogous to a table name in a database
-     * @param fileName - the name of the record. Must be unique.
-     * @param commentMap - map of comments, may be empty
-     */
-    void saveYamlFile(YamlConfiguration yamlConfig, String path, String fileName, Map<String, String> commentMap);
 
 }
 

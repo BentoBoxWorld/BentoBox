@@ -13,7 +13,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.hanging.HangingBreakByEntityEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -21,7 +21,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class ItemFrameListener extends AbstractFlagListener {
+public class ItemFrameListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onItemFrameDamage(final EntityDamageByEntityEvent e) {

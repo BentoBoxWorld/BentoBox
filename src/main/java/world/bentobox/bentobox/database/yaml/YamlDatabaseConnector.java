@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.flatfile;
+package world.bentobox.bentobox.database.yaml;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -21,15 +21,15 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 
-public class FlatFileDatabaseConnector implements DatabaseConnector {
+public class YamlDatabaseConnector implements DatabaseConnector {
 
     private static final int MAX_LOOPS = 100;
     private static final String DATABASE_FOLDER_NAME = "database";
+    private static final String YML = ".yml";
     private final BentoBox plugin;
     private final File dataFolder;
 
-
-    public FlatFileDatabaseConnector(BentoBox plugin) {
+    YamlDatabaseConnector(BentoBox plugin) {
         this.plugin = plugin;
         dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
     }
@@ -44,10 +44,9 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
         return null; // Not used
     }
 
-    @Override
     public YamlConfiguration loadYamlFile(String tableName, String fileName) {
-        if (!fileName.endsWith(".yml")) {
-            fileName = fileName + ".yml";
+        if (!fileName.endsWith(YML)) {
+            fileName = fileName + YML;
         }
         File yamlFile = new File(plugin.getDataFolder(), tableName + File.separator + fileName);
 
@@ -57,7 +56,7 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                plugin.logError("Could not load yaml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
             }
         } else {
             // Create the missing file
@@ -79,10 +78,9 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
         return config;
     }
 
-    @Override
     public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName, Map<String, String> commentMap) {
-        if (!fileName.endsWith(".yml")) {
-            fileName = fileName + ".yml";
+        if (!fileName.endsWith(YML)) {
+            fileName = fileName + YML;
         }
         File tableFolder = new File(plugin.getDataFolder(), tableName);
         File file = new File(tableFolder, fileName);
@@ -98,7 +96,7 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
             yamlConfig.save(file.toPath().toString());
             Files.deleteIfExists(tmpFile.toPath());
         } catch (Exception e) {
-            plugin.logError("Could not save yaml file: " + tableName + " " + fileName + " " + e.getMessage());
+            plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
@@ -160,18 +158,18 @@ public class FlatFileDatabaseConnector implements DatabaseConnector {
     @Override
     public String getUniqueId(String tableName) {
         UUID uuid = UUID.randomUUID();
-        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".yml");
+        File file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
         int limit = 0;
         while (file.exists() && limit++ < MAX_LOOPS) {
             uuid = UUID.randomUUID();
-            file = new File(dataFolder, tableName + File.separator + uuid.toString() + ".yml");
+            file = new File(dataFolder, tableName + File.separator + uuid.toString() + YML);
         }
         return uuid.toString();
     }
 
     @Override
     public boolean uniqueIdExists(String tableName, String key) {
-        File file = new File(dataFolder, tableName + File.separator + key + ".yml");
+        File file = new File(dataFolder, tableName + File.separator + key + YML);
         return file.exists();
     }
 

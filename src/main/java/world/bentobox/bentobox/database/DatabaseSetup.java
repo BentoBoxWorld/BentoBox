@@ -1,31 +1,34 @@
 package world.bentobox.bentobox.database;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.flatfile.FlatFileDatabase;
+import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 public interface DatabaseSetup {
 
     /**
      * Gets the type of database being used.
-     * Currently supported options are FLATFILE and MYSQL.
-     * Default is FLATFILE.
+     * Currently supported options are YAML, JSON, MYSQL and MONGODB.
+     * Default is YAML.
      * @return Database type
      */
     static DatabaseSetup getDatabase() {
+        BentoBox plugin = BentoBox.getInstance();
         for(DatabaseType type : DatabaseType.values()){
-            if(type == BentoBox.getInstance().getSettings().getDatabaseType()) {
+            if(type == plugin.getSettings().getDatabaseType()) {
                 return type.database;
             }
         }
-        return DatabaseType.FLATFILE.database;
+        return DatabaseType.YAML.database;
     }
 
     enum DatabaseType {
-        FLATFILE(new FlatFileDatabase()),
+        YAML(new YamlDatabase()),
+        JSON(new JSONDatabase()),
         MYSQL(new MySQLDatabase()),
-        MONGO(new MongoDBDatabase());
+        MONGODB(new MongoDBDatabase());
 
         DatabaseSetup database;
 

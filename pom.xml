@@ -6,7 +6,7 @@
 
 	<groupId>world.bentobox</groupId>
 	<artifactId>bentobox</artifactId>
-	<version>0.12.0-SNAPSHOT</version>
+	<version>0.14.0-SNAPSHOT</version>
 
 	<name>BentoBox</name>
 	<description>BentoBox is an expandable Minecraft Spigot plugin for island-type games like ASkyBlock or AcidIsland.</description>
@@ -56,6 +56,14 @@
 			<id>bstats-repo</id>
 			<url>http://repo.bstats.org/content/repositories/releases/</url>
 		</repository>
+		<repository>
+			<id>vault-repo</id>
+			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
+		</repository>
+		<repository>
+			<id>placeholderapi</id>
+			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -96,6 +104,20 @@
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
 			<version>3.8.0</version>
+		</dependency>
+		<!-- Vault -->
+		<dependency>
+			<groupId>net.milkbowl.vault</groupId>
+			<artifactId>VaultAPI</artifactId>
+			<version>1.7</version>
+			<scope>provided</scope>
+		</dependency>
+		<!-- Placeholders -->
+		<dependency>
+			<groupId>me.clip</groupId>
+			<artifactId>placeholderapi</artifactId>
+			<version>2.9.2</version>
+			<scope>provided</scope>
 		</dependency>
 	</dependencies>
 

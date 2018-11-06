@@ -12,14 +12,14 @@ import org.bukkit.event.block.EntityBlockFormEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
  */
-public class PlaceBlocksListener extends AbstractFlagListener {
+public class PlaceBlocksListener extends FlagListener {
 
     /**
      * Check blocks being placed in general

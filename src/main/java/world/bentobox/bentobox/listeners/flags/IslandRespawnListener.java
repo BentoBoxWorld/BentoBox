@@ -14,7 +14,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -23,7 +23,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class IslandRespawnListener extends AbstractFlagListener {
+public class IslandRespawnListener extends FlagListener {
     
     Map<UUID, World> respawn = new HashMap<>();
 

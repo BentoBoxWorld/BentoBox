@@ -1,9 +1,5 @@
 package world.bentobox.bentobox.database.mongodb;
 
-import java.util.Map;
-
-import org.bukkit.configuration.file.YamlConfiguration;
-
 import com.mongodb.MongoClient;
 import com.mongodb.MongoClientOptions;
 import com.mongodb.MongoCredential;
@@ -22,7 +18,7 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
      * Class for MySQL database connections using the settings provided
      * @param dbSettings - database settings
      */
-    public MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
+    MongoDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         MongoCredential credential = MongoCredential.createCredential(dbSettings.getUsername(),
                 dbSettings.getDatabaseName(),
@@ -48,28 +44,14 @@ public class MongoDBDatabaseConnector implements DatabaseConnector {
     }
 
     @Override
-    public YamlConfiguration loadYamlFile(String string, String key) {
-        // Not used
-        return null;
-    }
-
-    @Override
     public boolean uniqueIdExists(String tableName, String key) {
         // Not used
         return false;
     }
 
     @Override
-    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName,
-            Map<String, String> commentMap) {
-        // Not used
-        
-    }
-
-    @Override
     public void closeConnection() {
         client.close();
-        
     }
 
 }

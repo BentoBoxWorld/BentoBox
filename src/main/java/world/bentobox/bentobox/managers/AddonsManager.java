@@ -35,39 +35,29 @@ public class AddonsManager {
 
     private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
-    private List<AddonClassLoader> loader;
+    private List<AddonClassLoader> loaders;
     private final Map<String, Class<?>> classes = new HashMap<>();
     private BentoBox plugin;
 
     public AddonsManager(BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
-        loader = new ArrayList<>();
-        loadAddonsFromFile();
-    }
-
-    public void loadAddonsFromFile() {
-        plugin.log("Loading addons...");
-        File f = new File(plugin.getDataFolder(), "addons");
-        if (!f.exists() && !f.mkdirs()) {
-            plugin.logError("Cannot make addons folder!");
-            return;
-        }
-        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
-        sortAddons();
+        loaders = new ArrayList<>();
     }
 
     /**
      * Loads all the addons from the addons folder
      */
     public void loadAddons() {
-        // Run each onLoad
-        addons.forEach(addon -> {
-            addon.onLoad();
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-            plugin.log("Loading " + addon.getDescription().getName() + "...");
-        });
+        plugin.log("Loading addons...");
+        File f = new File(plugin.getDataFolder(), "addons");
+        if (!f.exists() && !f.mkdirs()) {
+            plugin.logError("Cannot create addons folder!");
+            return;
+        }
+        Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         plugin.log("Loaded " + addons.size() + " addons.");
+        sortAddons();
     }
 
     /**
@@ -81,7 +71,7 @@ public class AddonsManager {
                 Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
                 addon.setState(Addon.State.ENABLED);
                 plugin.log("Enabling " + addon.getDescription().getName() + "...");
-            } catch (NoClassDefFoundError e) {
+            } catch (NoClassDefFoundError | NoSuchMethodError e) {
                 // Looks like the addon is outdated, because it tries to refer to missing classes.
                 // Set the AddonState as "INCOMPATIBLE".
                 addon.setState(Addon.State.INCOMPATIBLE);
@@ -93,7 +83,7 @@ public class AddonsManager {
                 // Set the AddonState as "ERROR".
                 addon.setState(Addon.State.ERROR);
                 plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
-                plugin.log("STACKTRACE: " + e.getMessage() + " - " + e.getCause());
+                plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
             }
         });
         plugin.log("Addons successfully enabled.");
@@ -130,7 +120,7 @@ public class AddonsManager {
             // Load the addon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
             // Add to the list of loaders
-            loader.add(addonClassLoader);
+            loaders.add(addonClassLoader);
 
             // Get the addon itself
             addon = addonClassLoader.getAddon();
@@ -148,6 +138,8 @@ public class AddonsManager {
             Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
             // Add it to the list of addons
             addons.add(addon);
+            // Run the onLoad.
+            addon.onLoad();
         } catch (Exception e) {
             plugin.log(e.getMessage());
         }
@@ -160,12 +152,14 @@ public class AddonsManager {
         plugin.log("Disabling addons...");
         // Unload addons
         addons.forEach(addon -> {
-            addon.onDisable();
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-            plugin.log("Disabling " + addon.getDescription().getName() + "...");
+            if (addon.isEnabled()) {
+                addon.onDisable();
+                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
+                plugin.log("Disabling " + addon.getDescription().getName() + "...");
+            }
         });
 
-        loader.forEach(l -> {
+        loaders.forEach(l -> {
             try {
                 l.close();
             } catch (IOException ignore) {
@@ -179,12 +173,12 @@ public class AddonsManager {
         return addons;
     }
 
-    public List<AddonClassLoader> getLoader() {
-        return loader;
+    public List<AddonClassLoader> getLoaders() {
+        return loaders;
     }
 
-    public void setLoader(List<AddonClassLoader> loader) {
-        this.loader = loader;
+    public void setLoaders(List<AddonClassLoader> loaders) {
+        this.loaders = loaders;
     }
 
     /**
@@ -193,7 +187,7 @@ public class AddonsManager {
      * @return Class - the class
      */
     public Class<?> getClassByName(final String name) {
-        return classes.getOrDefault(name, loader.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
+        return classes.getOrDefault(name, loaders.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
     /**
@@ -233,19 +227,22 @@ public class AddonsManager {
     }
 
     private void sortAddons() {
-        // Check that any dependencies exist
+        // Lists all available addons as names.
         List<String> names = addons.stream().map(a -> a.getDescription().getName()).collect(Collectors.toList());
-        Iterator<Addon> ita = addons.iterator();
-        while (ita.hasNext()) {
-            Addon a = ita.next();
-            for (String dep : a.getDescription().getDependencies()) {
-                if (!names.contains(dep)) {
-                    plugin.logError(a.getDescription().getName() + " has dependency on " + dep + " that does not exist. Addon will not load!");
-                    ita.remove();
+
+        // Check that any dependencies exist
+        Iterator<Addon> addonsIterator = addons.iterator();
+        while (addonsIterator.hasNext()) {
+            Addon a = addonsIterator.next();
+            for (String dependency : a.getDescription().getDependencies()) {
+                if (!names.contains(dependency)) {
+                    plugin.logError(a.getDescription().getName() + " has dependency on " + dependency + " that does not exist. Addon will not load!");
+                    addonsIterator.remove();
                     break;
                 }
             }
         }
+
         // Load dependencies or soft dependencies
         Map<String,Addon> sortedAddons = new LinkedHashMap<>();
         // Start with nodes with no dependencies
@@ -255,30 +252,20 @@ public class AddonsManager {
         List<Addon> remaining = addons.stream().filter(a -> !sortedAddons.containsKey(a.getDescription().getName())).collect(Collectors.toList());
 
         // Run through remaining addons
-        int index = 0;
-        while (index < 10 && !remaining.isEmpty()) {
-            index++;
-            Iterator<Addon> it = remaining.iterator();
-            while (it.hasNext()) {
-                Addon a = it.next();
-                // Check if dependencies are loaded - make a list of all hard and soft deps
-                List<String> deps = new ArrayList<>(a.getDescription().getDependencies());
-                deps.addAll(a.getDescription().getSoftDependencies());
-                Iterator<String> depIt = deps.iterator();
-                while(depIt.hasNext()) {
-                    String dep = depIt.next();
-                    if (sortedAddons.containsKey(dep)) {
-                        depIt.remove();
-                    }
-                }
-                if (deps.stream().noneMatch(s -> a.getDescription().getDependencies().contains(s))) {
-                    // Add addons loaded
-                    sortedAddons.put(a.getDescription().getName(), a);
-                    it.remove();
-                }
+        remaining.forEach(addon -> {
+            // Get the addon's dependencies.
+            List<String> dependencies = new ArrayList<>(addon.getDescription().getDependencies());
+            dependencies.addAll(addon.getDescription().getSoftDependencies());
+
+            // Remove already sorted addons (dependencies) from the list
+            dependencies.removeIf(sortedAddons::containsKey);
+
+            if (dependencies.stream().noneMatch(dependency -> addon.getDescription().getDependencies().contains(dependency))) {
+                sortedAddons.put(addon.getDescription().getName(), addon);
             }
-        }
+        });
+
         addons.clear();
-        sortedAddons.values().forEach(addons::add);
+        addons.addAll(sortedAddons.values());
     }
 }

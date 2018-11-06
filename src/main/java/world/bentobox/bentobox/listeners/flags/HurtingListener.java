@@ -27,7 +27,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 
-import world.bentobox.bentobox.api.flags.AbstractFlagListener;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
@@ -37,7 +37,7 @@ import world.bentobox.bentobox.lists.Flags;
  * @author tastybento
  *
  */
-public class HurtingListener extends AbstractFlagListener {
+public class HurtingListener extends FlagListener {
 
     private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
 
