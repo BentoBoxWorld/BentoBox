@@ -324,8 +324,9 @@ public class BentoBox extends JavaPlugin {
     }
 
     /**
-     * True if the plugin is loaded and ready
-     * @return the isLoaded
+     * Returns whether BentoBox is fully loaded or not.
+     * This basically means that all managers are instantiated and can therefore be safely accessed.
+     * @return whether BentoBox is fully loaded or not.
      */
     public boolean isLoaded() {
         return isLoaded;
