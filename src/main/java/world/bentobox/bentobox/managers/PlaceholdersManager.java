@@ -25,10 +25,7 @@ public class PlaceholdersManager {
      */
     public void registerPlaceholder(String placeholder, PlaceholderReplacer replacer) {
         // Register it in PlaceholderAPI
-        plugin.getHooks().getHook("PlaceholderAPI").ifPresent(hook -> {
-            PlaceholderAPIHook placeholderAPIHook = (PlaceholderAPIHook) hook;
-            placeholderAPIHook.registerBentoBoxPlaceholder(placeholder, replacer);
-        });
+        plugin.getHooks().getHook("PlaceholderAPI").ifPresent(hook -> ((PlaceholderAPIHook) hook).registerBentoBoxPlaceholder(placeholder, replacer));
     }
 
     /**
@@ -42,9 +39,6 @@ public class PlaceholdersManager {
             return;
         }
         // Register it in PlaceholderAPI
-        plugin.getHooks().getHook("PlaceholderAPI").ifPresent(hook -> {
-            PlaceholderAPIHook placeholderAPIHook = (PlaceholderAPIHook) hook;
-            placeholderAPIHook.registerAddonPlaceholder(addon, placeholder, replacer);
-        });
+        plugin.getHooks().getHook("PlaceholderAPI").ifPresent(hook -> ((PlaceholderAPIHook) hook).registerAddonPlaceholder(addon, placeholder, replacer));
     }
 }
