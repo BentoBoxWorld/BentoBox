@@ -82,7 +82,9 @@ public class IslandWorldManager {
      * @return true if in a world or false if not
      */
     public boolean inWorld(World world) {
-        return worlds.containsKey(Util.getWorld(world));
+        return ((world.getEnvironment().equals(Environment.NETHER) && isIslandNether(world))
+                || (world.getEnvironment().equals(Environment.THE_END) && isIslandEnd(world))
+                || (world.getEnvironment().equals(Environment.NORMAL)) && worlds.containsKey(world));
     }
 
     /**
@@ -302,7 +304,7 @@ public class IslandWorldManager {
      */
     public boolean isNether(World world) {
         World w = Util.getWorld(world);
-        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate();
+        return world.getEnvironment().equals(Environment.NETHER) && worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate();
     }
 
     /**
@@ -314,7 +316,7 @@ public class IslandWorldManager {
      */
     public boolean isIslandNether(World world) {
         World w = Util.getWorld(world);
-        return worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate()
+        return world.getEnvironment().equals(Environment.NETHER) && worldSettings.containsKey(w) && worldSettings.get(w).isNetherGenerate()
                 && worldSettings.get(w).isNetherIslands();
     }
 
@@ -327,7 +329,7 @@ public class IslandWorldManager {
      */
     public boolean isEnd(World world) {
         World w = Util.getWorld(world);
-        return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate();
+        return world.getEnvironment().equals(Environment.THE_END) && worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate();
     }
 
     /**
@@ -339,7 +341,7 @@ public class IslandWorldManager {
      */
     public boolean isIslandEnd(World world) {
         World w = Util.getWorld(world);
-        return worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate()
+        return world.getEnvironment().equals(Environment.THE_END) && worldSettings.containsKey(w) && worldSettings.get(w).isEndGenerate()
                 && worldSettings.get(w).isEndIslands();
     }
 

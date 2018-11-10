@@ -8,8 +8,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
-
 import org.bukkit.metadata.MetadataValue;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -148,10 +148,7 @@ public abstract class FlagListener implements Listener {
      */
     public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
         // If this is not an Island World or a standard Nether or End, skip
-        if (!plugin.getIWM().inWorld(loc)
-                || (plugin.getIWM().isNether(loc.getWorld()) && !plugin.getIWM().isNetherIslands(loc.getWorld()))
-                || (plugin.getIWM().isEnd(loc.getWorld()) && !plugin.getIWM().isEndIslands(loc.getWorld()))
-                ) {
+        if (!plugin.getIWM().inWorld(loc)) {
             report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);
             return true;
         }
@@ -180,7 +177,7 @@ public abstract class FlagListener implements Listener {
         }
 
         // Ops or "bypass everywhere" moderators can do anything
-        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {            
+        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
             if (user.isOp()) {
                 report(user, e, loc, flag,  Why.OP);
             } else {
@@ -203,7 +200,7 @@ public abstract class FlagListener implements Listener {
                 report(user, e, loc, flag,  Why.BYPASS_ISLAND);
                 user = null;
                 return true;
-            } 
+            }
             report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
             noGo(e, flag, silent);
             // Clear the user for the next time
