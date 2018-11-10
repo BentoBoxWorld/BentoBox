@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers.island;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
@@ -22,6 +23,9 @@ class IslandGrid {
         if (grid.containsKey(island.getMinX())) {
             TreeMap<Integer, Island> zEntry = grid.get(island.getMinX());
             if (zEntry.containsKey(island.getMinZ())) {
+                BentoBox.getInstance().logError("Cannot add island to grid because there is an overlapping");
+                BentoBox.getInstance().logError("island already registered at this location:" + island.getCenter());
+                BentoBox.getInstance().logError("This is most likely caused by island distances changing mid-game, or an old database file");
                 return false;
             } else {
                 // Add island

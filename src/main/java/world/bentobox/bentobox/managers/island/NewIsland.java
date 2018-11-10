@@ -118,7 +118,11 @@ public class NewIsland {
         }
         // Add to the grid
         island = plugin.getIslands().createIsland(next, user.getUniqueId());
-        // Save the player so that if the server is reset weird things won't happen
+        if (island == null) {
+            plugin.logError("Failed to make island! Island could not be added to the grid.");
+            return;
+        }
+        // TODO: Save the player so that if the server is reset weird things won't happen?
 
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
@@ -145,7 +149,7 @@ public class NewIsland {
             // Stop the player from falling or moving if they are
             user.getPlayer().setVelocity(new Vector(0,0,0));
             user.getPlayer().setFallDistance(0F);
-            
+
             // Teleport player after this island is built
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
         });
