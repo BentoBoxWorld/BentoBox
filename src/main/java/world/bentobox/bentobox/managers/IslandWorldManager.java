@@ -59,7 +59,7 @@ public class IslandWorldManager {
      * @param world the World to register
      */
     private void registerToMultiverse(World world) {
-        if (!isUseOwnGenerator(world)) {
+        if (!isUseOwnGenerator(world) && plugin.getHooks() != null) {
             plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> ((MultiverseCoreHook) hook).registerWorld(world));
         }
     }
@@ -163,7 +163,6 @@ public class IslandWorldManager {
             }
             plugin.log("Added world " + friendlyName + " (" + world.getDifficulty() + ")");
         });
-
     }
 
     /**
