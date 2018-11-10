@@ -65,11 +65,11 @@ public class IslandWorldManager {
     }
 
     /**
-     * Checks if a location is in any of the island worlds
+     * Checks if a location is in any of the island worlds.
+     * This will be false if the player is in the standard Nether or standard End.
      *
-     * @param loc
-     *            - location
-     * @return true if in a world or false if not
+     * @param loc - location
+     * @return true if in a world or false if not. False if in standard Nether or standard End.
      */
     public boolean inWorld(Location loc) {
         return inWorld(loc.getWorld());

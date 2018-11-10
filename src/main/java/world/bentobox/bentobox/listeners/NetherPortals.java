@@ -175,7 +175,7 @@ public class NetherPortals implements Listener {
     public void onNetherPortalStandardNether(PlayerPortalEvent e) {
         World fromWorld = e.getFrom().getWorld();
         if (e.getCause().equals(TeleportCause.NETHER_PORTAL)
-                && plugin.getIWM().inWorld(e.getFrom())
+                && plugin.getIWM().inWorld(Util.getWorld(fromWorld))
                 && !plugin.getIWM().isNetherIslands(fromWorld)
                 && fromWorld.getEnvironment().equals(Environment.NETHER)
                 && plugin.getPlayers().isKnown(e.getPlayer().getUniqueId())) {
