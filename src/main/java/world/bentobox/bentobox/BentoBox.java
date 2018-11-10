@@ -12,6 +12,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.VaultHook;
 import world.bentobox.bentobox.listeners.BannedVisitorCommands;
@@ -109,15 +110,15 @@ public class BentoBox extends JavaPlugin {
         new BentoBoxCommand();
 
         // Start Island Worlds Manager
-        islandWorldManager = new IslandWorldManager(instance);
+        islandWorldManager = new IslandWorldManager(this);
         // Load schems manager
-        schemsManager = new SchemsManager(instance);
+        schemsManager = new SchemsManager(this);
 
         // Locales manager must be loaded before addons
-        localesManager = new LocalesManager(instance);
+        localesManager = new LocalesManager(this);
 
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
-        addonsManager = new AddonsManager(instance);
+        addonsManager = new AddonsManager(this);
         addonsManager.loadAddons();
         // Enable addons
         addonsManager.enableAddons();
@@ -135,7 +136,7 @@ public class BentoBox extends JavaPlugin {
                 islandsManager.save(true);
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
-            // Make sure all flag listeners are ready.
+            // Make sure all flag listeners are registered.
             flagsManager.registerListeners();
 
             // Load metrics
@@ -148,6 +149,10 @@ public class BentoBox extends JavaPlugin {
             hooksManager = new HooksManager(this);
             hooksManager.registerHook(new VaultHook());
             hooksManager.registerHook(new PlaceholderAPIHook());
+            hooksManager.registerHook(new MultiverseCoreHook());
+
+            // Make sure all worlds are already registered to Multiverse.
+            islandWorldManager.registerWorldsToMultiverse();
 
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);

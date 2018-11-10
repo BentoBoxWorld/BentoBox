@@ -21,6 +21,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 
@@ -32,8 +33,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class IslandWorldManager {
 
-    private static final String MULTIVERSE_SET_GENERATOR = "mv modify set generator ";
-    private static final String MULTIVERSE_IMPORT = "mv import ";
     private static final String NETHER = "_nether";
     private static final String THE_END = "_the_end";
 
@@ -50,23 +49,18 @@ public class IslandWorldManager {
         worldSettings = new HashMap<>();
     }
 
+    public void registerWorldsToMultiverse() {
+        worlds.forEach((world, s) -> registerToMultiverse(world));
+    }
+
     /**
-     * Registers a world with Multiverse if the plugin exists
+     * Registers a world with Multiverse if Multiverse is available.
      *
-     * @param world
-     *            - world
+     * @param world the World to register
      */
-    private void multiverseReg(World world) {
-        if (!isUseOwnGenerator(world) && Bukkit.getServer().getPluginManager().isPluginEnabled("Multiverse-Core")) {
-            Bukkit.getScheduler().runTask(plugin,
-                    () -> Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                            MULTIVERSE_IMPORT + world.getName() + " normal -g " + plugin.getName()));
-            Bukkit.getScheduler().runTask(plugin, () -> {
-                if (!Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(),
-                        MULTIVERSE_SET_GENERATOR + plugin.getName() + " " + world.getName())) {
-                    plugin.logError("Multiverse is out of date! - Upgrade to latest version!");
-                }
-            });
+    private void registerToMultiverse(World world) {
+        if (!isUseOwnGenerator(world)) {
+            plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> ((MultiverseCoreHook) hook).registerWorld(world));
         }
     }
 
@@ -145,7 +139,7 @@ public class IslandWorldManager {
         worlds.put(world, friendlyName);
         worldSettings.put(world, settings);
         // Call Multiverse
-        multiverseReg(world);
+        registerToMultiverse(world);
         // Set default island settings
         Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
         .forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
