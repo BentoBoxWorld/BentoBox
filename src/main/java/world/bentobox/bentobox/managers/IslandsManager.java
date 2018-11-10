@@ -286,6 +286,13 @@ public class IslandsManager {
      * @return Optional Island object
      */
     public Optional<Island> getIslandAt(Location location) {
+        // If this is not an Island World or a standard Nether or End, skip
+        if (!plugin.getIWM().inWorld(location)
+                || (plugin.getIWM().isNether(location.getWorld()) && !plugin.getIWM().isNetherIslands(location.getWorld()))
+                || (plugin.getIWM().isEnd(location.getWorld()) && !plugin.getIWM().isEndIslands(location.getWorld()))
+                ) {
+            return Optional.empty();
+        }
         // Do not return an island if there is no nether or end or islands in them
         if ((location.getWorld().getEnvironment().equals(World.Environment.NETHER) &&
                 (!plugin.getIWM().isNetherGenerate(location.getWorld()) || !plugin.getIWM().isNetherIslands(location.getWorld())))
@@ -636,7 +643,7 @@ public class IslandsManager {
             return false;
         }
         return (user.getLocation().getWorld() == world)
-               && getProtectedIslandAt(user.getLocation())
+                && getProtectedIslandAt(user.getLocation())
                 .map(i -> i.getMembers().entrySet().stream()
                         .anyMatch(en -> en.getKey().equals(user.getUniqueId()) && en.getValue() > RanksManager.VISITOR_RANK))
                 .orElse(false);

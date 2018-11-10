@@ -333,7 +333,7 @@ public abstract class Addon {
     /**
      * Returns the permission prefix corresponding to this addon.
      * It contains the addon's name plus a trailing dot.
-     * @return
+     * @return Permission prefix string
      */
     public String getPermissionPrefix() {
         return this.getDescription().getName().toLowerCase() + ".";
