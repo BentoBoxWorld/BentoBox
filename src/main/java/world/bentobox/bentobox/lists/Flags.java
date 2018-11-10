@@ -16,6 +16,7 @@ import world.bentobox.bentobox.listeners.flags.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.BucketListener;
 import world.bentobox.bentobox.listeners.flags.ChestDamageListener;
 import world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener;
+import world.bentobox.bentobox.listeners.flags.CoarseDirtTillingListener;
 import world.bentobox.bentobox.listeners.flags.CreeperListener;
 import world.bentobox.bentobox.listeners.flags.EggListener;
 import world.bentobox.bentobox.listeners.flags.EnderChestListener;
@@ -218,6 +219,8 @@ public class Flags {
     
     public static final Flag COMMAND_RANKS = new FlagBuilder().id("COMMAND_RANKS").icon(Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
             .onClick(new CommandRankClickListener()).subPanel(true).build();
+
+    public static final Flag COARSE_DIRT_TILLING = new FlagBuilder().id("COARSE_DIRT_TILLING").icon(Material.COARSE_DIRT).type(Type.WORLD_SETTING).allowedByDefault(true).listener(new CoarseDirtTillingListener()).build();
 
     /**
      * @return List of all the flags in this class

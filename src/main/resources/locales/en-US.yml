@@ -440,6 +440,13 @@ protection:
           &asuper-flat chunks in
           &aisland worlds
       name: "Clean Super Flat"
+    COARSE_DIRT_TILLING:
+      description: |-
+          &aPrevent the players from
+          &atilling the coarse dirt
+          &ato obtain dirt
+      name: "Coarse dirt tilling"
+      hint: "No coarse dirt tilling"
     COLLECT_LAVA: 
       description: |-
           &aToggle collecting lava
