@@ -13,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
 
+import org.bukkit.inventory.ItemStack;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 
@@ -61,7 +62,15 @@ public class ObsidianToLava implements Listener {
             }
 
             user.sendMessage("general.tips.changing-obsidian-to-lava");
-            e.getItem().setType(Material.LAVA_BUCKET);
+            if (e.getItem().getAmount() == 1) {
+                // Needs some special handling when there is only 1 bucket in the stack
+                e.getItem().setType(Material.LAVA_BUCKET);
+            } else {
+                // Remove one empty bucket and add a lava bucket to the player's inventory
+                e.getItem().setAmount(e.getItem().getAmount() - 1);
+                e.getPlayer().getInventory().addItem(new ItemStack(Material.LAVA_BUCKET));
+            }
+
             e.getPlayer().getWorld().playSound(e.getPlayer().getLocation(), Sound.ITEM_BUCKET_FILL_LAVA, 1F, 1F);
             e.getClickedBlock().setType(Material.AIR);
             e.setCancelled(true);

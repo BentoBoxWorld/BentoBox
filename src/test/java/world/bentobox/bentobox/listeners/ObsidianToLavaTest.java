@@ -21,8 +21,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -94,6 +96,8 @@ public class ObsidianToLavaTest {
         when(location.getBlockZ()).thenReturn(0);
         when(who.getLocation()).thenReturn(location);
 
+        when(who.getInventory()).thenReturn(mock(PlayerInventory.class));
+
         // Worlds
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -137,6 +141,7 @@ public class ObsidianToLavaTest {
         Material inHand = Material.ACACIA_DOOR;
         Material block = Material.BROWN_MUSHROOM;
         when(item.getType()).thenReturn(inHand);
+        when(item.getAmount()).thenReturn(1);
         when(clickedBlock.getType()).thenReturn(block);
         // Create the event
         testEvent(plugin, who, action, item, clickedBlock);
@@ -154,11 +159,18 @@ public class ObsidianToLavaTest {
         when(clickedBlock.getType()).thenReturn(block);
         // Create the event
         testEvent(plugin, who, action, item, clickedBlock);
-        // Test positive
+
+
+        // Positive test with 1 bucket in the stack
         inHand = Material.BUCKET;
         block = Material.OBSIDIAN;
         when(item.getType()).thenReturn(inHand);
         when(clickedBlock.getType()).thenReturn(block);
+        // Create the event
+        testEvent(plugin, who, action, item, clickedBlock);
+
+        // Positive test with 32 bucket in the stack
+        when(item.getAmount()).thenReturn(32);
         // Create the event
         testEvent(plugin, who, action, item, clickedBlock);
 
@@ -186,8 +198,6 @@ public class ObsidianToLavaTest {
         // Test when player is not on island
         when(im.userIsOnIsland(Mockito.any(), Mockito.any())).thenReturn(false);
         assertFalse(listener.onPlayerInteract(event));
-
-
     }
 
     private void testEvent(BentoBox plugin, Player who, Action action, ItemStack item, Block clickedBlock) {
