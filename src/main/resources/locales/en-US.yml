@@ -442,9 +442,9 @@ protection:
       name: "Clean Super Flat"
     COARSE_DIRT_TILLING:
       description: |-
-          &aPrevent the players from
-          &atilling the coarse dirt
-          &ato obtain dirt
+          &aToggle tilling the
+          &acoarse dirt to
+          &aobtain dirt
       name: "Coarse dirt tilling"
       hint: "No coarse dirt tilling"
     COLLECT_LAVA: 
