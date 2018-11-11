@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.listeners.flags;
 
+import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
@@ -36,6 +37,10 @@ public class EntityInteractListener extends FlagListener {
         // Villager trading
         if (e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
             checkIsland(e, e.getRightClicked().getLocation(), Flags.TRADING);
+        }
+        // Name tags
+        if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.PLACE_BLOCKS);
         }
     }
 }

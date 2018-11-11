@@ -6,12 +6,14 @@ import java.util.UUID;
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Entity;
+import org.bukkit.entity.Fish;
 import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
+import org.bukkit.entity.PufferFish;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Snowman;
 import org.bukkit.entity.Squid;
@@ -27,8 +29,8 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
 
-import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -49,11 +51,13 @@ public class HurtingListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
         // Mobs being hurt
-        if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman) {
+        if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
+                || (e.getEntity() instanceof Fish && !(e.getEntity() instanceof PufferFish))) {
             respond(e, e.getDamager(), Flags.HURT_ANIMALS);
         } else if (e.getEntity() instanceof Villager) {
             respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
-        } else if (e.getEntity() instanceof Monster || e.getEntity() instanceof Squid || e.getEntity() instanceof Slime) {
+        } else if (e.getEntity() instanceof Monster || e.getEntity() instanceof Squid
+                || e.getEntity() instanceof Slime || e.getEntity() instanceof PufferFish) {
             respond(e, e.getDamager(), Flags.HURT_MONSTERS);
         }
     }
@@ -88,7 +92,7 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_ANIMALS)) 
+        if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_ANIMALS))
                 || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS))
                 || (e.getCaught() instanceof Villager && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();

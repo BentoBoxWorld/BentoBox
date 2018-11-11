@@ -31,9 +31,16 @@ public class BlockInteractionListener extends FlagListener {
 
         // Now check for in-hand items
         if (e.getItem() != null) {
+            if (e.getItem().getType().name().contains("BOAT")) {
+                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                return;
+            }
             switch (e.getItem().getType()) {
             case ENDER_PEARL:
                 checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
+                break;
+            case BONE_MEAL:
+                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
                 break;
             case BAT_SPAWN_EGG:
             case BLAZE_SPAWN_EGG:
@@ -94,7 +101,7 @@ public class BlockInteractionListener extends FlagListener {
             }
         }
     }
-    
+
     /**
      * Check if an action can occur on a clicked block
      * @param e - event called
@@ -102,6 +109,11 @@ public class BlockInteractionListener extends FlagListener {
      * @param type - material type of clicked block
      */
     private void checkClickedBlock(Event e, Location loc, Material type) {
+        // Handle pots
+        if (type.name().startsWith("POTTED")) {
+            checkIsland(e, loc, Flags.CHEST);
+            return;
+        }
         switch (type) {
         case ANVIL:
             checkIsland(e, loc, Flags.ANVIL);
@@ -150,6 +162,8 @@ public class BlockInteractionListener extends FlagListener {
         case LIGHT_GRAY_SHULKER_BOX:
         case WHITE_SHULKER_BOX:
         case YELLOW_SHULKER_BOX:
+        case SHULKER_BOX:
+        case FLOWER_POT:
         case DISPENSER:
         case DROPPER:
         case HOPPER:
@@ -227,7 +241,7 @@ public class BlockInteractionListener extends FlagListener {
             break;
 
         }
-        
+
     }
 
     /**
