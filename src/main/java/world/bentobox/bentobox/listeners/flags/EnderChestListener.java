@@ -52,7 +52,7 @@ public class EnderChestListener extends FlagListener {
                 && !Flags.ENDER_CHEST.isSetForWorld(player.getWorld())) {
             // Not allowed
             User user = User.getInstance(player);
-            user.sendMessage("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.ENDER_CHEST.getHintReference()));
+            user.notify("protection.protected", TextVariables.DESCRIPTION, user.getTranslation(Flags.ENDER_CHEST.getHintReference()));
             return true;
         }
         return false;

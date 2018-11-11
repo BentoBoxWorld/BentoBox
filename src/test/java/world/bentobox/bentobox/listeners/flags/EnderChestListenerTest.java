@@ -39,6 +39,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -54,6 +55,7 @@ public class EnderChestListenerTest {
     private World world;
     private Player player;
     private IslandWorldManager iwm;
+    private Notifier notifier;
 
     @Before
     public void setUp() throws Exception {
@@ -114,6 +116,9 @@ public class EnderChestListenerTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
 
+        // Notifier
+        notifier = mock(Notifier.class);
+        when(plugin.getNotifier()).thenReturn(notifier);
     }
 
     @Test
@@ -208,7 +213,7 @@ public class EnderChestListenerTest {
         Flags.ENDER_CHEST.setSetting(world, false);
         new EnderChestListener().onEnderChestOpen(e);
         assertTrue(e.isCancelled());
-        Mockito.verify(player).sendMessage("protection.protected");
+        Mockito.verify(notifier).notify(Mockito.anyObject(), Mockito.eq("protection.protected"));
     }
 
     @Test
