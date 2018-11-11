@@ -22,12 +22,28 @@ public class CycleClick implements PanelItem.ClickHandler {
 
     private BentoBox plugin = BentoBox.getInstance();
     private final String id;
+    private int minRank = RanksManager.VISITOR_RANK;
+    private int maxRank = RanksManager.OWNER_RANK;
 
     /**
+     * Construct default cycle clicker with min rank of {@link RanksManager#VISITOR_RANK}
+     * and max rank of {@link RanksManager#OWNER_RANK}
      * @param id - the flag id that will be adjusted by this click
      */
     public CycleClick(String id) {
         this.id = id;
+    }
+
+    /**
+     * Construct a cycle clicker with a min and max rank
+     * @param id
+     * @param minRank
+     * @param maxRank
+     */
+    public CycleClick(String id, int minRank, int maxRank) {
+        this.id = id;
+        this.minRank = minRank;
+        this.maxRank = maxRank;
     }
 
     @Override
@@ -53,15 +69,15 @@ public class CycleClick implements PanelItem.ClickHandler {
             Flag flag = plugin.getFlagsManager().getFlagByID(id);
             int currentRank = island.getFlag(flag);
             if (click.equals(ClickType.LEFT)) {
-                if (currentRank == RanksManager.OWNER_RANK) {
-                    island.setFlag(flag, RanksManager.VISITOR_RANK);
+                if (currentRank >= maxRank) {
+                    island.setFlag(flag, minRank);
                 } else {
                     island.setFlag(flag, rm.getRankUpValue(currentRank));
                 }
                 user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
             } else if (click.equals(ClickType.RIGHT)) {
-                if (currentRank == RanksManager.VISITOR_RANK) {
-                    island.setFlag(flag, RanksManager.OWNER_RANK);
+                if (currentRank <= minRank) {
+                    island.setFlag(flag, maxRank);
                 } else {
                     island.setFlag(flag, rm.getRankDownValue(currentRank));
                 }
@@ -73,6 +89,20 @@ public class CycleClick implements PanelItem.ClickHandler {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }
         return true;
+    }
+
+    /**
+     * @param minRank the minRank to set
+     */
+    public void setMinRank(int minRank) {
+        this.minRank = minRank;
+    }
+
+    /**
+     * @param maxRank the maxRank to set
+     */
+    public void setMaxRank(int maxRank) {
+        this.maxRank = maxRank;
     }
 
 }

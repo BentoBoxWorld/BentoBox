@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.FlagBuilder;
+import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.listeners.flags.BlockInteractionListener;
 import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.BreedingListener;
@@ -143,6 +144,7 @@ public class Flags {
     public static final Flag LOCK = new FlagBuilder().id("LOCK")
             .icon(Material.TRIPWIRE_HOOK).type(Type.PROTECTION).allowedByDefault(true)
             .defaultRank(RanksManager.VISITOR_RANK).listener(new LockAndBanListener())
+            .onClick(new CycleClick("LOCK", RanksManager.VISITOR_RANK, RanksManager.MEMBER_RANK))
             .build();
 
     /*
@@ -216,7 +218,7 @@ public class Flags {
      */
     public static final Flag CREEPER_GRIEFING = new FlagBuilder().id("CREEPER_GRIEFING").icon(Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
             .allowedByDefault(false).build();
-    
+
     public static final Flag COMMAND_RANKS = new FlagBuilder().id("COMMAND_RANKS").icon(Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
             .onClick(new CommandRankClickListener()).subPanel(true).build();
 

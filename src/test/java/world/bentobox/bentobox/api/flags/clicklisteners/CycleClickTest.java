@@ -61,6 +61,7 @@ public class CycleClickTest {
     private Panel panel;
     private Inventory inv;
     private IslandWorldManager iwm;
+    private RanksManager rm;
 
     /**
      * @throws java.lang.Exception - exception
@@ -167,15 +168,21 @@ public class CycleClickTest {
         when(fm.getFlagByID(Mockito.anyString())).thenReturn(flag);
         when(plugin.getFlagsManager()).thenReturn(fm);
 
-        RanksManager rm = mock(RanksManager.class);
+        rm = mock(RanksManager.class);
 
         when(plugin.getRanksManager()).thenReturn(rm);
 
         // Provide a current rank value - member
         when(island.getFlag(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
         // Set up up and down ranks
+        when(rm.getRankUpValue(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn(RanksManager.COOP_RANK);
+        when(rm.getRankUpValue(Mockito.eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
+        when(rm.getRankUpValue(Mockito.eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.MEMBER_RANK);
         when(rm.getRankUpValue(Mockito.eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.OWNER_RANK);
-        when(rm.getRankDownValue(Mockito.eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.VISITOR_RANK);
+        when(rm.getRankDownValue(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn(RanksManager.MEMBER_RANK);
+        when(rm.getRankDownValue(Mockito.eq(RanksManager.MEMBER_RANK))).thenReturn(RanksManager.TRUSTED_RANK);
+        when(rm.getRankDownValue(Mockito.eq(RanksManager.TRUSTED_RANK))).thenReturn(RanksManager.COOP_RANK);
+        when(rm.getRankDownValue(Mockito.eq(RanksManager.COOP_RANK))).thenReturn(RanksManager.VISITOR_RANK);
 
         panel = mock(Panel.class);
         inv = mock(Inventory.class);
@@ -237,13 +244,34 @@ public class CycleClickTest {
     }
 
     @Test
+    public void testOnLeftClickSetMinMax() {
+        // Provide a current rank value - coop
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.COOP_RANK);
+        final int SLOT = 5;
+        CycleClick udc = new CycleClick("LOCK", RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
+        // Rank starts at member
+        // Click left
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.TRUSTED_RANK));
+        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        // Check rollover
+        // Clicking when Member should go to Coop
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.MEMBER_RANK);
+        assertTrue(udc.onClick(panel, user, ClickType.LEFT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.COOP_RANK));
+        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
+    }
+
+    @Test
     public void testOnRightClick() {
         final int SLOT = 5;
         CycleClick udc = new CycleClick("LOCK");
         // Rank starts at member
-        // Right click
+        // Right click - down rank to Trusted
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
-        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.VISITOR_RANK));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.TRUSTED_RANK));
         Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
         Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
         // Check rollover
@@ -251,6 +279,27 @@ public class CycleClickTest {
         when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
         assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
         Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.OWNER_RANK));
+        Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
+    }
+
+    @Test
+    public void testOnRightClickMinMaxSet() {
+        // Provide a current rank value - coop
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.TRUSTED_RANK);
+        final int SLOT = 5;
+        CycleClick udc = new CycleClick("LOCK", RanksManager.COOP_RANK, RanksManager.MEMBER_RANK);
+        // Rank starts at member
+        // Right click
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.COOP_RANK));
+        Mockito.verify(flag).toPanelItem(Mockito.any(), Mockito.any());
+        Mockito.verify(inv).setItem(Mockito.eq(SLOT), Mockito.any());
+        // Check rollover
+        // Clicking when Coop should go to Member
+        when(island.getFlag(Mockito.any())).thenReturn(RanksManager.COOP_RANK);
+        assertTrue(udc.onClick(panel, user, ClickType.RIGHT, SLOT));
+        Mockito.verify(island).setFlag(Mockito.eq(flag), Mockito.eq(RanksManager.MEMBER_RANK));
         Mockito.verify(flag, Mockito.times(2)).toPanelItem(Mockito.any(), Mockito.any());
         Mockito.verify(inv, Mockito.times(2)).setItem(Mockito.eq(SLOT), Mockito.any());
     }
