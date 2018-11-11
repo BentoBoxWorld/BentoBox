@@ -122,7 +122,8 @@ public class NewIsland {
             plugin.logError("Failed to make island! Island could not be added to the grid.");
             return;
         }
-        // TODO: Save the player so that if the server is reset weird things won't happen?
+        // Save the player so that if the server crashes weird things won't happen
+        plugin.getPlayers().save(user.getUniqueId());
 
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
