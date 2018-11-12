@@ -20,8 +20,8 @@ import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
 
-import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.flags.Flag;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -79,14 +79,16 @@ public class PVPListener extends FlagListener {
         } else if (damager instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) damager;
-            if (p.getShooter() instanceof Player) {
+            Entity entity =(Entity)p.getShooter();
+            if (entity instanceof Player) {
                 // Allow self damage
-                if (hurtEntity.equals(p.getShooter())) {
+                if (hurtEntity.equals(entity)) {
                     return;
                 }
                 User user = User.getInstance((Player)p.getShooter());
                 if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
+                    hurtEntity.setFireTicks(0);
                     damager.remove();
                     user.notify(Flags.PVP_OVERWORLD.getHintReference());
                     e.setCancelled(true);
