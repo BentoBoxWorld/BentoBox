@@ -35,21 +35,34 @@ public class LocalesManager {
     }
 
     /**
-     * Gets the reference from the locale file for this user
-     * @param user - the User
-     * @param reference - a reference that can be found in a locale file
-     * @return the translated string, or if the translation does not exist, the default language version, or if that does not exist null
+     * Gets the translated String corresponding to the reference from the locale file for this user.
+     * @param user the User
+     * @param reference a reference that can be found in a locale file
+     * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
      */
     public String get(User user, String reference) {
-        BentoBoxLocale locale = languages.get(user.getLocale());
-        if (locale != null && locale.contains(reference)) {
-            return locale.get(reference);
+        // Make sure the user is not null
+        if (user != null) {
+            BentoBoxLocale locale = languages.get(user.getLocale());
+            if (locale != null && locale.contains(reference)) {
+                return locale.get(reference);
+            }
         }
-        // Return the default
+        // No translation could be gotten from the player's locale, trying more generic solutions
+        return get(reference);
+    }
+
+    /**
+     * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
+     * @param reference a reference that can be found in a locale file
+     * @return the translated String from the server's locale or from the en-US locale, or null.
+     */
+    public String get(String reference) {
+        // Get the translation from the server's locale
         if (languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).contains(reference)) {
             return languages.get(Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage())).get(reference);
         }
-        // Or try in the en-US locale
+        // Get the translation from the en-US locale
         if (languages.get(Locale.forLanguageTag("en-US")).contains(reference)) {
             return languages.get(Locale.forLanguageTag("en-US")).get(reference);
         }
