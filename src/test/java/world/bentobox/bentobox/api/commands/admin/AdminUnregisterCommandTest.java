@@ -91,7 +91,7 @@ public class AdminUnregisterCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(),Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team

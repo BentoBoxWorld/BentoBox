@@ -92,7 +92,7 @@ public class AdminTeamSetownerCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(),Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -159,7 +159,7 @@ public class AdminTeamSetownerCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
-        when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
+        when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
 
         AdminTeamSetownerCommand itl = new AdminTeamSetownerCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
@@ -177,7 +177,7 @@ public class AdminTeamSetownerCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         // Leader
-        when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
         when(pm.getName(Mockito.eq(uuid))).thenReturn("owner");
         // Members
         Set<UUID> members = new HashSet<>();

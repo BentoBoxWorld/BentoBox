@@ -94,7 +94,7 @@ public class AdminTeamKickCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(),Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -161,7 +161,7 @@ public class AdminTeamKickCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
-        when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
+        when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
@@ -180,7 +180,7 @@ public class AdminTeamKickCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
-        when(im.getTeamLeader(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));

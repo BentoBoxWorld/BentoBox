@@ -134,7 +134,7 @@ public class IslandTeamLeaveCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team leader - null
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -153,7 +153,7 @@ public class IslandTeamLeaveCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team leader - null
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
@@ -170,7 +170,7 @@ public class IslandTeamLeaveCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team leader - null
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(null);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
         
         // Require resets
         when(iwm.isOnLeaveResetEnderChest(Mockito.any())).thenReturn(true);

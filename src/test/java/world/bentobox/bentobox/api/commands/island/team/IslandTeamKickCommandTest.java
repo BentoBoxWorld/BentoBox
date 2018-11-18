@@ -102,7 +102,7 @@ public class IslandTeamKickCommandTest {
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -143,7 +143,7 @@ public class IslandTeamKickCommandTest {
      */
     @Test
     public void testExecuteNotTeamLeader() {
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));

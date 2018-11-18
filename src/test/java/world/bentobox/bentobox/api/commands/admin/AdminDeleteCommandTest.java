@@ -100,7 +100,7 @@ public class AdminDeleteCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(),Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(),Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -164,7 +164,7 @@ public class AdminDeleteCommandTest {
     @Test
     public void testExecuteTeamLeader() {
         when(im.inTeam(Mockito.any(),Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(notUUID);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
@@ -178,7 +178,7 @@ public class AdminDeleteCommandTest {
     @Test
     public void testExecuteSuccess() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
         Island is = mock(Island.class);
         Location loc = mock(Location.class);
         when(loc.toVector()).thenReturn(new Vector(123,123,432));

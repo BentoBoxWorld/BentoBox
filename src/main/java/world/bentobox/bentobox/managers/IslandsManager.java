@@ -394,7 +394,7 @@ public class IslandsManager {
                 return l;
             } else {
                 // try team leader's home
-                Location tlh = plugin.getPlayers().getHomeLocation(world, plugin.getIslands().getTeamLeader(world, user.getUniqueId()));
+                Location tlh = plugin.getPlayers().getHomeLocation(world, plugin.getIslands().getOwner(world, user.getUniqueId()));
                 if (tlh != null && isSafeLocation(tlh)) {
                     plugin.getPlayers().setHomeLocation(user, tlh, number);
                     return tlh;
@@ -455,13 +455,26 @@ public class IslandsManager {
     }
 
     /**
-     * Provides UUID of this player's team leader or null if it does not exist
+     * Provides UUID of this player's island owner or null if it does not exist
      * @param world - world to check
-     * @param leaderUUID - the leader's UUID
-     * @return UUID of leader or null if player has no island
+     * @param playerUUID - the player's UUID
+     * @return island owner's UUID or null if player has no island
+     *
+     * @deprecated Renamed to {@link #getOwner(World, UUID)} for consistency.
      */
-    public UUID getTeamLeader(World world, UUID leaderUUID) {
-        return islandCache.getTeamLeader(world, leaderUUID);
+    @Deprecated
+    public UUID getTeamLeader(World world, UUID playerUUID) {
+        return getOwner(world, playerUUID);
+    }
+
+    /**
+     * Provides UUID of this player's island owner or null if it does not exist
+     * @param world world to check
+     * @param playerUUID the player's UUID
+     * @return island owner's UUID or null if player has no island
+     */
+    public UUID getOwner(World world, UUID playerUUID) {
+        return islandCache.getOwner(world, playerUUID);
     }
 
     /**

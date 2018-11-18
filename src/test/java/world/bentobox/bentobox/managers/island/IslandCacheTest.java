@@ -222,9 +222,9 @@ public class IslandCacheTest {
         IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
-        assertEquals(owner, ic.getTeamLeader(world, owner));
-        assertNull(ic.getTeamLeader(world, null));
-        assertNull(ic.getTeamLeader(world, UUID.randomUUID()));
+        assertEquals(owner, ic.getOwner(world, owner));
+        assertNull(ic.getOwner(world, null));
+        assertNull(ic.getOwner(world, UUID.randomUUID()));
 
 
     }

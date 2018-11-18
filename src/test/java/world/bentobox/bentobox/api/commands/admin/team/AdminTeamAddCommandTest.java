@@ -87,7 +87,7 @@ public class AdminTeamAddCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(true);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(), Mockito.any())).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(uuid);
         when(plugin.getIslands()).thenReturn(im);
 
         // Has team
@@ -203,7 +203,7 @@ public class AdminTeamAddCommandTest {
         // Has island, has team, but not a leader
         when(im.hasIsland(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
         when(im.inTeam(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(),Mockito.eq(uuid))).thenReturn(notUUID);
+        when(im.getOwner(Mockito.any(),Mockito.eq(uuid))).thenReturn(notUUID);
 
         // Island
         Island island = mock(Island.class);
@@ -228,7 +228,7 @@ public class AdminTeamAddCommandTest {
         // Has island, has team, is leader
         when(im.hasIsland(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
         when(im.inTeam(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
-        when(im.getTeamLeader(Mockito.any(), Mockito.eq(uuid))).thenReturn(uuid);
+        when(im.getOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(uuid);
 
         // Target has island
         when(im.hasIsland(Mockito.any(), Mockito.eq(notUUID))).thenReturn(true);

@@ -42,7 +42,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-        if (getIslands().getTeamLeader(getWorld(), targetUUID).equals(targetUUID)) {
+        if (getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
             user.sendMessage("commands.admin.team.kick.cannot-kick-leader");
             getIslands().getIsland(getWorld(), targetUUID).showMembers(getPlugin(), user, getWorld());
             return false;

@@ -143,8 +143,20 @@ public class IslandCache {
      * @param world - the world to check
      * @param uuid - player's uuid
      * @return team leader's UUID, the player UUID if they are not in a team, or null if there is no island
+     *
+     * @deprecated Renamed to {@link #getOwner(World, UUID)} for consistency.
      */
+    @Deprecated
     public UUID getTeamLeader(World world, UUID uuid) {
+        return getOwner(world, uuid);
+    }
+
+    /**
+     * @param world the world to check
+     * @param uuid the player's UUID
+     * @return island owner's UUID, the player UUID if they are not in a team, or null if there is no island
+     */
+    public UUID getOwner(World world, UUID uuid) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
         Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {
