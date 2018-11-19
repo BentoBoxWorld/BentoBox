@@ -23,7 +23,7 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public boolean onDragonSpawn(CreatureSpawnEvent e) {
-        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getIWM().isDragonSpawn(e.getEntity().getWorld())) {
+        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getWorlds().getGameWorld(e.getEntity().getWorld()).get().getSettings().isDragonSpawn()) {
             return true;
         }
         e.getEntity().setHealth(0);

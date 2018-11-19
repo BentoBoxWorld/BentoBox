@@ -22,7 +22,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.managers.IslandWorldManager;
 
 /**
  * @author tastybento

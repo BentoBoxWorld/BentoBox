@@ -26,13 +26,11 @@ import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
-import world.bentobox.bentobox.managers.IslandWorldManager;
-import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.SchemsManager;
+import world.bentobox.bentobox.managers.WorldsManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 
 /**
@@ -44,16 +42,14 @@ public class BentoBox extends JavaPlugin {
 
     // Databases
     private PlayersManager playersManager;
-    private IslandsManager islandsManager;
 
     // Managers
+    private WorldsManager worldsManager;
     private CommandsManager commandsManager;
     private LocalesManager localesManager;
     private AddonsManager addonsManager;
     private FlagsManager flagsManager;
-    private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
-    private SchemsManager schemsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
 
@@ -94,7 +90,6 @@ public class BentoBox extends JavaPlugin {
         if (!this.isEnabled()) {
             return;
         }
-        islandsManager = new IslandsManager(this);
         ranksManager = new RanksManager(this);
 
         // Start head getter
@@ -110,9 +105,7 @@ public class BentoBox extends JavaPlugin {
         new BentoBoxCommand();
 
         // Start Island Worlds Manager
-        islandWorldManager = new IslandWorldManager(this);
-        // Load schems manager
-        schemsManager = new SchemsManager(this);
+        worldsManager = new WorldsManager(this);
 
         // Locales manager must be loaded before addons
         localesManager = new LocalesManager(this);
@@ -128,12 +121,12 @@ public class BentoBox extends JavaPlugin {
             registerListeners();
 
             // Load islands from database - need to wait until all the worlds are loaded
-            islandsManager.load();
+            worldsManager.getGameWorldsList().forEach(gameWorld -> gameWorld.getIslands().load());
 
             // Save islands & players data asynchronously every X minutes
             instance.getServer().getScheduler().runTaskTimer(instance, () -> {
                 playersManager.save(true);
-                islandsManager.save(true);
+                worldsManager.getGameWorldsList().forEach(gameWorld -> gameWorld.getIslands().save(true));
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
             // Make sure all flag listeners are registered.
@@ -152,7 +145,7 @@ public class BentoBox extends JavaPlugin {
             hooksManager.registerHook(new MultiverseCoreHook());
 
             // Make sure all worlds are already registered to Multiverse.
-            islandWorldManager.registerWorldsToMultiverse();
+            worldsManager.registerWorldsToMultiverse();
 
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);
@@ -200,9 +193,7 @@ public class BentoBox extends JavaPlugin {
         if (playersManager != null) {
             playersManager.shutdown();
         }
-        if (islandsManager != null) {
-            islandsManager.shutdown();
-        }
+        worldsManager.getGameWorldsList().forEach(gameWorld -> gameWorld.getIslands().shutdown());
         // Save settings
         if (settings != null) {
             new Config<>(this, Settings.class).saveConfigObject(settings);
@@ -215,14 +206,6 @@ public class BentoBox extends JavaPlugin {
      */
     public PlayersManager getPlayers(){
         return playersManager;
-    }
-
-    /**
-     * Returns the island database
-     * @return the island database
-     */
-    public IslandsManager getIslands(){
-        return islandsManager;
     }
 
     private static void setInstance(BentoBox plugin) {
@@ -269,10 +252,10 @@ public class BentoBox extends JavaPlugin {
     }
 
     /**
-     * @return the Island World Manager
+     * @return the WorldsManager
      */
-    public IslandWorldManager getIWM() {
-        return islandWorldManager;
+    public WorldsManager getWorlds() {
+        return worldsManager;
     }
 
     /**
@@ -310,22 +293,6 @@ public class BentoBox extends JavaPlugin {
 
     public void logWarning(String warning) {
         getLogger().warning(warning);
-    }
-
-    /**
-     * Registers a world as a world to be covered by this plugin
-     * @param world - Bukkit overworld
-     * @param worldSettings - settings for this world
-     */
-    public void registerWorld(World world, WorldSettings worldSettings) {
-        islandWorldManager.addWorld(world, worldSettings);
-    }
-
-    /**
-     * @return the schemsManager
-     */
-    public SchemsManager getSchemsManager() {
-        return schemsManager;
     }
 
     /**

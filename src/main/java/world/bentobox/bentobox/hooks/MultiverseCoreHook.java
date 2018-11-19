@@ -5,6 +5,8 @@ import org.bukkit.World;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 
+import java.util.Arrays;
+
 /**
  * Provides implementation and interfacing to interact with Multiverse.
  *
@@ -22,6 +24,10 @@ public class MultiverseCoreHook extends Hook {
     public void registerWorld(World world) {
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MULTIVERSE_IMPORT + world.getName() + " normal -g " + BentoBox.getInstance().getName());
         Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MULTIVERSE_SET_GENERATOR + BentoBox.getInstance().getName() + " " + world.getName());
+    }
+
+    public void registerWorlds(World... worlds) {
+        Arrays.stream(worlds).forEach(this::registerWorld);
     }
 
     @Override

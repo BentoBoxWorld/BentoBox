@@ -1,0 +1,190 @@
+@startuml
+
+note as N1
+    This UML Class Diagram introduces a
+    likely better way of implementing
+    Worlds management.
+
+    In order to keep this diagram as legible
+    as possible, I've only listed methods
+    and fields that differs from the current
+    Alpha version (0.14.1-SNAPSHOT).
+    Therefore, "empty" classes are actually
+    existing classes which are kept as is.
+
+    This implementation seems to be the easy
+    option to be able to do the following:
+    o Potentially split Island databases between
+    each GameMode ;
+    o Provide a more efficient way for Addons
+    to register worlds ;
+    o Have an actual "link" between an Addon
+    and the Worlds it uses ;
+    o Make the code experience more fluent
+    when interacting with IslandsManager ;
+    o Support multiple schems.
+
+    The changes suggested here are huge and
+    must therefore be reviewed and approved
+    beforehand. We need to gather the feedback
+    of devs that may have already
+    used BentoBox's API.
+
+    - Poslovitch, @BentoBoxWorld.
+end note
+
+package world.bentobox.bentobox {
+
+    class BentoBox << (M,orchid) Main >> {
+        - addonsManager : AddonsManager
+        - worldsManager : WorldsManager
+        + getAddons() : AddonsManager
+        + getWorlds() : WorldsManager
+    }
+
+    package api {
+        package addons {
+            abstract class Addon
+
+            abstract class GameMode extends Addon {
+                Specific addon implementation that provides the
+                ability to register GameWorlds.
+                + registerGameWorld(gameWorld:GameWorld) : void
+                + getGameWorlds() : List<GameWorld>
+            }
+        }
+
+        package worlds {
+            interface WorldSettings
+
+            class GameWorld {
+                Represents a set of three Worlds
+                (Overworld, Nether, End) which is
+                registered by a GameMode addon and
+                managed by BentoBox.
+                It features its own implementation
+                of WorldSettings and provides
+                Islands and Schems managers.
+                __ Fields __
+                - name : String
+                - friendlyName : String
+                - overWorld : World
+                - netherWorld : World
+                - endWorld : World
+                - worldSettings : WorldSettings
+                .. Managers ..
+                - islandsManager : IslandsManager
+                - schemsManager : SchemsManager
+                __ Methods __
+                + createWorlds() : boolean
+                + inWorld(location:Location) : boolean
+                .. Getters ..
+                + getName() : String
+                + getFriendlyName() : String
+                + getOverWorld() : World
+                + getNetherWorld() : World
+                + getEndWorld() : World
+                + getSettings() : WorldSettings
+                + getIslands() : IslandsManager
+                + getSchems() : SchemsManager
+            }
+
+            GameWorld *-- "1" WorldSettings
+
+            GameMode *-- "*" GameWorld
+        }
+    }
+
+    package managers {
+        class AddonsManager
+
+        BentoBox *-- "1" AddonsManager
+        AddonsManager *-- "*" Addon
+
+        class WorldsManager {
+            Manages GameWorlds that are registered by GameMode addons.
+            It basically replaces IslandWorldManager.
+            __ Fields __
+            - gameWorlds : Map<GameMode, List<GameWorld>>
+            __ Methods __
+            + registerGameWorld(gameMode:GameMode, gameWorld:GameWorld) : boolean
+            .. Getters ..
+            + getGameWorldsMap() : Map<GameMode, List<GameWorld>>
+            + getGameWorldsList() : List<GameWorld>
+            + getGameWorlds(gameMode:GameMode) : List<GameWorld>
+            + getGameWorld(name:String) : Optional<GameWorld>
+            + getGameWorld(world:World) : Optional<GameWorld>
+            .. Multiverse ..
+            + registerWorldsToMultiverse() : void
+            + registerWorldToMultiverse(gameWorld:GameWorld) : void
+        }
+
+        BentoBox *-- "1" WorldsManager
+        WorldsManager *-- "*" GameWorld
+
+        package island {
+            class IslandCache {
+                - grid : IslandGrid
+                - islandsByUUID : Map<UUID, Island>
+                - islandsByLocation : Map<Location, Island>
+                + get(uuid:UUID) : Island
+                + getMembers(uuid:UUID) : Set<UUID>
+                + getOwner(uuid:UUID) : UUID
+                + hasIsland(uuid:UUID) : boolean
+                + removePlayer(uuid:UUID) : void
+            }
+
+            class IslandGrid
+        }
+
+        class IslandsManager {
+            - handler : Database<Island>
+            - islandCache : IslandCache
+            - last : Location
+            - spawn : Island
+
+            + getIsland(user:User) : Island
+            + getIsland(uuid:UUID) : Island
+            + getIslandLocation(uuid:UUID) : Location
+            + getLast() : Location
+            + getMembers(playerUUID:UUID) : Set<UUID>
+            + getSafeHomeLocation(user:User, number:int) : Location
+            + getSpawn() : Island
+            + getSpawnPoint() : Location
+            + getOwner(playerUUID:UUID) : UUID
+            + hasIsland(user:User) : boolean
+            + hasIsland(uuid:UUID) : boolean
+            + homeTeleport(player:Player) : void
+            + homeTeleport(player:Player, number:int) : void
+            + homeTeleport(player:Player, newIsland:boolean) : void
+            + homeTeleport(player:Player, number:int, newIsland:boolean) : void
+            + isOwner(uuid:UUID) : boolean
+            + userIsOnIsland(user:User) : boolean
+            + removePlayer(user:User) : void
+            + removePlayer(uuid:UUID) : void
+            + setLeaveTeam(uuid:UUID) : void
+            + inTeam(uuid:UUID) : boolean
+            + setOwner(user:User, targetUUID:UUID) : void
+            + setOwner(user:User, targetUUID:UUID, island:Island) : void
+        }
+
+        IslandsManager *-- "1" IslandCache
+        IslandCache *-- "1" IslandGrid
+
+        GameWorld *-- "1" IslandsManager
+
+        class SchemsManager {
+            - schems : List<Clipboard>
+
+            - copySchems(schems:File, name:String) : void
+            - loadSchem(name:String) : boolean
+            + getSchems() : List<Clipboard>
+            + paste(island:Island, task:Runnable) : void
+            + paste(island:Island) : void
+        }
+
+        GameWorld *-- "1" SchemsManager
+    }
+}
+
+@enduml
