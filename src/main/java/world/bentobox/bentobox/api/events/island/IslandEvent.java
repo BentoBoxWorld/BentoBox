@@ -7,30 +7,92 @@ import org.bukkit.Location;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Fired when a team event happens.
+ * Fired when an island event happens.
  *
  * @author tastybento
  * @since 1.0
  */
-public class IslandEvent {
+public class IslandEvent extends IslandBaseEvent {
+
+    final private Reason reason;
+
+    /**
+     * Fired every time an island event occurs. For developers who just want one event and will use an enum to track the reason
+     * @param island - the island involved in the event
+     * @param playerUUID - the player's UUID involved in the event
+     * @param admin - true if this is due to an admin event
+     * @param location - location of event
+     * @param reason - see {@link #getReason()}
+     */
+    public IslandEvent(Island island, UUID playerUUID, boolean admin, Location location, Reason reason) {
+        super(island, playerUUID, admin, location);
+        this.reason = reason;
+    }
+
+    /**
+     * @return the reason
+     */
+    public Reason getReason() {
+        return reason;
+    }
 
     /**
      * Reason for the event
      *
      */
     public enum Reason {
+        /**
+         * Called when a player has been allocated a new island spot
+         * but before the island itself has been pasted or the player teleported.
+         */
         CREATE,
+        /**
+         * Fired when an island is created for the very first time. Occurs after everything
+         * has been completed.
+         */
         CREATED,
+        /**
+         * Fired just before any island chunks are to be deleted.
+         */
         DELETE,
+        /**
+         * Fired after all island chunks have been deleted or set for regeneration by the server
+         */
         DELETED,
+        /**
+         * Fired when a player enters an island
+         */
         ENTER,
+        /**
+         * Fired when a player exits an island
+         */
         EXIT,
+        /**
+         * Fired when there a player makes a change to the lock state of their island
+         * To read the rank value, check the {@link Flags#LOCK} flag.
+         */
         LOCK,
+        /**
+         * Called when a player has been reset and a new island spot allocated
+         * but before the island itself has been pasted or the player teleported.
+         */
         RESET,
+        /**
+         * Called when an island has been pasted due to a reset.
+         * Occurs before the old island has been deleted but after everything else.
+         * ie., island pasted, player teleported, etc.
+         */
         RESETTED,
+        /**
+         * Reserved
+         */
         UNLOCK,
+        /**
+         * Reserved
+         */
         UNKNOWN
     }
 
@@ -54,6 +116,13 @@ public class IslandEvent {
      *
      */
     public static class IslandCreatedEvent extends IslandBaseEvent {
+        /**
+         * Fired when an island has been created
+         * @param island
+         * @param player
+         * @param admin
+         * @param location
+         */
         private IslandCreatedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
@@ -198,6 +267,9 @@ public class IslandEvent {
         }
 
         public IslandBaseEvent build() {
+            // Call the generic event for developers who just want one event and use the Reason enum
+            Bukkit.getServer().getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
+            // Generate explicit events
             switch (reason) {
             case CREATE:
                 IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location);

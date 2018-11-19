@@ -47,18 +47,18 @@ public class FlagBuilder {
         // If no onClick has been set, then apply default ones
         if (onClick == null) {
             switch (type){
-                case PROTECTION:
-                    onClick = new CycleClick(id);
-                    break;
-                case SETTING:
-                    onClick = new IslandToggleClick(id);
-                    break;
-                case WORLD_SETTING:
-                    onClick = new WorldToggleClick(id);
-                    break;
-                default:
-                    onClick = new CycleClick(id);
-                    break;
+            case PROTECTION:
+                onClick = new CycleClick(id);
+                break;
+            case SETTING:
+                onClick = new IslandToggleClick(id);
+                break;
+            case WORLD_SETTING:
+                onClick = new WorldToggleClick(id);
+                break;
+            default:
+                onClick = new CycleClick(id);
+                break;
             }
         }
 
@@ -96,7 +96,7 @@ public class FlagBuilder {
         id = flag.name();
         return this;
     }
-    
+
     /**
      * Set a default rank for this flag. If not set, the value of RanksManager.MEMBER_RANK will be used
      * @param rank - rank value
@@ -106,7 +106,7 @@ public class FlagBuilder {
         this.defaultRank = rank;
         return this;
     }
-    
+
     /**
      * Adds a listener for clicks on this flag when it is a panel item. Default is
      * {@link world.bentobox.bentobox.api.flags.clicklisteners.CycleClick}
