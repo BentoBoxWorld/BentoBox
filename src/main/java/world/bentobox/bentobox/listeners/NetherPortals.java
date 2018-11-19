@@ -46,7 +46,8 @@ public class NetherPortals implements Listener {
     private boolean atSpawn(Location location) {
         Vector p = location.toVector().multiply(new Vector(1, 0, 1));
         Vector spawn = location.getWorld().getSpawnLocation().toVector().multiply(new Vector(1, 0, 1));
-        int radiusSquared = plugin.getIWM().getNetherSpawnRadius(location.getWorld()) * plugin.getIWM().getNetherSpawnRadius(location.getWorld());
+        int radius = plugin.getWorlds().getGameWorld(location.getWorld()).map(gameWorld -> gameWorld.getSettings().getNetherSpawnRadius()).orElse(0);
+        int radiusSquared = radius * radius;
         return (spawn.distanceSquared(p) < radiusSquared);
     }
 

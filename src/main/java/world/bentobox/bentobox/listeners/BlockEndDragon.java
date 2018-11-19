@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.worlds.GameWorld;
 
 public class BlockEndDragon implements Listener {
     private BentoBox plugin;
@@ -23,7 +24,7 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public boolean onDragonSpawn(CreatureSpawnEvent e) {
-        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getWorlds().getGameWorld(e.getEntity().getWorld()).get().getSettings().isDragonSpawn()) {
+        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getWorlds().getGameWorld(e.getEntity().getWorld()).map(gameWorld -> gameWorld.getSettings().isDragonSpawn()).orElse(false)) {
             return true;
         }
         e.getEntity().setHealth(0);
