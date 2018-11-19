@@ -29,7 +29,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        if (!getTeamLeader(getWorld(), user).equals(user.getUniqueId())) {
+        if (!getOwner(getWorld(), user).equals(user.getUniqueId())) {
             user.sendMessage("general.errors.not-leader");
             return false;
         }

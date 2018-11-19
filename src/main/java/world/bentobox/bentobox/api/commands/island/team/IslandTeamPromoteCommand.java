@@ -22,7 +22,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             setDescription("commands.island.team.promote.description");
         } else {
             setParametersHelp("commands.island.team.demote.parameters");
-            setDescription("commands.island.team.demote.description"); 
+            setDescription("commands.island.team.demote.description");
         }
     }
 
@@ -49,7 +49,7 @@ public class IslandTeamPromoteCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return true;
         }
-        if (!inTeam(getWorld(), target) || !getTeamLeader(getWorld(), user).equals(getTeamLeader(getWorld(), target))) {
+        if (!inTeam(getWorld(), target) || !getOwner(getWorld(), user).equals(getOwner(getWorld(), target))) {
             user.sendMessage("general.errors.not-in-team");
             return true;
         }

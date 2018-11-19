@@ -36,13 +36,13 @@ public class IslandTeamCommand extends CompositeCommand {
         new IslandTeamUntrustCommand(this);
         new IslandTeamPromoteCommand(this, "promote");
         new IslandTeamPromoteCommand(this, "demote");
-        
+
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Player issuing the command must have an island
-        UUID teamLeaderUUID = getTeamLeader(getWorld(), user);
+        UUID teamLeaderUUID = getOwner(getWorld(), user);
         if (teamLeaderUUID == null) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -72,7 +72,7 @@ public class IslandTeamCommand extends CompositeCommand {
     private boolean fireEvent(User user) {
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                .getIsland(getWorld(), user.getUniqueId()))
+                        .getIsland(getWorld(), user.getUniqueId()))
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId())
                 .build();
