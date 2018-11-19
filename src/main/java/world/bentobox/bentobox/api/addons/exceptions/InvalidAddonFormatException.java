@@ -1,13 +1,9 @@
-package world.bentobox.bentobox.api.addons.exception;
-
-import java.util.logging.Level;
+package world.bentobox.bentobox.api.addons.exceptions;
 
 import org.bukkit.Bukkit;
 
-/**
- * @deprecated Moved to {@link world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException}.
- */
-@Deprecated
+import java.util.logging.Level;
+
 public class InvalidAddonFormatException extends AddonException {
 
     /**

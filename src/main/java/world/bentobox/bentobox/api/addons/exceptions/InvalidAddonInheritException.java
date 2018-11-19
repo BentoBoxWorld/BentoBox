@@ -1,9 +1,5 @@
-package world.bentobox.bentobox.api.addons.exception;
+package world.bentobox.bentobox.api.addons.exceptions;
 
-/**
- * @deprecated Moved to {@link world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException}.
- */
-@Deprecated
 public class InvalidAddonInheritException extends AddonException {
 
     /**

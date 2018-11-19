@@ -25,7 +25,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
-import world.bentobox.bentobox.api.addons.exception.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 
 /**

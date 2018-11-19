@@ -17,8 +17,8 @@ import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.util.permissions.DefaultPermissions;
 
 import world.bentobox.bentobox.api.addons.AddonDescription.AddonDescriptionBuilder;
-import world.bentobox.bentobox.api.addons.exception.InvalidAddonFormatException;
-import world.bentobox.bentobox.api.addons.exception.InvalidAddonInheritException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
 import world.bentobox.bentobox.managers.AddonsManager;
 
 /**
