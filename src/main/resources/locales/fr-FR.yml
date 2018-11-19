@@ -36,7 +36,7 @@ general:
 
 commands:
   help:
-    header: "&7=========== &c%bsb_plugin_name% &7==========="
+    header: "&7=========== &cBentoBox &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
@@ -45,7 +45,7 @@ commands:
     help:
       description: "admin command"
     version:
-      description: "display %bsb_plugin_name% and addons versions"
+      description: "display BentoBox and addons versions"
     setrange:
       parameters: "[player] [range]"
       description: "set the range of player's island"
@@ -58,7 +58,7 @@ commands:
       manual: "&cNo safe warp found! Manually tp near to &b[location] &cand check it out"
   island:
     about:
-      description: "display info about %bsb_plugin_name%"
+      description: "display info about BentoBox"
     go:
       parameters: "<home number>"
       description: "teleport you to your island"
@@ -262,10 +262,3 @@ language:
   panel-title: "Choisissez votre langue"
   selected: "&aActuellement sélectionné."
   edited: "&aLangue modifiée en &e[lang]&a."
-
-new-island:
-  sign:
-    line0: "&1%bsb_plugin_name%"
-    line1: "[player]"
-    line2: "Ne tombez pas!"
-    line3: "Bon jeu! &c<3"

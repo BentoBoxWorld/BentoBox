@@ -130,7 +130,7 @@ commands:
       banned-format: "&c[name]"
       unowned: "&cUnowned"
     version:
-      description: "display %bsb_plugin_name% and addons versions"
+      description: "display BentoBox and addons versions"
     setrange:
       parameters: "<player> <range>"
       description: "set the range of player's island"

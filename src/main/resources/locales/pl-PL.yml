@@ -102,7 +102,7 @@ commands:
       banned-format: "&c[name]"
       unowned: "&cNiezamieszkana"
     version:
-      description: "wyświetl %bsb_plugin_name% i wersje dodatków"
+      description: "wyświetl BentoBox i wersje dodatków"
     setrange:
       parameters: "<gracz> <zasięg>"
       description: "ustaw zasięg wyspy gracza"
@@ -542,10 +542,3 @@ language:
   panel-title: "Wybierz swój język"
   selected: "&aObecnie wybrany."
   edited: "&aZmieniono język na &e[lang]&a."
-
-new-island:
-  sign:
-    line0: "&1%bsb_plugin_name%"
-    line1: "[name]"
-    line2: "Nie spadnij!"
-    line3: "Baw się dobrze! &c<3"

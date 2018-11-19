@@ -129,7 +129,7 @@ commands:
       banned-format: "[name]"
       unowned: "所有"
     version:
-      description: "表示%bsb_plugin_name%とアドオンのバージョン"
+      description: "表示BentoBoxとアドオンのバージョン"
     setrange:
       parameters: "<プレーヤー><範囲>"
       description: "プレイヤーの島の範囲を設定する"

@@ -35,7 +35,7 @@ general:
 
 commands:
   help:
-    header: "&7=========== &c%bsb_plugin_name% &7==========="
+    header: "&7=========== &cBentoBox &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
@@ -45,7 +45,7 @@ commands:
       description: "xem lệnh dành cho admin"
       parameters: ""
     version:
-      description: "Hiện phiên bản %bsb_plugin_name% và các bổ sung"
+      description: "Hiện phiên bản BentoBox và các bổ sung"
     setrange:
       parameters: "[player] [range]"
       description: "Đặt giới hạn đảo người chơi"
@@ -58,7 +58,7 @@ commands:
       manual: "&cKhông tìm thấy cổng dịch chuyển an toàn! Hãy tp tới địa điểm &b[location] &cvà kiểm tra"
   island:
     about:
-      description: "hiện thông tin về %bsb_plugin_name%"
+      description: "hiện thông tin về BentoBox"
     go:
       parameters: "<home number>"
       description: "dịch chuyển tới đảo"
@@ -258,10 +258,3 @@ protection:
 
   island:
     locked: "&cThis island is locked!"
-
-new-island:
-  sign:
-    line0: "&1%bsb_plugin_name%"
-    line1: "[player]"
-    line2: "Đừng rơi"
-    line3: "Vui vẻ &c<3"
