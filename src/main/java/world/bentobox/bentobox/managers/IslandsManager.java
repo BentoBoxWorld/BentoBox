@@ -771,6 +771,8 @@ public class IslandsManager {
     }
 
     public void shutdown(){
+        // Remove all coop associations
+        islandCache.getIslands().stream().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
         save(false);
         islandCache.clear();
         handler.close();
@@ -833,6 +835,17 @@ public class IslandsManager {
         .filter(en -> (en instanceof Monster))
         .filter(en -> !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType()))
         .forEach(Entity::remove);
+    }
+
+    /**
+     * Removes a player from any island where they hold the indicated rank.
+     * Typically this is to remove temporary ranks such as coop.
+     * Removal is done in all worlds.
+     * @param rank - rank to clear
+     * @param uniqueId - UUID of player
+     */
+    public void clearRank(int rank, UUID uniqueId) {
+        islandCache.getIslands().stream().forEach(i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
     }
 
 }
