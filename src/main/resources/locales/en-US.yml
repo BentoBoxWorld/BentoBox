@@ -530,6 +530,12 @@ protection:
       description: "Toggle spread"
       name: "Fire spread"
       hint: "No fire spread allowed"
+    FISH_SCOOPING:
+      description: |
+         &aAllow scooping of
+         &atropical fish
+      name: "Fish Scooping"
+      hint: "No scooping of tropical fish"
     FURNACE: 
       description: "Toggle use"
       name: "Furnace"
@@ -691,6 +697,8 @@ protection:
   spawn-protected: "&cSpawn protected: [description]"
 
   panel:
+    next: "Next Page"
+    previous: "Previous Page"
     PROTECTION:
       title: "Protection"
       description: |-

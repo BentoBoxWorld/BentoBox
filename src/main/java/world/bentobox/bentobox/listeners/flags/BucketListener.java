@@ -1,11 +1,14 @@
 package world.bentobox.bentobox.listeners.flags;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -37,6 +40,7 @@ public class BucketListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
+        Bukkit.getLogger().info("DEBUG: " + e.getEventName());
         // Check filling of various liquids
         if (e.getItemStack().getType().equals(Material.LAVA_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA))) {
             return;
@@ -50,5 +54,13 @@ public class BucketListener extends FlagListener {
         // Check general bucket use
         checkIsland(e, e.getBlockClicked().getLocation(), Flags.BUCKET);
     }
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onTropicalFishSc(final PlayerInteractEntityEvent e) {
+        if (e.getRightClicked() instanceof TropicalFish && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET) && (!checkIsland(e, e.getRightClicked().getLocation(), Flags.FISH_SCOOPING))) {
+            return;
+        }
+    }
+
 
 }

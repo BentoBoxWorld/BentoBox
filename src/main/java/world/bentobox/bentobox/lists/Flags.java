@@ -91,6 +91,7 @@ public class Flags {
     public static final Flag COLLECT_LAVA = new FlagBuilder().id("COLLECT_LAVA").icon(Material.LAVA_BUCKET).build();
     public static final Flag COLLECT_WATER = new FlagBuilder().id("COLLECT_WATER").icon(Material.WATER_BUCKET).build();
     public static final Flag MILKING = new FlagBuilder().id("MILKING").icon(Material.MILK_BUCKET).build();
+    public static final Flag FISH_SCOOPING = new FlagBuilder().id("FISH_SCOOPING").allowedByDefault(false).icon(Material.TROPICAL_FISH_BUCKET).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new FlagBuilder().id("CHORUS_FRUIT").icon(Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
