@@ -141,7 +141,7 @@ public class AddonsManager {
             // Run the onLoad.
             addon.onLoad();
         } catch (Exception e) {
-            plugin.log(e.getMessage());
+            plugin.logError(e.getMessage());
         }
     }
 
