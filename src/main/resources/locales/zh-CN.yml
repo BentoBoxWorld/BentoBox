@@ -161,12 +161,12 @@ commands:
       set-pos1: "&a位置 1 设置为 [vector]"
       set-pos2: "&a位置 2 设置为 [vector]"
       set-different-pos: "&c请设置另一个地点 - 该位置已经设置了！"
-      need-pos1-pos2: "&c请先设置 位置 1 和 位置 2 ！"
+      need-pos1-pos2: "&c请先设置 pos1 和 pos2 ！"
       copied-blocks: "&b从剪切板复制 [number] 个方块"
       look-at-a-block: "&c请看向 20 个方块以内的方块来设置"
       copy:
         parameters: "[air]"
-        description: "复制 位置 1 和 位置 2 之间设置的方块（或使用空气方块）到剪切板"
+        description: "复制 pos1 和 pos2 之间设置的方块（或使用空气方块）到剪切板"
       load:
         parameters: "<schem name>"
         description: "加载规划文件到剪切板"
@@ -689,7 +689,7 @@ protection:
       description-layout: |
         &a[description]
 
-        &7Allowed for:
+        &7允许给：
       allowed-rank: "&3- &a"
       blocked-rank: "&3- &c"
       minimal-rank: "&3- &2"
@@ -697,7 +697,7 @@ protection:
       setting-layout: |
         &a[description]
         
-        &7Current setting: [setting]
+        &7当前设置：[setting]
       setting-active: "&a激活"
       setting-disabled: "&c禁止"
 
