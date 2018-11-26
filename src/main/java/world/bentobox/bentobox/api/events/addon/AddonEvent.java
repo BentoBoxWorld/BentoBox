@@ -1,8 +1,12 @@
 package world.bentobox.bentobox.api.events.addon;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import world.bentobox.bentobox.api.addons.Addon;
 
 public class AddonEvent {
+
 
     public enum Reason {
         ENABLE,
@@ -11,39 +15,51 @@ public class AddonEvent {
         UNKNOWN
     }
 
-    public static AddonEventBuilder builder() {
+
+    public AddonEventBuilder builder() {
         return new AddonEventBuilder();
     }
 
-    public static class AddonEnableEvent extends AddonBaseEvent {
-        private AddonEnableEvent(Addon addon) {
-            // Final variables have to be declared in the constuctor
-            super(addon);
+    public class AddonEnableEvent extends AddonBaseEvent {
+        private AddonEnableEvent(Addon addon, Map<String, Object> keyValues) {
+            // Final variables have to be declared in the constructor
+            super(addon, keyValues);
         }
     }
-    public static class AddonDisableEvent extends AddonBaseEvent {
-        private AddonDisableEvent(Addon addon) {
-            // Final variables have to be declared in the constuctor
-            super(addon);
+    public class AddonDisableEvent extends AddonBaseEvent {
+        private AddonDisableEvent(Addon addon, Map<String, Object> keyValues) {
+            // Final variables have to be declared in the constructor
+            super(addon, keyValues);
         }
     }
-    public static class AddonLoadEvent extends AddonBaseEvent {
-        private AddonLoadEvent(Addon addon) {
-            // Final variables have to be declared in the constuctor
-            super(addon);
+    public class AddonLoadEvent extends AddonBaseEvent {
+        private AddonLoadEvent(Addon addon, Map<String, Object> keyValues) {
+            // Final variables have to be declared in the constructor
+            super(addon, keyValues);
         }
     }
-    public static class AddonGeneralEvent extends AddonBaseEvent {
-        private AddonGeneralEvent(Addon addon) {
-            // Final variables have to be declared in the constuctor
-            super(addon);
+    public class AddonGeneralEvent extends AddonBaseEvent {
+        private AddonGeneralEvent(Addon addon, Map<String, Object> keyValues) {
+            // Final variables have to be declared in the constructor
+            super(addon, keyValues);
         }
     }
 
-    public static class AddonEventBuilder {
+    public class AddonEventBuilder {
         // Here field are NOT final. They are just used for the building.
         private Addon addon;
         private Reason reason = Reason.UNKNOWN;
+        private Map<String, Object> keyValues = new HashMap<>();
+
+        /**
+         * Add a map of key-value pairs to the event. Use this to transfer data from the addon to the external world.
+         * @param keyValues - map
+         * @return AddonEvent
+         */
+        public AddonEventBuilder keyValues(Map<String, Object> keyValues) {
+            this.keyValues = keyValues;
+            return this;
+        }
 
         public AddonEventBuilder addon(Addon addon) {
             this.addon = addon;
@@ -58,13 +74,13 @@ public class AddonEvent {
         public AddonBaseEvent build() {
             switch (reason) {
             case ENABLE:
-                return new AddonEnableEvent(addon);
+                return new AddonEnableEvent(addon, keyValues);
             case DISABLE:
-                return new AddonDisableEvent(addon);
+                return new AddonDisableEvent(addon, keyValues);
             case LOAD:
-                return new AddonLoadEvent(addon);
+                return new AddonLoadEvent(addon, keyValues);
             default:
-                return new AddonGeneralEvent(addon);
+                return new AddonGeneralEvent(addon, keyValues);
             }
         }
     }
