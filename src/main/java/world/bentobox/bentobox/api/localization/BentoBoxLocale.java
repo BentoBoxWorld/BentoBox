@@ -72,6 +72,9 @@ public class BentoBoxLocale {
      * @return the locale language tag
      */
     public String toLanguageTag(){
+        if(locale == null) {
+            return "unknown";
+        }
         return locale.toLanguageTag();
     }
 
