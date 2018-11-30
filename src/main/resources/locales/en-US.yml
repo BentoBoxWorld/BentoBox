@@ -692,6 +692,10 @@ protection:
       description: "Toggle access"
       name: "Trap doors"
       hint: "No trapdoor use"
+    TURTLE_EGGS:
+      description: "Toggle crushing"
+      name: "Turtle Eggs"
+      hint: "Turtle eggs cannot be crushed!"
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"

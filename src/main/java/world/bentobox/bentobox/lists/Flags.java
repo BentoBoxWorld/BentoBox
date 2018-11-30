@@ -100,6 +100,7 @@ public class Flags {
     // Physical interactions
     public static final Flag CROP_TRAMPLE = new FlagBuilder().id("CROP_TRAMPLE").icon(Material.WHEAT).listener(new PhysicalInteractionListener()).build();
     public static final Flag PRESSURE_PLATE = new FlagBuilder().id("PRESSURE_PLATE").icon(Material.STONE_PRESSURE_PLATE).build();
+    public static final Flag TURTLE_EGGS = new FlagBuilder().id("TURTLE_EGGS").icon(Material.TURTLE_EGG).build();
 
     // Egg throwing
     public static final Flag EGGS = new FlagBuilder().id("EGGS").icon(Material.EGG).listener(new EggListener()).build();
