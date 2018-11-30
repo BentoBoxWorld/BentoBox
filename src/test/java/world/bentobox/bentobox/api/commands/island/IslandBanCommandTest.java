@@ -293,6 +293,33 @@ public class IslandBanCommandTest {
     }
 
     @Test
+    public void testTabCompleteNoIsland() {
+        // No island
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
+        IslandBanCommand ibc = new IslandBanCommand(ic);
+        // Set up the user
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        // Get the tab-complete list with one argument
+        LinkedList<String> args = new LinkedList<>();
+        args.add("");
+        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        assertFalse(result.isPresent());
+
+        // Get the tab-complete list with one letter argument
+        args = new LinkedList<>();
+        args.add("d");
+        result = ibc.tabComplete(user, "", args);
+        assertFalse(result.isPresent());
+
+        // Get the tab-complete list with one letter argument
+        args = new LinkedList<>();
+        args.add("fr");
+        result = ibc.tabComplete(user, "", args);
+        assertFalse(result.isPresent());
+    }
+    
+    @Test
     public void testTabComplete() {
 
         String[] names = {"adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe"};

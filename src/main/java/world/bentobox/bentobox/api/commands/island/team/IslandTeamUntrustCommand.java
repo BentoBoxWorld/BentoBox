@@ -103,12 +103,16 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             return Optional.empty();
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        List<String> options = island.getMemberSet().stream()
-                .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.TRUSTED_RANK)
-                .map(Bukkit::getOfflinePlayer)
-                .map(OfflinePlayer::getName).collect(Collectors.toList());  
+        if (island != null) {
+            List<String> options = island.getMemberSet().stream()
+                    .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.TRUSTED_RANK)
+                    .map(Bukkit::getOfflinePlayer)
+                    .map(OfflinePlayer::getName).collect(Collectors.toList());  
 
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        return Optional.of(Util.tabLimit(options, lastArg));
+            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            return Optional.of(Util.tabLimit(options, lastArg));
+        } else {
+            return Optional.empty();
+        }
     }
 }
