@@ -208,10 +208,10 @@
 						</relocation>
 					</relocations>
 					<artifactSet>
-                <excludes>
-                  <exclude>org.mongodb:*</exclude>
-                </excludes>
-              </artifactSet>
+						<excludes>
+							<exclude>org.mongodb:*</exclude>
+						</excludes>
+					</artifactSet>
 				</configuration>
 				<executions>
 					<execution>
