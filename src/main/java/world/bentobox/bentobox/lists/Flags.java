@@ -140,7 +140,7 @@ public class Flags {
     public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
 
     // TNT
-    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.PROTECTION).build();
+    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).build();
 
     // Island lock
     public static final Flag LOCK = new FlagBuilder().id("LOCK")

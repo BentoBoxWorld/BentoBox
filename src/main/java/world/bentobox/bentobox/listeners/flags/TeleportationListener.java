@@ -22,7 +22,6 @@ public class TeleportationListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
-
         if (e.getCause() != null) {
             if (e.getCause().equals(TeleportCause.ENDER_PEARL)) {
                 checkIsland(e, e.getTo(), Flags.ENDER_PEARL);

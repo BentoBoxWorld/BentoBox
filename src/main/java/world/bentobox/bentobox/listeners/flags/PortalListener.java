@@ -17,9 +17,6 @@ public class PortalListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerPortal(PlayerPortalEvent e) {
-        if (e.getPlayer().isOp()) {
-            return;
-        }
         if (e.getCause().equals(TeleportCause.NETHER_PORTAL)) {
             checkIsland(e, e.getFrom(), Flags.PORTAL);
         } else if (e.getCause().equals(TeleportCause.END_PORTAL)) {
