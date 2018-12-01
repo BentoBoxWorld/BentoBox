@@ -490,17 +490,19 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         if (clazz.equals(Long.class) && value.getClass().equals(Integer.class)) {
             return Long.valueOf((Integer) value);
         }
-        if (clazz.equals(Integer.class) && value.getClass().equals(String.class)) {
-            return Integer.valueOf((String)value);
-        }
-        if (clazz.equals(Long.class) && value.getClass().equals(String.class)) {
-            return Long.valueOf((String)value);
-        }
-        if (clazz.equals(Double.class) && value.getClass().equals(String.class)) {
-            return Double.valueOf((String)value);
-        }
-        if (clazz.equals(Float.class) && value.getClass().equals(String.class)) {
-            return Float.valueOf((String)value);
+        if (value.getClass().equals(String.class)) {
+            if (clazz.equals(Integer.class)) {
+                return Integer.valueOf((String) value);
+            }
+            if (clazz.equals(Long.class)) {
+                return Long.valueOf((String) value);
+            }
+            if (clazz.equals(Double.class)) {
+                return Double.valueOf((String) value);
+            }
+            if (clazz.equals(Float.class)) {
+                return Float.valueOf((String) value);
+            }
         }
         if (clazz.equals(UUID.class)) {
             value = UUID.fromString((String)value);
