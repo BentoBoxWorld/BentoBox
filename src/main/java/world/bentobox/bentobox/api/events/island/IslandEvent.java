@@ -17,7 +17,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class IslandEvent extends IslandBaseEvent {
 
-    final private Reason reason;
+    private final Reason reason;
 
     /**
      * Fired every time an island event occurs. For developers who just want one event and will use an enum to track the reason

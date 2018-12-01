@@ -50,7 +50,7 @@ public class SettingsPanel {
                 .collect(Collectors.toList());
 
         // Use paging
-        flags.stream().skip(page * 43).limit(page * 43 + 43).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
+        flags.stream().skip(page * 43L).limit(page * 43L + 43L).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
         // Add forward and backward icons
         if (page > 0) {
             // Previous page icon
@@ -66,9 +66,6 @@ public class SettingsPanel {
                 return true;
             }).build());
         }
-
-
-
 
         // Show it to the player
         panelBuilder.build().open(user);

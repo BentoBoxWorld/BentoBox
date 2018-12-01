@@ -56,9 +56,9 @@ public class BucketListener extends FlagListener {
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onTropicalFishSc(final PlayerInteractEntityEvent e) {
-        if (e.getRightClicked() instanceof TropicalFish && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET) && (!checkIsland(e, e.getRightClicked().getLocation(), Flags.FISH_SCOOPING))) {
-            return;
+    public void onTropicalFishScooping(final PlayerInteractEntityEvent e) {
+        if (e.getRightClicked() instanceof TropicalFish && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET)) {
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
         }
     }
 

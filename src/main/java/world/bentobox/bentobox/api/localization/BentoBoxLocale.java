@@ -14,6 +14,8 @@ import world.bentobox.bentobox.util.ItemParser;
  */
 public class BentoBoxLocale {
 
+    private final String UNKNOWN = "unknown";
+
     private Locale locale;
     private YamlConfiguration config;
     private ItemStack banner;
@@ -49,7 +51,7 @@ public class BentoBoxLocale {
      */
     public String getLanguage(){
         if(locale == null) {
-            return "unknown";
+            return UNKNOWN;
         }
 
         return locale.getDisplayLanguage();
@@ -61,7 +63,7 @@ public class BentoBoxLocale {
      */
     public String getCountry(){
         if(locale == null) {
-            return "unknown";
+            return UNKNOWN;
         }
 
         return locale.getDisplayCountry();
@@ -73,7 +75,7 @@ public class BentoBoxLocale {
      */
     public String toLanguageTag(){
         if(locale == null) {
-            return "unknown";
+            return UNKNOWN;
         }
         return locale.toLanguageTag();
     }
