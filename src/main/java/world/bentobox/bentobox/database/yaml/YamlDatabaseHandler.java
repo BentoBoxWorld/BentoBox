@@ -522,7 +522,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Find out the value
             Class<Enum> enumClass = (Class<Enum>)clazz;
             try {
-                value = Enum.valueOf(enumClass, (String)value);
+                value = Enum.valueOf(enumClass, ((String)value).toUpperCase());
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
                 // Show what is available and pick one at random
