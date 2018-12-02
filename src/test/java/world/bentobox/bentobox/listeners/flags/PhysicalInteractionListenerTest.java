@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.flags;
 
@@ -70,9 +70,9 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( {BentoBox.class, Flags.class, Util.class, Bukkit.class} )
 public class PhysicalInteractionListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
-    private static Notifier notifier;
+    private Location location;
+    private BentoBox plugin;
+    private Notifier notifier;
 
     @Before
     public void setUp() {
@@ -318,7 +318,7 @@ public class PhysicalInteractionListenerTest {
     @Test
     public void testOnProjectileHitProjectileBlockNull() {
         Projectile entity = mock(Projectile.class);
-        ProjectileSource source = (ProjectileSource) mock(Creeper.class);
+        ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
         Block block = null;
         EntityInteractEvent e = new EntityInteractEvent(entity, block);
@@ -333,7 +333,7 @@ public class PhysicalInteractionListenerTest {
     @Test
     public void testOnProjectileHitProjectile() {
         Projectile entity = mock(Projectile.class);
-        ProjectileSource source = (ProjectileSource) mock(Creeper.class);
+        ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
         EntityInteractEvent e = new EntityInteractEvent(entity, block);
@@ -348,7 +348,7 @@ public class PhysicalInteractionListenerTest {
     @Test
     public void testOnProjectileHitProjectileBlockNullPlayer() {
         Projectile entity = mock(Projectile.class);
-        ProjectileSource source = (ProjectileSource) mock(Player.class);
+        ProjectileSource source = mock(Player.class);
         when(entity.getShooter()).thenReturn(source);
         Block block = null;
         EntityInteractEvent e = new EntityInteractEvent(entity, block);
@@ -367,7 +367,7 @@ public class PhysicalInteractionListenerTest {
         when(player.isOp()).thenReturn(false);
         when(player.getLocation()).thenReturn(location);
         User.getInstance(player);
-        ProjectileSource source = (ProjectileSource) player ;
+        ProjectileSource source = player ;
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
         when(block.getLocation()).thenReturn(location);

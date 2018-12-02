@@ -491,19 +491,30 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             return Long.valueOf((Integer) value);
         }
         if (value.getClass().equals(String.class)) {
-            return deserializeGenericTypes((String) value, clazz);
+            if (clazz.equals(Integer.class)) {
+                return Integer.valueOf((String) value);
+            }
+            if (clazz.equals(Long.class)) {
+                return Long.valueOf((String) value);
+            }
+            if (clazz.equals(Double.class)) {
+                return Double.valueOf((String) value);
+            }
+            if (clazz.equals(Float.class)) {
+                return Float.valueOf((String) value);
+            }
         }
         if (clazz.equals(UUID.class)) {
-            return UUID.fromString((String)value);
+            value = UUID.fromString((String)value);
         }
         // Bukkit Types
         if (clazz.equals(Location.class)) {
             // Get Location from String - may be null...
-            return Util.getLocationString(((String)value));
+            value = Util.getLocationString(((String)value));
         }
         if (clazz.equals(World.class)) {
             // Get world by name - may be null...
-            return plugin.getServer().getWorld((String)value);
+            value = plugin.getServer().getWorld((String)value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
@@ -511,7 +522,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Find out the value
             Class<Enum> enumClass = (Class<Enum>)clazz;
             try {
-                return Enum.valueOf(enumClass, (String)value);
+                value = Enum.valueOf(enumClass, ((String)value).toUpperCase());
             } catch (Exception e) {
                 // This value does not exist - probably admin typed it wrongly
                 // Show what is available and pick one at random
@@ -520,26 +531,10 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 for (Field fields : enumClass.getFields()) {
                     plugin.logError(fields.getName());
                 }
+                value = null;
             }
         }
-        // Could not deserialize the value.
         return value;
-    }
-
-    private Object deserializeGenericTypes(String value, Class<?> clazz) {
-        if (clazz.equals(Integer.class)) {
-            return Integer.valueOf(value);
-        }
-        if (clazz.equals(Long.class)) {
-            return Long.valueOf(value);
-        }
-        if (clazz.equals(Double.class)) {
-            return Double.valueOf(value);
-        }
-        if (clazz.equals(Float.class)) {
-            return Float.valueOf(value);
-        }
-        return null;
     }
 
     /* (non-Javadoc)

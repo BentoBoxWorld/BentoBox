@@ -30,7 +30,8 @@ public class BreedingListener extends FlagListener {
             Material.EGG,
             Material.WHEAT,
             Material.CARROT,
-            Material.WHEAT_SEEDS);
+            Material.WHEAT_SEEDS,
+            Material.SEAGRASS);
 
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)

@@ -114,8 +114,12 @@ public class AddonsManager {
 
     private void loadAddon(File f) {
         Addon addon;
-        // try loading the addon
-        try (JarFile jar = new JarFile(f); AddonClassLoader addonClassLoader = new AddonClassLoader(this, addonDescription(jar), f, this.getClass().getClassLoader())) {
+        try (JarFile jar = new JarFile(f)) {
+            // try loading the addon
+            // Get description in the addon.yml file
+            YamlConfiguration data = addonDescription(jar);
+            // Load the addon
+            AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
             // Get the addon itself
             addon = addonClassLoader.getAddon();
             // Initialize some settings
