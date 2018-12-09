@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners.flags;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.TropicalFish;
