@@ -812,9 +812,11 @@ public class IslandsManager {
         // Check if online
         User target = User.getInstance(targetUUID);
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
-        if (target.isOnline()) {
+        if (target.isOnline() && plugin.getIWM().getAddon(island.getWorld()).isPresent()) {
             // Check if new leader has a different range permission than the island size
-            int range = target.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+            int range = target.getPermissionValue(
+                    plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range",
+                    plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
             // Range can go up or down
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
