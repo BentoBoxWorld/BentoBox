@@ -456,19 +456,6 @@ public class IslandsManager {
 
     /**
      * Provides UUID of this player's island owner or null if it does not exist
-     * @param world - world to check
-     * @param playerUUID - the player's UUID
-     * @return island owner's UUID or null if player has no island
-     *
-     * @deprecated Renamed to {@link #getOwner(World, UUID)} for consistency.
-     */
-    @Deprecated
-    public UUID getTeamLeader(World world, UUID playerUUID) {
-        return getOwner(world, playerUUID);
-    }
-
-    /**
-     * Provides UUID of this player's island owner or null if it does not exist
      * @param world world to check
      * @param playerUUID the player's UUID
      * @return island owner's UUID or null if player has no island
