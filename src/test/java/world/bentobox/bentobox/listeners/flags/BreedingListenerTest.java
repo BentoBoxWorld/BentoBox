@@ -239,6 +239,8 @@ public class BreedingListenerTest {
             bl.onPlayerInteract(e);
             assertFalse("Animal, breeding item in main hand, wrong world failed " + breedingMat, e.isCancelled());
         }
+        // verify breeding was prevented
+        Mockito.verify(clickedEntity, Mockito.never()).setBreed(false);
     }
 
     /**
@@ -256,6 +258,8 @@ public class BreedingListenerTest {
             bl.onPlayerInteract(e);
             assertTrue("Animal, breeding item in main hand failed " + breedingMat, e.isCancelled());
         }
+        // verify breeding was prevented
+        Mockito.verify(clickedEntity, Mockito.times(5)).setBreed(false);
     }
 
     /**
@@ -275,6 +279,8 @@ public class BreedingListenerTest {
             bl.onPlayerInteract(e);
             assertFalse("Animal, breeding item in off hand, wrong world failed " + breedingMat, e.isCancelled());
         }
+        // verify breeding was not prevented
+        Mockito.verify(clickedEntity, Mockito.never()).setBreed(false);
     }
 
     /**
@@ -293,5 +299,7 @@ public class BreedingListenerTest {
             bl.onPlayerInteract(e);
             assertTrue("Animal, breeding item in off hand failed " + breedingMat, e.isCancelled());
         }
+        // verify breeding was prevented
+        Mockito.verify(clickedEntity, Mockito.times(5)).setBreed(false);
     }
 }
