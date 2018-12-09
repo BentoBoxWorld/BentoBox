@@ -54,13 +54,13 @@ public class JoinLeaveListener implements Listener {
             .forEach(world -> {
                 Island island = plugin.getIslands().getIsland(world, user);
 
-                // Check if new leader has a different range permission than the island size
+                // Check if new owner has a different range permission than the island size
                 int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
 
                 // Range can go up or down
                 if (range != island.getProtectionRange()) {
                     user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                    plugin.log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
+                    plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
                             + range + " for " + user.getName() + " due to permission.");
                 }
 

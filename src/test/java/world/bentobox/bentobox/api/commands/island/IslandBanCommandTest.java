@@ -131,7 +131,7 @@ public class IslandBanCommandTest {
 
     // *** Error conditions ***
     // Ban without an island
-    // Ban as not a team leader
+    // Ban as not an owner
     // Ban unknown user
     // Ban self
     // Ban team mate

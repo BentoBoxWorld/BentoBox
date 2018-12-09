@@ -36,7 +36,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
-
 /**
  * @author tastybento
  *
@@ -162,7 +161,7 @@ public class AdminDeleteCommandTest {
      * Test method for {@link AdminDeleteCommand#execute(User, String, java.util.List)
      */
     @Test
-    public void testExecuteTeamLeader() {
+    public void testExecuteOwner() {
         when(im.inTeam(Mockito.any(),Mockito.any())).thenReturn(true);
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         String[] name = {"tastybento"};

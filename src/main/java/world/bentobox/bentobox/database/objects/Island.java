@@ -484,7 +484,7 @@ public class Island implements DataObject {
 
     /**
      * Sets the owner of the island.
-     * @param owner - the island owner - the owner/team leader to set
+     * @param owner the island owner - the owner to set
      */
     public void setOwner(UUID owner){
         this.owner = owner;

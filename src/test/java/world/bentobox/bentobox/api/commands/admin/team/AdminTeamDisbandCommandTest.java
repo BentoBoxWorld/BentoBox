@@ -151,7 +151,7 @@ public class AdminTeamDisbandCommandTest {
      * Test method for {@link AdminTeamDisbandCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteDisbandNotLeader() {
+    public void testExecuteDisbandNotOwner() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
@@ -159,11 +159,11 @@ public class AdminTeamDisbandCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
         when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
-        when(pm.getName(Mockito.any())).thenReturn("leader");
+        when(pm.getName(Mockito.any())).thenReturn("owner");
 
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", "leader");
+        Mockito.verify(user).sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", "owner");
     }
 
     /**
@@ -176,7 +176,7 @@ public class AdminTeamDisbandCommandTest {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        // Leader
+        // Owner
         when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(notUUID);
         // Members
         Set<UUID> members = new HashSet<>();

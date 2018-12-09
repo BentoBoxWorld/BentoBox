@@ -36,14 +36,13 @@ public class IslandTeamCommand extends CompositeCommand {
         new IslandTeamUntrustCommand(this);
         new IslandTeamPromoteCommand(this, "promote");
         new IslandTeamPromoteCommand(this, "demote");
-
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Player issuing the command must have an island
-        UUID teamLeaderUUID = getOwner(getWorld(), user);
-        if (teamLeaderUUID == null) {
+        UUID ownerUUID = getOwner(getWorld(), user);
+        if (ownerUUID == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -55,7 +54,7 @@ public class IslandTeamCommand extends CompositeCommand {
             return false;
         }
         Set<UUID> teamMembers = getMembers(getWorld(), user);
-        if (teamLeaderUUID.equals(playerUUID)) {
+        if (ownerUUID.equals(playerUUID)) {
             int maxSize = inviteCommand.getMaxTeamSize(user);
             if (teamMembers.size() < maxSize) {
                 user.sendMessage("commands.island.team.invite.you-can-invite", TextVariables.NUMBER, String.valueOf(maxSize - teamMembers.size()));
@@ -67,7 +66,6 @@ public class IslandTeamCommand extends CompositeCommand {
         getIslands().getIsland(getWorld(), playerUUID).showMembers(getPlugin(), user, getWorld());
         return true;
     }
-
 
     private boolean fireEvent(User user) {
         IslandBaseEvent event = TeamEvent.builder()
