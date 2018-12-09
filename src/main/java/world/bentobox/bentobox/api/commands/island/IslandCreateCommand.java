@@ -37,6 +37,13 @@ public class IslandCreateCommand extends CompositeCommand {
             user.sendMessage("general.errors.already-have-island");
             return false;
         }
+        if (getIWM().getMaxIslands(getWorld()) > 0
+                && getIslands().getIslandCount(getWorld()) >= getIWM().getMaxIslands(getWorld())) {
+            // There is too many islands in the world :(
+            user.sendMessage("commands.island.create.too-many-islands");
+            return false;
+        }
+
         user.sendMessage("commands.island.create.creating-island");
         try {
             NewIsland.builder()

@@ -31,7 +31,7 @@ general:
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
-    you-must-wait: "&cYou must wait [number]s before you can do that command again"
+    you-must-wait: "&cYou must wait [number]s before you can do that command again."
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
@@ -231,9 +231,10 @@ commands:
       description: "teleport you to the spawn"
     create:
       description: "create an island"
+      too-many-islands: "&cThere are too many islands in this world: there isn't enough room for yours to be created."
       unable-create-island: "&cYour island could not be generated, please contact an administrator."
       creating-island: "&aCreating your island..."
-      pick-world: "&cPick a world from [worlds]"
+      pick-world: "&cPick a world from [worlds]."
     info:
       description: "display info about your island"
     reset:
