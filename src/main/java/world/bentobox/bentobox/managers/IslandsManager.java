@@ -253,8 +253,12 @@ public class IslandsManager {
         }
     }
 
-    public int getIslandCount(){
+    public int getIslandCount() {
         return islandCache.size();
+    }
+
+    public int getIslandCount(World world) {
+        return islandCache.size(world);
     }
 
     /**

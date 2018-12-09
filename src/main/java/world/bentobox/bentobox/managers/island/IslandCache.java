@@ -196,6 +196,15 @@ public class IslandCache {
     }
 
     /**
+     * Gets the number of islands in the cache for this world
+     * @param world
+     * @return the number of islands
+     */
+    public int size(World world) {
+        return islandsByUUID.getOrDefault(world, new HashMap<>(0)).size();
+    }
+
+    /**
      * Sets an island owner. Clears out any other owner
      * @param island - island
      * @param newOwnerUUID - new owner
