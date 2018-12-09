@@ -136,6 +136,7 @@ public class IslandsManagerTest {
         ground = mock(Block.class);
         space2 = mock(Block.class);
         when(location.getBlock()).thenReturn(space1);
+        when(location.getWorld()).thenReturn(world);
         when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
         when(space1.getRelative(BlockFace.UP)).thenReturn(space2);
         // A safe spot
@@ -192,6 +193,16 @@ public class IslandsManagerTest {
     public void testIsSafeLocationNull() {
         IslandsManager manager = new IslandsManager(plugin);
         assertFalse(manager.isSafeLocation(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
+     */
+    @Test
+    public void testIsSafeLocationNullWorld() {
+        when(location.getWorld()).thenReturn(null);
+        IslandsManager manager = new IslandsManager(plugin);
+        assertFalse(manager.isSafeLocation(location));
     }
 
     /**

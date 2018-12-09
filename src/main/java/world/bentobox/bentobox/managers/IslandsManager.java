@@ -163,7 +163,7 @@ public class IslandsManager {
      * @return true if safe, otherwise false
      */
     public boolean isSafeLocation(Location l) {
-        if (l == null) {
+        if (l == null || l.getWorld() == null) {
             return false;
         }
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
