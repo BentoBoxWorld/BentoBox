@@ -697,6 +697,10 @@ protection:
       description: "Toggle crushing"
       name: "Turtle Eggs"
       hint: "Turtle eggs cannot be crushed!"
+    FROST_WALKER:
+      description: "Toggle Frost Walker enchantment"
+      name: "Frost Walker"
+      hint: "Frost Walker cannot be used here"
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
