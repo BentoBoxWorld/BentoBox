@@ -54,19 +54,19 @@ commands:
       description: "清空所有玩家在这个世界的重制次数"
     team:
       add:
-        parameters: "<leader> <player>"
+        parameters: "<owner> <player>"
         description: "将玩家添加到队长的队伍中"
-        name-not-leader: "&c[name] 不是队长"
+        name-not-owner: "&c[name] 不是队长"
         name-has-island: "&c[name] 已经有岛屿了。请先注销或删除它们！"
       disband:
-        parameters: "<team leader>"
+        parameters: "<owner>"
         description: "解散队长的队伍"
-        user-disband-leader: "&c不是队长！请用 disband [leader]"
+        use-disband-owner: "&c不是队长！请用 disband [owner]"
         disbanded: "&c管理员解散了您的队伍！"
       kick:
         parameters: "<team player>"
         description: "从队伍中踢走玩家"
-        cannot-kick-leader: "&c您不能踢走队长。请先踢走成员"
+        cannot-kick-owner: "&c您不能踢走队长。请先踢走成员"
         admin-kicked: "&c管理员将您从队伍中踢了出来。"
       setowner:
         parameters: "<player>"
@@ -188,7 +188,7 @@ commands:
     delete:
       parameters: ""
       description: "删除玩家的岛屿"
-      cannot-delete-team-leader: "&c删除之前必须将所有岛屿成员都踢出岛屿。"
+      cannot-delete-owner: "&c删除之前必须将所有岛屿成员都踢出岛屿。"
       deleted-island: "&a位于 &e[xyz] &a的岛屿已经被成功删除。"
     why:
       parameters: "<player>"
@@ -323,7 +323,7 @@ commands:
       kick:
         description: "从您的岛屿踢出成员"
         parameters: "<player>"
-        leader-kicked: "&c队长将您踢出岛屿！"
+        owner-kicked: "&c队长将您踢出岛屿！"
         cannot-kick: "&c您不能把自己踢出去！"
       demote:
         description: "将您岛屿上的玩家降阶"

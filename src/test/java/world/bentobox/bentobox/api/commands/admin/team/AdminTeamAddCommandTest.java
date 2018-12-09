@@ -210,7 +210,7 @@ public class AdminTeamAddCommandTest {
         when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-leader", "[name]", "tastybento");
+        Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-owner", "[name]", "tastybento");
         Mockito.verify(island).showMembers(Mockito.eq(plugin), Mockito.any(), Mockito.any());
     }
 

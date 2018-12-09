@@ -56,19 +56,19 @@ commands:
       description: "clears all player reset counts for this world"
     team:
       add:
-        parameters: "<leader> <player>"
-        description: "add player to leader's team"
-        name-not-leader: "&c[name] is not the leader"
+        parameters: "<owner> <player>"
+        description: "add player to owner's team"
+        name-not-owner: "&c[name] is not the owner."
         name-has-island: "&c[name] has an island. Unregister or delete them first!"
       disband:
-        parameters: "<team leader>"
-        description: "disband team leader's team"
-        user-disband-leader: "&cNot leader! Use disband [leader]"
+        parameters: "<owner>"
+        description: "disband owner's team"
+        use-disband-owner: "&cNot owner! Use disband [owner]"
         disbanded: "&cAdmin disbanded your team!"
       kick:
         parameters: "<team player>"
         description: "kick a player from a team"
-        cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
+        cannot-kick-owner: "&cYou cannot kick the owner. Kick members first"
         admin-kicked: "&cThe admin kicked you from the team."
       setowner:
         parameters: "<player>"
@@ -190,7 +190,7 @@ commands:
     delete:
       parameters: ""
       description: "deletes a player's island"
-      cannot-delete-team-leader: "&cAll island members have to be kicked from the island before deleting it."
+      cannot-delete-owner: "&cAll island members have to be kicked from the island before deleting it."
       deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."
     why:
       parameters: "<player>"
@@ -319,13 +319,13 @@ commands:
         cancel:
           description: "cancel the pending invite to join your island"
       leave:
-        cannot-leave: "&cTeam leaders cannot leave! Become a member first, or kick all members."
+        cannot-leave: "&cOwners cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         left-your-island: "&c[name] &cleft your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
-        leader-kicked: "&cThe leader kicked you from the island!"
+        owner-kicked: "&cThe owner kicked you from the island!"
         cannot-kick: "&cYou cannot kick yourself!"
       demote:
         description: "demote a player on your island down a rank"
@@ -340,7 +340,7 @@ commands:
       setowner:
         description: "transfer your island ownership to a member"
         errors:
-          cant-transfer-to-yourself: "&cYou can't transfer ownership to yourself! Well, infact, you could... But we don't want you to. 'Cause it's bad."
+          cant-transfer-to-yourself: "&cYou can't transfer ownership to yourself! &7(&oWell, in fact, you could... But we don't want you to. Because it's useless.&r&7)"
           target-is-not-member: "&cThat player is not part of your island team!"
         name-is-the-owner: "&a[name] is now the island owner!"
         parameters: "<player>"

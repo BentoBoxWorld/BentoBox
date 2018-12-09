@@ -168,7 +168,7 @@ public class AdminDeleteCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.delete.cannot-delete-team-leader");
+        Mockito.verify(user).sendMessage("commands.admin.delete.cannot-delete-owner");
     }
 
     /**

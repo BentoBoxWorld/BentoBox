@@ -163,7 +163,7 @@ public class AdminTeamDisbandCommandTest {
 
         AdminTeamDisbandCommand itl = new AdminTeamDisbandCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", "owner");
+        Mockito.verify(user).sendMessage("commands.admin.team.disband.use-disband-owner", "[owner]", "owner");
     }
 
     /**

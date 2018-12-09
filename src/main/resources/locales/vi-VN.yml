@@ -129,7 +129,7 @@ commands:
         description: "loại bỏ 1 người chơi khỏi đảo"
         parameters: "<player>"
         type-again: "&cHãy đánh lệnh loại bỏ 1 lần nữa để xác nhận"
-        leader-kicked: "&cĐội trưởng đã đuổi bạn ra khỏi đội!"
+        owner-kicked: "&cĐội trưởng đã đuổi bạn ra khỏi đội!"
       demote:
         description: "hạ cấp bậc người chơi"
         parameters: "<player>"

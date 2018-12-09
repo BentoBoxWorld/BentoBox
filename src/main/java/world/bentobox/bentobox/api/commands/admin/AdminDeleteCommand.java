@@ -42,9 +42,9 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        // Team leaders should be kicked before deleting otherwise the whole team will become weird
+        // Owners should be kicked before deleting otherwise the whole team will become weird
         if (getIslands().inTeam(getWorld(), targetUUID) && getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.delete.cannot-delete-team-leader");
+            user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
         }
         // Confirm

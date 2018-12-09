@@ -165,7 +165,7 @@ public class AdminTeamKickCommandTest {
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-leader"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-owner"));
         Mockito.verify(is).showMembers(Mockito.any(), Mockito.any(), Mockito.any());
     }
 
