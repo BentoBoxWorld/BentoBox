@@ -40,7 +40,6 @@ public class BucketListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW)
     public void onBucketFill(final PlayerBucketFillEvent e) {
-        Bukkit.getLogger().info("DEBUG: " + e.getEventName());
         // Check filling of various liquids
         if (e.getItemStack().getType().equals(Material.LAVA_BUCKET) && (!checkIsland(e, e.getBlockClicked().getLocation(), Flags.COLLECT_LAVA))) {
             return;
@@ -61,6 +60,4 @@ public class BucketListener extends FlagListener {
             checkIsland(e, e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
         }
     }
-
-
 }
