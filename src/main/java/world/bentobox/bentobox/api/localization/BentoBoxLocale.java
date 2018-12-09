@@ -14,7 +14,7 @@ import world.bentobox.bentobox.util.ItemParser;
  */
 public class BentoBoxLocale {
 
-    private final String UNKNOWN = "unknown";
+    private final static String UNKNOWN = "unknown";
 
     private Locale locale;
     private YamlConfiguration config;
