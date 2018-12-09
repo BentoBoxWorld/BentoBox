@@ -122,10 +122,9 @@ public class IslandResetCommandTest {
 
     /**
      * Test method for .
-     * @throws IOException
      */
     @Test
-    public void testNoIsland() throws IOException {
+    public void testNoIsland() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Test the reset command
         // Does not have island
@@ -134,7 +133,7 @@ public class IslandResetCommandTest {
     }
 
     @Test
-    public void testNotOwner() throws IOException {
+    public void testNotOwner() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
@@ -143,7 +142,7 @@ public class IslandResetCommandTest {
     }
 
     @Test
-    public void testHasTeam() throws IOException {
+    public void testHasTeam() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
@@ -154,7 +153,7 @@ public class IslandResetCommandTest {
     }
 
     @Test
-    public void testNoResetsLeft() throws IOException {
+    public void testNoResetsLeft() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
