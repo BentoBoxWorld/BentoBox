@@ -37,7 +37,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
 
         if (!getIslands().isOwner(getWorld(), playerUUID)) {
-            user.sendMessage("general.errors.not-leader");
+            user.sendMessage("general.errors.not-owner");
             return false;
         }
         // Explain command

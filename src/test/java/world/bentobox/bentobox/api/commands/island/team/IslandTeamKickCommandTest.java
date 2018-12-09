@@ -142,7 +142,7 @@ public class IslandTeamKickCommandTest {
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-leader"));
+        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-owner"));
     }
 
     /**

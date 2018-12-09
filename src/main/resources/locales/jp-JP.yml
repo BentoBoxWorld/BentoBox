@@ -22,7 +22,7 @@ general:
     player-has-no-island: "&cあの選手には島がない!"
     already-have-island: "&cあなたはすでに島を持っている!"
     no-safe-location: "&cスタッフの方がとても親切でした。"
-    not-leader: "&cあなたの島のリーダーではありません!"
+    not-owner: "&cあなたの島のリーダーではありません!"
     not-in-team: "&cあの選手はあなたのチームにはいない!"
     offline-player: "&cそのプレイヤーはオフラインまたは存在しません。"
     unknown-player: "&c不明なプレイヤー!"

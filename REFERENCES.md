@@ -68,7 +68,7 @@ general.errors.no-island
 general.errors.no-permission
 general.errors.no-team
 general.errors.not-in-team
-general.errors.not-leader
+general.errors.not-owner
 general.errors.offline-player
 general.errors.player-has-island
 general.errors.player-has-no-island

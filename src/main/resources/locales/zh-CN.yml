@@ -21,7 +21,7 @@ general:
     player-has-no-island: "&c该玩家没有岛屿！"
     already-have-island: "&c您已经有岛屿了！"
     no-safe-location: "&c岛上没有安全位置！"
-    not-leader: "&c您不是您的岛上的队长！"
+    not-owner: "&c您不是您的岛上的队长！"
     not-in-team: "&c该玩家不是您的队员！"
     offline-player: "&c该玩家不在线或不存在。"
     unknown-player: "&c[name] 是未知玩家！"

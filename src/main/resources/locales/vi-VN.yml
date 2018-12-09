@@ -23,7 +23,7 @@ general:
     player-has-no-island: "&cNgười chơi đó không có đảo!"
     already-have-island: "&cBạn đã có đảo!"
     no-safe-location: "&cKhông có địa điểm an toàn nào trên đảo!"
-    not-leader: "&cBạn không phải đội trưởng!"
+    not-owner: "&cBạn không phải đội trưởng!"
     not-in-team: "&cNgười chơi không có trong đội!"
     offline-player: "&cNgười chơi đang offline hoặc không tồn tại."
     unknown-player: "&cNgười chơi không tìm thấy!"

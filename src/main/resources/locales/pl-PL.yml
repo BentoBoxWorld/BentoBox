@@ -26,7 +26,7 @@ general:
     player-has-no-island: "&cTen gracz nie ma wyspy!"
     already-have-island: "&cMasz już wyspę!"
     no-safe-location: "&cNa wyspie nie znaleziono bezpiecznej lokalizacji!"
-    not-leader: "&cNie jesteś liderem swojej wyspy!"
+    not-owner: "&cNie jesteś liderem swojej wyspy!"
     not-in-team: "&cTen gracz nie jest w twojej drużynie."
     offline-player: "&cTen gracz jest offline lub nie istnieje."
     unknown-player: "&cNieznany gracz!"

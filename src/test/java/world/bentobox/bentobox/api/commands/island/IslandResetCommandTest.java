@@ -139,7 +139,7 @@ public class IslandResetCommandTest {
         // Now has island, but is not the owner
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage("general.errors.not-leader");
+        Mockito.verify(user).sendMessage("general.errors.not-owner");
     }
 
     @Test
