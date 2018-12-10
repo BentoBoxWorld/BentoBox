@@ -96,7 +96,7 @@ public class JoinLeaveListener implements Listener {
                 island.getMembers().entrySet().stream()
                 .filter(e -> e.getValue() == RanksManager.COOP_RANK)
                 .forEach(e -> User.getInstance(e.getKey())
-                        .sendMessage("island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
+                        .sendMessage("commands.island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
              // Remove any coop players on this island
                 island.removeRank(RanksManager.COOP_RANK);
             }
