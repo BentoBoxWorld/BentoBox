@@ -31,9 +31,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         UUID playerUUID = user.getUniqueId();
         // Can use if in a team
         boolean inTeam = getPlugin().getIslands().inTeam(getWorld(), playerUUID);
-        UUID teamLeaderUUID = getOwner(getWorld(), user);
-        if (!(inTeam && teamLeaderUUID.equals(playerUUID))) {
-            user.sendMessage("general.errors.not-leader");
+        UUID ownerUUID = getOwner(getWorld(), user);
+        if (!(inTeam && ownerUUID.equals(playerUUID))) {
+            user.sendMessage("general.errors.not-owner");
             return false;
         }
         // If args are not right, show help

@@ -140,18 +140,6 @@ public class IslandCache {
     }
 
     /**
-     * @param world - the world to check
-     * @param uuid - player's uuid
-     * @return team leader's UUID, the player UUID if they are not in a team, or null if there is no island
-     *
-     * @deprecated Renamed to {@link #getOwner(World, UUID)} for consistency.
-     */
-    @Deprecated
-    public UUID getTeamLeader(World world, UUID uuid) {
-        return getOwner(world, uuid);
-    }
-
-    /**
      * @param world the world to check
      * @param uuid the player's UUID
      * @return island owner's UUID, the player UUID if they are not in a team, or null if there is no island
@@ -205,6 +193,15 @@ public class IslandCache {
      */
     public int size() {
         return islandsByLocation.size();
+    }
+
+    /**
+     * Gets the number of islands in the cache for this world
+     * @param world
+     * @return the number of islands
+     */
+    public int size(World world) {
+        return islandsByUUID.getOrDefault(world, new HashMap<>(0)).size();
     }
 
     /**

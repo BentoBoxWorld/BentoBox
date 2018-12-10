@@ -59,6 +59,9 @@ public class Flags {
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
     public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.GRASS).listener(new PlaceBlocksListener()).build();
 
+    // Frost walker - uses the place block listener
+    public static final Flag FROST_WALKER = new FlagBuilder().id("FROST_WALKER").icon(Material.ICE).build();
+
     // Block interactions - all use BlockInteractionListener()
     public static final Flag ANVIL = new FlagBuilder().id("ANVIL").icon(Material.ANVIL).listener(new BlockInteractionListener()).build();
     public static final Flag BEACON = new FlagBuilder().id("BEACON").icon(Material.BEACON).build();

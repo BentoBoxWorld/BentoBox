@@ -27,9 +27,9 @@ public class AdminTeamAddCommand extends CompositeCommand {
             showHelp(this, user);
             return false;
         }
-        // Get leader and target
-        UUID leaderUUID = getPlayers().getUUID(args.get(0));
-        if (leaderUUID == null) {
+        // Get owner and target
+        UUID ownerUUID = getPlayers().getUUID(args.get(0));
+        if (ownerUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
@@ -38,13 +38,13 @@ public class AdminTeamAddCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(1));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), leaderUUID)) {
+        if (!getIslands().hasIsland(getWorld(), ownerUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        if (getIslands().inTeam(getWorld(), leaderUUID) && !getIslands().getOwner(getWorld(), leaderUUID).equals(leaderUUID)) {
-            user.sendMessage("commands.admin.team.add.name-not-leader", TextVariables.NAME, args.get(0));
-            getIslands().getIsland(getWorld(), leaderUUID).showMembers(getPlugin(), user, getWorld());
+        if (getIslands().inTeam(getWorld(), ownerUUID) && !getIslands().getOwner(getWorld(), ownerUUID).equals(ownerUUID)) {
+            user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
+            getIslands().getIsland(getWorld(), ownerUUID).showMembers(getPlugin(), user, getWorld());
             return false;
         }
         if (getIslands().inTeam(getWorld(), targetUUID)) {
@@ -57,10 +57,10 @@ public class AdminTeamAddCommand extends CompositeCommand {
         }
         // Success
         User target = User.getInstance(targetUUID);
-        User leader = User.getInstance(leaderUUID);
-        leader.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, getPlugin().getPlayers().getName(targetUUID));
+        User owner = User.getInstance(ownerUUID);
+        owner.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, getPlugin().getPlayers().getName(targetUUID));
         target.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
-        getIslands().getIsland(getWorld(), leaderUUID).addMember(targetUUID);
+        getIslands().getIsland(getWorld(), ownerUUID).addMember(targetUUID);
         user.sendMessage("general.success");
         return true;
 

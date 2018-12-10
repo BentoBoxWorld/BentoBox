@@ -22,7 +22,7 @@ general:
     player-has-no-island: "&cあの選手には島がない!"
     already-have-island: "&cあなたはすでに島を持っている!"
     no-safe-location: "&cスタッフの方がとても親切でした。"
-    not-leader: "&cあなたの島のリーダーではありません!"
+    not-owner: "&cあなたの島のリーダーではありません!"
     not-in-team: "&cあの選手はあなたのチームにはいない!"
     offline-player: "&cそのプレイヤーはオフラインまたは存在しません。"
     unknown-player: "&c不明なプレイヤー!"
@@ -57,22 +57,22 @@ commands:
       add:
         parameters: "<リーダー> <プレーヤー>"
         description: "リーダーのチームにプレイヤーを追加する"
-        name-not-leader: "&c[name]はリーダーではありません"
+        name-not-owner: "&c[name]はリーダーではありません"
         name-has-island: "&c[name]には島があります。登録を解除するか、最初に削除します。"
       disband:
         parameters: "<リーダー>"
         description: "チームリーダーのチームを解散"
-        user-disband-leader: "リーダーじゃない!解散を使用 [leader]"
+        use-disband-owner: "リーダーじゃない!解散を使用 [owner]"
         disbanded: "管理者はあなたのチームを解散!"
       kick:
         parameters: "<プレーヤー>"
         description: "チームからプレーヤーを蹴る"
-        cannot-kick-leader: "&cチームリーダーを蹴ることはできません。キックのメンバーは、まず"
+        cannot-kick-owner: "&cチームリーダーを蹴ることはできません。キックのメンバーは、まず"
         admin-kicked: "管理者は、チームからあなたを蹴った。"
-      makeleader:
+      setowner:
         parameters: "<プレーヤー>"
         description: "プレーヤーをチームのリーダーにする"
-        already-leader: "&cプレイヤーはすでにリーダーです!"
+        already-owner: "&cプレイヤーはすでにリーダーです!"
     range:
       description: "管理島の範囲コマンド"
       display:
@@ -168,7 +168,7 @@ commands:
     delete:
       parameters: ""
       description: "プレイヤーの島を削除します。"
-      cannot-delete-team-leader: "&cすべての島のメンバーは、それを削除する前に島から追い出される必要があります。"
+      cannot-delete-owner: "&cすべての島のメンバーは、それを削除する前に島から追い出される必要があります。"
       deleted-island: "&2[xyz] の島は正常に削除されました。"
   bentobox:
     description: "BentoBox管理コマンド"
@@ -291,7 +291,7 @@ commands:
       kick:
         description: "島からメンバーを削除する"
         parameters: "<プレーヤー>"
-        leader-kicked: "リーダーが島からあなたを削除しました!"
+        owner-kicked: "リーダーが島からあなたを削除しました!"
         cannot-kick: "自分を削除することはできません!"
       demote:
         description: "ランクダウンあなたの島のプレーヤーを降格"

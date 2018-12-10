@@ -26,7 +26,7 @@ general:
     player-has-no-island: "&cTen gracz nie ma wyspy!"
     already-have-island: "&cMasz już wyspę!"
     no-safe-location: "&cNa wyspie nie znaleziono bezpiecznej lokalizacji!"
-    not-leader: "&cNie jesteś liderem swojej wyspy!"
+    not-owner: "&cNie jesteś liderem swojej wyspy!"
     not-in-team: "&cTen gracz nie jest w twojej drużynie."
     offline-player: "&cTen gracz jest offline lub nie istnieje."
     unknown-player: "&cNieznany gracz!"
@@ -55,22 +55,22 @@ commands:
       add:
         parameters: "<lider> <gracz>"
         description: "dodaj gracza do drużyny lidera"
-        name-not-leader: "&c[name] nie jest liderem"
+        name-not-owner: "&c[name] nie jest liderem"
         name-has-island: "&c[name] ma wyspę. Najpierw musi ją wyrejestrować lub usunąć."
       disband:
         parameters: "<lider drużyny>"
         description: "rozwiąż drużynę lidera wyspy"
-        user-disband-leader: "&cNie jesteś liderem! Użyj disband [leader]"
+        use-disband-owner: "&cNie jesteś liderem! Użyj disband [owner]"
         disbanded: "&cAdministrator rozwiązał Twoją drużyne!"
       kick:
         parameters: "<gracz z drużyny>"
         description: "wyrzuć gracza z drużyny"
-        cannot-kick-leader: "&cNie możesz wyrzucić lidera drużyny. Najpierw wyrzuć członków."
+        cannot-kick-owner: "&cNie możesz wyrzucić lidera drużyny. Najpierw wyrzuć członków."
         admin-kicked: "&cAdministrator wyrzucił Cię z drużyny."
-      makeleader:
+      setowner:
         parameters: "<gracz>"
         description: "uczyń gracza liderem wyspy"
-        already-leader: "&cGracz jest już liderem!"
+        already-owner: "&cGracz jest już liderem!"
     register:
       parameters: "<gracz>"
       description: "zarejestruj gracza na niezamieszkanej wyspie, na której jesteś"
@@ -215,7 +215,7 @@ commands:
       kick:
         description: "wyrzuć gracza z swojej wyspy"
         parameters: "<gracz>"
-        leader-kicked: "&cLider wyrzucił Cię z jego wyspy."
+        owner-kicked: "&cLider wyrzucił Cię z jego wyspy."
         cannot-kick: "&cNie możesz wyrzucić samego siebie."
       demote:
         description: "degraduj gracza na swojej wyspie do roli"

@@ -128,7 +128,7 @@ public class IslandUnbanCommandTest {
 
     // *** Error conditions ***
     // Unban without an island
-    // Unban as not a team leader
+    // Unban as not an owner
     // Unban unknown user
     // Unban self
     // Unban someone not banned

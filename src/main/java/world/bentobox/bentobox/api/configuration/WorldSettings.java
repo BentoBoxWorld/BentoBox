@@ -100,6 +100,7 @@ public interface WorldSettings {
     int getMaxHomes();
 
     /**
+     * 0 or -1 is unlimited. It will block island creation if the island count for the world is higher than this.
      * @return the maxIslands
      */
     int getMaxIslands();

@@ -39,7 +39,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             return false;
         }
         if (!getIslands().isOwner(getWorld(), user.getUniqueId())) {
-            user.sendMessage("general.errors.not-leader");
+            user.sendMessage("general.errors.not-owner");
             return false;
         }
         if (getIslands().inTeam(getWorld(), user.getUniqueId())) {

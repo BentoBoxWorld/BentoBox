@@ -1,6 +1,3 @@
-/**
- * 
- */
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
@@ -119,7 +116,7 @@ public class IslandTeamLeaveCommandTest {
      * Test method for .
      */
     @Test
-    public void testExecuteInTeamLeader() {
+    public void testExecuteInOwner() {
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.leave.cannot-leave"));
@@ -133,7 +130,7 @@ public class IslandTeamLeaveCommandTest {
         when(s.isLeaveConfirmation()).thenReturn(false);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        // Add a team leader - null
+        // Add a team owner - null
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
@@ -152,7 +149,7 @@ public class IslandTeamLeaveCommandTest {
         when(s.getConfirmationTime()).thenReturn(3);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        // Add a team leader - null
+        // Add a team owner - null
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
 
         IslandTeamLeaveCommand itl = new IslandTeamLeaveCommand(ic);
@@ -169,7 +166,7 @@ public class IslandTeamLeaveCommandTest {
         when(s.isLeaveConfirmation()).thenReturn(false);
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        // Add a team leader - null
+        // Add a team owner - null
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
         
         // Require resets

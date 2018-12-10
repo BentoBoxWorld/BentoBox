@@ -253,8 +253,12 @@ public class IslandsManager {
         }
     }
 
-    public int getIslandCount(){
+    public int getIslandCount() {
         return islandCache.size();
+    }
+
+    public int getIslandCount(World world) {
+        return islandCache.size(world);
     }
 
     /**
@@ -393,7 +397,7 @@ public class IslandsManager {
                 plugin.getPlayers().setHomeLocation(user, l, number);
                 return l;
             } else {
-                // try team leader's home
+                // try owner's home
                 Location tlh = plugin.getPlayers().getHomeLocation(world, plugin.getIslands().getOwner(world, user.getUniqueId()));
                 if (tlh != null && isSafeLocation(tlh)) {
                     plugin.getPlayers().setHomeLocation(user, tlh, number);
@@ -452,19 +456,6 @@ public class IslandsManager {
      */
     public Location getSpawnPoint(World world) {
         return spawn.containsKey(world) ? spawn.get(world).getSpawnPoint(world.getEnvironment()) : null;
-    }
-
-    /**
-     * Provides UUID of this player's island owner or null if it does not exist
-     * @param world - world to check
-     * @param playerUUID - the player's UUID
-     * @return island owner's UUID or null if player has no island
-     *
-     * @deprecated Renamed to {@link #getOwner(World, UUID)} for consistency.
-     */
-    @Deprecated
-    public UUID getTeamLeader(World world, UUID playerUUID) {
-        return getOwner(world, playerUUID);
     }
 
     /**
@@ -789,20 +780,20 @@ public class IslandsManager {
     }
 
     /**
-     * Makes a new leader for an island
-     * @param world - world
-     * @param user - the user who is issuing the command
-     * @param targetUUID - the current island member who is going to become the new owner
+     * Sets this target as the owner for this island
+     * @param world world
+     * @param user the user who is issuing the command
+     * @param targetUUID the current island member who is going to become the new owner
      */
     public void setOwner(World world, User user, UUID targetUUID) {
         setOwner(user, targetUUID, getIsland(world, targetUUID));
     }
 
     /**
-     * Makes a new leader for an island
-     * @param user - requester
-     * @param targetUUID - new owner
-     * @param island - island to register
+     * Sets this target as the owner for this island
+     * @param user requester
+     * @param targetUUID new owner
+     * @param island island to register
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
@@ -813,7 +804,7 @@ public class IslandsManager {
         User target = User.getInstance(targetUUID);
         target.sendMessage("commands.island.team.setowner.you-are-the-owner");
         if (target.isOnline() && plugin.getIWM().getAddon(island.getWorld()).isPresent()) {
-            // Check if new leader has a different range permission than the island size
+            // Check if new owner has a different range permission than the island size
             int range = target.getPermissionValue(
                     plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range",
                     plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
@@ -821,7 +812,7 @@ public class IslandsManager {
             if (range != island.getProtectionRange()) {
                 user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
                 target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                plugin.log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
+                plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
                         + range + " for " + user.getName() + " due to permission.");
             }
             island.setProtectionRange(range);
