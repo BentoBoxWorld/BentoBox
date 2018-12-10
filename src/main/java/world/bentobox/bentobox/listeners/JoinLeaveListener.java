@@ -84,9 +84,27 @@ public class JoinLeaveListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
-        // Remove any coop associations
+        // Remove any coops if all the island players have left
+        plugin.getIWM().getOverWorlds().forEach(w -> {
+            Island island = plugin.getIslands().getIsland(w, User.getInstance(event.getPlayer()));
+            // Are there any online players still for this island?
+            if (island != null &&  !plugin.getServer().getOnlinePlayers().stream()
+                    .filter(p -> !event.getPlayer().equals(p))
+                    .anyMatch(p -> plugin.getIslands().getMembers(w, event.getPlayer().getUniqueId()).contains(p.getUniqueId()))) {
+                // No, there are no more players online on this island
+                // Tell players they are being removed
+                island.getMembers().entrySet().stream()
+                .filter(e -> e.getValue() == RanksManager.COOP_RANK)
+                .forEach(e -> User.getInstance(e.getKey())
+                        .sendMessage("island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
+             // Remove any coop players on this island
+                island.removeRank(RanksManager.COOP_RANK);
+            }
+        });
+        // Remove any coop associations from the player logging out
         plugin.getIslands().clearRank(RanksManager.COOP_RANK, event.getPlayer().getUniqueId());
         players.save(event.getPlayer().getUniqueId());
         User.removePlayer(event.getPlayer());
+
     }
 }

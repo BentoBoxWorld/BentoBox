@@ -692,4 +692,12 @@ public class Island implements DataObject {
     public Location getSpawnPoint(Environment islandType) {
         return spawnPoint.get(islandType);
     }
+
+    /**
+     * Removes all of a specified rank from the member list
+     * @param coopRank - rank value
+     */
+    public void removeRank(Integer coopRank) {
+        members.values().removeIf(coopRank::equals); 
+    }
 }

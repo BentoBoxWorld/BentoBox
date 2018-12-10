@@ -277,6 +277,7 @@ commands:
         cannot-uncoop-member: "&cYou cannot uncoop a team member!"
         player-not-cooped: "&cPlayer is not cooped!"
         you-are-no-longer-a-coop-member: "&cYou are no longer a coop member of [name]'s island"
+        all-members-logged-off: "&cAll island members logged off so you are no longer a coop member of [name]'s island"
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
