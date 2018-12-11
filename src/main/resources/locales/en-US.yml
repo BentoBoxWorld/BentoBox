@@ -14,7 +14,7 @@ meta:
 general:
   success: "&aSuccess!"
   errors:
-    command-cancelled: "&cCommand cancelled"
+    command-cancelled: "&cCommand cancelled."
     no-permission: "&cYou don't have the permission to execute this command (&7[permission]&c)."
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
@@ -32,6 +32,7 @@ general:
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
     you-must-wait: "&cYou must wait [number]s before you can do that command again."
+    must-be-positive-number: "&c[number] is not a valid positive number."
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
@@ -68,7 +69,7 @@ commands:
       kick:
         parameters: "<team player>"
         description: "kick a player from a team"
-        cannot-kick-owner: "&cYou cannot kick the owner. Kick members first"
+        cannot-kick-owner: "&cYou cannot kick the owner. Kick members first."
         admin-kicked: "&cThe admin kicked you from the team."
       setowner:
         parameters: "<player>"
@@ -194,9 +195,17 @@ commands:
       deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."
     why:
       parameters: "<player>"
-      description:  "Toggle console protection debug reporting"
+      description:  "toggle console protection debug reporting"
       turning-on: "Turning on console debug for [name]"
       turning-off: "Turning off console debug for [name]"
+    deaths:
+      description: "edit deaths of players"
+      reset:
+        description: "resets deaths of the player"
+        parameters: "<player>"
+      set:
+        description: "sets deaths of the player"
+        parameters: "<player> <deaths>"
   bentobox:
     description: "BentoBox admin command"
     about:
