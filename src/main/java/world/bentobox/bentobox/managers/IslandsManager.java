@@ -797,26 +797,27 @@ public class IslandsManager {
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
-
-        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
-
-        // Check if online
-        User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.setowner.you-are-the-owner");
-        if (target.isOnline() && plugin.getIWM().getAddon(island.getWorld()).isPresent()) {
-            // Check if new owner has a different range permission than the island size
-            int range = target.getPermissionValue(
-                    plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range",
-                    plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
-            // Range can go up or down
-            if (range != island.getProtectionRange()) {
-                user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
-                        + range + " for " + user.getName() + " due to permission.");
+        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));        
+        plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
+            User target = User.getInstance(targetUUID);
+            // Tell target. If they are offline, then they may receive a message when they login
+            target.sendMessage("commands.island.team.setowner.you-are-the-owner");
+            // Permission checks for range changes only work when the target is online
+            if (target.isOnline()) {                
+                // Check if new owner has a different range permission than the island size
+                int range = target.getPermissionValue(
+                        addon.getPermissionPrefix() + "island.range",
+                        plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+                // Range can go up or down
+                if (range != island.getProtectionRange()) {
+                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                    target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                    plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
+                            + range + " for " + user.getName() + " due to permission.");
+                }
+                island.setProtectionRange(range);
             }
-            island.setProtectionRange(range);
-        }
+        });
     }
 
     /**
