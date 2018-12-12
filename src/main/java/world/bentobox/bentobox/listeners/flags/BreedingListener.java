@@ -40,10 +40,8 @@ public class BreedingListener extends FlagListener {
             if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
                 inHand = e.getPlayer().getInventory().getItemInOffHand();
             }
-            if (inHand != null && BREEDING_ITEMS.contains(inHand.getType())) {
-                if (!checkIsland(e, e.getRightClicked().getLocation(), Flags.BREEDING)) {
-                    ((Animals)e.getRightClicked()).setBreed(false);
-                }
+            if (inHand != null && BREEDING_ITEMS.contains(inHand.getType()) && !checkIsland(e, e.getRightClicked().getLocation(), Flags.BREEDING)) {
+                ((Animals)e.getRightClicked()).setBreed(false);
             }
         }
     }

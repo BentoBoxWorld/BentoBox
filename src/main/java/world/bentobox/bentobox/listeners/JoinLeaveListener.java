@@ -88,9 +88,9 @@ public class JoinLeaveListener implements Listener {
         plugin.getIWM().getOverWorlds().forEach(w -> {
             Island island = plugin.getIslands().getIsland(w, User.getInstance(event.getPlayer()));
             // Are there any online players still for this island?
-            if (island != null &&  !plugin.getServer().getOnlinePlayers().stream()
+            if (island != null && plugin.getServer().getOnlinePlayers().stream()
                     .filter(p -> !event.getPlayer().equals(p))
-                    .anyMatch(p -> plugin.getIslands().getMembers(w, event.getPlayer().getUniqueId()).contains(p.getUniqueId()))) {
+                    .noneMatch(p -> plugin.getIslands().getMembers(w, event.getPlayer().getUniqueId()).contains(p.getUniqueId()))) {
                 // No, there are no more players online on this island
                 // Tell players they are being removed
                 island.getMembers().entrySet().stream()
