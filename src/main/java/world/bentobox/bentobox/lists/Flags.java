@@ -11,40 +11,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
-import world.bentobox.bentobox.listeners.flags.BlockInteractionListener;
-import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
-import world.bentobox.bentobox.listeners.flags.BreedingListener;
-import world.bentobox.bentobox.listeners.flags.BucketListener;
-import world.bentobox.bentobox.listeners.flags.ChestDamageListener;
-import world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener;
-import world.bentobox.bentobox.listeners.flags.CoarseDirtTillingListener;
-import world.bentobox.bentobox.listeners.flags.CreeperListener;
-import world.bentobox.bentobox.listeners.flags.EggListener;
-import world.bentobox.bentobox.listeners.flags.EnderChestListener;
-import world.bentobox.bentobox.listeners.flags.EndermanListener;
-import world.bentobox.bentobox.listeners.flags.EnterExitListener;
-import world.bentobox.bentobox.listeners.flags.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.FireListener;
-import world.bentobox.bentobox.listeners.flags.GeoLimitMobsListener;
-import world.bentobox.bentobox.listeners.flags.HurtingListener;
-import world.bentobox.bentobox.listeners.flags.InventoryListener;
-import world.bentobox.bentobox.listeners.flags.InvincibleVisitorsListener;
-import world.bentobox.bentobox.listeners.flags.IslandRespawnListener;
-import world.bentobox.bentobox.listeners.flags.ItemDropPickUpListener;
-import world.bentobox.bentobox.listeners.flags.ItemFrameListener;
-import world.bentobox.bentobox.listeners.flags.LeashListener;
-import world.bentobox.bentobox.listeners.flags.LockAndBanListener;
-import world.bentobox.bentobox.listeners.flags.MobSpawnListener;
-import world.bentobox.bentobox.listeners.flags.OfflineRedstoneListener;
-import world.bentobox.bentobox.listeners.flags.PVPListener;
-import world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener;
-import world.bentobox.bentobox.listeners.flags.PistonPushListener;
-import world.bentobox.bentobox.listeners.flags.PlaceBlocksListener;
-import world.bentobox.bentobox.listeners.flags.PortalListener;
-import world.bentobox.bentobox.listeners.flags.RemoveMobsListener;
-import world.bentobox.bentobox.listeners.flags.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.TNTListener;
-import world.bentobox.bentobox.listeners.flags.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.*;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -141,6 +108,9 @@ public class Flags {
     // Item pickup or drop
     public static final Flag ITEM_DROP = new FlagBuilder().id("ITEM_DROP").icon(Material.BEETROOT_SOUP).allowedByDefault(true).listener(new ItemDropPickUpListener()).build();
     public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
+
+    // Experience
+    public static final Flag EXPERIENCE_PICKUP = new FlagBuilder().id("EXPERIENCE_PICKUP").icon(Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).build();
 
     // TNT
     public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).build();

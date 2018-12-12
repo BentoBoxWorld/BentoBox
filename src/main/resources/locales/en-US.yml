@@ -711,6 +711,10 @@ protection:
       description: "Toggle Frost Walker enchantment"
       name: "Frost Walker"
       hint: "Frost Walker cannot be used here"
+    EXPERIENCE_PICKUP:
+      name: "Experience pickup"
+      description: "Toggle experience orb pickup"
+      hint: "cannot pickup experience orb"
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
