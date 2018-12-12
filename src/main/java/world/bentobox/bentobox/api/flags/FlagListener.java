@@ -221,6 +221,7 @@ public abstract class FlagListener implements Listener {
     }
 
     private void report(User user, Event e, Location loc, Flag flag, Why why) {
+        // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name());
         if (user != null && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
             plugin.log("Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector()));
