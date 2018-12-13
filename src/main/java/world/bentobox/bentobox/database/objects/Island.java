@@ -613,7 +613,7 @@ public class Island implements DataObject {
                     String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
                     user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
                     // Show team members
-                    showMembers(plugin, user, world);
+                    showMembers(plugin, user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -639,9 +639,8 @@ public class Island implements DataObject {
      * Shows the members of this island
      * @param plugin - plugin
      * @param user - user who is requesting
-     * @param world - world to check
      */
-    public void showMembers(BentoBox plugin, User user, World world) {
+    public void showMembers(BentoBox plugin, User user) {
         user.sendMessage("commands.admin.info.team-members-title");
         members.forEach((u, i) -> {
             if (owner.equals(u)) {
