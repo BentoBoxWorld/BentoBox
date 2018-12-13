@@ -245,7 +245,8 @@ commands:
       creating-island: "&aCreating your island..."
       pick-world: "&cPick a world from [worlds]."
     info:
-      description: "display info about your island"
+      description: "display info about your island or the player's island"
+      parameters: "<player>"
     reset:
       description: "restart your island and remove the old one"
       must-remove-members: "&cYou must remove all members from your island before you can restart it (/island team kick <player>)."
