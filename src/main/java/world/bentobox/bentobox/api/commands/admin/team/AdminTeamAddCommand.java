@@ -44,7 +44,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
         }
         if (getIslands().inTeam(getWorld(), ownerUUID) && !getIslands().getOwner(getWorld(), ownerUUID).equals(ownerUUID)) {
             user.sendMessage("commands.admin.team.add.name-not-owner", TextVariables.NAME, args.get(0));
-            getIslands().getIsland(getWorld(), ownerUUID).showMembers(getPlugin(), user, getWorld());
+            getIslands().getIsland(getWorld(), ownerUUID).showMembers(user);
             return false;
         }
         if (getIslands().inTeam(getWorld(), targetUUID)) {

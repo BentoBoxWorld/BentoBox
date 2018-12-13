@@ -211,7 +211,7 @@ public class AdminTeamAddCommandTest {
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-owner", "[name]", "tastybento");
-        Mockito.verify(island).showMembers(Mockito.eq(plugin), Mockito.any(), Mockito.any());
+        Mockito.verify(island).showMembers(Mockito.any());
     }
 
     /**

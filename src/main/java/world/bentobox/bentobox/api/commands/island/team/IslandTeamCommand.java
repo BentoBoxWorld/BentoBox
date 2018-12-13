@@ -63,7 +63,7 @@ public class IslandTeamCommand extends CompositeCommand {
             }
         }
         // Show members of island
-        getIslands().getIsland(getWorld(), playerUUID).showMembers(getPlugin(), user, getWorld());
+        getIslands().getIsland(getWorld(), playerUUID).showMembers(user);
         return true;
     }
 

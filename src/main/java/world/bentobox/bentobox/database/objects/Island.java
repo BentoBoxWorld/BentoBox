@@ -595,8 +595,21 @@ public class Island implements DataObject {
      * @param user - the user who is receiving the info
      * @param world - world to check
      * @return true always
+     *
+     * @deprecated Renamed to {@link #showInfo(User)}.
      */
+    @Deprecated
     public boolean showInfo(BentoBox plugin, User user, World world) {
+        return showInfo(user);
+    }
+
+    /**
+     * Shows info of this island to this user.
+     * @param user the User who is requesting it
+     * @return always true
+     */
+    public boolean showInfo(User user) {
+        BentoBox plugin = BentoBox.getInstance();
         user.sendMessage("commands.admin.info.title");
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
@@ -606,14 +619,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (plugin.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     plugin.getServer().getOfflinePlayer(owner).getLastPlayed() : plugin.getServer().getOfflinePlayer(owner).getFirstPlayed();
-                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-                    // Show team members
-                    showMembers(plugin, user, world);
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -640,8 +653,20 @@ public class Island implements DataObject {
      * @param plugin - plugin
      * @param user - user who is requesting
      * @param world - world to check
+     *
+     * @deprecated Renamed to {@link #showMembers(User)}.
      */
+    @Deprecated
     public void showMembers(BentoBox plugin, User user, World world) {
+        showMembers(user);
+    }
+
+    /**
+     * Shows the members of this island to this user.
+     * @param user the User who is requesting it
+     */
+    public void showMembers(User user) {
+        BentoBox plugin = BentoBox.getInstance();
         user.sendMessage("commands.admin.info.team-members-title");
         members.forEach((u, i) -> {
             if (owner.equals(u)) {

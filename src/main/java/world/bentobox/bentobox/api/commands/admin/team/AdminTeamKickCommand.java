@@ -44,7 +44,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
         }
         if (getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
             user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
-            getIslands().getIsland(getWorld(), targetUUID).showMembers(getPlugin(), user, getWorld());
+            getIslands().getIsland(getWorld(), targetUUID).showMembers(user);
             return false;
         }
         User.getInstance(targetUUID).sendMessage("commands.admin.team.kick.admin-kicked");
