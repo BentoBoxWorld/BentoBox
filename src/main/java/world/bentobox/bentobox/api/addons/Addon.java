@@ -37,9 +37,30 @@ public abstract class Addon {
         state = State.DISABLED;
     }
 
+    /**
+     * Executes code when enabling the addon.
+     * This is called after {@link #onLoad()}.
+     */
     public abstract void onEnable();
+
+    /**
+     * Executes code when disabling the addon.
+     */
     public abstract void onDisable();
+
+    /**
+     * Executes code when loading the addon.
+     * This is called before {@link #onEnable()}.
+     * This should preferably be used to setup configuration and worlds.
+     */
     public void onLoad() {}
+
+    /**
+     * Executes code when reloading the addon.
+     *
+     * @since 0.17.0 (Alpha 11)
+     */
+    public void onReload() {}
 
     public BentoBox getPlugin() {
         return BentoBox.getInstance();
