@@ -41,6 +41,7 @@ commands:
   help:
     header: "&7=========== &c[label] help &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    syntax-no-parameters: "&b[usage]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
     description: "help command"
