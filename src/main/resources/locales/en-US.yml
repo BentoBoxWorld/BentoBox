@@ -725,16 +725,18 @@ protection:
     next: "Next Page"
     previous: "Previous Page"
     PROTECTION:
-      title: "Protection"
+      title: "&6Protection"
       description: |-
-        Protection settings
-        for this location
+        &aProtection settings
+        &afor this island
     SETTING:
-      title: "Settings"
-      description: "General settings"
+      title: "&6Settings"
+      description: |-
+        &aGeneral settings
+        &afor this island
     WORLD_SETTING:
-      title: "[world_name] Settings"
-      description: "Settings for this game world"
+      title: "&b[world_name] &6Settings"
+      description: "&aSettings for this game world"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |

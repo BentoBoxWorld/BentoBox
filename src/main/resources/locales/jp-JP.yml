@@ -635,14 +635,14 @@ protection:
   
   panel:
     PROTECTION:
-      title: "保護"
-      description: "場所の保護設定"
+      title: "&6保護"
+      description: "&a場所の保護設定"
     SETTING:
-      title: "設定"
-      description: "一般設定"
+      title: "&6設定"
+      description: "&a一般設定"
     WORLD_SETTING:
-      title: "[world_name]設定"
-      description: "ゲームの世界のための設定"
+      title: "&b[world_name]&6設定"
+      description: "&aゲームの世界のための設定"
     flag-item:
       description-layout: |
         &a[description]

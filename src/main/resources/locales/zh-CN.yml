@@ -680,15 +680,14 @@ protection:
     next: "下一页"
     previous: "上一页"
     PROTECTION:
-      title: "保护"
-      description: |-
-        当前位置的保护设置
+      title: "&6保护"
+      description: "&a当前位置的保护设置"
     SETTING:
-      title: "设置"
-      description: "通用设置"
+      title: "&6设置"
+      description: "&a通用设置"
     WORLD_SETTING:
-      title: "[world_name] 设置"
-      description: "本游戏世界的设置"
+      title: "&b[world_name] &6设置"
+      description: "&a本游戏世界的设置"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |

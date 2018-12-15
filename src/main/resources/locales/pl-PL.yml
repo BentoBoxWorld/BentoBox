@@ -511,16 +511,16 @@ protection:
 
   panel:
     PROTECTION:
-      title: "Ochrona"
+      title: "&6Ochrona"
       description: |-
         &aUstawienia ochrony
         &adla tej lokalizacji
     SETTING:
-      title: "Ustawienia"
-      description: "Ustawienia główne"
+      title: "&6Ustawienia"
+      description: "&aUstawienia główne"
     WORLD_SETTING:
-      title: "Ustawienia [world_name]"
-      description: "Ustawienia dla tego świata gry"
+      title: "&6Ustawienia &b[world_name]"
+      description: "&aUstawienia dla tego świata gry"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |+
