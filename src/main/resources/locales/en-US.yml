@@ -511,13 +511,13 @@ protection:
       name: "Ender Chests"
       hint: "Ender chests are disabled in this world"
     ENDERMAN_DEATH_DROP: 
-      description: |
+      description: |-
          &aEndermen will drop
          &aany block they are
          &aholding if killed.
       name: "Enderman Death Drop"
     ENDERMAN_GRIEFING: 
-      description: |
+      description: |-
          &aEndermen can remove
          &ablocks from islands
       name: "Enderman griefing"
@@ -544,7 +544,7 @@ protection:
       name: "Fire spread"
       hint: "No fire spread allowed"
     FISH_SCOOPING:
-      description: |
+      description: |-
          &aAllow scooping of
          &atropical fish
       name: "Fish Scooping"
@@ -558,7 +558,7 @@ protection:
       name: "Gates"
       hint: "No gate use"
     GEO_LIMIT_MOBS: 
-      description: |
+      description: |-
          &eRemove mobs that go
          &eoutside protected
          &eisland space

@@ -401,7 +401,7 @@ protection:
       name: "コーラスフルーツ"
       hint: "テレポートなし"
     CLEAN_SUPER_FLAT:
-      description: |
+      description: |-
           世界の
           スーパーフラット
           クリーン
@@ -453,14 +453,14 @@ protection:
       name: "エンダーチェスト"
       hint: "エンダーチェストは、この世界で無効になっている"
     ENDERMAN_DEATH_DROP:
-      description: |
+      description: |-
          &aエンダーマンは
          &a彼らが殺されたら
          &a保持している任意の
          &aブロックをドロップします
       name: "エンダーマン・デス・ドロップ"
     ENDERMAN_GRIEFING:
-      description: |
+      description: |-
          &aエンダーマンはブロックを
          &a削除することができます
       name: "エンダーマン苦情"
@@ -495,7 +495,7 @@ protection:
       name: "門"
       hint: "門使用なし"
     GEO_LIMIT_MOBS:
-      description: |
+      description: |-
          保護された領域を
          終了するモンスターを
          削除
@@ -513,7 +513,7 @@ protection:
       name: "村人を傷つける"
       hint: "村人を傷つけない"
     ITEM_FRAME_DAMAGE:
-      description: |
+      description: |-
           モンスターは項目フレームを
           傷つけることができる
       name: "アイテムフレームの損傷"
@@ -562,14 +562,14 @@ protection:
       name: "音符ブロック"
       hint: "音符ブロックを使用しない"
     OFFLINE_REDSTONE:
-      description: |
+      description: |-
           レッドストーンは
           チームメンバーが
           オフラインのと
           きは動作しません
       name: "オフラインレッドストーン"
     PISTON_PUSH:
-      description: |
+      description: |-
           ピストンが島の外に
           ブロックをプッシュできるようにする
       name: "ピストンプッシュ"
@@ -607,7 +607,7 @@ protection:
       name: "動物乗馬"
       hint: "動物の乗馬は許可されない"
     REMOVE_MOBS:
-      description: |
+      description: |-
         島にテレポートと
         きにモンスターを削除する
       name: "モンスターを削除"

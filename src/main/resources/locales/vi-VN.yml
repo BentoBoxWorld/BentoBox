@@ -200,11 +200,11 @@ protection:
       description: "Tắt/bật tương tác với xô"
     COLLECT_WATER:
       name: "Lấy nước"
-      description: |
+      description: |-
         Tắt/bật khả năng lấy nước bằng xô
     COLLECT_LAVA:
       name: "Lấy dung nham"
-      description: |
+      description: |-
         Tắt/bật khả năng lấy nước bằng xô
     CHORUS_FRUIT:
       name: "Chorus fruits"

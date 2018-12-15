@@ -315,13 +315,13 @@ protection:
       name: "Owoce refrenusu"
       hint: "Używanie teleportacji wyłączone."
     COLLECT_LAVA: 
-      description: |
+      description: |-
           Przełącz zbieranie lawy
           (nadpisuje wiaderka)
       name: "Zbieranie lawy"
       hint: "Zbieranie lawy wyłączone."
     COLLECT_WATER: 
-      description: |
+      description: |-
           Przełącz zbieranie wody
           (nadpisuje wiaderka)
       name: "Zbieranie wody"
@@ -397,13 +397,13 @@ protection:
       name: "Zabijanie osadników"
       hint: "Zabijanie osadników jest wyłączone."
     INVINCIBLE_VISITORS: 
-      description: |
+      description: |-
           &aUstawienia nieśmiertelnych
           &agości na wyspie.
       name: "Nieśmiertelni goście"
       hint: "&cGoście są chronieni przez obrażeniami."
     ISLAND_RESPAWN:
-      description: |
+      description: |-
         &aOdradzanie graczy
         &apo śmierci na wyspie.
       name: "Odradzanie na wyspie"
@@ -433,7 +433,7 @@ protection:
       description: "Przełącz spawnowanie"
       name: "Sprawnowanie potworów"
     MOUNT_INVENTORY: 
-      description: |
+      description: |-
         &aPrzełącz dostęp
         &ado ekwipunku mobów.
       name: "Ekwipunek zwierząt"
@@ -443,7 +443,7 @@ protection:
       name: "Muzyka"
       hint: "Używanie szafy grającej wyłączone."
     PISTON_PUSH: 
-      description: |
+      description: |-
           &aPozwól tłokom przepychać
           &abloki poza teren wyspy.
       name: "Przepychanie pistonem"
@@ -460,19 +460,19 @@ protection:
       name: "Płytki naciskowe"
       hint: "Używanie płytek naciskowych wyłączone."
     PVP_END: 
-      description: |
+      description: |-
           &cWłącz / wyłącz pvp
           &cw świecie kresu.
       name: "PVP w kresie"
       hint: "&cPVP jest wyłączone w świecie kresu."
     PVP_NETHER: 
-      description: |
+      description: |-
           &cWłącz / wyłącz pvp
           &cw piekle.
       name: "PVP w piekle"
       hint: "&cPVP jest wyłączone w piekle."
     PVP_OVERWORLD: 
-      description: |
+      description: |-
           &cWłącz / wyłącz pvp
           &cna wyspie.
       name: "PVP na wyspie"
@@ -486,7 +486,7 @@ protection:
       name: "Ujeżdzanie zwierząt"
       hint: "Ujeżdzanie zwierząt jest wyłączone."
     REMOVE_MOBS: 
-      description: |
+      description: |-
         &aUsuwanie potworów
         &apodczas teleportacji na wyspe.
       name: "Usuwanie potworów"
@@ -512,7 +512,7 @@ protection:
   panel:
     PROTECTION:
       title: "Ochrona"
-      description: |
+      description: |-
         Ustawienia ochrony
         dla tej lokalizacji
     SETTING:

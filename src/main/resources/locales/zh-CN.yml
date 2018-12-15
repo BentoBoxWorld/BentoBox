@@ -492,12 +492,12 @@ protection:
       name: "末影箱"
       hint: "本世界禁止末影箱"
     ENDERMAN_DEATH_DROP: 
-      description: |
+      description: |-
          &a末影人被杀害时将掉落
          &a任何他们手持的方块。
       name: "末影人死亡掉落物"
     ENDERMAN_GRIEFING: 
-      description: |
+      description: |-
          &a末影人能够破坏岛上方块
       name: "末影人破坏"
     ENDER_PEARL: 
@@ -523,7 +523,7 @@ protection:
       name: "火焰蔓延"
       hint: "禁止火焰蔓延"
     FISH_SCOOPING: 
-       description: |
+       description: |-
           &a允许打捞热带鱼
        name: "打捞鱼"
        hint: "禁止打捞热带鱼"
@@ -536,7 +536,7 @@ protection:
       name: "栅栏门"
       hint: "禁止使用栅栏门"
     GEO_LIMIT_MOBS: 
-      description: |
+      description: |-
          &e移除走到岛屿保护范围外
          &e的怪物
       name: "限制怪物到岛上"
