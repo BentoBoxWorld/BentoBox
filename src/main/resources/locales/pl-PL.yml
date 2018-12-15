@@ -316,14 +316,14 @@ protection:
       hint: "Używanie teleportacji wyłączone."
     COLLECT_LAVA: 
       description: |-
-          Przełącz zbieranie lawy
-          (nadpisuje wiaderka)
+          &aPrzełącz zbieranie lawy
+          &a(nadpisuje wiaderka)
       name: "Zbieranie lawy"
       hint: "Zbieranie lawy wyłączone."
     COLLECT_WATER: 
       description: |-
-          Przełącz zbieranie wody
-          (nadpisuje wiaderka)
+          &aPrzełącz zbieranie wody
+          &a(nadpisuje wiaderka)
       name: "Zbieranie wody"
       hint: "Zbieranie wody wyłączone."
     CRAFTING: 
@@ -513,8 +513,8 @@ protection:
     PROTECTION:
       title: "Ochrona"
       description: |-
-        Ustawienia ochrony
-        dla tej lokalizacji
+        &aUstawienia ochrony
+        &adla tej lokalizacji
     SETTING:
       title: "Ustawienia"
       description: "Ustawienia główne"

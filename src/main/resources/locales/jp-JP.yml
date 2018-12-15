@@ -402,9 +402,9 @@ protection:
       hint: "テレポートなし"
     CLEAN_SUPER_FLAT:
       description: |-
-          世界の
-          スーパーフラット
-          クリーン
+          &a世界の
+          &aスーパーフラット
+          &aクリーン
       name: "クリーンなスーパーフラット"
     COLLECT_LAVA:
       description: "溶岩を収集トグル"
@@ -496,9 +496,9 @@ protection:
       hint: "門使用なし"
     GEO_LIMIT_MOBS:
       description: |-
-         保護された領域を
-         終了するモンスターを
-         削除
+         &a保護された領域を
+         &a終了するモンスターを
+         &a削除
       name: "生き物を島に限る"
     HURT_ANIMALS:
       description: "トグルを傷つける"
@@ -514,8 +514,8 @@ protection:
       hint: "村人を傷つけない"
     ITEM_FRAME_DAMAGE:
       description: |-
-          モンスターは項目フレームを
-          傷つけることができる
+          &aモンスターは項目フレームを
+          &a傷つけることができる
       name: "アイテムフレームの損傷"
     INVINCIBLE_VISITORS:
       description: "無敵の訪問者の設定"
@@ -563,15 +563,15 @@ protection:
       hint: "音符ブロックを使用しない"
     OFFLINE_REDSTONE:
       description: |-
-          レッドストーンは
-          チームメンバーが
-          オフラインのと
-          きは動作しません
+          &aレッドストーンは
+          &aチームメンバーが
+          &aオフラインのと
+          &aきは動作しません
       name: "オフラインレッドストーン"
     PISTON_PUSH:
       description: |-
-          ピストンが島の外に
-          ブロックをプッシュできるようにする
+          &aピストンが島の外に
+          &aブロックをプッシュできるようにする
       name: "ピストンプッシュ"
     PLACE_BLOCKS:
       description: "トグル配置"
@@ -608,8 +608,8 @@ protection:
       hint: "動物の乗馬は許可されない"
     REMOVE_MOBS:
       description: |-
-        島にテレポートと
-        きにモンスターを削除する
+        &a島にテレポートと
+        &aきにモンスターを削除する
       name: "モンスターを削除"
     SHEARING:
       description: "トグルせん断"
