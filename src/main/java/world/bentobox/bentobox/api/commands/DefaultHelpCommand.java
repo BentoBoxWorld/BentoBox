@@ -94,7 +94,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         if (user.isPlayer()) {
             // Player. Check perms
             if (user.isOp() || user.hasPermission(parent.getPermission())) {
-                if (params.isEmpty()) {
+                if (params == null || params.isEmpty()) {
                     user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
                 } else {
                     user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
@@ -105,7 +105,7 @@ public class DefaultHelpCommand extends CompositeCommand {
             }
         } else if (!parent.isOnlyPlayer()) {
             // Console. Only show if it is a console command
-            if (params.isEmpty()) {
+            if (params == null || params.isEmpty()) {
                 user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
             } else {
                 user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);

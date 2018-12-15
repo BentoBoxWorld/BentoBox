@@ -140,11 +140,9 @@ public class DefaultHelpCommandTest {
         Mockito.verify(user).getTranslationOrNothing("parameters");
         Mockito.verify(user).getTranslation("description");
         Mockito.verify(user).sendMessage(
-                "commands.help.syntax",
+                "commands.help.syntax-no-parameters",
                 "[usage]",
                 "island",
-                "[parameters]",
-                "",
                 "[description]",
                 "the main island command"
                 );
@@ -169,11 +167,9 @@ public class DefaultHelpCommandTest {
         Mockito.verify(user).getTranslationOrNothing("parameters");
         Mockito.verify(user).getTranslation("description");
         Mockito.verify(user).sendMessage(
-                "commands.help.syntax",
+                "commands.help.syntax-no-parameters",
                 "[usage]",
                 "island",
-                "[parameters]",
-                "",
                 "[description]",
                 "the main island command"
                 );
