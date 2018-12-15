@@ -454,15 +454,15 @@ protection:
       hint: "エンダーチェストは、この世界で無効になっている"
     ENDERMAN_DEATH_DROP:
       description: |
-         エンダーマンは
-         彼らが殺されたら
-         保持している任意の
-         ブロックをドロップします
+         &aエンダーマンは
+         &a彼らが殺されたら
+         &a保持している任意の
+         &aブロックをドロップします
       name: "エンダーマン・デス・ドロップ"
     ENDERMAN_GRIEFING:
       description: |
-         エンダーマンはブロックを
-         削除することができます
+         &aエンダーマンはブロックを
+         &a削除することができます
       name: "エンダーマン苦情"
     ENDER_PEARL:
       description: "トグル使用"

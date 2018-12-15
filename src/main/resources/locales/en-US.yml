@@ -512,14 +512,14 @@ protection:
       hint: "Ender chests are disabled in this world"
     ENDERMAN_DEATH_DROP: 
       description: |
-         Endermen will drop
-         any block they are
-         holding if killed.
+         &aEndermen will drop
+         &aany block they are
+         &aholding if killed.
       name: "Enderman Death Drop"
     ENDERMAN_GRIEFING: 
       description: |
-         Endermen can remove
-         blocks from islands
+         &aEndermen can remove
+         &ablocks from islands
       name: "Enderman griefing"
     ENDER_PEARL: 
       description: "Toggle use"

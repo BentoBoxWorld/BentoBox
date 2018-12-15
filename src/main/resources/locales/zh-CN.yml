@@ -493,12 +493,12 @@ protection:
       hint: "本世界禁止末影箱"
     ENDERMAN_DEATH_DROP: 
       description: |
-         末影人被杀害时将掉落
-         任何他们手持的方块。
+         &a末影人被杀害时将掉落
+         &a任何他们手持的方块。
       name: "末影人死亡掉落物"
     ENDERMAN_GRIEFING: 
       description: |
-         末影人能够破坏岛上方块
+         &a末影人能够破坏岛上方块
       name: "末影人破坏"
     ENDER_PEARL: 
       description: "切换使用"
