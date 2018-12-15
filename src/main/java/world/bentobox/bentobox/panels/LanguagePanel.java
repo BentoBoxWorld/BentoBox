@@ -2,6 +2,7 @@ package world.bentobox.bentobox.panels;
 
 import java.util.Locale;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -35,7 +36,7 @@ public class LanguagePanel {
                 localeIcon.icon(new ItemStack(Material.WHITE_BANNER, 1)); // Set to a blank banner.
             }
 
-            localeIcon.name(fancyLocaleDisplayName(user, locale))
+            localeIcon.name(ChatColor.WHITE + fancyLocaleDisplayName(user, locale))
                     .clickHandler((panel, u, click, slot) -> {
                         BentoBox.getInstance().getPlayers().setLocale(u.getUniqueId(), locale.toLanguageTag());
                         u.sendMessage("language.edited", "[lang]", fancyLocaleDisplayName(u, locale));
