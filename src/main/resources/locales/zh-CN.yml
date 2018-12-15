@@ -454,7 +454,7 @@ protection:
       name: "收集水"
       hint: "禁止收集水"
     COMMAND_RANKS:
-      name: "命令等级"
+      name: "&e命令等级"
       description: "&a配置命令等级"
     CRAFTING: 
       description: "切换使用"
@@ -537,9 +537,9 @@ protection:
       hint: "禁止使用栅栏门"
     GEO_LIMIT_MOBS: 
       description: |-
-         &e移除走到岛屿保护范围外
-         &e的怪物
-      name: "限制怪物到岛上"
+         &a移除走到岛屿保护范围外
+         &a的怪物
+      name: "&e限制怪物到岛上"
     HURT_ANIMALS: 
       description: "切换伤害"
       name: "伤害动物"
@@ -559,7 +559,7 @@ protection:
     INVINCIBLE_VISITORS: 
       description: |-
           &a配置无敌的访客设置。
-      name: "无敌的访客"
+      name: "&e无敌的访客"
       hint: "&c访客已被保护"
     ISLAND_RESPAWN:
       description: |-

@@ -415,7 +415,7 @@ protection:
       name: "水を集める"
       hint: "水のコレクションは許可されない"
     COMMAND_RANKS:
-      name: "コマンドランク"
+      name: "&eコマンドランク"
       description: "コマンドランクの設定"
     CRAFTING:
       description: "トグル使用"
@@ -499,7 +499,7 @@ protection:
          &a保護された領域を
          &a終了するモンスターを
          &a削除
-      name: "生き物を島に限る"
+      name: "&e生き物を島に限る"
     HURT_ANIMALS:
       description: "トグルを傷つける"
       name: "動物を傷つける"
@@ -519,7 +519,7 @@ protection:
       name: "アイテムフレームの損傷"
     INVINCIBLE_VISITORS:
       description: "無敵の訪問者の設定"
-      name: "無敵の訪問者"
+      name: "&e無敵の訪問者"
       hint: "訪問者保護"
     ISLAND_RESPAWN:
       description: "選手の島で再起動"

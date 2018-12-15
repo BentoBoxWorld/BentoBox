@@ -400,7 +400,7 @@ protection:
       description: |-
           &aUstawienia nieśmiertelnych
           &agości na wyspie.
-      name: "Nieśmiertelni goście"
+      name: "&eNieśmiertelni goście"
       hint: "&cGoście są chronieni przez obrażeniami."
     ISLAND_RESPAWN:
       description: |-

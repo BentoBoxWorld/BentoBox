@@ -473,7 +473,7 @@ protection:
       name: "Collect water"
       hint: "No water collection"
     COMMAND_RANKS:
-      name: "Command Ranks"
+      name: "&eCommand Ranks"
       description: "&aConfigure command ranks"
     CRAFTING: 
       description: "Toggle use"
@@ -559,10 +559,10 @@ protection:
       hint: "No gate use"
     GEO_LIMIT_MOBS: 
       description: |-
-         &eRemove mobs that go
-         &eoutside protected
-         &eisland space
-      name: "Limit mobs to island"
+         &aRemove mobs that go
+         &aoutside protected
+         &aisland space
+      name: "&eLimit mobs to island"
     HURT_ANIMALS: 
       description: "Toggle hurting"
       name: "Hurt animals"
@@ -584,7 +584,7 @@ protection:
       description: |-
           &aConfigure invincible visitor
           &asettings.
-      name: "Invincible Visitors"
+      name: "&eInvincible Visitors"
       hint: "&cVisitors protected"
     ISLAND_RESPAWN:
       description: |-
