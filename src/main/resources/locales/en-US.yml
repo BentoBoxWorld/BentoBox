@@ -650,9 +650,13 @@ protection:
       description: "Toggle placing"
       name: "Place blocks"
       hint: "Not allowed to place blocks"
-    PORTAL: 
+    NETHER_PORTAL:
       description: "Toggle use"
-      name: "Portal"
+      name: "Nether Portal"
+      hint: "Portal use is disallowed"
+    END_PORTAL:
+      description: "Toggle use"
+      name: "End Portal"
       hint: "Portal use is disallowed"
     PRESSURE_PLATE: 
       description: "Toggle usage"

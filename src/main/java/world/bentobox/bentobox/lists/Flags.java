@@ -101,7 +101,8 @@ public class Flags {
     public static final Flag LEASH = new FlagBuilder().id("LEASH").icon(Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
-    public static final Flag PORTAL = new FlagBuilder().id("PORTAL").icon(Material.OBSIDIAN).listener(new PortalListener()).build();
+    public static final Flag NETHER_PORTAL = new FlagBuilder().id("NETHER_PORTAL").icon(Material.OBSIDIAN).listener(new PortalListener()).build();
+    public static final Flag END_PORTAL = new FlagBuilder().id("END_PORTAL").icon(Material.END_PORTAL_FRAME).listener(new PortalListener()).build();
 
     // Shearing
     public static final Flag SHEARING = new FlagBuilder().id("SHEARING").icon(Material.SHEARS).listener(new ShearingListener()).build();
