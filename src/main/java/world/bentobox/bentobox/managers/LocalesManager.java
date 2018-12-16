@@ -145,6 +145,11 @@ public class LocalesManager {
         }
     }
 
+    /**
+     * Gets a list of all the locales loaded
+     * @param sort - if true, the locales will be sorted by language tag
+     * @return list of locales
+     */
     public List<Locale> getAvailableLocales(boolean sort) {
         if (sort) {
             List<Locale> locales = new LinkedList<>(languages.keySet());
@@ -162,6 +167,9 @@ public class LocalesManager {
         }
     }
 
+    /**
+     * @return raw map of system locales to BentoBox locales
+     */
     public Map<Locale, BentoBoxLocale> getLanguages() {
         return this.languages;
     }
@@ -171,8 +179,8 @@ public class LocalesManager {
      */
     public void reloadLanguages() {
         languages.clear();
-        copyLocalesFromJar(plugin.getName());
-        loadLocalesFromFile(plugin.getName());
+        copyLocalesFromJar(BENTOBOX);
+        loadLocalesFromFile(BENTOBOX);
         plugin.getAddonsManager().getAddons().forEach(addon -> loadLocalesFromFile(addon.getDescription().getName()));
     }
 }

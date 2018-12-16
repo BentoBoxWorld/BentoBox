@@ -51,18 +51,22 @@ public class FileLister{
     public List<String> listJar(String folderPath) throws IOException {
         List<String> result = new ArrayList<>();
         // Look in the JAR
-        File jarfile;
+        File jarFile;
 
         try {
             Method method = JavaPlugin.class.getDeclaredMethod("getFile");
             method.setAccessible(true);
 
-            jarfile = (File) method.invoke(plugin);
+            jarFile = (File) method.invoke(plugin);
         } catch (Exception e) {
             throw new IOException(e);
         }
 
-        JarFile jar = new JarFile(jarfile);
+        if (jarFile == null) {
+            return result;
+        }
+
+        JarFile jar = new JarFile(jarFile);
 
         Enumeration<JarEntry> entries = jar.entries();
         while (entries.hasMoreElements()) {
