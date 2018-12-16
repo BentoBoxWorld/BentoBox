@@ -64,7 +64,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandsManagerTest {
 
-    private static BentoBox plugin;
+    private BentoBox plugin;
     private UUID uuid;
     private User user;
     private PlayersManager pm;

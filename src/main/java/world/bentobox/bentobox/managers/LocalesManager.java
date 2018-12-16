@@ -27,11 +27,12 @@ public class LocalesManager {
     private BentoBox plugin;
     private Map<Locale, BentoBoxLocale> languages = new HashMap<>();
     private static final String LOCALE_FOLDER = "locales";
+    private static final String BENTOBOX = "BentoBox";
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
-        copyLocalesFromJar(plugin.getName());
-        loadLocalesFromFile(plugin.getName()); // Default
+        copyLocalesFromJar(BENTOBOX);
+        loadLocalesFromFile(BENTOBOX); // Default
     }
 
     /**
@@ -95,10 +96,10 @@ public class LocalesManager {
             }
         }
     }
-    
+
     /**
      * Loads all the locales available in the locale folder given. Used for loading all locales from plugin and addons
-     * 
+     *
      * @param localeFolder - locale folder location relative to the plugin's data folder
      */
     public void loadLocalesFromFile(String localeFolder) {
@@ -164,12 +165,13 @@ public class LocalesManager {
     public Map<Locale, BentoBoxLocale> getLanguages() {
         return this.languages;
     }
-    
+
     /**
      * Reloads all the language files from the filesystem
      */
     public void reloadLanguages() {
         languages.clear();
+        copyLocalesFromJar(plugin.getName());
         loadLocalesFromFile(plugin.getName());
         plugin.getAddonsManager().getAddons().forEach(addon -> loadLocalesFromFile(addon.getDescription().getName()));
     }
