@@ -626,6 +626,10 @@ protection:
         &ato mount inventory
       name: "Mount inventory"
       hint: "No access to mount inventory"
+    NAME_TAG:
+      name: "Name tags"
+      description: "Toggle use"
+      hint: "No name tags use"
     NOTE_BLOCK: 
       description: "Toggle use"
       name: "Note block"
