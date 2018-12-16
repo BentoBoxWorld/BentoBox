@@ -52,6 +52,7 @@ public class Flags {
     public static final Flag ARMOR_STAND = new FlagBuilder().id("ARMOR_STAND").icon(Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
     public static final Flag RIDING = new FlagBuilder().id("RIDING").icon(Material.GOLDEN_HORSE_ARMOR).build();
     public static final Flag TRADING = new FlagBuilder().id("TRADING").allowedByDefault(true).icon(Material.EMERALD).build();
+    public static final Flag NAME_TAG = new FlagBuilder().id("NAME_TAG").icon(Material.NAME_TAG).build();
 
     // Breeding
     public static final Flag BREEDING = new FlagBuilder().id("BREEDING").icon(Material.CARROT).listener(new BreedingListener()).build();
