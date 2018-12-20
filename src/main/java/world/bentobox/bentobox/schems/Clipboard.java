@@ -18,6 +18,7 @@ import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -221,6 +222,19 @@ public class Clipboard {
             island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
             return;
         }
+        // Handle locale text for starting sign
+        // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
+        if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
+            // Get the addon that is operating in this world
+            plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
+                lines.clear();
+                for (int i = 0; i < 4; i++) {
+                    lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()), 
+                            addon.getDescription().getName().toLowerCase() + ".sign.line" + i,"")));
+                }
+            });
+        }
+        // Get the name of the player
         String name = TextVariables.NAME;
         if (island != null) {
             name = plugin.getPlayers().getName(island.getOwner());
@@ -229,6 +243,7 @@ public class Clipboard {
         for (int i = 0 ; i < lines.size(); i++) {
             sign.setLine(i, lines.get(i).replace(TextVariables.NAME, name));
         }
+        // Update the sign
         sign.update();
     }
 

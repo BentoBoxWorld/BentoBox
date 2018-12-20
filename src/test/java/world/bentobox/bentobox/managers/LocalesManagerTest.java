@@ -123,6 +123,28 @@ public class LocalesManagerTest {
         LocalesManager lm = new LocalesManager(plugin);
         assertNull(lm.get("test.test.test"));
     }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testGetOrDefaultStringString() throws IOException {
+        makeFakeLocaleFile();
+        LocalesManager lm = new LocalesManager(plugin);
+        assertEquals("test string", lm.getOrDefault("test.test", ""));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testGetOrDefaultStringStringFail() throws IOException {
+        makeFakeLocaleFile();
+        LocalesManager lm = new LocalesManager(plugin);
+        assertEquals("", lm.getOrDefault("test.test.test",""));
+    }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#get(world.bentobox.bentobox.api.user.User, java.lang.String)}.
@@ -147,6 +169,19 @@ public class LocalesManagerTest {
         User user = mock(User.class);
         when(user.getLocale()).thenReturn(Locale.US);
         assertEquals("test string", lm.get(user, "test.test"));
+    }
+    
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testGetOrDefaultUserStringString() throws IOException {
+        makeFakeLocaleFile();
+        LocalesManager lm = new LocalesManager(plugin);
+        User user = mock(User.class);
+        when(user.getLocale()).thenReturn(Locale.US);
+        assertEquals("test string", lm.getOrDefault(user, "test.test", ""));
     }
 
     /**
@@ -173,6 +208,19 @@ public class LocalesManagerTest {
         User user = mock(User.class);
         when(user.getLocale()).thenReturn(Locale.US);
         assertNull(lm.get(user, "test.test.test"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
+     * @throws IOException
+     */
+    @Test
+    public void testGetOrDefaultUserStringStringFail() throws IOException {
+        makeFakeLocaleFile();
+        LocalesManager lm = new LocalesManager(plugin);
+        User user = mock(User.class);
+        when(user.getLocale()).thenReturn(Locale.US);
+        assertEquals("", lm.getOrDefault(user, "test.test.test", ""));
     }
 
 

@@ -52,6 +52,25 @@ public class LocalesManager {
         // No translation could be gotten from the player's locale, trying more generic solutions
         return get(reference);
     }
+    
+    /**
+     * Gets the translated String corresponding to the reference from the locale file for this user.
+     * @param user the User
+     * @param reference a reference that can be found in a locale file
+     * @param default to return if the reference cannot be found anywhere
+     * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
+     */
+    public String getOrDefault(User user, String reference, String defaultText) {
+        // Make sure the user is not null
+        if (user != null) {
+            BentoBoxLocale locale = languages.get(user.getLocale());
+            if (locale != null && locale.contains(reference)) {
+                return locale.get(reference);
+            }
+        }
+        // No translation could be gotten from the player's locale, trying more generic solutions
+        return getOrDefault(reference, defaultText);
+    }
 
     /**
      * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
@@ -68,6 +87,18 @@ public class LocalesManager {
             return languages.get(Locale.forLanguageTag("en-US")).get(reference);
         }
         return null;
+    }
+    
+    /**
+     * Gets the translated String corresponding to the reference from the server's or the en-US locale file
+     * or if it cannot be found anywhere, use the default text supplied.
+     * @param reference a reference that can be found in a locale file
+     * @param default text to return if the reference cannot be found anywhere
+     * @return the translated String from the server's locale or from the en-US locale, or default.
+     */
+    public String getOrDefault(String reference, String defaultText) {
+        String result = get(reference);
+        return result == null ? defaultText : result;
     }
 
     /**
@@ -183,4 +214,6 @@ public class LocalesManager {
         loadLocalesFromFile(BENTOBOX);
         plugin.getAddonsManager().getAddons().forEach(addon -> loadLocalesFromFile(addon.getDescription().getName()));
     }
+
+
 }

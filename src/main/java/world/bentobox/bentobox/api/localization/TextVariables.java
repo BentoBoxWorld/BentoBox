@@ -16,4 +16,5 @@ public class TextVariables {
     public static final String PERMISSION = "[permission]";
     public static final String SPAWN_HERE = "[spawn_here]";
     public static final String VERSION = "[version]";
+    public static final String START_TEXT = "[start]";
 }
