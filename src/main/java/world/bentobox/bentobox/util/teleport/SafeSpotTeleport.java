@@ -156,7 +156,7 @@ public class SafeSpotTeleport {
         do {
             for (int i = x - radius; i <= x + radius; i+=16) {
                 for (int j = z - radius; j <= z + radius; j+=16) {
-                    addChunk(result, island, new Pair<>(i,j), new Pair<>(i/16, j/16));
+                    addChunk(result, island, new Pair<>(i,j), new Pair<>(i >> 4, j >> 4));
                 }
             }
             radius++;
@@ -301,7 +301,7 @@ public class SafeSpotTeleport {
     }
 
     private boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
-        Vector newSpot = new Vector(chunk.getX() * 16 + x + 0.5D, y + 1, chunk.getZ() * 16 + z + 0.5D);
+        Vector newSpot = new Vector((chunk.getX() << 4) + x + 0.5D, y + 1, (chunk.getZ() << 4) + z + 0.5D);
         if (portal) {
             if (bestSpot == null) {
                 // Stash the best spot
