@@ -9,14 +9,14 @@
 	<version>0.18.0-SNAPSHOT</version>
 
 	<name>BentoBox</name>
-	<description>BentoBox is an expandable Minecraft Spigot plugin for island-type games like ASkyBlock or AcidIsland.</description>
-	<url>https://github.com/BentoBoxWorld/bentobox</url>
-	<inceptionYear>2018</inceptionYear>
+	<description>Expandable Minecraft Spigot plugin for island-type games like SkyBlock or AcidIsland.</description>
+	<url>https://github.com/BentoBoxWorld/BentoBox</url>
+	<inceptionYear>2017</inceptionYear>
 
 	<scm>
 		<connection>scm:git:https://github.com/BentoBoxWorld/bentobox.git</connection>
 		<developerConnection>scm:git:git@github.com:BentoBoxWorld/bentobox.git</developerConnection>
-		<url>https://github.com/BentoBoxWorld/bentobox</url>
+		<url>https://github.com/BentoBoxWorld/BentoBox</url>
 	</scm>
 
 	<ciManagement>
@@ -26,7 +26,7 @@
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/BentoBoxWorld/bentobox/issues</url>
+		<url>https://github.com/BentoBoxWorld/BentoBox/issues</url>
 	</issueManagement>
 
 	<distributionManagement>
