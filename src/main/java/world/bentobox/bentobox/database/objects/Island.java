@@ -590,20 +590,6 @@ public class Island implements DataObject {
     }
 
     /**
-     * Show info on the island
-     * @param plugin - plugin
-     * @param user - the user who is receiving the info
-     * @param world - world to check
-     * @return true always
-     *
-     * @deprecated Renamed to {@link #showInfo(User)}.
-     */
-    @Deprecated
-    public boolean showInfo(BentoBox plugin, User user, World world) {
-        return showInfo(user);
-    }
-
-    /**
      * Shows info of this island to this user.
      * @param user the User who is requesting it
      * @return always true
@@ -646,19 +632,6 @@ public class Island implements DataObject {
             banned.forEach(u -> user.sendMessage("commands.admin.info.banned-format", TextVariables.NAME, plugin.getPlayers().getName(u)));
         }
         return true;
-    }
-
-    /**
-     * Shows the members of this island
-     * @param plugin - plugin
-     * @param user - user who is requesting
-     * @param world - world to check
-     *
-     * @deprecated Renamed to {@link #showMembers(User)}.
-     */
-    @Deprecated
-    public void showMembers(BentoBox plugin, User user, World world) {
-        showMembers(user);
     }
 
     /**
