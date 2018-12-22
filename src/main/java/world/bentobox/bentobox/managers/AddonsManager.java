@@ -45,6 +45,8 @@ public class AddonsManager {
         loaders = new HashMap<>();
     }
 
+    //TODO: add addon reload
+
     /**
      * Loads all the addons from the addons folder
      */
@@ -57,36 +59,41 @@ public class AddonsManager {
         }
         Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         plugin.log("Loaded " + addons.size() + " addons.");
-        sortAddons();
+
+        if (!addons.isEmpty()) {
+            sortAddons();
+        }
     }
 
     /**
      * Enables all the addons
      */
     public void enableAddons() {
-        plugin.log("Enabling addons...");
-        addons.forEach(addon -> {
-            try {
-                addon.onEnable();
-                Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
-                addon.setState(Addon.State.ENABLED);
-                plugin.log("Enabling " + addon.getDescription().getName() + "...");
-            } catch (NoClassDefFoundError | NoSuchMethodError e) {
-                // Looks like the addon is outdated, because it tries to refer to missing classes.
-                // Set the AddonState as "INCOMPATIBLE".
-                addon.setState(Addon.State.INCOMPATIBLE);
-                plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
-                plugin.log("NOTE: The addon is referring to no longer existing classes.");
-                plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
-            } catch (Exception e) {
-                // Unhandled exception. We'll give a bit of debug here.
-                // Set the AddonState as "ERROR".
-                addon.setState(Addon.State.ERROR);
-                plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
-                plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
-            }
-        });
-        plugin.log("Addons successfully enabled.");
+        if (!addons.isEmpty()) {
+            plugin.log("Enabling addons...");
+            addons.forEach(addon -> {
+                try {
+                    addon.onEnable();
+                    Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
+                    addon.setState(Addon.State.ENABLED);
+                    plugin.log("Enabling " + addon.getDescription().getName() + "...");
+                } catch (NoClassDefFoundError | NoSuchMethodError e) {
+                    // Looks like the addon is outdated, because it tries to refer to missing classes.
+                    // Set the AddonState as "INCOMPATIBLE".
+                    addon.setState(Addon.State.INCOMPATIBLE);
+                    plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
+                    plugin.log("NOTE: The addon is referring to no longer existing classes.");
+                    plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+                } catch (Exception e) {
+                    // Unhandled exception. We'll give a bit of debug here.
+                    // Set the AddonState as "ERROR".
+                    addon.setState(Addon.State.ERROR);
+                    plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
+                    plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
+                }
+            });
+            plugin.log("Addons successfully enabled.");
+        }
     }
 
     /**
@@ -149,24 +156,26 @@ public class AddonsManager {
      * Disable all the enabled addons
      */
     public void disableAddons() {
-        plugin.log("Disabling addons...");
-        // Unload addons
-        addons.forEach(addon -> {
-            if (addon.isEnabled()) {
-                addon.onDisable();
-                Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-                plugin.log("Disabling " + addon.getDescription().getName() + "...");
-            }
-        });
+        if (!addons.isEmpty()) {
+            plugin.log("Disabling addons...");
+            // Disable addons
+            addons.forEach(addon -> {
+                if (addon.isEnabled()) {
+                    addon.onDisable();
+                    Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
+                    plugin.log("Disabling " + addon.getDescription().getName() + "...");
+                }
+            });
 
-        loaders.values().forEach(l -> {
-            try {
-                l.close();
-            } catch (IOException ignore) {
-                // Ignore
-            }
-        });
-        plugin.log("Addons successfully disabled.");
+            loaders.values().forEach(l -> {
+                try {
+                    l.close();
+                } catch (IOException ignore) {
+                    // Ignore
+                }
+            });
+            plugin.log("Addons successfully disabled.");
+        }
     }
 
     public List<Addon> getAddons() {
