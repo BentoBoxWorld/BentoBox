@@ -320,7 +320,7 @@ public class Flag implements Comparable<Flag> {
             return this;
         }
 
-        private Builder usePanel(boolean usePanel) {
+        public Builder usePanel(boolean usePanel) {
             this.usePanel = usePanel;
             return this;
         }
