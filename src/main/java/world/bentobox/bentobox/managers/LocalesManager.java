@@ -27,11 +27,12 @@ public class LocalesManager {
     private BentoBox plugin;
     private Map<Locale, BentoBoxLocale> languages = new HashMap<>();
     private static final String LOCALE_FOLDER = "locales";
+    private static final String BENTOBOX = "BentoBox";
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
-        copyLocalesFromJar(plugin.getName());
-        loadLocalesFromFile(plugin.getName()); // Default
+        copyLocalesFromJar(BENTOBOX);
+        loadLocalesFromFile(BENTOBOX); // Default
     }
 
     /**
@@ -51,6 +52,25 @@ public class LocalesManager {
         // No translation could be gotten from the player's locale, trying more generic solutions
         return get(reference);
     }
+    
+    /**
+     * Gets the translated String corresponding to the reference from the locale file for this user.
+     * @param user the User
+     * @param reference a reference that can be found in a locale file
+     * @param default to return if the reference cannot be found anywhere
+     * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
+     */
+    public String getOrDefault(User user, String reference, String defaultText) {
+        // Make sure the user is not null
+        if (user != null) {
+            BentoBoxLocale locale = languages.get(user.getLocale());
+            if (locale != null && locale.contains(reference)) {
+                return locale.get(reference);
+            }
+        }
+        // No translation could be gotten from the player's locale, trying more generic solutions
+        return getOrDefault(reference, defaultText);
+    }
 
     /**
      * Gets the translated String corresponding to the reference from the server's or the en-US locale file.
@@ -67,6 +87,18 @@ public class LocalesManager {
             return languages.get(Locale.forLanguageTag("en-US")).get(reference);
         }
         return null;
+    }
+    
+    /**
+     * Gets the translated String corresponding to the reference from the server's or the en-US locale file
+     * or if it cannot be found anywhere, use the default text supplied.
+     * @param reference a reference that can be found in a locale file
+     * @param default text to return if the reference cannot be found anywhere
+     * @return the translated String from the server's locale or from the en-US locale, or default.
+     */
+    public String getOrDefault(String reference, String defaultText) {
+        String result = get(reference);
+        return result == null ? defaultText : result;
     }
 
     /**
@@ -95,10 +127,10 @@ public class LocalesManager {
             }
         }
     }
-    
+
     /**
      * Loads all the locales available in the locale folder given. Used for loading all locales from plugin and addons
-     * 
+     *
      * @param localeFolder - locale folder location relative to the plugin's data folder
      */
     public void loadLocalesFromFile(String localeFolder) {
@@ -144,6 +176,11 @@ public class LocalesManager {
         }
     }
 
+    /**
+     * Gets a list of all the locales loaded
+     * @param sort - if true, the locales will be sorted by language tag
+     * @return list of locales
+     */
     public List<Locale> getAvailableLocales(boolean sort) {
         if (sort) {
             List<Locale> locales = new LinkedList<>(languages.keySet());
@@ -161,16 +198,22 @@ public class LocalesManager {
         }
     }
 
+    /**
+     * @return raw map of system locales to BentoBox locales
+     */
     public Map<Locale, BentoBoxLocale> getLanguages() {
         return this.languages;
     }
-    
+
     /**
      * Reloads all the language files from the filesystem
      */
     public void reloadLanguages() {
         languages.clear();
-        loadLocalesFromFile(plugin.getName());
+        copyLocalesFromJar(BENTOBOX);
+        loadLocalesFromFile(BENTOBOX);
         plugin.getAddonsManager().getAddons().forEach(addon -> loadLocalesFromFile(addon.getDescription().getName()));
     }
+
+
 }

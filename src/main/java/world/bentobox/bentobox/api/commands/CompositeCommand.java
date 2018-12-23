@@ -381,21 +381,9 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Convenience method to obtain the user's team leader
-     * @param world - world to check
-     * @param user - the User
-     * @return UUID of player's team leader or null if user has no island
-     * @deprecated Renamed to {@link #getOwner(World, User)} for consistency.
-     */
-    @Deprecated
-    protected UUID getTeamLeader(World world, User user) {
-        return getOwner(world, user);
-    }
-
-    /**
      * Convenience method to obtain the user's island owner
      * @param world world to check
-     * @param user -the User
+     * @param user the User
      * @return UUID of player's island owner or null if user has no island
      */
     protected UUID getOwner(World world, User user) {

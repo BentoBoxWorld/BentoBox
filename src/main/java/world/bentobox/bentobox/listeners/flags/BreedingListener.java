@@ -30,20 +30,19 @@ public class BreedingListener extends FlagListener {
             Material.EGG,
             Material.WHEAT,
             Material.CARROT,
-            Material.WHEAT_SEEDS);
+            Material.WHEAT_SEEDS,
+            Material.SEAGRASS);
 
-
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
+    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled=true)
     public void onPlayerInteract(final PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked() instanceof Animals) {
             ItemStack inHand = e.getPlayer().getInventory().getItemInMainHand();
             if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
                 inHand = e.getPlayer().getInventory().getItemInOffHand();
             }
-            if (inHand != null && BREEDING_ITEMS.contains(inHand.getType())) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flags.BREEDING);
+            if (inHand != null && BREEDING_ITEMS.contains(inHand.getType()) && !checkIsland(e, e.getRightClicked().getLocation(), Flags.BREEDING)) {
+                ((Animals)e.getRightClicked()).setBreed(false);
             }
         }
     }
-
 }

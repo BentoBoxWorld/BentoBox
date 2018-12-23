@@ -6,27 +6,27 @@
 
 	<groupId>world.bentobox</groupId>
 	<artifactId>bentobox</artifactId>
-	<version>0.15.0-SNAPSHOT</version>
+	<version>0.19.0-SNAPSHOT</version>
 
 	<name>BentoBox</name>
-	<description>BentoBox is an expandable Minecraft Spigot plugin for island-type games like ASkyBlock or AcidIsland.</description>
-	<url>https://github.com/BentoBoxWorld/bentobox</url>
-	<inceptionYear>2018</inceptionYear>
+	<description>Expandable Minecraft Spigot plugin for island-type games like SkyBlock or AcidIsland.</description>
+	<url>https://github.com/BentoBoxWorld/BentoBox</url>
+	<inceptionYear>2017</inceptionYear>
 
 	<scm>
-		<connection>scm:git:https://github.com/BentoBoxWorld/bentobox.git</connection>
-		<developerConnection>scm:git:git@github.com:BentoBoxWorld/bentobox.git</developerConnection>
-		<url>https://github.com/BentoBoxWorld/bentobox</url>
+		<connection>scm:git:https://github.com/BentoBoxWorld/BentoBox.git</connection>
+		<developerConnection>scm:git:git@github.com:BentoBoxWorld/BentoBox.git</developerConnection>
+		<url>https://github.com/BentoBoxWorld/BentoBox</url>
 	</scm>
 
 	<ciManagement>
 		<system>jenkins</system>
-		<url>http://ci.codemc.org/job/BentoBoxWorld/job/bentobox</url>
+		<url>http://ci.codemc.org/job/BentoBoxWorld/job/BentoBox</url>
 	</ciManagement>
 
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/BentoBoxWorld/bentobox/issues</url>
+		<url>https://github.com/BentoBoxWorld/BentoBox/issues</url>
 	</issueManagement>
 
 	<distributionManagement>
@@ -53,15 +53,15 @@
 			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots</url>
 		</repository>
 		<repository>
-			<id>bstats-repo</id>
-			<url>http://repo.bstats.org/content/repositories/releases/</url>
+			<id>codemc-repo</id>
+			<url>https://repo.codemc.org/repository/maven-public</url>
 		</repository>
 		<repository>
 			<id>vault-repo</id>
 			<url>http://nexus.hc.to/content/repositories/pub_releases</url>
 		</repository>
 		<repository>
-			<id>placeholderapi</id>
+			<id>placeholderapi-repo</id>
 			<url>http://repo.extendedclip.com/content/repositories/placeholderapi/</url>
 		</repository>
 	</repositories>
@@ -78,7 +78,7 @@
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>1.2</version>
+			<version>1.4</version>
 		</dependency>
 		<!-- Mockito (Unit testing) -->
 		<dependency>
@@ -208,10 +208,10 @@
 						</relocation>
 					</relocations>
 					<artifactSet>
-                <excludes>
-                  <exclude>org.mongodb:*</exclude>
-                </excludes>
-              </artifactSet>
+						<excludes>
+							<exclude>org.mongodb:*</exclude>
+						</excludes>
+					</artifactSet>
 				</configuration>
 				<executions>
 					<execution>

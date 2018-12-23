@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.addons;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -15,6 +17,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
@@ -32,14 +35,36 @@ public abstract class Addon {
     private FileConfiguration config;
     private File dataFolder;
     private File file;
+    private Map<String, AddonRequestHandler> requestHandlers = new HashMap<>();
 
     public Addon() {
         state = State.DISABLED;
     }
 
+    /**
+     * Executes code when enabling the addon.
+     * This is called after {@link #onLoad()}.
+     */
     public abstract void onEnable();
+
+    /**
+     * Executes code when disabling the addon.
+     */
     public abstract void onDisable();
+
+    /**
+     * Executes code when loading the addon.
+     * This is called before {@link #onEnable()}.
+     * This should preferably be used to setup configuration and worlds.
+     */
     public void onLoad() {}
+
+    /**
+     * Executes code when reloading the addon.
+     *
+     * @since 0.17.0 (Alpha 12)
+     */
+    public void onReload() {}
 
     public BentoBox getPlugin() {
         return BentoBox.getInstance();
@@ -337,5 +362,29 @@ public abstract class Addon {
      */
     public String getPermissionPrefix() {
         return this.getDescription().getName().toLowerCase() + ".";
+    }
+
+    /**
+     * Register request handler to answer requests from plugins.
+     * @param handler
+     */
+    public void registerRequestHandler(AddonRequestHandler handler) {
+        requestHandlers.put(handler.getLabel(), handler);
+    }
+
+    /**
+     * Send request to addon.
+     * @param label
+     * @param metaData
+     * @return request response, null if no response.
+     */
+    public Object request(String label, Map<String, Object> metaData) {
+        label = label.toLowerCase();
+        AddonRequestHandler handler = requestHandlers.get(label);
+        if(handler != null) {
+            return handler.handle(metaData);
+        } else {
+            return null;
+        }
     }
 }

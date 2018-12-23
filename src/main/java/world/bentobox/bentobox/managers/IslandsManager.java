@@ -163,7 +163,7 @@ public class IslandsManager {
      * @return true if safe, otherwise false
      */
     public boolean isSafeLocation(Location l) {
-        if (l == null) {
+        if (l == null || l.getWorld() == null) {
             return false;
         }
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
@@ -253,8 +253,12 @@ public class IslandsManager {
         }
     }
 
-    public int getIslandCount(){
+    public int getIslandCount() {
         return islandCache.size();
+    }
+
+    public int getIslandCount(World world) {
+        return islandCache.size(world);
     }
 
     /**
@@ -393,7 +397,7 @@ public class IslandsManager {
                 plugin.getPlayers().setHomeLocation(user, l, number);
                 return l;
             } else {
-                // try team leader's home
+                // try owner's home
                 Location tlh = plugin.getPlayers().getHomeLocation(world, plugin.getIslands().getOwner(world, user.getUniqueId()));
                 if (tlh != null && isSafeLocation(tlh)) {
                     plugin.getPlayers().setHomeLocation(user, tlh, number);
@@ -452,19 +456,6 @@ public class IslandsManager {
      */
     public Location getSpawnPoint(World world) {
         return spawn.containsKey(world) ? spawn.get(world).getSpawnPoint(world.getEnvironment()) : null;
-    }
-
-    /**
-     * Provides UUID of this player's island owner or null if it does not exist
-     * @param world - world to check
-     * @param playerUUID - the player's UUID
-     * @return island owner's UUID or null if player has no island
-     *
-     * @deprecated Renamed to {@link #getOwner(World, UUID)} for consistency.
-     */
-    @Deprecated
-    public UUID getTeamLeader(World world, UUID playerUUID) {
-        return getOwner(world, playerUUID);
     }
 
     /**
@@ -771,6 +762,8 @@ public class IslandsManager {
     }
 
     public void shutdown(){
+        // Remove all coop associations
+        islandCache.getIslands().stream().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
         save(false);
         islandCache.clear();
         handler.close();
@@ -787,41 +780,44 @@ public class IslandsManager {
     }
 
     /**
-     * Makes a new leader for an island
-     * @param world - world
-     * @param user - the user who is issuing the command
-     * @param targetUUID - the current island member who is going to become the new owner
+     * Sets this target as the owner for this island
+     * @param world world
+     * @param user the user who is issuing the command
+     * @param targetUUID the current island member who is going to become the new owner
      */
     public void setOwner(World world, User user, UUID targetUUID) {
         setOwner(user, targetUUID, getIsland(world, targetUUID));
     }
 
     /**
-     * Makes a new leader for an island
-     * @param user - requester
-     * @param targetUUID - new owner
-     * @param island - island to register
+     * Sets this target as the owner for this island
+     * @param user requester
+     * @param targetUUID new owner
+     * @param island island to register
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
-
-        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
-
-        // Check if online
-        User target = User.getInstance(targetUUID);
-        target.sendMessage("commands.island.team.setowner.you-are-the-owner");
-        if (target.isOnline()) {
-            // Check if new leader has a different range permission than the island size
-            int range = target.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
-            // Range can go up or down
-            if (range != island.getProtectionRange()) {
-                user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                plugin.log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
-                        + range + " for " + user.getName() + " due to permission.");
+        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));        
+        plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
+            User target = User.getInstance(targetUUID);
+            // Tell target. If they are offline, then they may receive a message when they login
+            target.sendMessage("commands.island.team.setowner.you-are-the-owner");
+            // Permission checks for range changes only work when the target is online
+            if (target.isOnline()) {                
+                // Check if new owner has a different range permission than the island size
+                int range = target.getPermissionValue(
+                        addon.getPermissionPrefix() + "island.range",
+                        plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+                // Range can go up or down
+                if (range != island.getProtectionRange()) {
+                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                    target.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                    plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
+                            + range + " for " + user.getName() + " due to permission.");
+                }
+                island.setProtectionRange(range);
             }
-            island.setProtectionRange(range);
-        }
+        });
     }
 
     /**
@@ -833,6 +829,17 @@ public class IslandsManager {
         .filter(en -> (en instanceof Monster))
         .filter(en -> !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType()))
         .forEach(Entity::remove);
+    }
+
+    /**
+     * Removes a player from any island where they hold the indicated rank.
+     * Typically this is to remove temporary ranks such as coop.
+     * Removal is done in all worlds.
+     * @param rank - rank to clear
+     * @param uniqueId - UUID of player
+     */
+    public void clearRank(int rank, UUID uniqueId) {
+        islandCache.getIslands().stream().forEach(i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
     }
 
 }

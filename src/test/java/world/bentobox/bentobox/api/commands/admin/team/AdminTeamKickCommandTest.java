@@ -153,7 +153,7 @@ public class AdminTeamKickCommandTest {
      * Test method for {@link AdminTeamKickCommand#execute(User, String, List)} .
      */
     @Test
-    public void testExecuteKickLeader() {
+    public void testExecuteKickOwner() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
@@ -164,8 +164,8 @@ public class AdminTeamKickCommandTest {
 
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-leader"));
-        Mockito.verify(is).showMembers(Mockito.any(), Mockito.any(), Mockito.any());
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.cannot-kick-owner"));
+        Mockito.verify(is).showMembers(Mockito.any());
     }
 
     /**

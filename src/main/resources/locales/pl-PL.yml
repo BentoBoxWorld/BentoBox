@@ -26,7 +26,7 @@ general:
     player-has-no-island: "&cTen gracz nie ma wyspy!"
     already-have-island: "&cMasz już wyspę!"
     no-safe-location: "&cNa wyspie nie znaleziono bezpiecznej lokalizacji!"
-    not-leader: "&cNie jesteś liderem swojej wyspy!"
+    not-owner: "&cNie jesteś liderem swojej wyspy!"
     not-in-team: "&cTen gracz nie jest w twojej drużynie."
     offline-player: "&cTen gracz jest offline lub nie istnieje."
     unknown-player: "&cNieznany gracz!"
@@ -55,22 +55,22 @@ commands:
       add:
         parameters: "<lider> <gracz>"
         description: "dodaj gracza do drużyny lidera"
-        name-not-leader: "&c[name] nie jest liderem"
+        name-not-owner: "&c[name] nie jest liderem"
         name-has-island: "&c[name] ma wyspę. Najpierw musi ją wyrejestrować lub usunąć."
       disband:
         parameters: "<lider drużyny>"
         description: "rozwiąż drużynę lidera wyspy"
-        user-disband-leader: "&cNie jesteś liderem! Użyj disband [leader]"
+        use-disband-owner: "&cNie jesteś liderem! Użyj disband [owner]"
         disbanded: "&cAdministrator rozwiązał Twoją drużyne!"
       kick:
         parameters: "<gracz z drużyny>"
         description: "wyrzuć gracza z drużyny"
-        cannot-kick-leader: "&cNie możesz wyrzucić lidera drużyny. Najpierw wyrzuć członków."
+        cannot-kick-owner: "&cNie możesz wyrzucić lidera drużyny. Najpierw wyrzuć członków."
         admin-kicked: "&cAdministrator wyrzucił Cię z drużyny."
-      makeleader:
+      setowner:
         parameters: "<gracz>"
         description: "uczyń gracza liderem wyspy"
-        already-leader: "&cGracz jest już liderem!"
+        already-owner: "&cGracz jest już liderem!"
     register:
       parameters: "<gracz>"
       description: "zarejestruj gracza na niezamieszkanej wyspie, na której jesteś"
@@ -215,7 +215,7 @@ commands:
       kick:
         description: "wyrzuć gracza z swojej wyspy"
         parameters: "<gracz>"
-        leader-kicked: "&cLider wyrzucił Cię z jego wyspy."
+        owner-kicked: "&cLider wyrzucił Cię z jego wyspy."
         cannot-kick: "&cNie możesz wyrzucić samego siebie."
       demote:
         description: "degraduj gracza na swojej wyspie do roli"
@@ -315,15 +315,15 @@ protection:
       name: "Owoce refrenusu"
       hint: "Używanie teleportacji wyłączone."
     COLLECT_LAVA: 
-      description: |
-          Przełącz zbieranie lawy
-          (nadpisuje wiaderka)
+      description: |-
+          &aPrzełącz zbieranie lawy
+          &a(nadpisuje wiaderka)
       name: "Zbieranie lawy"
       hint: "Zbieranie lawy wyłączone."
     COLLECT_WATER: 
-      description: |
-          Przełącz zbieranie wody
-          (nadpisuje wiaderka)
+      description: |-
+          &aPrzełącz zbieranie wody
+          &a(nadpisuje wiaderka)
       name: "Zbieranie wody"
       hint: "Zbieranie wody wyłączone."
     CRAFTING: 
@@ -397,13 +397,13 @@ protection:
       name: "Zabijanie osadników"
       hint: "Zabijanie osadników jest wyłączone."
     INVINCIBLE_VISITORS: 
-      description: |
+      description: |-
           &aUstawienia nieśmiertelnych
           &agości na wyspie.
-      name: "Nieśmiertelni goście"
+      name: "&eNieśmiertelni goście"
       hint: "&cGoście są chronieni przez obrażeniami."
     ISLAND_RESPAWN:
-      description: |
+      description: |-
         &aOdradzanie graczy
         &apo śmierci na wyspie.
       name: "Odradzanie na wyspie"
@@ -433,7 +433,7 @@ protection:
       description: "Przełącz spawnowanie"
       name: "Sprawnowanie potworów"
     MOUNT_INVENTORY: 
-      description: |
+      description: |-
         &aPrzełącz dostęp
         &ado ekwipunku mobów.
       name: "Ekwipunek zwierząt"
@@ -443,7 +443,7 @@ protection:
       name: "Muzyka"
       hint: "Używanie szafy grającej wyłączone."
     PISTON_PUSH: 
-      description: |
+      description: |-
           &aPozwól tłokom przepychać
           &abloki poza teren wyspy.
       name: "Przepychanie pistonem"
@@ -460,19 +460,19 @@ protection:
       name: "Płytki naciskowe"
       hint: "Używanie płytek naciskowych wyłączone."
     PVP_END: 
-      description: |
+      description: |-
           &cWłącz / wyłącz pvp
           &cw świecie kresu.
       name: "PVP w kresie"
       hint: "&cPVP jest wyłączone w świecie kresu."
     PVP_NETHER: 
-      description: |
+      description: |-
           &cWłącz / wyłącz pvp
           &cw piekle.
       name: "PVP w piekle"
       hint: "&cPVP jest wyłączone w piekle."
     PVP_OVERWORLD: 
-      description: |
+      description: |-
           &cWłącz / wyłącz pvp
           &cna wyspie.
       name: "PVP na wyspie"
@@ -486,7 +486,7 @@ protection:
       name: "Ujeżdzanie zwierząt"
       hint: "Ujeżdzanie zwierząt jest wyłączone."
     REMOVE_MOBS: 
-      description: |
+      description: |-
         &aUsuwanie potworów
         &apodczas teleportacji na wyspe.
       name: "Usuwanie potworów"
@@ -511,16 +511,16 @@ protection:
 
   panel:
     PROTECTION:
-      title: "Ochrona"
-      description: |
-        Ustawienia ochrony
-        dla tej lokalizacji
+      title: "&6Ochrona"
+      description: |-
+        &aUstawienia ochrony
+        &adla tej lokalizacji
     SETTING:
-      title: "Ustawienia"
-      description: "Ustawienia główne"
+      title: "&6Ustawienia"
+      description: "&aUstawienia główne"
     WORLD_SETTING:
-      title: "Ustawienia [world_name]"
-      description: "Ustawienia dla tego świata gry"
+      title: "&6Ustawienia &b[world_name]"
+      description: "&aUstawienia dla tego świata gry"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |+

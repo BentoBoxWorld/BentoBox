@@ -40,7 +40,7 @@ public class EntityInteractListener extends FlagListener {
         }
         // Name tags
         if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flags.PLACE_BLOCKS);
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.NAME_TAG);
         }
     }
 }

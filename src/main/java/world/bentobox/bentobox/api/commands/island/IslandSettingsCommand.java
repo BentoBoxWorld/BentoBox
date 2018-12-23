@@ -28,7 +28,7 @@ public class IslandSettingsCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         // Settings are only shown if you are in the right world
         if (Util.getWorld(user.getWorld()).equals(getWorld())) {
-            SettingsPanel.openPanel(getPlugin(), user, Flag.Type.PROTECTION, getWorld());
+            SettingsPanel.openPanel(getPlugin(), user, Flag.Type.PROTECTION, getWorld(), 0);
             return true;
         } else {
             user.sendMessage("general.errors.wrong-world");

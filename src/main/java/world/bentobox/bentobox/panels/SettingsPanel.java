@@ -1,6 +1,8 @@
 package world.bentobox.bentobox.panels;
 
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -29,7 +31,7 @@ public class SettingsPanel {
      * @param flagType - initial view
      * @param world - world
      */
-    public static void openPanel(BentoBox plugin, User user, Flag.Type flagType, World world) {
+    public static void openPanel(BentoBox plugin, User user, Flag.Type flagType, World world, int page) {
         String friendlyWorldName = plugin.getIWM().getFriendlyName(world);
         // Create the panel
         PanelBuilder panelBuilder = new PanelBuilder()
@@ -38,8 +40,32 @@ public class SettingsPanel {
 
         setupHeader(user, panelBuilder, flagType, world, friendlyWorldName);
 
-        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(flagType))
-        .sorted(Comparator.comparing(Flag::getID)).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
+        // Get a list of flags of the correct type and sort by the translated names
+        List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(flagType))
+                .sorted(Comparator.comparing(Flag::getID, (s1, s2) -> {
+                    String s1Translation = user.getTranslation(plugin.getFlagsManager().getFlagByID(s1).getNameReference());
+                    String s2Translation = user.getTranslation(plugin.getFlagsManager().getFlagByID(s2).getNameReference());
+                    return s1Translation.compareTo(s2Translation);
+                }))
+                .collect(Collectors.toList());
+
+        // Use paging
+        flags.stream().skip(page * 43L).limit(page * 43L + 43L).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
+        // Add forward and backward icons
+        if (page > 0) {
+            // Previous page icon
+            panelBuilder.item(new PanelItemBuilder().icon(Material.SIGN).name(user.getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
+                openPanel(BentoBox.getInstance(), user, flagType, world, page - 1);
+                return true;
+            }).build());
+        }
+        if ((page + 1) * 44 < flags.size()) {
+            // Next page icon
+            panelBuilder.item(new PanelItemBuilder().icon(Material.SIGN).name(user.getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
+                openPanel(BentoBox.getInstance(), user, flagType, world, page + 1);
+                return true;
+            }).build());
+        }
 
         // Show it to the player
         panelBuilder.build().open(user);
@@ -55,7 +81,7 @@ public class SettingsPanel {
                     .glow(flagType.equals(currentFlagType))
                     .clickHandler((panel, user1, clickType, slot1) -> {
                         if (!flagType.equals(currentFlagType)) {
-                            openPanel(BentoBox.getInstance(), user, flagType, world);
+                            openPanel(BentoBox.getInstance(), user, flagType, world, 0);
                         }
                         return true;
                     })

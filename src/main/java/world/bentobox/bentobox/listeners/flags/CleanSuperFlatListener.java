@@ -33,7 +33,7 @@ public class CleanSuperFlatListener extends FlagListener {
             return;
         }
         world.regenerateChunk(e.getChunk().getX(), e.getChunk().getZ());
-        plugin.logWarning("Regenerating superflat chunk in " + world.getName() + " at blocks " + (e.getChunk().getX() * 16) + "," + (e.getChunk().getZ() * 16));
+        plugin.logWarning("Regenerating superflat chunk in " + world.getName() + " at blocks " + (e.getChunk().getX() << 4) + "," + (e.getChunk().getZ() << 4));
 
     }
 

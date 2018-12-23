@@ -14,7 +14,7 @@ meta:
 general:
   success: "&aSuccess!"
   errors:
-    command-cancelled: "&cCommand cancelled"
+    command-cancelled: "&cCommand cancelled."
     no-permission: "&cYou don't have the permission to execute this command (&7[permission]&c)."
     use-in-game: "&cThis command is only available in game."
     no-team: "&cYou do not have a team!"
@@ -23,7 +23,7 @@ general:
     player-has-no-island: "&cThat player has no island!"
     already-have-island: "&cYou already have an island!"
     no-safe-location: "&cNo safe location found on island!"
-    not-leader: "&cYou are not the leader of your island!"
+    not-owner: "&cYou are not the owner of your island!"
     not-in-team: "&cThat player is not in your team!"
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&c[name] is an unknown player!"
@@ -31,7 +31,8 @@ general:
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
     warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
-    you-must-wait: "&cYou must wait [number]s before you can do that command again"
+    you-must-wait: "&cYou must wait [number]s before you can do that command again."
+    must-be-positive-number: "&c[number] is not a valid positive number."
   tips:
     changing-obsidian-to-lava: "Changing obsidian back into lava. Be careful!"
 
@@ -40,6 +41,7 @@ commands:
   help:
     header: "&7=========== &c[label] help &7==========="
     syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    syntax-no-parameters: "&b[usage]&7: &e[description]"
     end: "&7================================="
     parameters: "[command]"
     description: "help command"
@@ -56,19 +58,19 @@ commands:
       description: "clears all player reset counts for this world"
     team:
       add:
-        parameters: "<leader> <player>"
-        description: "add player to leader's team"
-        name-not-leader: "&c[name] is not the leader"
+        parameters: "<owner> <player>"
+        description: "add player to owner's team"
+        name-not-owner: "&c[name] is not the owner."
         name-has-island: "&c[name] has an island. Unregister or delete them first!"
       disband:
-        parameters: "<team leader>"
-        description: "disband team leader's team"
-        user-disband-leader: "&cNot leader! Use disband [leader]"
+        parameters: "<owner>"
+        description: "disband owner's team"
+        use-disband-owner: "&cNot owner! Use disband [owner]"
         disbanded: "&cAdmin disbanded your team!"
       kick:
         parameters: "<team player>"
         description: "kick a player from a team"
-        cannot-kick-leader: "&cYou cannot kick the team leader. Kick members first"
+        cannot-kick-owner: "&cYou cannot kick the owner. Kick members first."
         admin-kicked: "&cThe admin kicked you from the team."
       setowner:
         parameters: "<player>"
@@ -190,13 +192,21 @@ commands:
     delete:
       parameters: ""
       description: "deletes a player's island"
-      cannot-delete-team-leader: "&cAll island members have to be kicked from the island before deleting it."
+      cannot-delete-owner: "&cAll island members have to be kicked from the island before deleting it."
       deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."
     why:
       parameters: "<player>"
-      description:  "Toggle console protection debug reporting"
+      description:  "toggle console protection debug reporting"
       turning-on: "Turning on console debug for [name]"
       turning-off: "Turning off console debug for [name]"
+    deaths:
+      description: "edit deaths of players"
+      reset:
+        description: "resets deaths of the player"
+        parameters: "<player>"
+      set:
+        description: "sets deaths of the player"
+        parameters: "<player> <deaths>"
   bentobox:
     description: "BentoBox admin command"
     about:
@@ -231,11 +241,13 @@ commands:
       description: "teleport you to the spawn"
     create:
       description: "create an island"
+      too-many-islands: "&cThere are too many islands in this world: there isn't enough room for yours to be created."
       unable-create-island: "&cYour island could not be generated, please contact an administrator."
       creating-island: "&aCreating your island..."
-      pick-world: "&cPick a world from [worlds]"
+      pick-world: "&cPick a world from [worlds]."
     info:
-      description: "display info about your island"
+      description: "display info about your island or the player's island"
+      parameters: "<player>"
     reset:
       description: "restart your island and remove the old one"
       must-remove-members: "&cYou must remove all members from your island before you can restart it (/island team kick <player>)."
@@ -277,6 +289,7 @@ commands:
         cannot-uncoop-member: "&cYou cannot uncoop a team member!"
         player-not-cooped: "&cPlayer is not cooped!"
         you-are-no-longer-a-coop-member: "&cYou are no longer a coop member of [name]'s island"
+        all-members-logged-off: "&cAll island members logged off so you are no longer a coop member of [name]'s island"
       trust:
         description: "give a player trusted rank on your island"
         parameters: "<player>"
@@ -319,13 +332,13 @@ commands:
         cancel:
           description: "cancel the pending invite to join your island"
       leave:
-        cannot-leave: "&cTeam leaders cannot leave! Become a member first, or kick all members."
+        cannot-leave: "&cOwners cannot leave! Become a member first, or kick all members."
         description: "leave your island"
         left-your-island: "&c[name] &cleft your island"
       kick:
         description: "remove a member from your island"
         parameters: "<player>"
-        leader-kicked: "&cThe leader kicked you from the island!"
+        owner-kicked: "&cThe owner kicked you from the island!"
         cannot-kick: "&cYou cannot kick yourself!"
       demote:
         description: "demote a player on your island down a rank"
@@ -340,7 +353,7 @@ commands:
       setowner:
         description: "transfer your island ownership to a member"
         errors:
-          cant-transfer-to-yourself: "&cYou can't transfer ownership to yourself! Well, infact, you could... But we don't want you to. 'Cause it's bad."
+          cant-transfer-to-yourself: "&cYou can't transfer ownership to yourself! &7(&oWell, in fact, you could... But we don't want you to. Because it's useless.&r&7)"
           target-is-not-member: "&cThat player is not part of your island team!"
         name-is-the-owner: "&a[name] is now the island owner!"
         parameters: "<player>"
@@ -460,7 +473,7 @@ protection:
       name: "Collect water"
       hint: "No water collection"
     COMMAND_RANKS:
-      name: "Command Ranks"
+      name: "&eCommand Ranks"
       description: "&aConfigure command ranks"
     CRAFTING: 
       description: "Toggle use"
@@ -498,15 +511,15 @@ protection:
       name: "Ender Chests"
       hint: "Ender chests are disabled in this world"
     ENDERMAN_DEATH_DROP: 
-      description: |
-         Endermen will drop
-         any block they are
-         holding if killed.
+      description: |-
+         &aEndermen will drop
+         &aany block they are
+         &aholding if killed.
       name: "Enderman Death Drop"
     ENDERMAN_GRIEFING: 
-      description: |
-         Endermen can remove
-         blocks from islands
+      description: |-
+         &aEndermen can remove
+         &ablocks from islands
       name: "Enderman griefing"
     ENDER_PEARL: 
       description: "Toggle use"
@@ -530,6 +543,12 @@ protection:
       description: "Toggle spread"
       name: "Fire spread"
       hint: "No fire spread allowed"
+    FISH_SCOOPING:
+      description: |-
+         &aAllow scooping of
+         &atropical fish
+      name: "Fish Scooping"
+      hint: "No scooping of tropical fish"
     FURNACE: 
       description: "Toggle use"
       name: "Furnace"
@@ -539,11 +558,11 @@ protection:
       name: "Gates"
       hint: "No gate use"
     GEO_LIMIT_MOBS: 
-      description: |
-         &eRemove mobs that go
-         &eoutside protected
-         &eisland space
-      name: "Limit mobs to island"
+      description: |-
+         &aRemove mobs that go
+         &aoutside protected
+         &aisland space
+      name: "&eLimit mobs to island"
     HURT_ANIMALS: 
       description: "Toggle hurting"
       name: "Hurt animals"
@@ -565,7 +584,7 @@ protection:
       description: |-
           &aConfigure invincible visitor
           &asettings.
-      name: "Invincible Visitors"
+      name: "&eInvincible Visitors"
       hint: "&cVisitors protected"
     ISLAND_RESPAWN:
       description: |-
@@ -607,6 +626,10 @@ protection:
         &ato mount inventory
       name: "Mount inventory"
       hint: "No access to mount inventory"
+    NAME_TAG:
+      name: "Name tags"
+      description: "Toggle use"
+      hint: "No name tags use"
     NOTE_BLOCK: 
       description: "Toggle use"
       name: "Note block"
@@ -627,9 +650,13 @@ protection:
       description: "Toggle placing"
       name: "Place blocks"
       hint: "Not allowed to place blocks"
-    PORTAL: 
+    NETHER_PORTAL:
       description: "Toggle use"
-      name: "Portal"
+      name: "Nether Portal"
+      hint: "Portal use is disallowed"
+    END_PORTAL:
+      description: "Toggle use"
+      name: "End Portal"
       hint: "Portal use is disallowed"
     PRESSURE_PLATE: 
       description: "Toggle usage"
@@ -686,22 +713,38 @@ protection:
       description: "Toggle access"
       name: "Trap doors"
       hint: "No trapdoor use"
+    TURTLE_EGGS:
+      description: "Toggle crushing"
+      name: "Turtle Eggs"
+      hint: "Turtle eggs cannot be crushed!"
+    FROST_WALKER:
+      description: "Toggle Frost Walker enchantment"
+      name: "Frost Walker"
+      hint: "Frost Walker cannot be used here"
+    EXPERIENCE_PICKUP:
+      name: "Experience pickup"
+      description: "Toggle experience orb pickup"
+      hint: "cannot pickup experience orb"
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
 
   panel:
+    next: "Next Page"
+    previous: "Previous Page"
     PROTECTION:
-      title: "Protection"
+      title: "&6Protection"
       description: |-
-        Protection settings
-        for this location
+        &aProtection settings
+        &afor this island
     SETTING:
-      title: "Settings"
-      description: "General settings"
+      title: "&6Settings"
+      description: |-
+        &aGeneral settings
+        &afor this island
     WORLD_SETTING:
-      title: "[world_name] Settings"
-      description: "Settings for this game world"
+      title: "&b[world_name] &6Settings"
+      description: "&aSettings for this game world"
     flag-item:
       name-layout: "&a[name]"
       description-layout: |

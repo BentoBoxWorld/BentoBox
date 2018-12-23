@@ -66,8 +66,11 @@ public class Database<T> {
         try {
             result = handler.loadObject(uniqueId);
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
-                | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
+                | ClassNotFoundException | IntrospectionException | SecurityException e) {
             logger.severe(() -> "Could not load object from database! " + e.getMessage());
+        } catch (NoSuchMethodException e) {
+            logger.severe(() -> "Could not load object from database! " + e.getMessage());
+            logger.severe(() -> "Did you forget the JavaBean no-arg default constructor?");
         }
         return result;
     }

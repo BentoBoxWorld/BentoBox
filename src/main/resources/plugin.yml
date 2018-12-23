@@ -4,6 +4,7 @@ version: ${project.version}
 api-version: 1.13
 
 authors: [tastybento, Poslovitch]
+website: https://bentobox.world
 
 softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI]
 

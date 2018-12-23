@@ -138,7 +138,7 @@ public class AdminTeamAddCommandTest {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
-        // Unknown leader
+        // Unknown owner
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(null);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
         assertFalse(itl.execute(user, ac.getLabel(), Arrays.asList(name)));
@@ -192,14 +192,14 @@ public class AdminTeamAddCommandTest {
      * Test method for {@link AdminTeamAddCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteAddNotLeader() {
+    public void testExecuteAddNotOwner() {
         AdminTeamAddCommand itl = new AdminTeamAddCommand(ac);
         String[] name = {"tastybento", "poslovich"};
 
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
 
-        // Has island, has team, but not a leader
+        // Has island, has team, but not an owner
         when(im.hasIsland(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
         when(im.inTeam(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
         when(im.getOwner(Mockito.any(),Mockito.eq(uuid))).thenReturn(notUUID);
@@ -209,8 +209,8 @@ public class AdminTeamAddCommandTest {
         when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(island);
 
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-leader", "[name]", "tastybento");
-        Mockito.verify(island).showMembers(Mockito.eq(plugin), Mockito.any(), Mockito.any());
+        Mockito.verify(user).sendMessage("commands.admin.team.add.name-not-owner", "[name]", "tastybento");
+        Mockito.verify(island).showMembers(Mockito.any());
     }
 
     /**
@@ -224,7 +224,7 @@ public class AdminTeamAddCommandTest {
         when(pm.getUUID(Mockito.eq("tastybento"))).thenReturn(uuid);
         when(pm.getUUID(Mockito.eq("poslovich"))).thenReturn(notUUID);
 
-        // Has island, has team, is leader
+        // Has island, has team, is owner
         when(im.hasIsland(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
         when(im.inTeam(Mockito.any(),Mockito.eq(uuid))).thenReturn(true);
         when(im.getOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(uuid);

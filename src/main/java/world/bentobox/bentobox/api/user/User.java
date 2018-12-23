@@ -185,11 +185,16 @@ public class User {
 
     /**
      * Get the maximum value of a numerical permission setting
-     * @param permissionPrefix the start of the perm, e.g., bskyblock.maxhomes
+     * @param permissionPrefix the start of the perm, e.g., {@code plugin.mypermission}
      * @param defaultValue the default value; the result may be higher or lower than this
      * @return max value
      */
     public int getPermissionValue(String permissionPrefix, int defaultValue) {
+        // If there is a dot at the end of the permissionPrefix, remove it
+        if (permissionPrefix.endsWith(".")) {
+            permissionPrefix = permissionPrefix.substring(0, permissionPrefix.length()-1);
+        }
+
         int value = defaultValue;
         for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
             if (perms.getPermission().startsWith(permissionPrefix + ".")) {

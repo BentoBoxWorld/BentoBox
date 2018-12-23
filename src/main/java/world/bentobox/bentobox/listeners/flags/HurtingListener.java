@@ -5,6 +5,7 @@ import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Fish;
 import org.bukkit.entity.IronGolem;
@@ -95,6 +96,11 @@ public class HurtingListener extends FlagListener {
         if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_ANIMALS))
                 || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS))
                 || (e.getCaught() instanceof Villager && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
+            e.getHook().remove();
+        }
+
+        // Handle Armor stands that can be pulled using a rod
+        if (e.getCaught() instanceof ArmorStand && checkIsland(e, e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
             e.getHook().remove();
         }
     }

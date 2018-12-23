@@ -30,7 +30,7 @@ public class AdminInfoCommand extends CompositeCommand {
         }
         // If there are no args, then the player wants info on the island at this location
         if (args.isEmpty()) {
-            if (!getIslands().getIslandAt(user.getLocation()).map(i -> i.showInfo(getPlugin(), user, getWorld())).orElse(false)) {
+            if (!getIslands().getIslandAt(user.getLocation()).map(i -> i.showInfo(user)).orElse(false)) {
                 user.sendMessage("commands.admin.info.no-island");
                 return false;
             }
@@ -47,7 +47,7 @@ public class AdminInfoCommand extends CompositeCommand {
             return false;
         }
         // Show info for this player
-        getIslands().getIsland(getWorld(), targetUUID).showInfo(getPlugin(), user, getWorld());
+        getIslands().getIsland(getWorld(), targetUUID).showInfo(user);
         return true;
     }
 }

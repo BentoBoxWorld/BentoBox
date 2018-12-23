@@ -4,6 +4,7 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -11,9 +12,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
@@ -24,6 +30,9 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
@@ -214,5 +223,77 @@ public class IslandTeamUncoopCommandTest {
         itl.execute(user, itl.getLabel(), Arrays.asList(name));
     }
     
+    @Test
+    public void testTabCompleteNoIsland() {
+        // No island
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
+        IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
+        // Set up the user
+        User user = mock(User.class);
+        when(user.getUniqueId()).thenReturn(UUID.randomUUID());
+        // Get the tab-complete list with one argument
+        LinkedList<String> args = new LinkedList<>();
+        args.add("");
+        Optional<List<String>> result = ibc.tabComplete(user, "", args);
+        assertFalse(result.isPresent());
+
+        // Get the tab-complete list with one letter argument
+        args = new LinkedList<>();
+        args.add("d");
+        result = ibc.tabComplete(user, "", args);
+        assertFalse(result.isPresent());
+
+        // Get the tab-complete list with one letter argument
+        args = new LinkedList<>();
+        args.add("fr");
+        result = ibc.tabComplete(user, "", args);
+        assertFalse(result.isPresent());
+    }
+    
+    @Test
+    public void testTabComplete() {
+
+        Builder<UUID> memberSet = new ImmutableSet.Builder<>();
+         for (int j = 0; j < 11; j++) {
+             memberSet.add(UUID.randomUUID());
+        }
+
+        when(island.getMemberSet()).thenReturn(memberSet.build());
+        // Return a set of players
+        PowerMockito.mockStatic(Bukkit.class);
+        OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
+        when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(offlinePlayer);
+        when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
+        when(island.getRank(Mockito.any())).thenReturn(
+                RanksManager.COOP_RANK, 
+                RanksManager.COOP_RANK, 
+                RanksManager.COOP_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK,
+                RanksManager.MEMBER_RANK
+                );
+
+        IslandTeamUncoopCommand ibc = new IslandTeamUncoopCommand(ic);
+        // Get the tab-complete list with no argument
+        Optional<List<String>> result = ibc.tabComplete(user, "", new LinkedList<>());
+        assertFalse(result.isPresent());
+
+        // Get the tab-complete list with no argument
+        LinkedList<String> args = new LinkedList<>();
+        args.add("");
+        result = ibc.tabComplete(user, "", args);
+        assertTrue(result.isPresent());
+        List<String> r = result.get().stream().sorted().collect(Collectors.toList());
+        // Compare the expected with the actual
+        String[] expectedNames = {"adam", "ben", "cara"};
+        
+        assertTrue(Arrays.equals(expectedNames, r.toArray()));
+
+    }
 
 }

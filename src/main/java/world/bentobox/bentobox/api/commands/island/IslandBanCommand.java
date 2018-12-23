@@ -103,12 +103,16 @@ public class IslandBanCommand extends CompositeCommand {
             return Optional.empty();
         }
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        List<String> options = Bukkit.getOnlinePlayers().stream()
-                .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
-                .filter(p -> !island.isBanned(p.getUniqueId()))
-                .filter(p -> user.getPlayer().canSee(p))
-                .map(Player::getName).collect(Collectors.toList());
-        String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
-        return Optional.of(Util.tabLimit(options, lastArg));
+        if (island != null) {
+            List<String> options = Bukkit.getOnlinePlayers().stream()
+                    .filter(p -> !p.getUniqueId().equals(user.getUniqueId()))
+                    .filter(p -> !island.isBanned(p.getUniqueId()))
+                    .filter(p -> user.getPlayer().canSee(p))
+                    .map(Player::getName).collect(Collectors.toList());
+            String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
+            return Optional.of(Util.tabLimit(options, lastArg));
+        } else {
+            return Optional.empty();
+        }
     }
 }

@@ -99,7 +99,8 @@ public class SchemsManager {
         if (islandSchems.containsKey(world)) {
             islandSchems.get(world).pasteIsland(world, island, task);
         } else {
-            plugin.logError("Tried to paste schem for " + world.getName() + " but it is not loaded!");
+            plugin.logError("Tried to paste schem for " + world.getName() + " but the schem is not loaded!");
+            plugin.log("This might be due to an invalid schem format. Keep in mind that schems are not schematics.");
         }
     }
 

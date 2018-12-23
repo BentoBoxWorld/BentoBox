@@ -87,8 +87,10 @@ public class NetherPortalsTest {
         end = mock(World.class);
         when(end.getEnvironment()).thenReturn(Environment.THE_END);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(end);
+        when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);
         when(iwm.getNetherWorld(Mockito.any())).thenReturn(nether);
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getNetherSpawnRadius(Mockito.any())).thenReturn(100);
@@ -266,10 +268,44 @@ public class NetherPortalsTest {
      */
     @Test
     public void testOnEndIslandPortalNotEnd() {
+        Location from = mock(Location.class);
+        // Teleport from world to nether
+        when(from.getWorld()).thenReturn(world);
+        when(from.toVector()).thenReturn(new Vector(1,2,3));
         NetherPortals np = new NetherPortals(plugin);
         // Wrong cause
-        PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.CHORUS_FRUIT);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.CHORUS_FRUIT);
         np.onEndIslandPortal(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     */
+    @Test
+    public void testOnEndIslandPortalNoEndWorldGenerated() {
+        Location from = mock(Location.class);
+        // Teleport from world to nether
+        when(from.getWorld()).thenReturn(world);
+        when(from.toVector()).thenReturn(new Vector(1,2,3));
+        // No end world
+        when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
+        NetherPortals np = new NetherPortals(plugin);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.END_PORTAL);
+        np.onEndIslandPortal(e);
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     */
+    @Test
+    public void testOnNetherIslandPortalNoNetherWorldGenerated() {
+        // No nether world
+        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
+        NetherPortals np = new NetherPortals(plugin);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.NETHER_PORTAL);
+        np.onNetherPortal(e);
         assertFalse(e.isCancelled());
     }
 

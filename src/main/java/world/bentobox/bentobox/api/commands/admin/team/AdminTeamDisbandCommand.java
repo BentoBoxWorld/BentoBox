@@ -42,13 +42,13 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             return false;
         }
         if (!getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
-            user.sendMessage("commands.admin.team.disband.use-disband-leader", "[leader]", getPlayers().getName(getIslands().getOwner(getWorld(), targetUUID)));
+            user.sendMessage("commands.admin.team.disband.use-disband-owner", "[owner]", getPlayers().getName(getIslands().getOwner(getWorld(), targetUUID)));
             return false;
         }
         // Disband team
         getIslands().getMembers(getWorld(), targetUUID).forEach(m -> {
             User.getInstance(m).sendMessage("commands.admin.team.disband.disbanded");
-            // The leader gets to keep the island
+            // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
                 getIslands().setLeaveTeam(getWorld(), m);
             }

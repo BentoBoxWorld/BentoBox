@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 public class JoinLeaveListener implements Listener {
@@ -49,22 +50,22 @@ public class JoinLeaveListener implements Listener {
 
             // Update the island range of the islands the player owns
             plugin.getIWM().getOverWorlds().stream()
-                    .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
-                    .forEach(world -> {
-                        Island island = plugin.getIslands().getIsland(world, user);
+            .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
+            .forEach(world -> {
+                Island island = plugin.getIslands().getIsland(world, user);
 
-                        // Check if new leader has a different range permission than the island size
-                        int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+                // Check if new owner has a different range permission than the island size
+                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
 
-                        // Range can go up or down
-                        if (range != island.getProtectionRange()) {
-                            user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                            plugin.log("Makeleader: Island protection range changed from " + island.getProtectionRange() + " to "
-                                    + range + " for " + user.getName() + " due to permission.");
-                        }
+                // Range can go up or down
+                if (range != island.getProtectionRange()) {
+                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                    plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
+                            + range + " for " + user.getName() + " due to permission.");
+                }
 
-                        island.setProtectionRange(range);
-                    });
+                island.setProtectionRange(range);
+            });
 
             // Set the player's name (it may have changed), but only if it isn't empty
             if (!user.getName().isEmpty()) {
@@ -83,7 +84,27 @@ public class JoinLeaveListener implements Listener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPlayerQuit(final PlayerQuitEvent event) {
+        // Remove any coops if all the island players have left
+        plugin.getIWM().getOverWorlds().forEach(w -> {
+            Island island = plugin.getIslands().getIsland(w, User.getInstance(event.getPlayer()));
+            // Are there any online players still for this island?
+            if (island != null && plugin.getServer().getOnlinePlayers().stream()
+                    .filter(p -> !event.getPlayer().equals(p))
+                    .noneMatch(p -> plugin.getIslands().getMembers(w, event.getPlayer().getUniqueId()).contains(p.getUniqueId()))) {
+                // No, there are no more players online on this island
+                // Tell players they are being removed
+                island.getMembers().entrySet().stream()
+                .filter(e -> e.getValue() == RanksManager.COOP_RANK)
+                .forEach(e -> User.getInstance(e.getKey())
+                        .sendMessage("commands.island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
+             // Remove any coop players on this island
+                island.removeRank(RanksManager.COOP_RANK);
+            }
+        });
+        // Remove any coop associations from the player logging out
+        plugin.getIslands().clearRank(RanksManager.COOP_RANK, event.getPlayer().getUniqueId());
         players.save(event.getPlayer().getUniqueId());
         User.removePlayer(event.getPlayer());
+
     }
 }

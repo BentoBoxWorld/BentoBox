@@ -21,11 +21,6 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
      */
     MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
-        try {
-            Class.forName("com.mysql.jdbc.Driver").getDeclaredConstructor().newInstance();
-        } catch (Exception e) {
-            Bukkit.getLogger().severe("Could not instantiate JDBC driver! " + e.getMessage());
-        }
         connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
         + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";
     }

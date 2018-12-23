@@ -2,10 +2,12 @@ package world.bentobox.bentobox.listeners.flags;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.TropicalFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -51,4 +53,10 @@ public class BucketListener extends FlagListener {
         checkIsland(e, e.getBlockClicked().getLocation(), Flags.BUCKET);
     }
 
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onTropicalFishScooping(final PlayerInteractEntityEvent e) {
+        if (e.getRightClicked() instanceof TropicalFish && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.WATER_BUCKET)) {
+            checkIsland(e, e.getRightClicked().getLocation(), Flags.FISH_SCOOPING);
+        }
+    }
 }

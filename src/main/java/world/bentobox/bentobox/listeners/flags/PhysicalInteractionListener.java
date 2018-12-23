@@ -33,24 +33,34 @@ public class PhysicalInteractionListener extends FlagListener {
             // Crop trample
             checkIsland(e, e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
             break;
-            case ACACIA_PRESSURE_PLATE:
-            case BIRCH_PRESSURE_PLATE:
-            case DARK_OAK_PRESSURE_PLATE:
-            case HEAVY_WEIGHTED_PRESSURE_PLATE:
-            case JUNGLE_PRESSURE_PLATE:
-            case LIGHT_WEIGHTED_PRESSURE_PLATE:
-            case OAK_PRESSURE_PLATE:
-            case SPRUCE_PRESSURE_PLATE:
-            case STONE_PRESSURE_PLATE:
+
+        case ACACIA_PRESSURE_PLATE:
+        case BIRCH_PRESSURE_PLATE:
+        case DARK_OAK_PRESSURE_PLATE:
+        case HEAVY_WEIGHTED_PRESSURE_PLATE:
+        case JUNGLE_PRESSURE_PLATE:
+        case LIGHT_WEIGHTED_PRESSURE_PLATE:
+        case OAK_PRESSURE_PLATE:
+        case SPRUCE_PRESSURE_PLATE:
+        case STONE_PRESSURE_PLATE:
             // Pressure plates
             checkIsland(e, e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             break;
+            
+        case TURTLE_EGG:
+            checkIsland(e, e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
+            break;   
+
         default:
             break;
 
         }
     }
 
+    /**
+     * Protects buttons and plates from being activated by projectiles
+     * @param e  - event
+     */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onProjectileHit(EntityInteractEvent e) {
         if (!(e.getEntity() instanceof Projectile)) {
@@ -62,24 +72,24 @@ public class PhysicalInteractionListener extends FlagListener {
             setUser(User.getInstance((Player)p.getShooter()));
 
             switch(e.getBlock().getType()) {
-                case ACACIA_BUTTON:
-                case BIRCH_BUTTON:
-                case JUNGLE_BUTTON:
-                case OAK_BUTTON:
-                case SPRUCE_BUTTON:
+            case ACACIA_BUTTON:
+            case BIRCH_BUTTON:
+            case JUNGLE_BUTTON:
+            case OAK_BUTTON:
+            case SPRUCE_BUTTON:
             case STONE_BUTTON:
-                case DARK_OAK_BUTTON:
+            case DARK_OAK_BUTTON:
                 checkIsland(e, e.getBlock().getLocation(), Flags.BUTTON);
                 break;
-                case ACACIA_PRESSURE_PLATE:
-                case BIRCH_PRESSURE_PLATE:
-                case DARK_OAK_PRESSURE_PLATE:
-                case HEAVY_WEIGHTED_PRESSURE_PLATE:
-                case JUNGLE_PRESSURE_PLATE:
-                case LIGHT_WEIGHTED_PRESSURE_PLATE:
-                case OAK_PRESSURE_PLATE:
-                case SPRUCE_PRESSURE_PLATE:
-                case STONE_PRESSURE_PLATE:
+            case ACACIA_PRESSURE_PLATE:
+            case BIRCH_PRESSURE_PLATE:
+            case DARK_OAK_PRESSURE_PLATE:
+            case HEAVY_WEIGHTED_PRESSURE_PLATE:
+            case JUNGLE_PRESSURE_PLATE:
+            case LIGHT_WEIGHTED_PRESSURE_PLATE:
+            case OAK_PRESSURE_PLATE:
+            case SPRUCE_PRESSURE_PLATE:
+            case STONE_PRESSURE_PLATE:
                 // Pressure plates
                 checkIsland(e, e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
                 break;

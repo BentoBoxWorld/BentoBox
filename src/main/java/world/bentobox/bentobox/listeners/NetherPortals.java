@@ -111,6 +111,7 @@ public class NetherPortals implements Listener {
             return;
         }
         World overWorld = Util.getWorld(e.getFrom().getWorld());
+
         // If entering a portal in the end, teleport home if you have one, else do nothing
         if (e.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
             if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())) {
@@ -195,7 +196,8 @@ public class NetherPortals implements Listener {
             return false;
         }
         World fromWorld = e.getFrom().getWorld();
-        if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !plugin.getIWM().inWorld(e.getFrom())) {
+        if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !plugin.getIWM().inWorld(e.getFrom())
+                || !plugin.getIWM().isNetherGenerate(fromWorld)) {
             // Do nothing special
             return false;
         }

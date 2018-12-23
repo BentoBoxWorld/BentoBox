@@ -29,21 +29,23 @@ import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 
 /**
- * @author Tastybento, ComminQ
+ * @author tastybento, ComminQ
  */
 public class AddonsManager {
 
     private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
-    private List<AddonClassLoader> loaders;
+    private Map<Addon, AddonClassLoader> loaders;
     private final Map<String, Class<?>> classes = new HashMap<>();
     private BentoBox plugin;
 
     public AddonsManager(BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
-        loaders = new ArrayList<>();
+        loaders = new HashMap<>();
     }
+
+    //TODO: add addon reload
 
     /**
      * Loads all the addons from the addons folder
@@ -57,36 +59,41 @@ public class AddonsManager {
         }
         Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
         plugin.log("Loaded " + addons.size() + " addons.");
-        sortAddons();
+
+        if (!addons.isEmpty()) {
+            sortAddons();
+        }
     }
 
     /**
      * Enables all the addons
      */
     public void enableAddons() {
-        plugin.log("Enabling addons...");
-        addons.forEach(addon -> {
-            try {
-                addon.onEnable();
-                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
-                addon.setState(Addon.State.ENABLED);
-                plugin.log("Enabling " + addon.getDescription().getName() + "...");
-            } catch (NoClassDefFoundError | NoSuchMethodError e) {
-                // Looks like the addon is outdated, because it tries to refer to missing classes.
-                // Set the AddonState as "INCOMPATIBLE".
-                addon.setState(Addon.State.INCOMPATIBLE);
-                plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
-                plugin.log("NOTE: The addon is referring to no longer existing classes.");
-                plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
-            } catch (Exception e) {
-                // Unhandled exception. We'll give a bit of debug here.
-                // Set the AddonState as "ERROR".
-                addon.setState(Addon.State.ERROR);
-                plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
-                plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
-            }
-        });
-        plugin.log("Addons successfully enabled.");
+        if (!addons.isEmpty()) {
+            plugin.log("Enabling addons...");
+            addons.forEach(addon -> {
+                try {
+                    addon.onEnable();
+                    Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
+                    addon.setState(Addon.State.ENABLED);
+                    plugin.log("Enabling " + addon.getDescription().getName() + "...");
+                } catch (NoClassDefFoundError | NoSuchMethodError e) {
+                    // Looks like the addon is outdated, because it tries to refer to missing classes.
+                    // Set the AddonState as "INCOMPATIBLE".
+                    addon.setState(Addon.State.INCOMPATIBLE);
+                    plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
+                    plugin.log("NOTE: The addon is referring to no longer existing classes.");
+                    plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+                } catch (Exception e) {
+                    // Unhandled exception. We'll give a bit of debug here.
+                    // Set the AddonState as "ERROR".
+                    addon.setState(Addon.State.ERROR);
+                    plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
+                    plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
+                }
+            });
+            plugin.log("Addons successfully enabled.");
+        }
     }
 
     /**
@@ -115,13 +122,11 @@ public class AddonsManager {
     private void loadAddon(File f) {
         Addon addon;
         try (JarFile jar = new JarFile(f)) {
+            // try loading the addon
             // Get description in the addon.yml file
             YamlConfiguration data = addonDescription(jar);
             // Load the addon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
-            // Add to the list of loaders
-            loaders.add(addonClassLoader);
-
             // Get the addon itself
             addon = addonClassLoader.getAddon();
             // Initialize some settings
@@ -135,13 +140,15 @@ public class AddonsManager {
             }
             plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
             // Fire the load event
-            Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
             // Add it to the list of addons
             addons.add(addon);
+            // Add to the list of loaders
+            loaders.put(addon, addonClassLoader);
             // Run the onLoad.
             addon.onLoad();
         } catch (Exception e) {
-            plugin.log(e.getMessage());
+            plugin.logError(e.getMessage());
         }
     }
 
@@ -149,36 +156,34 @@ public class AddonsManager {
      * Disable all the enabled addons
      */
     public void disableAddons() {
-        plugin.log("Disabling addons...");
-        // Unload addons
-        addons.forEach(addon -> {
-            if (addon.isEnabled()) {
-                addon.onDisable();
-                Bukkit.getPluginManager().callEvent(AddonEvent.builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-                plugin.log("Disabling " + addon.getDescription().getName() + "...");
-            }
-        });
+        if (!addons.isEmpty()) {
+            plugin.log("Disabling addons...");
+            // Disable addons
+            addons.forEach(addon -> {
+                if (addon.isEnabled()) {
+                    addon.onDisable();
+                    Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
+                    plugin.log("Disabling " + addon.getDescription().getName() + "...");
+                }
+            });
 
-        loaders.forEach(l -> {
-            try {
-                l.close();
-            } catch (IOException ignore) {
-                // Ignore
-            }
-        });
-        plugin.log("Addons successfully disabled.");
+            loaders.values().forEach(l -> {
+                try {
+                    l.close();
+                } catch (IOException ignore) {
+                    // Ignore
+                }
+            });
+            plugin.log("Addons successfully disabled.");
+        }
     }
 
     public List<Addon> getAddons() {
         return addons;
     }
 
-    public List<AddonClassLoader> getLoaders() {
-        return loaders;
-    }
-
-    public void setLoaders(List<AddonClassLoader> loaders) {
-        this.loaders = loaders;
+    public AddonClassLoader getLoader(final Addon addon) {
+        return loaders.get(addon);
     }
 
     /**
@@ -187,7 +192,7 @@ public class AddonsManager {
      * @return Class - the class
      */
     public Class<?> getClassByName(final String name) {
-        return classes.getOrDefault(name, loaders.stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
+        return classes.getOrDefault(name, loaders.values().stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
     /**
@@ -268,4 +273,6 @@ public class AddonsManager {
         addons.clear();
         addons.addAll(sortedAddons.values());
     }
+
+
 }

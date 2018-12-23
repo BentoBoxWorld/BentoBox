@@ -64,7 +64,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandsManagerTest {
 
-    private static BentoBox plugin;
+    private BentoBox plugin;
     private UUID uuid;
     private User user;
     private PlayersManager pm;
@@ -136,6 +136,7 @@ public class IslandsManagerTest {
         ground = mock(Block.class);
         space2 = mock(Block.class);
         when(location.getBlock()).thenReturn(space1);
+        when(location.getWorld()).thenReturn(world);
         when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
         when(space1.getRelative(BlockFace.UP)).thenReturn(space2);
         // A safe spot
@@ -192,6 +193,16 @@ public class IslandsManagerTest {
     public void testIsSafeLocationNull() {
         IslandsManager manager = new IslandsManager(plugin);
         assertFalse(manager.isSafeLocation(null));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
+     */
+    @Test
+    public void testIsSafeLocationNullWorld() {
+        when(location.getWorld()).thenReturn(null);
+        IslandsManager manager = new IslandsManager(plugin);
+        assertFalse(manager.isSafeLocation(location));
     }
 
     /**
@@ -967,7 +978,80 @@ public class IslandsManagerTest {
      */
     @Test
     public void testShutdown() {
-        //fail("Not yet implemented"); // TODO
+        // Mock island cache
+        Island is = mock(Island.class);
+
+        Collection<Island> collection = new ArrayList<>();
+        collection.add(is);
+        when(islandCache.getIslands()).thenReturn(collection);
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+        Map<UUID, Integer> members = new HashMap<>();
+        when(is.getMembers()).thenReturn(members);
+        // -- The user is the owner of the island --
+        members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
+        // Add some members
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        // Add some coops
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        // Add some trusted
+        members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
+        members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
+
+        im.shutdown();
+
+        assertEquals(10, members.size());
+        Mockito.verify(islandCache).clear();
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#clearRank(int, UUID)}.
+     */
+    @Test
+    public void testClearRank() {
+        // Mock island cache
+        Island is = mock(Island.class);
+
+        Collection<Island> collection = new ArrayList<>();
+        collection.add(is);
+        when(islandCache.getIslands()).thenReturn(collection);
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+        Map<UUID, Integer> members = new HashMap<>();
+        when(is.getMembers()).thenReturn(members);
+        // -- The user is the owner of the island --
+        members.put(user.getUniqueId(), RanksManager.OWNER_RANK);
+        // Add some members
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        members.put(UUID.randomUUID(), RanksManager.MEMBER_RANK);
+        // Add some coops
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        members.put(UUID.randomUUID(), RanksManager.COOP_RANK);
+        // Add some trusted
+        members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
+        members.put(UUID.randomUUID(), RanksManager.TRUSTED_RANK);
+        // Add specific coop
+        UUID coopUUID = UUID.randomUUID();
+        members.put(coopUUID, RanksManager.COOP_RANK);
+        // Clear a random user
+        im.clearRank(RanksManager.COOP_RANK, UUID.randomUUID());
+        assertEquals(14, members.size());
+        im.clearRank(RanksManager.COOP_RANK, coopUUID);
+        assertEquals(13, members.size());
     }
 
     /**

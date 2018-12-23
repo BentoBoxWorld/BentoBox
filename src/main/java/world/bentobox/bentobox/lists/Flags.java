@@ -11,40 +11,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
-import world.bentobox.bentobox.listeners.flags.BlockInteractionListener;
-import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
-import world.bentobox.bentobox.listeners.flags.BreedingListener;
-import world.bentobox.bentobox.listeners.flags.BucketListener;
-import world.bentobox.bentobox.listeners.flags.ChestDamageListener;
-import world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener;
-import world.bentobox.bentobox.listeners.flags.CoarseDirtTillingListener;
-import world.bentobox.bentobox.listeners.flags.CreeperListener;
-import world.bentobox.bentobox.listeners.flags.EggListener;
-import world.bentobox.bentobox.listeners.flags.EnderChestListener;
-import world.bentobox.bentobox.listeners.flags.EndermanListener;
-import world.bentobox.bentobox.listeners.flags.EnterExitListener;
-import world.bentobox.bentobox.listeners.flags.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.FireListener;
-import world.bentobox.bentobox.listeners.flags.GeoLimitMobsListener;
-import world.bentobox.bentobox.listeners.flags.HurtingListener;
-import world.bentobox.bentobox.listeners.flags.InventoryListener;
-import world.bentobox.bentobox.listeners.flags.InvincibleVisitorsListener;
-import world.bentobox.bentobox.listeners.flags.IslandRespawnListener;
-import world.bentobox.bentobox.listeners.flags.ItemDropPickUpListener;
-import world.bentobox.bentobox.listeners.flags.ItemFrameListener;
-import world.bentobox.bentobox.listeners.flags.LeashListener;
-import world.bentobox.bentobox.listeners.flags.LockAndBanListener;
-import world.bentobox.bentobox.listeners.flags.MobSpawnListener;
-import world.bentobox.bentobox.listeners.flags.OfflineRedstoneListener;
-import world.bentobox.bentobox.listeners.flags.PVPListener;
-import world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener;
-import world.bentobox.bentobox.listeners.flags.PistonPushListener;
-import world.bentobox.bentobox.listeners.flags.PlaceBlocksListener;
-import world.bentobox.bentobox.listeners.flags.PortalListener;
-import world.bentobox.bentobox.listeners.flags.RemoveMobsListener;
-import world.bentobox.bentobox.listeners.flags.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.TNTListener;
-import world.bentobox.bentobox.listeners.flags.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.*;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -58,6 +25,9 @@ public class Flags {
 
     public static final Flag BREAK_BLOCKS = new FlagBuilder().id("BREAK_BLOCKS").icon(Material.STONE).listener(new BreakBlocksListener()).build();
     public static final Flag PLACE_BLOCKS = new FlagBuilder().id("PLACE_BLOCKS").icon(Material.GRASS).listener(new PlaceBlocksListener()).build();
+
+    // Frost walker - uses the place block listener
+    public static final Flag FROST_WALKER = new FlagBuilder().id("FROST_WALKER").icon(Material.ICE).build();
 
     // Block interactions - all use BlockInteractionListener()
     public static final Flag ANVIL = new FlagBuilder().id("ANVIL").icon(Material.ANVIL).listener(new BlockInteractionListener()).build();
@@ -82,6 +52,7 @@ public class Flags {
     public static final Flag ARMOR_STAND = new FlagBuilder().id("ARMOR_STAND").icon(Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
     public static final Flag RIDING = new FlagBuilder().id("RIDING").icon(Material.GOLDEN_HORSE_ARMOR).build();
     public static final Flag TRADING = new FlagBuilder().id("TRADING").allowedByDefault(true).icon(Material.EMERALD).build();
+    public static final Flag NAME_TAG = new FlagBuilder().id("NAME_TAG").icon(Material.NAME_TAG).build();
 
     // Breeding
     public static final Flag BREEDING = new FlagBuilder().id("BREEDING").icon(Material.CARROT).listener(new BreedingListener()).build();
@@ -91,6 +62,7 @@ public class Flags {
     public static final Flag COLLECT_LAVA = new FlagBuilder().id("COLLECT_LAVA").icon(Material.LAVA_BUCKET).build();
     public static final Flag COLLECT_WATER = new FlagBuilder().id("COLLECT_WATER").icon(Material.WATER_BUCKET).build();
     public static final Flag MILKING = new FlagBuilder().id("MILKING").icon(Material.MILK_BUCKET).build();
+    public static final Flag FISH_SCOOPING = new FlagBuilder().id("FISH_SCOOPING").allowedByDefault(false).icon(Material.TROPICAL_FISH_BUCKET).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new FlagBuilder().id("CHORUS_FRUIT").icon(Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
@@ -99,6 +71,7 @@ public class Flags {
     // Physical interactions
     public static final Flag CROP_TRAMPLE = new FlagBuilder().id("CROP_TRAMPLE").icon(Material.WHEAT).listener(new PhysicalInteractionListener()).build();
     public static final Flag PRESSURE_PLATE = new FlagBuilder().id("PRESSURE_PLATE").icon(Material.STONE_PRESSURE_PLATE).build();
+    public static final Flag TURTLE_EGGS = new FlagBuilder().id("TURTLE_EGGS").icon(Material.TURTLE_EGG).build();
 
     // Egg throwing
     public static final Flag EGGS = new FlagBuilder().id("EGGS").icon(Material.EGG).listener(new EggListener()).build();
@@ -128,7 +101,8 @@ public class Flags {
     public static final Flag LEASH = new FlagBuilder().id("LEASH").icon(Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
-    public static final Flag PORTAL = new FlagBuilder().id("PORTAL").icon(Material.OBSIDIAN).listener(new PortalListener()).build();
+    public static final Flag NETHER_PORTAL = new FlagBuilder().id("NETHER_PORTAL").icon(Material.OBSIDIAN).listener(new PortalListener()).build();
+    public static final Flag END_PORTAL = new FlagBuilder().id("END_PORTAL").icon(Material.END_PORTAL_FRAME).listener(new PortalListener()).build();
 
     // Shearing
     public static final Flag SHEARING = new FlagBuilder().id("SHEARING").icon(Material.SHEARS).listener(new ShearingListener()).build();
@@ -137,8 +111,11 @@ public class Flags {
     public static final Flag ITEM_DROP = new FlagBuilder().id("ITEM_DROP").icon(Material.BEETROOT_SOUP).allowedByDefault(true).listener(new ItemDropPickUpListener()).build();
     public static final Flag ITEM_PICKUP = new FlagBuilder().id("ITEM_PICKUP").icon(Material.BEETROOT_SEEDS).build();
 
+    // Experience
+    public static final Flag EXPERIENCE_PICKUP = new FlagBuilder().id("EXPERIENCE_PICKUP").icon(Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).build();
+
     // TNT
-    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).type(Type.PROTECTION).build();
+    public static final Flag TNT = new FlagBuilder().id("TNT").icon(Material.TNT).listener(new TNTListener()).allowedByDefault(false).build();
 
     // Island lock
     public static final Flag LOCK = new FlagBuilder().id("LOCK")

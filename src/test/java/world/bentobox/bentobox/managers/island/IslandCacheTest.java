@@ -41,7 +41,6 @@ public class IslandCacheTest {
     UUID owner = UUID.randomUUID();
     Location location;
 
-
     @Before
     public void setUp() throws Exception {
         plugin = mock(BentoBox.class);
@@ -204,7 +203,7 @@ public class IslandCacheTest {
     }
      */
     @Test
-    public void testgetMembers() {
+    public void testGetMembers() {
         // New cache
         IslandCache ic = new IslandCache();
         ic.addIsland(island);
@@ -216,7 +215,7 @@ public class IslandCacheTest {
 
     }
     @Test
-    public void testGetTeamLeader() {
+    public void testGetOwner() {
         // New cache
         IslandCache ic = new IslandCache();
         ic.addIsland(island);
@@ -224,8 +223,6 @@ public class IslandCacheTest {
         assertEquals(owner, ic.getOwner(world, owner));
         assertNull(ic.getOwner(world, null));
         assertNull(ic.getOwner(world, UUID.randomUUID()));
-
-
     }
 
     @Test

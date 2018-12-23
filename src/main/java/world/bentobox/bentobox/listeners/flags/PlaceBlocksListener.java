@@ -90,7 +90,7 @@ public class PlaceBlocksListener extends FlagListener {
     public void onBlockForm(EntityBlockFormEvent e) {
         if (e.getNewState().getType().equals(Material.FROSTED_ICE) && e.getEntity() instanceof Player) {
             setUser(User.getInstance((Player)e.getEntity()));
-            checkIsland(e, e.getBlock().getLocation(), Flags.PLACE_BLOCKS);
+            checkIsland(e, e.getBlock().getLocation(), Flags.FROST_WALKER);
         }
     }
 

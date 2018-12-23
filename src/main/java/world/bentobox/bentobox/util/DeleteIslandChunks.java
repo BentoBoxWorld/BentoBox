@@ -32,13 +32,14 @@ public class DeleteIslandChunks {
         if (world == null) {
             return;
         }
-        int minXChunk =  island.getMinX() / 16;
-        int maxXChunk = (island.getRange() * 2 + island.getMinX() - 1) /16;
-        int minZChunk = island.getMinZ() / 16;
-        int maxZChunk = (island.getRange() * 2 + island.getMinZ() - 1) /16;
+        int minXChunk =  island.getMinX() >> 4;
+        int maxXChunk = (island.getRange() * 2 + island.getMinX() - 1) >> 4;
+        int minZChunk = island.getMinZ() >> 4;
+        int maxZChunk = (island.getRange() * 2 + island.getMinZ() - 1) >> 4;
         for (int x = minXChunk; x <= maxXChunk; x++) {
             for (int z = minZChunk; z<=maxZChunk; z++) {
                 world.regenerateChunk(x, z);
+                //System.out.println("regenerating = " + x + "," + z);
                 if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)) {
                     plugin.getIWM().getNetherWorld(world).regenerateChunk(x, z);
 

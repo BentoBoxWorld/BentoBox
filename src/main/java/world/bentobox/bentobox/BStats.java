@@ -17,6 +17,21 @@ class BStats {
     void registerMetrics() {
         if (metrics == null) {
             metrics = new Metrics(plugin);
+            registerCustomMetrics();
         }
+    }
+
+    private void registerCustomMetrics() {
+        // Simple Pie Charts
+        registerDefaultLanguageChart();
+        registerDatabaseTypeChart();
+    }
+
+    private void registerDefaultLanguageChart() {
+        metrics.addCustomChart(new Metrics.SimplePie("default_language", () -> plugin.getSettings().getDefaultLanguage()));
+    }
+
+    private void registerDatabaseTypeChart() {
+        metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> plugin.getSettings().getDatabaseType().toString()));
     }
 }

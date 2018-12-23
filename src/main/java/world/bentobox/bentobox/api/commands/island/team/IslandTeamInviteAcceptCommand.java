@@ -43,9 +43,9 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.invite.errors.you-already-are-in-team");
             return false;
         }
-        // Get the team leader
-        UUID prospectiveTeamLeaderUUID = itc.getInviteCommand().getInviteList().get(playerUUID);
-        if (!getIslands().hasIsland(getWorld(), prospectiveTeamLeaderUUID)) {
+        // Get the island owner
+        UUID prospectiveOwnerUUID = itc.getInviteCommand().getInviteList().get(playerUUID);
+        if (!getIslands().hasIsland(getWorld(), prospectiveOwnerUUID)) {
             user.sendMessage("commands.island.team.invite.errors.invalid-invite");
             itc.getInviteCommand().getInviteList().remove(playerUUID);
             return false;
@@ -53,7 +53,7 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
         // Fire event so add-ons can run commands, etc.
         IslandBaseEvent event = TeamEvent.builder()
                 .island(getIslands()
-                        .getIsland(getWorld(), prospectiveTeamLeaderUUID))
+                        .getIsland(getWorld(), prospectiveOwnerUUID))
                 .reason(TeamEvent.Reason.JOIN)
                 .involvedPlayer(playerUUID)
                 .build();
@@ -68,12 +68,12 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
         // Get the player's island - may be null if the player has no island
         Island island = getIslands().getIsland(getWorld(), playerUUID);
         // Get the team's island
-        Island teamIsland = getIslands().getIsland(getWorld(), prospectiveTeamLeaderUUID);
+        Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
         // Clear the player's inventory
         user.getInventory().clear();
         // Move player to team's island
-        User prospectiveTeamLeader = User.getInstance(prospectiveTeamLeaderUUID);
-        Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveTeamLeader, 1);
+        User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
+        Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);
         user.teleport(newHome);
         // Remove player as owner of the old island
         getIslands().removePlayer(getWorld(), playerUUID);

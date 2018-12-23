@@ -41,9 +41,9 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
     }
 
     private void leave(User user) {
-        UUID leaderUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
-        if (leaderUUID != null) {
-            User.getInstance(leaderUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
+        UUID ownerUUID = getIslands().getOwner(getWorld(), user.getUniqueId());
+        if (ownerUUID != null) {
+            User.getInstance(ownerUUID).sendMessage("commands.island.team.leave.left-your-island", TextVariables.NAME, user.getName());
         }
         getIslands().setLeaveTeam(getWorld(), user.getUniqueId());
         // Remove money inventory etc.

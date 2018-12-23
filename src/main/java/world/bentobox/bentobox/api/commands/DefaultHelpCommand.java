@@ -22,6 +22,7 @@ public class DefaultHelpCommand extends CompositeCommand {
     private static final String PARAMS_PLACEHOLDER = "[parameters]";
     private static final String DESC_PLACEHOLDER = "[description]";
     private static final String HELP_SYNTAX_REF = "commands.help.syntax";
+    private static final String HELP_SYNTAX_NO_PARAMETERS_REF = "commands.help.syntax-no-parameters";
     private static final String HELP = "help";
 
     public DefaultHelpCommand(CompositeCommand parent) {
@@ -93,14 +94,22 @@ public class DefaultHelpCommand extends CompositeCommand {
         if (user.isPlayer()) {
             // Player. Check perms
             if (user.isOp() || user.hasPermission(parent.getPermission())) {
-                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+                if (params == null || params.isEmpty()) {
+                    user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
+                } else {
+                    user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+                }
             } else {
                 // No permission, nothing to see here. If you don't have permission, you cannot see any sub commands
                 return true;
             }
         } else if (!parent.isOnlyPlayer()) {
             // Console. Only show if it is a console command
-            user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+            if (params == null || params.isEmpty()) {
+                user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
+            } else {
+                user.sendMessage(HELP_SYNTAX_REF, USAGE_PLACEHOLDER, usage, PARAMS_PLACEHOLDER, params, DESC_PLACEHOLDER, desc);
+            }
         }
         return false;
     }

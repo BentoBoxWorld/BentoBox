@@ -151,7 +151,7 @@ public class AdminTeamSetownerCommandTest {
      * Test method for {@link AdminTeamSetownerCommand#execute(User, String, List)}.
      */
     @Test
-    public void testExecuteMakeLeaderAlreadyLeader() {
+    public void testExecuteMakeOwnerAlreadyOwner() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
@@ -175,7 +175,7 @@ public class AdminTeamSetownerCommandTest {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        // Leader
+        // Owner
         when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
         when(pm.getName(Mockito.eq(uuid))).thenReturn("owner");
         // Members
