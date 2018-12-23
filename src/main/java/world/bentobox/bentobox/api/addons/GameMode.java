@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.addons;
 
 import world.bentobox.bentobox.api.worlds.GameWorld;
 
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -12,7 +13,7 @@ import java.util.List;
 public abstract class GameMode extends Addon {
 
     public void registerGameWorld(GameWorld gameWorld) {
-        //TODO
+        getPlugin().getWorlds().registerGameWorld(this, gameWorld);
     }
 
     /**
@@ -20,6 +21,6 @@ public abstract class GameMode extends Addon {
      * @return list of the GameWorlds registered by this GameMode, may be empty.
      */
     public List<GameWorld> getGameWorlds() {
-        return null; //TODO
+        return getPlugin().getWorlds().getGameWorlds(this);
     }
 }
