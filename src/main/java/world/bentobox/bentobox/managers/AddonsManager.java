@@ -131,11 +131,11 @@ public class AddonsManager {
             addon = addonClassLoader.getAddon();
             // Initialize some settings
             addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-            addon.setAddonFile(f);
+            addon.setFile(f);
 
             File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
             // Obtain any locale files and save them
-            for (String localeFile : listJarYamlFiles(jar, LOCALE_FOLDER)) {
+            for (String localeFile : listJarFiles(jar, LOCALE_FOLDER, ".yml")) {
                 addon.saveResource(localeFile, localeDir, false, true);
             }
             plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
@@ -206,12 +206,13 @@ public class AddonsManager {
     }
 
     /**
-     * Lists all the yml files found in the jar in the folder
+     * Lists files found in the jar in the folderPath with the suffix given
      * @param jar - the jar file
      * @param folderPath - the path within the jar
+     * @param suffix - the suffix required
      * @return a list of files
      */
-    public List<String> listJarYamlFiles(JarFile jar, String folderPath) {
+    public List<String> listJarFiles(JarFile jar, String folderPath, String suffix) {
         List<String> result = new ArrayList<>();
 
         Enumeration<JarEntry> entries = jar.entries();
@@ -223,7 +224,7 @@ public class AddonsManager {
                 continue;
             }
 
-            if (entry.getName().endsWith(".yml")) {
+            if (entry.getName().endsWith(suffix)) {
                 result.add(entry.getName());
             }
 

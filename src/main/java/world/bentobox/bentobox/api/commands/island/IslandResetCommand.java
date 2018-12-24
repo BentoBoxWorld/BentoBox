@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -24,6 +25,7 @@ public class IslandResetCommand extends ConfirmableCommand {
     public void setup() {
         setPermission("island.create");
         setOnlyPlayer(true);
+        setParametersHelp("commands.island.reset.parameters");
         setDescription("commands.island.reset.description");
     }
 
@@ -56,17 +58,35 @@ public class IslandResetCommand extends ConfirmableCommand {
                 user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(resetsLeft));
             }
         }
+        // Default schem is 'island'
+
+        String name = args.isEmpty() ? "island" : args.get(0).toLowerCase(java.util.Locale.ENGLISH);
+        if (!args.isEmpty()) {
+            // Permission check
+            String permission = this.getPermissionPrefix() + "island.create." + name;
+            if (!user.isOp() && !user.hasPermission(permission)) {
+                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
+                return false;
+            }
+            // Check the schem name exists
+            Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
+            if (!validNames.contains(name)) {
+                user.sendMessage("commands.island.create.unknown-schem");
+                return false;
+            }
+
+        }
         // Request confirmation
         if (getSettings().isResetConfirmation()) {
-            this.askConfirmation(user, () -> resetIsland(user));
+            this.askConfirmation(user, () -> resetIsland(user, name));
             return true;
         } else {
-            return resetIsland(user);
+            return resetIsland(user, name);
         }
 
     }
 
-    private boolean resetIsland(User user) {
+    private boolean resetIsland(User user, String name) {
         // Reset the island
         Player player = user.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
@@ -92,6 +112,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             .player(user)
             .reason(Reason.RESET)
             .oldIsland(oldIsland)
+            .name(name)
             .build();
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());

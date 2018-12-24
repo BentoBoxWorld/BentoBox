@@ -240,16 +240,19 @@ commands:
     spawn:
       description: "teleport you to the spawn"
     create:
-      description: "create an island"
+      description: "create an island, using optional schem (requires permission)"
+      parameters: "<schem>"
       too-many-islands: "&cThere are too many islands in this world: there isn't enough room for yours to be created."
       unable-create-island: "&cYour island could not be generated, please contact an administrator."
       creating-island: "&aCreating your island..."
       pick-world: "&cPick a world from [worlds]."
+      unknown-schem: "&cThat schem has not been loaded yet."
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
     reset:
       description: "restart your island and remove the old one"
+      parameters: "<schem>"
       must-remove-members: "&cYou must remove all members from your island before you can restart it (/island team kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"

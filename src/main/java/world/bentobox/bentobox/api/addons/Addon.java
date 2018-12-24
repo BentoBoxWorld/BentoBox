@@ -286,10 +286,9 @@ public abstract class Addon {
     /**
      * Set the file that contains this addon
      *
-     * @param f
-     *            the file to set
+     * @param f the file to set
      */
-    public void setAddonFile(File f) {
+    public void setFile(File f) {
         file = f;
     }
 
