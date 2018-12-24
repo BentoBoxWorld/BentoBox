@@ -49,9 +49,8 @@ public class Flag implements Comparable<Flag> {
     private final boolean subPanel;
 
     /**
-     * @deprecated {@link Flag.Builder} should be used instead.
+     * {@link Flag.Builder} should be used instead. This is only used for testing.
      */
-    @Deprecated
     Flag(String id, Material icon, Listener listener, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
         this.id = id;
         this.icon = icon;
@@ -282,7 +281,7 @@ public class Flag implements Comparable<Flag> {
 
         // Default settings
         private boolean defaultSetting;
-        private int defaultRank;
+        private int defaultRank = RanksManager.MEMBER_RANK;
 
         // ClickHandler - default depends on the type
         private PanelItem.ClickHandler clickHandler;
@@ -329,18 +328,18 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type){
-                    case PROTECTION:
-                        clickHandler = new CycleClick(id);
-                        break;
-                    case SETTING:
-                        clickHandler = new IslandToggleClick(id);
-                        break;
-                    case WORLD_SETTING:
-                        clickHandler = new WorldToggleClick(id);
-                        break;
-                    default:
-                        clickHandler = new CycleClick(id);
-                        break;
+                case PROTECTION:
+                    clickHandler = new CycleClick(id);
+                    break;
+                case SETTING:
+                    clickHandler = new IslandToggleClick(id);
+                    break;
+                case WORLD_SETTING:
+                    clickHandler = new WorldToggleClick(id);
+                    break;
+                default:
+                    clickHandler = new CycleClick(id);
+                    break;
                 }
             }
 
