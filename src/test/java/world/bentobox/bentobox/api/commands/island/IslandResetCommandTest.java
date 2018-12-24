@@ -192,6 +192,7 @@ public class IslandResetCommandTest {
         when(builder.player(Mockito.any())).thenReturn(builder);
         when(builder.oldIsland(Mockito.any())).thenReturn(builder);
         when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.name(Mockito.any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
@@ -226,6 +227,7 @@ public class IslandResetCommandTest {
         when(builder.player(Mockito.any())).thenReturn(builder);
         when(builder.oldIsland(Mockito.any())).thenReturn(builder);
         when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.name(Mockito.any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
@@ -263,6 +265,7 @@ public class IslandResetCommandTest {
         when(builder.player(Mockito.any())).thenReturn(builder);
         when(builder.oldIsland(Mockito.any())).thenReturn(builder);
         when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.name(Mockito.any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
@@ -304,6 +307,7 @@ public class IslandResetCommandTest {
         when(builder.player(Mockito.any())).thenReturn(builder);
         when(builder.oldIsland(Mockito.any())).thenReturn(builder);
         when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.name(Mockito.any())).thenReturn(builder);
         when(builder.build()).thenThrow(new IOException());
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);

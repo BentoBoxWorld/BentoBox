@@ -129,7 +129,7 @@ public class AddonTest {
         TestClass test = new TestClass();
         File file = mock(File.class);
         assertNull(test.getFile());
-        test.setAddonFile(file);
+        test.setFile(file);
         assertEquals(file, test.getFile());
     }
 
@@ -173,7 +173,7 @@ public class AddonTest {
         File jarFile = new File("addon.jar");
         File dataFolder = new File("dataFolder");
         test.setDataFolder(dataFolder);
-        test.setAddonFile(jarFile);
+        test.setFile(jarFile);
         test.saveDefaultConfig();
     }
 
@@ -195,7 +195,7 @@ public class AddonTest {
         File jarFile = new File("addon.jar");
         File dataFolder = new File("dataFolder");
         test.setDataFolder(dataFolder);
-        test.setAddonFile(jarFile);
+        test.setFile(jarFile);
         test.saveResource("no_such_file", true);
     }
 
@@ -205,7 +205,7 @@ public class AddonTest {
         File jarFile = new File("addon.jar");
         File dataFolder = new File("dataFolder");
         test.setDataFolder(dataFolder);
-        test.setAddonFile(jarFile);
+        test.setFile(jarFile);
         test.saveResource("no_such_file", jarFile, false, false);
         test.saveResource("no_such_file", jarFile, false, true);
         test.saveResource("no_such_file", jarFile, true, false);
@@ -219,7 +219,7 @@ public class AddonTest {
         File jarFile = new File("addon.jar");
         File dataFolder = new File("dataFolder");
         test.setDataFolder(dataFolder);
-        test.setAddonFile(jarFile);
+        test.setFile(jarFile);
         assertNull(test.getResource("nothing"));
     }
 
@@ -227,7 +227,7 @@ public class AddonTest {
     public void testSetAddonFile() {
         TestClass test = new TestClass();
         File jarFile = new File("addon.jar");
-        test.setAddonFile(jarFile);
+        test.setFile(jarFile);
         assertEquals(jarFile, test.getFile());
     }
 

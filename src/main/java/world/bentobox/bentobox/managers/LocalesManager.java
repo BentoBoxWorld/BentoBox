@@ -52,12 +52,12 @@ public class LocalesManager {
         // No translation could be gotten from the player's locale, trying more generic solutions
         return get(reference);
     }
-    
+
     /**
      * Gets the translated String corresponding to the reference from the locale file for this user.
      * @param user the User
      * @param reference a reference that can be found in a locale file
-     * @param default to return if the reference cannot be found anywhere
+     * @param defaultText to return if the reference cannot be found anywhere
      * @return the translated String from the User's locale or from the server's locale or from the en-US locale, or null.
      */
     public String getOrDefault(User user, String reference, String defaultText) {
@@ -88,12 +88,12 @@ public class LocalesManager {
         }
         return null;
     }
-    
+
     /**
      * Gets the translated String corresponding to the reference from the server's or the en-US locale file
      * or if it cannot be found anywhere, use the default text supplied.
      * @param reference a reference that can be found in a locale file
-     * @param default text to return if the reference cannot be found anywhere
+     * @param defaultText text to return if the reference cannot be found anywhere
      * @return the translated String from the server's locale or from the en-US locale, or default.
      */
     public String getOrDefault(String reference, String defaultText) {

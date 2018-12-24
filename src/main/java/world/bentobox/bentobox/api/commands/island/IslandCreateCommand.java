@@ -2,9 +2,11 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
@@ -27,6 +29,7 @@ public class IslandCreateCommand extends CompositeCommand {
     public void setup() {
         setPermission("island.create");
         setOnlyPlayer(true);
+        setParametersHelp("commands.island.create.parameters");
         setDescription("commands.island.create.description");
     }
 
@@ -45,11 +48,30 @@ public class IslandCreateCommand extends CompositeCommand {
         }
 
         user.sendMessage("commands.island.create.creating-island");
+        // Default schem is 'island'
+        String name = "island";
+        if (!args.isEmpty()) {
+            name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
+            // Permission check
+            String permission = this.getPermissionPrefix() + "island.create." + name;
+            if (!user.isOp() && !user.hasPermission(permission)) {
+                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
+                return false;
+            }
+            // Check the schem name exists
+            Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
+            if (!validNames.contains(name)) {
+                user.sendMessage("commands.island.create.unknown-schem");
+                return false;
+            }
+
+        }
         try {
             NewIsland.builder()
             .player(user)
             .world(getWorld())
             .reason(Reason.CREATE)
+            .name(name)
             .build();
             return true;
         } catch (IOException e) {
