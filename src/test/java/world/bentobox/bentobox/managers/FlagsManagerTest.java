@@ -33,7 +33,6 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -97,11 +96,9 @@ public class FlagsManagerTest {
     public void testRegisterDuplicateFlagIcons() {
         FlagsManager fm = new FlagsManager(plugin);
         // Change the ID to something random, but use every icon that is already used
-        Flags.values().forEach(dupe -> assertFalse(fm.registerFlag(new FlagBuilder()
-                .id(UUID.randomUUID().toString())
-                .icon(dupe.getIcon())
-                .listener(new BreakBlocksListener())
-                .build())));
+        Flags.values().forEach(dupe -> assertFalse(fm.registerFlag(
+                new Flag.Builder(UUID.randomUUID().toString(), dupe.getIcon()).listener(new BreakBlocksListener()).build()
+                )));
     }
 
 
@@ -111,12 +108,12 @@ public class FlagsManagerTest {
         FlagsManager fm = new FlagsManager(plugin);
         // This should pass
         OriginalListener ol = new OriginalListener();
-        Flag originalFlag = new FlagBuilder().id("ORIGINAL").icon(Material.EMERALD_BLOCK).listener(ol).build();
+        Flag originalFlag = new Flag.Builder("ORIGINAL", Material.EMERALD_BLOCK).listener(ol).build();
         assertTrue(fm.registerFlag(originalFlag));
         // Verify registered
         Mockito.verify(server).getPluginManager();
         // Register another flag with same listener
-        Flag originalFlag2 = new FlagBuilder().id("ORIGINAL2").icon(Material.COAL_ORE).listener(ol).build();
+        Flag originalFlag2 = new Flag.Builder("ORIGINAL2", Material.COAL_ORE).listener(ol).build();
         assertTrue(fm.registerFlag(originalFlag2));
         // Verify registered only once
         Mockito.verify(server).getPluginManager();

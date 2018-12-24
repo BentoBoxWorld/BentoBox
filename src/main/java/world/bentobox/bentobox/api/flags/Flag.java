@@ -9,6 +9,9 @@ import org.bukkit.inventory.ItemStack;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
+import world.bentobox.bentobox.api.flags.clicklisteners.IslandToggleClick;
+import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -45,6 +48,9 @@ public class Flag implements Comparable<Flag> {
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
 
+    /**
+     * {@link Flag.Builder} should be used instead. This is only used for testing.
+     */
     Flag(String id, Material icon, Listener listener, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
         this.id = id;
         this.icon = icon;
@@ -53,6 +59,17 @@ public class Flag implements Comparable<Flag> {
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
         this.subPanel = subPanel;
+    }
+
+    private Flag(Builder builder) {
+        this.id = builder.id;
+        this.icon = builder.icon;
+        this.listener = builder.listener;
+        this.type = builder.type;
+        this.setting = builder.defaultSetting;
+        this.defaultRank = builder.defaultRank;
+        this.clickHandler = builder.clickHandler;
+        this.subPanel = builder.usePanel;
     }
 
     public String getID() {
@@ -246,5 +263,87 @@ public class Flag implements Comparable<Flag> {
     @Override
     public int compareTo(Flag o) {
         return getID().compareTo(o.getID());
+    }
+
+    /**
+     * @author tastybento, Poslovitch
+     */
+    public static class Builder {
+        // Mandatory fields
+        private String id;
+        private Material icon;
+
+        // Listener
+        private Listener listener;
+
+        // Type - is defaulted to PROTECTION
+        private Type type = Type.PROTECTION;
+
+        // Default settings
+        private boolean defaultSetting;
+        private int defaultRank = RanksManager.MEMBER_RANK;
+
+        // ClickHandler - default depends on the type
+        private PanelItem.ClickHandler clickHandler;
+
+        // Whether there is a sub-panel or not
+        private boolean usePanel = false;
+
+        public Builder(String id, Material icon) {
+            this.id = id;
+            this.icon = icon;
+        }
+
+        public Builder listener(Listener listener) {
+            this.listener = listener;
+            return this;
+        }
+
+        public Builder type(Type type) {
+            this.type = type;
+            return this;
+        }
+
+        public Builder clickHandler(PanelItem.ClickHandler clickHandler) {
+            this.clickHandler = clickHandler;
+            return this;
+        }
+
+        public Builder defaultSetting(boolean defaultSetting) {
+            this.defaultSetting = defaultSetting;
+            return this;
+        }
+
+        public Builder defaultRank(int defaultRank) {
+            this.defaultRank = defaultRank;
+            return this;
+        }
+
+        public Builder usePanel(boolean usePanel) {
+            this.usePanel = usePanel;
+            return this;
+        }
+
+        public Flag build() {
+            // If no clickHandler has been set, then apply default ones
+            if (clickHandler == null) {
+                switch (type){
+                case PROTECTION:
+                    clickHandler = new CycleClick(id);
+                    break;
+                case SETTING:
+                    clickHandler = new IslandToggleClick(id);
+                    break;
+                case WORLD_SETTING:
+                    clickHandler = new WorldToggleClick(id);
+                    break;
+                default:
+                    clickHandler = new CycleClick(id);
+                    break;
+                }
+            }
+
+            return new Flag(this);
+        }
     }
 }

@@ -10,6 +10,10 @@ import world.bentobox.bentobox.api.flags.clicklisteners.WorldToggleClick;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.managers.RanksManager;
 
+/**
+ * @deprecated Replaced by {@link Flag.Builder}.
+ */
+@Deprecated
 public class FlagBuilder {
 
     private String id;

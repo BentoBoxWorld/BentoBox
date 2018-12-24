@@ -52,7 +52,6 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.flags.FlagBuilder;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -500,7 +499,7 @@ public class TestBentoBox {
     public void testCustomFlags() {
         // Custom
         TestFlagListener fl = new TestFlagListener(plugin);
-        Flag customFlag = new FlagBuilder().id("CUSTOM_FLAG").icon(Material.DIAMOND).listener(fl).build();
+        Flag customFlag = new Flag.Builder("CUSTOM_FLAG", Material.DIAMOND).listener(fl).build();
         assertEquals("CUSTOM_FLAG", customFlag.getID());
         assertEquals(Material.DIAMOND, customFlag.getIcon());
         assertEquals(fl, customFlag.getListener().get());
