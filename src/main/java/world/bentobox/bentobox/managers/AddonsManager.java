@@ -148,7 +148,7 @@ public class AddonsManager {
             loaders.put(addon, addonClassLoader);
             // Run the onLoad.
             addon.onLoad();
-            // If this is a GameMode, get the GameWorld
+            // If this is a GameModeAddon create the worlds, register it and load the schems
             if (addon instanceof GameModeAddon) {
                 GameModeAddon gameMode = (GameModeAddon)addon;
                 // Create the gameWorlds

@@ -135,7 +135,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         permissionPrefix = (addon != null) ? addon.getPermissionPrefix() : "";
         // Set up world if this is an AddonGameMode
         if (addon instanceof GameModeAddon) {
-            addon.log("DEBUG: gamemode command - world = " +((GameModeAddon)addon).getOverWorld());
             setWorld(((GameModeAddon)addon).getOverWorld());
         }
         // Run setup

@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.addons;
 
 import org.bukkit.Location;
@@ -10,8 +7,9 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.util.Util;
 
 /**
- * Defines the addon as a game mode. A game mode creates worlds, registers world settings and schems.
- * @author tastybento
+ * Defines the addon as a game mode.
+ * A game mode creates worlds, registers world settings and has schems in a jar folder.
+ * @author tastybento, Postlovitch
  *
  */
 public abstract class GameModeAddon extends Addon {
@@ -23,7 +21,7 @@ public abstract class GameModeAddon extends Addon {
     /**
      * Make the worlds for this GameMode in this method. BentoBox will call it
      * after onLoad() and before onEnable().
-     * {@link #islandWorld} must be created,
+     * {@link #islandWorld} must be created and assigned,
      * {@link #netherWorld} and {@link #endWorld} are optional and may be null.
      */
     public abstract void createWorlds();
@@ -42,14 +40,23 @@ public abstract class GameModeAddon extends Addon {
         return Util.sameWorld(loc.getWorld(), islandWorld);
     }
 
+    /**
+     * @return over world
+     */
     public World getOverWorld() {
         return islandWorld;
     }
 
+    /**
+     * @return nether world, or null if it does not exist
+     */
     public World getNetherWorld() {
         return netherWorld;
     }
 
+    /**
+     * @return end world, or null if it does not exist
+     */
     public World getEndWorld() {
         return endWorld;
     }
