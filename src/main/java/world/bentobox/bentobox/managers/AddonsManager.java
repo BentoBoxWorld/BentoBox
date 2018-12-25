@@ -153,10 +153,8 @@ public class AddonsManager {
                 GameModeAddon gameMode = (GameModeAddon)addon;
                 // Create the gameWorlds
                 gameMode.createWorlds();
-                plugin.logDebug("GameModeAddon found! overWorld = " + gameMode.getOverWorld());
                 plugin.getIWM().addWorld(gameMode.getOverWorld(), gameMode.getWorldSettings());
                 // Register the schems
-                plugin.logDebug("Trying to register schems");
                 plugin.getSchemsManager().loadIslands(gameMode);
             }
         } catch (Exception e) {

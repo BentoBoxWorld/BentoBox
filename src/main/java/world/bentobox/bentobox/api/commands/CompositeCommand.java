@@ -85,7 +85,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * The prefix to be used in this command
      */
-    private String permissionPrefix = "";
+    private String permissionPrefix;
 
     /**
      * The world that this command operates in. This is an overworld and will cover any associated nether or end
@@ -101,7 +101,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * The top level label
      */
-    private String topLabel = "";
+    private String topLabel;
 
     /**
      * Cool down tracker
@@ -133,11 +133,13 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         setDescription(COMMANDS + label + ".description");
         setParametersHelp(COMMANDS + label + ".parameters");
         permissionPrefix = (addon != null) ? addon.getPermissionPrefix() : "";
-        setup();
         // Set up world if this is an AddonGameMode
         if (addon instanceof GameModeAddon) {
-            this.world = ((GameModeAddon)addon).getOverWorld();
+            addon.log("DEBUG: gamemode command - world = " +((GameModeAddon)addon).getOverWorld());
+            setWorld(((GameModeAddon)addon).getOverWorld());
         }
+        // Run setup
+        setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }

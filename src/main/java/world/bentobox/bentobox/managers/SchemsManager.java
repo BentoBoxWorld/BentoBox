@@ -41,12 +41,9 @@ public class SchemsManager {
             plugin.logError("Could not make schems folder!");
             return;
         }
-        // Save any schems that
+        // Save any schems that are in the jar
         try (JarFile jar = new JarFile(addon.getFile())) {
-            plugin.getAddonsManager().listJarFiles(jar, "schems", ".schem").forEach(name -> {
-                plugin.logDebug("Found " + name);
-                addon.saveResource(name, false);
-            });
+            plugin.getAddonsManager().listJarFiles(jar, "schems", ".schem").forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load schem files from addon jar " + e.getMessage());
         }
