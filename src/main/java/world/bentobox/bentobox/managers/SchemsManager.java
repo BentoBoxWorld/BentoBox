@@ -43,7 +43,7 @@ public class SchemsManager {
         // Save any schems that
         try (JarFile jar = new JarFile(addon.getFile())) {
             plugin.getAddonsManager().listJarFiles(jar, "schems", ".schem").forEach(name -> {
-                addon.saveResource("schems/" + name, false);
+                addon.saveResource(name, false);
             });
         } catch (IOException e) {
             plugin.logError("Could not load schem files from addon jar " + e.getMessage());
