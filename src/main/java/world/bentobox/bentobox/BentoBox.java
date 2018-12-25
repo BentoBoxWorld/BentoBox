@@ -3,12 +3,10 @@ package world.bentobox.bentobox;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import world.bentobox.bentobox.api.configuration.Config;
-import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
@@ -310,15 +308,6 @@ public class BentoBox extends JavaPlugin {
 
     public void logWarning(String warning) {
         getLogger().warning(warning);
-    }
-
-    /**
-     * Registers a world as a world to be covered by this plugin
-     * @param world - Bukkit overworld
-     * @param worldSettings - settings for this world
-     */
-    public void registerWorld(World world, WorldSettings worldSettings) {
-        islandWorldManager.addWorld(world, worldSettings);
     }
 
     /**

@@ -22,6 +22,7 @@ import org.bukkit.entity.Player;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -133,6 +134,10 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         setParametersHelp(COMMANDS + label + ".parameters");
         permissionPrefix = (addon != null) ? addon.getPermissionPrefix() : "";
         setup();
+        // Set up world if this is an AddonGameMode
+        if (addon instanceof GameModeAddon) {
+            this.world = ((GameModeAddon)addon).getOverWorld();
+        }
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
             new DefaultHelpCommand(this);
         }
