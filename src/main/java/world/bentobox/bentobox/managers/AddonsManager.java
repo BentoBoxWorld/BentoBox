@@ -6,7 +6,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -33,7 +32,6 @@ import world.bentobox.bentobox.api.events.addon.AddonEvent;
  */
 public class AddonsManager {
 
-    private static final String LOCALE_FOLDER = "locales";
     private List<Addon> addons;
     private Map<Addon, AddonClassLoader> loaders;
     private final Map<String, Class<?>> classes = new HashMap<>();
@@ -125,26 +123,30 @@ public class AddonsManager {
             // try loading the addon
             // Get description in the addon.yml file
             YamlConfiguration data = addonDescription(jar);
+
             // Load the addon
             AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+
             // Get the addon itself
             addon = addonClassLoader.getAddon();
+
             // Initialize some settings
             addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
             addon.setFile(f);
 
-            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
-            // Obtain any locale files and save them
-            for (String localeFile : listJarFiles(jar, LOCALE_FOLDER, ".yml")) {
-                addon.saveResource(localeFile, localeDir, false, true);
-            }
+            // Locales
+            plugin.getLocalesManager().copyLocalesFromAddonJar(addon);
             plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
+
             // Fire the load event
             Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+
             // Add it to the list of addons
             addons.add(addon);
+
             // Add to the list of loaders
             loaders.put(addon, addonClassLoader);
+
             // Run the onLoad.
             addon.onLoad();
         } catch (Exception e) {
@@ -203,33 +205,6 @@ public class AddonsManager {
      */
     public void setClass(final String name, final Class<?> clazz) {
         classes.putIfAbsent(name, clazz);
-    }
-
-    /**
-     * Lists files found in the jar in the folderPath with the suffix given
-     * @param jar - the jar file
-     * @param folderPath - the path within the jar
-     * @param suffix - the suffix required
-     * @return a list of files
-     */
-    public List<String> listJarFiles(JarFile jar, String folderPath, String suffix) {
-        List<String> result = new ArrayList<>();
-
-        Enumeration<JarEntry> entries = jar.entries();
-        while (entries.hasMoreElements()) {
-            JarEntry entry = entries.nextElement();
-            String path = entry.getName();
-
-            if (!path.startsWith(folderPath)) {
-                continue;
-            }
-
-            if (entry.getName().endsWith(suffix)) {
-                result.add(entry.getName());
-            }
-
-        }
-        return result;
     }
 
     private void sortAddons() {

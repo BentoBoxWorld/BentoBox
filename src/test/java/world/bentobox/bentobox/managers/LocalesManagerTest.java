@@ -9,13 +9,20 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
+import java.util.jar.Attributes;
+import java.util.jar.JarEntry;
+import java.util.jar.JarOutputStream;
+import java.util.jar.Manifest;
 
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -79,7 +86,7 @@ public class LocalesManagerTest {
      */
     @After
     public void cleanUp() throws Exception {
-
+        // Delete locale folder
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER);
         if (localeDir.exists()) {
             // Remove it
@@ -90,6 +97,16 @@ public class LocalesManagerTest {
 
         }
 
+        // Delete addon folder
+        localeDir = new File(plugin.getDataFolder(), "addons");
+        if (localeDir.exists()) {
+            // Remove it
+            Files.walk(localeDir.toPath())
+            .map(Path::toFile)
+            .sorted((o1, o2) -> -o1.compareTo(o2))
+            .forEach(File::delete);
+
+        }
     }
 
     /**
@@ -123,7 +140,7 @@ public class LocalesManagerTest {
         LocalesManager lm = new LocalesManager(plugin);
         assertNull(lm.get("test.test.test"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(java.lang.String, java.lang.String)}.
      * @throws IOException
@@ -170,7 +187,7 @@ public class LocalesManagerTest {
         when(user.getLocale()).thenReturn(Locale.US);
         assertEquals("test string", lm.get(user, "test.test"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.managers.LocalesManager#getOrDefault(world.bentobox.bentobox.api.user.User, java.lang.String, java.lang.String)}.
      * @throws IOException
@@ -283,17 +300,98 @@ public class LocalesManagerTest {
         List<Addon> none = new ArrayList<>();
         Addon addon = mock(Addon.class);
         AddonDescription desc = new AddonDescription();
-        desc.setName(BENTOBOX);
+        desc.setName("AcidIsland");
         when(addon.getDescription()).thenReturn(desc);
+        // Create a tmp folder to jar up
+        File localeDir = new File(LOCALE_FOLDER);
+        localeDir.mkdirs();
+        // Create a fake locale file for this jar
+        File english = new File(localeDir, Locale.US.toLanguageTag() + ".yml");
+        YamlConfiguration yaml = new YamlConfiguration();
+        yaml.set("test.test", "test string");
+        yaml.save(english);
+        // Create a temporary jar file
+        File jar = new File("addons", "AcidIsland.jar");
+        jar.getParentFile().mkdirs();
+        Manifest manifest = new Manifest();
+        manifest.getMainAttributes().put(Attributes.Name.MANIFEST_VERSION, "1.0");
+        JarOutputStream target = new JarOutputStream(new FileOutputStream("addons" + File.separator + "AcidIsland.jar"), manifest);
+        add(english, target);
+        target.close();
+        // When the file is requested, return it
+        when(addon.getFile()).thenReturn(jar);
         none.add(addon);
         when(am.getAddons()).thenReturn(none);
         when(plugin.getAddonsManager()).thenReturn(am);
         makeFakeLocaleFile();
         LocalesManager lm = new LocalesManager(plugin);
+
+        // RELOAD!!!
         lm.reloadLanguages();
-        Mockito.verify(addon).getDescription();
-        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + BENTOBOX);
-        assertTrue(localeDir.exists());
+
+        // Verify that the resources have been saved (note that they are not actually saved because addon is a mock)
+        Mockito.verify(addon).saveResource(
+                Mockito.eq("locales/en-US.yml"),
+                Mockito.any(),
+                Mockito.eq(false),
+                Mockito.eq(true)
+                );
+
+        // Clean up
+        // Delete the temp folder we made. Other clean up is done globally
+        localeDir = new File(plugin.getDataFolder(), "AcidIsland");
+        if (localeDir.exists()) {
+            // Remove it
+            Files.walk(localeDir.toPath())
+            .map(Path::toFile)
+            .sorted((o1, o2) -> -o1.compareTo(o2))
+            .forEach(File::delete);
+        }
+
+    }
+
+    private void add(File source, JarOutputStream target) throws IOException
+    {
+        BufferedInputStream in = null;
+        try
+        {
+            if (source.isDirectory())
+            {
+                String name = source.getPath().replace("\\", "/");
+                if (!name.isEmpty())
+                {
+                    if (!name.endsWith("/"))
+                        name += "/";
+                    JarEntry entry = new JarEntry(name);
+                    entry.setTime(source.lastModified());
+                    target.putNextEntry(entry);
+                    target.closeEntry();
+                }
+                for (File nestedFile: source.listFiles())
+                    add(nestedFile, target);
+                return;
+            }
+
+            JarEntry entry = new JarEntry(source.getPath().replace("\\", "/"));
+            entry.setTime(source.lastModified());
+            target.putNextEntry(entry);
+            in = new BufferedInputStream(new FileInputStream(source));
+
+            byte[] buffer = new byte[1024];
+            while (true)
+            {
+                int count = in.read(buffer);
+                if (count == -1)
+                    break;
+                target.write(buffer, 0, count);
+            }
+            target.closeEntry();
+        }
+        finally
+        {
+            if (in != null)
+                in.close();
+        }
     }
 
     /**

@@ -11,13 +11,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
+import java.util.jar.JarFile;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.FileLister;
+import world.bentobox.bentobox.util.Util;
 
 /**
  * @author tastybento, Poslovitch
@@ -31,7 +34,7 @@ public class LocalesManager {
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
-        copyLocalesFromJar(BENTOBOX);
+        copyLocalesFromPluginJar(BENTOBOX);
         loadLocalesFromFile(BENTOBOX); // Default
     }
 
@@ -102,11 +105,28 @@ public class LocalesManager {
     }
 
     /**
+     * Copies locale files from the addon jar to the file system
+     * @param addon - addon
+     */
+    void copyLocalesFromAddonJar(Addon addon) {
+        try (JarFile jar = new JarFile(addon.getFile())) {
+            File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + addon.getDescription().getName());
+            if (!localeDir.exists()) {
+                localeDir.mkdirs();
+                // Obtain any locale files and save them
+                Util.listJarFiles(jar, LOCALE_FOLDER, ".yml").forEach(lf -> addon.saveResource(lf, localeDir, false, true));
+            }
+        } catch (Exception e) {
+            plugin.logError(e.getMessage());
+        }
+    }
+
+    /**
      * Copies all the locale files from the plugin jar to the filesystem.
      * Only done if the locale folder does not already exist.
      * @param folderName - the name of the destination folder
      */
-    private void copyLocalesFromJar(String folderName) {
+    private void copyLocalesFromPluginJar(String folderName) {
         // Run through the files and store the locales
         File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + folderName);
         // If the folder does not exist, then make it and fill with the locale files from the jar
@@ -210,9 +230,12 @@ public class LocalesManager {
      */
     public void reloadLanguages() {
         languages.clear();
-        copyLocalesFromJar(BENTOBOX);
+        copyLocalesFromPluginJar(BENTOBOX);
         loadLocalesFromFile(BENTOBOX);
-        plugin.getAddonsManager().getAddons().forEach(addon -> loadLocalesFromFile(addon.getDescription().getName()));
+        plugin.getAddonsManager().getAddons().forEach(addon -> {
+            copyLocalesFromAddonJar(addon);
+            loadLocalesFromFile(addon.getDescription().getName());
+        });
     }
 
 
