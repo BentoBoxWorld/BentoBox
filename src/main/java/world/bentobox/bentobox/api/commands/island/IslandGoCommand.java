@@ -7,6 +7,7 @@ import org.apache.commons.lang.math.NumberUtils;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
  * @author tastybento
@@ -30,6 +31,11 @@ public class IslandGoCommand extends CompositeCommand {
         if (getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
             return false;
+        }
+        if ((getIWM().inWorld(user.getWorld()) && !Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
+            && user.getPlayer().getFallDistance() > 0) {
+            user.sendMessage("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint");
+            return true;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.parseInt(args.get(0));
