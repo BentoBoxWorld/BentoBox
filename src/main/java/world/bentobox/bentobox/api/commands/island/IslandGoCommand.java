@@ -34,7 +34,8 @@ public class IslandGoCommand extends CompositeCommand {
         }
         if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
             && user.getPlayer().getFallDistance() > 0) {
-            user.sendMessage("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint");
+			// We're sending the "hint" to the player to tell them they cannot teleport while falling.
+            user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
             return true;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
