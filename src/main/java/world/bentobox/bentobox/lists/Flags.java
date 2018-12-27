@@ -95,7 +95,7 @@ public final class Flags {
     public static final Flag COLLECT_LAVA = new Flag.Builder("COLLECT_LAVA", Material.LAVA_BUCKET).build();
     public static final Flag COLLECT_WATER = new Flag.Builder("COLLECT_WATER", Material.WATER_BUCKET).build();
     public static final Flag MILKING = new Flag.Builder("MILKING", Material.MILK_BUCKET).build();
-    public static final Flag FISH_SCOOPING = new Flag.Builder("FISH_SCOOPING", Material.TROPICAL_FISH_BUCKET).defaultSetting(false).build();
+    public static final Flag FISH_SCOOPING = new Flag.Builder("FISH_SCOOPING", Material.TROPICAL_FISH_BUCKET).build();
 
     // Chorus Fruit and Enderpearls
     public static final Flag CHORUS_FRUIT = new Flag.Builder("CHORUS_FRUIT", Material.CHORUS_FRUIT).listener(new TeleportationListener()).build();
@@ -148,7 +148,7 @@ public final class Flags {
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).build();
 
     // TNT
-    public static final Flag TNT = new Flag.Builder("TNT", Material.TNT).listener(new TNTListener()).defaultSetting(false).build();
+    public static final Flag TNT = new Flag.Builder("TNT", Material.TNT).listener(new TNTListener()).build();
 
     // Island lock
     public static final Flag LOCK = new Flag.Builder("LOCK", Material.TRIPWIRE_HOOK).defaultSetting(true)
@@ -177,9 +177,8 @@ public final class Flags {
      * World Settings - they apply to every island in the game worlds.
      */
 
-    // World Settings - apply to every island in the game worlds
     public static final Flag ENDER_CHEST = new Flag.Builder("ENDER_CHEST", Material.ENDER_CHEST)
-            .defaultSetting(false).type(Type.WORLD_SETTING)
+            .type(Type.WORLD_SETTING)
             .listener(new EnderChestListener())
             .build();
 
@@ -207,7 +206,7 @@ public final class Flags {
             .listener(new RemoveMobsListener()).defaultSetting(true).build();
 
     public static final Flag ITEM_FRAME_DAMAGE = new Flag.Builder("ITEM_FRAME_DAMAGE", Material.ITEM_FRAME).type(Type.WORLD_SETTING)
-            .listener(new ItemFrameListener()).defaultSetting(false).build();
+            .listener(new ItemFrameListener()).build();
 
     public static final Flag ISLAND_RESPAWN = new Flag.Builder("ISLAND_RESPAWN", Material.TORCH).type(Type.WORLD_SETTING)
             .listener(new IslandRespawnListener()).defaultSetting(true).build();
@@ -216,17 +215,17 @@ public final class Flags {
             .listener(new OfflineRedstoneListener()).defaultSetting(true).build();
 
     public static final Flag CLEAN_SUPER_FLAT = new Flag.Builder("CLEAN_SUPER_FLAT", Material.BEDROCK).type(Type.WORLD_SETTING)
-            .listener(new CleanSuperFlatListener()).defaultSetting(false).build();
+            .listener(new CleanSuperFlatListener()).build();
 
     public static final Flag CHEST_DAMAGE = new Flag.Builder("CHEST_DAMAGE", Material.TRAPPED_CHEST).type(Type.WORLD_SETTING)
-            .listener(new ChestDamageListener()).defaultSetting(false).build();
+            .listener(new ChestDamageListener()).build();
     public static final Flag CREEPER_DAMAGE = new Flag.Builder("CREEPER_DAMAGE", Material.GREEN_SHULKER_BOX).listener(new CreeperListener()).type(Type.WORLD_SETTING)
             .defaultSetting(true).build();
     /**
      * Prevents creeper griefing. This is where a visitor will trigger a creeper to blow up an island.
      */
     public static final Flag CREEPER_GRIEFING = new Flag.Builder("CREEPER_GRIEFING", Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
-            .defaultSetting(false).build();
+            .build();
 
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
             .clickHandler(new CommandRankClickListener()).usePanel(true).build();
