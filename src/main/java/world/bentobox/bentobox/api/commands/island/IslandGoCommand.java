@@ -32,7 +32,7 @@ public class IslandGoCommand extends CompositeCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if ((getIWM().inWorld(user.getWorld()) && !Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
+        if ((getIWM().inWorld(user.getWorld()) && Flags.PREVENT_TELEPORT_WHEN_FALLING.isSetForWorld(user.getWorld()))
             && user.getPlayer().getFallDistance() > 0) {
             user.sendMessage("protection.flags.PREVENT_TELEPORT_WHEN_FALLING.hint");
             return true;
