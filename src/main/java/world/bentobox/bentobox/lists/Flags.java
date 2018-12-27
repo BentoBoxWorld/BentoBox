@@ -232,6 +232,8 @@ public final class Flags {
 
     public static final Flag COARSE_DIRT_TILLING = new Flag.Builder("COARSE_DIRT_TILLING", Material.COARSE_DIRT).type(Type.WORLD_SETTING).defaultSetting(true).listener(new CoarseDirtTillingListener()).build();
 
+    public static final Flag PREVENT_TELEPORT_WHEN_FALLING = new Flag.Builder("PREVENT_TELEPORT_WHEN_FALLING", Material.FEATHER).type(Type.WORLD_SETTING).build();
+
     /**
      * @return List of all the flags in this class
      */

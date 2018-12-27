@@ -728,6 +728,13 @@ protection:
       name: "Experience pickup"
       description: "Toggle experience orb pickup"
       hint: "cannot pickup experience orb"
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: "Prevent teleport when falling"
+      description: |-
+        &aPrevent players from teleporting
+        &aback to their island using commands
+        &aif they are falling.
+      hint: "&cYou cannot teleport back to your island while you are falling."
   locked: "&cThis island is locked!"
   protected: "&cIsland protected: [description]"
   spawn-protected: "&cSpawn protected: [description]"
