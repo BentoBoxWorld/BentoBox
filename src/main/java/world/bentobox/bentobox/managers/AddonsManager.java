@@ -24,6 +24,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
 
@@ -149,6 +150,15 @@ public class AddonsManager {
 
             // Run the onLoad.
             addon.onLoad();
+            // If this is a GameModeAddon create the worlds, register it and load the schems
+            if (addon instanceof GameModeAddon) {
+                GameModeAddon gameMode = (GameModeAddon)addon;
+                // Create the gameWorlds
+                gameMode.createWorlds();
+                plugin.getIWM().addWorld(gameMode.getOverWorld(), gameMode.getWorldSettings());
+                // Register the schems
+                plugin.getSchemsManager().loadIslands(gameMode);
+            }
         } catch (Exception e) {
             plugin.logError(e.getMessage());
         }

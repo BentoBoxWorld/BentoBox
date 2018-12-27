@@ -14,6 +14,7 @@ import org.bukkit.configuration.InvalidConfigurationException;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.schems.Clipboard;
 import world.bentobox.bentobox.util.Util;
@@ -41,7 +42,7 @@ public class SchemsManager {
             plugin.logError("Could not make schems folder!");
             return;
         }
-        // Save any schems that
+        // Save any schems that are in the jar
         try (JarFile jar = new JarFile(addon.getFile())) {
             Util.listJarFiles(jar, "schems", ".schem").forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
@@ -60,33 +61,29 @@ public class SchemsManager {
 
     /**
      * Load schems for addon. Will try and load nether and end schems too if settings are set.
-     * @param world - world
+     * @param addon - GameModeAddon
      */
-    public void loadIslands(World world) {
-        plugin.getIWM().getAddon(world).ifPresent(addon -> {
-            File schems = new File(addon.getDataFolder(), "schems");
-            // Copy any schems fould in the jar
-            copySchems(addon, schems);
-            // Load all schems in folder
-            // Look through the folder
-            FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".schem")
-                    && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("nether-")
-                    && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("end-");
-            Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).forEach(name -> {
-                if (!plugin.getSchemsManager().loadSchem(world, schems, name)) {
-                    plugin.logError("Could not load " + name + ".schem for " + plugin.getIWM().getFriendlyName(world));
-                }
-                if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)
-                        && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getNetherWorld(world), schems, "nether-" + name)) {
-                    plugin.logError("Could not load nether-" + name + ".schem for " + plugin.getIWM().getFriendlyName(world));
-                }
-                if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)
-                        && !plugin.getSchemsManager().loadSchem(plugin.getIWM().getEndWorld(world), schems, "end-" + name)) {
-                    plugin.logError("Could not load end-" + name + ".schem for " + plugin.getIWM().getFriendlyName(world));
-                }
-            });
-
-
+    public void loadIslands(GameModeAddon addon) {
+        File schems = new File(addon.getDataFolder(), "schems");
+        // Copy any schems fould in the jar
+        copySchems(addon, schems);
+        // Load all schems in folder
+        // Look through the folder
+        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".schem")
+                && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("nether-")
+                && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("end-");
+        Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).forEach(name -> {
+            if (!plugin.getSchemsManager().loadSchem(addon.getOverWorld(), schems, name)) {
+                plugin.logError("Could not load " + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
+            }
+            if (addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands()
+                    && !plugin.getSchemsManager().loadSchem(addon.getNetherWorld(), schems, "nether-" + name)) {
+                plugin.logError("Could not load nether-" + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
+            }
+            if (addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands()
+                    && !plugin.getSchemsManager().loadSchem(addon.getEndWorld(), schems, "end-" + name)) {
+                plugin.logError("Could not load end-" + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
+            }
         });
     }
 
