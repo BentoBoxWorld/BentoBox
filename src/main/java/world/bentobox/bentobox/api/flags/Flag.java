@@ -280,7 +280,7 @@ public class Flag implements Comparable<Flag> {
         private Type type = Type.PROTECTION;
 
         // Default settings
-        private boolean defaultSetting;
+        private boolean defaultSetting = false;
         private int defaultRank = RanksManager.MEMBER_RANK;
 
         // ClickHandler - default depends on the type

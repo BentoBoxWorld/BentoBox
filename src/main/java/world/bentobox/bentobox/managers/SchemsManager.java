@@ -17,6 +17,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.schems.Clipboard;
+import world.bentobox.bentobox.util.Util;
 
 public class SchemsManager {
 
@@ -43,7 +44,7 @@ public class SchemsManager {
         }
         // Save any schems that are in the jar
         try (JarFile jar = new JarFile(addon.getFile())) {
-            plugin.getAddonsManager().listJarFiles(jar, "schems", ".schem").forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, "schems", ".schem").forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load schem files from addon jar " + e.getMessage());
         }

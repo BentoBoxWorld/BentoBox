@@ -1,7 +1,10 @@
 package world.bentobox.bentobox.util;
 
 import java.util.ArrayList;
+import java.util.Enumeration;
 import java.util.List;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -193,6 +196,33 @@ public class Util {
      */
     public static World getWorld(World world) {
         return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
+    }
+
+    /**
+     * Lists files found in the jar in the folderPath with the suffix given
+     * @param jar - the jar file
+     * @param folderPath - the path within the jar
+     * @param suffix - the suffix required
+     * @return a list of files
+     */
+    public static List<String> listJarFiles(JarFile jar, String folderPath, String suffix) {
+        List<String> result = new ArrayList<>();
+
+        Enumeration<JarEntry> entries = jar.entries();
+        while (entries.hasMoreElements()) {
+            JarEntry entry = entries.nextElement();
+            String path = entry.getName();
+
+            if (!path.startsWith(folderPath)) {
+                continue;
+            }
+
+            if (entry.getName().endsWith(suffix)) {
+                result.add(entry.getName());
+            }
+
+        }
+        return result;
     }
 
     /**
