@@ -111,7 +111,7 @@ public class BlockInteractionListener extends FlagListener {
     private void checkClickedBlock(Event e, Location loc, Material type) {
         // Handle pots
         if (type.name().startsWith("POTTED")) {
-            checkIsland(e, loc, Flags.CHEST);
+            checkIsland(e, loc, Flags.CONTAINER);
             return;
         }
         switch (type) {
@@ -164,7 +164,7 @@ public class BlockInteractionListener extends FlagListener {
         case YELLOW_SHULKER_BOX:
         case SHULKER_BOX:
         case FLOWER_POT:
-            checkIsland(e, loc, Flags.CHEST);
+            checkIsland(e, loc, Flags.CONTAINER);
             break;
         case DISPENSER:
             checkIsland(e, loc, Flags.DISPENSER);

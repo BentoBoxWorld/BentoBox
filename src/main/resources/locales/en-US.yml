@@ -439,10 +439,15 @@ protection:
       description: "Toggle button use"
       name: "Buttons"
       hint: "No button use allowed"
-    CHEST: 
-      description: "Toggle chest access"
-      name: "Chests"
-      hint: "Chest access disabled"
+    CONTAINER:
+      name: "Containers"
+      description: |-
+        &aToggle interaction with chests,
+        &ashulker boxes and flower pots.
+
+        &7Other containers are handled
+        &7by dedicated flags.
+      hint: "Container access disabled"
     DISPENSER:
       name: "Dispensers"
       description: "Toggle dispenser interaction"

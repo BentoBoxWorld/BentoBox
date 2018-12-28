@@ -67,7 +67,7 @@ public final class Flags {
     public static final Flag BEACON = new Flag.Builder("BEACON", Material.BEACON).build();
     public static final Flag BED = new Flag.Builder("BED", Material.RED_BED).build();
     public static final Flag BREWING = new Flag.Builder("BREWING", Material.BREWING_STAND).build();
-    public static final Flag CHEST = new Flag.Builder("CHEST", Material.CHEST).build();
+    public static final Flag CONTAINER = new Flag.Builder("CONTAINER", Material.CHEST).build();
     public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).build();
     public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).build();
     public static final Flag HOPPER = new Flag.Builder("HOPPER", Material.HOPPER).build();
