@@ -40,12 +40,14 @@ public class InventoryListener extends FlagListener {
         }
         else if (inventoryHolder instanceof Chest
                 || inventoryHolder instanceof Hopper
-                || inventoryHolder instanceof Dropper
                 || inventoryHolder instanceof ShulkerBox) {
             checkIsland(e, e.getInventory().getLocation(), Flags.CHEST);
         }
         else if (inventoryHolder instanceof Dispenser) {
             checkIsland(e, e.getInventory().getLocation(), Flags.DISPENSER);
+        }
+        else if (inventoryHolder instanceof Dropper) {
+            checkIsland(e, e.getInventory().getLocation(), Flags.DROPPER);
         }
         else if (inventoryHolder instanceof Furnace) {
             checkIsland(e, e.getInventory().getLocation(), Flags.FURNACE);

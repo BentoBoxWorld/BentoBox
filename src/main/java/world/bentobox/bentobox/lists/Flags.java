@@ -69,6 +69,7 @@ public final class Flags {
     public static final Flag BREWING = new Flag.Builder("BREWING", Material.BREWING_STAND).build();
     public static final Flag CHEST = new Flag.Builder("CHEST", Material.CHEST).build();
     public static final Flag DISPENSER = new Flag.Builder("DISPENSER", Material.DISPENSER).build();
+    public static final Flag DROPPER = new Flag.Builder("DROPPER", Material.DROPPER).build();
     public static final Flag DOOR = new Flag.Builder("DOOR", Material.OAK_DOOR).defaultSetting(true).build();
     public static final Flag TRAPDOOR = new Flag.Builder("TRAPDOOR", Material.OAK_TRAPDOOR).defaultSetting(true).build();
     public static final Flag CRAFTING = new Flag.Builder("CRAFTING", Material.CRAFTING_TABLE).defaultSetting(true).build();
