@@ -20,7 +20,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
@@ -37,7 +36,6 @@ public class IslandWorldManager {
     private static final String THE_END = "_the_end";
 
     private BentoBox plugin;
-    private Map<World, String> worlds;
     private Map<World, GameModeAddon> gameModes;
 
     /**
@@ -45,12 +43,11 @@ public class IslandWorldManager {
      */
     public IslandWorldManager(BentoBox plugin) {
         this.plugin = plugin;
-        worlds = new HashMap<>();
         gameModes = new HashMap<>();
     }
 
     public void registerWorldsToMultiverse() {
-        worlds.forEach((world, s) -> registerToMultiverse(world));
+        gameModes.forEach((world, s) -> registerToMultiverse(world));
     }
 
     /**
@@ -84,50 +81,36 @@ public class IslandWorldManager {
     public boolean inWorld(World world) {
         return ((world.getEnvironment().equals(Environment.NETHER) && isIslandNether(world))
                 || (world.getEnvironment().equals(Environment.THE_END) && isIslandEnd(world))
-                || (world.getEnvironment().equals(Environment.NORMAL)) && worlds.containsKey(world));
+                || (world.getEnvironment().equals(Environment.NORMAL)) && gameModes.containsKey(world));
     }
 
     /**
      * @return List of over worlds
      */
     public List<World> getOverWorlds() {
-        return worlds.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL))
+        return gameModes.keySet().stream().filter(w -> w.getEnvironment().equals(Environment.NORMAL))
                 .collect(Collectors.toList());
     }
 
     /**
-     * Get friendly names of all the over worlds and associated addon
+     * Get friendly names of all the over worlds and associated GameModeAddon
      *
-     * @return Map of world names and associated addon friendly name or if it's a built-in world "none"
+     * @return Map of world names and associated GameModeAddon friendly name
      */
     public Map<String, String> getOverWorldNames() {
         return gameModes.values().stream()
-                .collect(Collectors.toMap(a -> a.getOverWorld().getName(), a -> a.getDescription().getName()));
-    }
-
-    /**
-     * Get a set of world names that user does not already have an island in
-     *
-     * @param user
-     *            - user
-     * @return set of world names, or empty set
-     */
-    public Set<String> getFreeOverWorldNames(User user) {
-        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
-                .filter(w -> !plugin.getIslands().hasIsland(w.getKey(), user)).map(Map.Entry::getValue)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toMap(a -> a.getOverWorld().getName(), a -> a.getWorldSettings().getFriendlyName()));
     }
 
     /**
      * Check if a name is a known friendly world name, ignores case
      *
-     * @param name
-     *            - world name
+     * @param name - world name
      * @return true if name is a known world name
      */
-    public boolean isOverWorld(String name) {
-        return worlds.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
-                .anyMatch(w -> w.getValue().equalsIgnoreCase(name));
+    public boolean isKnownFriendlyWorldName(String name) {
+        return gameModes.entrySet().stream().filter(e -> e.getKey().getEnvironment().equals(Environment.NORMAL))
+                .anyMatch(w -> w.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(name));
     }
 
 
@@ -135,7 +118,6 @@ public class IslandWorldManager {
         WorldSettings settings = gameMode.getWorldSettings();
         World world = gameMode.getOverWorld();
         String friendlyName = settings.getFriendlyName().isEmpty() ? world.getName() : settings.getFriendlyName();
-        worlds.put(world, friendlyName);
         gameModes.put(world, gameMode);
         // Call Multiverse
         registerToMultiverse(world);
@@ -184,7 +166,7 @@ public class IslandWorldManager {
      * @return world, or null if it does not exist
      */
     public World getWorld(String friendlyName) {
-        return worlds.entrySet().stream().filter(n -> n.getValue().equalsIgnoreCase(friendlyName))
+        return gameModes.entrySet().stream().filter(en -> en.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyName))
                 .map(Map.Entry::getKey).findFirst().orElse(null);
     }
 
@@ -394,7 +376,7 @@ public class IslandWorldManager {
      */
     public String getFriendlyNames() {
         StringBuilder r = new StringBuilder();
-        worlds.values().forEach(n -> r.append(n).append(", "));
+        gameModes.values().forEach(n -> r.append(n).append(", "));
         if (r.length() > 0) {
             r.setLength(r.length() - 2);
         }
@@ -409,7 +391,7 @@ public class IslandWorldManager {
      * @return world, or null if not known
      */
     public World getIslandWorld(String friendlyWorldName) {
-        return worlds.entrySet().stream().filter(e -> e.getValue().equalsIgnoreCase(friendlyWorldName)).findFirst()
+        return gameModes.entrySet().stream().filter(e -> e.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyWorldName)).findFirst()
                 .map(Map.Entry::getKey).orElse(null);
     }
 
@@ -629,7 +611,7 @@ public class IslandWorldManager {
      * @return number of resets allowed. -1 = unlimited
      */
     public int getResetLimit(World world) {
-        return worlds.containsKey(Util.getWorld(world)) ? gameModes.get(Util.getWorld(world)).getWorldSettings().getResetLimit() : -1;
+        return gameModes.containsKey(Util.getWorld(world)) ? gameModes.get(Util.getWorld(world)).getWorldSettings().getResetLimit() : -1;
     }
 
 
