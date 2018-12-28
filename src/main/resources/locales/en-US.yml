@@ -443,6 +443,14 @@ protection:
       description: "Toggle chest access"
       name: "Chests"
       hint: "Chest access disabled"
+    DISPENSER:
+      name: "Dispensers"
+      description: "Toggle dispenser interaction"
+      hint: "Dispenser interaction disabled"
+    DROPPER:
+      name: "Droppers"
+      description: "Toggle dropper interaction"
+      hint: "Dropper interaction disabled"
     HOPPER:
       name: "Hoppers"
       description: "Toggle hopper interaction"
