@@ -443,6 +443,10 @@ protection:
       description: "Toggle chest access"
       name: "Chests"
       hint: "Chest access disabled"
+    HOPPER:
+      name: "Hoppers"
+      description: "Toggle hopper interaction"
+      hint: "Hopper interaction disabled"
     CHEST_DAMAGE:
       description: "Toggle chest damage from explosions"
       name: "Chest Damage"
