@@ -164,11 +164,13 @@ public class BlockInteractionListener extends FlagListener {
         case YELLOW_SHULKER_BOX:
         case SHULKER_BOX:
         case FLOWER_POT:
-        case DISPENSER:
         case DROPPER:
         case HOPPER:
         case HOPPER_MINECART:
             checkIsland(e, loc, Flags.CHEST);
+            break;
+        case DISPENSER:
+            checkIsland(e, loc, Flags.DISPENSER);
             break;
         case ACACIA_DOOR:
         case BIRCH_DOOR:
