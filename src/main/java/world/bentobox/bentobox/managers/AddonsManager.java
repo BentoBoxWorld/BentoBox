@@ -155,7 +155,7 @@ public class AddonsManager {
                 GameModeAddon gameMode = (GameModeAddon)addon;
                 // Create the gameWorlds
                 gameMode.createWorlds();
-                plugin.getIWM().addWorld(gameMode.getOverWorld(), gameMode.getWorldSettings());
+                plugin.getIWM().addGameMode(gameMode);
                 // Register the schems
                 plugin.getSchemsManager().loadIslands(gameMode);
             }

@@ -2,14 +2,12 @@ package world.bentobox.bentobox.api.configuration;
 
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
 import org.bukkit.entity.EntityType;
 
-import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.flags.Flag;
 
 /**
@@ -18,11 +16,6 @@ import world.bentobox.bentobox.api.flags.Flag;
  *
  */
 public interface WorldSettings {
-
-    /**
-     * @return the Addon that registered this world
-     */
-    Optional<Addon> getAddon();
 
     /**
      * Get the default game mode for this game world, e.g. SURVIVAL
@@ -252,7 +245,7 @@ public interface WorldSettings {
      * @return max number of deaths for this world
      */
     int getDeathsMax();
-    
+
     /**
      * @return whether deaths should be counted.
      */
