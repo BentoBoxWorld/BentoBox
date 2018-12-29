@@ -280,9 +280,9 @@ public class PlayersManager {
     /**
      * Sets how many resets the player has performed
      *
-     * @param world - world
-     * @param playerUUID - the player's UUID
-     * @param resets - number of resets
+     * @param world world
+     * @param playerUUID player's UUID
+     * @param resets number of resets to set
      */
     public void setResets(World world, UUID playerUUID, int resets) {
         addPlayer(playerUUID);
