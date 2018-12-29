@@ -10,6 +10,10 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * @deprecated Renamed and moved to {@link world.bentobox.bentobox.api.commands.admin.resets.AdminResetsResetCommand}.
+ */
+@Deprecated
 public class AdminClearresetsCommand extends CompositeCommand {
 
     public AdminClearresetsCommand(CompositeCommand parent) {

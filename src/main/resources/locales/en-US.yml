@@ -50,12 +50,14 @@ commands:
     help:
       parameters: ""
       description: "admin command"
-    clearresets:
-      parameters: "<player>"
-      description: "clears player reset count for this world"
-      cleared: "&2Resets cleared"
-    clearresetsall:
-      description: "clears all player reset counts for this world"
+    resets:
+      description: "edit resets of the players"
+      set:
+        description: "sets the resets of this player"
+        parameters: "<player> <resets>"
+      reset:
+        description: "resets the resets of this player to 0"
+        parameters: "<player>"
     team:
       add:
         parameters: "<owner> <player>"

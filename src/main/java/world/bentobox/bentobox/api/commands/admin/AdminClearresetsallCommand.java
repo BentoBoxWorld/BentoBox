@@ -9,6 +9,11 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * Unlike {@link AdminClearresetsCommand}, this command will be removed.
+ * We will be working on an alternative which will use {@link world.bentobox.bentobox.api.commands.admin.resets.AdminResetsResetCommand} instead.
+ */
+@Deprecated
 public class AdminClearresetsallCommand extends ConfirmableCommand {
 
     public AdminClearresetsallCommand(CompositeCommand parent) {
