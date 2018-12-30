@@ -6,13 +6,34 @@
 ![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=reliability_rating)
 ![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=security_rating)
 ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=bugs)
+[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/BentoBoxWorld/BentoBox.svg)](http://isitmaintained.com/project/BentoBoxWorld/BentoBox "Average time to resolve an issue")
+[![Percentage of issues still open](http://isitmaintained.com/badge/open/BentoBoxWorld/BentoBox.svg)](http://isitmaintained.com/project/BentoBoxWorld/BentoBox "Percentage of issues still open")
 
-BentoBox is an expandable Minecraft Spigot plugin for island-type games like SkyBlock or AcidIsland.
+BentoBox is an expandable Minecraft **1.13+ Spigot plugin** for island-type games like SkyBlock or AcidIsland.
 
-It is designed to take over ASkyBlock and AcidIsland for 1.13+ Minecraft versions.
+## About BentoBox
+
+### History
+
+ASkyBlock and AcidIsland were originally created by [tastybento](https://github.com/tastybento).
+These two plugins were sharing the same codebase, which grew fastly but ultimately became hard to maintain.
+[Poslovitch](https://github.com/Poslovitch) was running a Skyblock server before starting to contribute regularly on ASkyBlock's codebase.
+
+Then came the idea of *completely rewriting ASkyBlock*.
+A turning point that would be called *BSkyBlock*.
+In May 2017, tastybento agreed to the idea, and Poslovitch and him spent more time developing the code of the plugin which would become *BentoBox*.
+During summer 2018, ASkyBlock's support got dropped and development was focused on the now called plugin *BentoBox*, which would then take over ASkyBlock and AcidIsland for 1.13+ servers.
+
+### Description
+
+BentoBox introduces a **unique Addon system** and a **powerful API** which allows for a technically **unlimited customization** of the gamemodes.
+Therefore, BentoBox **does nothing on its own**: addons and gamemodes are bringing the features.
+
+BentoBox being totally **free and open-sourced**, we are confident in seeing this platform grow and become even more powerful in the future.
+
+Start now to create the server you've dreamed of!
 
 ## Addons
-Admins can assemble the game or games how they like with a variety of Addons.
 These include some popular Gamemodes:
 * [**BSkyBlock**](https://github.com/BentoBoxWorld/BSkyBlock): the successor to the popular ASkyBlock.
 * [**AcidIsland**](https://github.com/BentoBoxWorld/AcidIsland): you are marooned in a sea of acid!
@@ -24,22 +45,26 @@ And these include Addons that are bringing incredible new features, such as:
 
 And there are plenty of other official or community-made Addons you can try and use for your server!
 
+## Documentation
+
+* [Installation guide](https://github.com/BentoBoxWorld/bentobox/wiki/Install-Bentobox)
+* [Javadocs](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/javadoc/)
+* [Wiki](https://github.com/BentoBoxWorld/BentoBox/wiki)
+
 ## Downloads
 
 ### Webtool
 A [webtool](https://bentobox-tool.herokuapp.com/) is currently being developed to allow you to easily setup BentoBox and Addons on your server.
 
 ### Direct links
-* [Installation guide](https://github.com/BentoBoxWorld/bentobox/wiki/Install-Bentobox)
 * [Download](https://github.com/BentoBoxWorld/BentoBox/releases)
 
 ### Developers
-* [Jenkins](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/)
-* [Javadocs](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/javadoc/)
+* [Jenkins](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/) (**untested and mostly unstable builds**)
 
 ## What about contributing?
 
-BentoBox heavily relies on the community that gets involved in its development.
+BentoBox heavily relies on [the community that gets involved in its development](https://github.com/BentoBoxWorld/BentoBox/graphs/contributors).
 You don't need to know any programming language to start helping us.
 
 However, your contribution **must be in agreement** with:
@@ -54,7 +79,10 @@ We consider Pull Requests from non-collaborators that contain actual code improv
 Do not submit PRs that only address code formatting because they will not be accepted.
 
 ## API
-Maven dependency:
+
+BentoBox uses Maven, and its Maven repository is kindly provided by [CodeMC](https://codemc.org).
+
+### Maven dependency
 ```xml
 <repositories>
   <repository>
@@ -72,5 +100,3 @@ Maven dependency:
   </dependency>
 </dependencies>
 ```
-
-You can find the javadoc here: https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/javadoc/
