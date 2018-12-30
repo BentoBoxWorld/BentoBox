@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -42,6 +43,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
@@ -54,6 +56,9 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  */
 public class Clipboard {
+
+    // Speed of pasting
+    private static final int BLOCKS_PER_TICK = Integer.MAX_VALUE;
 
     // Commonly used texts along this class.
     private static final String ATTACHED = "attached";
@@ -72,6 +77,8 @@ public class Clipboard {
     private boolean copied;
 
     private File schemFolder;
+
+    private BukkitTask pastingTask;
 
     public Clipboard(BentoBox plugin, File schemFolder) {
         super();
@@ -188,13 +195,25 @@ public class Clipboard {
         Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
         // Paste
         if (blockConfig.contains(BLOCK)) {
-            blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+            Iterator<String> it = blockConfig.getConfigurationSection(BLOCK).getKeys(false).iterator();
+            pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                int count = 0;
+                while (count < BLOCKS_PER_TICK && it.hasNext()) {
+                    pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + it.next()));
+                    count++;
+                }
+                // If the pasting has been completed, then cancel and run any follow on task
+                if (!it.hasNext()) {
+                    // Cancel task
+                    pastingTask.cancel();
+                    if (task != null) {
+                        // Run follow on task if it exists
+                        Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
+                    }
+                }
+            }, 0L, 1L);
         } else {
             plugin.logError("Clipboard has no block data in it to paste!");
-        }
-        // Run follow on task if it exists
-        if (task != null) {
-            Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
         }
     }
 
@@ -229,7 +248,7 @@ public class Clipboard {
             plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
                 lines.clear();
                 for (int i = 0; i < 4; i++) {
-                    lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()), 
+                    lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
                             addon.getDescription().getName().toLowerCase() + ".sign.line" + i,"")));
                 }
             });
