@@ -32,6 +32,7 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
+import world.bentobox.bentobox.versions.ServerCompatibility;
 
 /**
  * Main BentoBox class
@@ -67,6 +68,18 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void onEnable(){
+        if (!ServerCompatibility.getInstance().checkCompatibility(this).isCanLaunch()) {
+            // The server's most likely incompatible.
+            // For safety reasons, we must stop BentoBox from loading.
+
+            getServer().getLogger().severe("Aborting BentoBox enabling.");
+            getServer().getLogger().severe("BentoBox cannot be loaded on this server.");
+            getServer().getLogger().severe("You must be using a compatible server software and run on a version supported by BentoBox.");
+
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         // Not loaded
         isLoaded = false;
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.
