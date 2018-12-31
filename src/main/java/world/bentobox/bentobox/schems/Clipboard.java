@@ -58,7 +58,7 @@ import world.bentobox.bentobox.util.Util;
 public class Clipboard {
 
     // Speed of pasting
-    private static final int BLOCKS_PER_TICK = Integer.MAX_VALUE;
+    private int pasteSpeed = 200;
 
     // Commonly used texts along this class.
     private static final String ATTACHED = "attached";
@@ -87,6 +87,7 @@ public class Clipboard {
             schemFolder.mkdirs();
         }
         this.schemFolder = schemFolder;
+        pasteSpeed = plugin.getSettings().getPasteSpeed();
     }
 
     /**
@@ -198,7 +199,7 @@ public class Clipboard {
             Iterator<String> it = blockConfig.getConfigurationSection(BLOCK).getKeys(false).iterator();
             pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
                 int count = 0;
-                while (count < BLOCKS_PER_TICK && it.hasNext()) {
+                while (count < pasteSpeed && it.hasNext()) {
                     pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + it.next()));
                     count++;
                 }

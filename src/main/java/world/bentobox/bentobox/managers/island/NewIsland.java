@@ -46,11 +46,7 @@ public class NewIsland {
         this.reason = reason;
         this.world = world;
         this.name = name;
-        newIsland();
-        if (oldIsland != null) {
-            // Delete the old island
-            plugin.getIslands().deleteIsland(oldIsland, true);
-        }
+        newIsland(oldIsland);
     }
 
     /**
@@ -121,8 +117,9 @@ public class NewIsland {
 
     /**
      * Makes an island.
+     * @param oldIsland
      */
-    public void newIsland() {
+    public void newIsland(Island oldIsland) {
         Location next = getNextIsland();
         if (next == null) {
             plugin.logError("Failed to make island - no unoccupied spot found");
@@ -165,6 +162,12 @@ public class NewIsland {
 
             // Teleport player after this island is built
             plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
+
+            // Delete old island
+            if (oldIsland != null) {
+                // Delete the old island
+                plugin.getIslands().deleteIsland(oldIsland, true);
+            }
         });
         // Make nether island
         if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {

@@ -90,6 +90,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         // Reset the island
         Player player = user.getPlayer();
         player.setGameMode(GameMode.SPECTATOR);
+        user.sendMessage("commands.island.create.creating-island");
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), player.getUniqueId());
         // Remove them from this island (it still exists and will be deleted later)
