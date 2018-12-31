@@ -1,7 +1,7 @@
 BentoBox
 ========
 
-[![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/bentobox)](https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/)
+[![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/BentoBox)](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/)
 ![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=ncloc)
 ![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=sqale_rating)
 ![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=reliability_rating)
@@ -45,7 +45,7 @@ Development Builds
 ==================
 **These development builds are not eligible to any kind of support. Use them at your own discretion or only under our approval.** *Most of them are __untested__. In the worst cases, they can even __corrupt your worlds and/or your databases__.*
 
-Jenkins: https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/
+Jenkins: https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/
 
 API
 ===
@@ -68,4 +68,4 @@ Maven dependency:
 </dependencies>
 ```
 
-You can find the javadoc here: https://ci.codemc.org/job/BentoBoxWorld/job/bentobox/javadoc/
+You can find the javadoc here: https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/javadoc/
