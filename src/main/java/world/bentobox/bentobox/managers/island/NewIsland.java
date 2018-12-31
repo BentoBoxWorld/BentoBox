@@ -157,12 +157,16 @@ public class NewIsland {
                 plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
             }
             // Stop the player from falling or moving if they are
-            user.getPlayer().setVelocity(new Vector(0,0,0));
-            user.getPlayer().setFallDistance(0F);
+            if (user.isOnline()) {
+                user.getPlayer().setVelocity(new Vector(0,0,0));
+                user.getPlayer().setFallDistance(0F);
 
-            // Teleport player after this island is built
-            plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
-
+                // Teleport player after this island is built
+                plugin.getIslands().homeTeleport(world, user.getPlayer(), true);
+            } else {
+                // Remove the player again to completely clear the data
+                User.removePlayer(user.getPlayer());
+            }
             // Delete old island
             if (oldIsland != null) {
                 // Delete the old island
