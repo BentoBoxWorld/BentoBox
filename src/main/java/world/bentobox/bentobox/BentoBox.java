@@ -201,10 +201,7 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
-        // Save settings
-        if (settings != null) {
-            new Config<>(this, Settings.class).saveConfigObject(settings);
-        }
+        // Save settings - not required
     }
 
     /**

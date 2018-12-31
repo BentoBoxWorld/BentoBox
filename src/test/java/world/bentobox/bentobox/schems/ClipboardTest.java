@@ -36,6 +36,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.Before;
@@ -153,6 +154,12 @@ public class ClipboardTest {
         Settings settings = mock(Settings.class);
         when(settings.getPasteSpeed()).thenReturn(200);
         when(plugin.getSettings()).thenReturn(settings);
+
+        // Default block state
+        BlockState bs = mock(BlockState.class);
+        when(block.getState()).thenReturn(bs);
+        MaterialData md = mock(MaterialData.class);
+        when(bs.getData()).thenReturn(md);
 
     }
 
