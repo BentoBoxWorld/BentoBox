@@ -60,9 +60,7 @@ public class Clipboard {
 
     enum PasteState {
         BLOCKS,
-        BLOCKS_DONE,
         ATTACHMENTS,
-        ATTACHMENTS_DONE,
         ENTITIES,
         DONE
     }
@@ -72,9 +70,9 @@ public class Clipboard {
     private PasteState pasteState;
 
     // Commonly used texts along this class.
-    private static final String ATTACHED = "attached.";
-    private static final String ENTITIES = "entities.";
-    private static final String BLOCK = "blocks.";
+    private static final String ATTACHED_YAML_PREFIX = "attached.";
+    private static final String ENTITIES_YAML_PREFIX = "entities.";
+    private static final String BLOCKS_YAML_PREFIX = "blocks.";
     private static final String BEDROCK = "bedrock";
     private static final String INVENTORY = "inventory";
     private static final String ENTITY = "entity";
@@ -208,14 +206,14 @@ public class Clipboard {
         // Calculate location for pasting
         Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
         // Paste
-        if (!blockConfig.contains(BLOCK)) {
+        if (!blockConfig.contains(BLOCKS_YAML_PREFIX)) {
             plugin.logError("Clipboard has no block data in it to paste!");
             return;
         }
         // Iterators for the various schem sections
-        Iterator<String> it = blockConfig.getConfigurationSection(BLOCK).getKeys(false).iterator();
-        Iterator<String> it2 = blockConfig.contains(ATTACHED) ? blockConfig.getConfigurationSection(ATTACHED).getKeys(false).iterator() : null;
-        Iterator<String> it3 = blockConfig.contains(ENTITIES) ? blockConfig.getConfigurationSection(ENTITIES).getKeys(false).iterator() : null;
+        Iterator<String> it = blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).iterator();
+        Iterator<String> it2 = blockConfig.contains(ATTACHED_YAML_PREFIX) ? blockConfig.getConfigurationSection(ATTACHED_YAML_PREFIX).getKeys(false).iterator() : null;
+        Iterator<String> it3 = blockConfig.contains(ENTITIES_YAML_PREFIX) ? blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX).getKeys(false).iterator() : null;
 
         // Initial state & speed
         pasteState = PasteState.BLOCKS;
@@ -224,15 +222,15 @@ public class Clipboard {
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             int count = 0;
             while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
-                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + it.next()));
+                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + it.next()));
                 count++;
             }
             while (it2 != null && pasteState.equals(PasteState.ATTACHMENTS) && count < pasteSpeed && it2.hasNext()) {
-                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(ATTACHED + it2.next()));
+                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(ATTACHED_YAML_PREFIX + it2.next()));
                 count++;
             }
             while (it3 != null && pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
-                pasteEntity(world, island, loc, blockConfig.getConfigurationSection(ENTITIES + it3.next()));
+                pasteEntity(world, island, loc, blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX + it3.next()));
                 count++;
             }
             // STATE SHIFT
@@ -270,8 +268,8 @@ public class Clipboard {
      * @param location - location
      */
     public void pasteClipboard(Location location) {
-        if (blockConfig.contains(BLOCK)) {
-            blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        if (blockConfig.contains(BLOCKS_YAML_PREFIX)) {
+            blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + "." + b)));
         } else {
             plugin.logError("Clipboard has no block data in it to paste!");
         }
@@ -439,11 +437,11 @@ public class Clipboard {
         String pos = x + "," + y + "," + z;
 
         // Position defines the section
-        ConfigurationSection s = blockConfig.createSection(BLOCK + "." + pos);
+        ConfigurationSection s = blockConfig.createSection(BLOCKS_YAML_PREFIX + "." + pos);
 
         // Set entities
         for (LivingEntity e: entities) {
-            ConfigurationSection en = blockConfig.createSection(ENTITIES + pos + "." + e.getUniqueId());
+            ConfigurationSection en = blockConfig.createSection(ENTITIES_YAML_PREFIX + pos + "." + e.getUniqueId());
             en.set("type", e.getType().name());
             en.set("name", e.getCustomName());
             if (e instanceof Colorable) {
@@ -488,7 +486,7 @@ public class Clipboard {
 
         // Set block data
         if (bs.getData() instanceof Attachable) {
-            ConfigurationSection a = blockConfig.createSection(ATTACHED + pos);
+            ConfigurationSection a = blockConfig.createSection(ATTACHED_YAML_PREFIX + pos);
             a.set("bd", block.getBlockData().getAsString());
             // Placeholder for attachment
             s.set("bd", "minecraft:air");
