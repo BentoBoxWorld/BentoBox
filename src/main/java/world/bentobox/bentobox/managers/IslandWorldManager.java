@@ -155,7 +155,11 @@ public class IslandWorldManager {
      * @return world settings, or null if world is unknown
      */
     public WorldSettings getWorldSettings(World world) {
-        return gameModes.get(Util.getWorld(world)).getWorldSettings();
+        if (gameModes.containsKey(Util.getWorld(world))) {
+            return gameModes.get(Util.getWorld(world)).getWorldSettings();
+        } else {
+            return null;
+        }
     }
 
     /**
