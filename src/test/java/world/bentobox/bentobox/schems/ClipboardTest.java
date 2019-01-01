@@ -326,9 +326,8 @@ public class ClipboardTest {
         cb.setPos2(loc2);
         cb.copy(user, false);
         cb.pasteClipboard(loc);
-        // This is set just once because the coords of the block are always the same
-        Mockito.verify(block).setBlockData(Mockito.any());
-        // TODO Verify the entities are spawned
+        // Verify the task is run
+        Mockito.verify(sched).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         // Player should NOT spawn!!
         Mockito.verify(world, Mockito.never()).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.PLAYER));
     }
