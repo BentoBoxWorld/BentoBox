@@ -206,6 +206,10 @@ public class Clipboard {
         // Calculate location for pasting
         Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
         // Paste
+        paste(world, island, loc, task);
+    }
+
+    private void paste(World world, Island island, Location loc, Runnable task) {
         if (!blockConfig.contains(BLOCKS_YAML_PREFIX)) {
             plugin.logError("Clipboard has no block data in it to paste!");
             return;
@@ -261,6 +265,7 @@ public class Clipboard {
             }
         }, 0L, 1L);
 
+
     }
 
     /**
@@ -269,7 +274,8 @@ public class Clipboard {
      */
     public void pasteClipboard(Location location) {
         if (blockConfig.contains(BLOCKS_YAML_PREFIX)) {
-            blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + "." + b)));
+            paste(location.getWorld(), null, location, null);
+            //blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + "." + b)));
         } else {
             plugin.logError("Clipboard has no block data in it to paste!");
         }
@@ -353,7 +359,8 @@ public class Clipboard {
     private void setEntity(Location location, ConfigurationSection en) {
         en.getKeys(false).forEach(k -> {
             ConfigurationSection ent = en.getConfigurationSection(k);
-            Location center = location.add(new Vector(0.5, 1.0, 0.5));
+            // Center, and just a bit high
+            Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
             if (e != null) {
                 e.setCustomName(ent.getString("name"));
