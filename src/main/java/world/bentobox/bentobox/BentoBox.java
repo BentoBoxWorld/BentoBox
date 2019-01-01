@@ -176,7 +176,7 @@ public class BentoBox extends JavaPlugin {
             instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
             instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
             instance.log("Thanks for using our plugin !");
-            instance.log("- Tastybento and Poslovitch, 2017-2018");
+            instance.log("- Tastybento and Poslovitch, 2017-2019");
             instance.log("#############################################");
         });
     }
