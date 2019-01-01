@@ -214,7 +214,10 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
-        // Save settings - not required
+        // Save settings - ensures admins always have the latest config file
+        if (settings != null) {
+            new Config<>(this, Settings.class).saveConfigObject(settings);
+        }
     }
 
     /**
