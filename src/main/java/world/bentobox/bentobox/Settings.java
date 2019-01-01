@@ -14,7 +14,7 @@ import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * All the plugin settings are here
- * @author Tastybento
+ * @author tastybento
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
 @ConfigComment("BentoBox Configuration [version]")
@@ -43,15 +43,10 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "general.use-economy")
     private boolean useEconomy = true;
 
-    @ConfigComment("Starting money - this is how much money new players will have as their")
-    @ConfigComment("balance at the start of an island.")
-    @ConfigEntry(path = "general.starting-money")
-    private double startingMoney = 10.0;
-
     // Database
     @ConfigComment("YAML, JSON, MYSQL, MONGODB.")
     @ConfigComment("YAML and JSON are both file-based databases.")
-    @ConfigComment("if you use MONGODB, you must also run the BSBMongo plugin (not addon).")
+    @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
     @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
     @ConfigEntry(path = "general.database.type")
     private DatabaseType databaseType = DatabaseType.YAML;
@@ -184,14 +179,6 @@ public class Settings implements DataObject {
 
     public void setUseEconomy(boolean useEconomy) {
         this.useEconomy = useEconomy;
-    }
-
-    public double getStartingMoney() {
-        return startingMoney;
-    }
-
-    public void setStartingMoney(double startingMoney) {
-        this.startingMoney = startingMoney;
     }
 
     public DatabaseType getDatabaseType() {
