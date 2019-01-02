@@ -11,9 +11,10 @@ import org.bukkit.entity.EntityType;
 import world.bentobox.bentobox.api.flags.Flag;
 
 /**
- * Contains world-specific settings. Only getters are required, but you may need setters for your own class.
+ * Contains world-specific settings that must be provided by the {@link world.bentobox.bentobox.api.addons.GameModeAddon} in order to register its Worlds.
+ * <br/>
+ * Depending on your implementation, you may need to add setters.
  * @author tastybento
- *
  */
 public interface WorldSettings {
 
