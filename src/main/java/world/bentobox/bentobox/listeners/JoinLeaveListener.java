@@ -1,7 +1,12 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -48,24 +53,13 @@ public class JoinLeaveListener implements Listener {
             .filter(w -> event.getPlayer().getLastPlayed() < plugin.getIWM().getResetEpoch(w))
             .forEach(w -> players.setResets(w, playerUUID, 0));
 
+            // Automated island ownership transfer
+            if (plugin.getSettings().isEnableAutoOwnershipTransfer()) {
+                runAutomatedOwnershipTransfer(user);
+            }
+
             // Update the island range of the islands the player owns
-            plugin.getIWM().getOverWorlds().stream()
-            .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
-            .forEach(world -> {
-                Island island = plugin.getIslands().getIsland(world, user);
-
-                // Check if new owner has a different range permission than the island size
-                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
-
-                // Range can go up or down
-                if (range != island.getProtectionRange()) {
-                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                    plugin.log("Setowner: Island protection range changed from " + island.getProtectionRange() + " to "
-                            + range + " for " + user.getName() + " due to permission.");
-                }
-
-                island.setProtectionRange(range);
-            });
+            updateIslandRange(user);
 
             // Set the player's name (it may have changed), but only if it isn't empty
             if (!user.getName().isEmpty()) {
@@ -80,6 +74,59 @@ public class JoinLeaveListener implements Listener {
                 plugin.getIslands().clearArea(user.getLocation());
             }
         }
+    }
+
+    private void runAutomatedOwnershipTransfer(User user) {
+        plugin.getIWM().getOverWorlds().stream()
+                .filter(world -> plugin.getIslands().hasIsland(world, user) && !plugin.getIslands().isOwner(world, user.getUniqueId()))
+                .forEach(world -> {
+                    Island island = plugin.getIslands().getIsland(world, user);
+
+                    OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwner());
+
+                    // Converting the setting (in days) to milliseconds.
+                    long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000;
+                    long timestamp = System.currentTimeMillis() - inactivityThreshold;
+
+                    // We make sure the current owner is inactive.
+                    if (owner.getLastPlayed() != 0 && owner.getLastPlayed() < timestamp) {
+                        // The current owner is inactive
+                        // Now, let's run through all of the island members (except the player who's just joined) and see who's active.
+                        // Sadly, this will make us calculate the owner inactivity again... :(
+                        List<UUID> candidates = Arrays.asList((UUID[]) island.getMemberSet().stream()
+                                .filter(uuid -> !user.getUniqueId().equals(uuid))
+                                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).getLastPlayed() != 0
+                                        && Bukkit.getOfflinePlayer(uuid).getLastPlayed() < timestamp)
+                                .toArray());
+
+                        if (!candidates.isEmpty()) {
+                            if (!plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
+                                // Ranks are not ignored, our candidates can only have the highest rank
+
+                            }
+                        }
+                    }
+                });
+    }
+
+    private void updateIslandRange(User user) {
+        plugin.getIWM().getOverWorlds().stream()
+                .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
+                .forEach(world -> {
+                    Island island = plugin.getIslands().getIsland(world, user);
+
+                    // Check if new owner has a different range permission than the island size
+                    int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+
+                    // Range can go up or down
+                    if (range != island.getProtectionRange()) {
+                        user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                        plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
+                                + range + " for " + user.getName() + " due to permission.");
+                    }
+
+                    island.setProtectionRange(range);
+                });
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -105,6 +152,5 @@ public class JoinLeaveListener implements Listener {
         plugin.getIslands().clearRank(RanksManager.COOP_RANK, event.getPlayer().getUniqueId());
         players.save(event.getPlayer().getUniqueId());
         User.removePlayer(event.getPlayer());
-
     }
 }

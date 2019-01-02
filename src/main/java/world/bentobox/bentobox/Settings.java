@@ -149,6 +149,25 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.custom-ranks", experimental = true)
     private Map<String, Integer> customRanks = new HashMap<>();
 
+    // Automated ownership transfer
+    @ConfigComment("Toggles the automated ownership transfer.")
+    @ConfigComment("It automatically transfers the ownership of an island to one of its members in case the current owner is inactive.")
+    @ConfigComment("More precisely, it transfers the ownership of the island to the player who's active, whose rank is the highest")
+    @ConfigComment("and who's been part of the island the longest time.")
+    @ConfigComment("Setting this to 'false' will disable the feature.")
+    @ConfigEntry(path = "island.automated-ownership-transfer.enable")
+    private boolean enableAutoOwnershipTransfer = true;
+
+    @ConfigComment("Time in days since the island owner's last disconnection before they are considered inactive.")
+    @ConfigEntry(path = "island.automated-ownership-transfer.inactivity-threshold")
+    private int autoOwnershipTransferInactivityThreshold = 30;
+
+    @ConfigComment("Ranks are being considered when transferring the island ownership to one of its member.")
+    @ConfigComment("Ignoring ranks will result in the island ownership being transferred to the player who's active and")
+    @ConfigComment("who's been member of the island the longest time.")
+    @ConfigEntry(path = "island.automated-ownership-transfer.ignore-ranks")
+    private boolean autoOwnershipTransferIgnoreRanks = false;
+
     //---------------------------------------------------------------------------------------/
     @ConfigComment("These settings should not be edited")
     private String uniqueId = "config";
@@ -386,6 +405,30 @@ public class Settings implements DataObject {
         this.customRanks = customRanks;
     }
 
+    public boolean isEnableAutoOwnershipTransfer() {
+        return enableAutoOwnershipTransfer;
+    }
+
+    public void setEnableAutoOwnershipTransfer(boolean enableAutoOwnershipTransfer) {
+        this.enableAutoOwnershipTransfer = enableAutoOwnershipTransfer;
+    }
+
+    public int getAutoOwnershipTransferInactivityThreshold() {
+        return autoOwnershipTransferInactivityThreshold;
+    }
+
+    public void setAutoOwnershipTransferInactivityThreshold(int autoOwnershipTransferInactivityThreshold) {
+        this.autoOwnershipTransferInactivityThreshold = autoOwnershipTransferInactivityThreshold;
+    }
+
+    public boolean isAutoOwnershipTransferIgnoreRanks() {
+        return autoOwnershipTransferIgnoreRanks;
+    }
+
+    public void setAutoOwnershipTransferIgnoreRanks(boolean autoOwnershipTransferIgnoreRanks) {
+        this.autoOwnershipTransferIgnoreRanks = autoOwnershipTransferIgnoreRanks;
+    }
+
     /**
      * @return the uniqueId
      */
@@ -401,7 +444,4 @@ public class Settings implements DataObject {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
-
-
-
 }
