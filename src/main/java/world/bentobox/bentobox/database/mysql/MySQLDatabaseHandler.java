@@ -10,10 +10,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonSyntaxException;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
@@ -72,7 +73,17 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 // Load all the results
                 Gson gson = getGson();
                 while (resultSet.next()) {
-                    list.add(gson.fromJson(resultSet.getString("json"), dataObject));
+                    String json = resultSet.getString("json");
+                    if (json != null) {
+                        try {
+                            T gsonResult = gson.fromJson(json, dataObject);
+                            if (gsonResult != null) {
+                                list.add(gsonResult);
+                            }
+                        } catch (JsonSyntaxException ex) {
+                            plugin.logError("Could not load object " + ex.getMessage());
+                        }
+                    }
                 }
             }
         } catch (SQLException e) {
