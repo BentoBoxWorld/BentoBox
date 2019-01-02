@@ -44,7 +44,6 @@ public class AddonTest {
     static BentoBox plugin;
     static JavaPlugin javaPlugin;
 
-
     @Before
     public void setUp() throws Exception {
         Server server = mock(Server.class);
@@ -69,21 +68,14 @@ public class AddonTest {
         when(server.getItemFactory()).thenReturn(itemFactory);
         ItemMeta itemMeta = mock(ItemMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(itemMeta);
-
     }
 
     class TestClass extends Addon {
+        @Override
+        public void onEnable() { }
 
         @Override
-        public void onEnable() {
-
-        }
-
-        @Override
-        public void onDisable() {
-
-        }
-
+        public void onDisable() { }
     }
 
     @Test
@@ -118,7 +110,7 @@ public class AddonTest {
     @Test
     public void testGetDescription() {
         TestClass test = new TestClass();
-        AddonDescription d = new AddonDescription();
+        AddonDescription d = new AddonDescription.Builder("main", "name").build();
         assertNull(test.getDescription());
         test.setDescription(d);
         assertEquals(d, test.getDescription());
@@ -157,14 +149,6 @@ public class AddonTest {
         TestListener listener = new TestListener();
         TestClass test = new TestClass();
         test.registerListener(listener);
-    }
-
-
-    @Test
-    public void testSaveConfig() {
-        //TestClass test = new TestClass();
-        // This will wipe out the config.yml of BSB so I am commenting it out
-        //test.saveConfig();
     }
 
     @Test
@@ -210,7 +194,6 @@ public class AddonTest {
         test.saveResource("no_such_file", jarFile, false, true);
         test.saveResource("no_such_file", jarFile, true, false);
         test.saveResource("no_such_file", jarFile, true, true);
-
     }
 
     @Test
@@ -242,7 +225,7 @@ public class AddonTest {
     @Test
     public void testSetDescription() {
         TestClass test = new TestClass();
-        AddonDescription desc = new AddonDescription();
+        AddonDescription desc = new AddonDescription.Builder("main", "name").build();
         test.setDescription(desc);
         assertEquals(desc, test.getDescription());
     }
@@ -279,5 +262,4 @@ public class AddonTest {
         TestClass test = new TestClass();
         assertEquals(Optional.empty(),test.getAddonByName("addon"));
     }
-
 }

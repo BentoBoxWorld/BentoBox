@@ -16,7 +16,6 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.util.permissions.DefaultPermissions;
 
-import world.bentobox.bentobox.api.addons.AddonDescription.AddonDescriptionBuilder;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
 import world.bentobox.bentobox.managers.AddonsManager;
@@ -83,18 +82,19 @@ public class AddonClassLoader extends URLClassLoader {
     }
 
     private AddonDescription asDescription(YamlConfiguration data) {
-        AddonDescriptionBuilder adb = new AddonDescriptionBuilder(data.getString("name"))
-                .withVersion(data.getString("version"))
-                .withAuthor(data.getString("authors"));
+        AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"))
+                .version(data.getString("version"))
+                .authors(data.getString("authors"));
+
         if (data.getString("depend") != null) {
-            adb.withDepend(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
+            builder.dependencies(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
         }
         if (data.getString("softdepend") != null) {
-            adb.withSoftDepend(Arrays.asList(data.getString("softdepend").split("\\s*,\\s*")));
+            builder.softDependencies(Arrays.asList(data.getString("softdepend").split("\\s*,\\s*")));
         }
-        return adb.build();
-    }
 
+        return builder.build();
+    }
 
     /* (non-Javadoc)
      * @see java.net.URLClassLoader#findClass(java.lang.String)
