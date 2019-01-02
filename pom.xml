@@ -72,7 +72,6 @@
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
 			<version>1.13.2-R0.1-SNAPSHOT</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- Metrics -->
 		<dependency>
@@ -110,13 +109,13 @@
 			<groupId>net.milkbowl.vault</groupId>
 			<artifactId>VaultAPI</artifactId>
 			<version>1.7</version>
-			<scope>provided</scope>
 		</dependency>
 		<!-- Placeholders -->
 		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
 			<version>2.9.2</version>
+			<!-- compile is not needed here: addons don't have direct access to the PlaceholderAPI API -->
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
