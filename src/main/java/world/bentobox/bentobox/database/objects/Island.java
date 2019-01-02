@@ -192,7 +192,7 @@ public class Island implements DataObject {
     }
 
     /**
-     * Members > MEMBER_RANK
+     * Members >= MEMBER_RANK
      * @return the members of the island (owner included)
      */
     public ImmutableSet<UUID> getMemberSet(){
