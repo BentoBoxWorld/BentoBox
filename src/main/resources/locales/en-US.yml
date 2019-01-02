@@ -214,7 +214,7 @@ commands:
     about:
       description: "display copyright and license info"
     reload:
-      description: "reloads all locale files"
+      description: "reloads addons (if supported) and locale files"
       locales-reloaded: "&2Languages reloaded"
       addons-reloaded: "&2Addons reloaded"
     version:
