@@ -83,6 +83,7 @@ public final class Flags {
     public static final Flag BUTTON = new Flag.Builder("BUTTON", Material.OAK_BUTTON).build();
     public static final Flag REDSTONE = new Flag.Builder("REDSTONE", Material.REDSTONE).build();
     public static final Flag SPAWN_EGGS = new Flag.Builder("SPAWN_EGGS", Material.COW_SPAWN_EGG).build();
+    public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).build();
 
     // Entity interactions
     public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
