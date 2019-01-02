@@ -140,7 +140,7 @@ commands:
       description: "set the range of player's island"
       range-updated: "Island range updated to [number]"
     reload:
-      description: "reload the plugin"
+      description: "reload"
     tp:
       parameters: "<player>"
       description: "teleport to a player's island"

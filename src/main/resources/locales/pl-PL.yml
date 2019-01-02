@@ -108,7 +108,7 @@ commands:
       description: "ustaw zasięg wyspy gracza"
       range-updated: "Zaktualizowano zasięg wyspy do [number]"
     reload:
-      description: "ponownie załaduj plugin"
+      description: "ponownie załaduj"
     tp:
       parameters: "<gracz>"
       description: "teleportuj się na wyspę gracza"
