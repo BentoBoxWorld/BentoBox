@@ -681,7 +681,9 @@ public class IslandsManager {
      */
     public void removePlayersFromIsland(Island island) {
         World w = island.getWorld();
-        Bukkit.getOnlinePlayers().stream().filter(p -> island.onIsland(p.getLocation())).forEach(p -> {
+        Bukkit.getOnlinePlayers().stream()
+        .filter(p -> p.getGameMode().equals(plugin.getIWM().getDefaultGameMode(island.getWorld())))
+        .filter(p -> island.onIsland(p.getLocation())).forEach(p -> {
             // Teleport island players to their island home
             if (!island.getMemberSet().contains(p.getUniqueId()) && (hasIsland(w, p.getUniqueId()) || inTeam(w, p.getUniqueId()))) {
                 homeTeleport(w, p);
