@@ -140,6 +140,11 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
 
+    @ConfigComment("Number of blocks to paste per tick when pasting a schem")
+    @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take longer")
+    @ConfigEntry(path = "island.paste-speed")
+    private int pasteSpeed = 1000;
+
     // Ranks
     @ConfigEntry(path = "island.custom-ranks", experimental = true)
     private Map<String, Integer> customRanks = new HashMap<>();
@@ -359,6 +364,20 @@ public class Settings implements DataObject {
         this.nameMaxLength = nameMaxLength;
     }
 
+    /**
+     * @param pasteSpeed the pasteSpeed to set
+     */
+    public void setPasteSpeed(int pasteSpeed) {
+        this.pasteSpeed = pasteSpeed;
+    }
+
+    /**
+     * @return paste speed in blocks per tick
+     */
+    public int getPasteSpeed() {
+        return this.pasteSpeed;
+    }
+
     public Map<String, Integer> getCustomRanks() {
         return customRanks;
     }
@@ -382,5 +401,7 @@ public class Settings implements DataObject {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
+
+
 
 }

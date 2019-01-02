@@ -108,6 +108,7 @@ public class AdminClearresetsallCommandTest {
     /**
      * Test method for .
      */
+    @SuppressWarnings("deprecation")
     @Test
     public void testExecuteCheckConfirm() {
         AdminClearresetsallCommand itl = new AdminClearresetsallCommand(ac);

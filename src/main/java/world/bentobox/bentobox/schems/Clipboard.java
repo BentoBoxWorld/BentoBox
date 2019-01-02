@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -41,7 +42,9 @@ import org.bukkit.entity.Tameable;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Attachable;
 import org.bukkit.material.Colorable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
@@ -55,9 +58,21 @@ import world.bentobox.bentobox.util.Util;
  */
 public class Clipboard {
 
+    enum PasteState {
+        BLOCKS,
+        ATTACHMENTS,
+        ENTITIES,
+        DONE
+    }
+
+    // Speed of pasting
+    private int pasteSpeed;
+    private PasteState pasteState;
+
     // Commonly used texts along this class.
-    private static final String ATTACHED = "attached";
-    private static final String BLOCK = "blocks";
+    private static final String ATTACHED_YAML_PREFIX = "attached.";
+    private static final String ENTITIES_YAML_PREFIX = "entities.";
+    private static final String BLOCKS_YAML_PREFIX = "blocks.";
     private static final String BEDROCK = "bedrock";
     private static final String INVENTORY = "inventory";
     private static final String ENTITY = "entity";
@@ -73,6 +88,8 @@ public class Clipboard {
 
     private File schemFolder;
 
+    private BukkitTask pastingTask;
+
     public Clipboard(BentoBox plugin, File schemFolder) {
         super();
         this.plugin = plugin;
@@ -80,6 +97,8 @@ public class Clipboard {
             schemFolder.mkdirs();
         }
         this.schemFolder = schemFolder;
+        pasteSpeed = plugin.getSettings().getPasteSpeed();
+        pasteState = PasteState.BLOCKS;
     }
 
     /**
@@ -187,15 +206,66 @@ public class Clipboard {
         // Calculate location for pasting
         Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
         // Paste
-        if (blockConfig.contains(BLOCK)) {
-            blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCK + "." + b)));
-        } else {
+        paste(world, island, loc, task);
+    }
+
+    private void paste(World world, Island island, Location loc, Runnable task) {
+        if (!blockConfig.contains(BLOCKS_YAML_PREFIX)) {
             plugin.logError("Clipboard has no block data in it to paste!");
+            return;
         }
-        // Run follow on task if it exists
-        if (task != null) {
-            Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
-        }
+        // Iterators for the various schem sections
+        Iterator<String> it = blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).iterator();
+        Iterator<String> it2 = blockConfig.contains(ATTACHED_YAML_PREFIX) ? blockConfig.getConfigurationSection(ATTACHED_YAML_PREFIX).getKeys(false).iterator() : null;
+        Iterator<String> it3 = blockConfig.contains(ENTITIES_YAML_PREFIX) ? blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX).getKeys(false).iterator() : null;
+
+        // Initial state & speed
+        pasteState = PasteState.BLOCKS;
+        pasteSpeed = plugin.getSettings().getPasteSpeed();
+
+        pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            int count = 0;
+            while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
+                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + it.next()));
+                count++;
+            }
+            while (it2 != null && pasteState.equals(PasteState.ATTACHMENTS) && count < pasteSpeed && it2.hasNext()) {
+                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(ATTACHED_YAML_PREFIX + it2.next()));
+                count++;
+            }
+            while (it3 != null && pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
+                pasteEntity(world, island, loc, blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX + it3.next()));
+                count++;
+            }
+            // STATE SHIFT
+            if (pasteState.equals(PasteState.BLOCKS) && !it.hasNext()) {
+                // Blocks done.
+                if (it2 == null && it3 == null) {
+                    // No attachments or entities
+                    pasteState = PasteState.DONE;
+                } else {
+                    // Next paste attachments, otherwise skip to entities
+                    pasteState = it2 != null ? PasteState.ATTACHMENTS : PasteState.ENTITIES;
+                }
+            }
+            if (pasteState.equals(PasteState.ATTACHMENTS) && !it2.hasNext()) {
+                // Attachments done. Next paste entities, otherwise done
+                pasteState = it3 != null ? PasteState.ENTITIES : PasteState.DONE;
+            }
+            if (pasteState.equals(PasteState.ENTITIES) && !it3.hasNext()) {
+                pasteState = PasteState.DONE;
+            }
+            if (pasteState.equals(PasteState.DONE)) {
+                // All done. Cancel task
+                pastingTask.cancel();
+                if (task != null) {
+                    // Run follow on task if it exists
+                    Bukkit.getScheduler().runTaskLater(plugin, task, 2L);
+                }
+            }
+        }, 0L, 1L);
+
+
     }
 
     /**
@@ -203,8 +273,9 @@ public class Clipboard {
      * @param location - location
      */
     public void pasteClipboard(Location location) {
-        if (blockConfig.contains(BLOCK)) {
-            blockConfig.getConfigurationSection(BLOCK).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCK + "." + b)));
+        if (blockConfig.contains(BLOCKS_YAML_PREFIX)) {
+            paste(location.getWorld(), null, location, null);
+            //blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + "." + b)));
         } else {
             plugin.logError("Clipboard has no block data in it to paste!");
         }
@@ -229,7 +300,7 @@ public class Clipboard {
             plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
                 lines.clear();
                 for (int i = 0; i < 4; i++) {
-                    lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()), 
+                    lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
                             addon.getDescription().getName().toLowerCase() + ".sign.line" + i,"")));
                 }
             });
@@ -257,16 +328,20 @@ public class Clipboard {
         Block block = world.getBlockAt(x, y, z);
         String blockData = config.getString("bd");
         if (blockData != null) {
-            if (config.getBoolean(ATTACHED)) {
-                plugin.getServer().getScheduler().runTask(plugin, () -> setBlock(island, block, config, blockData));
-            } else {
-                setBlock(island, block, config, blockData);
-            }
+            setBlock(island, block, config, blockData);
         }
-        // Entities
+        // Entities (legacy)
         if (config.isConfigurationSection(ENTITY)) {
-            setEntity(block.getLocation(), config);
+            setEntity(block.getLocation(), config.getConfigurationSection(ENTITY));
         }
+    }
+
+    private void pasteEntity(World world, Island island, Location location, ConfigurationSection config) {
+        String[] pos = config.getName().split(",");
+        int x = location.getBlockX() + Integer.valueOf(pos[0]);
+        int y = location.getBlockY() + Integer.valueOf(pos[1]);
+        int z = location.getBlockZ() + Integer.valueOf(pos[2]);
+        setEntity(new Location(world, x, y, z), config);
     }
 
     private void setBlock(Island island, Block block, ConfigurationSection config, String blockData) {
@@ -281,11 +356,11 @@ public class Clipboard {
      * @param location - locaton
      * @param config - config section
      */
-    private void setEntity(Location location, ConfigurationSection config) {
-        ConfigurationSection en = config.getConfigurationSection(ENTITY);
+    private void setEntity(Location location, ConfigurationSection en) {
         en.getKeys(false).forEach(k -> {
             ConfigurationSection ent = en.getConfigurationSection(k);
-            Location center = location.add(new Vector(0.5, 0.0, 0.5));
+            // Center, and just a bit high
+            Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, EntityType.valueOf(ent.getString("type", "PIG")));
             if (e != null) {
                 e.setCustomName(ent.getString("name"));
@@ -369,11 +444,11 @@ public class Clipboard {
         String pos = x + "," + y + "," + z;
 
         // Position defines the section
-        ConfigurationSection s = blockConfig.createSection(BLOCK + "." + pos);
+        ConfigurationSection s = blockConfig.createSection(BLOCKS_YAML_PREFIX + "." + pos);
 
         // Set entities
         for (LivingEntity e: entities) {
-            ConfigurationSection en = s.createSection("entity." + e.getUniqueId());
+            ConfigurationSection en = blockConfig.createSection(ENTITIES_YAML_PREFIX + pos + "." + e.getUniqueId());
             en.set("type", e.getType().name());
             en.set("name", e.getCustomName());
             if (e instanceof Colorable) {
@@ -413,15 +488,34 @@ public class Clipboard {
             return true;
         }
 
+        // Block state
+        BlockState bs = block.getState();
+
         // Set block data
-        s.set("bd", block.getBlockData().getAsString());
+        if (bs.getData() instanceof Attachable) {
+            ConfigurationSection a = blockConfig.createSection(ATTACHED_YAML_PREFIX + pos);
+            a.set("bd", block.getBlockData().getAsString());
+            // Placeholder for attachment
+            s.set("bd", "minecraft:air");
+            // Signs
+            if (bs instanceof Sign) {
+                Sign sign = (Sign)bs;
+                a.set("lines", Arrays.asList(sign.getLines()));
+            }
+            return true;
+        } else {
+            s.set("bd", block.getBlockData().getAsString());
+            // Signs
+            if (bs instanceof Sign) {
+                Sign sign = (Sign)bs;
+                s.set("lines", Arrays.asList(sign.getLines()));
+            }
+        }
 
         if (block.getType().equals(Material.BEDROCK)) {
             blockConfig.set(BEDROCK, x + "," + y + "," + z);
         }
 
-        // Block state
-        BlockState bs = block.getState();
         // Chests
         if (bs instanceof InventoryHolder) {
             InventoryHolder ih = (InventoryHolder)bs;
@@ -432,11 +526,7 @@ public class Clipboard {
                 }
             }
         }
-        // Signs
-        if (bs instanceof Sign) {
-            Sign sign = (Sign)bs;
-            s.set("lines", Arrays.asList(sign.getLines()));
-        }
+
         if (bs instanceof CreatureSpawner) {
             CreatureSpawner spawner = (CreatureSpawner)bs;
             s.set("spawnedType",spawner.getSpawnedType().name());

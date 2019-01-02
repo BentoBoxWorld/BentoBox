@@ -36,6 +36,7 @@ import org.bukkit.entity.Sheep;
 import org.bukkit.inventory.HorseInventory;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.Before;
@@ -47,10 +48,12 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
+@SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class})
 public class ClipboardTest {
@@ -76,7 +79,7 @@ public class ClipboardTest {
         block = mock(Block.class);
         when(block.getType()).thenReturn(Material.GRASS);
         when(block.getLocation()).thenReturn(loc);
-        
+
         BlockData bd = mock(BlockData.class);
         when(bd.getAsString()).thenReturn("Block_data");
         when(block.getBlockData()).thenReturn(bd);
@@ -87,7 +90,7 @@ public class ClipboardTest {
         when(loc.getBlockZ()).thenReturn(3);
         when(loc.getBlock()).thenReturn(block);
         when(loc.toVector()).thenReturn(new Vector(1,2,3));
-        
+
         loc2 = mock(Location.class);
         when(loc2.getWorld()).thenReturn(world);
         when(loc2.getBlockX()).thenReturn(2);
@@ -95,7 +98,7 @@ public class ClipboardTest {
         when(loc2.getBlockZ()).thenReturn(4);
         when(loc2.getBlock()).thenReturn(block);
         // Living entities
-        
+
         List<LivingEntity> ents = new ArrayList<>();
         Pig pig = mock(Pig.class);
         Player player = mock(Player.class);
@@ -109,7 +112,7 @@ public class ClipboardTest {
         when(player.getLocation()).thenReturn(loc);
         when(sheep.getLocation()).thenReturn(loc);
         when(horse.getLocation()).thenReturn(loc);
-        
+
         when(pig.getType()).thenReturn(EntityType.PIG);
         when(player.getType()).thenReturn(EntityType.PLAYER);
         when(cow.getType()).thenReturn(EntityType.COW);
@@ -122,7 +125,7 @@ public class ClipboardTest {
 
         HorseInventory inv = mock(HorseInventory.class);
         when(horse.getInventory()).thenReturn(inv);
-        
+
         // UUIDs (I'm going to assume these will all be unique (prays to god of randomness)
         when(creeper.getUniqueId()).thenReturn(UUID.randomUUID());
         when(player.getUniqueId()).thenReturn(UUID.randomUUID());
@@ -138,29 +141,40 @@ public class ClipboardTest {
         ents.add(sheep);
         ents.add(horse);
         when(world.getLivingEntities()).thenReturn(ents);
-        
+
         user = mock(User.class);
         User.setPlugin(plugin);
         when(user.getLocation()).thenReturn(loc);
-        
+
         // Scheduler
         PowerMockito.mockStatic(Bukkit.class);
         sched = mock(BukkitScheduler.class);
         when(Bukkit.getScheduler()).thenReturn(sched);
-        
+
+        // Settings
+        Settings settings = mock(Settings.class);
+        when(settings.getPasteSpeed()).thenReturn(200);
+        when(plugin.getSettings()).thenReturn(settings);
+
+        // Default block state
+        BlockState bs = mock(BlockState.class);
+        when(block.getState()).thenReturn(bs);
+        MaterialData md = mock(MaterialData.class);
+        when(bs.getData()).thenReturn(md);
+
     }
 
     @Test
     public void testClipboard() {
         when(schemFolder.exists()).thenReturn(false);
-        new Clipboard(plugin, schemFolder); 
+        new Clipboard(plugin, schemFolder);
         Mockito.verify(schemFolder).mkdirs();
 
     }
 
     @Test
     public void testSetGetPos1() {
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         assertNull(cb.getPos1());
         cb.setPos1(loc);
         assertEquals(loc, cb.getPos1());
@@ -169,7 +183,7 @@ public class ClipboardTest {
 
     @Test
     public void testSetGetPos2() {
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         assertNull(cb.getPos2());
         cb.setPos2(loc);
         assertEquals(loc, cb.getPos2());
@@ -177,7 +191,7 @@ public class ClipboardTest {
 
     @Test
     public void testSetGetOrigin() {
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         assertNull(cb.getOrigin());
         cb.setOrigin(loc);
         assertEquals(loc, cb.getOrigin());
@@ -185,28 +199,28 @@ public class ClipboardTest {
 
     @Test
     public void testCopyNoPos1Pos2() {
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.copy(user, false);
         Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.schem.need-pos1-pos2"));
     }
-    
+
     @Test
     public void testCopyNoPos2() {
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.setPos1(loc);
         cb.copy(user, false);
         Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.schem.need-pos1-pos2"));
     }
-    
+
     @Test
     public void testCopy() {
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
         Mockito.verify(user).sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, "8");
     }
-    
+
     @Test
     public void testCopySigns() {
         when(block.getType()).thenReturn(Material.SIGN);
@@ -214,7 +228,7 @@ public class ClipboardTest {
         String[] lines = {"line1", "line2", "line3", "line4"};
         when(bs.getLines()).thenReturn(lines);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -232,7 +246,7 @@ public class ClipboardTest {
         when(inv.getContents()).thenReturn(contents);
         when(bs.getInventory()).thenReturn(inv);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -240,14 +254,14 @@ public class ClipboardTest {
         // Every block is a sign, so this should be called 8 times
         Mockito.verify(bs, Mockito.times(8)).getInventory();
     }
-    
+
     @Test
     public void testCopyCreatureSpawners() {
         when(block.getType()).thenReturn(Material.SPAWNER);
         CreatureSpawner bs = mock(CreatureSpawner.class);
         when(bs.getSpawnedType()).thenReturn(EntityType.CAVE_SPIDER);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -255,7 +269,7 @@ public class ClipboardTest {
         // Every block is a sign, so this should be called 8 times
         Mockito.verify(bs, Mockito.times(8)).getMaxNearbyEntities();
     }
-    
+
     @Test
     public void testCopyAir() {
         // No entities
@@ -263,7 +277,7 @@ public class ClipboardTest {
         when(block.getType()).thenReturn(Material.AIR);
         BlockState bs = mock(BlockState.class);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder); 
+        Clipboard cb = new Clipboard(plugin, schemFolder);
         cb.setPos1(loc);
         cb.setPos2(loc2);
         // Do not copy air
@@ -273,7 +287,7 @@ public class ClipboardTest {
         Mockito.verify(user).sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, "8");
     }
 
-    
+
     @Test
     public void testPasteIslandNoData() {
         Clipboard cb = new Clipboard(plugin, schemFolder);
@@ -281,10 +295,10 @@ public class ClipboardTest {
         when(island.getCenter()).thenReturn(loc);
         cb.pasteIsland(world, island, () -> {});
         Mockito.verify(plugin).logError(Mockito.eq("Clipboard has no block data in it to paste!"));
-     // Verify the task is run
-        Mockito.verify(sched).runTaskLater(Mockito.eq(plugin), Mockito.any(Runnable.class), Mockito.eq(2L));
+        // Verify the task is run
+        Mockito.verify(sched, Mockito.never()).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
-    
+
     @Test
     public void testPasteIslandWithData() {
         Clipboard cb = new Clipboard(plugin, schemFolder);
@@ -294,19 +308,8 @@ public class ClipboardTest {
         cb.setPos2(loc2);
         cb.copy(user, false);
         cb.pasteIsland(world, island, () -> {});
-        // This is set just once because the coords of the block are always the same
-        Mockito.verify(block).setBlockData(Mockito.any());
-        // Verify the entities are spawned
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.PIG));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.CREEPER));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.HORSE));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.SHEEP));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.COW));
-        // Player should NOT spawn!!
-        Mockito.verify(world, Mockito.never()).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.PLAYER));
-
         // Verify the task is run
-        Mockito.verify(sched).runTaskLater(Mockito.eq(plugin), Mockito.any(Runnable.class), Mockito.eq(2L));
+        Mockito.verify(sched).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     @Test
@@ -315,7 +318,7 @@ public class ClipboardTest {
         cb.pasteClipboard(loc);
         Mockito.verify(plugin).logError(Mockito.eq("Clipboard has no block data in it to paste!"));
     }
-    
+
     @Test
     public void testPasteClipboard() {
         Clipboard cb = new Clipboard(plugin, schemFolder);
@@ -323,14 +326,8 @@ public class ClipboardTest {
         cb.setPos2(loc2);
         cb.copy(user, false);
         cb.pasteClipboard(loc);
-        // This is set just once because the coords of the block are always the same
-        Mockito.verify(block).setBlockData(Mockito.any());
-        // Verify the entities are spawned
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.PIG));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.CREEPER));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.HORSE));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.SHEEP));
-        Mockito.verify(world).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.COW));
+        // Verify the task is run
+        Mockito.verify(sched).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         // Player should NOT spawn!!
         Mockito.verify(world, Mockito.never()).spawnEntity(Mockito.eq(null), Mockito.eq(EntityType.PLAYER));
     }

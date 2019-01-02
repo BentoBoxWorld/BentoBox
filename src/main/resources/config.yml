@@ -72,6 +72,9 @@ island:
     # These set the minimum and maximum size of a name.
     min-length: 4
     max-length: 20
+  # Number of blocks to paste per tick when pasting a schem
+  # Smaller values will help reduce noticeable lag but will make pasting take longer
+  paste-speed: 1000
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   custom-ranks: {}
 # These settings should not be edited

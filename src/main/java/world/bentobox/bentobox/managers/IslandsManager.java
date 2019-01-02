@@ -564,6 +564,7 @@ public class IslandsManager {
             user.sendMessage("commands.island.go.teleported", TextVariables.NUMBER, String.valueOf(number));
         }
         // Exit spectator mode if in it
+
         if (player.getGameMode().equals(GameMode.SPECTATOR)) {
             player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
         }
@@ -679,25 +680,25 @@ public class IslandsManager {
      * @param island to remove players from
      */
     public void removePlayersFromIsland(Island island) {
-        // Teleport players away
-        for (Player player : Bukkit.getOnlinePlayers()) {
-            if (island.inIslandSpace(player.getLocation().getBlockX(), player.getLocation().getBlockZ())) {
-                // Teleport island players to their island home
-                if (hasIsland(island.getWorld(), player.getUniqueId()) || plugin.getIslands().inTeam(island.getWorld(), player.getUniqueId())) {
-                    homeTeleport(island.getWorld(), player);
+        World w = island.getWorld();
+        Bukkit.getOnlinePlayers().stream()
+        .filter(p -> p.getGameMode().equals(plugin.getIWM().getDefaultGameMode(island.getWorld())))
+        .filter(p -> island.onIsland(p.getLocation())).forEach(p -> {
+            // Teleport island players to their island home
+            if (!island.getMemberSet().contains(p.getUniqueId()) && (hasIsland(w, p.getUniqueId()) || inTeam(w, p.getUniqueId()))) {
+                homeTeleport(w, p);
+            } else {
+                // Move player to spawn
+                if (spawn.containsKey(w)) {
+                    // go to island spawn
+                    p.teleport(spawn.get(w).getSpawnPoint(w.getEnvironment()));
                 } else {
-                    // Move player to spawn
-                    if (spawn.containsKey(island.getWorld())) {
-                        // go to island spawn
-                        player.teleport(spawn.get(island.getWorld()).getSpawnPoint(island.getWorld().getEnvironment()));
-                    } else {
-                        plugin.logWarning("During island deletion player " + player.getName() + " could not be sent home so was placed into spectator mode.");
-                        player.setGameMode(GameMode.SPECTATOR);
-                        player.getPlayer().setFlying(true);
-                    }
+                    plugin.logWarning("During island deletion player " + p.getName() + " could not be sent home so was placed into spectator mode.");
+                    p.setGameMode(GameMode.SPECTATOR);
+                    p.setFlying(true);
                 }
             }
-        }
+        });
     }
 
     /**
@@ -797,13 +798,13 @@ public class IslandsManager {
      */
     public void setOwner(User user, UUID targetUUID, Island island) {
         islandCache.setOwner(island, targetUUID);
-        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));        
+        user.sendMessage("commands.island.team.setowner.name-is-the-owner", "[name]", plugin.getPlayers().getName(targetUUID));
         plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
             User target = User.getInstance(targetUUID);
             // Tell target. If they are offline, then they may receive a message when they login
             target.sendMessage("commands.island.team.setowner.you-are-the-owner");
             // Permission checks for range changes only work when the target is online
-            if (target.isOnline()) {                
+            if (target.isOnline()) {
                 // Check if new owner has a different range permission than the island size
                 int range = target.getPermissionValue(
                         addon.getPermissionPrefix() + "island.range",
