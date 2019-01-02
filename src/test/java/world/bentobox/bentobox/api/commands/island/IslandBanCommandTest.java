@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertFalse;
@@ -61,9 +58,6 @@ public class IslandBanCommandTest {
     private PlayersManager pm;
     private Island island;
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -121,7 +115,6 @@ public class IslandBanCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
-
     }
 
     /**
@@ -241,6 +234,7 @@ public class IslandBanCommandTest {
         when(targetUser.isPlayer()).thenReturn(true);
         when(targetUser.isOnline()).thenReturn(false);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(targetUser);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(-1);
 
         // Allow adding to ban list
         when(island.addToBanList(Mockito.any())).thenReturn(true);
@@ -263,6 +257,7 @@ public class IslandBanCommandTest {
         when(targetUser.isPlayer()).thenReturn(true);
         when(targetUser.isOnline()).thenReturn(true);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(targetUser);
+        when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(-1);
         // Allow adding to ban list
         when(island.addToBanList(Mockito.any())).thenReturn(true);
 

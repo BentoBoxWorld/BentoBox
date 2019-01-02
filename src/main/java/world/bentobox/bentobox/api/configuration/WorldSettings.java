@@ -226,7 +226,6 @@ public interface WorldSettings {
      */
     int getResetLimit();
 
-
     /**
      * Get the island reset time stamp. Any player who last logged in before this time will have resets zeroed
      */
@@ -272,4 +271,13 @@ public interface WorldSettings {
      */
     boolean isRequireConfirmationToSetHomeInTheEnd();
 
+    /**
+     * Gets ban limit for this world.
+     * Once exceeded, island members won't be able to ban any more players from their island.
+     * Set it to -1 for unlimited.
+     * <br/>
+     * Permission to increase the limit: {@code (permissionprefix).ban.maxlimit.(value)}
+     * @return the ban limit for this world.
+     */
+    int getBanLimit();
 }

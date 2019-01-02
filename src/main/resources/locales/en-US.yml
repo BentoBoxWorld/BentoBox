@@ -369,6 +369,7 @@ commands:
       cannot-ban-yourself: "&cYou cannot ban yourself!"
       cannot-ban: "&cThat player cannot be banned."
       cannot-ban-member: "&cKick the team member first, then ban."
+      cannot-ban-more-players: "&cYou reached the ban limit, you cannot ban any more players from your island."
       player-already-banned: "&cPlayer is already banned"
       owner-banned-you: "&b[name]&c banned you from their island!"
       you-are-banned: "&bYou are banned from this island!"
@@ -383,6 +384,7 @@ commands:
       noone: "&aNo one is banned on this island"
       the-following: "&bThe following players are banned:"
       names: "&c[line]"
+      you-can-ban: "&bYou can ban up to &e[number] &bmore players."
     settings:
       description: "display island settings"
     language:

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -64,6 +65,11 @@ public class IslandBanlistCommand extends CompositeCommand {
         }
         // Send the strings
         lines.forEach(l -> user.sendMessage("commands.island.banlist.names", "[line]", l));
+
+        int banLimit = user.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));
+        if (banLimit <= -1 || island.getBanned().size() < banLimit) {
+            user.sendMessage("commands.island.banlist.you-can-ban", TextVariables.NUMBER, String.valueOf(banLimit - island.getBanned().size()));
+        }
         return true;
     }
 

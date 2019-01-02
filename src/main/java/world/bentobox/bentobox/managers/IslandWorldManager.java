@@ -648,6 +648,7 @@ public class IslandWorldManager {
         return gameModes.get(Util.getWorld(world)).getWorldSettings().getDeathsMax();
     }
 
-
-
+    public int getBanLimit(World world) {
+        return gameModes.get(Util.getWorld(world)).getWorldSettings().getBanLimit();
+    }
 }
