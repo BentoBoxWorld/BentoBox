@@ -44,8 +44,6 @@ public class AddonsManager {
         loaders = new HashMap<>();
     }
 
-    //TODO: add addon reload
-
     /**
      * Loads all the addons from the addons folder
      */
@@ -92,6 +90,20 @@ public class AddonsManager {
                 }
             });
             plugin.log("Addons successfully enabled.");
+        }
+    }
+
+    /**
+     * Reloads all the enabled addons
+     */
+    public void reloadAddons() {
+        if (!addons.isEmpty()) {
+            plugin.log("Reloading addons...");
+            addons.stream().filter(Addon::isEnabled).forEach(addon -> {
+                plugin.log("Reloading " + addon.getDescription().getName() + "...");
+                addon.onReload();
+            });
+            plugin.log("Addons successfully reloaded.");
         }
     }
 
@@ -259,6 +271,5 @@ public class AddonsManager {
         addons.clear();
         addons.addAll(sortedAddons.values());
     }
-
 
 }

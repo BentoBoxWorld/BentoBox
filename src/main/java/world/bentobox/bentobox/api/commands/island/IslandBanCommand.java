@@ -82,15 +82,22 @@ public class IslandBanCommand extends CompositeCommand {
 
     private boolean ban(User user, User targetUser) {
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
-        if (island.addToBanList(targetUser.getUniqueId())) {
-            user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
-            // If the player is online, has an island and on the banned island, move them home immediately
-            if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
-                getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
-                island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+
+        // Check if player can ban any more players
+        int banLimit = user.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));
+        if (banLimit <= -1 || island.getBanned().size() < banLimit) {
+            if (island.addToBanList(targetUser.getUniqueId())) {
+                user.sendMessage("general.success");
+                targetUser.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
+                // If the player is online, has an island and on the banned island, move them home immediately
+                if (targetUser.isOnline() && getIslands().hasIsland(getWorld(), targetUser.getUniqueId()) && island.onIsland(targetUser.getLocation())) {
+                    getIslands().homeTeleport(getWorld(), targetUser.getPlayer());
+                    island.getWorld().playSound(targetUser.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+                }
+                return true;
             }
-            return true;
+        } else {
+            user.sendMessage("commands.island.ban.cannot-ban-more-players");
         }
         // Banning was blocked, maybe due to an event cancellation. Fail silently.
         return false;

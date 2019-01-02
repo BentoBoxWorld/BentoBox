@@ -10,7 +10,7 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Unlike {@link AdminClearresetsCommand}, this command will be removed.
+ * @deprecated Unlike {@link AdminClearresetsCommand}, this command will be removed.
  * We will be working on an alternative which will use {@link world.bentobox.bentobox.api.commands.admin.resets.AdminResetsResetCommand} instead.
  */
 @Deprecated

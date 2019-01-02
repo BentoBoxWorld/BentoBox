@@ -118,7 +118,8 @@ public class ServerCompatibility {
 
             if (version == null || version.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'Version = null' means that it's not listed. And therefore, it's implicitly incompatible.
-                return result = Compatibility.INCOMPATIBLE;
+                result = Compatibility.INCOMPATIBLE;
+                return result;
             }
 
             // Now, check the server software
@@ -126,19 +127,23 @@ public class ServerCompatibility {
 
             if (software == null || software.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'software = null' means that it's not listed. And therefore, it's implicitly incompatible.
-                return result = Compatibility.INCOMPATIBLE;
+                result = Compatibility.INCOMPATIBLE;
+                return result;
             }
 
             if (software.getCompatibility().equals(Compatibility.NOT_SUPPORTED) || version.getCompatibility().equals(Compatibility.NOT_SUPPORTED)) {
-                return result = Compatibility.NOT_SUPPORTED;
+                result = Compatibility.NOT_SUPPORTED;
+                return result;
             }
 
             if (software.getCompatibility().equals(Compatibility.SUPPORTED) || version.getCompatibility().equals(Compatibility.SUPPORTED)) {
-                return result = Compatibility.SUPPORTED;
+                result = Compatibility.SUPPORTED;
+                return result;
             }
 
             // Nothing's wrong, the server is compatible.
-            return result = Compatibility.COMPATIBLE;
+            result = Compatibility.COMPATIBLE;
+            return result;
         }
 
         return result;

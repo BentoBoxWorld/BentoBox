@@ -25,6 +25,9 @@ class BStats {
         // Simple Pie Charts
         registerDefaultLanguageChart();
         registerDatabaseTypeChart();
+
+        // Single Line charts
+        registerIslandsCountChart();
     }
 
     private void registerDefaultLanguageChart() {
@@ -33,5 +36,9 @@ class BStats {
 
     private void registerDatabaseTypeChart() {
         metrics.addCustomChart(new Metrics.SimplePie("database_type", () -> plugin.getSettings().getDatabaseType().toString()));
+    }
+
+    private void registerIslandsCountChart() {
+        metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> plugin.getIslands().getIslandCount()));
     }
 }

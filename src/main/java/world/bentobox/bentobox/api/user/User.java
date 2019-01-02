@@ -17,9 +17,15 @@ import org.bukkit.util.Vector;
 import world.bentobox.bentobox.BentoBox;
 
 /**
- * BSB's user object. Wraps Player.
- * @author tastybento
+ * Combines {@link Player}, {@link OfflinePlayer} and {@link CommandSender} to provide convenience methods related to
+ * localization and generic interactions.
+ * <br/>
+ * Therefore, a User could usually be a Player, an OfflinePlayer or the server's console.
+ * Preliminary checks should be performed before trying to run methods that relies on a specific implementation.
+ * <br/><br/>
+ * It is good practice to use the User instance whenever possible instead of Player or CommandSender.
  *
+ * @author tastybento
  */
 public class User {
 
@@ -33,7 +39,7 @@ public class User {
     }
 
     /**
-     * Get an instance of User from a CommandSender
+     * Gets an instance of User from a CommandSender
      * @param sender - command sender, e.g. console
      * @return user - user
      */
@@ -44,8 +50,9 @@ public class User {
         // Console
         return new User(sender);
     }
+
     /**
-     * Get an instance of User from a Player object
+     * Gets an instance of User from a Player object
      * @param player - the player
      * @return user - user
      */
@@ -58,8 +65,9 @@ public class User {
         }
         return new User(player);
     }
+
     /**
-     * Get an instance of User from a UUID
+     * Gets an instance of User from a UUID
      * @param uuid - UUID
      * @return user - user
      */
@@ -73,9 +81,10 @@ public class User {
         // Return player, or null if they are not online
         return new User(uuid);
     }
+
     /**
      * Removes this player from the User cache
-     * @param player - the player
+     * @param player the player
      */
     public static void removePlayer(Player player) {
         users.remove(player.getUniqueId());
@@ -342,7 +351,6 @@ public class User {
             return Locale.forLanguageTag(plugin.getPlayers().getLocale(playerUUID));
         }
         return Locale.forLanguageTag(plugin.getSettings().getDefaultLanguage());
-
     }
 
     /**
@@ -351,7 +359,6 @@ public class User {
      */
     public void updateInventory() {
         player.updateInventory();
-
     }
 
     /**
@@ -421,6 +428,7 @@ public class User {
         result = prime * result + ((playerUUID == null) ? 0 : playerUUID.hashCode());
         return result;
     }
+
     /* (non-Javadoc)
      * @see java.lang.Object#equals(java.lang.Object)
      */

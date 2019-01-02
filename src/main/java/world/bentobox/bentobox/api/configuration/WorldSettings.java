@@ -11,9 +11,10 @@ import org.bukkit.entity.EntityType;
 import world.bentobox.bentobox.api.flags.Flag;
 
 /**
- * Contains world-specific settings. Only getters are required, but you may need setters for your own class.
+ * Contains world-specific settings that must be provided by the {@link world.bentobox.bentobox.api.addons.GameModeAddon} in order to register its Worlds.
+ * <br/>
+ * Depending on your implementation, you may need to add setters.
  * @author tastybento
- *
  */
 public interface WorldSettings {
 
@@ -225,7 +226,6 @@ public interface WorldSettings {
      */
     int getResetLimit();
 
-
     /**
      * Get the island reset time stamp. Any player who last logged in before this time will have resets zeroed
      */
@@ -271,4 +271,13 @@ public interface WorldSettings {
      */
     boolean isRequireConfirmationToSetHomeInTheEnd();
 
+    /**
+     * Gets ban limit for this world.
+     * Once exceeded, island members won't be able to ban any more players from their island.
+     * Set it to -1 for unlimited.
+     * <br/>
+     * Permission to increase the limit: {@code (permissionprefix).ban.maxlimit.(value)}
+     * @return the ban limit for this world.
+     */
+    int getBanLimit();
 }

@@ -115,6 +115,7 @@ public class Island implements DataObject {
             members.put(playerUUID, RanksManager.MEMBER_RANK);
         }
     }
+
     /**
      * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
      * If the player is a member, coop or trustee, they will be removed from those lists.
@@ -155,6 +156,7 @@ public class Island implements DataObject {
     public long getCreatedDate(){
         return createdDate;
     }
+
     /**
      * Gets the Island Guard flag's setting. If this is a protection flag, the this will be the
      * rank needed to bypass this flag. If it is a Settings flag, any non-zero value means the
