@@ -147,6 +147,15 @@ public interface WorldSettings {
     String getWorldName();
 
     /**
+     * Allow obsidian to be scooped up with an empty bucket back into lava.
+     * This only works if there is a single block of obsidian (no obsidian within 10 blocks).
+     * Recommendation is to keep this true so that newbies don't bother you or reset their
+     * island unnecessarily.
+     * @return whether obsidian scooping is allowed or not.
+     */
+    boolean isAllowObsidianScooping();
+
+    /**
      * @return the dragonSpawn
      */
     boolean isDragonSpawn();

@@ -40,14 +40,14 @@ import world.bentobox.bentobox.managers.LocalesManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({PlayerEvent.class, PlayerInteractEvent.class})
-public class ObsidianToLavaTest {
+public class ObsidianScoopingListenerTest {
 
     private static World world;
 
     @Test
     public void testObsidianToLava() {
         BentoBox plugin = mock(BentoBox.class);
-        assertNotNull(new ObsidianToLava(plugin));
+        assertNotNull(new ObsidianScoopingListener(plugin));
     }
 
     @Test
@@ -75,14 +75,7 @@ public class ObsidianToLavaTest {
         BentoBox plugin = mock(BentoBox.class);
 
         // Create new object
-        ObsidianToLava listener = new ObsidianToLava(plugin);
-
-        // Mock settings
-        Settings settings = mock(Settings.class);
-        when(plugin.getSettings()).thenReturn(settings);
-        when(settings.isAllowObsidianScooping()).thenReturn(false);
-        // Allow scooping
-        when(settings.isAllowObsidianScooping()).thenReturn(true);
+        ObsidianScoopingListener listener = new ObsidianScoopingListener(plugin);
 
         // Mock player
         Player who = mock(Player.class);
@@ -103,6 +96,7 @@ public class ObsidianToLavaTest {
         when(iwm.getIslandWorld(Mockito.any())).thenReturn(world);
         when(iwm.getNetherWorld(Mockito.any())).thenReturn(world);
         when(iwm.getEndWorld(Mockito.any())).thenReturn(world);
+        when(iwm.isAllowObsidianScooping(Mockito.any())).thenReturn(true); // Allow scooping
 
         // Mock up IslandsManager
         IslandsManager im = mock(IslandsManager.class);
@@ -205,7 +199,7 @@ public class ObsidianToLavaTest {
         Block airBlock = mock(Block.class);
         when(airBlock.getType()).thenReturn(Material.AIR);
 
-        ObsidianToLava listener = new ObsidianToLava(plugin);
+        ObsidianScoopingListener listener = new ObsidianScoopingListener(plugin);
         PlayerInteractEvent event = new PlayerInteractEvent(who, action, item, clickedBlock, BlockFace.EAST);
         if (!action.equals(Action.RIGHT_CLICK_BLOCK) || !item.getType().equals(Material.BUCKET) || !clickedBlock.getType().equals(Material.OBSIDIAN)) {
             assertFalse(listener.onPlayerInteract(event));
