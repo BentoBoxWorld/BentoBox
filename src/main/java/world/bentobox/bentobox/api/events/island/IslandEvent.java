@@ -13,7 +13,6 @@ import world.bentobox.bentobox.lists.Flags;
  * Fired when an island event happens.
  *
  * @author tastybento
- * @since 1.0
  */
 public class IslandEvent extends IslandBaseEvent {
 

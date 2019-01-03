@@ -12,7 +12,6 @@ import world.bentobox.bentobox.database.objects.Island;
  * Canceling this event will result in canceling the change.
  *
  * @author Poslovitch
- * @since 1.0
  */
 public class FlagChangeEvent extends IslandBaseEvent {
     private final UUID player;

@@ -10,7 +10,6 @@ import world.bentobox.bentobox.api.events.PremadeEvent;
  * Fired when a team event happens.
  *
  * @author tastybento
- * @since 1.0
  */
 public class CommandEvent extends PremadeEvent implements Cancellable {
 
