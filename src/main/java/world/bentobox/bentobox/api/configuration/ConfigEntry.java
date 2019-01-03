@@ -17,4 +17,10 @@ public @interface ConfigEntry {
     boolean overrideOnChange() default false;
     boolean experimental() default false;
     boolean needsReset() default false;
+
+    /**
+     * Sets whether this config entry should be printed in the final config file or not.
+     * @return {@code true} if this config entry should be printed in the final config file, {@code false} otherwise.
+     */
+    boolean hidden() default false;
 }
