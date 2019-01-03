@@ -172,6 +172,25 @@ public class NewIsland {
                 // Delete the old island
                 plugin.getIslands().deleteIsland(oldIsland, true);
             }
+
+            // Fire exit event
+            Reason reasonDone = Reason.CREATED;
+            switch (reason) {
+            case CREATE:
+                reasonDone = Reason.CREATED;
+                break;
+            case RESET:
+                reasonDone = Reason.RESETTED;
+                break;
+            default:
+                break;
+            }
+            IslandEvent.builder()
+            .involvedPlayer(user.getUniqueId())
+            .reason(reasonDone)
+            .island(island)
+            .location(island.getCenter())
+            .build();
         });
         // Make nether island
         if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {
@@ -185,25 +204,6 @@ public class NewIsland {
 
         // Set default settings
         island.setFlagsDefaults();
-
-        // Fire exit event
-        Reason reasonDone = Reason.CREATED;
-        switch (reason) {
-        case CREATE:
-            reasonDone = Reason.CREATED;
-            break;
-        case RESET:
-            reasonDone = Reason.RESETTED;
-            break;
-        default:
-            break;
-        }
-        IslandEvent.builder()
-        .involvedPlayer(user.getUniqueId())
-        .reason(reasonDone)
-        .island(island)
-        .location(island.getCenter())
-        .build();
 
     }
 
