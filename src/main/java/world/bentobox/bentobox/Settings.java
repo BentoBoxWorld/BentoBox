@@ -144,17 +144,17 @@ public class Settings implements DataObject {
     @ConfigComment("More precisely, it transfers the ownership of the island to the player who's active, whose rank is the highest")
     @ConfigComment("and who's been part of the island the longest time.")
     @ConfigComment("Setting this to 'false' will disable the feature.")
-    @ConfigEntry(path = "island.automated-ownership-transfer.enable")
+    @ConfigEntry(path = "island.automated-ownership-transfer.enable", hidden = true)
     private boolean enableAutoOwnershipTransfer = true;
 
     @ConfigComment("Time in days since the island owner's last disconnection before they are considered inactive.")
-    @ConfigEntry(path = "island.automated-ownership-transfer.inactivity-threshold")
+    @ConfigEntry(path = "island.automated-ownership-transfer.inactivity-threshold", hidden = true)
     private int autoOwnershipTransferInactivityThreshold = 30;
 
     @ConfigComment("Ranks are being considered when transferring the island ownership to one of its member.")
     @ConfigComment("Ignoring ranks will result in the island ownership being transferred to the player who's active and")
     @ConfigComment("who's been member of the island the longest time.")
-    @ConfigEntry(path = "island.automated-ownership-transfer.ignore-ranks")
+    @ConfigEntry(path = "island.automated-ownership-transfer.ignore-ranks", hidden = true)
     private boolean autoOwnershipTransferIgnoreRanks = false;
 
     //---------------------------------------------------------------------------------------/
