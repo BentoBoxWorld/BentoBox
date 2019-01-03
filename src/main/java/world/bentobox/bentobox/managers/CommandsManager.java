@@ -27,7 +27,7 @@ public class CommandsManager {
             if (command.getAddon() != null) {
                 commandPrefix = command.getAddon().getDescription().getName().toLowerCase(Locale.ENGLISH);
             }
-            
+
             commandMap.register(commandPrefix, command);
         }
         catch(Exception exception){
