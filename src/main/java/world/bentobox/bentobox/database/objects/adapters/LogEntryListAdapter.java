@@ -44,7 +44,7 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
             String type = (String) entry.get(TYPE);
             Map<String, Object> data = (Map<String, Object>) entry.get(DATA);
 
-            result.add(new LogEntry(timestamp, type, data));
+            result.add(new LogEntry.Builder(type).timestamp(timestamp).data(data).build());
         }
 
         return result;
