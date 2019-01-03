@@ -103,7 +103,7 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.cooldown.trust")
     private int trustCooldown = 5;
 
-    @ConfigComment("How long a player must wait until they can ban a player.")
+    @ConfigComment("How long a player must wait until they can ban a player")
     @ConfigComment("after unbanning them. In minutes.")
     @ConfigEntry(path = "island.cooldown.ban")
     private int banCooldown = 10;
