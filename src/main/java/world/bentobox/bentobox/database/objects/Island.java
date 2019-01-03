@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -25,6 +27,8 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
+import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
+import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
@@ -87,6 +91,11 @@ public class Island implements DataObject {
     @Adapter(FlagSerializer.class)
     @Expose
     private Map<Flag, Integer> flags = new HashMap<>();
+
+    //// Island History ////
+    @Adapter(LogEntryListAdapter.class)
+    @Expose
+    private List<LogEntry> history = new LinkedList<>();
 
     @Expose
     private int levelHandicap;
@@ -695,9 +704,33 @@ public class Island implements DataObject {
 
     /**
      * Removes all of a specified rank from the member list
-     * @param coopRank - rank value
+     * @param rank rank value
      */
-    public void removeRank(Integer coopRank) {
-        members.values().removeIf(coopRank::equals); 
+    public void removeRank(Integer rank) {
+        members.values().removeIf(rank::equals);
+    }
+
+    /**
+     * Gets the history of the island.
+     * @return the list of {@link LogEntry} for this island.
+     */
+    public List<LogEntry> getHistory() {
+        return history;
+    }
+
+    /**
+     * Adds a {@link LogEntry} to the history of this island.
+     * @param logEntry the LogEntry to add.
+     */
+    public void log(LogEntry logEntry) {
+        history.add(logEntry);
+    }
+
+    /**
+     * Sets the history of the island.
+     * @param history the list of {@link LogEntry} to se for this island.
+     */
+    public void setHistory(List<LogEntry> history) {
+        this.history = history;
     }
 }
