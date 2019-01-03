@@ -145,10 +145,6 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 1000;
 
-    // Ranks
-    @ConfigEntry(path = "island.custom-ranks", experimental = true)
-    private Map<String, Integer> customRanks = new HashMap<>();
-
     //---------------------------------------------------------------------------------------/
     @ConfigComment("These settings should not be edited")
     private String uniqueId = "config";
@@ -378,14 +374,6 @@ public class Settings implements DataObject {
         return this.pasteSpeed;
     }
 
-    public Map<String, Integer> getCustomRanks() {
-        return customRanks;
-    }
-
-    public void setCustomRanks(Map<String, Integer> customRanks) {
-        this.customRanks = customRanks;
-    }
-
     /**
      * @return the uniqueId
      */
@@ -401,7 +389,4 @@ public class Settings implements DataObject {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
-
-
-
 }

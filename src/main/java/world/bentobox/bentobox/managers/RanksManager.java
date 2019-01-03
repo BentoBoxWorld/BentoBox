@@ -50,18 +50,6 @@ public class RanksManager {
         ranksPut(COOP_RANK_REF, COOP_RANK);
         ranksPut(VISITOR_RANK_REF, VISITOR_RANK);
         ranksPut(BANNED_RANK_REF, BANNED_RANK);
-        loadCustomRanks();
-    }
-
-    /**
-     * Loads the custom ranks from the settings
-     */
-    public void loadCustomRanks() {
-        for (Entry<String, Integer> en : plugin.getSettings().getCustomRanks().entrySet()) {
-            if (!addRank(en.getKey(),en.getValue())) {
-                plugin.logError("Error loading custom rank: " + en.getKey() + " " + en.getValue() + " skipping...");
-            }
-        }
     }
 
     /**
