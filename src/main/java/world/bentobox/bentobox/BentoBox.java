@@ -8,7 +8,9 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.Notifier;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
@@ -172,12 +174,9 @@ public class BentoBox extends JavaPlugin {
             isLoaded = true;
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
 
-            instance.log("#############################################");
-            instance.log(instance.getDescription().getFullName() + " has been fully enabled.");
-            instance.log("It took: " + (System.currentTimeMillis() - startMillis + "ms"));
-            instance.log("Thanks for using our plugin !");
-            instance.log("- Tastybento and Poslovitch, 2017-2019");
-            instance.log("#############################################");
+            User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
+                    TextVariables.VERSION, instance.getDescription().getVersion(),
+                    "[time]", String.valueOf(System.currentTimeMillis() - startMillis));
         });
     }
 
