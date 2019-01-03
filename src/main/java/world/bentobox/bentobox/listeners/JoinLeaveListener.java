@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.listeners;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
@@ -78,55 +77,55 @@ public class JoinLeaveListener implements Listener {
 
     private void runAutomatedOwnershipTransfer(User user) {
         plugin.getIWM().getOverWorlds().stream()
-                .filter(world -> plugin.getIslands().hasIsland(world, user) && !plugin.getIslands().isOwner(world, user.getUniqueId()))
-                .forEach(world -> {
-                    Island island = plugin.getIslands().getIsland(world, user);
+        .filter(world -> plugin.getIslands().hasIsland(world, user) && !plugin.getIslands().isOwner(world, user.getUniqueId()))
+        .forEach(world -> {
+            Island island = plugin.getIslands().getIsland(world, user);
 
-                    OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwner());
+            OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwner());
 
-                    // Converting the setting (in days) to milliseconds.
-                    long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000L;
-                    long timestamp = System.currentTimeMillis() - inactivityThreshold;
+            // Converting the setting (in days) to milliseconds.
+            long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000L;
+            long timestamp = System.currentTimeMillis() - inactivityThreshold;
 
-                    // We make sure the current owner is inactive.
-                    if (owner.getLastPlayed() != 0 && owner.getLastPlayed() < timestamp) {
-                        // The current owner is inactive
-                        // Now, let's run through all of the island members (except the player who's just joined) and see who's active.
-                        // Sadly, this will make us calculate the owner inactivity again... :(
-                        List<UUID> candidates = Arrays.asList((UUID[]) island.getMemberSet().stream()
-                                .filter(uuid -> !user.getUniqueId().equals(uuid))
-                                .filter(uuid -> Bukkit.getOfflinePlayer(uuid).getLastPlayed() != 0
-                                        && Bukkit.getOfflinePlayer(uuid).getLastPlayed() < timestamp)
-                                .toArray());
+            // We make sure the current owner is inactive.
+            if (owner.getLastPlayed() != 0 && owner.getLastPlayed() < timestamp) {
+                // The current owner is inactive
+                // Now, let's run through all of the island members (except the player who's just joined) and see who's active.
+                // Sadly, this will make us calculate the owner inactivity again... :(
+                List<UUID> candidates = Arrays.asList((UUID[]) island.getMemberSet().stream()
+                        .filter(uuid -> !user.getUniqueId().equals(uuid))
+                        .filter(uuid -> Bukkit.getOfflinePlayer(uuid).getLastPlayed() != 0
+                        && Bukkit.getOfflinePlayer(uuid).getLastPlayed() < timestamp)
+                        .toArray());
 
-                        if (!candidates.isEmpty()) {
-                            if (!plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
-                                // Ranks are not ignored, our candidates can only have the highest rank
+                if (!candidates.isEmpty()) {
+                    if (!plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
+                        // Ranks are not ignored, our candidates can only have the highest rank
 
-                            }
-                        }
                     }
-                });
+                }
+            }
+        });
     }
 
     private void updateIslandRange(User user) {
         plugin.getIWM().getOverWorlds().stream()
-                .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
-                .forEach(world -> {
-                    Island island = plugin.getIslands().getIsland(world, user);
+        .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
+        .forEach(world -> {
+            Island island = plugin.getIslands().getIsland(world, user);
 
-                    // Check if new owner has a different range permission than the island size
-                    int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
+            // Check if new owner has a different range permission than the island size
+            int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
 
-                    // Range can go up or down
-                    if (range != island.getProtectionRange()) {
-                        user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                        plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
-                                + range + " for " + user.getName() + " due to permission.");
-                    }
+            // Range can go up or down
+            if (range != island.getProtectionRange()) {
+                user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
+                        + range + " for " + user.getName() + " due to permission.");
+            }
 
-                    island.setProtectionRange(range);
-                });
+            island.setProtectionRange(range);
+        });
     }
 
     @EventHandler(priority = EventPriority.NORMAL)
@@ -144,7 +143,7 @@ public class JoinLeaveListener implements Listener {
                 .filter(e -> e.getValue() == RanksManager.COOP_RANK)
                 .forEach(e -> User.getInstance(e.getKey())
                         .sendMessage("commands.island.team.uncoop.all-members-logged-off", TextVariables.NAME, plugin.getPlayers().getName(island.getOwner())));
-             // Remove any coop players on this island
+                // Remove any coop players on this island
                 island.removeRank(RanksManager.COOP_RANK);
             }
         });

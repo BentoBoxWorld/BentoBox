@@ -1,29 +1,23 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.managers;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.Settings;
 
 /**
  * @author tastybento
  *
  */
 public class RanksManagerTest {
-    
+
     public static RanksManager ranksManager;
 
     /**
