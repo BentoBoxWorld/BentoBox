@@ -86,7 +86,7 @@ public class Settings implements DataObject {
     private boolean allowObsidianScooping = true;
 
     @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
-    @ConfigEntry(path = "general.rank-command")
+    @ConfigEntry(path = "general.rank-command", experimental = true)
     private Map<String, Integer> rankCommand = new HashMap<>();
 
     @ConfigEntry(path = "panel.close-on-click-outside")
