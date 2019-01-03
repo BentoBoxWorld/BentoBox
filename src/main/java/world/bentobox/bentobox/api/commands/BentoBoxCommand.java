@@ -8,7 +8,6 @@ import world.bentobox.bentobox.api.user.User;
 /**
  * Interface for BentoBox Commands
  * @author tastybento
- *
  */
 public interface BentoBoxCommand {
 

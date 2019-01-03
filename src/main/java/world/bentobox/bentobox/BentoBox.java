@@ -75,7 +75,7 @@ public class BentoBox extends JavaPlugin {
 
             getServer().getLogger().severe("Aborting BentoBox enabling.");
             getServer().getLogger().severe("BentoBox cannot be loaded on this server.");
-            getServer().getLogger().severe("You must be using a compatible server software and run on a version supported by BentoBox.");
+            getServer().getLogger().severe("You must use a compatible server software (Spigot) and run on a supported version (1.13.2).");
 
             getServer().getPluginManager().disablePlugin(this);
             return;
