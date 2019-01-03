@@ -145,7 +145,7 @@ public class Settings implements DataObject {
     @ConfigComment("and who's been part of the island the longest time.")
     @ConfigComment("Setting this to 'false' will disable the feature.")
     @ConfigEntry(path = "island.automated-ownership-transfer.enable", hidden = true)
-    private boolean enableAutoOwnershipTransfer = true;
+    private boolean enableAutoOwnershipTransfer = false;
 
     @ConfigComment("Time in days since the island owner's last disconnection before they are considered inactive.")
     @ConfigEntry(path = "island.automated-ownership-transfer.inactivity-threshold", hidden = true)
