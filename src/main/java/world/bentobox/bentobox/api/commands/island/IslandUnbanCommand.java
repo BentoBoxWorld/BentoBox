@@ -64,14 +64,14 @@ public class IslandUnbanCommand extends CompositeCommand {
         return unban(user, targetUser);
     }
 
-    private boolean unban(User user, User targetUser) {
-        if (getIslands().getIsland(getWorld(), user.getUniqueId()).removeFromBanList(targetUser.getUniqueId())) {
-            user.sendMessage("general.success");
-            targetUser.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, user.getName());
+    private boolean unban(User issuer, User target) {
+        if (getIslands().getIsland(getWorld(), issuer.getUniqueId()).unban(issuer.getUniqueId(), target.getUniqueId())) {
+            issuer.sendMessage("general.success");
+            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, issuer.getName());
             // Set cooldown
             if (getSettings().getBanCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("ban").ifPresent(subCommand ->
-                subCommand.setCooldown(user.getUniqueId(), targetUser.getUniqueId(), getSettings().getBanCooldown() * 60));
+                subCommand.setCooldown(issuer.getUniqueId(), target.getUniqueId(), getSettings().getBanCooldown() * 60));
             }
             return true;
         }

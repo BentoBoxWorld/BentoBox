@@ -208,7 +208,7 @@ public class IslandUnbanCommandTest {
         when(island.isBanned(Mockito.eq(targetUUID))).thenReturn(true);
 
         // Allow removing from ban list
-        when(island.removeFromBanList(Mockito.any())).thenReturn(true);
+        when(island.unban(Mockito.any(), Mockito.any())).thenReturn(true);
 
         assertTrue(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.success");
@@ -232,7 +232,7 @@ public class IslandUnbanCommandTest {
         when(island.isBanned(Mockito.eq(targetUUID))).thenReturn(true);
 
         // Allow removing from ban list
-        when(island.removeFromBanList(Mockito.any())).thenReturn(false);
+        when(island.unban(Mockito.any(), Mockito.any())).thenReturn(false);
 
         assertFalse(iubc.execute(user, iubc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user, Mockito.never()).sendMessage("general.success");

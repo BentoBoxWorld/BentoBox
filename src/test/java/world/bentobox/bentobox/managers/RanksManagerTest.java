@@ -32,14 +32,8 @@ public class RanksManagerTest {
     @Before
     public void setUp() throws Exception {
         BentoBox plugin = mock(BentoBox.class);
-        Settings settings = mock(Settings.class);
-        // Blank ranks for now
-        Map<String, Integer> customRanks = new HashMap<>();
-        when(plugin.getSettings()).thenReturn(settings);
-        when(settings.getCustomRanks()).thenReturn(customRanks);
-        
+
         ranksManager = new RanksManager(plugin);
-        
     }
 
     /**
@@ -118,5 +112,4 @@ public class RanksManagerTest {
         assertEquals(RanksManager.OWNER_RANK_REF, ranksManager.getRank(RanksManager.OWNER_RANK));
         assertEquals("", ranksManager.getRank(-999));
     }
-
 }

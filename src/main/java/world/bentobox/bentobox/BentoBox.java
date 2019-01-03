@@ -18,7 +18,7 @@ import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.NetherPortals;
-import world.bentobox.bentobox.listeners.ObsidianToLava;
+import world.bentobox.bentobox.listeners.ObsidianScoopingListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -193,7 +193,7 @@ public class BentoBox extends JavaPlugin {
         // Nether portals
         manager.registerEvents(new NetherPortals(this), this);
         // Obsidian to lava helper
-        manager.registerEvents(new ObsidianToLava(this), this);
+        manager.registerEvents(new ObsidianScoopingListener(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands

@@ -274,13 +274,8 @@ public class User {
      */
     public void sendMessage(String reference, String... variables) {
         String message = getTranslation(reference, variables);
-        if (!ChatColor.stripColor(message).trim().isEmpty()) {
-            if (sender != null) {
-                sender.sendMessage(message);
-            } else {
-                // TODO: Offline message
-                // Save this message so the player can see it later
-            }
+        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+            sender.sendMessage(message);
         }
     }
 
@@ -291,9 +286,6 @@ public class User {
     public void sendRawMessage(String message) {
         if (sender != null) {
             sender.sendMessage(message);
-        } else {
-            // TODO: Offline message
-            // Save this message so the player can see it later
         }
     }
 

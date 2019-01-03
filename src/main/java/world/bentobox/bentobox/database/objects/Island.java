@@ -4,6 +4,8 @@ import java.util.Date;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
@@ -25,6 +27,8 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
+import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
+import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
@@ -88,6 +92,11 @@ public class Island implements DataObject {
     @Expose
     private Map<Flag, Integer> flags = new HashMap<>();
 
+    //// Island History ////
+    @Adapter(LogEntryListAdapter.class)
+    @Expose
+    private List<LogEntry> history = new LinkedList<>();
+
     @Expose
     private int levelHandicap;
     @Expose
@@ -117,14 +126,17 @@ public class Island implements DataObject {
     }
 
     /**
-     * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
+     * Bans the target player from this Island.
      * If the player is a member, coop or trustee, they will be removed from those lists.
-     * @param targetUUID - the target's UUID
-     * @return true if successfully added
+     * @param issuer UUID of the issuer, may be null.
+     *               Whenever possible, one should be provided.
+     * @param target UUID of the target, must be provided.
+     * @return {@code true} if the target is successfully banned, {@code false} otherwise.
      */
-    public boolean addToBanList(UUID targetUUID) {
-        if (targetUUID != null) {
-            members.put(targetUUID, RanksManager.BANNED_RANK);
+    public boolean ban(UUID issuer, UUID target) {
+        if (target != null) {
+            members.put(target, RanksManager.BANNED_RANK);
+            log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
             return true;
         }
         return false;
@@ -141,6 +153,21 @@ public class Island implements DataObject {
             }
         }
         return result;
+    }
+
+    /**
+     * Unbans the target player from this Island.
+     * @param issuer UUID of the issuer, may be null.
+     *               Whenever possible, one should be provided.
+     * @param target UUID of the target, must be provided.
+     * @return {@code true} if the target is successfully unbanned, {@code false} otherwise.
+     */
+    public boolean unban(UUID issuer, UUID target) {
+        if (members.remove(target) != null) {
+            log(new LogEntry.Builder("UNBAN").data("player", target).data("issuer", issuer).build());
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -394,15 +421,6 @@ public class Island implements DataObject {
      */
     public boolean onIsland(Location target) {
         return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
-    }
-
-    /**
-     * Removes target from the banned list. May be cancelled by unban event.
-     * @param targetUUID - the target's UUID
-     * @return true if successful, otherwise false.
-     */
-    public boolean removeFromBanList(UUID targetUUID) {
-        return (members.remove(targetUUID) != null);
     }
 
     /**
@@ -695,9 +713,33 @@ public class Island implements DataObject {
 
     /**
      * Removes all of a specified rank from the member list
-     * @param coopRank - rank value
+     * @param rank rank value
      */
-    public void removeRank(Integer coopRank) {
-        members.values().removeIf(coopRank::equals); 
+    public void removeRank(Integer rank) {
+        members.values().removeIf(rank::equals);
+    }
+
+    /**
+     * Gets the history of the island.
+     * @return the list of {@link LogEntry} for this island.
+     */
+    public List<LogEntry> getHistory() {
+        return history;
+    }
+
+    /**
+     * Adds a {@link LogEntry} to the history of this island.
+     * @param logEntry the LogEntry to add.
+     */
+    public void log(LogEntry logEntry) {
+        history.add(logEntry);
+    }
+
+    /**
+     * Sets the history of the island.
+     * @param history the list of {@link LogEntry} to se for this island.
+     */
+    public void setHistory(List<LogEntry> history) {
+        this.history = history;
     }
 }

@@ -237,7 +237,7 @@ public class IslandBanCommandTest {
         when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(-1);
 
         // Allow adding to ban list
-        when(island.addToBanList(Mockito.any())).thenReturn(true);
+        when(island.ban(Mockito.any(), Mockito.any())).thenReturn(true);
 
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.success");
@@ -259,7 +259,7 @@ public class IslandBanCommandTest {
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(targetUser);
         when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(-1);
         // Allow adding to ban list
-        when(island.addToBanList(Mockito.any())).thenReturn(true);
+        when(island.ban(Mockito.any(), Mockito.any())).thenReturn(true);
 
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user).sendMessage("general.success");
@@ -280,7 +280,7 @@ public class IslandBanCommandTest {
         when(targetUser.isOnline()).thenReturn(true);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(targetUser);
         // Disallow adding to ban list - even cancelled
-        when(island.addToBanList(Mockito.any())).thenReturn(false);
+        when(island.ban(Mockito.any(), Mockito.any())).thenReturn(false);
 
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
         Mockito.verify(user, Mockito.never()).sendMessage("general.success");

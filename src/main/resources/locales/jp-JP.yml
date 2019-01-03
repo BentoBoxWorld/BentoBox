@@ -135,7 +135,7 @@ commands:
       description: "プレイヤーの島の範囲を設定する"
       range-updated: "&2島の範囲は、[number]に更新"
     reload:
-      description: "プラグインをリロードする"
+      description: "リロードする"
     tp:
       parameters: "<プレーヤー>"
       description: "プレイヤーの島にテレポート"

@@ -745,7 +745,6 @@ public class IslandsManager {
         islandCache.addPlayer(playerUUID, teamIsland);
         // Save the database
         save(false);
-
     }
 
     public void setLast(Location last) {

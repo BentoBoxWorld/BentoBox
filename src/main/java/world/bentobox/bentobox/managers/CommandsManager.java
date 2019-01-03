@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -21,7 +22,13 @@ public class CommandsManager {
             Field commandMapField = Bukkit.getServer().getClass().getDeclaredField("commandMap");
             commandMapField.setAccessible(true);
             CommandMap commandMap = (CommandMap) commandMapField.get(Bukkit.getServer());
-            commandMap.register(command.getLabel(), command);
+
+            String commandPrefix = "bentobox";
+            if (command.getAddon() != null) {
+                commandPrefix = command.getAddon().getDescription().getName().toLowerCase(Locale.ENGLISH);
+            }
+
+            commandMap.register(commandPrefix, command);
         }
         catch(Exception exception){
             Bukkit.getLogger().severe("Bukkit server commandMap method is not there! This means no commands can be registered!");

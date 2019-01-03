@@ -78,15 +78,8 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "general.fakeplayers", experimental = true)
     private Set<String> fakePlayers = new HashSet<>();
 
-    @ConfigComment("Allow obsidian to be scooped up with an empty bucket back into lava")
-    @ConfigComment("This only works if there is a single block of obsidian (no obsidian within 10 blocks)")
-    @ConfigComment("Recommendation is to keep this true so that newbies don't bother you or reset their")
-    @ConfigComment("island unnecessarily.")
-    @ConfigEntry(path = "general.allow-obsidian-scooping")
-    private boolean allowObsidianScooping = true;
-
     @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
-    @ConfigEntry(path = "general.rank-command")
+    @ConfigEntry(path = "general.rank-command", experimental = true)
     private Map<String, Integer> rankCommand = new HashMap<>();
 
     @ConfigEntry(path = "panel.close-on-click-outside")
@@ -144,10 +137,6 @@ public class Settings implements DataObject {
     @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take longer")
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 1000;
-
-    // Ranks
-    @ConfigEntry(path = "island.custom-ranks", experimental = true)
-    private Map<String, Integer> customRanks = new HashMap<>();
 
     // Automated ownership transfer
     @ConfigComment("Toggles the automated ownership transfer.")
@@ -261,14 +250,6 @@ public class Settings implements DataObject {
 
     public void setFakePlayers(Set<String> fakePlayers) {
         this.fakePlayers = fakePlayers;
-    }
-
-    public boolean isAllowObsidianScooping() {
-        return allowObsidianScooping;
-    }
-
-    public void setAllowObsidianScooping(boolean allowObsidianScooping) {
-        this.allowObsidianScooping = allowObsidianScooping;
     }
 
     public Map<String, Integer> getRankCommand() {
@@ -395,14 +376,6 @@ public class Settings implements DataObject {
      */
     public int getPasteSpeed() {
         return this.pasteSpeed;
-    }
-
-    public Map<String, Integer> getCustomRanks() {
-        return customRanks;
-    }
-
-    public void setCustomRanks(Map<String, Integer> customRanks) {
-        this.customRanks = customRanks;
     }
 
     public boolean isEnableAutoOwnershipTransfer() {
