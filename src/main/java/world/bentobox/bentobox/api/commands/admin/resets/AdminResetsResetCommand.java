@@ -1,13 +1,16 @@
 package world.bentobox.bentobox.api.commands.admin.resets;
 
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 import java.util.List;
 import java.util.UUID;
 
-public class AdminResetsResetCommand extends CompositeCommand {
+public class AdminResetsResetCommand extends ConfirmableCommand {
 
     public AdminResetsResetCommand(CompositeCommand parent) {
         super(parent, "reset");
@@ -26,14 +29,27 @@ public class AdminResetsResetCommand extends CompositeCommand {
             return false;
         }
 
-        UUID target = getPlayers().getUUID(args.get(0));
-        if (target == null) {
-            user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
-            return false;
-        } else {
-            getPlayers().setResets(getWorld(), target, 0);
-            user.sendMessage("general.success");
+        // Check if this is @a - therefore, we're resetting everyone's resets :)
+        if (args.get(0).equalsIgnoreCase("@a")) {
+            this.askConfirmation(user, () -> {
+                // Set the reset epoch to now
+                getIWM().setResetEpoch(getWorld());
+                // Reset all current players
+                Bukkit.getOnlinePlayers().stream().map(Player::getUniqueId).filter(getPlayers()::isKnown).forEach(u -> getPlayers().setResets(getWorld(), u, 0));
+                user.sendMessage("general.success");
+            });
             return true;
+        } else {
+            // Then, it may be a player
+            UUID target = getPlayers().getUUID(args.get(0));
+            if (target == null) {
+                user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
+                return false;
+            } else {
+                getPlayers().setResets(getWorld(), target, 0);
+                user.sendMessage("general.success");
+                return true;
+            }
         }
     }
 }
