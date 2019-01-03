@@ -402,7 +402,7 @@ public class TestBentoBox {
         assertFalse(members.contains(member3));
 
         // Ban member
-        island.addToBanList(member1);
+        island.ban(null, member1);
         members = island.getMemberSet();
         assertTrue(members.contains(playerUUID));
         assertFalse(members.contains(member1));
@@ -413,7 +413,7 @@ public class TestBentoBox {
         assertTrue(banned.contains(member1));
 
         // Unban
-        island.removeFromBanList(member1);
+        island.unban(null, member1);
         assertFalse(island.getBanned().contains(member1));
 
         // Protection
@@ -445,7 +445,7 @@ public class TestBentoBox {
         // Check if the members have capability
         User mem1 = User.getInstance(member1); // Visitor
         User mem2 = User.getInstance(member2); // Member
-        island.addToBanList(member3);
+        island.ban(null, member3);
         User mem3 = User.getInstance(member3); // Banned
 
         // Member 1 is a visitor

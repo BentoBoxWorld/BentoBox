@@ -126,14 +126,17 @@ public class Island implements DataObject {
     }
 
     /**
-     * Adds target to a list of banned players for this island. May be blocked by the event being cancelled.
+     * Bans the target player from this Island.
      * If the player is a member, coop or trustee, they will be removed from those lists.
-     * @param targetUUID - the target's UUID
-     * @return true if successfully added
+     * @param issuer UUID of the issuer, may be null.
+     *               Whenever possible, one should be provided.
+     * @param target UUID of the target, must be provided.
+     * @return {@code true} if the target is successfully banned, {@code false} otherwise.
      */
-    public boolean addToBanList(UUID targetUUID) {
-        if (targetUUID != null) {
-            members.put(targetUUID, RanksManager.BANNED_RANK);
+    public boolean ban(UUID issuer, UUID target) {
+        if (target != null) {
+            members.put(target, RanksManager.BANNED_RANK);
+            log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
             return true;
         }
         return false;
@@ -150,6 +153,21 @@ public class Island implements DataObject {
             }
         }
         return result;
+    }
+
+    /**
+     * Unbans the target player from this Island.
+     * @param issuer UUID of the issuer, may be null.
+     *               Whenever possible, one should be provided.
+     * @param target UUID of the target, must be provided.
+     * @return {@code true} if the target is successfully unbanned, {@code false} otherwise.
+     */
+    public boolean unban(UUID issuer, UUID target) {
+        if (members.remove(target) != null) {
+            log(new LogEntry.Builder("UNBAN").data("player", target).data("issuer", issuer).build());
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -403,15 +421,6 @@ public class Island implements DataObject {
      */
     public boolean onIsland(Location target) {
         return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
-    }
-
-    /**
-     * Removes target from the banned list. May be cancelled by unban event.
-     * @param targetUUID - the target's UUID
-     * @return true if successful, otherwise false.
-     */
-    public boolean removeFromBanList(UUID targetUUID) {
-        return (members.remove(targetUUID) != null);
     }
 
     /**
