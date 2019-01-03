@@ -344,7 +344,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
                 if (configEntry.hidden()) {
                     // If the annotation tells us to not print the config entry, then we won't.
-                    return;
+                    continue;
                 }
             }
 
