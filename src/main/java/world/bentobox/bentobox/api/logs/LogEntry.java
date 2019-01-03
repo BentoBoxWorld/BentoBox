@@ -13,15 +13,15 @@ import java.util.Map;
 public class LogEntry {
     private long timestamp;
     private String type;
-    private Map<String, String> data;
+    private Map<String, Object> data;
 
-    public LogEntry(String type, Map<String, String> data) {
+    public LogEntry(String type, Map<String, Object> data) {
         this.timestamp = System.currentTimeMillis();
         this.type = type;
         this.data = data;
     }
 
-    public LogEntry(long timestamp, String type, Map<String, String> data) {
+    public LogEntry(long timestamp, String type, Map<String, Object> data) {
         this.timestamp = timestamp;
         this.type = type;
         this.data = data;
@@ -35,7 +35,7 @@ public class LogEntry {
         return type;
     }
 
-    public Map<String, String> getData() {
+    public Map<String, Object> getData() {
         return data;
     }
 }

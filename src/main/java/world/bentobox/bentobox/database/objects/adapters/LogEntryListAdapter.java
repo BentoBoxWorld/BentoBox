@@ -42,7 +42,7 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
         for (Map<String, Object> entry : serialized) {
             long timestamp = (long) entry.get(TIMESTAMP);
             String type = (String) entry.get(TYPE);
-            Map<String, String> data = (Map<String, String>) entry.get(DATA);
+            Map<String, Object> data = (Map<String, Object>) entry.get(DATA);
 
             result.add(new LogEntry(timestamp, type, data));
         }
