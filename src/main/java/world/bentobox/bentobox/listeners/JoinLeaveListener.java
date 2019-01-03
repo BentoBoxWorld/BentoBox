@@ -85,7 +85,7 @@ public class JoinLeaveListener implements Listener {
                     OfflinePlayer owner = Bukkit.getOfflinePlayer(island.getOwner());
 
                     // Converting the setting (in days) to milliseconds.
-                    long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000;
+                    long inactivityThreshold = plugin.getSettings().getAutoOwnershipTransferInactivityThreshold() * 24 * 60 * 60 * 1000L;
                     long timestamp = System.currentTimeMillis() - inactivityThreshold;
 
                     // We make sure the current owner is inactive.

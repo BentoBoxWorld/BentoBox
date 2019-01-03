@@ -29,17 +29,11 @@ public class RanksManager {
     public static final int VISITOR_RANK = 0;
     public static final int BANNED_RANK = -1;
 
-    private BentoBox plugin;
-
     // The store of ranks
     private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
 
-    /**
-     * @param plugin - plugin object
-     */
-    public RanksManager(BentoBox plugin) {
+    public RanksManager() {
         super();
-        this.plugin = plugin;
         // Hard coded ranks
         ranksPut(ADMIN_RANK_REF, ADMIN_RANK);
         ranksPut(MOD_RANK_REF, MOD_RANK);

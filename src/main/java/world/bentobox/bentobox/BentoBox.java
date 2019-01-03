@@ -106,7 +106,7 @@ public class BentoBox extends JavaPlugin {
             return;
         }
         islandsManager = new IslandsManager(this);
-        ranksManager = new RanksManager(this);
+        ranksManager = new RanksManager();
 
         // Start head getter
         headGetter = new HeadGetter(this);

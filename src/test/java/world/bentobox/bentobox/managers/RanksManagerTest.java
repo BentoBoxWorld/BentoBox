@@ -31,9 +31,7 @@ public class RanksManagerTest {
      */
     @Before
     public void setUp() throws Exception {
-        BentoBox plugin = mock(BentoBox.class);
-
-        ranksManager = new RanksManager(plugin);
+        ranksManager = new RanksManager();
     }
 
     /**

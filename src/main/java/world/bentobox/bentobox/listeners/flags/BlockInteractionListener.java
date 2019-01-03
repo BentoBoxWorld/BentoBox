@@ -24,11 +24,10 @@ public class BlockInteractionListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerInteract(final PlayerInteractEvent e) {
         // For some items, we need to do a specific check for RIGHT_CLICK_BLOCK
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-            if (e.getClickedBlock().getType().equals(Material.ITEM_FRAME)) {
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.ITEM_FRAME);
-                return;
-            }
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && e.getClickedBlock().getType().equals(Material.ITEM_FRAME)) {
+            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ITEM_FRAME);
+            return;
         }
 
         // Otherwise, we just don't care about the RIGHT_CLICK_BLOCK action.
