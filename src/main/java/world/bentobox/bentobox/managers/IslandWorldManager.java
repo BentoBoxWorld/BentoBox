@@ -252,13 +252,6 @@ public class IslandWorldManager {
     }
 
     /**
-     * @return whether obsidian scooping is allowed or not.
-     */
-    public boolean isAllowObsidianScooping(World world) {
-        return gameModes.get(Util.getWorld(world)).getWorldSettings().isAllowObsidianScooping();
-    }
-
-    /**
      * @return the endGenerate
      */
     public boolean isEndGenerate(World world) {

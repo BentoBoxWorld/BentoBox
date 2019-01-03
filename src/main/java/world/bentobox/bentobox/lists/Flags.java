@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
+import world.bentobox.bentobox.listeners.ObsidianScoopingListener;
 import world.bentobox.bentobox.listeners.flags.BlockInteractionListener;
 import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.BreedingListener;
@@ -138,7 +139,7 @@ public final class Flags {
     public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
-    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.OBSIDIAN).listener(new PortalListener()).build();
+    public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).build();
     public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).listener(new PortalListener()).build();
 
     // Shearing
@@ -238,6 +239,8 @@ public final class Flags {
 
     public static final Flag PREVENT_TELEPORT_WHEN_FALLING = new Flag.Builder("PREVENT_TELEPORT_WHEN_FALLING", Material.FEATHER).type(Type.WORLD_SETTING).build();
 
+    public static final Flag OBSIDIAN_SCOOPING = new Flag.Builder("OBSIDIAN_SCOOPING", Material.OBSIDIAN).type(Type.WORLD_SETTING)
+            .listener(new ObsidianScoopingListener()).defaultSetting(true).build();
     /**
      * @return List of all the flags in this class
      */

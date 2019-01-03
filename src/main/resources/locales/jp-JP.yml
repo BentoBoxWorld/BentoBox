@@ -561,6 +561,14 @@ protection:
       description: "トグル使用"
       name: "音符ブロック"
       hint: "音符ブロックを使用しない"
+    OBSIDIAN_SCOOPING:
+      name: "黒曜石スクープ"
+      description: | 
+        スクープを切り替える
+        黒曜石を空のバケツですくい上げて
+        溶岩に戻すことができます。
+        初心者を保護します。
+        リセットを減らします。
     OFFLINE_REDSTONE:
       description: |-
           &aレッドストーンは

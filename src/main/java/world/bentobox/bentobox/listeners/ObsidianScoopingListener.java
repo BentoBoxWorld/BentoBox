@@ -9,39 +9,31 @@ import org.bukkit.Sound;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import org.bukkit.inventory.ItemStack;
-import world.bentobox.bentobox.BentoBox;
+
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Enables changing of obsidian back into lava
+ * For {@link world.bentobox.bentobox.lists.Flags#OBSIDIAN_SCOOPING}
  * @author tastybento
  */
-public class ObsidianScoopingListener implements Listener {
-
-    private BentoBox plugin;
-
-    /**
-     * @param plugin plugin
-     */
-    public ObsidianScoopingListener(BentoBox plugin) {
-        this.plugin = plugin;
-    }
+public class ObsidianScoopingListener extends FlagListener {
 
     /**
      * Enables changing of obsidian back into lava
-     * 
+     *
      * @param e event
      * @return false if obsidian not scooped, true if scooped
      */
     @EventHandler(priority = EventPriority.NORMAL)
     public boolean onPlayerInteract(final PlayerInteractEvent e) {
-        if (!plugin.getIWM().inWorld(e.getPlayer().getLocation())
-                || !plugin.getIWM().isAllowObsidianScooping(e.getPlayer().getWorld())
+        if (!getIWM().inWorld(e.getPlayer().getLocation())
+                || !Flags.OBSIDIAN_SCOOPING.isSetForWorld(e.getPlayer().getWorld())
                 || !e.getPlayer().getGameMode().equals(GameMode.SURVIVAL)
                 || !e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 || !(e.getItem() != null && e.getItem().getType().equals(Material.BUCKET))
@@ -49,7 +41,7 @@ public class ObsidianScoopingListener implements Listener {
             return false;
         }
         User user = User.getInstance(e.getPlayer());
-        if (plugin.getIslands().userIsOnIsland(user.getWorld(), user)) {
+        if (getIslands().userIsOnIsland(user.getWorld(), user)) {
             // Look around to see if this is a lone obsidian block
             Block b = e.getClickedBlock();
 
