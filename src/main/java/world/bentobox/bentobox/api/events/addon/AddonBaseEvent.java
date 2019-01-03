@@ -7,7 +7,6 @@ import world.bentobox.bentobox.api.events.PremadeEvent;
 
 /**
  * @author Poslovitch
- * @since 1.0
  */
 public class AddonBaseEvent extends PremadeEvent {
 

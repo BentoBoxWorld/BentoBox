@@ -61,8 +61,6 @@ public abstract class Addon {
 
     /**
      * Executes code when reloading the addon.
-     *
-     * @since 0.17.0 (Alpha 12)
      */
     public void onReload() {}
 

@@ -11,7 +11,6 @@ import world.bentobox.bentobox.database.objects.Island;
  * Fired when a team event happens.
  *
  * @author tastybento
- * @since 1.0
  */
 public class TeamEvent {
 
