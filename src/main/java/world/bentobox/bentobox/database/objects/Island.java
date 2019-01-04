@@ -407,7 +407,8 @@ public class Island implements DataObject {
     }
 
     /**
-     * @return spawn
+     * Returns whether the island is a spawn or not.
+     * @return {@code true} if the island is a spawn, {@code false} otherwise.
      */
     public boolean isSpawn() {
         return spawn;
@@ -567,10 +568,21 @@ public class Island implements DataObject {
     }
 
     /**
-     * @param isSpawn - if the island is the spawn
+     * Sets whether this island is a spawn or not.
+     * <br/>
+     * If {@code true}, the members and the owner will be removed from this island.
+     * The flags will also be resetted to default values.
+     * @param isSpawn {@code true} if the island is a spawn, {@code false} otherwise.
      */
     public void setSpawn(boolean isSpawn){
         spawn = isSpawn;
+        if (isSpawn) {
+            owner = null;
+            members.clear();
+            setFlagsDefaults();
+            setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
+        }
+        log(new LogEntry.Builder("SPAWN").data("value", String.valueOf(isSpawn)).build());
     }
 
     /**
