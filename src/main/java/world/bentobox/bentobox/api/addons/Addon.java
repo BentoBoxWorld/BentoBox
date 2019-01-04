@@ -75,6 +75,12 @@ public abstract class Addon {
      */
     public enum State {
         /**
+         * The addon has been correctly loaded.
+         * @since 1.1
+         */
+        LOADED,
+
+        /**
          * The addon has been correctly enabled and is now fully working.
          */
         ENABLED,
@@ -149,6 +155,15 @@ public abstract class Addon {
 
     public boolean isEnabled() {
         return state == State.ENABLED;
+    }
+
+    /**
+     * Gets the current {@link State} of this Addon.
+     * @return the current State of this Addon.
+     * @since 1.1
+     */
+    public State getState() {
+        return state;
     }
 
     /**

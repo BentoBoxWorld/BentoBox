@@ -55,10 +55,70 @@ public class AddonsManager {
             return;
         }
         Arrays.stream(Objects.requireNonNull(f.listFiles())).filter(x -> !x.isDirectory() && x.getName().endsWith(".jar")).forEach(this::loadAddon);
-        plugin.log("Loaded " + addons.size() + " addons.");
+        plugin.log("Loaded " + getLoadedAddons().size() + " addons.");
 
-        if (!addons.isEmpty()) {
+        if (!getLoadedAddons().isEmpty()) {
             sortAddons();
+        }
+    }
+
+    private void loadAddon(File f) {
+        Addon addon;
+        AddonClassLoader addonClassLoader;
+        try (JarFile jar = new JarFile(f)) {
+            // try loading the addon
+            // Get description in the addon.yml file
+            YamlConfiguration data = addonDescription(jar);
+
+            // Load the addon
+            addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
+
+            // Get the addon itself
+            addon = addonClassLoader.getAddon();
+        } catch (Exception e) {
+            // We couldn't load the addon, aborting.
+            plugin.logError(e.getMessage());
+            return;
+        }
+
+        // Initialize some settings
+        addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
+        addon.setFile(f);
+
+        // Locales
+        plugin.getLocalesManager().copyLocalesFromAddonJar(addon);
+        plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
+
+        // Fire the load event
+        Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
+
+        // Add it to the list of addons
+        addons.add(addon);
+
+        // Add to the list of loaders
+        loaders.put(addon, addonClassLoader);
+
+        try {
+            // Run the onLoad.
+            addon.onLoad();
+            // If this is a GameModeAddon create the worlds, register it and load the schems
+            if (addon instanceof GameModeAddon) {
+                GameModeAddon gameMode = (GameModeAddon) addon;
+                // Create the gameWorlds
+                gameMode.createWorlds();
+                plugin.getIWM().addGameMode(gameMode);
+                // Register the schems
+                plugin.getSchemsManager().loadIslands(gameMode);
+            }
+
+            // Addon successfully loaded
+            addon.setState(Addon.State.LOADED);
+        } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
+            // Looks like the addon is incompatible, because it tries to refer to missing classes...
+            handleAddonIncompatibility(addon);
+        } catch (Exception e) {
+            // Unhandled exception. We'll give a bit of debug here.
+            handleAddonError(addon, e);
         }
     }
 
@@ -66,27 +126,20 @@ public class AddonsManager {
      * Enables all the addons
      */
     public void enableAddons() {
-        if (!addons.isEmpty()) {
+        if (!getLoadedAddons().isEmpty()) {
             plugin.log("Enabling addons...");
-            addons.forEach(addon -> {
+            getLoadedAddons().forEach(addon -> {
                 try {
                     addon.onEnable();
                     Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
                     addon.setState(Addon.State.ENABLED);
                     plugin.log("Enabling " + addon.getDescription().getName() + "...");
-                } catch (NoClassDefFoundError | NoSuchMethodError e) {
-                    // Looks like the addon is outdated, because it tries to refer to missing classes.
-                    // Set the AddonState as "INCOMPATIBLE".
-                    addon.setState(Addon.State.INCOMPATIBLE);
-                    plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
-                    plugin.log("NOTE: The addon is referring to no longer existing classes.");
-                    plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+                } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
+                    // Looks like the addon is incompatible, because it tries to refer to missing classes...
+                    handleAddonIncompatibility(addon);
                 } catch (Exception e) {
                     // Unhandled exception. We'll give a bit of debug here.
-                    // Set the AddonState as "ERROR".
-                    addon.setState(Addon.State.ERROR);
-                    plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
-                    plugin.log("STACKTRACE: " + e.getClass().getSimpleName() + " - " + e.getMessage() + " - " + e.getCause());
+                    handleAddonError(addon, e);
                 }
             });
             plugin.log("Addons successfully enabled.");
@@ -94,12 +147,38 @@ public class AddonsManager {
     }
 
     /**
+     * Handles an addon which failed to load due to an incompatibility (missing class, missing method).
+     * @param addon instance of the Addon.
+     * @since 1.1
+     */
+    private void handleAddonIncompatibility(Addon addon) {
+        // Set the AddonState as "INCOMPATIBLE".
+        addon.setState(Addon.State.INCOMPATIBLE);
+        plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
+        plugin.log("NOTE: The addon is referring to no longer existing classes.");
+        plugin.log("NOTE: DO NOT report this as a bug from BentoBox.");
+    }
+
+    /**
+     * Handles an addon which failed to load due to an error.
+     * @param addon instance of the Addon.
+     * @param throwable Throwable that was thrown and which lead to the error.
+     * @since 1.1
+     */
+    private void handleAddonError(Addon addon, Throwable throwable) {
+        // Set the AddonState as "ERROR".
+        addon.setState(Addon.State.ERROR);
+        plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
+        plugin.log("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
+    }
+
+    /**
      * Reloads all the enabled addons
      */
     public void reloadAddons() {
-        if (!addons.isEmpty()) {
+        if (!getEnabledAddons().isEmpty()) {
             plugin.log("Reloading addons...");
-            addons.stream().filter(Addon::isEnabled).forEach(addon -> {
+            getEnabledAddons().stream().filter(Addon::isEnabled).forEach(addon -> {
                 plugin.log("Reloading " + addon.getDescription().getName() + "...");
                 addon.onReload();
             });
@@ -130,60 +209,14 @@ public class AddonsManager {
         return data;
     }
 
-    private void loadAddon(File f) {
-        Addon addon;
-        try (JarFile jar = new JarFile(f)) {
-            // try loading the addon
-            // Get description in the addon.yml file
-            YamlConfiguration data = addonDescription(jar);
-
-            // Load the addon
-            AddonClassLoader addonClassLoader = new AddonClassLoader(this, data, f, this.getClass().getClassLoader());
-
-            // Get the addon itself
-            addon = addonClassLoader.getAddon();
-
-            // Initialize some settings
-            addon.setDataFolder(new File(f.getParent(), addon.getDescription().getName()));
-            addon.setFile(f);
-
-            // Locales
-            plugin.getLocalesManager().copyLocalesFromAddonJar(addon);
-            plugin.getLocalesManager().loadLocalesFromFile(addon.getDescription().getName());
-
-            // Fire the load event
-            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
-
-            // Add it to the list of addons
-            addons.add(addon);
-
-            // Add to the list of loaders
-            loaders.put(addon, addonClassLoader);
-
-            // Run the onLoad.
-            addon.onLoad();
-            // If this is a GameModeAddon create the worlds, register it and load the schems
-            if (addon instanceof GameModeAddon) {
-                GameModeAddon gameMode = (GameModeAddon)addon;
-                // Create the gameWorlds
-                gameMode.createWorlds();
-                plugin.getIWM().addGameMode(gameMode);
-                // Register the schems
-                plugin.getSchemsManager().loadIslands(gameMode);
-            }
-        } catch (Exception e) {
-            plugin.logError(e.getMessage());
-        }
-    }
-
     /**
      * Disable all the enabled addons
      */
     public void disableAddons() {
-        if (!addons.isEmpty()) {
+        if (!getEnabledAddons().isEmpty()) {
             plugin.log("Disabling addons...");
             // Disable addons
-            addons.forEach(addon -> {
+            getEnabledAddons().forEach(addon -> {
                 if (addon.isEnabled()) {
                     addon.onDisable();
                     Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
@@ -204,6 +237,24 @@ public class AddonsManager {
 
     public List<Addon> getAddons() {
         return addons;
+    }
+
+    /**
+     * Gets the list of Addons that are loaded.
+     * @return list of loaded Addons.
+     * @since 1.1
+     */
+    public List<Addon> getLoadedAddons() {
+        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.LOADED)).collect(Collectors.toList());
+    }
+
+    /**
+     * Gets the list of Addons that are enabled.
+     * @return list of enabled Addons.
+     * @since 1.1
+     */
+    public List<Addon> getEnabledAddons() {
+        return addons.stream().filter(addon -> addon.getState().equals(Addon.State.ENABLED)).collect(Collectors.toList());
     }
 
     public AddonClassLoader getLoader(final Addon addon) {
