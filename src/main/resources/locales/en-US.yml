@@ -154,6 +154,11 @@ commands:
       description: "set a player's rank on their island"
       unknown-rank: "&cUnknown rank!"
       rank-set: "&aRank set from [from] to [to]."
+    setspawn:
+      description: "set an Island as spawn for this world"
+      already-spawn: "&cThis island is already a spawn!"
+      no-island-here: "&cThere is no island here."
+      confirmation: "&cAre you sure you want to set this Island as the spawn for this world?"
     schem:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulate schems"
