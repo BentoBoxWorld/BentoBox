@@ -442,7 +442,7 @@ public class IslandsManager {
 
     /**
      * Get the island that is defined as spawn in this world
-     * @param world - world
+     * @param world world
      * @return island or null
      */
     public Island getSpawn(World world){
@@ -596,10 +596,29 @@ public class IslandsManager {
     }
 
     /**
-     * @param spawn the spawn to set
+     * Sets an Island to be the spawn of its World. It will become an unowned Island.
+     * <br/>
+     * If there was already a spawn set for this World, it will no longer be the spawn but it will remain unowned.
+     * @param spawn the Island to set as spawn.
+     *              Must not be null.
      */
     public void setSpawn(Island spawn) {
+        if (spawn == null) {
+            return;
+        }
+
+        // Checking if there is already a spawn set for this world
+        if (this.spawn.containsKey(spawn.getWorld()) && this.spawn.get(spawn.getWorld()) != null) {
+            Island oldSpawn = this.spawn.get(spawn.getWorld());
+            if (oldSpawn.equals(spawn)) {
+                return; // The spawn is already the current spawn - no need to update anything.
+            } else {
+                oldSpawn.setSpawn(false);
+            }
+        }
+
         this.spawn.put(spawn.getWorld(), spawn);
+        spawn.setSpawn(true);
     }
 
     /**
