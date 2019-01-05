@@ -10,6 +10,8 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -86,15 +88,26 @@ public class IslandBanCommand extends CompositeCommand {
         // Check if player can ban any more players
         int banLimit = issuer.getPermissionValue(getPermissionPrefix() + "ban.maxlimit", getIWM().getBanLimit(getWorld()));
         if (banLimit <= -1 || island.getBanned().size() < banLimit) {
-            if (island.ban(issuer.getUniqueId(), target.getUniqueId())) {
-                issuer.sendMessage("general.success");
-                target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
-                // If the player is online, has an island and on the banned island, move them home immediately
-                if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
-                    getIslands().homeTeleport(getWorld(), target.getPlayer());
-                    island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+            // Run the event
+            IslandBaseEvent banEvent = IslandEvent.builder()
+                    .island(island)
+                    .involvedPlayer(target.getUniqueId())
+                    .admin(false)
+                    .reason(IslandEvent.Reason.BAN)
+                    .build();
+
+            // Event is not cancelled
+            if (!banEvent.isCancelled()) {
+                if (island.ban(issuer.getUniqueId(), target.getUniqueId())) {
+                    issuer.sendMessage("general.success");
+                    target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
+                    // If the player is online, has an island and on the banned island, move them home immediately
+                    if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
+                        getIslands().homeTeleport(getWorld(), target.getPlayer());
+                        island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
+                    }
+                    return true;
                 }
-                return true;
             }
         } else {
             issuer.sendMessage("commands.island.ban.cannot-ban-more-players");

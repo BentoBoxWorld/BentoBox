@@ -40,9 +40,13 @@ public class IslandEvent extends IslandBaseEvent {
 
     /**
      * Reason for the event
-     *
      */
     public enum Reason {
+        /**
+         * Fired when a player will be banned from an island.
+         * @since 1.1
+         */
+        BAN,
         /**
          * Called when a player has been allocated a new island spot
          * but before the island itself has been pasted or the player teleported.
@@ -86,6 +90,11 @@ public class IslandEvent extends IslandBaseEvent {
          */
         RESETTED,
         /**
+         * Fired when a player will be unbanned from an island.
+         * @since 1.1
+         */
+        UNBAN,
+        /**
          * Reserved
          */
         UNLOCK,
@@ -97,6 +106,34 @@ public class IslandEvent extends IslandBaseEvent {
 
     public static IslandEventBuilder builder() {
         return new IslandEventBuilder();
+    }
+
+    /**
+     * Fired when a player will be banned from an island.
+     * May be cancelled.
+     * Cancellation will result in the ban being aborted.
+     *
+     * @since 1.1
+     */
+    public static class IslandBanEvent extends IslandBaseEvent {
+        private IslandBanEvent(Island island, UUID player, boolean admin, Location location) {
+            // Final variables have to be declared in the constructor
+            super(island, player, admin, location);
+        }
+    }
+
+    /**
+     * Fired when a player will be banned from an island.
+     * May be cancelled.
+     * Cancellation will result in the unban being aborted.
+     *
+     * @since 1.1
+     */
+    public static class IslandUnbanEvent extends IslandBaseEvent {
+        public IslandUnbanEvent(Island island, UUID player, boolean admin, Location location) {
+            // Final variables have to be declared in the constructor
+            super(island, player, admin, location);
+        }
     }
 
     /**
@@ -115,13 +152,6 @@ public class IslandEvent extends IslandBaseEvent {
      *
      */
     public static class IslandCreatedEvent extends IslandBaseEvent {
-        /**
-         * Fired when an island has been created
-         * @param island
-         * @param player
-         * @param admin
-         * @param location
-         */
         private IslandCreatedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
@@ -270,6 +300,10 @@ public class IslandEvent extends IslandBaseEvent {
             Bukkit.getServer().getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
             // Generate explicit events
             switch (reason) {
+            case BAN:
+                IslandBanEvent ban = new IslandBanEvent(island, player, admin, location);
+                Bukkit.getServer().getPluginManager().callEvent(ban);
+                return ban;
             case CREATE:
                 IslandCreateEvent create = new IslandCreateEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(create);
@@ -306,6 +340,10 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandResettedEvent resetted = new IslandResettedEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(resetted);
                 return resetted;
+            case UNBAN:
+                IslandUnbanEvent unban = new IslandUnbanEvent(island, player, admin, location);
+                Bukkit.getServer().getPluginManager().callEvent(unban);
+                return unban;
             case UNLOCK:
                 IslandUnlockEvent unlock = new IslandUnlockEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(unlock);
@@ -315,7 +353,6 @@ public class IslandEvent extends IslandBaseEvent {
                 Bukkit.getServer().getPluginManager().callEvent(general);
                 return general;
             }
-
         }
     }
 }

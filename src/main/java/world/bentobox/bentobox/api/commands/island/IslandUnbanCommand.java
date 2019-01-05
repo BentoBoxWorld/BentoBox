@@ -6,6 +6,8 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -65,15 +67,26 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     private boolean unban(User issuer, User target) {
-        if (getIslands().getIsland(getWorld(), issuer.getUniqueId()).unban(issuer.getUniqueId(), target.getUniqueId())) {
-            issuer.sendMessage("general.success");
-            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, issuer.getName());
-            // Set cooldown
-            if (getSettings().getBanCooldown() > 0 && getParent() != null) {
-                getParent().getSubCommand("ban").ifPresent(subCommand ->
-                subCommand.setCooldown(issuer.getUniqueId(), target.getUniqueId(), getSettings().getBanCooldown() * 60));
+        // Run the event
+        IslandBaseEvent unbanEvent = IslandEvent.builder()
+                .island(getIslands().getIsland(getWorld(), issuer.getUniqueId()))
+                .involvedPlayer(target.getUniqueId())
+                .admin(false)
+                .reason(IslandEvent.Reason.UNBAN)
+                .build();
+
+        // Event is not cancelled
+        if (!unbanEvent.isCancelled()) {
+            if (getIslands().getIsland(getWorld(), issuer.getUniqueId()).unban(issuer.getUniqueId(), target.getUniqueId())) {
+                issuer.sendMessage("general.success");
+                target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, issuer.getName());
+                // Set cooldown
+                if (getSettings().getBanCooldown() > 0 && getParent() != null) {
+                    getParent().getSubCommand("ban").ifPresent(subCommand ->
+                            subCommand.setCooldown(issuer.getUniqueId(), target.getUniqueId(), getSettings().getBanCooldown() * 60));
+                }
+                return true;
             }
-            return true;
         }
         // Unbanning was blocked, maybe due to an event cancellation. Fail silently.
         return false;

@@ -128,6 +128,8 @@ public class Island implements DataObject {
     /**
      * Bans the target player from this Island.
      * If the player is a member, coop or trustee, they will be removed from those lists.
+     * <br/>
+     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandEvent.IslandBanEvent}.
      * @param issuer UUID of the issuer, may be null.
      *               Whenever possible, one should be provided.
      * @param target UUID of the target, must be provided.
@@ -157,6 +159,8 @@ public class Island implements DataObject {
 
     /**
      * Unbans the target player from this Island.
+     * <br/>
+     * Calling this method won't call the {@link world.bentobox.bentobox.api.events.island.IslandEvent.IslandUnbanEvent}.
      * @param issuer UUID of the issuer, may be null.
      *               Whenever possible, one should be provided.
      * @param target UUID of the target, must be provided.
