@@ -512,6 +512,10 @@ public class Island implements DataObject {
      * @param owner the island owner - the owner to set
      */
     public void setOwner(UUID owner){
+        if (this.owner == owner) {
+            return; //No need to update anything
+        }
+
         this.owner = owner;
         if (owner == null) {
             return;
@@ -579,6 +583,10 @@ public class Island implements DataObject {
      * @param isSpawn {@code true} if the island is a spawn, {@code false} otherwise.
      */
     public void setSpawn(boolean isSpawn){
+        if (spawn == isSpawn) {
+            return; // No need to update anything
+        }
+
         spawn = isSpawn;
         if (isSpawn) {
             owner = null;
