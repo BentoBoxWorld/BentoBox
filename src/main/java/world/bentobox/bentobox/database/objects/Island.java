@@ -516,6 +516,7 @@ public class Island implements DataObject {
 
         this.owner = owner;
         if (owner == null) {
+            log(new LogEntry.Builder("UNOWNED").build());
             return;
         }
         // Defensive code: demote any previous owner
@@ -599,7 +600,7 @@ public class Island implements DataObject {
 
         spawn = isSpawn;
         if (isSpawn) {
-            owner = null;
+            setOwner(null);
             members.clear();
             setFlagsDefaults();
             setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
