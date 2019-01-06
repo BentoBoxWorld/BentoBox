@@ -120,9 +120,7 @@ public class Island implements DataObject {
      * @param playerUUID - the player's UUID
      */
     public void addMember(UUID playerUUID) {
-        if (playerUUID != null) {
-            members.put(playerUUID, RanksManager.MEMBER_RANK);
-        }
+        setRank(playerUUID, RanksManager.MEMBER_RANK);
     }
 
     /**
@@ -137,7 +135,7 @@ public class Island implements DataObject {
      */
     public boolean ban(UUID issuer, UUID target) {
         if (target != null) {
-            members.put(target, RanksManager.BANNED_RANK);
+            setRank(target, RanksManager.BANNED_RANK);
             log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
             return true;
         }
@@ -523,10 +521,10 @@ public class Island implements DataObject {
         // Defensive code: demote any previous owner
         for (Entry<UUID, Integer> en : members.entrySet()) {
             if (en.getValue().equals(RanksManager.OWNER_RANK)) {
-                en.setValue(RanksManager.MEMBER_RANK);
+                setRank(en.getKey(), RanksManager.MEMBER_RANK);
             }
         }
-        members.put(owner, RanksManager.OWNER_RANK);
+        setRank(owner, RanksManager.OWNER_RANK);
     }
 
     /**
@@ -559,13 +557,25 @@ public class Island implements DataObject {
 
     /**
      * Set user's rank to an arbitrary rank value
-     * @param user - the User
-     * @param rank - rank value
+     * @param user the User
+     * @param rank rank value
      */
     public void setRank(User user, int rank) {
-        if (user.getUniqueId() != null) {
-            members.put(user.getUniqueId(), rank);
+        setRank(user.getUniqueId(), rank);
+    }
+
+    /**
+     * Sets player's rank to an arbitrary rank value
+     * @param uuid UUID of the player
+     * @param rank rank value
+     * @since 1.1
+     */
+    public void setRank(UUID uuid, int rank) {
+        if (uuid == null) {
+            return; // Defensive code
         }
+
+        members.put(uuid, rank);
     }
 
     /**
