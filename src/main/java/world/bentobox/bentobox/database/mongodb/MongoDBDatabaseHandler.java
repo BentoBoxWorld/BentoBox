@@ -15,8 +15,8 @@ import com.mongodb.client.model.Indexes;
 import com.mongodb.util.JSON;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
@@ -78,6 +78,11 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void saveObject(T instance) {
+        // Null check
+        if (instance == null) {
+            plugin.logError("MongoDB database request to store a null. ");
+            return;
+        }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
@@ -103,6 +108,11 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void deleteObject(T instance) {
+        // Null check
+        if (instance == null) {
+            plugin.logError("MondDB database request to delete a null. ");
+            return;
+        }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;

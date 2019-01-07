@@ -34,6 +34,7 @@ import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.objects.DataObject;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.AdapterInterface;
 import world.bentobox.bentobox.util.Util;
@@ -293,6 +294,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     @SuppressWarnings("unchecked")
     @Override
     public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Null check
+        if (instance == null) {
+            plugin.logError("YAML database request to store a null. ");
+            return;
+        }
+        // DataObject check
+        if (!(instance instanceof DataObject)) {
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            return;
+        }
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
 
@@ -547,6 +558,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Null check
+        if (instance == null) {
+            plugin.logError("YAM database request to delete a null. ");
+            return;
+        }
+        if (!(instance instanceof DataObject)) {
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            return;
+        }
+
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();

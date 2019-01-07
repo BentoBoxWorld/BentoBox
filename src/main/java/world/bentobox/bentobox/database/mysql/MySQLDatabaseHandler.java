@@ -115,6 +115,11 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void saveObject(T instance) {
+        // Null check
+        if (instance == null) {
+            plugin.logError("MySQL database request to store a null. ");
+            return;
+        }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
@@ -138,6 +143,11 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void deleteObject(T instance) {
+        // Null check
+        if (instance == null) {
+            plugin.logError("MySQL database request to delete a null. ");
+            return;
+        }
         if (!(instance instanceof DataObject)) {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;

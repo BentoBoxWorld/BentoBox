@@ -1,8 +1,5 @@
 package world.bentobox.bentobox.database.json;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.DatabaseConnector;
-
 import java.beans.IntrospectionException;
 import java.beans.PropertyDescriptor;
 import java.io.File;
@@ -18,6 +15,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.DatabaseConnector;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
@@ -84,6 +85,15 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Null check
+        if (instance == null) {
+            plugin.logError("JSON database request to store a null. ");
+            return;
+        }
+        if (!(instance instanceof DataObject)) {
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            return;
+        }
         String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
 
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
@@ -114,6 +124,16 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Null check
+        if (instance == null) {
+            plugin.logError("JSON database request to delete a null. ");
+            return;
+        }
+        if (!(instance instanceof DataObject)) {
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            return;
+        }
+
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();

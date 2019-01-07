@@ -19,7 +19,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.plugin.PluginManager;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -39,7 +39,7 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class, Util.class })
+@PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
 public class MySQLDatabaseHandlerTest {
 
     private static MySQLDatabaseHandler<Island> handler;
@@ -52,8 +52,8 @@ public class MySQLDatabaseHandlerTest {
     private static IslandWorldManager iwm;
 
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         Server server = mock(Server.class);
         world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -66,8 +66,7 @@ public class MySQLDatabaseHandlerTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        Bukkit.setServer(server);
-
+        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -98,6 +97,11 @@ public class MySQLDatabaseHandlerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.sameWorld(Mockito.any(), Mockito.any())).thenReturn(true);
 
+    }
+
+    @Test
+    public void testSaveNullObject() {
+        handler.saveObject(null);
     }
 
     @Test
