@@ -223,6 +223,12 @@ public class IslandsManager {
      */
     public Island createIsland(Location location, UUID owner){
         Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        while (handler.objectExists(island.getUniqueId())) {
+            // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
+            // it will be bad if this does occur and the server should crash.
+            plugin.logWarning("Duplicate island UUID occurred");
+            island.setUniqueId(UUID.randomUUID().toString());
+        }
         if (islandCache.addIsland(island)) {
             return island;
         }
