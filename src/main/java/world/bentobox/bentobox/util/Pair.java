@@ -1,6 +1,13 @@
 package world.bentobox.bentobox.util;
 
 
+/**
+ * Class to store pairs of objects, e.g. coordinates
+ * @author tastybento
+ *
+ * @param <X> the x part of the pair
+ * @param <Z> the z part of the pair
+ */
 public class Pair<X, Z> {
     public final X x;
     public final Z z;
