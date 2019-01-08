@@ -150,6 +150,7 @@ public class AdminInfoCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(null);
         assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
     }

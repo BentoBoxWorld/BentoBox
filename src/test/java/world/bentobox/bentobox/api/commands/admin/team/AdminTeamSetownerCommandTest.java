@@ -171,6 +171,9 @@ public class AdminTeamSetownerCommandTest {
      */
     @Test
     public void testExecuteSuccess() {
+        // Player is a team member, not an owner
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(false);
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(true);
         Island is = mock(Island.class);
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);

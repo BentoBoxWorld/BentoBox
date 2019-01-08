@@ -33,10 +33,6 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.no-island");
-            return false;
-        }
         if (!getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
