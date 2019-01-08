@@ -5,6 +5,7 @@ package world.bentobox.bentobox.listeners.flags;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.stream.Collectors;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -51,8 +52,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         String ivPanelName = user.getTranslation("protection.flags.INVINCIBLE_VISITORS.name");
         if (panel.getName().equals(ivPanelName)) {
             // This is a click on the IV panel
-            // Slot relates to the enum
-            DamageCause c = Arrays.asList(EntityDamageEvent.DamageCause.values()).get(slot);
+            // Slot relates to the sorted enum
+            DamageCause c = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).collect(Collectors.toList()).get(slot);
             if (getIWM().getIvSettings(user.getWorld()).contains(c.name())) {
                 getIWM().getIvSettings(user.getWorld()).remove(c.name());
             } else {
@@ -74,7 +75,7 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
         PanelBuilder pb = new PanelBuilder();
         pb.user(user).name(ivPanelName);
 
-        // Make panel items
+        // Make panel items - sort alphabetically.
         Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).forEach(c -> pb.item(getPanelItem(c, user)));
         pb.build();
     }

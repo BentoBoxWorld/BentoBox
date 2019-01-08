@@ -7,9 +7,12 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -18,6 +21,7 @@ import org.bukkit.World;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFactory;
@@ -158,25 +162,28 @@ public class InvincibleVisitorsListenerTest {
     @Test
     public void testOnClickIVPanel() {
         ClickType clickType = ClickType.LEFT;
-        int slot = 5; // FALL damage
+        ivSettings.clear();
         when(panel.getName()).thenReturn("panel");
+        // Test all damage causes to make sure they can be clicked on and off
+        for (int slot = 0; slot < DamageCause.values().length; slot ++) {
+            // Get the damage type
+            DamageCause dc = Arrays.stream(EntityDamageEvent.DamageCause.values()).sorted(Comparator.comparing(DamageCause::name)).collect(Collectors.toList()).get(slot);
+            // IV settings should be empty
+            assertFalse(ivSettings.contains(dc.name()));
+            // Click on the icon
+            listener.onClick(panel, user, clickType, slot );
+            // Should keep panel open
+            Mockito.verify(user, Mockito.never()).closeInventory();
+            // IV settings should now have the damage cause in it
+            assertTrue(ivSettings.contains(dc.name()));
 
-        // IV settings should be empty
-        assertFalse(ivSettings.contains("FALL"));
-        // Click on the FALL icon
-        listener.onClick(panel, user, clickType, slot );
-        // Should keep panel open
-        Mockito.verify(user, Mockito.never()).closeInventory();
-        // IV settings should now have FALL in it
-        assertTrue(ivSettings.contains("FALL"));
-
-        // Click on it again
-        listener.onClick(panel, user, clickType, slot );
-        // Should keep panel open
-        Mockito.verify(user, Mockito.never()).closeInventory();
-        // IV settings should not have FALL in it anymore
-        assertFalse(ivSettings.contains("FALL"));
-
+            // Click on it again
+            listener.onClick(panel, user, clickType, slot );
+            // Should keep panel open
+            Mockito.verify(user, Mockito.never()).closeInventory();
+            // IV settings should not have the damage cause in it anymore
+            assertFalse(ivSettings.contains(dc.name()));
+        }
 
     }
 
