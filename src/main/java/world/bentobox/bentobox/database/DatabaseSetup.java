@@ -2,6 +2,7 @@ package world.bentobox.bentobox.database;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.json.JSONDatabase;
+import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
@@ -10,7 +11,7 @@ public interface DatabaseSetup {
 
     /**
      * Gets the type of database being used.
-     * Currently supported options are YAML, JSON, MYSQL and MONGODB.
+     * Currently supported options are YAML, JSON, MYSQL, MARIADB and MONGODB.
      * Default is YAML.
      * @return Database type
      */
@@ -28,8 +29,8 @@ public interface DatabaseSetup {
         YAML(new YamlDatabase()),
         JSON(new JSONDatabase()),
         MYSQL(new MySQLDatabase()),
+        MARIADB(new MariaDBDatabase()),
         MONGODB(new MongoDBDatabase());
-
         DatabaseSetup database;
 
         DatabaseType(DatabaseSetup database){
