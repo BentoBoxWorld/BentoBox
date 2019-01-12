@@ -10,8 +10,8 @@ import java.util.Map;
 /**
  * Represents an event that occurred and that is logged.
  * <br/>
- * An {@link world.bentobox.bentobox.database.objects.adapters.AdapterInterface} is provided to be able to save/retrieve
- * a list of instances of this object to/from the database: {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter}.
+ * An {@link world.bentobox.bentobox.database.objects.adapters.AdapterInterface AdapterInterface} is provided to be able to save/retrieve
+ * a list of instances of this object to/from the database: {@link world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter LogEntryListAdapter}.
  *
  * @author Poslovitch
  */
