@@ -12,6 +12,7 @@ public interface DatabaseSetup {
     /**
      * Gets the type of database being used.
      * Currently supported options are YAML, JSON, MYSQL, MARIADB and MONGODB.
+     * MARIADB works since version 1.1
      * Default is YAML.
      * @return Database type
      */

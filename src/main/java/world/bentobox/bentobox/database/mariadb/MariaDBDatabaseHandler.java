@@ -16,9 +16,10 @@ import java.util.List;
  *
  * Class that inserts a <T> into the corresponding database-table.
  *
- * @author tastybento
+ * @author barpec12
  *
  * @param <T>
+ * @since 1.1
  */
 public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 

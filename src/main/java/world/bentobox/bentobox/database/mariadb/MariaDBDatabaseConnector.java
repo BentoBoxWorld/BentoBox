@@ -17,6 +17,7 @@ public class MariaDBDatabaseConnector implements DatabaseConnector {
     /**
      * Class for MariaDB database connections using the settings provided
      * @param dbSettings - database settings
+     * @since 1.1
      */
     MariaDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;

@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.0
+# BentoBox Configuration 1.1
 # This config file is dynamic and saved when the server is shutdown.
 # You cannot edit it while the server is running because changes will
 # be lost! Use in-game settings GUI or edit when server is offline.
@@ -15,7 +15,7 @@ general:
   # If there is no economy plugin present anyway, money will be automatically disabled.
   use-economy: true
   database:
-    # YAML, JSON, MYSQL, MONGODB.
+    # YAML, JSON, MYSQL, MARIADB, MONGODB.
     # YAML and JSON are both file-based databases.
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
