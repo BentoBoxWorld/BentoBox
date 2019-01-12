@@ -119,6 +119,15 @@
 			<version>2.9.2</version>
 			<scope>provided</scope>
 		</dependency>
+		<!-- Static analysis -->
+		<!-- We are using Eclipse's annotations.
+		If you're using IDEA, update your project settings to take these
+		into account for in real time static analysis -->
+        <dependency>
+            <groupId>org.eclipse.jdt</groupId>
+            <artifactId>org.eclipse.jdt.annotation</artifactId>
+            <version>2.2.200</version>
+        </dependency>
 	</dependencies>
 
 	<build>
