@@ -133,15 +133,12 @@ public class Island implements DataObject {
      * @param issuer UUID of the issuer, may be null.
      *               Whenever possible, one should be provided.
      * @param target UUID of the target, must be provided.
-     * @return {@code true} if the target is successfully banned, {@code false} otherwise.
+     * @return {@code true}
      */
     public boolean ban(@Nullable UUID issuer, @NonNull UUID target) {
-        if (target != null) {
-            setRank(target, RanksManager.BANNED_RANK);
-            log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
-            return true;
-        }
-        return false;
+        setRank(target, RanksManager.BANNED_RANK);
+        log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
+        return true;
     }
 
     /**

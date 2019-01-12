@@ -98,11 +98,8 @@ public class JoinLeaveListener implements Listener {
                         && Bukkit.getOfflinePlayer(uuid).getLastPlayed() < timestamp)
                         .toArray());
 
-                if (!candidates.isEmpty()) {
-                    if (!plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
-                        // Ranks are not ignored, our candidates can only have the highest rank
-
-                    }
+                if (!candidates.isEmpty() && !plugin.getSettings().isAutoOwnershipTransferIgnoreRanks()) {
+                    // Ranks are not ignored, our candidates can only have the highest rank
                 }
             }
         });
