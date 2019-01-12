@@ -109,7 +109,7 @@ public class Database<T> {
             handler.deleteObject(object);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | IntrospectionException e) {
-            logger.severe(() -> "Could not delete config! Error: " + e.getMessage());
+            logger.severe(() -> "Could not delete object! Error: " + e.getMessage());
         }
     }
 

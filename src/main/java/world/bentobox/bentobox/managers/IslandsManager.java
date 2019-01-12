@@ -24,9 +24,13 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.DeletedIslandDO;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -244,6 +248,11 @@ public class IslandsManager {
         if (island == null) {
             return;
         }
+        // Fire event
+        IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
+        if (event.isCancelled()) {
+            return;
+        }
         // Set the owner of the island to no one.
         island.setOwner(null);
         island.setFlag(Flags.LOCK, RanksManager.VISITOR_RANK);
@@ -255,7 +264,7 @@ public class IslandsManager {
             // Remove players from island
             removePlayersFromIsland(island);
             // Remove blocks from world
-            new DeleteIslandChunks(plugin, island);
+            new DeleteIslandChunks(plugin, new DeletedIslandDO(island));
         }
     }
 
