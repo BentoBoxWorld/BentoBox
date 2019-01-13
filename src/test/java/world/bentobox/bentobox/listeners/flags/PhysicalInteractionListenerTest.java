@@ -136,8 +136,6 @@ public class PhysicalInteractionListenerTest {
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
-        //User user = mock(User.class);
-        ///user.setPlugin(plugin);
         User.setPlugin(plugin);
 
 

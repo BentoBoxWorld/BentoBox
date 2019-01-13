@@ -65,6 +65,7 @@ public class IslandBanCommandTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+        User.setPlugin(plugin);
 
         // Command manager
         CommandsManager cm = mock(CommandsManager.class);

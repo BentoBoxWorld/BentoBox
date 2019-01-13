@@ -29,11 +29,11 @@ public class EnderChestListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEnderChestOpen(PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {          
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             e.setCancelled(checkEnderChest(e.getPlayer(), e.getClickedBlock().getType()));
         }
     }
-    
+
     /**
      * Prevents crafting of EnderChest unless the player has permission
      *

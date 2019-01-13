@@ -27,6 +27,7 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -49,13 +50,16 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({BentoBox.class, Util.class, User.class })
+@PrepareForTest({BentoBox.class, Util.class })
 public class EnderChestListenerTest {
 
     private World world;
     private Player player;
     private IslandWorldManager iwm;
     private Notifier notifier;
+    private ItemStack item;
+    private Block clickedBlock;
+    private Action action;
 
     @Before
     public void setUp() throws Exception {
@@ -110,6 +114,8 @@ public class EnderChestListenerTest {
         // No special perms
         when(player.hasPermission(Mockito.anyString())).thenReturn(false);
         when(player.getWorld()).thenReturn(world);
+        User.setPlugin(plugin);
+        User.getInstance(player);
 
         // Locales - this returns the string that was requested for translation
         LocalesManager lm = mock(LocalesManager.class);
@@ -119,13 +125,22 @@ public class EnderChestListenerTest {
         // Notifier
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
+
+        // Acition, Item and clicked block
+        action = Action.RIGHT_CLICK_BLOCK;
+        item = mock(ItemStack.class);
+        clickedBlock = mock(Block.class);
+
+    }
+
+    @After
+    public void cleanUp() {
+        User.clearUsers();
     }
 
     @Test
     public void testOnEnderChestOpenNotRightClick() {
-        Action action = Action.LEFT_CLICK_AIR;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
+        action = Action.LEFT_CLICK_AIR;
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         new EnderChestListener().onEnderChestOpen(e);
@@ -134,9 +149,6 @@ public class EnderChestListenerTest {
 
     @Test
     public void testOnEnderChestOpenNotEnderChest() {
-        Action action = Action.RIGHT_CLICK_BLOCK;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
@@ -146,9 +158,6 @@ public class EnderChestListenerTest {
 
     @Test
     public void testOnEnderChestOpenEnderChestNotInWorld() {
-        Action action = Action.RIGHT_CLICK_BLOCK;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
@@ -161,9 +170,6 @@ public class EnderChestListenerTest {
 
     @Test
     public void testOnEnderChestOpenEnderChestOpPlayer() {
-        Action action = Action.RIGHT_CLICK_BLOCK;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
@@ -175,9 +181,6 @@ public class EnderChestListenerTest {
 
     @Test
     public void testOnEnderChestOpenEnderChestHasBypassPerm() {
-        Action action = Action.RIGHT_CLICK_BLOCK;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
@@ -189,9 +192,6 @@ public class EnderChestListenerTest {
 
     @Test
     public void testOnEnderChestOpenEnderChestOkay() {
-        Action action = Action.RIGHT_CLICK_BLOCK;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
@@ -199,21 +199,20 @@ public class EnderChestListenerTest {
         Flags.ENDER_CHEST.setSetting(world, true);
         new EnderChestListener().onEnderChestOpen(e);
         assertFalse(e.isCancelled());
+        Mockito.verify(notifier, Mockito.never()).notify(Mockito.anyObject(), Mockito.anyString());
     }
 
     @Test
     public void testOnEnderChestOpenEnderChestBlocked() {
-        Action action = Action.RIGHT_CLICK_BLOCK;
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        // Enderchest use is okay
+        // Enderchest use is blocked
         Flags.ENDER_CHEST.setSetting(world, false);
         new EnderChestListener().onEnderChestOpen(e);
+
         assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.anyObject(), Mockito.eq("protection.protected"));
+        Mockito.verify(notifier).notify(Mockito.any(User.class), Mockito.eq("protection.protected"));
     }
 
     @Test
