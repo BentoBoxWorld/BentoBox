@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
@@ -44,6 +45,7 @@ public class Database<T> {
      * Load all the config objects and supply them as a list
      * @return list of config objects or an empty list if they cannot be loaded
      */
+    @NonNull
     public List<T> loadObjects() {
         List<T> result = new ArrayList<>();
         try {
