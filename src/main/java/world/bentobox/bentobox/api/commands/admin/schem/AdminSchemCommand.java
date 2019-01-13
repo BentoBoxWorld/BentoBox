@@ -9,6 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -107,8 +108,10 @@ public class AdminSchemCommand extends ConfirmableCommand {
     }
 
     void hideClipboard(User user) {
-        Bukkit.getScheduler().cancelTask(displayClipboards.get(user));
-        displayClipboards.remove(user);
+        if (displayClipboards.containsKey(user)) {
+            Bukkit.getScheduler().cancelTask(displayClipboards.get(user));
+            displayClipboards.remove(user);
+        }
     }
 
     File getSchemsFolder() {
