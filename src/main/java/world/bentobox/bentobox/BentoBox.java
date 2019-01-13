@@ -25,7 +25,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
-import world.bentobox.bentobox.managers.IslandDeleteManager;
+import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -68,7 +68,7 @@ public class BentoBox extends JavaPlugin {
 
     private boolean isLoaded;
 
-    private IslandDeleteManager islandDeletionManager;
+    private IslandDeletionManager islandDeletionManager;
 
     @Override
     public void onEnable(){
@@ -202,7 +202,7 @@ public class BentoBox extends JavaPlugin {
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
         // Island Delete Manager
-        islandDeletionManager = new IslandDeleteManager(this);
+        islandDeletionManager = new IslandDeletionManager(this);
         manager.registerEvents(islandDeletionManager, this);
     }
 
@@ -368,7 +368,7 @@ public class BentoBox extends JavaPlugin {
     /**
      * @return the islandDeletionManager
      */
-    public IslandDeleteManager getIslandDeletionManager() {
+    public IslandDeletionManager getIslandDeletionManager() {
         return islandDeletionManager;
     }
 }

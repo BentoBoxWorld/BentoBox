@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
-import world.bentobox.bentobox.managers.IslandDeleteManager;
+import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -51,7 +51,7 @@ public class AdminRegisterCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
-    private IslandDeleteManager idm;
+    private IslandDeletionManager idm;
 
     /**
      * @throws java.lang.Exception
@@ -115,7 +115,7 @@ public class AdminRegisterCommandTest {
         when(plugin.getLocalesManager()).thenReturn(lm);
 
         // Deletion Manager
-        idm = mock(IslandDeleteManager.class);
+        idm = mock(IslandDeletionManager.class);
         when(idm.inDeletion(Mockito.any())).thenReturn(false);
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
     }

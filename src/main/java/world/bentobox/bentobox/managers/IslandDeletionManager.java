@@ -21,19 +21,18 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Listens for island deletions and adds them to the database. Removes them when the island is deleted.
  * @author tastybento
- *
+ * @since 1.1
  */
-public class IslandDeleteManager implements Listener {
+public class IslandDeletionManager implements Listener {
 
+    private BentoBox plugin;
     /**
      * Queue of islands to delete
      */
-    private BentoBox plugin;
     private Database<DeletedIslandDO> handler;
     private Set<Location> inDeletion;
 
-
-    public IslandDeleteManager(BentoBox plugin) {
+    public IslandDeletionManager(BentoBox plugin) {
         this.plugin = plugin;
         handler = new Database<>(plugin, DeletedIslandDO.class);
         inDeletion = new HashSet<>();
