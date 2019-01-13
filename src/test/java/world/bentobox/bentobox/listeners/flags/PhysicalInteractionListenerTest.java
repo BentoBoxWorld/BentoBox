@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
@@ -38,6 +39,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.projectiles.ProjectileSource;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -73,6 +75,9 @@ public class PhysicalInteractionListenerTest {
     private Location location;
     private BentoBox plugin;
     private Notifier notifier;
+    private Player player;
+    private ItemStack item;
+    private Block clickedBlock;
 
     @Before
     public void setUp() {
@@ -167,6 +172,23 @@ public class PhysicalInteractionListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+
+        // Player setup
+        player = mock(Player.class);
+        when(player.isOp()).thenReturn(false);
+        when(player.getLocation()).thenReturn(location);
+        when(player.getUniqueId()).thenReturn(UUID.randomUUID());
+        User.getInstance(player);
+
+        // Item and clicked block
+        item = mock(ItemStack.class);
+        clickedBlock = mock(Block.class);
+
+    }
+
+    @After
+    public void cleanUp() {
+        User.removePlayer(player);
     }
 
     /**
@@ -174,14 +196,10 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractNotPhysical() {
-        Player player = mock(Player.class);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.RIGHT_CLICK_AIR, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
-        User.removePlayer(player);
     }
 
     /**
@@ -189,14 +207,10 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractWrongMaterial() {
-        Player player = mock(Player.class);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.STONE);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         new PhysicalInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
-        User.removePlayer(player);
     }
 
     /**
@@ -204,19 +218,12 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractFarmland() {
-        Player player = mock(Player.class);
-        when(player.isOp()).thenReturn(false);
-        when(player.getLocation()).thenReturn(location);
-        User.getInstance(player);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertTrue(e.isCancelled());
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
-        User.removePlayer(player);
     }
 
     /**
@@ -224,18 +231,12 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractFarmlandOp() {
-        Player player = mock(Player.class);
         when(player.isOp()).thenReturn(true);
-        when(player.getLocation()).thenReturn(location);
-        User.getInstance(player);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertFalse(e.isCancelled());
-        User.removePlayer(player);
     }
 
     /**
@@ -243,19 +244,12 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractFarmlandPermission() {
-        Player player = mock(Player.class);
-        when(player.isOp()).thenReturn(false);
         when(player.hasPermission(Mockito.anyString())).thenReturn(true);
-        when(player.getLocation()).thenReturn(location);
-        User.getInstance(player);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.FARMLAND);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertFalse(e.isCancelled());
-        User.removePlayer(player);
     }
 
     /**
@@ -263,19 +257,12 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractTurtleEgg() {
-        Player player = mock(Player.class);
-        when(player.isOp()).thenReturn(false);
-        when(player.getLocation()).thenReturn(location);
-        User.getInstance(player);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         when(clickedBlock.getType()).thenReturn(Material.TURTLE_EGG);
         PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onPlayerInteract(e);
         assertTrue(e.isCancelled());
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
-        User.removePlayer(player);
     }
 
     /**
@@ -283,12 +270,6 @@ public class PhysicalInteractionListenerTest {
      */
     @Test
     public void testOnPlayerInteractPressurePlate() {
-        Player player = mock(Player.class);
-        when(player.isOp()).thenReturn(false);
-        when(player.getLocation()).thenReturn(location);
-        User.getInstance(player);
-        ItemStack item = mock(ItemStack.class);
-        Block clickedBlock = mock(Block.class);
         Arrays.stream(Material.values()).filter(m -> m.name().contains("PRESSURE_PLATE")).forEach(p -> {
             when(clickedBlock.getType()).thenReturn(p);
             PlayerInteractEvent e  = new PlayerInteractEvent(player, Action.PHYSICAL, item, clickedBlock, BlockFace.UP);
@@ -296,7 +277,6 @@ public class PhysicalInteractionListenerTest {
             i.onPlayerInteract(e);
             assertTrue(e.isCancelled());
         });
-        User.removePlayer(player);
     }
 
     /**
@@ -363,10 +343,6 @@ public class PhysicalInteractionListenerTest {
     @Test
     public void testOnProjectileHitProjectilePlayer() {
         Projectile entity = mock(Projectile.class);
-        Player player = mock(Player.class);
-        when(player.isOp()).thenReturn(false);
-        when(player.getLocation()).thenReturn(location);
-        User.getInstance(player);
         ProjectileSource source = player ;
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
