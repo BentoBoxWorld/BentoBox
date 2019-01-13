@@ -17,10 +17,11 @@ import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -45,8 +46,6 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-//FIXME
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class IslandUnbanCommandTest {
@@ -119,6 +118,13 @@ public class IslandUnbanCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
+
+        // Server and Plugin Manager for events
+        Server server = mock(Server.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
+
     }
 
     /**
@@ -197,7 +203,7 @@ public class IslandUnbanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID targetUUID = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);        
+        when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
         PowerMockito.mockStatic(User.class);
         User targetUser = mock(User.class);
         when(targetUser.isOp()).thenReturn(false);
@@ -221,7 +227,7 @@ public class IslandUnbanCommandTest {
         when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         UUID targetUUID = UUID.randomUUID();
-        when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);        
+        when(pm.getUUID(Mockito.anyString())).thenReturn(targetUUID);
         PowerMockito.mockStatic(User.class);
         User targetUser = mock(User.class);
         when(targetUser.isOp()).thenReturn(false);
@@ -256,7 +262,7 @@ public class IslandUnbanCommandTest {
         String[] names = {"a", "b", "c", "d", "e", "f", "g", "h", "i", "j"};
         assertTrue(Arrays.equals(names, result.get().toArray()));
     }
-    
+
     @Test
     public void testTabCompleteNoIsland() {
         // No island

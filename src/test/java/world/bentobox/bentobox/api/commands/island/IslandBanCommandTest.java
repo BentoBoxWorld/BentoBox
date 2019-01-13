@@ -19,10 +19,11 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -48,8 +49,6 @@ import world.bentobox.bentobox.managers.RanksManager;
  * @author tastybento
  *
  */
-//FIXME
-@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
 public class IslandBanCommandTest {
@@ -118,6 +117,12 @@ public class IslandBanCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
+
+        // Server and Plugin Manager for events
+        Server server = mock(Server.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
     }
 
     /**
@@ -316,7 +321,7 @@ public class IslandBanCommandTest {
         result = ibc.tabComplete(user, "", args);
         assertFalse(result.isPresent());
     }
-    
+
     @Test
     public void testTabComplete() {
 
