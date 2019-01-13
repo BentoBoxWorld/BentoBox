@@ -338,6 +338,9 @@ commands:
           description: "accept an invitation"
           you-joined-island: "&aYou joined an island! Use /[label] team info to see the other members."
           name-joined-your-island: "&a[name] joined your island!"
+          confirmation: |-
+            &cAre you sure you want to accept this invite?
+            &c&lYou will &nLOSE &r&c&lyour current island!
         reject:
           description: "reject an invitation"
           you-rejected-invite: "&aYou rejected the invitation to join an island."
