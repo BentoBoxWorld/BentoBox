@@ -44,8 +44,9 @@ public class Settings implements DataObject {
     private boolean useEconomy = true;
 
     // Database
-    @ConfigComment("YAML, JSON, MYSQL, MONGODB.")
+    @ConfigComment("YAML, JSON, MYSQL, MARIADB, MONGODB.")
     @ConfigComment("YAML and JSON are both file-based databases.")
+    @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
     @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
     @ConfigEntry(path = "general.database.type")

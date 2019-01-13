@@ -8,6 +8,10 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+/**
+ * @author barpec12
+ * @since 1.1
+ */
 public class MariaDBDatabaseConnector implements DatabaseConnector {
 
     private String connectionUrl;

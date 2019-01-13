@@ -7,6 +7,9 @@ import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
+/**
+ * @author Poslovitch
+ */
 public interface DatabaseSetup {
 
     /**
@@ -29,6 +32,9 @@ public interface DatabaseSetup {
         YAML(new YamlDatabase()),
         JSON(new JSONDatabase()),
         MYSQL(new MySQLDatabase()),
+        /**
+         * @since 1.1
+         */
         MARIADB(new MariaDBDatabase()),
         MONGODB(new MongoDBDatabase());
         DatabaseSetup database;

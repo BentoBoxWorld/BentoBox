@@ -5,8 +5,11 @@ import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
 import world.bentobox.bentobox.database.DatabaseSetup;
 
+/**
+ * @author barpec12
+ * @since 1.1
+ */
 public class MariaDBDatabase implements DatabaseSetup {
-
 
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.database.BSBDbSetup#getHandler(java.lang.Class)

@@ -13,10 +13,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- *
  * Class that inserts a <T> into the corresponding database-table.
  *
- * @author tastybento
+ * @author barpec12
+ * @since 1.1
  *
  * @param <T>
  */
