@@ -123,6 +123,28 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
+    public boolean deleteID(String uniqueId) {
+        // The filename of the JSON file is the value of uniqueId field plus .json. Sometimes the .json is already appended.
+        if (!uniqueId.endsWith(JSON)) {
+            uniqueId = uniqueId + JSON;
+        }
+        // Get the database and table folders
+        File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
+        File tableFolder = new File(dataFolder, dataObject.getSimpleName());
+        if (tableFolder.exists()) {
+            // Obtain the file and delete it
+            File file = new File(tableFolder, uniqueId);
+            try {
+                Files.delete(file.toPath());
+                return true;
+            } catch (IOException e) {
+                plugin.logError("Could not delete json database object! " + file.getName() + " - " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
+    @Override
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Null check
         if (instance == null) {
@@ -137,25 +159,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();
-        String fileName = (String) method.invoke(instance);
-
-        // The filename of the JSON file is the value of uniqueId field plus .json. Sometimes the .json is already appended.
-        if (!fileName.endsWith(JSON)) {
-            fileName = fileName + JSON;
-        }
-
-        // Get the database and table folders
-        File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-        File tableFolder = new File(dataFolder, dataObject.getSimpleName());
-        if (tableFolder.exists()) {
-            // Obtain the file and delete it
-            File file = new File(tableFolder, fileName);
-            try {
-                Files.delete(file.toPath());
-            } catch (IOException e) {
-                plugin.logError("Could not delete json database object! " + file.getName() + " - " + e.getMessage());
-            }
-        }
+        deleteID((String) method.invoke(instance));
     }
 
     @Override

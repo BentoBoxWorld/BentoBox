@@ -109,6 +109,7 @@ commands:
       registered-island: "&aRegistered player to island at [xyz]."
       already-owned: "&cIsland is already owned by another player!"
       no-island-here: "&cThere is no island here. Confirm to make one."
+      in-deletion: "&cThis island space is currently being deleted. Try later."
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"
@@ -128,6 +129,7 @@ commands:
       island-location: "Island location: [xyz]"
       island-coords: "Island coordinates: [xz1] to [xz2]"
       protection-range: "Protection range: [range]"
+      max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
       is-spawn: "Island is a spawn island"
       banned-players: "Banned players:"

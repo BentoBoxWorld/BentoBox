@@ -107,6 +107,16 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
+    public boolean deleteID(String uniqueId) {
+        try {
+            return collection.findOneAndDelete(new Document(MONGO_ID, uniqueId)) == null ? false : true;
+        } catch (Exception e) {
+            plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     public void deleteObject(T instance) {
         // Null check
         if (instance == null) {
@@ -117,11 +127,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        try {
-            collection.findOneAndDelete(new Document(MONGO_ID, ((DataObject)instance).getUniqueId()));
-        } catch (Exception e) {
-            plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
-        }
+        deleteID(((DataObject)instance).getUniqueId());
     }
 
     @Override

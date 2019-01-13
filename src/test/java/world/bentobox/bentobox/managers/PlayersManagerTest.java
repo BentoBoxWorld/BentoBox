@@ -175,13 +175,12 @@ public class PlayersManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#save(boolean)}.
+     * Test method for {@link world.bentobox.bentobox.managers.PlayersManager#saveAll()}.
      */
     @Test
     public void testSaveBoolean() {
         PlayersManager pm = new PlayersManager(plugin);
-        pm.save(false);
-        pm.save(true);
+        pm.saveAll();
     }
 
     /**

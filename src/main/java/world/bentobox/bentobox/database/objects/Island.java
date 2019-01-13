@@ -24,11 +24,11 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
-import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
@@ -59,6 +59,10 @@ public class Island implements DataObject {
     // Protection size
     @Expose
     private int protectionRange;
+
+    // Maximum ever protection range - used in island deletion
+    @Expose
+    private int maxEverProtectionRange;
 
     // World the island started in. This may be different from the island location
     @Expose
@@ -113,6 +117,7 @@ public class Island implements DataObject {
         center = new Location(location.getWorld(), location.getX(), location.getY(), location.getZ());
         range = BentoBox.getInstance().getIWM().getIslandDistance(world);
         this.protectionRange = protectionRange;
+        this.maxEverProtectionRange = protectionRange;
     }
 
     /**
@@ -282,6 +287,20 @@ public class Island implements DataObject {
      */
     public int getProtectionRange() {
         return protectionRange;
+    }
+
+    /**
+     * @return the maxEverProtectionRange or the protection range, whichever is larger
+     */
+    public int getMaxEverProtectionRange() {
+        return Math.max(protectionRange, maxEverProtectionRange);
+    }
+
+    /**
+     * @param maxEverProtectionRange the maxEverProtectionRange to set
+     */
+    public void setMaxEverProtectionRange(int maxEverProtectionRange) {
+        this.maxEverProtectionRange = maxEverProtectionRange;
     }
 
     /**
@@ -533,6 +552,10 @@ public class Island implements DataObject {
      */
     public void setProtectionRange(int protectionRange) {
         this.protectionRange = protectionRange;
+        // Ratchet up the maximum protection range
+        if (protectionRange > this.maxEverProtectionRange) {
+            this.maxEverProtectionRange = protectionRange;
+        }
     }
 
     /**
@@ -660,14 +683,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (plugin.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     plugin.getServer().getOfflinePlayer(owner).getLastPlayed() : plugin.getServer().getOfflinePlayer(owner).getFirstPlayed();
-            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-            // Show team members
-            showMembers(user);
+                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+                    // Show team members
+                    showMembers(user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -675,6 +698,7 @@ public class Island implements DataObject {
         Vector to = center.toVector().add(new Vector(range-1, 0, range-1)).setY(center.getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.island-coords", "[xz1]", Util.xyz(from), "[xz2]", Util.xyz(to));
         user.sendMessage("commands.admin.info.protection-range", "[range]", String.valueOf(protectionRange));
+        user.sendMessage("commands.admin.info.max-protection-range", "[range]", String.valueOf(maxEverProtectionRange));
         Vector pfrom = center.toVector().subtract(new Vector(protectionRange, 0, protectionRange)).setY(0);
         Vector pto = center.toVector().add(new Vector(protectionRange-1, 0, protectionRange-1)).setY(center.getWorld().getMaxHeight());
         user.sendMessage("commands.admin.info.protection-coords", "[xz1]", Util.xyz(pfrom), "[xz2]", Util.xyz(pto));

@@ -169,8 +169,9 @@ public class IslandCache {
      * The island is removed from the islandsByUUID map, but kept in the location map.
      * @param world - world
      * @param uuid - player's UUID
+     * @return island player had or null if none
      */
-    public void removePlayer(World world, UUID uuid) {
+    public Island removePlayer(World world, UUID uuid) {
         world = Util.getWorld(world);
         islandsByUUID.putIfAbsent(world, new HashMap<>());
         Island island = islandsByUUID.get(world).get(uuid);
@@ -185,6 +186,7 @@ public class IslandCache {
             }
         }
         islandsByUUID.get(world).remove(uuid);
+        return island;
     }
 
     /**

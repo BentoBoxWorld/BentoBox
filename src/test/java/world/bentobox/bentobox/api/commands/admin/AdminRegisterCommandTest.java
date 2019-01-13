@@ -30,6 +30,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
+import world.bentobox.bentobox.managers.IslandDeleteManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -50,6 +51,7 @@ public class AdminRegisterCommandTest {
     private IslandsManager im;
     private PlayersManager pm;
     private UUID notUUID;
+    private IslandDeleteManager idm;
 
     /**
      * @throws java.lang.Exception
@@ -111,11 +113,16 @@ public class AdminRegisterCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
+
+        // Deletion Manager
+        idm = mock(IslandDeleteManager.class);
+        when(idm.inDeletion(Mockito.any())).thenReturn(false);
+        when(plugin.getIslandDeletionManager()).thenReturn(idm);
     }
 
 
     /**
-     * Test method for .
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecuteNoTarget() {
@@ -125,7 +132,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecuteUnknownPlayer() {
@@ -137,7 +144,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecutePlayerHasIsland() {
@@ -151,7 +158,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecuteInTeam() {
@@ -165,7 +172,7 @@ public class AdminRegisterCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
      */
     @Test
     public void testExecuteAlreadyOwnedIsland() {
@@ -186,6 +193,32 @@ public class AdminRegisterCommandTest {
         Mockito.verify(user).sendMessage("commands.admin.register.already-owned");
     }
 
+    /**
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     */
+    @Test
+    public void testExecuteInDeletionIsland() {
+        when(idm.inDeletion(Mockito.any())).thenReturn(true);
+        when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
+        when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
+        String[] name = {"tastybento"};
+        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+        Location loc = mock(Location.class);
+
+        // Island has owner
+        Island is = mock(Island.class);
+        when(is.getOwner()).thenReturn(uuid);
+        Optional<Island> opi = Optional.of(is);
+        when(im.getIslandAt(Mockito.any())).thenReturn(opi);
+        when(user.getLocation()).thenReturn(loc);
+        AdminRegisterCommand itl = new AdminRegisterCommand(ac);
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        Mockito.verify(user).sendMessage("commands.admin.register.in-deletion");
+    }
+
+    /**
+     * Test method for {@link AdminRegisterCommand#execute(org.bukkit.command.CommandSender, String, String[])}.
+     */
     @Test
     public void testExecuteSuccess() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);

@@ -553,6 +553,28 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return value;
     }
 
+    @Override
+    public boolean deleteID(String uniqueId) {
+        // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
+        if (!uniqueId.endsWith(YML)) {
+            uniqueId = uniqueId + YML;
+        }
+        // Get the database and table folders
+        File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
+        File tableFolder = new File(dataFolder, dataObject.getSimpleName());
+        if (tableFolder.exists()) {
+            // Obtain the file and delete it
+            File file = new File(tableFolder, uniqueId);
+            try {
+                Files.delete(file.toPath());
+                return true;
+            } catch (IOException e) {
+                plugin.logError("Could not delete yml database object! " + file.getName() + " - " + e.getMessage());
+            }
+        }
+        return false;
+    }
+
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteObject(java.lang.Object)
      */
@@ -571,23 +593,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();
-        String fileName = (String) method.invoke(instance);
-        // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
-        if (!fileName.endsWith(YML)) {
-            fileName = fileName + YML;
-        }
-        // Get the database and table folders
-        File dataFolder = new File(plugin.getDataFolder(), DATABASE_FOLDER_NAME);
-        File tableFolder = new File(dataFolder, dataObject.getSimpleName());
-        if (tableFolder.exists()) {
-            // Obtain the file and delete it
-            File file = new File(tableFolder, fileName);
-            try {
-                Files.delete(file.toPath());
-            } catch (IOException e) {
-                plugin.logError("Could not delete yml database object! " + file.getName() + " - " + e.getMessage());
-            }
-        }
+        deleteID((String) method.invoke(instance));
+
     }
 
     @Override

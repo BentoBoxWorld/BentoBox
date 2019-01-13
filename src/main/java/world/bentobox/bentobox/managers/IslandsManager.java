@@ -64,9 +64,6 @@ public class IslandsManager {
     // Island Cache
     private IslandCache islandCache;
 
-    // Async database saving semaphore
-    private boolean midSave;
-
     /**
      * Islands Manager
      * @param plugin - plugin
@@ -694,8 +691,7 @@ public class IslandsManager {
      * @param user - user
      */
     public void removePlayer(World world, User user) {
-        islandCache.removePlayer(world, user.getUniqueId());
-        save(true);
+        removePlayer(world, user.getUniqueId());
     }
 
     /**
@@ -704,8 +700,10 @@ public class IslandsManager {
      * @param uuid - user's uuid
      */
     public void removePlayer(World world, UUID uuid) {
-        islandCache.removePlayer(world, uuid);
-        save(true);
+        Island island = islandCache.removePlayer(world, uuid);
+        if (island != null) {
+            handler.saveObject(island);
+        }
     }
 
     /**
@@ -736,36 +734,18 @@ public class IslandsManager {
     }
 
     /**
-     * Save the islands to the database
-     * @param async - if true, saving will be done async
+     * Save the all the islands to the database
      */
-    public void save(boolean async){
-        if (midSave) {
-            // If it's already saving, then do nothing
-            return;
-        }
+    public void saveAll(){
         Collection<Island> collection = islandCache.getIslands();
-        if(async) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                midSave = true;
-                for(Island island : collection){
-                    try {
-                        handler.saveObject(island);
-                    } catch (Exception e) {
-                        plugin.logError("Could not save island to database when running async! " + e.getMessage());
-                    }
-                }
-                midSave = false;
-            });
-        } else {
-            for(Island island : collection){
-                try {
-                    handler.saveObject(island);
-                } catch (Exception e) {
-                    plugin.logError("Could not save island to database when running sync! " + e.getMessage());
-                }
+        for(Island island : collection){
+            try {
+                handler.saveObject(island);
+            } catch (Exception e) {
+                plugin.logError("Could not save island to database when running sync! " + e.getMessage());
             }
         }
+
     }
 
     /**
@@ -777,8 +757,8 @@ public class IslandsManager {
         // Add player to new island
         teamIsland.addMember(playerUUID);
         islandCache.addPlayer(playerUUID, teamIsland);
-        // Save the database
-        save(false);
+        // Save the island
+        handler.saveObject(teamIsland);
     }
 
     public void setLast(Location last) {
@@ -798,7 +778,7 @@ public class IslandsManager {
     public void shutdown(){
         // Remove all coop associations
         islandCache.getIslands().stream().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
-        save(false);
+        saveAll();
         islandCache.clear();
         handler.close();
     }
@@ -874,6 +854,15 @@ public class IslandsManager {
      */
     public void clearRank(int rank, UUID uniqueId) {
         islandCache.getIslands().stream().forEach(i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
+    }
+
+    /**
+     * Save the island to the database
+     * @param island - island
+     */
+    public void save(Island island) {
+        handler.saveObject(island);
+
     }
 
 }

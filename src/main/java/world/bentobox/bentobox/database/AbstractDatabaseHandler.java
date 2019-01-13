@@ -110,4 +110,11 @@ public abstract class AbstractDatabaseHandler<T> {
      * Closes the database
      */
     public abstract void close();
+
+    /**
+     * Attempts to delete the object with the uniqueId
+     * @param uniqueId - uniqueId of object
+     * @return true if successful, false if there is no such uniqueId
+     */
+    public abstract boolean deleteID(String uniqueId);
 }

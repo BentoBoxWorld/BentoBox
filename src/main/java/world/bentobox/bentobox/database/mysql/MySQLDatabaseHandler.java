@@ -142,6 +142,22 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
+    public boolean deleteID(String uniqueId) {
+        String sb = "DELETE FROM `" +
+                dataObject.getCanonicalName() +
+                "` WHERE uniqueId = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
+            // UniqueId needs to be placed in quotes
+            preparedStatement.setString(1, "\"" + uniqueId + "\"");
+            preparedStatement.execute();
+            return preparedStatement.getUpdateCount() > 0;
+        } catch (Exception e) {
+            plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
     public void deleteObject(T instance) {
         // Null check
         if (instance == null) {
@@ -152,15 +168,9 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
             return;
         }
-        String sb = "DELETE FROM `" +
-                dataObject.getCanonicalName() +
-                "` WHERE uniqueId = ?";
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
+        try {
             Method getUniqueId = dataObject.getMethod("getUniqueId");
-            String uniqueId = (String) getUniqueId.invoke(instance);
-            // UniqueId needs to be placed in quotes
-            preparedStatement.setString(1, "\"" + uniqueId + "\"");
-            preparedStatement.execute();
+            deleteID((String) getUniqueId.invoke(instance));
         } catch (Exception e) {
             plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }

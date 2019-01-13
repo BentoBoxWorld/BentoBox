@@ -106,7 +106,7 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
         if (inviter != null) {
             inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
         }
-        getIslands().save(false);
+        getIslands().save(island);
         return true;
     }
 

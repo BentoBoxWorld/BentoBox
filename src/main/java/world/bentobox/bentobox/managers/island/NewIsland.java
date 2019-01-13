@@ -244,7 +244,7 @@ public class NewIsland {
      */
     private Result isIsland(Location location){
         location = Util.getClosestIsland(location);
-        if (plugin.getIslands().getIslandAt(location).isPresent()) {
+        if (plugin.getIslands().getIslandAt(location).isPresent() || plugin.getIslandDeletionManager().inDeletion(location)) {
             return Result.ISLAND_FOUND;
         }
 

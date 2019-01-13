@@ -16,34 +16,43 @@ import world.bentobox.bentobox.database.objects.DeletedIslandDO;
  */
 public class DeleteIslandChunks {
 
+    /**
+     * This is how many chunks per world will be done in one tick.
+     */
+    private final static int SPEED = 5;
     private int x;
     private int z;
     private BukkitTask task;
 
     @SuppressWarnings("deprecation")
     public DeleteIslandChunks(BentoBox plugin, DeletedIslandDO di) {
+        // Fire event
+        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
         x = di.getMinXChunk();
         z = di.getMinZChunk();
         task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-            di.getWorld().regenerateChunk(x, z);
-            //System.out.println("regenerating = " + x + "," + z);
-            if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
-                plugin.getIWM().getNetherWorld(di.getWorld()).regenerateChunk(x, z);
+            for (int i = 0; i < SPEED; i++) {
+                di.getWorld().regenerateChunk(x, z);
+                if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
+                    plugin.getIWM().getNetherWorld(di.getWorld()).regenerateChunk(x, z);
 
-            }
-            if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
-                plugin.getIWM().getEndWorld(di.getWorld()).regenerateChunk(x, z);
-            }
-            z++;
-            if (z > di.getMaxZChunk()) {
-                z = di.getMinZChunk();
-                x++;
-                if (x > di.getMaxXChunk()) {
-                    task.cancel();
-                    // Fire event
-                    IslandEvent.builder().location(Util.getLocationString(di.getUniqueId())).reason(Reason.DELETED).build();
+                }
+                if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
+                    plugin.getIWM().getEndWorld(di.getWorld()).regenerateChunk(x, z);
+                }
+                z++;
+                if (z > di.getMaxZChunk()) {
+                    z = di.getMinZChunk();
+                    x++;
+                    if (x > di.getMaxXChunk()) {
+                        task.cancel();
+                        // Fire event
+                        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
+                    }
                 }
             }
         }, 0L, 1L);
 
-    }}
+    }
+
+}
