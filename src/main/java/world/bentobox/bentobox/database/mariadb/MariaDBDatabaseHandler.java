@@ -1,16 +1,21 @@
 package world.bentobox.bentobox.database.mariadb;
 
+import java.lang.reflect.Method;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
 import world.bentobox.bentobox.database.json.AbstractJSONDatabaseHandler;
 import world.bentobox.bentobox.database.objects.DataObject;
-
-import java.lang.reflect.Method;
-import java.sql.*;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Class that inserts a <T> into the corresponding database-table.
@@ -132,20 +137,35 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public void deleteObject(T instance) {
-        if (!(instance instanceof DataObject)) {
-            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
-            return;
-        }
+    public boolean deleteID(String uniqueId) {
         String sb = "DELETE FROM `" +
                 dataObject.getCanonicalName() +
                 "` WHERE uniqueId = ?";
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
-            Method getUniqueId = dataObject.getMethod("getUniqueId");
-            String uniqueId = (String) getUniqueId.invoke(instance);
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             preparedStatement.execute();
+            return preparedStatement.getUpdateCount() > 0;
+        } catch (Exception e) {
+            plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
+            return false;
+        }
+    }
+
+    @Override
+    public void deleteObject(T instance) {
+        // Null check
+        if (instance == null) {
+            plugin.logError("MariaDB database request to delete a null. ");
+            return;
+        }
+        if (!(instance instanceof DataObject)) {
+            plugin.logError("This class is not a DataObject: " + instance.getClass().getName());
+            return;
+        }
+        try {
+            Method getUniqueId = dataObject.getMethod("getUniqueId");
+            deleteID((String) getUniqueId.invoke(instance));
         } catch (Exception e) {
             plugin.logError("Could not delete object " + instance.getClass().getName() + " " + e.getMessage());
         }
