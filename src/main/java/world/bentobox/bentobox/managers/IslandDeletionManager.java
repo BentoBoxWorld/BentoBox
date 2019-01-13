@@ -14,7 +14,7 @@ import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeletedEvent;
 import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.DeletedIslandDO;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 
@@ -29,12 +29,12 @@ public class IslandDeletionManager implements Listener {
     /**
      * Queue of islands to delete
      */
-    private Database<DeletedIslandDO> handler;
+    private Database<IslandDeletion> handler;
     private Set<Location> inDeletion;
 
     public IslandDeletionManager(BentoBox plugin) {
         this.plugin = plugin;
-        handler = new Database<>(plugin, DeletedIslandDO.class);
+        handler = new Database<>(plugin, IslandDeletion.class);
         inDeletion = new HashSet<>();
     }
 
@@ -45,7 +45,7 @@ public class IslandDeletionManager implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
         // Load list of islands that were mid deletion and delete them
-        List<DeletedIslandDO> toBeDeleted = handler.loadObjects();
+        List<IslandDeletion> toBeDeleted = handler.loadObjects();
         if (toBeDeleted != null && toBeDeleted.size() > 0) {
             plugin.log("There are " + toBeDeleted.size() + " islands pending deletion.");
             toBeDeleted.forEach(di -> {

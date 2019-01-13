@@ -6,7 +6,7 @@ import org.bukkit.scheduler.BukkitTask;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
-import world.bentobox.bentobox.database.objects.DeletedIslandDO;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 
 /**
  * Deletes islands fast using chunk regeneration
@@ -25,7 +25,7 @@ public class DeleteIslandChunks {
     private BukkitTask task;
 
     @SuppressWarnings("deprecation")
-    public DeleteIslandChunks(BentoBox plugin, DeletedIslandDO di) {
+    public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         // Fire event
         IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
         x = di.getMinXChunk();

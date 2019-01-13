@@ -30,7 +30,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.DeletedIslandDO;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -261,7 +261,7 @@ public class IslandsManager {
             // Remove players from island
             removePlayersFromIsland(island);
             // Remove blocks from world
-            new DeleteIslandChunks(plugin, new DeletedIslandDO(island));
+            new DeleteIslandChunks(plugin, new IslandDeletion(island));
         }
     }
 

@@ -6,7 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
-import world.bentobox.bentobox.database.objects.DeletedIslandDO;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -180,15 +180,15 @@ public class IslandEvent extends IslandBaseEvent {
      *
      */
     public static class IslandDeleteChunksEvent extends IslandBaseEvent {
-        private final DeletedIslandDO deletedIslandInfo;
+        private final IslandDeletion deletedIslandInfo;
 
-        private IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location, DeletedIslandDO deletedIsland) {
+        private IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
             this.deletedIslandInfo = deletedIsland;
         }
 
-        public DeletedIslandDO getDeletedIslandInfo() {
+        public IslandDeletion getDeletedIslandInfo() {
             return deletedIslandInfo;
         }
     }
@@ -197,15 +197,15 @@ public class IslandEvent extends IslandBaseEvent {
      *
      */
     public static class IslandDeletedEvent extends IslandBaseEvent {
-        private final DeletedIslandDO deletedIslandInfo;
+        private final IslandDeletion deletedIslandInfo;
 
-        private IslandDeletedEvent(Island island, UUID player, boolean admin, Location location, DeletedIslandDO deletedIsland) {
+        private IslandDeletedEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
             this.deletedIslandInfo = deletedIsland;
         }
 
-        public DeletedIslandDO getDeletedIslandInfo() {
+        public IslandDeletion getDeletedIslandInfo() {
             return deletedIslandInfo;
         }
     }
@@ -287,7 +287,7 @@ public class IslandEvent extends IslandBaseEvent {
         private Reason reason = Reason.UNKNOWN;
         private boolean admin;
         private Location location;
-        private DeletedIslandDO deletedIslandInfo;
+        private IslandDeletion deletedIslandInfo;
 
         public IslandEventBuilder island(Island island) {
             this.island = island;
@@ -327,7 +327,7 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
-        public IslandEventBuilder deletedIslandInfo(DeletedIslandDO deletedIslandInfo) {
+        public IslandEventBuilder deletedIslandInfo(IslandDeletion deletedIslandInfo) {
             this.deletedIslandInfo = deletedIslandInfo;
             return this;
         }

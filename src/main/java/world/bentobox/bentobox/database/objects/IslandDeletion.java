@@ -9,9 +9,10 @@ import com.google.gson.annotations.Expose;
 
 /**
  * Data object to store islands in deletion
- *
+ * @author tastybento
+ * @since 1.1
  */
-public class DeletedIslandDO implements DataObject {
+public class IslandDeletion implements DataObject {
 
     @Expose
     private String uniqueId = "";
@@ -31,9 +32,9 @@ public class DeletedIslandDO implements DataObject {
     @Expose
     private int maxZChunk;
 
-    public DeletedIslandDO() {}
+    public IslandDeletion() {}
 
-    public DeletedIslandDO(Island island) {
+    public IslandDeletion(Island island) {
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
         minXChunk =  (location.getBlockX() - island.getMaxEverProtectionRange()) >> 4;
@@ -42,7 +43,7 @@ public class DeletedIslandDO implements DataObject {
         maxZChunk = (island.getMaxEverProtectionRange() + location.getBlockZ() - 1) >> 4;
     }
 
-    public DeletedIslandDO(Location location, int minXChunk, int maxXChunk, int minZChunk, int maxZChunk) {
+    public IslandDeletion(Location location, int minXChunk, int maxXChunk, int minZChunk, int maxZChunk) {
         this.uniqueId = UUID.randomUUID().toString();
         this.location = location;
         this.minXChunk = minXChunk;
@@ -62,10 +63,10 @@ public class DeletedIslandDO implements DataObject {
         if (obj == null) {
             return false;
         }
-        if (!(obj instanceof DeletedIslandDO)) {
+        if (!(obj instanceof IslandDeletion)) {
             return false;
         }
-        DeletedIslandDO other = (DeletedIslandDO) obj;
+        IslandDeletion other = (IslandDeletion) obj;
         if (uniqueId == null) {
             if (other.uniqueId != null) {
                 return false;
@@ -173,7 +174,5 @@ public class DeletedIslandDO implements DataObject {
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
-
-
 }
 
