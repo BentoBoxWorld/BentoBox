@@ -9,13 +9,16 @@ import java.util.Set;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 
 public class CommandsManager {
 
-    private Map<String, CompositeCommand> commands = new HashMap<>();
+    @NonNull
+    private Map<@NonNull String, @NonNull CompositeCommand> commands = new HashMap<>();
 
-    public void registerCommand(CompositeCommand command) {
+    public void registerCommand(@NonNull CompositeCommand command) {
         commands.put(command.getLabel(), command);
         // Use reflection to obtain the commandMap method in Bukkit's server.
         try{
@@ -40,13 +43,15 @@ public class CommandsManager {
      * @param command - command string
      * @return CompositeCommand or null if it does not exist
      */
-    public CompositeCommand getCommand(String command) {
+    @Nullable
+    public CompositeCommand getCommand(@NonNull String command) {
         return commands.get(command);
     }
 
     /**
      * @return the commands
      */
+    @NonNull
     public Map<String, CompositeCommand> getCommands() {
         return commands;
     }
@@ -55,8 +60,8 @@ public class CommandsManager {
      * List all commands registered so far
      * @return set of commands
      */
+    @NonNull
     public Set<String> listCommands() {
         return commands.keySet();
     }
-
 }

@@ -78,6 +78,7 @@ public class Clipboard {
     private static final String ENTITY = "entity";
     private static final String COLOR = "color";
     private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
+    private static final String LINES = "lines";
 
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
@@ -234,7 +235,7 @@ public class Clipboard {
                 count++;
             }
             while (it3 != null && pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
-                pasteEntity(world, island, loc, blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX + it3.next()));
+                pasteEntity(world, loc, blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX + it3.next()));
                 count++;
             }
             // STATE SHIFT
@@ -336,7 +337,7 @@ public class Clipboard {
         }
     }
 
-    private void pasteEntity(World world, Island island, Location location, ConfigurationSection config) {
+    private void pasteEntity(World world, Location location, ConfigurationSection config) {
         String[] pos = config.getName().split(",");
         int x = location.getBlockX() + Integer.valueOf(pos[0]);
         int y = location.getBlockY() + Integer.valueOf(pos[1]);
@@ -403,7 +404,7 @@ public class Clipboard {
         BlockState bs = block.getState();
         // Signs
         if (bs instanceof Sign) {
-            List<String> lines = config.getStringList("lines");
+            List<String> lines = config.getStringList(LINES);
             writeSign(island, block, lines);
         }
         // Chests, in general
@@ -500,7 +501,7 @@ public class Clipboard {
             // Signs
             if (bs instanceof Sign) {
                 Sign sign = (Sign)bs;
-                a.set("lines", Arrays.asList(sign.getLines()));
+                a.set(LINES, Arrays.asList(sign.getLines()));
             }
             return true;
         } else {
@@ -508,7 +509,7 @@ public class Clipboard {
             // Signs
             if (bs instanceof Sign) {
                 Sign sign = (Sign)bs;
-                s.set("lines", Arrays.asList(sign.getLines()));
+                s.set(LINES, Arrays.asList(sign.getLines()));
             }
         }
 

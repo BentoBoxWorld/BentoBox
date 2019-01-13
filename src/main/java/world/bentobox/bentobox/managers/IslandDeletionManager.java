@@ -46,7 +46,7 @@ public class IslandDeletionManager implements Listener {
     public void onBentoBoxReady(BentoBoxReadyEvent e) {
         // Load list of islands that were mid deletion and delete them
         List<IslandDeletion> toBeDeleted = handler.loadObjects();
-        if (toBeDeleted != null && toBeDeleted.size() > 0) {
+        if (!toBeDeleted.isEmpty()) {
             plugin.log("There are " + toBeDeleted.size() + " islands pending deletion.");
             toBeDeleted.forEach(di -> {
                 plugin.log("Resuming deletion of island at " + di.getLocation().getWorld().getName() + " " + Util.xyz(di.getLocation().toVector()));
