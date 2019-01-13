@@ -20,6 +20,8 @@ import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 
+import org.eclipse.jdt.annotation.Nullable;
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -108,7 +110,7 @@ public class Island implements DataObject {
 
     public Island() {}
 
-    public Island(Location location, UUID owner, int protectionRange) {
+    public Island(@NonNull Location location, UUID owner, int protectionRange) {
         setOwner(owner);
         createdDate = System.currentTimeMillis();
         updatedDate = System.currentTimeMillis();
@@ -124,7 +126,7 @@ public class Island implements DataObject {
      * Adds a team member. If player is on banned list, they will be removed from it.
      * @param playerUUID - the player's UUID
      */
-    public void addMember(UUID playerUUID) {
+    public void addMember(@NonNull UUID playerUUID) {
         setRank(playerUUID, RanksManager.MEMBER_RANK);
     }
 
@@ -136,15 +138,12 @@ public class Island implements DataObject {
      * @param issuer UUID of the issuer, may be null.
      *               Whenever possible, one should be provided.
      * @param target UUID of the target, must be provided.
-     * @return {@code true} if the target is successfully banned, {@code false} otherwise.
+     * @return {@code true}
      */
-    public boolean ban(UUID issuer, UUID target) {
-        if (target != null) {
-            setRank(target, RanksManager.BANNED_RANK);
-            log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
-            return true;
-        }
-        return false;
+    public boolean ban(@Nullable UUID issuer, @NonNull UUID target) {
+        setRank(target, RanksManager.BANNED_RANK);
+        log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
+        return true;
     }
 
     /**
@@ -169,7 +168,7 @@ public class Island implements DataObject {
      * @param target UUID of the target, must be provided.
      * @return {@code true} if the target is successfully unbanned, {@code false} otherwise.
      */
-    public boolean unban(UUID issuer, UUID target) {
+    public boolean unban(@Nullable UUID issuer, @NonNull UUID target) {
         if (members.remove(target) != null) {
             log(new LogEntry.Builder("UNBAN").data("player", target).data("issuer", issuer).build());
             return true;
@@ -198,7 +197,7 @@ public class Island implements DataObject {
      * @param flag - flag
      * @return flag value
      */
-    public int getFlag(Flag flag) {
+    public int getFlag(@NonNull Flag flag) {
         flags.putIfAbsent(flag, flag.getDefaultRank());
         return flags.get(flag);
     }

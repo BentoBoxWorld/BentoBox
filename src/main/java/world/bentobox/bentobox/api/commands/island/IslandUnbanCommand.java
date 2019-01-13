@@ -67,26 +67,26 @@ public class IslandUnbanCommand extends CompositeCommand {
     }
 
     private boolean unban(User issuer, User target) {
+        Island island = getIslands().getIsland(getWorld(), issuer.getUniqueId());
+
         // Run the event
         IslandBaseEvent unbanEvent = IslandEvent.builder()
-                .island(getIslands().getIsland(getWorld(), issuer.getUniqueId()))
+                .island(island)
                 .involvedPlayer(target.getUniqueId())
                 .admin(false)
                 .reason(IslandEvent.Reason.UNBAN)
                 .build();
 
         // Event is not cancelled
-        if (!unbanEvent.isCancelled()) {
-            if (getIslands().getIsland(getWorld(), issuer.getUniqueId()).unban(issuer.getUniqueId(), target.getUniqueId())) {
-                issuer.sendMessage("general.success");
-                target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, issuer.getName());
-                // Set cooldown
-                if (getSettings().getBanCooldown() > 0 && getParent() != null) {
-                    getParent().getSubCommand("ban").ifPresent(subCommand ->
-                            subCommand.setCooldown(issuer.getUniqueId(), target.getUniqueId(), getSettings().getBanCooldown() * 60));
-                }
-                return true;
+        if (!unbanEvent.isCancelled() && island.unban(issuer.getUniqueId(), target.getUniqueId())) {
+            issuer.sendMessage("general.success");
+            target.sendMessage("commands.island.unban.you-are-unbanned", TextVariables.NAME, issuer.getName());
+            // Set cooldown
+            if (getSettings().getBanCooldown() > 0 && getParent() != null) {
+                getParent().getSubCommand("ban").ifPresent(subCommand ->
+                        subCommand.setCooldown(issuer.getUniqueId(), target.getUniqueId(), getSettings().getBanCooldown() * 60));
             }
+            return true;
         }
         // Unbanning was blocked, maybe due to an event cancellation. Fail silently.
         return false;

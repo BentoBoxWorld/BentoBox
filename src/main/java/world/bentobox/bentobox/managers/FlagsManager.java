@@ -4,10 +4,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
@@ -19,15 +22,15 @@ import world.bentobox.bentobox.lists.Flags;
 public class FlagsManager {
 
     private BentoBox plugin;
-    private List<Flag> flags = new ArrayList<>();
+    private List<@NonNull Flag> flags = new ArrayList<>();
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
      * Value is true if the listener has been registered already
      */
-    private Map<Listener, Boolean> registeredListeners = new HashMap<>();
+    private Map<@NonNull Listener, @NonNull Boolean> registeredListeners = new HashMap<>();
 
-    public FlagsManager(BentoBox plugin) {
+    public FlagsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
 
         // Register default flags
@@ -39,7 +42,7 @@ public class FlagsManager {
      * @param flag flag to be registered
      * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
      */
-    public boolean registerFlag(Flag flag) {
+    public boolean registerFlag(@NonNull Flag flag) {
         // Check in case the flag id or icon already exists
         for (Flag fl : flags) {
             if (fl.getID().equals(flag.getID()) || fl.getIcon().equals(flag.getIcon())) {
@@ -64,7 +67,7 @@ public class FlagsManager {
      * Tries to register a listener
      * @param l - listener
      */
-    private void registerListener(Listener l) {
+    private void registerListener(@NonNull Listener l) {
         registeredListeners.putIfAbsent(l, false);
         if (!registeredListeners.get(l)) {
             Bukkit.getServer().getPluginManager().registerEvents(l, plugin);
@@ -75,6 +78,7 @@ public class FlagsManager {
     /**
      * @return list of all flags
      */
+    @NonNull
     public List<Flag> getFlags() {
         return flags;
     }
@@ -83,8 +87,22 @@ public class FlagsManager {
      * Get flag by ID
      * @param id unique id for this flag
      * @return Flag or null if not known
+     * @deprecated As of 1.1, use {@link #getFlag(String)} instead.
      */
-    public Flag getFlagByID(String id) {
-        return flags.stream().filter(flag -> flag.getID().equals(id)).findFirst().orElse(null);
+    @Deprecated
+    @Nullable
+    public Flag getFlagByID(@NonNull String id) {
+        return getFlag(id).orElse(null);
+    }
+
+    /**
+     * Gets a Flag by providing an ID.
+     * @param id Unique ID for this Flag.
+     * @return Optional containing the Flag instance or empty.
+     * @since 1.1
+     */
+    @NonNull
+    public Optional<Flag> getFlag(@NonNull String id) {
+        return flags.stream().filter(flag -> flag.getID().equals(id)).findFirst();
     }
 }

@@ -97,17 +97,15 @@ public class IslandBanCommand extends CompositeCommand {
                     .build();
 
             // Event is not cancelled
-            if (!banEvent.isCancelled()) {
-                if (island.ban(issuer.getUniqueId(), target.getUniqueId())) {
-                    issuer.sendMessage("general.success");
-                    target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
-                    // If the player is online, has an island and on the banned island, move them home immediately
-                    if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
-                        getIslands().homeTeleport(getWorld(), target.getPlayer());
-                        island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
-                    }
-                    return true;
+            if (!banEvent.isCancelled() && island.ban(issuer.getUniqueId(), target.getUniqueId())) {
+                issuer.sendMessage("general.success");
+                target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
+                // If the player is online, has an island and on the banned island, move them home immediately
+                if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
+                    getIslands().homeTeleport(getWorld(), target.getPlayer());
+                    island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
                 }
+                return true;
             }
         } else {
             issuer.sendMessage("commands.island.ban.cannot-ban-more-players");
