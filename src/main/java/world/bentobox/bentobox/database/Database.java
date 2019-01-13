@@ -106,6 +106,7 @@ public class Database<T> {
      * Attempts to delete the object with the uniqueId
      * @param uniqueId - uniqueId of object
      * @return true if successful, false if there is no such uniqueId
+     * @since 1.1
      */
     public boolean deleteID(String uniqueId) {
         return handler.deleteID(uniqueId);
