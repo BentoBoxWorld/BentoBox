@@ -6,14 +6,17 @@ import java.util.UUID;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
-import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
-public class IslandTeamInviteAcceptCommand extends CompositeCommand {
+/**
+ * @author tastybento
+ */
+public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
 
     private IslandTeamCommand itc;
 
@@ -31,7 +34,6 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-
         UUID playerUUID = user.getUniqueId();
         // Check if player has been invited
         if (!itc.getInviteCommand().getInviteList().containsKey(playerUUID)) {
@@ -61,52 +63,56 @@ public class IslandTeamInviteAcceptCommand extends CompositeCommand {
         if (event.isCancelled()) {
             return true;
         }
-        // Remove the invite
-        itc.getInviteCommand().getInviteList().remove(playerUUID);
-        // Put player into Spectator mode
-        user.setGameMode(GameMode.SPECTATOR);
-        // Get the player's island - may be null if the player has no island
-        Island island = getIslands().getIsland(getWorld(), playerUUID);
-        // Get the team's island
-        Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
-        // Clear the player's inventory
-        user.getInventory().clear();
-        // Move player to team's island
-        User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
-        Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);
-        user.teleport(newHome);
-        // Remove player as owner of the old island
-        getIslands().removePlayer(getWorld(), playerUUID);
-        // Remove money inventory etc. for leaving
-        if (getIWM().isOnLeaveResetEnderChest(getWorld()) || getIWM().isOnJoinResetEnderChest(getWorld())) {
-            user.getPlayer().getEnderChest().clear();
-        }
-        if (getIWM().isOnLeaveResetInventory(getWorld()) || getIWM().isOnJoinResetInventory(getWorld())) {
-            user.getPlayer().getInventory().clear();
-        }
-        if (getSettings().isUseEconomy() && (getIWM().isOnLeaveResetMoney(getWorld()) || getIWM().isOnJoinResetMoney(getWorld()))) {
-            getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
-        }
-        // Add the player as a team member of the new island
-        getIslands().setJoinTeam(teamIsland, playerUUID);
-        // Set the player's home
-        getPlayers().setHomeLocation(playerUUID, user.getLocation());
-        // Delete the old island
-        getIslands().deleteIsland(island, true);
-        // TODO Set the cooldown
-        // Reset deaths
-        if (getIWM().isTeamJoinDeathReset(getWorld())) {
-            getPlayers().setDeaths(getWorld(), playerUUID, 0);
-        }
-        // Put player back into normal mode
-        user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
 
-        user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
-        User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
-        if (inviter != null) {
-            inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
-        }
-        getIslands().save(island);
+        askConfirmation(user, "commands.island.team.invite.accept.confirmation", () -> {
+            // Remove the invite
+            itc.getInviteCommand().getInviteList().remove(playerUUID);
+            // Put player into Spectator mode
+            user.setGameMode(GameMode.SPECTATOR);
+            // Get the player's island - may be null if the player has no island
+            Island island = getIslands().getIsland(getWorld(), playerUUID);
+            // Get the team's island
+            Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
+            // Clear the player's inventory
+            user.getInventory().clear();
+            // Move player to team's island
+            User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
+            Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);
+            user.teleport(newHome);
+            // Remove player as owner of the old island
+            getIslands().removePlayer(getWorld(), playerUUID);
+            // Remove money inventory etc. for leaving
+            if (getIWM().isOnLeaveResetEnderChest(getWorld()) || getIWM().isOnJoinResetEnderChest(getWorld())) {
+                user.getPlayer().getEnderChest().clear();
+            }
+            if (getIWM().isOnLeaveResetInventory(getWorld()) || getIWM().isOnJoinResetInventory(getWorld())) {
+                user.getPlayer().getInventory().clear();
+            }
+            if (getSettings().isUseEconomy() && (getIWM().isOnLeaveResetMoney(getWorld()) || getIWM().isOnJoinResetMoney(getWorld()))) {
+                getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
+            }
+            // Add the player as a team member of the new island
+            getIslands().setJoinTeam(teamIsland, playerUUID);
+            // Set the player's home
+            getPlayers().setHomeLocation(playerUUID, user.getLocation());
+            // Delete the old island
+            getIslands().deleteIsland(island, true);
+            // TODO Set the cooldown
+            // Reset deaths
+            if (getIWM().isTeamJoinDeathReset(getWorld())) {
+                getPlayers().setDeaths(getWorld(), playerUUID, 0);
+            }
+            // Put player back into normal mode
+            user.setGameMode(getIWM().getDefaultGameMode(getWorld()));
+
+            user.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
+            User inviter = User.getInstance(itc.getInviteCommand().getInviteList().get(playerUUID));
+            if (inviter != null) {
+                inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
+            }
+            getIslands().save(island);
+        });
+
         return true;
     }
 
