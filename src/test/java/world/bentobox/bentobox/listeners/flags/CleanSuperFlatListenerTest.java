@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -28,6 +29,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
@@ -44,6 +46,8 @@ public class CleanSuperFlatListenerTest {
     private Block block;
     private Chunk chunk;
     private IslandWorldManager iwm;
+    private CleanSuperFlatListener l;
+    private BukkitScheduler scheduler;
 
     /**
      * @throws java.lang.Exception
@@ -91,84 +95,86 @@ public class CleanSuperFlatListenerTest {
         when(block.getType()).thenReturn(Material.BEDROCK);
         when(chunk.getBlock(Mockito.anyInt(), Mockito.anyInt(), Mockito.anyInt())).thenReturn(block);
 
+        // Fire the ready event
+        l = new CleanSuperFlatListener();
+        l.onBentoBoxReady(mock(BentoBoxReadyEvent.class));
+
+        // Scheduler
+        scheduler = mock(BukkitScheduler.class);
+        when(Bukkit.getScheduler()).thenReturn(scheduler);
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadNotBedrockNoFlsg() {
         when(block.getType()).thenReturn(Material.AIR);
         Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
 
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world, Mockito.never()).regenerateChunk(Mockito.anyInt(), Mockito.anyInt());
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler, Mockito.never()).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrock() {
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt());
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrockNoClean() {
         Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
 
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world, Mockito.never()).regenerateChunk(Mockito.anyInt(), Mockito.anyInt());
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler, Mockito.never()).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrockNether() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt());
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt()); // No more than once
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt()); // No more than once
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener#onChunkLoad(org.bukkit.event.world.ChunkLoadEvent)}.
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void testOnChunkLoadBedrockEnd() {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
         ChunkLoadEvent e = new ChunkLoadEvent(chunk, false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt());
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
         when(iwm.isEndIslands(Mockito.any())).thenReturn(true);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt()); // No more than once
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isEndIslands(Mockito.any())).thenReturn(false);
-        new CleanSuperFlatListener().onChunkLoad(e);
-        Mockito.verify(world).regenerateChunk(Mockito.anyInt(), Mockito.anyInt()); // No more than once
+        l.onChunkLoad(e);
+        Mockito.verify(scheduler).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
     }
 
 }

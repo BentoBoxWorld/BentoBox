@@ -3,17 +3,20 @@
  */
 package world.bentobox.bentobox.listeners.flags;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
+import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Pair;
@@ -25,28 +28,41 @@ import world.bentobox.bentobox.util.Pair;
  *
  */
 public class CleanSuperFlatListener extends FlagListener {
-    
-    private Set<Pair<Integer, Integer>> regeneratedChunk = new HashSet<>();
-    
+
+    private Queue<Pair<Integer, Integer>> chunkQ = new ArrayDeque<>();
+    private BukkitTask task;
+    private boolean ready;
+
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onBentoBoxReady(BentoBoxReadyEvent e) {
+        ready = true;
+    }
+
     @SuppressWarnings("deprecation")
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onChunkLoad(ChunkLoadEvent e) {
-        BentoBox plugin = BentoBox.getInstance();
-        World world = e.getWorld();
-        if (regeneratedChunk.contains(new Pair<Integer, Integer>(e.getChunk().getX(), e.getChunk().getZ()))) {
-            Flags.CLEAN_SUPER_FLAT.setSetting(world, false);
-            plugin.logError("World generator for " + world.getName() + " is broken and superflat regen cannot occur!!! Disabling regen.");
+        if (!ready) {
             return;
         }
+        BentoBox plugin = BentoBox.getInstance();
+        World world = e.getWorld();
         if (!e.getChunk().getBlock(0, 0, 0).getType().equals(Material.BEDROCK)
                 || !Flags.CLEAN_SUPER_FLAT.isSetForWorld(world)
                 || (world.getEnvironment().equals(Environment.NETHER) && (!plugin.getIWM().isNetherGenerate(world) || !plugin.getIWM().isNetherIslands(world)))
                 || (world.getEnvironment().equals(Environment.THE_END) && (!plugin.getIWM().isEndGenerate(world) || !plugin.getIWM().isEndIslands(world)))) {
             return;
         }
-        // This deprecation is OK because all it means is that things like tree leaves may not be the same in the chunk when it is generated
-        world.regenerateChunk(e.getChunk().getX(), e.getChunk().getZ());
-        plugin.logWarning("Regenerating superflat chunk in " + world.getName() + " at blocks " + (e.getChunk().getX() << 4) + "," + (e.getChunk().getZ() << 4));
+        // Add to queue
+        chunkQ.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
+        if (task == null) {
+            task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                if (!chunkQ.isEmpty()) {
+                    Pair<Integer, Integer> chunkXZ = chunkQ.poll();
+                    world.regenerateChunk(chunkXZ.x, chunkXZ.z);
+                    plugin.logWarning(chunkQ.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
+                }
+            }, 0L, 1L);
+        }
 
     }
 
