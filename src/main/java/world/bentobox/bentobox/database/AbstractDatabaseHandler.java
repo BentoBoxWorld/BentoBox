@@ -4,6 +4,8 @@ import java.beans.IntrospectionException;
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
@@ -38,12 +40,14 @@ public abstract class AbstractDatabaseHandler<T> {
     /**
      * The addon that is accessing the database, if any.
      */
+    @Nullable
     private Addon addon;
 
     /**
      * Get the addon that is accessing the database, if any. May be null.
      * @return the addon
      */
+    @Nullable
     public Addon getAddon() {
         return addon;
     }
@@ -52,7 +56,7 @@ public abstract class AbstractDatabaseHandler<T> {
      * Set the addon that is accessing the database, if any.
      * @param addon the addon to set
      */
-    public void setAddon(Addon addon) {
+    public void setAddon(@Nullable Addon addon) {
         this.addon = addon;
     }
 
@@ -84,7 +88,8 @@ public abstract class AbstractDatabaseHandler<T> {
      * @param uniqueId - unique ID
      * @return <T>
      */
-    public abstract T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException;
+    @Nullable
+    public abstract T loadObject(@NonNull String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException;
 
     /**
      * Save T into the corresponding database
@@ -110,4 +115,12 @@ public abstract class AbstractDatabaseHandler<T> {
      * Closes the database
      */
     public abstract void close();
+
+    /**
+     * Attempts to delete the object with the uniqueId
+     * @param uniqueId - uniqueId of object
+     * @return true if successful, false if there is no such uniqueId
+     * @since 1.1
+     */
+    public abstract boolean deleteID(String uniqueId);
 }

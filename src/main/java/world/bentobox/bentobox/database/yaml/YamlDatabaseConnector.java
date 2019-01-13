@@ -6,8 +6,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +18,8 @@ import java.util.Scanner;
 import java.util.UUID;
 
 import org.bukkit.configuration.file.YamlConfiguration;
+
+import com.google.common.base.Charsets;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.DatabaseConnector;
@@ -78,29 +81,21 @@ public class YamlDatabaseConnector implements DatabaseConnector {
         return config;
     }
 
-    public void saveYamlFile(YamlConfiguration yamlConfig, String tableName, String fileName, Map<String, String> commentMap) {
-        if (!fileName.endsWith(YML)) {
-            fileName = fileName + YML;
-        }
+    public void saveYamlFile(String data, String tableName, String fileName, Map<String, String> commentMap) {
+        String name = fileName.endsWith(YML) ? fileName : fileName + YML;
         File tableFolder = new File(plugin.getDataFolder(), tableName);
-        File file = new File(tableFolder, fileName);
+        File file = new File(tableFolder, name);
         if (!tableFolder.exists()) {
             tableFolder.mkdirs();
         }
-        try {
-            File tmpFile = new File(tableFolder, fileName + ".bak");
-            if (file.exists()) {
-                // Make a backup of file
-                Files.copy(file.toPath(), tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            }
-            yamlConfig.save(file.toPath().toString());
-            Files.deleteIfExists(tmpFile.toPath());
-        } catch (Exception e) {
+        try (Writer writer = new OutputStreamWriter(new FileOutputStream(file), Charsets.UTF_8)) {
+            writer.write(data);
+        } catch (IOException e) {
             plugin.logError("Could not save yml file: " + tableName + " " + fileName + " " + e.getMessage());
             return;
         }
         if (commentMap != null && !commentMap.isEmpty()) {
-            commentFile(new File(tableFolder, fileName), commentMap);
+            commentFile(new File(tableFolder, name), commentMap);
         }
     }
 

@@ -25,6 +25,7 @@ import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
+import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -66,6 +67,8 @@ public class BentoBox extends JavaPlugin {
     private HeadGetter headGetter;
 
     private boolean isLoaded;
+
+    private IslandDeletionManager islandDeletionManager;
 
     @Override
     public void onEnable(){
@@ -142,10 +145,10 @@ public class BentoBox extends JavaPlugin {
             // Load islands from database - need to wait until all the worlds are loaded
             islandsManager.load();
 
-            // Save islands & players data asynchronously every X minutes
+            // Save islands & players data every X minutes
             instance.getServer().getScheduler().runTaskTimer(instance, () -> {
-                playersManager.save(true);
-                islandsManager.save(true);
+                playersManager.saveAll();
+                islandsManager.saveAll();
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
 
             // Make sure all flag listeners are registered.
@@ -169,13 +172,15 @@ public class BentoBox extends JavaPlugin {
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);
 
-            // Fire plugin ready event
-            isLoaded = true;
-            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
-
+            // Show banner
             User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
                     TextVariables.VERSION, instance.getDescription().getVersion(),
                     "[time]", String.valueOf(System.currentTimeMillis() - startMillis));
+
+            // Fire plugin ready event - this should go last after everything else
+            isLoaded = true;
+            Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
+
         });
     }
 
@@ -196,6 +201,9 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new BannedVisitorCommands(this), this);
         // Death counter
         manager.registerEvents(new DeathListener(this), this);
+        // Island Delete Manager
+        islandDeletionManager = new IslandDeletionManager(this);
+        manager.registerEvents(islandDeletionManager, this);
     }
 
     @Override
@@ -355,5 +363,12 @@ public class BentoBox extends JavaPlugin {
      */
     public PlaceholdersManager getPlaceholdersManager() {
         return placeholdersManager;
+    }
+
+    /**
+     * @return the islandDeletionManager
+     */
+    public IslandDeletionManager getIslandDeletionManager() {
+        return islandDeletionManager;
     }
 }

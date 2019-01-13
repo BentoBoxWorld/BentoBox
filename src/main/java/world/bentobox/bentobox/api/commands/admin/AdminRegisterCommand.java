@@ -51,6 +51,12 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             return false;
         }
 
+        // Check if this spot is still being deleted
+        Location closestIsland = getClosestIsland(user.getLocation());
+        if (getPlugin().getIslandDeletionManager().inDeletion(closestIsland)) {
+            user.sendMessage("commands.admin.register.in-deletion");
+            return false;
+        }
         // Check if island is owned
         Optional<Island> island = getIslands().getIslandAt(user.getLocation());
         if (island.map(i -> i.getOwner() != null).orElse(false)) {
@@ -69,7 +75,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.register.no-island-here");
             this.askConfirmation(user, () -> {
                 // Make island here
-                Island i = getIslands().createIsland(getClosestIsland(user.getLocation()), targetUUID);
+                Island i = getIslands().createIsland(closestIsland, targetUUID);
                 getIslands().setOwner(user, targetUUID, i);
                 getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));

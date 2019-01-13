@@ -43,7 +43,7 @@ public class IslandBaseEvent extends PremadeEvent implements Cancellable {
     }
 
     /**
-     * @return the island involved in this event
+     * @return the island involved in this event. This may be null in the case of deleted islands, so use location instead
      */
     public Island getIsland(){
         return island;

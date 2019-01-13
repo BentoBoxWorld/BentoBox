@@ -23,6 +23,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Server;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -37,6 +38,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.entity.Slime;
 import org.bukkit.entity.Wither;
 import org.bukkit.entity.Zombie;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
@@ -54,6 +56,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
+import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
@@ -79,6 +82,7 @@ public class IslandsManagerTest {
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
     private Island is;
+    private PluginManager pim;
 
     /**
      * @throws java.lang.Exception
@@ -122,8 +126,7 @@ public class IslandsManagerTest {
         pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
 
-        // Server & Scheduler
-
+        // Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
@@ -174,6 +177,11 @@ public class IslandsManagerTest {
         // User location
         when(user.getLocation()).thenReturn(location);
 
+        // Server for events
+        Server server = mock(Server.class);
+        when(Bukkit.getServer()).thenReturn(server);
+        pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
     }
 
 
@@ -432,16 +440,37 @@ public class IslandsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
      */
     @Test
-    public void testDeleteIslandIslandBoolean() {
+    public void testDeleteIslandIslandBooleanNull() {
         IslandsManager im = new IslandsManager(plugin);
-
         im.deleteIsland((Island)null, true);
+        Mockito.verify(pim, Mockito.never()).callEvent(Mockito.any());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
+     */
+    @Test
+    public void testDeleteIslandIslandBooleanNoBlockRemoval() {
+        IslandsManager im = new IslandsManager(plugin);
         UUID owner = UUID.randomUUID();
         Island island = im.createIsland(location, owner);
         im.deleteIsland(island, false);
-        island = im.createIsland(location, owner);
+        assertNull(island.getOwner());
+        Mockito.verify(pim, Mockito.times(2)).callEvent(Mockito.any(IslandDeleteEvent.class));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
+     */
+    @Test
+    public void testDeleteIslandIslandBooleanRemoveBlocks() {
+        Mockito.verify(pim, Mockito.never()).callEvent(Mockito.any());
+        IslandsManager im = new IslandsManager(plugin);
+        UUID owner = UUID.randomUUID();
+        Island island = im.createIsland(location, owner);
         im.deleteIsland(island, true);
-        assertNull(island);
+        assertNull(island.getOwner());
+        Mockito.verify(pim, Mockito.times(4)).callEvent(Mockito.any(IslandDeleteEvent.class));
     }
 
     /**

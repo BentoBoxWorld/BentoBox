@@ -10,6 +10,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class IslandTeamSetownerCommand extends CompositeCommand {
@@ -59,9 +60,9 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             return false;
         }
         // Fire event so add-ons can run commands, etc.
+        Island island = getIslands().getIsland(getWorld(), playerUUID);
         IslandBaseEvent event = TeamEvent.builder()
-                .island(getIslands()
-                        .getIsland(getWorld(), playerUUID))
+                .island(island)
                 .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
                 .build();
@@ -70,7 +71,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
             return false;
         }
         getIslands().setOwner(getWorld(), user, targetUUID);
-        getIslands().save(true);
+        getIslands().save(island);
         return true;
     }
 

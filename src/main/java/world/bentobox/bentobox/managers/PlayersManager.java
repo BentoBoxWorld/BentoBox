@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,7 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 
@@ -63,20 +61,13 @@ public class PlayersManager {
 
     /**
      * Save all players
-     * @param async - if true, save async
      */
-    public void save(boolean async){
-        Collection<Players> set = Collections.unmodifiableCollection(playerCache.values());
-        if(async) {
-            Runnable save = () -> set.forEach(handler::saveObject);
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, save);
-        } else {
-            set.forEach(handler::saveObject);
-        }
+    public void saveAll(){
+        Collections.unmodifiableCollection(playerCache.values()).forEach(handler::saveObject);
     }
 
     public void shutdown(){
-        save(false);
+        saveAll();
         playerCache.clear();
         handler.close();
     }

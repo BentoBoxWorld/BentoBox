@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.util;
 
-import org.bukkit.World;
+import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
-import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 
 /**
  * Deletes islands fast using chunk regeneration
@@ -17,40 +17,41 @@ import world.bentobox.bentobox.database.objects.Island;
 public class DeleteIslandChunks {
 
     /**
-     * Deletes the island
-     * @param plugin - plugin object
-     * @param island - island to delete
+     * This is how many chunks per world will be done in one tick.
      */
+    private final static int SPEED = 5;
+    private int x;
+    private int z;
+    private BukkitTask task;
+
     @SuppressWarnings("deprecation")
-    public DeleteIslandChunks(final BentoBox plugin, final Island island) {
+    public DeleteIslandChunks(BentoBox plugin, IslandDeletion di) {
         // Fire event
-        IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
-        if (event.isCancelled()) {
-            return;
-        }
-        final World world = island.getCenter().getWorld();
-        if (world == null) {
-            return;
-        }
-        int minXChunk =  island.getMinX() >> 4;
-        int maxXChunk = (island.getRange() * 2 + island.getMinX() - 1) >> 4;
-        int minZChunk = island.getMinZ() >> 4;
-        int maxZChunk = (island.getRange() * 2 + island.getMinZ() - 1) >> 4;
-        for (int x = minXChunk; x <= maxXChunk; x++) {
-            for (int z = minZChunk; z<=maxZChunk; z++) {
-                world.regenerateChunk(x, z);
-                //System.out.println("regenerating = " + x + "," + z);
-                if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world)) {
-                    plugin.getIWM().getNetherWorld(world).regenerateChunk(x, z);
+        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETE_CHUNKS).build();
+        x = di.getMinXChunk();
+        z = di.getMinZChunk();
+        task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+            for (int i = 0; i < SPEED; i++) {
+                di.getWorld().regenerateChunk(x, z);
+                if (plugin.getIWM().isNetherGenerate(di.getWorld()) && plugin.getIWM().isNetherIslands(di.getWorld())) {
+                    plugin.getIWM().getNetherWorld(di.getWorld()).regenerateChunk(x, z);
 
                 }
-                if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world)) {
-                    plugin.getIWM().getEndWorld(world).regenerateChunk(x, z);
+                if (plugin.getIWM().isEndGenerate(di.getWorld()) && plugin.getIWM().isEndIslands(di.getWorld())) {
+                    plugin.getIWM().getEndWorld(di.getWorld()).regenerateChunk(x, z);
+                }
+                z++;
+                if (z > di.getMaxZChunk()) {
+                    z = di.getMinZChunk();
+                    x++;
+                    if (x > di.getMaxXChunk()) {
+                        task.cancel();
+                        // Fire event
+                        IslandEvent.builder().deletedIslandInfo(di).reason(Reason.DELETED).build();
+                    }
                 }
             }
-        }
-        // Fire event
-        IslandEvent.builder().island(island).reason(Reason.DELETED).build();
+        }, 0L, 1L);
 
     }
 

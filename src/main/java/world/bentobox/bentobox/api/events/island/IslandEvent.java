@@ -6,6 +6,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -58,9 +59,14 @@ public class IslandEvent extends IslandBaseEvent {
          */
         CREATED,
         /**
-         * Fired just before any island chunks are to be deleted.
+         * Fired when an island is to be deleted. Note an island can be deleted without having
+         * chunks removed.
          */
         DELETE,
+        /**
+         * Fired when island chunks are going to be deleted
+         */
+        DELETE_CHUNKS,
         /**
          * Fired after all island chunks have been deleted or set for regeneration by the server
          */
@@ -169,13 +175,38 @@ public class IslandEvent extends IslandBaseEvent {
         }
     }
     /**
+     * Fired when an island chunks are going to be deleted.
+     * May be cancelled.
+     *
+     */
+    public static class IslandDeleteChunksEvent extends IslandBaseEvent {
+        private final IslandDeletion deletedIslandInfo;
+
+        private IslandDeleteChunksEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
+            // Final variables have to be declared in the constructor
+            super(island, player, admin, location);
+            this.deletedIslandInfo = deletedIsland;
+        }
+
+        public IslandDeletion getDeletedIslandInfo() {
+            return deletedIslandInfo;
+        }
+    }
+    /**
      * Fired when an island is deleted.
      *
      */
     public static class IslandDeletedEvent extends IslandBaseEvent {
-        private IslandDeletedEvent(Island island, UUID player, boolean admin, Location location) {
+        private final IslandDeletion deletedIslandInfo;
+
+        private IslandDeletedEvent(Island island, UUID player, boolean admin, Location location, IslandDeletion deletedIsland) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
+            this.deletedIslandInfo = deletedIsland;
+        }
+
+        public IslandDeletion getDeletedIslandInfo() {
+            return deletedIslandInfo;
         }
     }
     /**
@@ -256,6 +287,7 @@ public class IslandEvent extends IslandBaseEvent {
         private Reason reason = Reason.UNKNOWN;
         private boolean admin;
         private Location location;
+        private IslandDeletion deletedIslandInfo;
 
         public IslandEventBuilder island(Island island) {
             this.island = island;
@@ -295,6 +327,11 @@ public class IslandEvent extends IslandBaseEvent {
             return this;
         }
 
+        public IslandEventBuilder deletedIslandInfo(IslandDeletion deletedIslandInfo) {
+            this.deletedIslandInfo = deletedIslandInfo;
+            return this;
+        }
+
         public IslandBaseEvent build() {
             // Call the generic event for developers who just want one event and use the Reason enum
             Bukkit.getServer().getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
@@ -316,8 +353,12 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandDeleteEvent delete = new IslandDeleteEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(delete);
                 return delete;
+            case DELETE_CHUNKS:
+                IslandDeleteChunksEvent deleteChunks = new IslandDeleteChunksEvent(island, player, admin, location, deletedIslandInfo);
+                Bukkit.getServer().getPluginManager().callEvent(deleteChunks);
+                return deleteChunks;
             case DELETED:
-                IslandDeletedEvent deleted = new IslandDeletedEvent(island, player, admin, location);
+                IslandDeletedEvent deleted = new IslandDeletedEvent(island, player, admin, location, deletedIslandInfo);
                 Bukkit.getServer().getPluginManager().callEvent(deleted);
                 return deleted;
             case ENTER:

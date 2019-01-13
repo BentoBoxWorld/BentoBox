@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
@@ -44,6 +45,7 @@ public class Database<T> {
      * Load all the config objects and supply them as a list
      * @return list of config objects or an empty list if they cannot be loaded
      */
+    @NonNull
     public List<T> loadObjects() {
         List<T> result = new ArrayList<>();
         try {
@@ -101,6 +103,16 @@ public class Database<T> {
     }
 
     /**
+     * Attempts to delete the object with the uniqueId
+     * @param uniqueId - uniqueId of object
+     * @return true if successful, false if there is no such uniqueId
+     * @since 1.1
+     */
+    public boolean deleteID(String uniqueId) {
+        return handler.deleteID(uniqueId);
+    }
+
+    /**
      * Delete object from database
      * @param object - object to delete
      */
@@ -109,7 +121,7 @@ public class Database<T> {
             handler.deleteObject(object);
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | IntrospectionException e) {
-            logger.severe(() -> "Could not delete config! Error: " + e.getMessage());
+            logger.severe(() -> "Could not delete object! Error: " + e.getMessage());
         }
     }
 
@@ -119,5 +131,7 @@ public class Database<T> {
     public void close() {
         handler.close();
     }
+
+
 
 }
