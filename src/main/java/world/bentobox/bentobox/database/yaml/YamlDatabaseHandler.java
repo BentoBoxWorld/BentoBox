@@ -22,6 +22,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
@@ -307,18 +308,14 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         // This is the Yaml Configuration that will be used and saved at the end
         YamlConfiguration config = new YamlConfiguration();
 
-        // The file name of the Yaml file.
-        String filename = "";
-        String path = DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName();
         // Comments for the file
         Map<String, String> yamlComments = new HashMap<>();
 
         // Only allow storing in an arbitrary place if it is a config object. Otherwise it is in the database
         StoreAt storeAt = instance.getClass().getAnnotation(StoreAt.class);
-        if (storeAt != null) {
-            path = storeAt.path();
-            filename = storeAt.filename();
-        }
+        String path = storeAt == null ? DATABASE_FOLDER_NAME + File.separator + dataObject.getSimpleName() : storeAt.path();
+        String filename = storeAt == null ? "" : storeAt.filename();
+
         // See if there are any top-level comments
         // See if there are multiple comments
         ConfigComment.Line comments = instance.getClass().getAnnotation(ConfigComment.Line.class);
@@ -443,7 +440,16 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             throw new IllegalArgumentException("No uniqueId in class");
         }
 
-        ((YamlDatabaseConnector)databaseConnector).saveYamlFile(config, path, filename, yamlComments);
+        // Save
+        String name = filename;
+        String data = config.saveToString();
+        if (plugin.isEnabled()) {
+            // Async
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
+        } else {
+            // Sync for shutdown
+            ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments);
+        }
     }
 
     private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {

@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -128,11 +130,18 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 "`" +
                 dataObject.getCanonicalName() +
                 "` (json) VALUES (?) ON DUPLICATE KEY UPDATE json = ?";
-        // Replace into is used so that any data in the table will be replaced with updated data
-        // The table name is the canonical name, so that add-ons can be sure of a unique table in the database
+
+        Gson gson = getGson();
+        String toStore = gson.toJson(instance);
+        if (plugin.isEnabled()) {
+            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> store(instance, toStore, sb));
+        } else {
+            store(instance, toStore, sb);
+        }
+    }
+
+    private void store(T instance, String toStore, String sb) {
         try (PreparedStatement preparedStatement = connection.prepareStatement(sb)) {
-            Gson gson = getGson();
-            String toStore = gson.toJson(instance);
             preparedStatement.setString(1, toStore);
             preparedStatement.setString(2, toStore);
             preparedStatement.execute();
