@@ -353,8 +353,8 @@ public class Clipboard {
 
     /**
      * Sets any entity that is in this location
-     * @param location - locaton
-     * @param config - config section
+     * @param location - location
+     * @param en - config section
      */
     private void setEntity(Location location, ConfigurationSection en) {
         en.getKeys(false).forEach(k -> {
