@@ -19,7 +19,7 @@ public class DeleteIslandChunks {
     /**
      * This is how many chunks per world will be done in one tick.
      */
-    private final static int SPEED = 5;
+    private static final int SPEED = 5;
     private int x;
     private int z;
     private BukkitTask task;

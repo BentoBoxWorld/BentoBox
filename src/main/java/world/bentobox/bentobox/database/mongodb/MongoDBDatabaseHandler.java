@@ -109,7 +109,7 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     @Override
     public boolean deleteID(String uniqueId) {
         try {
-            return collection.findOneAndDelete(new Document(MONGO_ID, uniqueId)) == null ? false : true;
+            return collection.findOneAndDelete(new Document(MONGO_ID, uniqueId)) != null;
         } catch (Exception e) {
             plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
             return false;
