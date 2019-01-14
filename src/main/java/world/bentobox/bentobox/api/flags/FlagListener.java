@@ -10,6 +10,9 @@ import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.metadata.MetadataValue;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -21,14 +24,12 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Abstract class for flag listeners. Provides common code.
  * @author tastybento
- *
  */
 public abstract class FlagListener implements Listener {
 
     /**
      * Reason for why flag was allowed or disallowed
      * Used by admins for debugging player actions
-     *
      */
     enum Why {
         UNPROTECTED_WORLD,
@@ -48,12 +49,15 @@ public abstract class FlagListener implements Listener {
         SETTING_NOT_ALLOWED_IN_WORLD
     }
 
+    @NonNull
     private BentoBox plugin = BentoBox.getInstance();
+    @Nullable
     private User user = null;
 
     /**
      * @return the plugin
      */
+    @NonNull
     public BentoBox getPlugin() {
         return plugin;
     }
@@ -62,7 +66,7 @@ public abstract class FlagListener implements Listener {
      * Used for unit testing only to set the plugin
      * @param plugin - plugin object
      */
-    public void setPlugin(BentoBox plugin) {
+    public void setPlugin(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
 
@@ -72,7 +76,7 @@ public abstract class FlagListener implements Listener {
      * @param e - event
      * @return true if found, otherwise false
      */
-    private boolean createEventUser(Event e) {
+    private boolean createEventUser(@NonNull Event e) {
         try {
             // Use reflection to get the getPlayer method if it exists
             Method getPlayer = e.getClass().getMethod("getPlayer");
@@ -89,7 +93,8 @@ public abstract class FlagListener implements Listener {
      * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
      * @param user - the User
      */
-    public FlagListener setUser(User user) {
+    @NonNull
+    public FlagListener setUser(@NonNull User user) {
         if (!plugin.getSettings().getFakePlayers().contains(user.getName())) {
             this.user = user;
         }
@@ -105,7 +110,7 @@ public abstract class FlagListener implements Listener {
      * @param e - event
      * @param flag - the flag that has been checked
      */
-    public void noGo(Event e, Flag flag) {
+    public void noGo(@NonNull Event e, @NonNull Flag flag) {
         noGo(e, flag, false);
     }
 
@@ -115,7 +120,7 @@ public abstract class FlagListener implements Listener {
      * @param flag - the flag that has been checked
      * @param silent - if true, message is not sent
      */
-    public void noGo(Event e, Flag flag, boolean silent) {
+    public void noGo(@NonNull Event e, @NonNull Flag flag, boolean silent) {
         if (e instanceof Cancellable) {
             ((Cancellable)e).setCancelled(true);
         }
@@ -134,7 +139,7 @@ public abstract class FlagListener implements Listener {
      * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
      * @return true if allowed, false if not
      */
-    public boolean checkIsland(Event e, Location loc, Flag flag) {
+    public boolean checkIsland(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag) {
         return checkIsland(e, loc, flag, false);
     }
 
@@ -146,7 +151,7 @@ public abstract class FlagListener implements Listener {
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(Event e, Location loc, Flag flag, boolean silent) {
+    public boolean checkIsland(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag, boolean silent) {
         // If this is not an Island World or a standard Nether or End, skip
         if (!plugin.getIWM().inWorld(loc)) {
             report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);
@@ -220,8 +225,8 @@ public abstract class FlagListener implements Listener {
         }
     }
 
-    private void report(User user, Event e, Location loc, Flag flag, Why why) {
-        // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name());
+    private void report(@Nullable User user, @NonNull Event e, @NonNull Location loc, @NonNull Flag flag, @NonNull Why why) {
+        // A quick way to debug flag listener unit tests is to add this line here: System.out.println(why.name()); NOSONAR
         if (user != null && user.getPlayer().getMetadata(loc.getWorld().getName() + "_why_debug").stream()
                 .filter(p -> p.getOwningPlugin().equals(getPlugin())).findFirst().map(MetadataValue::asBoolean).orElse(false)) {
             plugin.log("Why: " + e.getEventName() + " in world " + loc.getWorld().getName() + " at " + Util.xyz(loc.toVector()));
@@ -234,9 +239,23 @@ public abstract class FlagListener implements Listener {
      * Get the flag for this ID
      * @param id - the flag ID
      * @return Flag denoted by the id
+     * @deprecated As of 1.1, replaced with {@link #getFlag(String)}.
      */
-    protected Flag id(String id) {
-        return plugin.getFlagsManager().getFlagByID(id);
+    @Deprecated
+    @Nullable
+    protected Flag id(@NonNull String id) {
+        return getFlag(id).orElse(null);
+    }
+
+    /**
+     * Get the flag for this ID
+     * @param id the flag ID
+     * @return Optional of the Flag denoted by the id
+     * @since 1.1
+     */
+    @NonNull
+    protected Optional<Flag> getFlag(@NonNull String id) {
+        return plugin.getFlagsManager().getFlag(id);
     }
 
     /**
