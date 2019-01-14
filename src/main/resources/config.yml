@@ -23,7 +23,7 @@ general:
     host: localhost
     # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.
     port: 3306
-    name: BSkyBlock
+    name: bentobox
     username: username
     password: password
     # How often the data will be saved to file in mins. Default is 5 minutes.

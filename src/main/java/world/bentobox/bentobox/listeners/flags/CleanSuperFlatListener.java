@@ -3,7 +3,7 @@
  */
 package world.bentobox.bentobox.listeners.flags;
 
-import java.util.ArrayDeque;
+import java.util.LinkedList;
 import java.util.Queue;
 
 import org.bukkit.Bukkit;
@@ -29,7 +29,7 @@ import world.bentobox.bentobox.util.Pair;
  */
 public class CleanSuperFlatListener extends FlagListener {
 
-    private Queue<Pair<Integer, Integer>> chunkQ = new ArrayDeque<>();
+    private Queue<Pair<Integer, Integer>> chunkQ = new LinkedList<>();
     private BukkitTask task;
     private boolean ready;
 

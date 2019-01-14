@@ -9,6 +9,8 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bukkit.Bukkit;
+
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
@@ -42,6 +44,11 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     MariaDBDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         connection = (Connection)dbConnecter.createConnection();
+        if (connection == null) {
+            plugin.logError("Are the settings in config.yml correct?");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return;
+        }
         // Check if the table exists in the database and if not, create it
         createSchema();
     }

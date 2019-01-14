@@ -8,8 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
@@ -35,6 +38,20 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private Connection connection;
 
     /**
+     * FIFO queue for saves. Note that the assumption here is that most database objects will be held
+     * in memory because loading is not handled with this queue. That means that it is theoretically
+     * possible to load something before it has been saved. So, in general, load your objects and then
+     * save them async only when you do not need the data again immediately.
+     */
+    private Queue<Runnable> saveQueue;
+
+    /**
+     * Async save task that runs repeatedly
+     */
+    private BukkitTask asyncSaveTask;
+
+
+    /**
      * Handles the connection to the database and creation of the initial database schema (tables) for
      * the class that will be stored.
      * @param plugin - plugin object
@@ -44,8 +61,32 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     MySQLDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector dbConnecter) {
         super(plugin, type, dbConnecter);
         connection = (Connection)dbConnecter.createConnection();
+        if (connection == null) {
+            plugin.logError("Are the settings in config.yml correct?");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return;
+        }
         // Check if the table exists in the database and if not, create it
         createSchema();
+        saveQueue = new ConcurrentLinkedQueue<>();
+        if (plugin.isEnabled()) {
+            asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                // Loop continuously
+                while (plugin.isEnabled() || !saveQueue.isEmpty()) {
+                    while (!saveQueue.isEmpty()) {
+                        saveQueue.poll().run();
+                    }
+                    // Clear the queue and then sleep
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        plugin.logError("Thread sleep error " + e.getMessage());
+                    }
+                }
+                // Cancel
+                asyncSaveTask.cancel();
+            });
+        }
     }
 
     /**
@@ -134,8 +175,10 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         Gson gson = getGson();
         String toStore = gson.toJson(instance);
         if (plugin.isEnabled()) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> store(instance, toStore, sb));
+            // Async
+            saveQueue.add(() -> store(instance, toStore, sb));
         } else {
+            // Sync
             store(instance, toStore, sb);
         }
     }

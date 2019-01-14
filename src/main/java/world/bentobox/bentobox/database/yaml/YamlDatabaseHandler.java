@@ -19,14 +19,17 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Objects;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.scheduler.BukkitTask;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
@@ -54,9 +57,24 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private static final String YML = ".yml";
 
     /**
+     * FIFO queue for saves. Note that the assumption here is that most database objects will be held
+     * in memory because loading is not handled with this queue. That means that it is theoretically
+     * possible to load something before it has been saved. So, in general, load your objects and then
+     * save them async only when you do not need the data again immediately.
+     */
+    private Queue<Runnable> saveQueue;
+
+    /**
+     * Async save task that runs repeatedly
+     */
+    private BukkitTask asyncSaveTask;
+
+    /**
      * Flag to indicate if this is a config or a pure object database (difference is in comments and annotations)
      */
     protected boolean configFlag;
+
+
 
     /**
      * Constructor
@@ -66,6 +84,25 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     YamlDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
+        saveQueue = new ConcurrentLinkedQueue<>();
+        if (plugin.isEnabled()) {
+            asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+                // Loop continuously
+                while (plugin.isEnabled() || !saveQueue.isEmpty()) {
+                    while (!saveQueue.isEmpty()) {
+                        saveQueue.poll().run();
+                    }
+                    // Clear the queue and then sleep
+                    try {
+                        Thread.sleep(25);
+                    } catch (InterruptedException e) {
+                        plugin.logError("Thread sleep error " + e.getMessage());
+                    }
+                }
+                // Cancel
+                asyncSaveTask.cancel();
+            });
+        }
     }
 
     /* (non-Javadoc)
@@ -445,7 +482,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         String data = config.saveToString();
         if (plugin.isEnabled()) {
             // Async
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
+            saveQueue.add(() -> ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
         } else {
             // Sync for shutdown
             ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments);

@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bson.Document;
 import org.bson.conversions.Bson;
+import org.bukkit.Bukkit;
 
 import com.google.gson.Gson;
 import com.mongodb.client.MongoCollection;
@@ -49,6 +50,11 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
         // Connection to the database
         MongoDatabase database = (MongoDatabase) dbConnecter.createConnection();
+        if (database == null) {
+            plugin.logError("Are the settings in config.yml correct?");
+            Bukkit.getPluginManager().disablePlugin(plugin);
+            return;
+        }
         collection = database.getCollection(dataObject.getCanonicalName());
         IndexOptions indexOptions = new IndexOptions().unique(true);
         collection.createIndex(Indexes.text(UNIQUEID), indexOptions);
