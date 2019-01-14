@@ -276,7 +276,6 @@ public class Clipboard {
     public void pasteClipboard(Location location) {
         if (blockConfig.contains(BLOCKS_YAML_PREFIX)) {
             paste(location.getWorld(), null, location, null);
-            //blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).forEach(b -> pasteBlock(location.getWorld(), null, location, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + "." + b)));
         } else {
             plugin.logError("Clipboard has no block data in it to paste!");
         }
