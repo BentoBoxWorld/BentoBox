@@ -264,7 +264,6 @@ public class UserTest {
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
         when(lm.get(any(), Mockito.eq("name.a.reference"))).thenReturn("mockmockmock");
-        //user = User.getInstance(player);
         user.sendMessage("a.reference");
         Mockito.verify(player, Mockito.never()).sendMessage(Mockito.eq(TEST_TRANSLATION));
         Mockito.verify(player).sendMessage(Mockito.eq("mockmockmock"));
