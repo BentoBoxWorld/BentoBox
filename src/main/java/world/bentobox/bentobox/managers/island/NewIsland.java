@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.EnumMap;
 import java.util.Map;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -31,6 +32,7 @@ public class NewIsland {
     private final Reason reason;
     private final World world;
     private final String name;
+    private final boolean noPaste;
 
     private enum Result {
         ISLAND_FOUND,
@@ -39,13 +41,14 @@ public class NewIsland {
         FREE
     }
 
-    private NewIsland(Island oldIsland, User user, Reason reason, World world, String name) {
+    private NewIsland(Island oldIsland, User user, Reason reason, World world, String name, boolean noPaste) {
         super();
         plugin = BentoBox.getInstance();
         this.user = user;
         this.reason = reason;
         this.world = world;
         this.name = name;
+        this.noPaste = noPaste;
         newIsland(oldIsland);
     }
 
@@ -75,6 +78,7 @@ public class NewIsland {
         private Reason reason2;
         private World world2;
         private String name2 = "island";
+        private boolean noPaste2;
 
         public Builder oldIsland(Island oldIsland) {
             this.oldIsland2 = oldIsland;
@@ -99,6 +103,14 @@ public class NewIsland {
         }
 
         /**
+         * No schematics will be pasted
+         */
+        public Builder noPaste() {
+            this.noPaste2 = true;
+            return this;
+        }
+
+        /**
          * @param name - filename of schematic
          */
         public Builder name(String name) {
@@ -108,7 +120,7 @@ public class NewIsland {
 
         public Island build() throws IOException {
             if (user2 != null) {
-                NewIsland newIsland = new NewIsland(oldIsland2, user2, reason2, world2, name2);
+                NewIsland newIsland = new NewIsland(oldIsland2, user2, reason2, world2, name2, noPaste2);
                 return newIsland.getIsland();
             }
             throw new IOException("Insufficient parameters. Must have a schematic and a player");
@@ -150,8 +162,8 @@ public class NewIsland {
         if (event.isCancelled()) {
             return;
         }
-        // Create island
-        plugin.getSchemsManager().paste(world, island, name, () -> {
+        // Task to run after creating the island
+        Runnable task = () -> {
             // Set initial spawn point if one exists
             if (island.getSpawnPoint(Environment.NORMAL) != null) {
                 plugin.getPlayers().setHomeLocation(user, island.getSpawnPoint(Environment.NORMAL), 1);
@@ -191,17 +203,22 @@ public class NewIsland {
             .island(island)
             .location(island.getCenter())
             .build();
-        });
-        // Make nether island
-        if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {
-            plugin.getSchemsManager().paste(plugin.getIWM().getNetherWorld(world), island, "nether-" + name);
-        }
+        };
+        if (noPaste) {
+            Bukkit.getScheduler().runTask(plugin, task);
+        } else {
+            // Create island
+            plugin.getSchemsManager().paste(world, island, name, task);
+            // Make nether island
+            if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {
+                plugin.getSchemsManager().paste(plugin.getIWM().getNetherWorld(world), island, "nether-" + name);
+            }
 
-        // Make end island
-        if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world) && plugin.getIWM().getEndWorld(world) != null) {
-            plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island, "end-" + name);
+            // Make end island
+            if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world) && plugin.getIWM().getEndWorld(world) != null) {
+                plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island, "end-" + name);
+            }
         }
-
         // Set default settings
         island.setFlagsDefaults();
 
