@@ -40,6 +40,8 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.AddonDescription;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
@@ -54,6 +56,7 @@ public class UserTest {
     private BentoBox plugin;
     private LocalesManager lm;
     private User user;
+    private IslandWorldManager iwm;
 
     @Before
     public void setUp() throws Exception {
@@ -82,7 +85,7 @@ public class UserTest {
         when(Bukkit.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         // Addon
         when(iwm .getAddon(Mockito.any())).thenReturn(Optional.empty());
@@ -251,6 +254,20 @@ public class UserTest {
     public void testSendMessage() {
         user.sendMessage("a.reference");
         Mockito.verify(player).sendMessage(Mockito.eq(TEST_TRANSLATION));
+    }
+
+    @Test
+    public void testSendMessageOverrideWithAddon() {
+        GameModeAddon addon = mock(GameModeAddon.class);
+        AddonDescription desc = new AddonDescription.Builder("mock", "name").build();
+        when(addon.getDescription()).thenReturn(desc);
+        Optional<GameModeAddon> optionalAddon = Optional.of(addon);
+        when(iwm .getAddon(any())).thenReturn(optionalAddon);
+        when(lm.get(any(), Mockito.eq("name.a.reference"))).thenReturn("mockmockmock");
+        //user = User.getInstance(player);
+        user.sendMessage("a.reference");
+        Mockito.verify(player, Mockito.never()).sendMessage(Mockito.eq(TEST_TRANSLATION));
+        Mockito.verify(player).sendMessage(Mockito.eq("mockmockmock"));
     }
 
     @Test
