@@ -15,6 +15,10 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
 public class AdminTeleportCommand extends CompositeCommand {
 
+    /**
+     * @param parent - parent command
+     * @param tpCommand - should be "tp", "tpnether" or "tpend"
+     */
     public AdminTeleportCommand(CompositeCommand parent, String tpCommand) {
         super(parent, tpCommand);
     }
