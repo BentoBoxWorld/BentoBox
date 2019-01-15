@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.flags;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Material;
@@ -18,6 +20,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
+import world.bentobox.bentobox.util.Util;
 
 public class Flag implements Comparable<Flag> {
 
@@ -44,6 +47,7 @@ public class Flag implements Comparable<Flag> {
     private final Listener listener;
     private final Type type;
     private boolean setting;
+    private Map<World, Boolean> defaultWorldSettings = new HashMap<>();
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
@@ -100,7 +104,7 @@ public class Flag implements Comparable<Flag> {
             return false;
         } else {
             // Setting
-            return setting;
+            return defaultWorldSettings.getOrDefault(Util.getWorld(world), setting);
         }
     }
 
@@ -121,6 +125,14 @@ public class Flag implements Comparable<Flag> {
      */
     public void setDefaultSetting(boolean defaultSetting) {
         this.setting = defaultSetting;
+    }
+
+    /**
+     * Set the status of this flag for locations outside of island spaces for a specific world
+     * @param defaultSetting - true means it is allowed. false means it is not allowed
+     */
+    public void setDefaultSetting(World world, boolean defaultSetting) {
+        this.defaultWorldSettings.put(world, defaultSetting);
     }
 
     /**
