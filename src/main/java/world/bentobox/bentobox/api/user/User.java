@@ -245,11 +245,12 @@ public class User {
      */
     public String getTranslation(String reference, String... variables) {
         // Get translation.
-        String addonPrefix = plugin.getIWM().getAddon(getWorld()).map(a -> a.getDescription().getName().toLowerCase() + ".").orElse("");
-        String translation = plugin.getLocalesManager().get(addonPrefix + reference);
+        String addonPrefix = plugin.getIWM()
+                .getAddon(getWorld()).map(a -> a.getDescription().getName().toLowerCase() + ".").orElse("");
+        String translation = plugin.getLocalesManager().get(this, addonPrefix + reference);
 
         if (translation == null) {
-            translation = plugin.getLocalesManager().get(reference);
+            translation = plugin.getLocalesManager().get(this, reference);
             if (translation == null) {
                 // If no translation has been found, return the reference for debug purposes.
                 return reference;

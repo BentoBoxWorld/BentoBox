@@ -148,6 +148,10 @@ public class NetherPortalsTest {
 
         // Normally in world
         Util.setPlugin(plugin);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     private void wrongWorld() {

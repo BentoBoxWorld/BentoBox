@@ -13,6 +13,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -112,6 +113,9 @@ public class AdminTeamKickCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
 

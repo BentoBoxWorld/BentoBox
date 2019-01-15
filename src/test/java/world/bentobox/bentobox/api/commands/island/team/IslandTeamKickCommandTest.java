@@ -121,6 +121,9 @@ public class IslandTeamKickCommandTest {
         iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
     /**

@@ -1,5 +1,13 @@
 package world.bentobox.bentobox.util.teleport;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.junit.Before;
@@ -7,19 +15,16 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.LocalesManager;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(SafeSpotTeleport.Builder.class)
@@ -46,6 +51,11 @@ public class SafeSpotTeleportBuilderTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
+        // Addon
+        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+        when(plugin.getIWM()).thenReturn(iwm);
+
     }
 
     @Test

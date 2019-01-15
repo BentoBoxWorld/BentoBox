@@ -149,6 +149,9 @@ public class HurtingListenerTest {
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     /**

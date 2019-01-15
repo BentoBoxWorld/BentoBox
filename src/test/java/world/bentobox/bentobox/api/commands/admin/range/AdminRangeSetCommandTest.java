@@ -6,7 +6,12 @@ package world.bentobox.bentobox.api.commands.admin.range;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -119,6 +124,8 @@ public class AdminRangeSetCommandTest {
         when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
         when(plugin.getLocalesManager()).thenReturn(lm);
 
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
     /**

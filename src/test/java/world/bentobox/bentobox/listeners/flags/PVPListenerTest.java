@@ -193,6 +193,10 @@ public class PVPListenerTest {
         // Notifier
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     private void wrongWorld() {

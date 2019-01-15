@@ -99,7 +99,6 @@ public class PhysicalInteractionListenerTest {
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
-        //Bukkit.setServer(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -181,6 +180,10 @@ public class PhysicalInteractionListenerTest {
         // Item and clicked block
         item = mock(ItemStack.class);
         clickedBlock = mock(Block.class);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
 
     }
 

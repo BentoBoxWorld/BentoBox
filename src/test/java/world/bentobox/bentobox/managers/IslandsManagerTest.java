@@ -182,6 +182,10 @@ public class IslandsManagerTest {
         when(Bukkit.getServer()).thenReturn(server);
         pim = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pim);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
 

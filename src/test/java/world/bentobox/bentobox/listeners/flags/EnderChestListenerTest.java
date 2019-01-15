@@ -131,6 +131,9 @@ public class EnderChestListenerTest {
         item = mock(ItemStack.class);
         clickedBlock = mock(Block.class);
 
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     @After

@@ -170,6 +170,10 @@ public class EnterExitListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     /**
