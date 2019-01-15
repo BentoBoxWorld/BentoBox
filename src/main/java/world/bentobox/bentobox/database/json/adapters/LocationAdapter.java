@@ -21,7 +21,7 @@ public class LocationAdapter extends TypeAdapter<Location> {
 
     @Override
     public void write(JsonWriter out, Location location) throws IOException {
-        if (location == null) {
+        if (location == null || location.getWorld() == null) {
             out.nullValue();
             return;
         }
@@ -33,8 +33,8 @@ public class LocationAdapter extends TypeAdapter<Location> {
         out.value(location.getYaw());
         out.value(location.getPitch());
         out.endArray();
-   }
-    
+    }
+
     @Override
     public Location read(JsonReader in) throws IOException {
         if (in.peek() == JsonToken.NULL) {
