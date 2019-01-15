@@ -236,19 +236,24 @@ public class User {
     }
 
     /**
-     * Gets a translation of this reference for this user.
+     * Gets a translation of this reference for this user. Translations may be overridden by Addons
+     * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
      * @param reference - reference found in a locale file
      * @param variables - variables to insert into translated string. Variables go in pairs, for example
      *                  "[name]", "tastybento"
      * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
-        // Get translation
-        String translation = plugin.getLocalesManager().get(this, reference);
+        // Get translation.
+        String addonPrefix = plugin.getIWM().getAddon(getWorld()).map(a -> a.getDescription().getName().toLowerCase() + ".").orElse("");
+        String translation = plugin.getLocalesManager().get(addonPrefix + reference);
 
-        // If no translation has been found, return the reference for debug purposes.
         if (translation == null) {
-            return reference;
+            translation = plugin.getLocalesManager().get(reference);
+            if (translation == null) {
+                // If no translation has been found, return the reference for debug purposes.
+                return reference;
+            }
         }
 
         // Then replace variables
@@ -327,10 +332,10 @@ public class User {
 
     /**
      * Gets the current world this entity resides in
-     * @return World
+     * @return World - world or null
      */
     public World getWorld() {
-        return player.getWorld();
+        return player == null ? null : player.getWorld();
     }
 
     /**
