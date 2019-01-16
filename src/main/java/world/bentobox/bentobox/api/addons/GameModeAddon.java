@@ -1,8 +1,11 @@
 package world.bentobox.bentobox.api.addons;
 
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.util.Util;
 
@@ -17,6 +20,14 @@ public abstract class GameModeAddon extends Addon {
     protected World islandWorld;
     protected World netherWorld;
     protected World endWorld;
+    /**
+     * Main player command. Addons can use this hook to into this command.
+     */
+    protected CompositeCommand playerCommand;
+    /**
+     * Main admin command. Addons can use this hook to into this command.
+     */
+    protected CompositeCommand adminCommand;
 
     /**
      * Make the worlds for this GameMode in this method. BentoBox will call it
@@ -61,5 +72,17 @@ public abstract class GameModeAddon extends Addon {
         return endWorld;
     }
 
+    /**
+     * @return the main player command for this Game Mode Addon
+     */
+    public Optional<CompositeCommand> getPlayerCommand() {
+        return Optional.ofNullable(playerCommand);
+    }
 
+    /**
+     * @return the main admin command for this Game Mode Addon
+     */
+    public Optional<CompositeCommand> getAdminCommand() {
+        return Optional.ofNullable(adminCommand);
+    }
 }
