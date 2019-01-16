@@ -240,6 +240,17 @@ public class AddonsManager {
     }
 
     /**
+     * @return List of enabled game mode addons
+     * @since 1.1
+     */
+    public List<GameModeAddon> getGameModeAddons() {
+        return getEnabledAddons().stream()
+                .filter(GameModeAddon.class::isInstance)
+                .map(GameModeAddon.class::cast)
+                .collect(Collectors.toList());
+    }
+
+    /**
      * Gets the list of Addons that are loaded.
      * @return list of loaded Addons.
      * @since 1.1
