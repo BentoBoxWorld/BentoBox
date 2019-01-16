@@ -244,8 +244,7 @@ public class AddonsManager {
      * @since 1.1
      */
     public List<GameModeAddon> getGameModeAddons() {
-        return addons.stream()
-                .filter(addon -> addon.getState().equals(Addon.State.ENABLED))
+        return getEnabledAddons().stream()
                 .filter(GameModeAddon.class::isInstance)
                 .map(GameModeAddon.class::cast)
                 .collect(Collectors.toList());
