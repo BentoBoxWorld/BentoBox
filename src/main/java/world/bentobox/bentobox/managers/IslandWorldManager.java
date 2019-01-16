@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -549,8 +550,8 @@ public class IslandWorldManager {
      *            - world
      * @return GameModeAddon, or empty
      */
-    public Optional<GameModeAddon> getAddon(World world) {
-        return Optional.ofNullable(gameModes.get(Util.getWorld(world)));
+    public Optional<GameModeAddon> getAddon(@Nullable World world) {
+        return world == null ? Optional.empty() : Optional.ofNullable(gameModes.get(Util.getWorld(world)));
     }
 
     /**

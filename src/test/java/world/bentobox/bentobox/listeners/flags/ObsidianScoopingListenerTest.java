@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Logger;
 
 import org.bukkit.GameMode;
@@ -142,6 +143,10 @@ public class ObsidianScoopingListenerTest {
         Map<String, Boolean> map = new HashMap<>();
         map.put("OBSIDIAN_SCOOPING", true);
         when(ws.getWorldFlags()).thenReturn(map);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     @Test

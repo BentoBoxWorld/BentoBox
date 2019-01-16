@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -110,6 +111,9 @@ public class AdminTeamAddCommandTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
 

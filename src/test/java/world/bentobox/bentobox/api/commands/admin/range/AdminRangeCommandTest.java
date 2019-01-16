@@ -5,6 +5,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -101,8 +102,11 @@ public class AdminRangeCommandTest {
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
         Answer<String> answer = invocation -> invocation.getArgumentAt(1, String.class);
-            when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
-            when(plugin.getLocalesManager()).thenReturn(lm);
+        when(lm.get(Mockito.any(), Mockito.any())).thenAnswer(answer );
+        when(plugin.getLocalesManager()).thenReturn(lm);
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
     }
 
 

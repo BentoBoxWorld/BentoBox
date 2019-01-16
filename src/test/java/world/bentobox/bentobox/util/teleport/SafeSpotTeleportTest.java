@@ -95,6 +95,10 @@ public class SafeSpotTeleportTest {
         sch = mock(BukkitScheduler.class);
         when(server.getScheduler()).thenReturn(sch);
 
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
+
     }
 
     /**

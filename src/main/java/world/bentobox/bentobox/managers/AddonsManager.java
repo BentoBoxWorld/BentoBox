@@ -168,8 +168,11 @@ public class AddonsManager {
     private void handleAddonError(Addon addon, Throwable throwable) {
         // Set the AddonState as "ERROR".
         addon.setState(Addon.State.ERROR);
-        plugin.log("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
-        plugin.log("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
+        plugin.logError("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
+        plugin.logError("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
+        if (plugin.getConfig().getBoolean("debug")) {
+            throwable.printStackTrace();
+        }
     }
 
     /**

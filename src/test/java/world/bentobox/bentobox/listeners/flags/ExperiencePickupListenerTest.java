@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.flags;
 
@@ -55,7 +55,7 @@ import world.bentobox.bentobox.util.Util;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
 public class ExperiencePickupListenerTest {
-    
+
     private EntityTargetLivingEntityEvent e;
     private ExperiencePickupListener epl;
     private World world;
@@ -73,10 +73,10 @@ public class ExperiencePickupListenerTest {
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        
+
         // World
         world = mock(World.class);
-        
+
         //FlagsManager flagsManager = new FlagsManager(plugin);
         //when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
@@ -85,7 +85,7 @@ public class ExperiencePickupListenerTest {
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
-        
+
         // Fake players
         Settings settings = mock(Settings.class);
         Mockito.when(plugin.getSettings()).thenReturn(settings);
@@ -124,16 +124,20 @@ public class ExperiencePickupListenerTest {
         when(location.getBlockX()).thenReturn(0);
         when(location.getBlockY()).thenReturn(0);
         when(location.getBlockZ()).thenReturn(0);
-        
-        // Set up as valid        
+
+        // Set up as valid
         entity = mock(ExperienceOrb.class);
         targetEntity = mock(Player.class);
         when(targetEntity.getLocation()).thenReturn(location);
         when(entity.getLocation()).thenReturn(location);
-        
+
         TargetReason reason = TargetReason.CLOSEST_PLAYER;
         e = new EntityTargetLivingEntityEvent(entity, targetEntity, reason);
         epl = new ExperiencePickupListener();
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     /**
@@ -147,17 +151,17 @@ public class ExperiencePickupListenerTest {
         assertNull(e.getTarget());
         Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
     @Test
-    public void testOnExperienceOrbTargetPlayerAllowed() {        
+    public void testOnExperienceOrbTargetPlayerAllowed() {
         epl.onExperienceOrbTargetPlayer(e);
         assertNotNull(e.getTarget());
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */
@@ -168,7 +172,7 @@ public class ExperiencePickupListenerTest {
         assertNotNull(e.getTarget());
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.any(), Mockito.anyString());
     }
-    
+
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.flags.ExperiencePickupListener#onExperienceOrbTargetPlayer(org.bukkit.event.entity.EntityTargetLivingEntityEvent)}.
      */

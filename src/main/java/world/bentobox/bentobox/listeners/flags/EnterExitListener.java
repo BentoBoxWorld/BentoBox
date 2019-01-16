@@ -65,17 +65,17 @@ public class EnterExitListener extends FlagListener {
         islandFrom.ifPresent(i -> {
             // Fire the IslandExitEvent
             new IslandEvent.IslandEventBuilder()
-                    .island(i)
-                    .involvedPlayer(user.getUniqueId())
-                    .reason(IslandEvent.Reason.EXIT)
-                    .admin(false)
-                    .location(user.getLocation())
-                    .build();
+            .island(i)
+            .involvedPlayer(user.getUniqueId())
+            .reason(IslandEvent.Reason.EXIT)
+            .admin(false)
+            .location(user.getLocation())
+            .build();
 
             // Send message if island is owned by someone
             if (i.getOwner() != null) {
                 user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-leaving", TextVariables.NAME, (i.getName() != null) ? i.getName() :
-                        user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner())));
+                    user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner())));
             }
             // Send message if island is unowned, but has a name
             else if (i.getName() != null) {
@@ -86,17 +86,17 @@ public class EnterExitListener extends FlagListener {
         islandTo.ifPresent(i -> {
             // Fire the IslandEnterEvent
             new IslandEvent.IslandEventBuilder()
-                    .island(i)
-                    .involvedPlayer(user.getUniqueId())
-                    .reason(IslandEvent.Reason.ENTER)
-                    .admin(false)
-                    .location(user.getLocation())
-                    .build();
+            .island(i)
+            .involvedPlayer(user.getUniqueId())
+            .reason(IslandEvent.Reason.ENTER)
+            .admin(false)
+            .location(user.getLocation())
+            .build();
 
             // Send message if island is owned by someone
             if (i.getOwner() != null) {
                 user.notify("protection.flags.ENTER_EXIT_MESSAGES.now-entering", TextVariables.NAME, (i.getName() != null) ? i.getName() :
-                        user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner())));
+                    user.getTranslation("protection.flags.ENTER_EXIT_MESSAGES.island", TextVariables.NAME, getPlugin().getPlayers().getName(i.getOwner())));
             }
             // Send message if island is unowned, but has a name
             else if (i.getName() != null) {

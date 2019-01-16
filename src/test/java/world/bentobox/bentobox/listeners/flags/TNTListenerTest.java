@@ -91,7 +91,6 @@ public class TNTListenerTest {
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getServer()).thenReturn(server);
-        //Bukkit.setServer(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -164,6 +163,10 @@ public class TNTListenerTest {
 
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+
+        // Addon
+        when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
     }
 
     @Test
