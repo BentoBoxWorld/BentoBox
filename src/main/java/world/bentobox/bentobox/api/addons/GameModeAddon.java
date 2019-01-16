@@ -5,6 +5,9 @@ import java.util.Optional;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.util.Util;
@@ -12,21 +15,26 @@ import world.bentobox.bentobox.util.Util;
 /**
  * Defines the addon as a game mode.
  * A game mode creates worlds, registers world settings and has schems in a jar folder.
- * @author tastybento, Postlovitch
- *
+ * @author tastybento, Poslovitch
  */
 public abstract class GameModeAddon extends Addon {
 
     protected World islandWorld;
+    @Nullable
     protected World netherWorld;
+    @Nullable
     protected World endWorld;
     /**
      * Main player command. Addons can use this hook to into this command.
+     * @since 1.1
      */
+    @Nullable
     protected CompositeCommand playerCommand;
     /**
      * Main admin command. Addons can use this hook to into this command.
+     * @since 1.1
      */
+    @Nullable
     protected CompositeCommand adminCommand;
 
     /**
@@ -61,6 +69,7 @@ public abstract class GameModeAddon extends Addon {
     /**
      * @return nether world, or null if it does not exist
      */
+    @Nullable
     public World getNetherWorld() {
         return netherWorld;
     }
@@ -68,20 +77,25 @@ public abstract class GameModeAddon extends Addon {
     /**
      * @return end world, or null if it does not exist
      */
+    @Nullable
     public World getEndWorld() {
         return endWorld;
     }
 
     /**
      * @return the main player command for this Game Mode Addon
+     * @since 1.1
      */
+    @NonNull
     public Optional<CompositeCommand> getPlayerCommand() {
         return Optional.ofNullable(playerCommand);
     }
 
     /**
      * @return the main admin command for this Game Mode Addon
+     * @since 1.1
      */
+    @NonNull
     public Optional<CompositeCommand> getAdminCommand() {
         return Optional.ofNullable(adminCommand);
     }
