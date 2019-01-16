@@ -81,6 +81,7 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                         Thread.sleep(25);
                     } catch (InterruptedException e) {
                         plugin.logError("Thread sleep error " + e.getMessage());
+                        Thread.currentThread().interrupt();
                     }
                 }
                 // Cancel
