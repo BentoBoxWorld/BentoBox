@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
@@ -29,7 +30,6 @@ import world.bentobox.bentobox.util.Util;
  * Handles registration and management of worlds
  *
  * @author tastybento
- *
  */
 public class IslandWorldManager {
 
@@ -37,7 +37,7 @@ public class IslandWorldManager {
     private static final String THE_END = "_the_end";
 
     private BentoBox plugin;
-    private Map<World, GameModeAddon> gameModes;
+    private Map<@NonNull World, @NonNull GameModeAddon> gameModes;
 
     /**
      * Manages worlds registered with BentoBox
@@ -83,6 +83,15 @@ public class IslandWorldManager {
         return ((world.getEnvironment().equals(Environment.NETHER) && isIslandNether(world))
                 || (world.getEnvironment().equals(Environment.THE_END) && isIslandEnd(world))
                 || (world.getEnvironment().equals(Environment.NORMAL)) && gameModes.containsKey(world));
+    }
+
+    /**
+     * @return Set of all worlds registered by GameModeAddons
+     * @since 1.1
+     */
+    @NonNull
+    public Set<World> getWorlds() {
+        return gameModes.keySet();
     }
 
     /**
@@ -170,7 +179,8 @@ public class IslandWorldManager {
      *            - friendly name of world
      * @return world, or null if it does not exist
      */
-    public World getWorld(String friendlyName) {
+    @Nullable
+    public World getWorld(@NonNull String friendlyName) {
         return gameModes.entrySet().stream().filter(en -> en.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyName))
                 .map(Map.Entry::getKey).findFirst().orElse(null);
     }
