@@ -46,6 +46,7 @@ import world.bentobox.bentobox.listeners.flags.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.ShearingListener;
 import world.bentobox.bentobox.listeners.flags.TNTListener;
 import world.bentobox.bentobox.listeners.flags.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.ThrowingListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -111,8 +112,13 @@ public final class Flags {
     public static final Flag PRESSURE_PLATE = new Flag.Builder("PRESSURE_PLATE", Material.STONE_PRESSURE_PLATE).build();
     public static final Flag TURTLE_EGGS = new Flag.Builder("TURTLE_EGGS", Material.TURTLE_EGG).build();
 
-    // Egg throwing
+    // Throwing things
     public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
+    /**
+     * Prevents players from throwing potions / exp bottles.
+     * @since 1.1
+     */
+    public static final Flag POTION_THROWING = new Flag.Builder("POTION_THROWING", Material.SPLASH_POTION).listener(new ThrowingListener()).build();
 
     /*
      * Fire

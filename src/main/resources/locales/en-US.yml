@@ -682,7 +682,7 @@ protection:
           &awill not operate on islands
           &awhere all members are offline.
           &aMay help reduce lag.
-      name: "Offline Redstone"     
+      name: "Offline Redstone"
     PISTON_PUSH: 
       description: |-
           &aAllow pistons to push
@@ -692,6 +692,13 @@ protection:
       description: "Toggle placing"
       name: "Place blocks"
       hint: "Not allowed to place blocks"
+    POTION_THROWING:
+      name: "Potion throwing"
+      description: |-
+        &aToggle throwing potions.
+        &aThis include splash and lingering
+        &apotions and experience bottles.
+      hint: "Not allowed to throw potions"
     NETHER_PORTAL:
       description: "Toggle use"
       name: "Nether Portal"

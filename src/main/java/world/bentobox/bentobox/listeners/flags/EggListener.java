@@ -24,5 +24,4 @@ public class EggListener extends FlagListener {
             e.setHatching(false);
         }
     }
-
 }
