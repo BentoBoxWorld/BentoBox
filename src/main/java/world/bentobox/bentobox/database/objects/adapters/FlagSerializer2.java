@@ -26,11 +26,11 @@ public class FlagSerializer2 implements AdapterInterface<Map<Flag, Integer>, Map
         if (object instanceof MemorySection) {
             MemorySection section = (MemorySection) object;
             for (String key : section.getKeys(false)) {
-                result.put(BentoBox.getInstance().getFlagsManager().getFlagByID(key), section.getBoolean(key) ? 0 : -1);
+                BentoBox.getInstance().getFlagsManager().getFlag(key).ifPresent(flag -> result.put(flag, section.getBoolean(key) ? 0 : -1));
             }
         } else {
             for (Entry<String, Boolean> en : ((Map<String, Boolean>)object).entrySet()) {
-                result.put(BentoBox.getInstance().getFlagsManager().getFlagByID(en.getKey()), en.getValue() ? 0 : -1);
+                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, en.getValue() ? 0 : -1));
             }
         }
         return result;

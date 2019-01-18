@@ -29,17 +29,11 @@ public class FlagSerializer implements AdapterInterface<Map<Flag, Integer>, Map<
         if (object instanceof MemorySection) {
             MemorySection section = (MemorySection) object;
             for (String key : section.getKeys(false)) {
-                Flag flag = BentoBox.getInstance().getFlagsManager().getFlagByID(key);
-                if (flag != null) {
-                    result.put(flag, section.getInt(key));
-                }
+                BentoBox.getInstance().getFlagsManager().getFlag(key).ifPresent(flag -> result.put(flag, section.getInt(key)));
             }
         } else {
             for (Entry<String, Integer> en : ((Map<String, Integer>)object).entrySet()) {
-                Flag flag = BentoBox.getInstance().getFlagsManager().getFlagByID(en.getKey());
-                if (flag != null) {
-                    result.put(flag, en.getValue());
-                }
+                BentoBox.getInstance().getFlagsManager().getFlag(en.getKey()).ifPresent(flag -> result.put(flag, en.getValue()));
             }
         }
         return result;
