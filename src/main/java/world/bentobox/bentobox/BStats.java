@@ -5,10 +5,17 @@ import org.bstats.bukkit.Metrics;
 /**
  * @author Poslovitch
  */
-class BStats {
+public class BStats {
 
     private final BentoBox plugin;
     private Metrics metrics;
+
+    /**
+     * Counts of the islands that got created.
+     * It is reset to 0 when BStats gets the data.
+     * @since 1.1
+     */
+    private int islandsCreatedCount = 0;
 
     BStats(BentoBox plugin) {
         this.plugin = plugin;
@@ -28,6 +35,7 @@ class BStats {
 
         // Single Line charts
         registerIslandsCountChart();
+        registerIslandsCreatedChart();
     }
 
     private void registerDefaultLanguageChart() {
@@ -40,5 +48,24 @@ class BStats {
 
     private void registerIslandsCountChart() {
         metrics.addCustomChart(new Metrics.SingleLineChart("islands", () -> plugin.getIslands().getIslandCount()));
+    }
+
+    /**
+     * @since 1.1
+     */
+    private void registerIslandsCreatedChart() {
+        metrics.addCustomChart(new Metrics.SingleLineChart("islandsCreated", () -> {
+            int value = islandsCreatedCount;
+            islandsCreatedCount = 0;
+            return value;
+        }));
+    }
+
+    /**
+     * Increases the count of islands that got create since the last "data get" request from BStats.
+     * @since 1.1
+     */
+    public void increaseIslandsCreatedCount() {
+        islandsCreatedCount++;
     }
 }

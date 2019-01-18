@@ -6,6 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -57,6 +59,7 @@ public class BentoBox extends JavaPlugin {
     private SchemsManager schemsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
+    private IslandDeletionManager islandDeletionManager;
 
     // Settings
     private Settings settings;
@@ -68,7 +71,9 @@ public class BentoBox extends JavaPlugin {
 
     private boolean isLoaded;
 
-    private IslandDeletionManager islandDeletionManager;
+    // Metrics
+    @Nullable
+    private BStats metrics;
 
     @Override
     public void onEnable(){
@@ -156,8 +161,8 @@ public class BentoBox extends JavaPlugin {
 
             // Load metrics
             if (settings.isMetrics()) {
-                BStats bStats = new BStats(this);
-                bStats.registerMetrics();
+                metrics = new BStats(this);
+                metrics.registerMetrics();
             }
 
             // Load hooks
@@ -180,7 +185,6 @@ public class BentoBox extends JavaPlugin {
             // Fire plugin ready event - this should go last after everything else
             isLoaded = true;
             Bukkit.getServer().getPluginManager().callEvent(new BentoBoxReadyEvent());
-
         });
     }
 
@@ -367,8 +371,18 @@ public class BentoBox extends JavaPlugin {
 
     /**
      * @return the islandDeletionManager
+     * @since 1.1
      */
     public IslandDeletionManager getIslandDeletionManager() {
         return islandDeletionManager;
+    }
+
+    /**
+     * @return an optional of the Bstats instance
+     * @since 1.1
+     */
+    @NonNull
+    public Optional<BStats> getMetrics() {
+        return Optional.ofNullable(metrics);
     }
 }

@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.util.Vector;
 
+import world.bentobox.bentobox.BStats;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -221,7 +222,7 @@ public class NewIsland {
         }
         // Set default settings
         island.setFlagsDefaults();
-
+        plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
     }
 
     /**
