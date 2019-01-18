@@ -21,6 +21,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
@@ -33,15 +35,19 @@ import world.bentobox.bentobox.api.events.addon.AddonEvent;
  */
 public class AddonsManager {
 
+    @NonNull
     private List<Addon> addons;
-    private Map<Addon, AddonClassLoader> loaders;
-    private final Map<String, Class<?>> classes = new HashMap<>();
+    @NonNull
+    private Map<@NonNull Addon, @Nullable AddonClassLoader> loaders;
+    @NonNull
+    private final Map<String, Class<?>> classes;
     private BentoBox plugin;
 
-    public AddonsManager(BentoBox plugin) {
+    public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
         loaders = new HashMap<>();
+        classes = new HashMap<>();
     }
 
     /**
@@ -62,7 +68,7 @@ public class AddonsManager {
         }
     }
 
-    private void loadAddon(File f) {
+    private void loadAddon(@NonNull File f) {
         Addon addon;
         AddonClassLoader addonClassLoader;
         try (JarFile jar = new JarFile(f)) {
@@ -151,7 +157,7 @@ public class AddonsManager {
      * @param addon instance of the Addon.
      * @since 1.1
      */
-    private void handleAddonIncompatibility(Addon addon) {
+    private void handleAddonIncompatibility(@NonNull Addon addon) {
         // Set the AddonState as "INCOMPATIBLE".
         addon.setState(Addon.State.INCOMPATIBLE);
         plugin.log("Skipping " + addon.getDescription().getName() + " as it is incompatible with the current version of BentoBox or of server software...");
@@ -162,16 +168,17 @@ public class AddonsManager {
     /**
      * Handles an addon which failed to load due to an error.
      * @param addon instance of the Addon.
-     * @param throwable Throwable that was thrown and which lead to the error.
+     * @param throwable Throwable that was thrown and which led to the error.
      * @since 1.1
      */
-    private void handleAddonError(Addon addon, Throwable throwable) {
+    private void handleAddonError(@NonNull Addon addon, @NonNull Throwable throwable) {
         // Set the AddonState as "ERROR".
         addon.setState(Addon.State.ERROR);
         plugin.logError("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
         plugin.logError("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
         if (plugin.getConfig().getBoolean("debug")) {
-            throwable.printStackTrace();
+            plugin.logDebug(throwable.toString());
+            plugin.logDebug(throwable.getStackTrace());
         }
     }
 
@@ -191,14 +198,16 @@ public class AddonsManager {
 
     /**
      * Gets the addon by name
-     * @param name - addon name
+     * @param name addon name, not null
      * @return Optional addon object
      */
-    public Optional<Addon> getAddonByName(String name){
+    @NonNull
+    public Optional<Addon> getAddonByName(@NonNull String name){
         return addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst();
     }
 
-    private YamlConfiguration addonDescription(JarFile jar) throws InvalidAddonFormatException, IOException, InvalidConfigurationException {
+    @NonNull
+    private YamlConfiguration addonDescription(@NonNull JarFile jar) throws InvalidAddonFormatException, IOException, InvalidConfigurationException {
         // Obtain the addon.yml file
         JarEntry entry = jar.getJarEntry("addon.yml");
         if (entry == null) {
@@ -238,6 +247,7 @@ public class AddonsManager {
         }
     }
 
+    @NonNull
     public List<Addon> getAddons() {
         return addons;
     }
@@ -246,6 +256,7 @@ public class AddonsManager {
      * @return List of enabled game mode addons
      * @since 1.1
      */
+    @NonNull
     public List<GameModeAddon> getGameModeAddons() {
         return getEnabledAddons().stream()
                 .filter(GameModeAddon.class::isInstance)
@@ -258,6 +269,7 @@ public class AddonsManager {
      * @return list of loaded Addons.
      * @since 1.1
      */
+    @NonNull
     public List<Addon> getLoadedAddons() {
         return addons.stream().filter(addon -> addon.getState().equals(Addon.State.LOADED)).collect(Collectors.toList());
     }
@@ -267,30 +279,33 @@ public class AddonsManager {
      * @return list of enabled Addons.
      * @since 1.1
      */
+    @NonNull
     public List<Addon> getEnabledAddons() {
         return addons.stream().filter(addon -> addon.getState().equals(Addon.State.ENABLED)).collect(Collectors.toList());
     }
 
-    public AddonClassLoader getLoader(final Addon addon) {
+    @Nullable
+    public AddonClassLoader getLoader(@NonNull final Addon addon) {
         return loaders.get(addon);
     }
 
     /**
      * Finds a class by name that has been loaded by this loader
-     * @param name - name of the class
-     * @return Class - the class
+     * @param name name of the class, not null
+     * @return Class the class
      */
-    public Class<?> getClassByName(final String name) {
+    @Nullable
+    public Class<?> getClassByName(@NonNull final String name) {
         return classes.getOrDefault(name, loaders.values().stream().map(l -> l.findClass(name, false)).filter(Objects::nonNull).findFirst().orElse(null));
     }
 
     /**
      * Sets a class that this loader should know about
      *
-     * @param name - name of the class
-     * @param clazz - the class
+     * @param name name of the class, not null
+     * @param clazz the class, not null
      */
-    public void setClass(final String name, final Class<?> clazz) {
+    public void setClass(@NonNull final String name, @NonNull final Class<?> clazz) {
         classes.putIfAbsent(name, clazz);
     }
 
@@ -336,5 +351,4 @@ public class AddonsManager {
         addons.clear();
         addons.addAll(sortedAddons.values());
     }
-
 }

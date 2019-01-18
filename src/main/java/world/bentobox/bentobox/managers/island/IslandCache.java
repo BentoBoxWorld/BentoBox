@@ -41,7 +41,7 @@ public class IslandCache {
      * @param island island to add, not null
      * @return true if successfully added, false if not
      */
-    public boolean addIsland(Island island) {
+    public boolean addIsland(@NonNull Island island) {
         if (island.getCenter() == null || island.getWorld() == null) {
             return false;
         }
