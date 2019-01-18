@@ -7,6 +7,7 @@ import java.util.Set;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -15,6 +16,9 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
+/**
+ * @author tastybento
+ */
 public class IslandResetCommand extends ConfirmableCommand {
 
     public IslandResetCommand(CompositeCommand islandCommand) {
@@ -48,7 +52,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.reset.must-remove-members");
             return false;
         }
-        if (getIWM().getResetLimit(getWorld()) >= 0 ) {
+        if (getIWM().getResetLimit(getWorld()) >= 0) {
             int resetsLeft = getIWM().getResetLimit(getWorld()) - getPlayers().getResets(getWorld(), user.getUniqueId());
             if (resetsLeft <= 0) {
                 user.sendMessage("commands.island.reset.none-left");
@@ -58,24 +62,22 @@ public class IslandResetCommand extends ConfirmableCommand {
                 user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(resetsLeft));
             }
         }
+
         // Default schem is 'island'
-
-        String name = args.isEmpty() ? "island" : args.get(0).toLowerCase(java.util.Locale.ENGLISH);
-        if (!args.isEmpty()) {
-            // Permission check
-            String permission = this.getPermissionPrefix() + "island.create." + name;
-            if (!user.isOp() && !user.hasPermission(permission)) {
-                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
-                return false;
-            }
-            // Check the schem name exists
-            Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
-            if (!validNames.contains(name)) {
-                user.sendMessage("commands.island.create.unknown-schem");
-                return false;
-            }
-
+        String name = getSchemName(args);
+        if (name == null) {
+            // The schem name is not valid.
+            user.sendMessage("commands.island.create.unknown-schem");
+            return false;
         }
+
+        // Permission check if the name is not the default one
+        String permission = getPermissionPrefix() + "island.create." + name;
+        if (!name.equals("island") && (!user.isOp() || !user.hasPermission(permission))) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
+            return false;
+        }
+
         // Request confirmation
         if (getSettings().isResetConfirmation()) {
             this.askConfirmation(user, () -> resetIsland(user, name));
@@ -83,7 +85,24 @@ public class IslandResetCommand extends ConfirmableCommand {
         } else {
             return resetIsland(user, name);
         }
+    }
 
+    /**
+     * Returns the schem name from the args.
+     * "island" is the default.
+     * May be null if the schem does not exist.
+     * @param args args of the command
+     * @return schem name or null
+     * @since 1.1
+     */
+    @Nullable
+    private String getSchemName(List<String> args) {
+        String name = args.isEmpty() ? "island" : args.get(0).toLowerCase(java.util.Locale.ENGLISH);
+        Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
+        if (!validNames.contains(name)) {
+            return null;
+        }
+        return name;
     }
 
     private boolean resetIsland(User user, String name) {
