@@ -97,9 +97,13 @@ public class IslandResetCommand extends ConfirmableCommand {
      */
     @Nullable
     private String getSchemName(List<String> args) {
-        String name = args.isEmpty() ? "island" : args.get(0).toLowerCase(java.util.Locale.ENGLISH);
+        if (args.isEmpty()) {
+            return "island";
+        }
+
+        String name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
         Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
-        if (!validNames.contains(name)) {
+        if (!name.equals("island") && !validNames.contains(name)) {
             return null;
         }
         return name;

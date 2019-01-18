@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertFalse;
