@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.api.addons;
 
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -9,13 +11,18 @@ import java.util.List;
  */
 public final class AddonDescription {
 
-    private String main;
-    private String name;
-    private String version;
-    private String description;
-    private List<String> authors;
-    private List<String> dependencies;
-    private List<String> softDependencies;
+    private final @NonNull String main;
+    private final @NonNull String name;
+    private final @NonNull String version;
+    private final @NonNull String description;
+    private final @NonNull List<String> authors;
+    private final @NonNull List<String> dependencies;
+    private final @NonNull List<String> softDependencies;
+    /**
+     * Whether the addon should be included in Metrics or not.
+     * @since 1.1
+     */
+    private final boolean metrics;
 
     private AddonDescription(Builder builder) {
         this.main = builder.main;
@@ -25,24 +32,30 @@ public final class AddonDescription {
         this.authors = builder.authors;
         this.dependencies = builder.dependencies;
         this.softDependencies = builder.softDependencies;
+        this.metrics = builder.metrics;
     }
 
+    @NonNull
     public String getName() {
         return name;
     }
 
+    @NonNull
     public String getMain() {
         return main;
     }
 
+    @NonNull
     public String getVersion() {
         return version;
     }
 
+    @NonNull
     public String getDescription() {
         return description;
     }
 
+    @NonNull
     public List<String> getAuthors() {
         return authors;
     }
@@ -50,6 +63,7 @@ public final class AddonDescription {
     /**
      * @return the dependencies
      */
+    @NonNull
     public List<String> getDependencies() {
         return dependencies;
     }
@@ -57,49 +71,93 @@ public final class AddonDescription {
     /**
      * @return the softDependencies
      */
+    @NonNull
     public List<String> getSoftDependencies() {
         return softDependencies;
     }
 
-    public static class Builder {
-        private String main;
-        private String name;
-        private String version;
-        private String description;
-        private List<String> authors = new ArrayList<>();
-        private List<String> dependencies = new ArrayList<>();
-        private List<String> softDependencies = new ArrayList<>();
+    /**
+     * Returns whether the addon should be included in Metrics or not.
+     * @return {@code true} if the addon should be included in Metrics reports, {@code false} otherwise.
+     * @since 1.1
+     */
+    public boolean isMetrics() {
+        return metrics;
+    }
 
-        public Builder(String main, String name) {
+    public static class Builder {
+        private @NonNull String main;
+        private @NonNull String name;
+        private @NonNull String version;
+        private @NonNull String description = "";
+        private @NonNull List<String> authors = new ArrayList<>();
+        private @NonNull List<String> dependencies = new ArrayList<>();
+        private @NonNull List<String> softDependencies = new ArrayList<>();
+        private boolean metrics = false;
+
+        /**
+         * @deprecated As of 1.1, use {@link Builder#Builder(String, String, String)} instead.
+         */
+        @Deprecated
+        public Builder(@NonNull String main, @NonNull String name) {
             this.main = main;
             this.name = name;
+            this.version = "";
         }
 
-        public Builder version(String version) {
+        /**
+         * @since 1.1
+         */
+        public Builder(@NonNull String main, @NonNull String name, @NonNull String version) {
+            this.main = main;
+            this.name = name;
+            this.version = version;
+        }
+
+        /**
+         * @deprecated As of 1.1, for removal.
+         */
+        @Deprecated
+        @NonNull
+        public Builder version(@NonNull String version) {
             this.version = version;
             return this;
         }
 
-        public Builder description(String description) {
+        @NonNull
+        public Builder description(@NonNull String description) {
             this.description = description;
             return this;
         }
 
-        public Builder authors(String... authors) {
+        @NonNull
+        public Builder authors(@NonNull String... authors) {
             this.authors = Arrays.asList(authors);
             return this;
         }
 
-        public Builder dependencies(List<String> dependencies) {
+        @NonNull
+        public Builder dependencies(@NonNull List<String> dependencies) {
             this.dependencies = dependencies;
             return this;
         }
 
-        public Builder softDependencies(List<String> softDependencies) {
+        @NonNull
+        public Builder softDependencies(@NonNull List<String> softDependencies) {
             this.softDependencies = softDependencies;
             return this;
         }
 
+        /**
+         * @since 1.1
+         */
+        @NonNull
+        public Builder metrics(boolean metrics) {
+            this.metrics = metrics;
+            return this;
+        }
+
+        @NonNull
         public AddonDescription build() {
             return new AddonDescription(this);
         }

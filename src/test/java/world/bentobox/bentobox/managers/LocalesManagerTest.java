@@ -296,7 +296,7 @@ public class LocalesManagerTest {
         AddonsManager am = mock(AddonsManager.class);
         List<Addon> none = new ArrayList<>();
         Addon addon = mock(Addon.class);
-        AddonDescription desc = new AddonDescription.Builder("", "AcidIsland").build();
+        AddonDescription desc = new AddonDescription.Builder("", "AcidIsland", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
         // Create a tmp folder to jar up
         File localeDir = new File(LOCALE_FOLDER);

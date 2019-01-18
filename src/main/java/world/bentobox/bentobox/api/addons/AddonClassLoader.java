@@ -84,9 +84,9 @@ public class AddonClassLoader extends URLClassLoader {
     }
 
     private AddonDescription asDescription(YamlConfiguration data) {
-        AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"))
-                .version(data.getString("version"))
-                .authors(data.getString("authors"));
+        AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"), data.getString("version"))
+                .authors(data.getString("authors"))
+                .metrics(data.getBoolean("metrics"));
 
         if (data.getString("depend") != null) {
             builder.dependencies(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
@@ -102,6 +102,7 @@ public class AddonClassLoader extends URLClassLoader {
      * @see java.net.URLClassLoader#findClass(java.lang.String)
      */
     @Override
+    @Nullable
     protected Class<?> findClass(String name) {
         return findClass(name, true);
     }
@@ -127,7 +128,7 @@ public class AddonClassLoader extends URLClassLoader {
                 try {
                     computed = super.findClass(key);
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
-                    computed = null;
+                    // Do nothing.
                 }
                 if (computed != null) {
                     loader.setClass(key, computed);

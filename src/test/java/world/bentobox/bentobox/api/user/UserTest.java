@@ -259,7 +259,7 @@ public class UserTest {
     @Test
     public void testSendMessageOverrideWithAddon() {
         GameModeAddon addon = mock(GameModeAddon.class);
-        AddonDescription desc = new AddonDescription.Builder("mock", "name").build();
+        AddonDescription desc = new AddonDescription.Builder("mock", "name", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
@@ -275,7 +275,6 @@ public class UserTest {
         when(lm.get(any(), any())).thenReturn("");
         user.sendMessage("a.reference");
         Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
-
     }
 
     @Test
@@ -288,7 +287,6 @@ public class UserTest {
         when(lm.get(any(), any())).thenReturn(allColors.toString());
         user.sendMessage("a.reference");
         Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
-
     }
 
     @Test
@@ -304,7 +302,6 @@ public class UserTest {
         user = User.getInstance((CommandSender)null);
         user.sendRawMessage(raw);
         Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
-
     }
 
     @Test
@@ -320,7 +317,6 @@ public class UserTest {
 
         user.notify("a.reference");
         Mockito.verify(notifier).notify(user, translation);
-
     }
 
 
@@ -330,7 +326,6 @@ public class UserTest {
             user.setGameMode(gm);
         }
         Mockito.verify(player, Mockito.times(GameMode.values().length)).setGameMode(Mockito.any());
-
     }
 
     @Test
@@ -339,7 +334,6 @@ public class UserTest {
         Location loc = mock(Location.class);
         user.teleport(loc);
         Mockito.verify(player).teleport(loc);
-
     }
 
     @Test
@@ -348,7 +342,6 @@ public class UserTest {
         when(player.getWorld()).thenReturn(world);
         User user = User.getInstance(player);
         assertEquals(world, user.getWorld());
-
     }
 
     @Test
@@ -409,7 +402,6 @@ public class UserTest {
 
         user1 = User.getInstance((UUID)null);
         assertFalse(user2.equals(user1));
-
     }
 
     @Test

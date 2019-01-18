@@ -2,6 +2,9 @@ package world.bentobox.bentobox;
 
 import org.bstats.bukkit.Metrics;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * @author Poslovitch
  */
@@ -36,6 +39,9 @@ public class BStats {
         // Single Line charts
         registerIslandsCountChart();
         registerIslandsCreatedChart();
+
+        // Simple Bar Charts
+        registerAddonsChart();
     }
 
     private void registerDefaultLanguageChart() {
@@ -67,5 +73,19 @@ public class BStats {
      */
     public void increaseIslandsCreatedCount() {
         islandsCreatedCount++;
+    }
+
+    /**
+     * Sends the enabled addons of this server.
+     * @since 1.1
+     */
+    private void registerAddonsChart() {
+        metrics.addCustomChart(new Metrics.SimpleBarChart("addons", () -> {
+            Map<String, Integer> map = new HashMap<>();
+            plugin.getAddonsManager().getEnabledAddons().stream()
+                    .filter(addon -> addon.getDescription().isMetrics())
+                    .forEach(addon -> map.put(addon.getDescription().getName(), 1));
+            return map;
+        }));
     }
 }
