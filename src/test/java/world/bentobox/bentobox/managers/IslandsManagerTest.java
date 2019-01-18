@@ -202,15 +202,6 @@ public class IslandsManagerTest {
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
      */
     @Test
-    public void testIsSafeLocationNull() {
-        IslandsManager manager = new IslandsManager(plugin);
-        assertFalse(manager.isSafeLocation(null));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isSafeLocation(org.bukkit.Location)}.
-     */
-    @Test
     public void testIsSafeLocationNullWorld() {
         when(location.getWorld()).thenReturn(null);
         IslandsManager manager = new IslandsManager(plugin);
@@ -364,18 +355,10 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#IslandsManager(world.bentobox.bentobox.BentoBox)}.
-     */
-    @Test
-    public void testIslandsManager() {
-        assertNotNull(new IslandsManager(plugin));
-    }
-
-    /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#bigScan(org.bukkit.Location, int)}.
      */
     @Test
-    public void testBigScan() throws Exception {
+    public void testBigScan() {
         Settings settings = mock(Settings.class);
 
         when(plugin.getSettings()).thenReturn(settings);
@@ -407,13 +390,8 @@ public class IslandsManagerTest {
         when(ground.getState()).thenReturn(blockState);
 
         // Negative value = full island scan
-        // Null location should get a null response
-        assertNull(manager.bigScan(null, -1));
         // No island here yet
         assertNull(manager.bigScan(location, -1));
-        // Try null location, > 0 scan value
-        assertNull(manager.bigScan(null, 10));
-
     }
 
     /**
@@ -438,16 +416,6 @@ public class IslandsManagerTest {
         assertNotNull(island);
         assertEquals(island.getCenter().getWorld(), location.getWorld());
         assertEquals(owner, island.getOwner());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#deleteIsland(world.bentobox.bentobox.database.objects.Island, boolean)}.
-     */
-    @Test
-    public void testDeleteIslandIslandBooleanNull() {
-        IslandsManager im = new IslandsManager(plugin);
-        im.deleteIsland((Island)null, true);
-        Mockito.verify(pim, Mockito.never()).callEvent(Mockito.any());
     }
 
     /**
@@ -521,16 +489,13 @@ public class IslandsManagerTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
         assertEquals(Optional.empty(), im.getIslandAt(location));
-
-
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testGetIslandAtLocationNether() throws Exception {
+    public void testGetIslandAtLocationNether() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
@@ -544,10 +509,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testGetIslandAtLocationNetherNoNether() throws Exception {
+    public void testGetIslandAtLocationNetherNoNether() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
 
@@ -560,10 +524,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testGetIslandAtLocationNetherNoNetherIslands() throws Exception {
+    public void testGetIslandAtLocationNetherNoNetherIslands() {
         when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
@@ -594,10 +557,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testGetIslandAtLocationEndNoEnd() throws Exception {
+    public void testGetIslandAtLocationEndNoEnd() {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
 
@@ -610,10 +572,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testGetIslandAtLocationEndNoEndIslands() throws Exception {
+    public void testGetIslandAtLocationEndNoEndIslands() {
         when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
         when(iwm.isEndIslands(Mockito.any())).thenReturn(false);
@@ -650,10 +611,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getMembers(World, UUID)}.
-     * @throws Exception
      */
     @Test
-    public void testGetMembers() throws Exception {
+    public void testGetMembers() {
         // Mock island cache
         Set<UUID> members = new HashSet<>();
         members.add(UUID.randomUUID());
@@ -667,10 +627,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getProtectedIslandAt(org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testGetProtectedIslandAt() throws Exception {
+    public void testGetProtectedIslandAt() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -777,10 +736,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#isOwner(World, UUID)}.
-     * @throws Exception
      */
     @Test
-    public void testIsOwner() throws Exception {
+    public void testIsOwner() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -818,10 +776,9 @@ public class IslandsManagerTest {
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#locationIsOnIsland(org.bukkit.entity.Player, org.bukkit.Location)}.
-     * @throws Exception
      */
     @Test
-    public void testLocationIsOnIsland() throws Exception {
+    public void testLocationIsOnIsland() {
         // Mock island cache
         Island is = mock(Island.class);
 
@@ -967,7 +924,7 @@ public class IslandsManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#save(boolean)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#save(Island)}.
      */
     @Test
     public void testSave() {
@@ -1144,5 +1101,4 @@ public class IslandsManagerTest {
         Mockito.verify(wither, Mockito.never()).remove();
         Mockito.verify(creeper).remove();
     }
-
 }

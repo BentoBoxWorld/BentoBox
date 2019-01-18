@@ -11,16 +11,24 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * @author tastybento
+ */
 public class IslandCache {
-    private Map<Location, Island> islandsByLocation;
+    @NonNull
+    private Map<@NonNull Location, @NonNull Island> islandsByLocation;
     /**
      * Every player who is associated with an island is in this map.
      */
-    private Map<World, Map<UUID, Island>> islandsByUUID;
-    private Map<World, IslandGrid> grids;
+    @NonNull
+    private Map<@NonNull World, @NonNull Map<@NonNull UUID, @NonNull Island>> islandsByUUID;
+    @NonNull
+    private Map<@NonNull World, @NonNull IslandGrid> grids;
 
     public IslandCache() {
         islandsByLocation = new HashMap<>();
@@ -30,7 +38,7 @@ public class IslandCache {
 
     /**
      * Adds an island to the grid
-     * @param island - island to add
+     * @param island island to add, not null
      * @return true if successfully added, false if not
      */
     public boolean addIsland(Island island) {
@@ -144,6 +152,7 @@ public class IslandCache {
      * @param uuid the player's UUID
      * @return island owner's UUID, the player UUID if they are not in a team, or null if there is no island
      */
+    @Nullable
     public UUID getOwner(World world, UUID uuid) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
         Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
@@ -199,7 +208,7 @@ public class IslandCache {
 
     /**
      * Gets the number of islands in the cache for this world
-     * @param world
+     * @param world world to get the number of islands in
      * @return the number of islands
      */
     public int size(World world) {
@@ -207,7 +216,8 @@ public class IslandCache {
     }
 
     /**
-     * Sets an island owner. Clears out any other owner
+     * Sets an island owner.
+     * Clears out any other owner.
      * @param island - island
      * @param newOwnerUUID - new owner
      */
@@ -217,5 +227,4 @@ public class IslandCache {
         islandsByUUID.get(Util.getWorld(island.getWorld())).put(newOwnerUUID, island);
         islandsByLocation.put(island.getCenter(), island);
     }
-
 }

@@ -23,6 +23,8 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -51,17 +53,20 @@ public class IslandsManager {
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
      */
-    private Map<World, Island> spawn;
+    @NonNull
+    private Map<@NonNull World, @Nullable Island> spawn;
 
+    @NonNull
     private Database<Island> handler;
 
     /**
      * The last locations where an island were put.
      * This is not stored persistently and resets when the server starts
      */
-    private Map<World,Location> last;
+    private Map<World, Location> last;
 
     // Island Cache
+    @NonNull
     private IslandCache islandCache;
 
     /**
@@ -83,17 +88,14 @@ public class IslandsManager {
      * @param i - the range to scan for a location less than 0 means the full island.
      * @return - safe location, or null if none can be found
      */
-    public Location bigScan(Location l, int i) {
-        if (l == null) {
-            return null;
-        }
+    @Nullable
+    public Location bigScan(@NonNull Location l, int i) {
         final int height;
         final int depth;
         if (i > 0) {
             height = i;
             depth = i;
         } else {
-
             Optional<Island> island = getIslandAt(l);
             if (!island.isPresent()) {
                 return null;
@@ -159,12 +161,11 @@ public class IslandsManager {
      * warps and boat exits Unsafe is any liquid or air and also if there's no
      * space
      *
-     * @param l
-     *            - Location to be checked
+     * @param l Location to be checked, not null.
      * @return true if safe, otherwise false
      */
-    public boolean isSafeLocation(Location l) {
-        if (l == null || l.getWorld() == null) {
+    public boolean isSafeLocation(@NonNull Location l) {
+        if (l.getWorld() == null) {
             return false;
         }
         Block ground = l.getBlock().getRelative(BlockFace.DOWN);
@@ -209,20 +210,22 @@ public class IslandsManager {
 
     /**
      * Create an island with no owner at location
-     * @param location - the location - location
-     * @return Island
+     * @param location the location, not null
+     * @return Island or null if the island could not be created for some reason
      */
+    @Nullable
     public Island createIsland(Location location){
         return createIsland(location, null);
     }
 
     /**
      * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
-     * @param location - the location - location
-     * @param owner - the island owner UUID
+     * @param location the location, not null
+     * @param owner the island owner UUID, may be null
      * @return Island or null if the island could not be created for some reason
      */
-    public Island createIsland(Location location, UUID owner){
+    @Nullable
+    public Island createIsland(@NonNull Location location, @Nullable UUID owner){
         Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         while (handler.objectExists(island.getUniqueId())) {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
@@ -237,14 +240,11 @@ public class IslandsManager {
     }
 
     /**
-     * Deletes island. If island is null, it does nothing
-     * @param island - island
-     * @param removeBlocks - if the island blocks should be removed or not
+     * Deletes island.
+     * @param island island to delete, not null
+     * @param removeBlocks whether the island blocks should be removed or not
      */
-    public void deleteIsland(Island island, boolean removeBlocks) {
-        if (island == null) {
-            return;
-        }
+    public void deleteIsland(@NonNull Island island, boolean removeBlocks) {
         // Fire event
         IslandBaseEvent event = IslandEvent.builder().island(island).reason(Reason.DELETE).build();
         if (event.isCancelled()) {
@@ -274,19 +274,21 @@ public class IslandsManager {
     }
 
     /**
-     * Gets the island for this player. If they are in a team, the team island is returned.
-     * @param world - world to check
-     * @param user - user
+     * Gets the island for this player.
+     * If they are in a team, the team island is returned.
+     * @param world world to check
+     * @param user user
      * @return Island or null
      */
+    @Nullable
     public Island getIsland(World world, User user){
         return islandCache.get(world, user.getUniqueId());
     }
 
     /**
      * Gets the island for this player. If they are in a team, the team island is returned.
-     * @param world - world to check
-     * @param uuid - user's uuid
+     * @param world world to check
+     * @param uuid user's uuid
      * @return Island or null
      */
     public Island getIsland(World world, UUID uuid){

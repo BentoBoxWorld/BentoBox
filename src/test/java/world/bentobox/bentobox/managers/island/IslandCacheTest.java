@@ -35,12 +35,12 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest(Util.class)
 public class IslandCacheTest {
 
-    BentoBox plugin;
+    private BentoBox plugin;
     private static World world;
 
-    Island island;
-    UUID owner = UUID.randomUUID();
-    Location location;
+    private Island island;
+    private UUID owner = UUID.randomUUID();
+    private Location location;
 
     @Before
     public void setUp() throws Exception {
