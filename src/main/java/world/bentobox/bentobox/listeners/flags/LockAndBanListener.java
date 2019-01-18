@@ -7,7 +7,6 @@ import org.bukkit.Sound;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
@@ -15,6 +14,7 @@ import org.bukkit.event.vehicle.VehicleMoveEvent;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -23,16 +23,14 @@ import world.bentobox.bentobox.lists.Flags;
  * Also handles ban protection
  *
  * @author tastybento
- *
  */
-public class LockAndBanListener implements Listener {
+public class LockAndBanListener extends FlagListener {
 
     private enum CheckResult {
         BANNED,
         LOCKED,
         OPEN
     }
-
 
     // Teleport check
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
@@ -93,19 +91,18 @@ public class LockAndBanListener implements Listener {
      * @return CheckResult LOCKED, BANNED or OPEN. If an island is locked, that will take priority over banned
      */
     private CheckResult check(Player player, Location loc) {
-        BentoBox plugin = BentoBox.getInstance();
         // Ops are allowed everywhere
         if (player.isOp()) {
             return CheckResult.OPEN;
         }
         // See if the island is locked to non-members or player is banned
-        return plugin.getIslands().getProtectedIslandAt(loc)
+        return getIslands().getProtectedIslandAt(loc)
                 .map(is -> {
                     if (is.isBanned(player.getUniqueId())) {
-                        return player.hasPermission(plugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
+                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypassban") ? CheckResult.OPEN : CheckResult.BANNED;
                     }
                     if (!is.isAllowed(User.getInstance(player), Flags.LOCK)) {
-                        return player.hasPermission(plugin.getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
+                        return player.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypasslock") ? CheckResult.OPEN : CheckResult.LOCKED;
                     }
                     return CheckResult.OPEN;
                 }).orElse(CheckResult.OPEN);
@@ -139,9 +136,8 @@ public class LockAndBanListener implements Listener {
     private void eject(Player player) {
         player.setGameMode(GameMode.SPECTATOR);
         // Teleport player to their home
-        if (BentoBox.getInstance().getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
-            BentoBox.getInstance().getIslands().homeTeleport(player.getWorld(), player);
+        if (getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
+            getIslands().homeTeleport(player.getWorld(), player);
         } // else, TODO: teleport somewhere else?
     }
-
 }
