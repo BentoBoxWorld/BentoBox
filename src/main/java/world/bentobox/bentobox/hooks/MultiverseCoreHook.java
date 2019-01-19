@@ -2,6 +2,7 @@ package world.bentobox.bentobox.hooks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 
@@ -20,8 +21,10 @@ public class MultiverseCoreHook extends Hook {
     }
 
     public void registerWorld(World world) {
-        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MULTIVERSE_IMPORT + world.getName() + " normal -g " + BentoBox.getInstance().getName());
-        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), MULTIVERSE_SET_GENERATOR + BentoBox.getInstance().getName() + " " + world.getName());
+        String cmd1 = MULTIVERSE_IMPORT + world.getName() + " " + world.getEnvironment().name().toLowerCase() + " -g " + BentoBox.getInstance().getName();
+        String cmd2 = MULTIVERSE_SET_GENERATOR + BentoBox.getInstance().getName() + " " + world.getName();
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd1);
+        Bukkit.getServer().dispatchCommand(Bukkit.getServer().getConsoleSender(), cmd2);
     }
 
     @Override

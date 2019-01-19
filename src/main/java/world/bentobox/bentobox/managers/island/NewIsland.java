@@ -144,14 +144,15 @@ public class NewIsland {
             plugin.logError("Failed to make island! Island could not be added to the grid.");
             return;
         }
-        // Save the player so that if the server crashes weird things won't happen
-        plugin.getPlayers().save(user.getUniqueId());
 
         // Clear any old home locations (they should be clear, but just in case)
         plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
 
         // Set home location
         plugin.getPlayers().setHomeLocation(user, next, 1);
+
+        // Save the player so that if the server crashes weird things won't happen
+        plugin.getPlayers().save(user.getUniqueId());
 
         // Fire event
         IslandBaseEvent event = IslandEvent.builder()
@@ -223,6 +224,8 @@ public class NewIsland {
         // Set default settings
         island.setFlagsDefaults();
         plugin.getMetrics().ifPresent(BStats::increaseIslandsCreatedCount);
+        // Save island
+        plugin.getIslands().save(island);
     }
 
     /**
