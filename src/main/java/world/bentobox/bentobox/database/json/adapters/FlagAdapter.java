@@ -27,13 +27,13 @@ public class FlagAdapter extends TypeAdapter<Flag> {
         out.value(value.getID());
 
     }
-    
+
     @Override
     public Flag read(JsonReader reader) throws IOException {
         if (reader.peek() == JsonToken.NULL) {
             reader.nextNull();
             return null;
         }
-        return plugin.getFlagsManager().getFlagByID(reader.nextString());
+        return plugin.getFlagsManager().getFlag(reader.nextString()).orElse(null);
     }
 }
