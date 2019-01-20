@@ -36,7 +36,7 @@ public class IslandGoCommand extends CompositeCommand {
             && user.getPlayer().getFallDistance() > 0) {
 			// We're sending the "hint" to the player to tell them they cannot teleport while falling.
             user.sendMessage(Flags.PREVENT_TELEPORT_WHEN_FALLING.getHintReference());
-            return true;
+            return false;
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.parseInt(args.get(0));

@@ -249,6 +249,8 @@ commands:
       pick-world: "&cSpecify world from [worlds]"
     spawn:
       description: "teleport you to the spawn"
+      teleporting: "&aTeleporting you to the spawn."
+      no-spawn: "&cThere is no spawn in this world."
     create:
       description: "create an island, using optional schem (requires permission)"
       parameters: "<schem>"
