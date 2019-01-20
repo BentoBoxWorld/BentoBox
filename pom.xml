@@ -6,7 +6,7 @@
 
 	<groupId>world.bentobox</groupId>
 	<artifactId>bentobox</artifactId>
-	<version>1.1-SNAPSHOT</version>
+	<version>1.1</version>
 
 	<name>BentoBox</name>
 	<description>Expandable Minecraft Spigot plugin for island-type games like SkyBlock or AcidIsland.</description>
