@@ -138,6 +138,20 @@ public class LockAndBanListener extends FlagListener {
         // Teleport player to their home
         if (getIslands().hasIsland(player.getWorld(), player.getUniqueId())) {
             getIslands().homeTeleport(player.getWorld(), player);
-        } // else, TODO: teleport somewhere else?
+        } else if (getIslands().getSpawn(player.getWorld()).isPresent()) {
+            // Else, try to teleport him to the world spawn
+            getIslands().spawnTeleport(player.getWorld(), player);
+        } else {
+            // There's nothing much we can do.
+            // We'll try to teleport him to the spawn...
+            player.teleport(player.getWorld().getSpawnLocation());
+
+            // Switch him back to the default gamemode. He may die, sorry :(
+            player.setGameMode(getIWM().getDefaultGameMode(player.getWorld()));
+
+            // Log
+            getPlugin().log("Could not teleport '" + player.getName() + "' back to his island or the spawn.");
+            getPlugin().log("Please consider setting a spawn for this world using the admin setspawn command.");
+        }
     }
 }

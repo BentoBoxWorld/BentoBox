@@ -639,7 +639,7 @@ public class IslandsManager {
                     player.updateInventory();
                 }
             }
-            
+
             user.sendMessage("commands.island.spawn.teleporting");
             player.teleport(spawn.get().getSpawnPoint(World.Environment.NORMAL));
 
