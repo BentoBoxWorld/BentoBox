@@ -90,7 +90,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
     /**
      * Returns the schem name from the args.
-     * "island" is the default.
+     * {@link SchemsManager#DEFAULT_SCHEM_NAME} is the default.
      * May be null if the schem does not exist.
      * @param args args of the command
      * @return schem name or null

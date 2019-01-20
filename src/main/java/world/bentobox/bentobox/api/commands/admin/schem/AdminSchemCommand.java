@@ -13,6 +13,7 @@ import org.bukkit.Particle;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.schems.Clipboard;
 
 public class AdminSchemCommand extends ConfirmableCommand {
@@ -115,6 +116,6 @@ public class AdminSchemCommand extends ConfirmableCommand {
     }
 
     File getSchemsFolder() {
-        return new File(getIWM().getDataFolder(getWorld()), "schems");
+        return new File(getIWM().getDataFolder(getWorld()), SchemsManager.FOLDER_NAME);
     }
 }
