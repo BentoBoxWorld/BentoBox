@@ -4,7 +4,6 @@ import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -45,12 +44,13 @@ public class IslandToggleClick implements ClickHandler {
         // Get the user's island
         Island island = plugin.getIslands().getIsland(user.getWorld(), user);
         if (island != null && user.getUniqueId().equals(island.getOwner())) {
-            Flag flag = plugin.getFlagsManager().getFlag(id).orElse(null);
-            // Toggle flag
-            island.toggleFlag(flag);
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-            // Apply change to panel
-            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+            plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
+                // Toggle flag
+                island.toggleFlag(flag);
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                // Apply change to panel
+                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+            });
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }

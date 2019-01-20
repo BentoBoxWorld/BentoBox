@@ -4,7 +4,6 @@ import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -72,25 +71,26 @@ public class CycleClick implements PanelItem.ClickHandler {
         if (island != null && user.getUniqueId().equals(island.getOwner())) {
             changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
-            Flag flag = plugin.getFlagsManager().getFlag(id).orElse(null);
-            int currentRank = island.getFlag(flag);
-            if (click.equals(ClickType.LEFT)) {
-                if (currentRank >= maxRank) {
-                    island.setFlag(flag, minRank);
-                } else {
-                    island.setFlag(flag, rm.getRankUpValue(currentRank));
+            plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
+                int currentRank = island.getFlag(flag);
+                if (click.equals(ClickType.LEFT)) {
+                    if (currentRank >= maxRank) {
+                        island.setFlag(flag, minRank);
+                    } else {
+                        island.setFlag(flag, rm.getRankUpValue(currentRank));
+                    }
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                } else if (click.equals(ClickType.RIGHT)) {
+                    if (currentRank <= minRank) {
+                        island.setFlag(flag, maxRank);
+                    } else {
+                        island.setFlag(flag, rm.getRankDownValue(currentRank));
+                    }
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                 }
-                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-            } else if (click.equals(ClickType.RIGHT)) {
-                if (currentRank <= minRank) {
-                    island.setFlag(flag, maxRank);
-                } else {
-                    island.setFlag(flag, rm.getRankDownValue(currentRank));
-                }
-                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-            }
-            // Apply change to panel
-            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+                // Apply change to panel
+                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+            });
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }

@@ -4,7 +4,6 @@ import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -42,12 +41,13 @@ public class WorldToggleClick implements ClickHandler {
             return true;
         }
         // Get flag
-        Flag flag = plugin.getFlagsManager().getFlag(id).orElse(null);
-        // Toggle flag
-        flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
-        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
-        // Apply change to panel
-        panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+        plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
+            // Toggle flag
+            flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
+            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+            // Apply change to panel
+            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+        });
         return true;
     }
 
