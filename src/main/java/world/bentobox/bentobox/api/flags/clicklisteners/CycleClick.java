@@ -23,7 +23,7 @@ public class CycleClick implements PanelItem.ClickHandler {
     protected BentoBox plugin = BentoBox.getInstance();
     protected Island island;
     protected User user;
-    protected boolean changeOccured;
+    protected boolean changeOccurred;
     private final String id;
     private int minRank = RanksManager.VISITOR_RANK;
     private int maxRank = RanksManager.OWNER_RANK;
@@ -52,7 +52,7 @@ public class CycleClick implements PanelItem.ClickHandler {
     @Override
     public boolean onClick(Panel panel, User user, ClickType click, int slot) {
         this.user = user;
-        changeOccured = false;
+        changeOccurred = false;
         // Get the world
         if (!plugin.getIWM().inWorld(user.getLocation())) {
             user.sendMessage("general.errors.wrong-world");
@@ -69,10 +69,10 @@ public class CycleClick implements PanelItem.ClickHandler {
         // Right clicking decreases the rank required
         // Get the user's island
         island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
-        if (island != null && island.getOwner().equals(user.getUniqueId())) {
-            changeOccured = true;
+        if (island != null && user.getUniqueId().equals(island.getOwner())) {
+            changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
-            Flag flag = plugin.getFlagsManager().getFlagByID(id);
+            Flag flag = plugin.getFlagsManager().getFlag(id).orElse(null);
             int currentRank = island.getFlag(flag);
             if (click.equals(ClickType.LEFT)) {
                 if (currentRank >= maxRank) {

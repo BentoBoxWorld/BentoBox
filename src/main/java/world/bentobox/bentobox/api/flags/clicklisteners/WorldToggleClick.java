@@ -42,7 +42,7 @@ public class WorldToggleClick implements ClickHandler {
             return true;
         }
         // Get flag
-        Flag flag = plugin.getFlagsManager().getFlagByID(id);
+        Flag flag = plugin.getFlagsManager().getFlag(id).orElse(null);
         // Toggle flag
         flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);

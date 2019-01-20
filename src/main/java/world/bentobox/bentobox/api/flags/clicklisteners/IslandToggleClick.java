@@ -44,8 +44,8 @@ public class IslandToggleClick implements ClickHandler {
         }
         // Get the user's island
         Island island = plugin.getIslands().getIsland(user.getWorld(), user);
-        if (island != null && island.getOwner().equals(user.getUniqueId())) {
-            Flag flag = plugin.getFlagsManager().getFlagByID(id);
+        if (island != null && user.getUniqueId().equals(island.getOwner())) {
+            Flag flag = plugin.getFlagsManager().getFlag(id).orElse(null);
             // Toggle flag
             island.toggleFlag(flag);
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);

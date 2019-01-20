@@ -26,7 +26,7 @@ public class IslandLockClick extends CycleClick {
      */
     public IslandLockClick(String id, int minRank, int maxRank) {
         super(id, minRank, maxRank);
-        if (island != null && changeOccured) {
+        if (island != null && changeOccurred) {
             // Fire lock event
             new IslandEvent.IslandEventBuilder()
             .island(island)
