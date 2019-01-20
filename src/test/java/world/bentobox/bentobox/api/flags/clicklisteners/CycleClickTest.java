@@ -165,7 +165,7 @@ public class CycleClickTest {
         when(flag.toPanelItem(Mockito.any(), Mockito.any())).thenReturn(panelItem);
         when(panelItem.getItem()).thenReturn(mock(ItemStack.class));
         FlagsManager fm = mock(FlagsManager.class);
-        when(fm.getFlagByID(Mockito.anyString())).thenReturn(flag);
+        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         rm = mock(RanksManager.class);

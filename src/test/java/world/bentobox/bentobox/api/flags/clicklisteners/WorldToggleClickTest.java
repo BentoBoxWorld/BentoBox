@@ -28,6 +28,8 @@ import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
+import java.util.Optional;
+
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class })
 public class WorldToggleClickTest {
@@ -72,9 +74,8 @@ public class WorldToggleClickTest {
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
         when(flag.toPanelItem(Mockito.any(), Mockito.eq(user))).thenReturn(item);
-        when(fm.getFlagByID(Mockito.anyString())).thenReturn(flag);
+        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
-
     }
 
     @Test
@@ -99,5 +100,4 @@ public class WorldToggleClickTest {
         Mockito.verify(flag).setSetting(Mockito.any(), Mockito.eq(true));
         Mockito.verify(panel).getInventory();
     }
-
 }

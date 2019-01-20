@@ -4,6 +4,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Location;
@@ -82,7 +83,7 @@ public class IslandToggleClickTest {
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
         when(flag.toPanelItem(Mockito.any(), Mockito.eq(user))).thenReturn(item);
-        when(fm.getFlagByID(Mockito.anyString())).thenReturn(flag);
+        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Island Manager
