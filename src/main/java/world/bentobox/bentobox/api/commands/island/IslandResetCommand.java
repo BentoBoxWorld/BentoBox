@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
 /**
@@ -73,7 +74,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
         // Permission check if the name is not the default one
         String permission = getPermissionPrefix() + "island.create." + name;
-        if (!name.equals("island") && (!user.isOp() || !user.hasPermission(permission))) {
+        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && (!user.isOp() || !user.hasPermission(permission))) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;
         }
@@ -98,12 +99,12 @@ public class IslandResetCommand extends ConfirmableCommand {
     @Nullable
     private String getSchemName(List<String> args) {
         if (args.isEmpty()) {
-            return "island";
+            return SchemsManager.DEFAULT_SCHEM_NAME;
         }
 
         String name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
         Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
-        if (!name.equals("island") && !validNames.contains(name)) {
+        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && !validNames.contains(name)) {
             return null;
         }
         return name;

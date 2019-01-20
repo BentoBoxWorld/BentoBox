@@ -12,6 +12,7 @@ import java.util.jar.JarFile;
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -20,6 +21,24 @@ import world.bentobox.bentobox.schems.Clipboard;
 import world.bentobox.bentobox.util.Util;
 
 public class SchemsManager {
+
+    /**
+     * Name of the schem that is expected to be the default one.
+     * @since 1.2.0
+     */
+    public static final @NonNull String DEFAULT_SCHEM_NAME = "island";
+
+    /**
+     * File extension of the schems file.
+     * @since 1.2.0
+     */
+    public static final @NonNull String FILE_EXTENSION = ".schem";
+
+    /**
+     * Name of the folder containing schems.
+     * @since 1.2.0
+     */
+    public static final @NonNull String FOLDER_NAME = "schems";
 
     private BentoBox plugin;
     private Map<World, Map<String, Clipboard>> islandSchems;
@@ -32,19 +51,18 @@ public class SchemsManager {
         islandSchems = new HashMap<>();
     }
 
-    private void copySchems(Addon addon, File schems) {
-
-        if (schems.exists()) {
+    private void copySchems(Addon addon, File folder) {
+        if (folder.exists()) {
             // If the folder exists, do not copy anything from the jar
             return;
         }
-        if (!schems.exists() && !schems.mkdirs()) {
-            plugin.logError("Could not make schems folder!");
+        if (!folder.exists() && !folder.mkdirs()) {
+            plugin.logError("Could not make '" + FOLDER_NAME + "' folder!");
             return;
         }
         // Save any schems that are in the jar
         try (JarFile jar = new JarFile(addon.getFile())) {
-            Util.listJarFiles(jar, "schems", ".schem").forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, FOLDER_NAME, FILE_EXTENSION).forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load schem files from addon jar " + e.getMessage());
         }
@@ -64,12 +82,12 @@ public class SchemsManager {
      * @param addon - GameModeAddon
      */
     public void loadIslands(GameModeAddon addon) {
-        File schems = new File(addon.getDataFolder(), "schems");
+        File schems = new File(addon.getDataFolder(), FOLDER_NAME);
         // Copy any schems fould in the jar
         copySchems(addon, schems);
         // Load all schems in folder
         // Look through the folder
-        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".schem")
+        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(FILE_EXTENSION)
                 && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("nether-")
                 && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("end-");
         Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).forEach(name -> {
@@ -110,7 +128,6 @@ public class SchemsManager {
      */
     public void paste(World world, Island island, String name) {
         paste(world, island, name, null);
-
     }
 
     /**
@@ -128,6 +145,4 @@ public class SchemsManager {
             plugin.log("This might be due to an invalid schem format. Keep in mind that schems are not schematics.");
         }
     }
-
-
 }

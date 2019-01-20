@@ -618,9 +618,9 @@ public class IslandsManager {
      */
     public void spawnTeleport(@NonNull World world, @NonNull Player player) {
         User user = User.getInstance(player);
-        Optional<Island> spawn = getSpawn(world);
+        Optional<Island> spawnIsland = getSpawn(world);
 
-        if (!spawn.isPresent()) {
+        if (!spawnIsland.isPresent()) {
             // There is no spawn here.
             user.sendMessage("commands.island.spawn.no-spawn");
         } else {
@@ -641,7 +641,7 @@ public class IslandsManager {
             }
 
             user.sendMessage("commands.island.spawn.teleporting");
-            player.teleport(spawn.get().getSpawnPoint(World.Environment.NORMAL));
+            player.teleport(spawnIsland.get().getSpawnPoint(World.Environment.NORMAL));
 
             // If the player is in SPECTATOR gamemode, reset it to default
             if (player.getGameMode().equals(GameMode.SPECTATOR)) {
