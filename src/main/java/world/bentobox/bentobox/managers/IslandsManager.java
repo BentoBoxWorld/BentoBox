@@ -322,6 +322,16 @@ public class IslandsManager {
     }
 
     /**
+     * Returns an <strong>unmodifiable collection</strong> of all the islands (even those who may be unowned).
+     * @return unmodifiable collection containing every island.
+     * @since 1.1
+     */
+    @NonNull
+    public Collection<Island> getIslands() {
+        return islandCache.getIslands();
+    }
+
+    /**
      * Used for testing only to inject the islandCache mock object
      * @param islandCache - island cache
      */
@@ -864,7 +874,6 @@ public class IslandsManager {
      */
     public void save(Island island) {
         handler.saveObject(island);
-
     }
 
 }
