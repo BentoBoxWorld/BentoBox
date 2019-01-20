@@ -33,6 +33,9 @@ import world.bentobox.bentobox.lists.Flags;
 public class IslandWorldManager {
 
     private BentoBox plugin;
+    /**
+     * Map associating Worlds (Overworld, Nether and End) with the GameModeAddon that creates them.
+     */
     private Map<@NonNull World, @NonNull GameModeAddon> gameModes;
 
     /**
@@ -60,7 +63,7 @@ public class IslandWorldManager {
      *
      * @param world the World to register
      */
-    private void registerToMultiverse(World world) {
+    private void registerToMultiverse(@NonNull World world) {
         if (!isUseOwnGenerator(world) && plugin.getHooks() != null) {
             plugin.getHooks().getHook("Multiverse-Core").ifPresent(hook -> {
                 if (Bukkit.isPrimaryThread()) {

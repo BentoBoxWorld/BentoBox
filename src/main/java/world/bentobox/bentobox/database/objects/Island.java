@@ -82,7 +82,7 @@ public class Island implements DataObject {
 
     //// Team ////
     @Expose
-    private UUID owner;
+    private @Nullable UUID owner;
 
     @Expose
     private Map<UUID, Integer> members = new HashMap<>();
@@ -527,7 +527,7 @@ public class Island implements DataObject {
      * Sets the owner of the island.
      * @param owner the island owner - the owner to set
      */
-    public void setOwner(UUID owner){
+    public void setOwner(@Nullable UUID owner){
         if (this.owner == owner) {
             return; //No need to update anything
         }
