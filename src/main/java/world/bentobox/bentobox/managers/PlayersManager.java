@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -10,6 +11,7 @@ import java.util.UUID;
 import org.bukkit.Location;
 import org.bukkit.World;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
@@ -82,6 +84,16 @@ public class PlayersManager {
             addPlayer(uuid);
         }
         return playerCache.get(uuid);
+    }
+
+    /**
+     * Returns an <strong>unmodifiable collection</strong> of all the players that are <strong>currently in the cache</strong>.
+     * @return unmodifiable collection containing every player in the cache.
+     * @since 1.1
+     */
+    @NonNull
+    public Collection<Players> getPlayers() {
+        return Collections.unmodifiableCollection(playerCache.values());
     }
 
     /*
