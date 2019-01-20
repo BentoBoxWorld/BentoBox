@@ -206,8 +206,7 @@ public class IslandWorldManager {
     /**
      * Get the overworld based on friendly name.
      *
-     * @param friendlyName
-     *            - friendly name of world
+     * @param friendlyName friendly name of world
      * @return overworld, or null if it does not exist
      * @since 1.1
      */
@@ -215,7 +214,7 @@ public class IslandWorldManager {
     public World getOverWorld(@NonNull String friendlyName) {
         return gameModes.values().stream().distinct()
                 .filter(gm -> gm.getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyName))
-                .map(gm -> gm.getOverWorld()).findFirst().orElse(null);
+                .map(GameModeAddon::getOverWorld).findFirst().orElse(null);
     }
 
     /**
