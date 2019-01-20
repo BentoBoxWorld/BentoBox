@@ -465,12 +465,13 @@ public class IslandsManager {
     }
 
     /**
-     * Get the island that is defined as spawn in this world
+     * Gets the island that is defined as spawn in this world
      * @param world world
-     * @return island or null
+     * @return optional island, may be empty
      */
-    public Island getSpawn(World world){
-        return spawn.get(world);
+    @NonNull
+    public Optional<Island> getSpawn(@NonNull World world){
+        return Optional.ofNullable(spawn.get(world));
     }
 
     /**
@@ -610,6 +611,46 @@ public class IslandsManager {
     }
 
     /**
+     * Teleports the player to the spawn location for this world
+     * @param world world
+     * @param player player to teleport
+     * @since 1.1
+     */
+    public void spawnTeleport(@NonNull World world, @NonNull Player player) {
+        User user = User.getInstance(player);
+        Optional<Island> spawn = getSpawn(world);
+
+        if (!spawn.isPresent()) {
+            // There is no spawn here.
+            user.sendMessage("commands.island.spawn.no-spawn");
+        } else {
+            // Teleport the player to the spawn
+
+            // Stop any gliding
+            player.setGliding(false);
+            // Check if the player is a passenger in a boat
+            if (player.isInsideVehicle()) {
+                Entity boat = player.getVehicle();
+                if (boat instanceof Boat) {
+                    player.leaveVehicle();
+                    // Remove the boat so they don't lie around everywhere
+                    boat.remove();
+                    player.getInventory().addItem(new ItemStack(Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT"), 1));
+                    player.updateInventory();
+                }
+            }
+            
+            user.sendMessage("commands.island.spawn.teleporting");
+            player.teleport(spawn.get().getSpawnPoint(World.Environment.NORMAL));
+
+            // If the player is in SPECTATOR gamemode, reset it to default
+            if (player.getGameMode().equals(GameMode.SPECTATOR)) {
+                player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
+            }
+        }
+    }
+
+    /**
      * Indicates whether a player is at an island spawn or not
      *
      * @param playerLoc - player's location
@@ -626,11 +667,7 @@ public class IslandsManager {
      * @param spawn the Island to set as spawn.
      *              Must not be null.
      */
-    public void setSpawn(Island spawn) {
-        if (spawn == null) {
-            return;
-        }
-
+    public void setSpawn(@NonNull Island spawn) {
         // Checking if there is already a spawn set for this world
         if (this.spawn.containsKey(spawn.getWorld()) && this.spawn.get(spawn.getWorld()) != null) {
             Island oldSpawn = this.spawn.get(spawn.getWorld());
