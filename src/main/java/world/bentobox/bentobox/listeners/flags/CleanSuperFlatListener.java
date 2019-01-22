@@ -36,7 +36,7 @@ public class CleanSuperFlatListener extends FlagListener {
 
     /**
      * Task that runs each tick to regenerate chunks that are in the {@link #chunkQueue}.
-     * It does on at a time.
+     * It regenerates them one at a time.
      * @since 1.1
      */
     @Nullable
