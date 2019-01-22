@@ -75,7 +75,9 @@ public class CleanSuperFlatListener extends FlagListener {
                 if (!chunkQueue.isEmpty()) {
                     Pair<Integer, Integer> chunkXZ = chunkQueue.poll();
                     world.regenerateChunk(chunkXZ.x, chunkXZ.z); // NOSONAR - the deprecation doesn't cause any issues to us
-                    plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
+                    if (plugin.getSettings().isLogCleanSuperFlatChunks()) {
+                        plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
+                    }
                 }
             }, 0L, 1L);
         }

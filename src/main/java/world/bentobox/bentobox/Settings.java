@@ -86,6 +86,13 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
 
+    @ConfigComment("Toggle whether superflat chunks regeneration should be logged in the server logs or not.")
+    @ConfigComment("It can be spammy if there are a lot of superflat chunks to regenerate.")
+    @ConfigComment("However, as superflat chunks regeneration can be performance-intensive, it is recommended to keep")
+    @ConfigComment("this setting set to true, as it will help you know if there are regenerations taking place.")
+    @ConfigEntry(path = "logs.clean-super-flat-chunks", since = "1.1")
+    private boolean logCleanSuperFlatChunks = true;
+
     /*
      * Island
      */
@@ -417,5 +424,13 @@ public class Settings implements DataObject {
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
+    }
+
+    public boolean isLogCleanSuperFlatChunks() {
+        return logCleanSuperFlatChunks;
+    }
+
+    public void setLogCleanSuperFlatChunks(boolean logCleanSuperFlatChunks) {
+        this.logCleanSuperFlatChunks = logCleanSuperFlatChunks;
     }
 }
