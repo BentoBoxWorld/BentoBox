@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags;
 
 import java.util.LinkedList;
@@ -15,6 +12,8 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.scheduler.BukkitTask;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -25,12 +24,29 @@ import world.bentobox.bentobox.util.Pair;
  * Cleans super-flat world chunks or normal nether chunks if they generate accidentally
  * due to lack of a generator being loaded
  * @author tastybento
- *
  */
 public class CleanSuperFlatListener extends FlagListener {
 
-    private Queue<Pair<Integer, Integer>> chunkQ = new LinkedList<>();
+    /**
+     * Stores pairs of X,Z coordinates of chunks that need to be regenerated.
+     * @since 1.1
+     */
+    @NonNull
+    private Queue<@NonNull Pair<@NonNull Integer, @NonNull Integer>> chunkQueue = new LinkedList<>();
+
+    /**
+     * Task that runs each tick to regenerate chunks that are in the {@link #chunkQueue}.
+     * It does on at a time.
+     * @since 1.1
+     */
+    @Nullable
     private BukkitTask task;
+
+    /**
+     * Whether BentoBox is ready or not.
+     * This helps to avoid hanging out the server on startup as a lot of {@link ChunkLoadEvent} are called at this time.
+     * @since 1.1
+     */
     private boolean ready;
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -53,13 +69,13 @@ public class CleanSuperFlatListener extends FlagListener {
             return;
         }
         // Add to queue
-        chunkQ.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
+        chunkQueue.add(new Pair<>(e.getChunk().getX(), e.getChunk().getZ()));
         if (task == null) {
             task = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
-                if (!chunkQ.isEmpty()) {
-                    Pair<Integer, Integer> chunkXZ = chunkQ.poll();
-                    world.regenerateChunk(chunkXZ.x, chunkXZ.z); // NOSONAR - the deprecation doesn't the cause any issues to us
-                    plugin.log(chunkQ.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
+                if (!chunkQueue.isEmpty()) {
+                    Pair<Integer, Integer> chunkXZ = chunkQueue.poll();
+                    world.regenerateChunk(chunkXZ.x, chunkXZ.z); // NOSONAR - the deprecation doesn't cause any issues to us
+                    plugin.log(chunkQueue.size() + " Regenerating superflat chunk " + world.getName() + " " + chunkXZ.x + ", " + chunkXZ.z);
                 }
             }, 0L, 1L);
         }
