@@ -96,7 +96,9 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             // Set the player's home
             getPlayers().setHomeLocation(playerUUID, user.getLocation());
             // Delete the old island
-            getIslands().deleteIsland(island, true);
+            if (island != null) {
+                getIslands().deleteIsland(island, true);
+            }
             // TODO Set the cooldown
             // Reset deaths
             if (getIWM().isTeamJoinDeathReset(getWorld())) {
@@ -110,7 +112,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             if (inviter != null) {
                 inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
             }
-            getIslands().save(island);
+            getIslands().save(teamIsland);
         });
 
         return true;
