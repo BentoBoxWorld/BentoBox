@@ -328,7 +328,7 @@ public class BentoBox extends JavaPlugin {
     }
 
     public void logWarning(String warning) {
-        getLogger().warning(warning);
+        getLogger().warning(() -> warning);
     }
 
     /**
