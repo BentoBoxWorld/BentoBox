@@ -22,7 +22,7 @@ public class IslandCreateCommand extends CompositeCommand {
      * @param islandCommand - parent command
      */
     public IslandCreateCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "create");
+        super(islandCommand, "create", "new");
     }
 
     @Override
