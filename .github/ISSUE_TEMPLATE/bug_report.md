@@ -22,7 +22,7 @@ If applicable, add screenshots to help explain your problem.
 **Server Information:**
 
 [Please complete the following information:]
- - Database being used (YAML, JSON, MySQL, MongoDB): []
+ - Database being used (YAML, JSON, MySQL, MongoDB, MariaDB): []
  - OS: [e.g. iOS]
  - Java Version: [e.g. Java 8]
  - BentoBox version: [e.g. 1.7.2.21]
