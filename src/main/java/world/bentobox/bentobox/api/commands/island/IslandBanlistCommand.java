@@ -12,7 +12,7 @@ import world.bentobox.bentobox.database.objects.Island;
 public class IslandBanlistCommand extends CompositeCommand {
 
     public IslandBanlistCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "banlist");
+        super(islandCommand, "banlist", "banned", "bans");
     }
 
     @Override
