@@ -9,6 +9,7 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
@@ -24,17 +25,36 @@ import world.bentobox.bentobox.util.Util;
 
 public class Flag implements Comparable<Flag> {
 
+    /**
+     * Defines the behavior and operation of the flag, as well as its category in the {@link world.bentobox.bentobox.panels.SettingsPanel}.
+     */
     public enum Type {
+        /**
+         * Flag protecting an island.
+         * It can be modified by the players (island owner).
+         * It applies differently depending on the rank of the player who performs the action protected by the flag.
+         */
         PROTECTION(Material.SHIELD),
+        /**
+         * Flag modifying parameters of the island.
+         * It can be modified by the players (island owner).
+         * This is usually an on/off setting.
+         */
         SETTING(Material.COMMAND_BLOCK),
+        /**
+         * Flag applying to the world.
+         * It can only be modified by administrators (permission or operator).
+         * This is usually an on/off setting.
+         */
         WORLD_SETTING(Material.GRASS_BLOCK);
 
-        private Material icon;
+        private @NonNull Material icon;
 
-        Type(Material icon) {
+        Type(@NonNull Material icon) {
             this.icon = icon;
         }
 
+        @NonNull
         public Material getIcon() {
             return icon;
         }
