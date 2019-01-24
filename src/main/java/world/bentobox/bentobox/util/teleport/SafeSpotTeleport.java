@@ -129,6 +129,11 @@ public class SafeSpotTeleport {
                 } else {
                     // Last resort
                     ((Player)entity).setGameMode(GameMode.SURVIVAL);
+                    if (Bukkit.getServer().isPrimaryThread()) {
+                        ((Player)entity).performCommand("spawn");
+                    } else {
+                        Bukkit.getScheduler().runTask(plugin, () -> ((Player)entity).performCommand("spawn"));
+                    }
                 }
             }
         }
