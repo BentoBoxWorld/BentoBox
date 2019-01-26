@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
@@ -35,6 +36,7 @@ import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
 
@@ -97,6 +99,10 @@ public class MySQLDatabaseHandlerTest {
         PowerMockito.mockStatic(Util.class);
         when(Util.sameWorld(Mockito.any(), Mockito.any())).thenReturn(true);
 
+        // Flags
+        FlagsManager fm = mock(FlagsManager.class);
+        when(plugin.getFlagsManager()).thenReturn(fm);
+        when(fm.getFlags()).thenReturn(new ArrayList<>());
     }
 
     @Test

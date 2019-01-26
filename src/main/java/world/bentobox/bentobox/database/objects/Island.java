@@ -15,13 +15,13 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 
-import org.eclipse.jdt.annotation.Nullable;
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -491,11 +491,12 @@ public class Island implements DataObject {
      * If flags are missing from the config, the default hard-coded value is used and set
      */
     public void setFlagsDefaults() {
+        BentoBox plugin = BentoBox.getInstance();
         Map<Flag, Integer> result = new HashMap<>();
-        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-        .forEach(f -> result.put(f, BentoBox.getInstance().getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
-        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-        .forEach(f -> result.put(f, BentoBox.getInstance().getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
+        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
+        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
     }
 

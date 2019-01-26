@@ -134,8 +134,8 @@ public class FlagsManagerTest {
     public void testGetFlagByID() {
         FlagsManager fm = new FlagsManager(plugin);
         // Test in forward and reverse order so that any duplicates are caught
-        Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlagByID(flag.getID())));
-        Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlagByID(flag.getID())));
+        Flags.values().stream().sorted().forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
+        Flags.values().stream().sorted(Comparator.reverseOrder()).forEach(flag -> assertEquals(flag, fm.getFlag(flag.getID()).get()));
 
     }
 

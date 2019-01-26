@@ -23,7 +23,6 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
-import world.bentobox.bentobox.lists.Flags;
 
 /**
  * Handles registration and management of worlds
@@ -163,9 +162,9 @@ public class IslandWorldManager {
             }
         }
         // Set default island settings
-        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
+        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
         .forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
-        Flags.values().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
+        plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
         .forEach(f -> settings.getDefaultIslandSettings().putIfAbsent(f, f.getDefaultRank()));
         Bukkit.getScheduler().runTask(plugin, () -> {
             // Set world difficulty
