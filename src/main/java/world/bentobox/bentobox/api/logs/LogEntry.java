@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.api.logs;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Represents an event that occurred and that is logged.
@@ -18,7 +18,7 @@ import java.util.Map;
 public class LogEntry {
     private final long timestamp;
     private final String type;
-    private final Map<String, Object> data;
+    private final Map<String, String> data;
 
     private LogEntry(@NonNull Builder builder) {
         this.timestamp = builder.timestamp;
@@ -36,14 +36,14 @@ public class LogEntry {
     }
 
     @Nullable
-    public Map<String, Object> getData() {
+    public Map<String, String> getData() {
         return data;
     }
 
     public static class Builder {
         private long timestamp;
         private String type;
-        private Map<String, Object> data;
+        private Map<String, String> data;
 
         public Builder(@NonNull String type) {
             this.timestamp = System.currentTimeMillis();
@@ -56,8 +56,8 @@ public class LogEntry {
             return this;
         }
 
-        public Builder data(Map<@NonNull String, @Nullable Object> data) {
-            this.data = data;
+        public Builder data(Map<String, String> data2) {
+            this.data = data2;
             return this;
         }
 
@@ -67,7 +67,7 @@ public class LogEntry {
          * @param value value to set
          * @return the Builder instance
          */
-        public Builder data(@NonNull String key, @Nullable Object value) {
+        public Builder data(@NonNull String key, @Nullable String value) {
             this.data.put(key, value);
             return this;
         }

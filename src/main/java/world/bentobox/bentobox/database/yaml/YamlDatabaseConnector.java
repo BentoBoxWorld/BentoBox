@@ -1,22 +1,23 @@
 package world.bentobox.bentobox.database.yaml;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.sql.Connection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
-import java.util.Scanner;
-import java.util.UUID;
 
+import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import com.google.common.base.Charsets;
@@ -59,7 +60,20 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 config = new YamlConfiguration();
                 config.load(yamlFile);
             } catch (Exception e) {
-                plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                /*
+                 * TODO: Temporary fix for removing UUID tags. Remove in a few versions
+                 */
+                if (e.getMessage().contains("!!java.util.UUID")) {
+                    removeStringFromFile(yamlFile);
+                    // Try again
+                    try {
+                        Objects.requireNonNull(config).load(yamlFile);
+                    } catch (IOException | InvalidConfigurationException e1) {
+                        plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                    }
+                } else {
+                    plugin.logError("Could not load yml file from database " + tableName + " " + fileName + " " + e.getMessage());
+                }
             }
         } else {
             // Create the missing file
@@ -79,6 +93,25 @@ public class YamlDatabaseConnector implements DatabaseConnector {
             }
         }
         return config;
+    }
+
+    private void removeStringFromFile(File yamlFile) {
+        try {
+            File temp = File.createTempFile("file", ".tmp", yamlFile.getParentFile());
+            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8));
+            PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
+            for (String line; (line = reader.readLine()) != null;) {
+                line = line.replace("!!java.util.UUID", "");
+                writer.println(line);
+            }
+            reader.close();
+            writer.close();
+            if (yamlFile.delete()) {
+                temp.renameTo(yamlFile);
+            }
+        } catch (Exception e) {
+            plugin.logError("Could not fix Island object - skipping - " + e.getMessage());
+        }
     }
 
     public void saveYamlFile(String data, String tableName, String fileName, Map<String, String> commentMap) {

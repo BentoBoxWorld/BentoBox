@@ -1,14 +1,11 @@
 package world.bentobox.bentobox.database.objects.adapters;
 
-import org.eclipse.jdt.annotation.NonNull;
-import world.bentobox.bentobox.api.logs.LogEntry;
-
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
+
+import world.bentobox.bentobox.api.logs.LogEntry;
 
 /**
  * @author Poslovitch
@@ -45,7 +42,7 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
         for (Map<String, Object> entry : serialized) {
             long timestamp = (long) entry.get(TIMESTAMP);
             String type = (String) entry.get(TYPE);
-            Map<String, Object> data = (Map<String, Object>) entry.get(DATA);
+            Map<String, String> data = (Map<String, String>) entry.get(DATA);
 
             result.add(new LogEntry.Builder(type).timestamp(timestamp).data(data).build());
         }
@@ -68,7 +65,7 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
             value.put(TYPE, logEntry.getType());
 
             if (logEntry.getData() != null) {
-                value.put(DATA, tidy(logEntry.getData()));
+                value.put(DATA, logEntry.getData());
             }
 
             result.add(value);
@@ -77,24 +74,4 @@ public class LogEntryListAdapter implements AdapterInterface<List<LogEntry>, Lis
         return result;
     }
 
-    /**
-     * Returns a "data" map that contains "tidied up" values, as some types are not safe to store 'as is'.
-     * See https://github.com/BentoBoxWorld/BentoBox/issues/486
-     * @param data the data map to tidy up
-     * @return the tidied up data map
-     * @since 1.1.1
-     */
-    @NonNull
-    private Map<String, Object> tidy(@NonNull Map<String, Object> data) {
-        Map<String, Object> result = new HashMap<>();
-        for (Map.Entry<String, Object> entry : data.entrySet()) {
-            if (entry.getValue() instanceof UUID) {
-                // UUIDs need some special handling
-                result.put(entry.getKey(), entry.getValue().toString());
-            } else {
-                result.put(entry.getKey(), entry.getValue());
-            }
-        }
-        return result;
-    }
 }
