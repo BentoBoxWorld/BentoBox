@@ -402,7 +402,7 @@ public class TestBentoBox {
         assertFalse(members.contains(member3));
 
         // Ban member
-        island.ban(null, member1);
+        island.ban(UUID.randomUUID(), member1);
         members = island.getMemberSet();
         assertTrue(members.contains(playerUUID));
         assertFalse(members.contains(member1));
@@ -413,7 +413,7 @@ public class TestBentoBox {
         assertTrue(banned.contains(member1));
 
         // Unban
-        island.unban(null, member1);
+        island.unban(UUID.randomUUID(), member1);
         assertFalse(island.getBanned().contains(member1));
 
         // Protection
@@ -445,7 +445,7 @@ public class TestBentoBox {
         // Check if the members have capability
         User mem1 = User.getInstance(member1); // Visitor
         User mem2 = User.getInstance(member2); // Member
-        island.ban(null, member3);
+        island.ban(member2, member3);
         User mem3 = User.getInstance(member3); // Banned
 
         // Member 1 is a visitor
@@ -505,7 +505,7 @@ public class TestBentoBox {
         assertEquals(fl, customFlag.getListener().get());
         // Add it to the Flag Manager
         flagsManager.registerFlag(customFlag);
-        assertEquals(customFlag, flagsManager.getFlagByID("CUSTOM_FLAG"));
+        assertEquals(customFlag, flagsManager.getFlag("CUSTOM_FLAG").get());
     }
 
     /**

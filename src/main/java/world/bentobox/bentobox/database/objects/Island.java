@@ -140,9 +140,9 @@ public class Island implements DataObject {
      * @param target UUID of the target, must be provided.
      * @return {@code true}
      */
-    public boolean ban(@Nullable UUID issuer, @NonNull UUID target) {
+    public boolean ban(@NonNull UUID issuer, @NonNull UUID target) {
         setRank(target, RanksManager.BANNED_RANK);
-        log(new LogEntry.Builder("BAN").data("player", target).data("issuer", issuer).build());
+        log(new LogEntry.Builder("BAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
         return true;
     }
 
@@ -168,9 +168,9 @@ public class Island implements DataObject {
      * @param target UUID of the target, must be provided.
      * @return {@code true} if the target is successfully unbanned, {@code false} otherwise.
      */
-    public boolean unban(@Nullable UUID issuer, @NonNull UUID target) {
+    public boolean unban(@NonNull UUID issuer, @NonNull UUID target) {
         if (members.remove(target) != null) {
-            log(new LogEntry.Builder("UNBAN").data("player", target).data("issuer", issuer).build());
+            log(new LogEntry.Builder("UNBAN").data("player", target.toString()).data("issuer", issuer.toString()).build());
             return true;
         }
         return false;
