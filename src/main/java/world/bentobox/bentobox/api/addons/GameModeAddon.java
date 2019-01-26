@@ -4,7 +4,7 @@ import java.util.Optional;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-
+import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -60,6 +60,18 @@ public abstract class GameModeAddon extends Addon {
     }
 
     /**
+     * Checks if world is governed by this game mode
+     * @param world - world to check
+     * @return true if in a world or false if not
+     */
+    public boolean inWorld(World world) {
+        if (world == null) {
+            return false;
+        }
+        return Util.sameWorld(world, islandWorld);
+    }
+
+    /**
      * @return over world
      */
     public World getOverWorld() {
@@ -99,4 +111,14 @@ public abstract class GameModeAddon extends Addon {
     public Optional<CompositeCommand> getAdminCommand() {
         return Optional.ofNullable(adminCommand);
     }
+
+    /**
+     * Defines the world generator for this game mode
+     * @param worldName - name of world that this applies to
+     * @param id - id if any
+     * @return Chunk generator
+     * @since 1.1
+     */
+    @NonNull
+    public abstract ChunkGenerator getDefaultWorldGenerator(String worldName, String id);
 }

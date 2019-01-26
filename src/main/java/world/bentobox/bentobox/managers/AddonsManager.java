@@ -20,9 +20,10 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-
+import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
@@ -107,15 +108,6 @@ public class AddonsManager {
         try {
             // Run the onLoad.
             addon.onLoad();
-            // If this is a GameModeAddon create the worlds, register it and load the schems
-            if (addon instanceof GameModeAddon) {
-                GameModeAddon gameMode = (GameModeAddon) addon;
-                // Create the gameWorlds
-                gameMode.createWorlds();
-                plugin.getIWM().addGameMode(gameMode);
-                // Register the schems
-                plugin.getSchemsManager().loadIslands(gameMode);
-            }
 
             // Addon successfully loaded
             addon.setState(Addon.State.LOADED);
@@ -134,7 +126,18 @@ public class AddonsManager {
     public void enableAddons() {
         if (!getLoadedAddons().isEmpty()) {
             plugin.log("Enabling addons...");
+
             getLoadedAddons().forEach(addon -> {
+                // If this is a GameModeAddon create the worlds, register it and load the schems
+                if (addon instanceof GameModeAddon) {
+                    GameModeAddon gameMode = (GameModeAddon) addon;
+                    // Create the gameWorlds
+                    gameMode.createWorlds();
+                    plugin.getIWM().addGameMode(gameMode);
+                    // Register the schems
+                    plugin.getSchemsManager().loadIslands(gameMode);
+                }
+
                 try {
                     addon.onEnable();
                     Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
@@ -176,6 +179,7 @@ public class AddonsManager {
         addon.setState(Addon.State.ERROR);
         plugin.logError("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
         plugin.logError("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
+        throwable.printStackTrace();
         if (plugin.getConfig().getBoolean("debug")) {
             plugin.logDebug(throwable.toString());
             plugin.logDebug(throwable.getStackTrace());
@@ -350,5 +354,16 @@ public class AddonsManager {
 
         addons.clear();
         addons.addAll(sortedAddons.values());
+    }
+
+    /**
+     * Get the world generator if it exists
+     * @param worldName - name of world
+     * @param id - specific generator id
+     * @return ChunkGenerator or null if none found
+     */
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        return getGameModeAddons().stream().filter(gm -> gm.inWorld(Bukkit.getWorld(worldName))).findFirst().map(gm -> gm.getDefaultWorldGenerator(worldName, id)).orElse(null);
+
     }
 }

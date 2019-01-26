@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 
@@ -88,6 +89,7 @@ public class Database<T> {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
                 | IntrospectionException e) {
             logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
+            e.printStackTrace();
             return false;
         }
         return true;
