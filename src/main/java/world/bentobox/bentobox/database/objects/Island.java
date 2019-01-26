@@ -100,7 +100,7 @@ public class Island implements DataObject {
 
     //// Island History ////
     @Adapter(LogEntryListAdapter.class)
-    //FIXME: see https://github.com/BentoBoxWorld/BentoBox/issues/482
+    @Expose
     private List<LogEntry> history = new LinkedList<>();
 
     @Expose
