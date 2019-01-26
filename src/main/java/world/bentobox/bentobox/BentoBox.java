@@ -137,6 +137,12 @@ public class BentoBox extends JavaPlugin {
         // Locales manager must be loaded before addons
         localesManager = new LocalesManager(this);
 
+        // Load hooks
+        hooksManager = new HooksManager(this);
+        hooksManager.registerHook(new VaultHook());
+        hooksManager.registerHook(new PlaceholderAPIHook());
+        hooksManager.registerHook(new MultiverseCoreHook());
+
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
         addonsManager = new AddonsManager(this);
         addonsManager.loadAddons();
@@ -164,12 +170,6 @@ public class BentoBox extends JavaPlugin {
                 metrics = new BStats(this);
                 metrics.registerMetrics();
             }
-
-            // Load hooks
-            hooksManager = new HooksManager(this);
-            hooksManager.registerHook(new VaultHook());
-            hooksManager.registerHook(new PlaceholderAPIHook());
-            hooksManager.registerHook(new MultiverseCoreHook());
 
             // Make sure all worlds are already registered to Multiverse.
             islandWorldManager.registerWorldsToMultiverse();
