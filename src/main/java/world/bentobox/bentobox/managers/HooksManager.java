@@ -25,10 +25,12 @@ public class HooksManager {
             plugin.log("Hooking with " + hook.getPluginName() + "...");
             if (hook.hook()) {
                 hooks.add(hook);
-                return;
+            } else {
+                plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
             }
         }
-        plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
+        // Do not tell the user if we couldn't hook with a plugin which is not available.
+        // We may have in the near future almost ~25 hooks, which would basically spam the console and make users nervous.
     }
 
     public List<Hook> getHooks() {
