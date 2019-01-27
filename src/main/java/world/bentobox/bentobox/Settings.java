@@ -111,8 +111,7 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.cooldown.trust")
     private int trustCooldown = 5;
 
-    @ConfigComment("How long a player must wait until they can ban a player")
-    @ConfigComment("after unbanning them. In minutes.")
+    @ConfigComment("How long a player must wait until they can ban a player after unbanning them. In minutes.")
     @ConfigEntry(path = "island.cooldown.ban")
     private int banCooldown = 10;
 
@@ -121,7 +120,7 @@ public class Settings implements DataObject {
     private int resetCooldown = 300;
 
     // Timeout for team kick and leave commands
-    @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset")
+    @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset.")
     @ConfigEntry(path = "island.confirmation.time")
     private int confirmationTime = 10;
 
