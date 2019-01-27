@@ -179,7 +179,7 @@ public class IslandCache {
     public boolean hasIsland(@NonNull World world, @NonNull UUID uuid) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
         Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
-        return island != null && island.getOwner().equals(uuid);
+        return island != null && uuid.equals(island.getOwner());
     }
 
     /**

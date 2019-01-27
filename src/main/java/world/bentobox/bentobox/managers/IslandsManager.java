@@ -489,7 +489,8 @@ public class IslandsManager {
      * @param playerUUID the player's UUID
      * @return island owner's UUID or null if player has no island
      */
-    public UUID getOwner(World world, UUID playerUUID) {
+    @Nullable
+    public UUID getOwner(@NonNull World world, @NonNull UUID playerUUID) {
         return islandCache.getOwner(world, playerUUID);
     }
 
@@ -686,8 +687,8 @@ public class IslandsManager {
      * @param uniqueId - unique ID
      * @return true if the player is the owner of their island.
      */
-    public boolean isOwner(World world, UUID uniqueId) {
-        return hasIsland(world, uniqueId) && getIsland(world, uniqueId).getOwner().equals(uniqueId);
+    public boolean isOwner(@NonNull World world, @NonNull UUID uniqueId) {
+        return hasIsland(world, uniqueId) && uniqueId.equals(getIsland(world, uniqueId).getOwner());
     }
 
     /**
