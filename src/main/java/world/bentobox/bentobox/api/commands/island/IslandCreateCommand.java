@@ -73,11 +73,15 @@ public class IslandCreateCommand extends CompositeCommand {
             .reason(Reason.CREATE)
             .name(name)
             .build();
-            return true;
         } catch (IOException e) {
             getPlugin().logError("Could not create island for player. " + e.getMessage());
             user.sendMessage("commands.island.create.unable-create-island");
             return false;
         }
+
+        if (getSettings().isResetCooldownOnCreate()) {
+            getParent().getSubCommand("reset").ifPresent(resetCommand -> resetCommand.setCooldown(user.getUniqueId(), null, getSettings().getResetCooldown()));
+        }
+        return true;
     }
 }

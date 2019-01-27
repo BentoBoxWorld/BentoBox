@@ -119,6 +119,10 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "island.cooldown.time.reset")
     private int resetCooldown = 300;
 
+    @ConfigComment("Whether the reset cooldown should be applied when the player creates an island for the first time or not.")
+    @ConfigEntry(path = "island.cooldown.options.set-reset-cooldown-on-create", since = "1.2.0")
+    private boolean resetCooldownOnCreate = true;
+
     // Timeout for team kick and leave commands
     @ConfigComment("Time in seconds that players have to confirm sensitive commands, e.g. island reset.")
     @ConfigEntry(path = "island.confirmation.time")
@@ -431,5 +435,13 @@ public class Settings implements DataObject {
 
     public void setLogCleanSuperFlatChunks(boolean logCleanSuperFlatChunks) {
         this.logCleanSuperFlatChunks = logCleanSuperFlatChunks;
+    }
+
+    public boolean isResetCooldownOnCreate() {
+        return resetCooldownOnCreate;
+    }
+
+    public void setResetCooldownOnCreate(boolean resetCooldownOnCreate) {
+        this.resetCooldownOnCreate = resetCooldownOnCreate;
     }
 }
