@@ -121,7 +121,7 @@ public class AddonClassLoader extends URLClassLoader {
 
         // Either return the value if it exists (and != null), or try to compute one.
         // If the computed value is null, it won't be added to the map.
-        return classes.computeIfAbsent(name, key -> {
+        return classes.computeIfAbsent(name, (key) -> {
             Class<?> computed = checkGlobal ? loader.getClassByName(key) : null;
 
             if (computed == null) {
