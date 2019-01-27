@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.managers;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.hooks.Hook;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.hooks.Hook;
 
 /**
  * @author Poslovitch
@@ -25,10 +25,10 @@ public class HooksManager {
             plugin.log("Hooking with " + hook.getPluginName() + "...");
             if (hook.hook()) {
                 hooks.add(hook);
-            } else {
-                plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
+                return;
             }
         }
+        plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
     }
 
     public List<Hook> getHooks() {

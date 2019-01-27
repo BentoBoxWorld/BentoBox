@@ -20,9 +20,10 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
-
+import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
@@ -116,7 +117,6 @@ public class AddonsManager {
                 // Register the schems
                 plugin.getSchemsManager().loadIslands(gameMode);
             }
-
             // Addon successfully loaded
             addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
@@ -134,6 +134,7 @@ public class AddonsManager {
     public void enableAddons() {
         if (!getLoadedAddons().isEmpty()) {
             plugin.log("Enabling addons...");
+
             getLoadedAddons().forEach(addon -> {
                 try {
                     addon.onEnable();
@@ -350,5 +351,17 @@ public class AddonsManager {
 
         addons.clear();
         addons.addAll(sortedAddons.values());
+    }
+
+    /**
+     * Get the world generator if it exists
+     * @param worldName - name of world
+     * @param id - specific generator id
+     * @return ChunkGenerator or null if none found
+     * @since 1.1.1
+     */
+    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+        return getGameModeAddons().stream().filter(gm -> gm.inWorld(Bukkit.getWorld(worldName))).findFirst().map(gm -> gm.getDefaultWorldGenerator(worldName, id)).orElse(null);
+
     }
 }
