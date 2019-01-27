@@ -45,17 +45,18 @@ public class AdminGetrankCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
+        Island island = getIslands().getIsland(getWorld(), targetUUID);
+        if (island != null) {
+            // Get rank
+            RanksManager rm = getPlugin().getRanksManager();
+            User target = User.getInstance(targetUUID);
+            int currentRank = island.getRank(target);
+            user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK, user.getTranslation(rm.getRank(currentRank)));
+            return true;
+        } else {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        // Get rank
-        RanksManager rm = getPlugin().getRanksManager();
-        User target = User.getInstance(targetUUID);
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
-        int currentRank = island.getRank(target);
-        user.sendMessage("commands.admin.getrank.rank-is", TextVariables.RANK, user.getTranslation(rm.getRank(currentRank)));
-        return true;
     }
 
     @Override
