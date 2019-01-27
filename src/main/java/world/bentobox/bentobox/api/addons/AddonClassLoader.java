@@ -15,9 +15,8 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.util.permissions.DefaultPermissions;
-
-import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonInheritException;
 import world.bentobox.bentobox.managers.AddonsManager;
@@ -109,33 +108,35 @@ public class AddonClassLoader extends URLClassLoader {
 
     /**
      * This is a custom findClass that enables classes in other addons to be found
-     * @param name class name
-     * @param checkGlobal check globally or not when searching
-     * @return class if found, null otherwise
+     * @param name - class name
+     * @param checkGlobal - check globally or not when searching
+     * @return Class - class if found
      */
-    @Nullable
-    public Class<?> findClass(@NonNull String name, boolean checkGlobal) {
+    public Class<?> findClass(String name, boolean checkGlobal) {
         if (name.startsWith("world.bentobox.bentobox")) {
             return null;
         }
+        Class<?> result = classes.get(name);
+        if (result == null) {
+            if (checkGlobal) {
+                result = loader.getClassByName(name);
+            }
 
-        // Either return the value if it exists (and != null), or try to compute one.
-        // If the computed value is null, it won't be added to the map.
-        return classes.computeIfAbsent(name, (key) -> {
-            Class<?> computed = checkGlobal ? loader.getClassByName(key) : null;
-
-            if (computed == null) {
+            if (result == null) {
                 try {
-                    computed = super.findClass(key);
+                    result = super.findClass(name);
                 } catch (ClassNotFoundException | NoClassDefFoundError e) {
                     // Do nothing.
+                    result = null;
                 }
-                if (computed != null) {
-                    loader.setClass(key, computed);
+                if (result != null) {
+                    loader.setClass(name, result);
+
                 }
             }
-            return computed;
-        });
+            classes.put(name, result);
+        }
+        return result;
     }
 
     /**
@@ -144,4 +145,5 @@ public class AddonClassLoader extends URLClassLoader {
     public Addon getAddon() {
         return addon;
     }
+
 }
