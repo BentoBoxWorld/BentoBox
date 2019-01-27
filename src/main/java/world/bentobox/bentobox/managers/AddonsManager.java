@@ -108,7 +108,15 @@ public class AddonsManager {
         try {
             // Run the onLoad.
             addon.onLoad();
-
+            // If this is a GameModeAddon create the worlds, register it and load the schems
+            if (addon instanceof GameModeAddon) {
+                GameModeAddon gameMode = (GameModeAddon) addon;
+                // Create the gameWorlds
+                gameMode.createWorlds();
+                plugin.getIWM().addGameMode(gameMode);
+                // Register the schems
+                plugin.getSchemsManager().loadIslands(gameMode);
+            }
             // Addon successfully loaded
             addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
@@ -128,16 +136,6 @@ public class AddonsManager {
             plugin.log("Enabling addons...");
 
             getLoadedAddons().forEach(addon -> {
-                // If this is a GameModeAddon create the worlds, register it and load the schems
-                if (addon instanceof GameModeAddon) {
-                    GameModeAddon gameMode = (GameModeAddon) addon;
-                    // Create the gameWorlds
-                    gameMode.createWorlds();
-                    plugin.getIWM().addGameMode(gameMode);
-                    // Register the schems
-                    plugin.getSchemsManager().loadIslands(gameMode);
-                }
-
                 try {
                     addon.onEnable();
                     Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
@@ -179,7 +177,6 @@ public class AddonsManager {
         addon.setState(Addon.State.ERROR);
         plugin.logError("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
         plugin.logError("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
-        throwable.printStackTrace();
         if (plugin.getConfig().getBoolean("debug")) {
             plugin.logDebug(throwable.toString());
             plugin.logDebug(throwable.getStackTrace());

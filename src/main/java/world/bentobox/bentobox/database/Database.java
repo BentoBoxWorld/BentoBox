@@ -89,7 +89,6 @@ public class Database<T> {
         } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException | SecurityException
                 | IntrospectionException e) {
             logger.severe(() -> "Could not save object to database! Error: " + e.getMessage());
-            e.printStackTrace();
             return false;
         }
         return true;

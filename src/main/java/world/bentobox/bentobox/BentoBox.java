@@ -142,7 +142,6 @@ public class BentoBox extends JavaPlugin {
         hooksManager = new HooksManager(this);
         hooksManager.registerHook(new VaultHook());
         hooksManager.registerHook(new PlaceholderAPIHook());
-        hooksManager.registerHook(new MultiverseCoreHook());
 
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
         addonsManager = new AddonsManager(this);
@@ -172,7 +171,9 @@ public class BentoBox extends JavaPlugin {
                 metrics.registerMetrics();
             }
 
+            // Register Multiverse hook - MV loads AFTER BentoBox
             // Make sure all worlds are already registered to Multiverse.
+            hooksManager.registerHook(new MultiverseCoreHook());
             islandWorldManager.registerWorldsToMultiverse();
 
             // Setup the Placeholders manager
