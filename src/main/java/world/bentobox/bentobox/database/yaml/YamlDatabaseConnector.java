@@ -96,21 +96,25 @@ public class YamlDatabaseConnector implements DatabaseConnector {
     }
 
     private void removeStringFromFile(File yamlFile) {
-        try {
+        PrintWriter writer = null;
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8))){
             File temp = File.createTempFile("file", ".tmp", yamlFile.getParentFile());
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(yamlFile), StandardCharsets.UTF_8));
-            PrintWriter writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
+            writer = new PrintWriter(new OutputStreamWriter(new FileOutputStream(temp), StandardCharsets.UTF_8));
             for (String line; (line = reader.readLine()) != null;) {
                 line = line.replace("!!java.util.UUID", "");
                 writer.println(line);
             }
-            reader.close();
-            writer.close();
             if (yamlFile.delete()) {
-                temp.renameTo(yamlFile);
+                if (!temp.renameTo(yamlFile)) {
+                    plugin.logError("Could not rename fixed Island object. Are the writing permissions correctly setup?");
+                }
             }
         } catch (Exception e) {
             plugin.logError("Could not fix Island object - skipping - " + e.getMessage());
+        } finally {
+            if (writer != null) {
+                writer.close();
+            }
         }
     }
 
