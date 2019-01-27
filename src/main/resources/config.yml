@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.1
+# BentoBox Configuration 1.2.0
 # This config file is dynamic and saved when the server is shutdown.
 # You cannot edit it while the server is running because changes will
 # be lost! Use in-game settings GUI or edit when server is offline.
@@ -41,23 +41,32 @@ general:
   rank-command: {}
 panel:
   close-on-click-outside: true
+logs:
+  # Toggle whether superflat chunks regeneration should be logged in the server logs or not.
+  # It can be spammy if there are a lot of superflat chunks to regenerate.
+  # However, as superflat chunks regeneration can be performance-intensive, it is recommended to keep
+  # this setting set to true, as it will help you know if there are regenerations taking place.
+  clean-super-flat-chunks: true
 island:
   cooldown:
-    # How long a player must wait until they can rejoin a team island after being
-    # kicked in minutes. This slows the effectiveness of players repeating challenges
-    # by repetitively being invited to a team island.
-    invite: 60
-    # How long a player must wait until they can coop a player in minutes.
-    coop: 5
-    # How long a player must wait until they can trust a player in minutes.
-    trust: 5
-    # How long a player must wait until they can ban a player
-    # after unbanning them. In minutes.
-    ban: 10
-    # How long a player must wait before they can reset their island again in seconds.
-    reset: 300
+    time:
+      # How long a player must wait until they can rejoin a team island after being kicked in minutes.
+      # This slows the effectiveness of players repeating challenges
+      # by repetitively being invited to a team island.
+      invite: 60
+      # How long a player must wait until they can coop a player in minutes.
+      coop: 5
+      # How long a player must wait until they can trust a player in minutes.
+      trust: 5
+      # How long a player must wait until they can ban a player after unbanning them. In minutes.
+      ban: 10
+      # How long a player must wait before they can reset their island again in seconds.
+      reset: 300
+    options:
+      # Whether the reset cooldown should be applied when the player creates an island for the first time or not.
+      set-reset-cooldown-on-create: true
   confirmation:
-    # Time in seconds that players have to confirm sensitive commands, e.g. island reset
+    # Time in seconds that players have to confirm sensitive commands, e.g. island reset.
     time: 10
     commands:
       # Ask the player to confirm the command he is using by typing it again.
