@@ -7,8 +7,6 @@
 ![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=reliability_rating)
 ![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=security_rating)
 ![Bugs](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=bugs)
-[![Average time to resolve an issue](http://isitmaintained.com/badge/resolution/BentoBoxWorld/BentoBox.svg)](http://isitmaintained.com/project/BentoBoxWorld/BentoBox "Average time to resolve an issue")
-[![Percentage of issues still open](http://isitmaintained.com/badge/open/BentoBoxWorld/BentoBox.svg)](http://isitmaintained.com/project/BentoBoxWorld/BentoBox "Percentage of issues still open")
 
 BentoBox is an expandable Minecraft **1.13+ Spigot plugin** for island-type games like SkyBlock or AcidIsland.
 
