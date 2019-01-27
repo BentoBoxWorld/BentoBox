@@ -63,6 +63,7 @@ public abstract class GameModeAddon extends Addon {
      * Checks if world is governed by this game mode
      * @param world - world to check
      * @return true if in a world or false if not
+     * @since 1.1.1
      */
     public boolean inWorld(World world) {
         if (world == null) {

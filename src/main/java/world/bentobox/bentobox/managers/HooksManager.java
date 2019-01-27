@@ -28,7 +28,7 @@ public class HooksManager {
                 return;
             }
         }
-        plugin.logError("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
+        plugin.log("Could not hook with " + hook.getPluginName() + ((hook.getFailureCause() != null) ? " because: " + hook.getFailureCause() : "") + ". Skipping...");
     }
 
     public List<Hook> getHooks() {
