@@ -90,7 +90,7 @@ public class Settings implements DataObject {
     @ConfigComment("It can be spammy if there are a lot of superflat chunks to regenerate.")
     @ConfigComment("However, as superflat chunks regeneration can be performance-intensive, it is recommended to keep")
     @ConfigComment("this setting set to true, as it will help you know if there are regenerations taking place.")
-    @ConfigEntry(path = "logs.clean-super-flat-chunks", since = "1.1.1")
+    @ConfigEntry(path = "logs.clean-super-flat-chunks", since = "1.2.0")
     private boolean logCleanSuperFlatChunks = true;
 
     /*

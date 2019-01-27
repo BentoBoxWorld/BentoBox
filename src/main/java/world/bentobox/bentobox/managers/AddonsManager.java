@@ -358,10 +358,10 @@ public class AddonsManager {
      * @param worldName - name of world
      * @param id - specific generator id
      * @return ChunkGenerator or null if none found
-     * @since 1.1.1
+     * @since 1.2.0
      */
+    @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return getGameModeAddons().stream().filter(gm -> gm.inWorld(Bukkit.getWorld(worldName))).findFirst().map(gm -> gm.getDefaultWorldGenerator(worldName, id)).orElse(null);
-
     }
 }

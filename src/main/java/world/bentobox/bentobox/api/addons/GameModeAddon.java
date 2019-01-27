@@ -63,7 +63,7 @@ public abstract class GameModeAddon extends Addon {
      * Checks if world is governed by this game mode
      * @param world - world to check
      * @return true if in a world or false if not
-     * @since 1.1.1
+     * @since 1.2.0
      */
     public boolean inWorld(World world) {
         if (world == null) {
@@ -118,7 +118,7 @@ public abstract class GameModeAddon extends Addon {
      * @param worldName - name of world that this applies to
      * @param id - id if any
      * @return Chunk generator
-     * @since 1.1.1
+     * @since 1.2.0
      */
     @NonNull
     public abstract ChunkGenerator getDefaultWorldGenerator(String worldName, String id);
