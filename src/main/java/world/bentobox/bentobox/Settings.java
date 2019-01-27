@@ -97,26 +97,26 @@ public class Settings implements DataObject {
      * Island
      */
     // Cooldowns
-    @ConfigComment("How long a player must wait until they can rejoin a team island after being")
-    @ConfigComment("kicked in minutes. This slows the effectiveness of players repeating challenges")
+    @ConfigComment("How long a player must wait until they can rejoin a team island after being kicked in minutes.")
+    @ConfigComment("This slows the effectiveness of players repeating challenges")
     @ConfigComment("by repetitively being invited to a team island.")
-    @ConfigEntry(path = "island.cooldown.invite")
+    @ConfigEntry(path = "island.cooldown.time.invite")
     private int inviteCooldown = 60;
 
     @ConfigComment("How long a player must wait until they can coop a player in minutes.")
-    @ConfigEntry(path = "island.cooldown.coop")
+    @ConfigEntry(path = "island.cooldown.time.coop")
     private int coopCooldown = 5;
 
     @ConfigComment("How long a player must wait until they can trust a player in minutes.")
-    @ConfigEntry(path = "island.cooldown.trust")
+    @ConfigEntry(path = "island.cooldown.time.trust")
     private int trustCooldown = 5;
 
     @ConfigComment("How long a player must wait until they can ban a player after unbanning them. In minutes.")
-    @ConfigEntry(path = "island.cooldown.ban")
+    @ConfigEntry(path = "island.cooldown.time.ban")
     private int banCooldown = 10;
 
     @ConfigComment("How long a player must wait before they can reset their island again in seconds.")
-    @ConfigEntry(path = "island.cooldown.reset")
+    @ConfigEntry(path = "island.cooldown.time.reset")
     private int resetCooldown = 300;
 
     // Timeout for team kick and leave commands
