@@ -3,8 +3,13 @@ package world.bentobox.bentobox.managers;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-import java.util.*;
+
+import java.util.Objects;
+import java.util.TreeMap;
 import java.util.jar.JarFile;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
