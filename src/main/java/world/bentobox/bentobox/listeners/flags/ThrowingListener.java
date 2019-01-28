@@ -1,11 +1,14 @@
 package world.bentobox.bentobox.listeners.flags;
 
+import org.bukkit.entity.Player;
 import org.bukkit.entity.ThrownExpBottle;
 import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.ProjectileLaunchEvent;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -21,7 +24,9 @@ public class ThrowingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerThrowPotion(ProjectileLaunchEvent e) {
-        if (e.getEntity() instanceof ThrownPotion || e.getEntity() instanceof ThrownExpBottle) {
+        if (e.getEntity().getShooter() instanceof Player 
+                && (e.getEntity() instanceof ThrownPotion || e.getEntity() instanceof ThrownExpBottle)) {
+            setUser(User.getInstance((Player)e.getEntity().getShooter()));
             checkIsland(e, e.getEntity().getLocation(), Flags.POTION_THROWING);
         }
     }
