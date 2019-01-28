@@ -825,6 +825,9 @@ language:
   selected: "&aCurrently selected."
   edited: "&aChanged your language to &e[lang]&a."
 
+schems:
+  panel-title: "Select your island schem"
+
 successfully-loaded: |
 
   &6  ____             _        ____

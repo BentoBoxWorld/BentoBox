@@ -542,3 +542,6 @@ language:
   panel-title: "Wybierz swój język"
   selected: "&aObecnie wybrany."
   edited: "&aZmieniono język na &e[lang]&a."
+
+schems:
+  panel-title: "Wybierz swój schemat wyspy"
