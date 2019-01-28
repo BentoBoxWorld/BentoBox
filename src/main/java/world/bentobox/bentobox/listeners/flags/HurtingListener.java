@@ -128,6 +128,7 @@ public class HurtingListener extends FlagListener {
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
+            setUser(User.getInstance(attacker));
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
                 // Self damage
