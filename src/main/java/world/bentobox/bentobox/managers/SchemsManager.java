@@ -3,11 +3,13 @@ package world.bentobox.bentobox.managers;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.jar.JarFile;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.jar.JarFile;
 
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
@@ -74,7 +76,7 @@ public class SchemsManager {
      * @return map of schems for this world or an empty map if there are none registered
      */
     public Map<String, Clipboard> get(World world) {
-        return islandSchems.getOrDefault(world, new HashMap<>());
+        return islandSchems.getOrDefault(world, new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
     }
 
     /**
@@ -107,7 +109,7 @@ public class SchemsManager {
 
     private boolean loadSchem(World world, File schems, String name) {
         plugin.log("Loading " + name + ".schem for " + world.getName());
-        Map<String, Clipboard> schemList = islandSchems.getOrDefault(world, new HashMap<>());
+        Map<String, Clipboard> schemList = islandSchems.getOrDefault(world, new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
         try {
             Clipboard cb = new Clipboard(plugin, schems);
             cb.load(name);
