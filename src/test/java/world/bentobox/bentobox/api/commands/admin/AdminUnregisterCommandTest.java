@@ -151,19 +151,6 @@ public class AdminUnregisterCommandTest {
      * Test method for .
      */
     @Test
-    public void testExecuteInTeam() {
-        when(im.inTeam(Mockito.any(),Mockito.any())).thenReturn(true);
-        String[] name = {"tastybento"};
-        when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
-        AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("commands.admin.unregister.cannot-unregister-team-player");
-    }
-
-    /**
-     * Test method for .
-     */
-    @Test
     public void testExecuteSuccess() {
         when(im.inTeam(Mockito.any(), Mockito.any())).thenReturn(false);
         Island is = mock(Island.class);

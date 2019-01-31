@@ -294,7 +294,7 @@ public class AdminTeamAddCommandTest {
 
         // Success
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(island).addMember(notUUID);
+        Mockito.verify(im).setJoinTeam(Mockito.eq(island), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
 

@@ -6,6 +6,7 @@ import java.util.UUID;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminTeamAddCommand extends CompositeCommand {
 
@@ -60,9 +61,15 @@ public class AdminTeamAddCommand extends CompositeCommand {
         User owner = User.getInstance(ownerUUID);
         owner.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, getPlugin().getPlayers().getName(targetUUID));
         target.sendMessage("commands.island.team.invite.accept.you-joined-island", TextVariables.LABEL, getTopLabel());
-        getIslands().getIsland(getWorld(), ownerUUID).addMember(targetUUID);
-        user.sendMessage("general.success");
-        return true;
+        Island teamIsland = getIslands().getIsland(getWorld(), ownerUUID);
+        if (teamIsland != null) {
+            getIslands().setJoinTeam(teamIsland, targetUUID);
+            user.sendMessage("general.success");
+            return true;
+        } else {
+            user.sendMessage("general.errors.player-has-no-island");
+            return false;
+        }
 
     }
 

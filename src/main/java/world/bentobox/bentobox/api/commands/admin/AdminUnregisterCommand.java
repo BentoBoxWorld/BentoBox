@@ -15,7 +15,7 @@ public class AdminUnregisterCommand extends CompositeCommand {
     public AdminUnregisterCommand(CompositeCommand parent) {
         super(parent, "unregister");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.unregister");
@@ -36,14 +36,11 @@ public class AdminUnregisterCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
+        if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        if (getIslands().inTeam(getWorld(), targetUUID)) {
-            user.sendMessage("commands.admin.unregister.cannot-unregister-team-player");
-            return false;
-        }
+
         // Unregister island
         user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
         getIslands().removePlayer(getWorld(), targetUUID);
@@ -51,7 +48,7 @@ public class AdminUnregisterCommand extends CompositeCommand {
         user.sendMessage("general.success");
         return true;
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
