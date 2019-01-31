@@ -31,6 +31,15 @@ public class PanelItem {
         this.playerHead = playerHead;
         // Get the meta
         meta = icon.getItemMeta();
+        if (meta != null) {
+            // Set flags to neaten up the view
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+            meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
+            icon.setItemMeta(meta);
+        }
 
         this.clickHandler = clickHandler;
 
@@ -39,13 +48,7 @@ public class PanelItem {
         setDescription(description);
         setGlow(glow);
 
-        // Set flags to neaten up the view
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
-        meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        meta.addItemFlags(ItemFlag.HIDE_POTION_EFFECTS);
-        icon.setItemMeta(meta);
+
     }
 
     public ItemStack getItem() {
@@ -58,8 +61,10 @@ public class PanelItem {
 
     public void setDescription(List<String> description) {
         this.description = description;
-        meta.setLore(description);
-        icon.setItemMeta(meta);
+        if (meta != null) {
+            meta.setLore(description);
+            icon.setItemMeta(meta);
+        }
     }
 
     public String getName() {
@@ -68,9 +73,11 @@ public class PanelItem {
 
     public void setName(String name) {
         this.name = name;
-        meta.setDisplayName(name);
-        meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
-        icon.setItemMeta(meta);
+        if (meta != null) {
+            meta.setDisplayName(name);
+            meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
+            icon.setItemMeta(meta);
+        }
     }
 
     public Optional<ClickHandler> getClickHandler() {
@@ -83,7 +90,10 @@ public class PanelItem {
 
     public void setGlow(boolean glow) {
         this.glow = glow;
-        meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, glow);
+        if (meta != null) {
+            meta.addEnchant(Enchantment.ARROW_DAMAGE, 0, glow);
+            icon.setItemMeta(meta);
+        }
     }
 
     /**
@@ -112,17 +122,18 @@ public class PanelItem {
     public void setHead(ItemStack itemStack) {
         this.icon = itemStack;
         // Get the meta
-        meta = icon.getItemMeta();
+        if (icon.hasItemMeta()) {
+            meta = icon.getItemMeta();
+            // Set flags to neaten up the view
+            meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
+            meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
+            meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
+            meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+            icon.setItemMeta(meta);
+        }
         // Create the final item
         setName(name);
         setDescription(description);
         setGlow(glow);
-
-        // Set flags to neaten up the view
-        meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
-        meta.addItemFlags(ItemFlag.HIDE_DESTROYS);
-        meta.addItemFlags(ItemFlag.HIDE_PLACED_ON);
-        meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
-        icon.setItemMeta(meta);
     }
 }
