@@ -122,7 +122,7 @@ public class PanelItem {
     public void setHead(ItemStack itemStack) {
         this.icon = itemStack;
         // Get the meta
-        if (icon.hasItemMeta()) {
+        if (meta != null) {
             meta = icon.getItemMeta();
             // Set flags to neaten up the view
             meta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES);
