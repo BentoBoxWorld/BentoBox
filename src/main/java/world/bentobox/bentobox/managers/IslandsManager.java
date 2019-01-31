@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.managers;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
@@ -22,9 +24,9 @@ import org.bukkit.entity.Monster;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -32,8 +34,8 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.DeleteIslandChunks;
@@ -696,7 +698,22 @@ public class IslandsManager {
      */
     public void load(){
         islandCache.clear();
-        handler.loadObjects().forEach(islandCache::addIsland);
+        List<Island> toQuarantine = new ArrayList<>();
+        // Only load non-quarantined island
+        // TODO: write a purge admin command to delete these records
+        handler.loadObjects().stream().filter(i -> !i.isDoNotLoad()).forEach(island -> {
+           if (!islandCache.addIsland(island)) {
+               // Quarantine the offending island
+               toQuarantine.add(island);
+           }
+        });
+        if (!toQuarantine.isEmpty()) {
+            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; quarantining.");
+            toQuarantine.forEach(i -> {
+                i.setDoNotLoad(true);
+                handler.saveObject(i);
+            });          
+        }
     }
 
     /**

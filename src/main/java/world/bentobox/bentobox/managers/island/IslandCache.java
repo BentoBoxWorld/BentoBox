@@ -45,15 +45,18 @@ public class IslandCache {
         if (island.getCenter() == null || island.getWorld() == null) {
             return false;
         }
-        islandsByLocation.put(island.getCenter(), island);
-        // Make world
-        islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
-        // Only add islands to this map if they are owned
-        if (island.getOwner() != null) {
-            islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
-            island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
+        if (addToGrid(island)) {
+            islandsByLocation.put(island.getCenter(), island);
+            // Make world
+            islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
+            // Only add islands to this map if they are owned
+            if (island.getOwner() != null) {
+                islandsByUUID.get(island.getWorld()).put(island.getOwner(), island);
+                island.getMemberSet().forEach(member -> islandsByUUID.get(island.getWorld()).put(member, island));
+            }
+            return true;
         }
-        return addToGrid(island);
+        return false;
     }
 
     /**
