@@ -225,9 +225,9 @@ commands:
       locales-reloaded: "&2Languages reloaded"
       addons-reloaded: "&2Addons reloaded"
     version:
-      plugin-version: "&2Bentobox version: &3[name]"
+      plugin-version: "&2BentoBox version: &3[name]"
       description: "display info"
-      loaded-addons: "Loaded Add-Ons"
+      loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version]" 
       game-worlds: "&2[name] &3([addon])"
