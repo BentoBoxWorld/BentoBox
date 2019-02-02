@@ -612,6 +612,10 @@ protection:
       description: "Toggle hurting"
       name: "Hurt villagers"
       hint: "No villager hurting"
+    ITEM_FRAME:
+      name: "Item Frame"
+      description: "Toggle interaction"
+      hint: "Item Frame use disabled"
     ITEM_FRAME_DAMAGE:
       description: |-
           &aMobs can damage
