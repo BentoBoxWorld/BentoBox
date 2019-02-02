@@ -206,8 +206,8 @@ commands:
     why:
       parameters: "<player>"
       description:  "toggle console protection debug reporting"
-      turning-on: "Turning on console debug for [name]"
-      turning-off: "Turning off console debug for [name]"
+      turning-on: "Turning on console debug for [name]."
+      turning-off: "Turning off console debug for [name]."
     deaths:
       description: "edit deaths of players"
       reset:
@@ -222,8 +222,8 @@ commands:
       description: "display copyright and license info"
     reload:
       description: "reloads addons (if supported) and locale files"
-      locales-reloaded: "&2Languages reloaded"
-      addons-reloaded: "&2Addons reloaded"
+      locales-reloaded: "&2Languages reloaded."
+      addons-reloaded: "&2Addons reloaded."
     version:
       plugin-version: "&2BentoBox version: &3[name]"
       description: "display info"
@@ -232,9 +232,9 @@ commands:
       addon-syntax: "&2[name] &3[version]" 
       game-worlds: "&2[name] &3([addon])"
   confirmation:
-    confirm: "&cType command again within &b[seconds]s&c to confirm"
-    previous-request-cancelled: "&6Previous confirmation request cancelled"
-    request-cancelled: "&cConfirmation timeout - &brequest cancelled"
+    confirm: "&cType command again within &b[seconds]s&c to confirm."
+    previous-request-cancelled: "&6Previous confirmation request cancelled."
+    request-cancelled: "&cConfirmation timeout - &brequest cancelled."
   island:
     about:
       description: "About this addon"
