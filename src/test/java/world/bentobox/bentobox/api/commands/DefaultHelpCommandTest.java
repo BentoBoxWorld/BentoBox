@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -175,8 +176,7 @@ public class DefaultHelpCommandTest {
                 );
     }
 
-    // FIXME Tastybento, I need help with this one! :(
-    /* Commenting out for now, so the CI can build.
+    @Ignore("Failing due to 'wanted but not invoked' errors")
     @Test
     public void testExecuteDirectHelpHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
@@ -204,6 +204,5 @@ public class DefaultHelpCommandTest {
                 "[description]",
                 "the help command"
                 );
-    } */
-
+    }
 }
