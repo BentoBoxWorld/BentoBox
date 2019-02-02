@@ -84,18 +84,6 @@ public class FlagsManager {
     }
 
     /**
-     * Get flag by ID
-     * @param id unique id for this flag
-     * @return Flag or null if not known
-     * @deprecated As of 1.1, use {@link #getFlag(String)} instead.
-     */
-    @Deprecated
-    @Nullable
-    public Flag getFlagByID(@NonNull String id) {
-        return getFlag(id).orElse(null);
-    }
-
-    /**
      * Gets a Flag by providing an ID.
      * @param id Unique ID for this Flag.
      * @return Optional containing the Flag instance or empty.

@@ -42,11 +42,7 @@ public class SettingsPanel {
 
         // Get a list of flags of the correct type and sort by the translated names
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(flagType))
-                .sorted(Comparator.comparing(Flag::getID, (s1, s2) -> {
-                    String s1Translation = user.getTranslation(plugin.getFlagsManager().getFlagByID(s1).getNameReference());
-                    String s2Translation = user.getTranslation(plugin.getFlagsManager().getFlagByID(s2).getNameReference());
-                    return s1Translation.compareTo(s2Translation);
-                }))
+                .sorted(Comparator.comparing(flag -> user.getTranslation(flag.getNameReference())))
                 .collect(Collectors.toList());
 
         // Use paging

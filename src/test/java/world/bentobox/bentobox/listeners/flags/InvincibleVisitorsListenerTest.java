@@ -101,7 +101,7 @@ public class InvincibleVisitorsListenerTest {
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
         when(flag.toPanelItem(Mockito.any(), Mockito.eq(user))).thenReturn(item);
-        when(fm.getFlagByID(Mockito.anyString())).thenReturn(flag);
+        when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Island Manager
