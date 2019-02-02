@@ -585,10 +585,27 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (command.hasSubCommands()) {
             options.addAll(getSubCommandLabels(sender, command));
         }
+
+        /* /!\ The following check is likely a poor quality patch-up job. If any better solution can be applied, don't hesitate to do so. */
+        // See https://github.com/BentoBoxWorld/BentoBox/issues/416
+
+        // "help" shouldn't appear twice, so remove it if it is already in the args.
+        if (Arrays.asList(args).contains("help")) {
+            options.remove("help");
+        }
+
+        /* ------------ */
+
         String lastArg = args.length != 0 ? args[args.length - 1] : "";
         return Util.tabLimit(options, lastArg).stream().sorted().collect(Collectors.toList());
     }
 
+    /**
+     * Returns a list containing all the labels of the subcommands for the provided CompositeCommand.
+     * @param sender the CommandSender
+     * @param command the CompositeCommand to get the subcommands from
+     * @return a list of subcommands labels or an empty list.
+     */
     @NonNull
     private List<String> getSubCommandLabels(@NonNull CommandSender sender, @NonNull CompositeCommand command) {
         return command.getSubCommands().values().stream()
