@@ -19,6 +19,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginIdentifiableCommand;
 import org.bukkit.entity.Player;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -393,7 +395,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param user the User
      * @return UUID of player's island owner or null if user has no island
      */
-    protected UUID getOwner(World world, User user) {
+    @Nullable
+    protected UUID getOwner(@NonNull World world, @NonNull User user) {
         return plugin.getIslands().getOwner(world, user.getUniqueId());
     }
 
@@ -565,29 +568,31 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     @Override
+    @NonNull
     public List<String> tabComplete(final CommandSender sender, final String alias, final String[] args) {
         List<String> options = new ArrayList<>();
         // Get command object based on args entered so far
-        CompositeCommand cmd = getCommandFromArgs(args);
+        CompositeCommand command = getCommandFromArgs(args);
         // Check for console and permissions
-        if ((cmd.onlyPlayer && !(sender instanceof Player))) {
+        if (command.isOnlyPlayer() && !(sender instanceof Player)) {
             return options;
         }
-        if (!cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission()) && !sender.isOp()) {
+        if (!command.getPermission().isEmpty() && !sender.hasPermission(command.getPermission()) && !sender.isOp()) {
             return options;
         }
         // Add any tab completion from the subcommand
-        options.addAll(cmd.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElse(new ArrayList<>()));
-        if (cmd.hasSubCommands()) {
-            options.addAll(getSubCommandLabels(sender, cmd));
+        options.addAll(command.tabComplete(User.getInstance(sender), alias, new LinkedList<>(Arrays.asList(args))).orElse(new ArrayList<>()));
+        if (command.hasSubCommands()) {
+            options.addAll(getSubCommandLabels(sender, command));
         }
         String lastArg = args.length != 0 ? args[args.length - 1] : "";
         return Util.tabLimit(options, lastArg).stream().sorted().collect(Collectors.toList());
     }
 
-    private List<String> getSubCommandLabels(CommandSender sender, CompositeCommand cmd) {
-        return cmd.getSubCommands().values().stream().filter(c -> !c.isOnlyPlayer() || sender.isOp()
-                || (sender instanceof Player && (c.getPermission().isEmpty() || sender.hasPermission(c.getPermission()))) )
+    @NonNull
+    private List<String> getSubCommandLabels(@NonNull CommandSender sender, @NonNull CompositeCommand command) {
+        return command.getSubCommands().values().stream()
+                .filter(cmd -> !cmd.isOnlyPlayer() || sender.isOp() || (sender instanceof Player && (cmd.getPermission().isEmpty() || sender.hasPermission(cmd.getPermission()))) )
                 .map(CompositeCommand::getLabel).collect(Collectors.toList());
     }
 
