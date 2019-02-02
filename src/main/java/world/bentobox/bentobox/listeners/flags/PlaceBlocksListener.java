@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.listeners.flags;
 
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -39,7 +38,7 @@ public class PlaceBlocksListener extends FlagListener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onPlayerHitEntity(PlayerInteractEntityEvent e) {
+    public void onPlayerHitItemFrame(PlayerInteractEntityEvent e) {
         if (e.getRightClicked().getType().equals(EntityType.ITEM_FRAME)) {
             checkIsland(e, e.getRightClicked().getLocation(), Flags.PLACE_BLOCKS);
         }
@@ -55,8 +54,9 @@ public class PlaceBlocksListener extends FlagListener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
+
         switch (e.getClickedBlock().getType()) {
-            case FIREWORK_ROCKET:
+        case FIREWORK_ROCKET:
             checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
             return;
         case RAIL:
@@ -70,10 +70,11 @@ public class PlaceBlocksListener extends FlagListener {
             return;
         default:
             // Check in-hand items
-            // This check protects against an exploit in 1.7.9 against cactus
-            // and sugar cane and placing boats on non-liquids
             if (e.getMaterial() != null
-                    && (e.getMaterial().equals(Material.END_CRYSTAL) || Tag.DOORS.isTagged(e.getMaterial())
+            && (e.getMaterial().equals(Material.FIREWORK_ROCKET)
+                    || e.getMaterial().equals(Material.ARMOR_STAND)
+                    || e.getMaterial().equals(Material.END_CRYSTAL)
+                    //|| Tag.DOORS.isTagged(e.getMaterial())
                     || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)
                     || (e.getMaterial().name().contains("BOAT")
                             && !e.getClickedBlock().isLiquid()))) {
