@@ -51,11 +51,11 @@ public class IslandSetnameCommand extends CompositeCommand {
 
         // Check if the name isn't too short or too long
         if (name.length() < getSettings().getNameMinLength()) {
-            user.sendMessage("commands.island.setname.too-short", TextVariables.NUMBER,  String.valueOf(getSettings().getNameMinLength()));
+            user.sendMessage("commands.island.setname.name-too-short", TextVariables.NUMBER,  String.valueOf(getSettings().getNameMinLength()));
             return false;
         }
         if (name.length() > getSettings().getNameMaxLength()) {
-            user.sendMessage("commands.island.setname.too-long", TextVariables.NUMBER, String.valueOf(getSettings().getNameMaxLength()));
+            user.sendMessage("commands.island.setname.name-too-long", TextVariables.NUMBER, String.valueOf(getSettings().getNameMaxLength()));
             return false;
         }
 
