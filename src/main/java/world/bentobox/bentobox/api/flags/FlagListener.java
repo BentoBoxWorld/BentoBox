@@ -237,18 +237,6 @@ public abstract class FlagListener implements Listener {
 
     /**
      * Get the flag for this ID
-     * @param id - the flag ID
-     * @return Flag denoted by the id
-     * @deprecated As of 1.1, replaced with {@link #getFlag(String)}.
-     */
-    @Deprecated
-    @Nullable
-    protected Flag id(@NonNull String id) {
-        return getFlag(id).orElse(null);
-    }
-
-    /**
-     * Get the flag for this ID
      * @param id the flag ID
      * @return Optional of the Flag denoted by the id
      * @since 1.1
