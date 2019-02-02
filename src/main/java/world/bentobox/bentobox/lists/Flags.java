@@ -51,6 +51,9 @@ import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickLi
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
+/**
+ * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
+ */
 public final class Flags {
 
     private Flags() {}
@@ -58,10 +61,21 @@ public final class Flags {
     // Disabled setting 'rank'
     private static final int DISABLED = -1;
 
+    /**
+     * Prevents players from breaking blocks on one's island.
+     * @see BreakBlocksListener
+     */
     public static final Flag BREAK_BLOCKS = new Flag.Builder("BREAK_BLOCKS", Material.STONE).listener(new BreakBlocksListener()).build();
+    /**
+     * Prevents players from placing blocks on one's island.
+     * @see PlaceBlocksListener
+     */
     public static final Flag PLACE_BLOCKS = new Flag.Builder("PLACE_BLOCKS", Material.GRASS).listener(new PlaceBlocksListener()).build();
 
-    // Frost walker - uses the place block listener
+    /**
+     * Prevents players from generated Frosted Ice on one's island using boots enchanted with "Frost Walker".
+     * @see PlaceBlocksListener
+     */
     public static final Flag FROST_WALKER = new Flag.Builder("FROST_WALKER", Material.ICE).build();
 
     // Block interactions - all use BlockInteractionListener()
@@ -247,7 +261,9 @@ public final class Flags {
 
     public static final Flag OBSIDIAN_SCOOPING = new Flag.Builder("OBSIDIAN_SCOOPING", Material.OBSIDIAN).type(Type.WORLD_SETTING)
             .listener(new ObsidianScoopingListener()).defaultSetting(true).build();
+
     /**
+     * Provides a list of all the Flag instances contained in this class using reflection.
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
