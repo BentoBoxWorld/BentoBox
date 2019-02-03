@@ -256,10 +256,10 @@ public final class Flags {
     public static final Flag CREEPER_DAMAGE = new Flag.Builder("CREEPER_DAMAGE", Material.GREEN_SHULKER_BOX).listener(new CreeperListener()).type(Type.WORLD_SETTING)
             .defaultSetting(true).build();
     /**
-     * Prevents creeper griefing. This is where a visitor will trigger a creeper to blow up an island.
+     * Prevents visitors from triggering a creeper to blow up an island.
+     * @see CreeperListener
      */
-    public static final Flag CREEPER_GRIEFING = new Flag.Builder("CREEPER_GRIEFING", Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
-            .build();
+    public static final Flag CREEPER_GRIEFING = new Flag.Builder("CREEPER_GRIEFING", Material.CREEPER_HEAD).type(Type.WORLD_SETTING).build();
 
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
             .clickHandler(new CommandRankClickListener()).usePanel(true).build();
