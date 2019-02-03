@@ -159,8 +159,16 @@ public final class Flags {
     public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
+    /**
+     * Prevents players from going through the Nether Portal.
+     * @see PortalListener
+     */
     public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).build();
-    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).listener(new PortalListener()).build(); // FIXME: twice the listener
+    /**
+     * Prevents players from going through the End Portal.
+     * @see PortalListener
+     */
+    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).build();
 
     // Shearing
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).build();
