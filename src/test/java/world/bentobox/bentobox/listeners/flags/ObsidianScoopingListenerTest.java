@@ -120,7 +120,6 @@ public class ObsidianScoopingListenerTest {
         when(clickedBlock.getWorld()).thenReturn(world);
         when(item.getAmount()).thenReturn(1);
 
-
         // Users
         User.setPlugin(plugin);
 
@@ -146,12 +145,6 @@ public class ObsidianScoopingListenerTest {
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
-
-    }
-
-    @Test
-    public void testObsidianToLava() {
-        assertNotNull(new ObsidianScoopingListener());
     }
 
     @Test
