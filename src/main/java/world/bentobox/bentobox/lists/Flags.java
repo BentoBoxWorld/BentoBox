@@ -10,6 +10,7 @@ import org.bukkit.Material;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
 import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
@@ -73,7 +74,7 @@ public final class Flags {
     public static final Flag PLACE_BLOCKS = new Flag.Builder("PLACE_BLOCKS", Material.GRASS).listener(new PlaceBlocksListener()).build();
 
     /**
-     * Prevents players from generated Frosted Ice on one's island using boots enchanted with "Frost Walker".
+     * Prevents players from generating Frosted Ice on one's island using "Frost Walker" enchanted boots.
      * @see PlaceBlocksListener
      */
     public static final Flag FROST_WALKER = new Flag.Builder("FROST_WALKER", Material.ICE).build();
@@ -129,7 +130,7 @@ public final class Flags {
     // Throwing things
     public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
     /**
-     * Prevents players from throwing potions / exp bottles.
+     * Prevents players from throwing potions / experience bottles.
      * @since 1.1
      */
     public static final Flag POTION_THROWING = new Flag.Builder("POTION_THROWING", Material.SPLASH_POTION).listener(new ThrowingListener()).build();
@@ -270,6 +271,14 @@ public final class Flags {
 
     public static final Flag OBSIDIAN_SCOOPING = new Flag.Builder("OBSIDIAN_SCOOPING", Material.OBSIDIAN).type(Type.WORLD_SETTING)
             .listener(new ObsidianScoopingListener()).defaultSetting(true).build();
+
+    /**
+     * Prevents liquids from flowing outside the protection range, in order to avoid cobblestone/stone/obsidian being generated and remaining unbreakable by players.
+     * @since 1.3.0
+     * @see LiquidsFlowingOutListener
+     */
+    public static final Flag LIQUIDS_FLOWING_OUT = new Flag.Builder("LIQUIDS_FLOWING_OUT", Material.WATER_BUCKET).type(Type.WORLD_SETTING)
+            .listener(new LiquidsFlowingOutListener()).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.

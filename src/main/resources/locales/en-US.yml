@@ -651,6 +651,14 @@ protection:
       description: "Toggle use"
       name: "Lever use"
       hint: "No lever use"
+    LIQUIDS_FLOWING_OUT:
+      name: "Liquids flowing outside islands"
+      description: |-
+        &aToggle whether liquids can flow outside
+        &aof the island's protection range.
+        &aDisabling it helps avoiding lava and water
+        &agenerating cobblestone in the area between
+        &atwo islands.
     LOCK: 
       description: "Toggle lock"
       name: "Lock island"
