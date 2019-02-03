@@ -5,11 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -69,6 +72,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             getIslands().setOwner(user, targetUUID, i);
             user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
             user.sendMessage("general.success");
+            IslandBaseEvent event = IslandEvent.builder()
+                    .island(i)
+                    .reason(IslandEvent.Reason.REGISTERED)
+                    .involvedPlayer(targetUUID)
+                    .admin(true)
+                    .build();
+            Bukkit.getServer().getPluginManager().callEvent(event);
             return true;
         }).orElse(false)) {
             // Island does not exist
@@ -80,6 +90,13 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));
                 user.sendMessage("general.success");
+                IslandBaseEvent event = IslandEvent.builder()
+                        .island(i)
+                        .reason(IslandEvent.Reason.CREATED)
+                        .involvedPlayer(targetUUID)
+                        .admin(true)
+                        .build();
+                Bukkit.getServer().getPluginManager().callEvent(event);
             });
             return false;
         }

@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminUnregisterCommand extends CompositeCommand {
@@ -42,10 +47,18 @@ public class AdminUnregisterCommand extends CompositeCommand {
         }
 
         // Unregister island
-        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
+        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()));
         getIslands().removePlayer(getWorld(), targetUUID);
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
         user.sendMessage("general.success");
+        IslandBaseEvent event = IslandEvent.builder()
+                .island(oldIsland)
+                .reason(IslandEvent.Reason.UNREGISTERED)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .build();
+        Bukkit.getServer().getPluginManager().callEvent(event);
         return true;
     }
 

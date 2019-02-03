@@ -177,6 +177,7 @@ public class AddonsManager {
         addon.setState(Addon.State.ERROR);
         plugin.logError("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
         plugin.logError("STACKTRACE: " + throwable.getClass().getSimpleName() + " - " + throwable.getMessage() + " - " + throwable.getCause());
+        throwable.printStackTrace();
         if (plugin.getConfig().getBoolean("debug")) {
             plugin.logDebug(throwable.toString());
             plugin.logDebug(throwable.getStackTrace());

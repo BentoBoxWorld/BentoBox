@@ -47,8 +47,8 @@ public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHan
         // enableComplexMapKeySerialization - forces GSON to use TypeAdapters even for Map keys
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization();
         // Register adapters
-        builder.registerTypeAdapter(Location.class, new LocationAdapter(plugin)) ;
-        builder.registerTypeAdapter(World.class, new WorldAdapter(plugin));
+        builder.registerTypeAdapter(Location.class, new LocationAdapter()) ;
+        builder.registerTypeAdapter(World.class, new WorldAdapter());
         builder.registerTypeAdapter(Flag.class, new FlagAdapter(plugin));
         builder.registerTypeAdapter(PotionEffectType.class, new PotionEffectTypeAdapter());
         builder.registerTypeAdapter(ItemStack.class, new ItemStackTypeAdapter());

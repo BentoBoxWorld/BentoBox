@@ -6,6 +6,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import com.google.common.collect.BiMap;
@@ -51,7 +52,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
         if (args.isEmpty() || args.size() > 1) {
             // Invite label with no name, i.e., /island invite - tells the player who has invited them so far
             if (inviteList.containsKey(playerUUID)) {
-                OfflinePlayer inviter = getPlugin().getServer().getOfflinePlayer(inviteList.get(playerUUID));
+                OfflinePlayer inviter = Bukkit.getServer().getOfflinePlayer(inviteList.get(playerUUID));
                 user.sendMessage("commands.island.team.invite.name-has-invited-you", TextVariables.NAME, inviter.getName());
                 return true;
             }
@@ -105,7 +106,7 @@ public class IslandTeamInviteCommand extends CompositeCommand {
                     .reason(TeamEvent.Reason.INVITE)
                     .involvedPlayer(invitedPlayer.getUniqueId())
                     .build();
-            getPlugin().getServer().getPluginManager().callEvent(event);
+            Bukkit.getServer().getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return false;
             }

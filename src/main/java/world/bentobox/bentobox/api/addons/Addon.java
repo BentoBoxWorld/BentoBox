@@ -150,7 +150,7 @@ public abstract class Addon {
      * @return the server object
      */
     public Server getServer() {
-        return getPlugin().getServer();
+        return Bukkit.getServer();
     }
 
     public boolean isEnabled() {

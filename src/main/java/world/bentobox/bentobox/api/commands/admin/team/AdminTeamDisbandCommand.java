@@ -3,16 +3,21 @@ package world.bentobox.bentobox.api.commands.admin.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminTeamDisbandCommand extends CompositeCommand {
 
     public AdminTeamDisbandCommand(CompositeCommand parent) {
         super(parent, "disband");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.team");
@@ -46,11 +51,19 @@ public class AdminTeamDisbandCommand extends CompositeCommand {
             return false;
         }
         // Disband team
+        Island island = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().getMembers(getWorld(), targetUUID).forEach(m -> {
             User.getInstance(m).sendMessage("commands.admin.team.disband.disbanded");
             // The owner gets to keep the island
             if (!m.equals(targetUUID)) {
                 getIslands().setLeaveTeam(getWorld(), m);
+                IslandBaseEvent event = TeamEvent.builder()
+                        .island(island)
+                        .reason(TeamEvent.Reason.KICK)
+                        .involvedPlayer(targetUUID)
+                        .admin(true)
+                        .build();
+                Bukkit.getServer().getPluginManager().callEvent(event);
             }
         });
         user.sendMessage("general.success");

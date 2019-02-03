@@ -13,7 +13,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
@@ -114,6 +116,13 @@ public class AdminTeamAddCommandTest {
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
+        // Plugin Manager
+        Server server = mock(Server.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getServer()).thenReturn(server);
+
     }
 
 

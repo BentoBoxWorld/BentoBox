@@ -3,10 +3,15 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 
 public class IslandTeamKickCommand extends ConfirmableCommand {
 
@@ -64,6 +69,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
     private void kick(User user, UUID targetUUID) {
         User target = User.getInstance(targetUUID);
         target.sendMessage("commands.island.team.kick.owner-kicked");
+        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
         getIslands().removePlayer(getWorld(), targetUUID);
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
@@ -76,6 +82,13 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
         }
         user.sendMessage("general.success");
+        // Fire event
+        IslandBaseEvent e = TeamEvent.builder()
+                .island(oldIsland)
+                .reason(TeamEvent.Reason.KICK)
+                .involvedPlayer(targetUUID)
+                .build();
+        Bukkit.getServer().getPluginManager().callEvent(e);
 
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {

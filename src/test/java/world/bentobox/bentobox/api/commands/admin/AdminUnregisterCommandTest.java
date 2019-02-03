@@ -12,7 +12,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.Before;
@@ -109,6 +111,13 @@ public class AdminUnregisterCommandTest {
         LocalesManager lm = mock(LocalesManager.class);
         when(lm.get(Mockito.any(), Mockito.any())).thenReturn("mock translation");
         when(plugin.getLocalesManager()).thenReturn(lm);
+
+        // Plugin Manager
+        Server server = mock(Server.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getServer()).thenReturn(server);
+
     }
 
 
