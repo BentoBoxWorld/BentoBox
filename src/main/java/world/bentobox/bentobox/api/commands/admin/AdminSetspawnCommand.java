@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.api.commands.admin;
 
+import java.util.List;
+import java.util.Optional;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-
-import java.util.List;
-import java.util.Optional;
 
 /**
  * Admin command (only player) to set an island as the world's spawn.
@@ -38,7 +38,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
             }
 
             // Everything's fine, we can set the island as spawn :)
-            askConfirmation(user, "commands.admin.setspawn.confirmation", () -> {
+            askConfirmation(user, user.getTranslation("commands.admin.setspawn.confirmation"), () -> {
                 getIslands().setSpawn(island.get());
                 user.sendMessage("general.success");
             });

@@ -64,7 +64,7 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             return true;
         }
 
-        askConfirmation(user, "commands.island.team.invite.accept.confirmation", () -> {
+        askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"), () -> {
             // Remove the invite
             itc.getInviteCommand().getInviteList().remove(playerUUID);
             // Put player into Spectator mode
