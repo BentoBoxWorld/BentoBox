@@ -44,7 +44,7 @@ public class FlagsManager {
     public boolean registerFlag(@NonNull Flag flag) {
         // Check in case the flag id or icon already exists
         for (Flag fl : flags) {
-            if (fl.getID().equals(flag.getID()) || fl.getIcon().equals(flag.getIcon())) {
+            if (fl.getID().equals(flag.getID())) {
                 return false;
             }
         }
