@@ -41,6 +41,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EndermanListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -140,7 +141,7 @@ public class EndermanListenerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testNotEnderman() {
@@ -153,7 +154,7 @@ public class EndermanListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testOnEndermanGriefWrongWorld() {
@@ -168,7 +169,7 @@ public class EndermanListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testOnEndermanGriefAllowed() {
@@ -182,7 +183,7 @@ public class EndermanListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
+     * Test method for {@link EndermanListener#onEndermanGrief(org.bukkit.event.entity.EntityChangeBlockEvent)}.
      */
     @Test
     public void testOnEndermanGrief() {

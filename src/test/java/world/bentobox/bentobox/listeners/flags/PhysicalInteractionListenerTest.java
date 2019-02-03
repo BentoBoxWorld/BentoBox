@@ -56,6 +56,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -193,7 +194,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractNotPhysical() {
@@ -204,7 +205,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractWrongMaterial() {
@@ -215,7 +216,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractFarmland() {
@@ -228,7 +229,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractFarmlandOp() {
@@ -241,7 +242,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractFarmlandPermission() {
@@ -254,7 +255,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractTurtleEgg() {
@@ -267,7 +268,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractEvent)}.
      */
     @Test
     public void testOnPlayerInteractPressurePlate() {
@@ -281,7 +282,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitNotProjectile() {
@@ -294,7 +295,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectileBlockNull() {
@@ -309,7 +310,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectile() {
@@ -324,7 +325,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectileBlockNullPlayer() {
@@ -339,7 +340,7 @@ public class PhysicalInteractionListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
+     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
      */
     @Test
     public void testOnProjectileHitProjectilePlayer() {

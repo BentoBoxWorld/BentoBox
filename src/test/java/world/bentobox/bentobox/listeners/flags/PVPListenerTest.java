@@ -67,6 +67,7 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -205,7 +206,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageNotPlayer() {
@@ -219,7 +220,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageSelfDamage() {
@@ -232,7 +233,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPlayerByZombie() {
@@ -266,7 +267,7 @@ public class PVPListenerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPlayerByZombieVisitorProtected() {
@@ -299,7 +300,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorProtected() {
@@ -333,7 +334,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorProtectedWrongDamage() {
@@ -363,7 +364,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnVisitorByZombieVisitorNotProtected() {
@@ -403,7 +404,7 @@ public class PVPListenerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPNotAllowed() {
@@ -419,7 +420,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPNotAllowedInvVisitor() {
@@ -438,7 +439,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPVPAllowed() {
@@ -464,7 +465,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageOnPVPNotAllowedProjectile() {
@@ -492,7 +493,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamageSelfDamageProjectile() {
@@ -508,7 +509,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link PVPListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamagePVPAllowedProjectile() {
@@ -537,7 +538,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishing() {
@@ -583,7 +584,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingProtectVisitors() {
@@ -606,7 +607,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingSelfDamage() {
@@ -619,7 +620,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link PVPListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingNoPVPProtectVisitors() {
@@ -642,7 +643,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashWitch() {
@@ -655,7 +656,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashNoPlayers() {
@@ -672,7 +673,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplash() {
@@ -700,7 +701,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashSelfInflicted() {
@@ -727,7 +728,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashAllowPVP() {
@@ -750,7 +751,7 @@ public class PVPListenerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link PVPListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplashAllowPVPProtectVisitors() {
@@ -784,7 +785,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
+     * Test method for {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
     public void testOnLingeringPotionSplash() {
@@ -802,7 +803,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
+     * Test method for {@link PVPListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
     public void testOnLingeringPotionSplashNonHuman() {
@@ -819,7 +820,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
+     * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
     public void testOnLingeringPotionDamageNoPVP() {
@@ -855,7 +856,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
+     * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
     public void testOnLingeringPotionDamagePVP() {
@@ -889,7 +890,7 @@ public class PVPListenerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
+     * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
     public void testOnLingeringPotionDamageNoPVPVisitor() {
@@ -929,7 +930,7 @@ public class PVPListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
+     * Test method for {@link PVPListener#onLingeringPotionDamage(org.bukkit.event.entity.AreaEffectCloudApplyEvent)}.
      */
     @Test
     public void testOnLingeringPotionDamagePVPVisitor() {

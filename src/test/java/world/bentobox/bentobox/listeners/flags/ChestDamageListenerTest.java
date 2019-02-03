@@ -50,6 +50,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -164,7 +165,7 @@ public class ChestDamageListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionChestDamageNotAllowed() {
@@ -196,7 +197,7 @@ public class ChestDamageListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
+     * Test method for {@link ChestDamageListener#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
      */
     @Test
     public void testOnExplosionChestDamageAllowed() {

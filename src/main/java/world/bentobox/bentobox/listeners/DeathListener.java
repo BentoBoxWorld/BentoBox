@@ -1,6 +1,3 @@
-/**
- * 
- */
 package world.bentobox.bentobox.listeners;
 
 import org.bukkit.event.EventHandler;

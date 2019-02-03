@@ -52,6 +52,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -189,7 +190,7 @@ public class BreedingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractNotAnimal() {
@@ -201,7 +202,7 @@ public class BreedingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalNothingInMainHand() {
@@ -214,7 +215,7 @@ public class BreedingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalNothingInOffHand() {
@@ -227,7 +228,7 @@ public class BreedingListenerTest {
 
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInMainHandNotRightWorld() {
@@ -248,7 +249,7 @@ public class BreedingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInMainHand() {
@@ -267,7 +268,7 @@ public class BreedingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInOffHandNotRightWorld() {
@@ -289,7 +290,7 @@ public class BreedingListenerTest {
 
     /**
      * I am not sure if breeding with off hand is possible!
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
+     * Test method for {@link BreedingListener#onPlayerInteract(org.bukkit.event.player.PlayerInteractAtEntityEvent)}.
      */
     @Test
     public void testOnPlayerInteractAnimalBreedingFoodInOffHand() {

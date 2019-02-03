@@ -27,6 +27,7 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -96,7 +97,7 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnUserTeleport() {
@@ -106,7 +107,7 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnUserTeleportDoNotRemove() {
@@ -117,7 +118,7 @@ public class RemoveMobsListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
+     * Test method for {@link RemoveMobsListener#onUserTeleport(org.bukkit.event.player.PlayerTeleportEvent)}.
      */
     @Test
     public void testOnUserTeleportToNotIsland() {

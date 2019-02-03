@@ -46,6 +46,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -155,7 +156,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link HurtingListener#onEntityDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnEntityDamage() {
@@ -163,7 +164,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowArmorStandCatching() {
@@ -184,7 +185,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowArmorStandCatching() {
@@ -207,7 +208,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowAnimalCatching() {
@@ -228,7 +229,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowAnimalsCatching() {
@@ -251,7 +252,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowMonsterCatching() {
@@ -272,7 +273,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowMonsterCatching() {
@@ -295,7 +296,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingDisallowVillagerCatching() {
@@ -316,7 +317,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
+     * Test method for {@link HurtingListener#onFishing(org.bukkit.event.player.PlayerFishEvent)}.
      */
     @Test
     public void testOnFishingAllowVillagerCatching() {
@@ -338,7 +339,7 @@ public class HurtingListenerTest {
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.eq(user), Mockito.eq("protection.protected"));
     }
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
+     * Test method for {@link HurtingListener#onPlayerFeedParrots(org.bukkit.event.player.PlayerInteractEntityEvent)}.
      */
     @Test
     public void testOnPlayerFeedParrots() {
@@ -346,7 +347,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
+     * Test method for {@link HurtingListener#onSplashPotionSplash(org.bukkit.event.entity.PotionSplashEvent)}.
      */
     @Test
     public void testOnSplashPotionSplash() {
@@ -354,7 +355,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
+     * Test method for {@link HurtingListener#onLingeringPotionSplash(org.bukkit.event.entity.LingeringPotionSplashEvent)}.
      */
     @Test
     public void testOnLingeringPotionSplash() {
@@ -362,7 +363,7 @@ public class HurtingListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
+     * Test method for {@link HurtingListener#onLingeringPotionDamage(org.bukkit.event.entity.EntityDamageByEntityEvent)}.
      */
     @Test
     public void testOnLingeringPotionDamage() {

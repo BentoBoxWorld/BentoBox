@@ -35,6 +35,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnterExitListener;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -177,7 +178,7 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnMoveInsideIsland() {
@@ -188,7 +189,7 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnMoveOutsideIsland() {
@@ -199,7 +200,7 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnGoingIntoIslandEmptyIslandName() {
@@ -213,7 +214,7 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testOnGoingIntoIslandWithIslandName() {
@@ -228,7 +229,7 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testExitingIslandEmptyIslandName() {
@@ -242,7 +243,7 @@ public class EnterExitListenerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.flags.EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
+     * Test method for {@link EnterExitListener#onMove(org.bukkit.event.player.PlayerMoveEvent)}.
      */
     @Test
     public void testExitingIslandWithIslandName() {
