@@ -678,10 +678,10 @@ protection:
     OBSIDIAN_SCOOPING:
       name: "Obsidian scooping"
       description: | 
-        Toggle scooping
-        Allow obsidian to be scooped up
-        with an empty bucket back into lava.
-        Protects newbies. Reduces resets.
+        &aToggle scooping
+        &aAllow obsidian to be scooped up
+        &awith an empty bucket back into lava.
+        &aProtects newbies. Reduces resets.
     OFFLINE_REDSTONE:
       description: |-
           &aWhen disabled, redstone
