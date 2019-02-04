@@ -54,6 +54,7 @@ public class AdminUnregisterCommand extends CompositeCommand {
         user.sendMessage("general.success");
         IslandBaseEvent event = IslandEvent.builder()
                 .island(oldIsland)
+                .location(oldIsland.getCenter())
                 .reason(IslandEvent.Reason.UNREGISTERED)
                 .involvedPlayer(targetUUID)
                 .admin(true)

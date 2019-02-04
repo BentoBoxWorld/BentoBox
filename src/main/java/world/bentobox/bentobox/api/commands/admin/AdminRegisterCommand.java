@@ -74,6 +74,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             user.sendMessage("general.success");
             IslandBaseEvent event = IslandEvent.builder()
                     .island(i)
+                    .location(i.getCenter())
                     .reason(IslandEvent.Reason.REGISTERED)
                     .involvedPlayer(targetUUID)
                     .admin(true)
@@ -92,6 +93,7 @@ public class AdminRegisterCommand extends ConfirmableCommand {
                 user.sendMessage("general.success");
                 IslandBaseEvent event = IslandEvent.builder()
                         .island(i)
+                        .location(i.getCenter())
                         .reason(IslandEvent.Reason.CREATED)
                         .involvedPlayer(targetUUID)
                         .admin(true)
