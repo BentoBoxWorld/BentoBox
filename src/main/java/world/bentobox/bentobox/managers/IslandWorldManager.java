@@ -408,7 +408,7 @@ public class IslandWorldManager {
      * @return true (default) if it can spawn or not
      */
     public boolean isDragonSpawn(@Nullable World world) {
-        return world == null ? false : !gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isDragonSpawn();
+        return world == null ? true : !gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isDragonSpawn();
     }
 
     /**
@@ -416,7 +416,7 @@ public class IslandWorldManager {
      */
     public String getFriendlyNames() {
         StringBuilder r = new StringBuilder();
-        gameModes.values().stream().distinct().forEach(n -> r.append(n).append(", "));
+        gameModes.values().stream().distinct().forEach(n -> r.append(n.getWorldSettings().getFriendlyName()).append(", "));
         if (r.length() > 0) {
             r.setLength(r.length() - 2);
         }
