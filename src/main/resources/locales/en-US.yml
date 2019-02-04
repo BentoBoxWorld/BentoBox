@@ -748,15 +748,21 @@ protection:
       description: "Toggle use"
       name: "Redstone items"
       hint: "No redstone item use"
-    RIDING: 
-      description: "Toggle riding"
-      name: "Animal riding"
-      hint: "No animal riding allowed"
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &aPrevents the end exit
+        &aisland from generating
+        &aat coordinates 0,0
+      name: "Remove end exit island"
     REMOVE_MOBS: 
       description: |-
         &aRemove monsters when
         &ateleporting to island
       name: "Remove monsters"
+    RIDING: 
+      description: "Toggle riding"
+      name: "Animal riding"
+      hint: "No animal riding allowed"
     SHEARING: 
       description: "Toggle shearing"
       name: "Shearing"

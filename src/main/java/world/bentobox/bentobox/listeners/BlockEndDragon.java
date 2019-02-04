@@ -15,6 +15,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Pair;
 
 public class BlockEndDragon implements Listener {
@@ -61,7 +62,8 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEnd(ChunkLoadEvent e) {
-        if (!e.getWorld().getEnvironment().equals(Environment.THE_END)
+        if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getWorld())
+                || !e.getWorld().getEnvironment().equals(Environment.THE_END)
                 || !plugin.getIWM().inWorld(e.getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getWorld())
                 || !plugin.getIWM().isEndIslands(e.getWorld())
@@ -92,7 +94,8 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockPlace(BlockPlaceEvent e) {
-        if (e.getBlock().getY() < DEAD_ZONE_Y
+        if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
+                || e.getBlock().getY() < DEAD_ZONE_Y
                 || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
                 || !plugin.getIWM().inWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
