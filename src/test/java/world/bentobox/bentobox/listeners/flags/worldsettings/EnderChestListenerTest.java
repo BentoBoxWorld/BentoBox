@@ -39,11 +39,12 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.listeners.flags.worldsettings.EnderChestListener;
+import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -127,13 +128,19 @@ public class EnderChestListenerTest {
         notifier = mock(Notifier.class);
         when(plugin.getNotifier()).thenReturn(notifier);
 
-        // Acition, Item and clicked block
+        // Action, Item and clicked block
         action = Action.RIGHT_CLICK_BLOCK;
         item = mock(ItemStack.class);
+        when(item.getType()).thenReturn(Material.ENDER_CHEST);
         clickedBlock = mock(Block.class);
-
+        when(clickedBlock.getLocation()).thenReturn(inside);
+        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
+
+        Settings settings = mock(Settings.class);
+        // Fake players
+        when(plugin.getSettings()).thenReturn(settings);
 
     }
 
@@ -147,74 +154,61 @@ public class EnderChestListenerTest {
         action = Action.LEFT_CLICK_AIR;
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        new EnderChestListener().onEnderChestOpen(e);
-        assertFalse(e.isCancelled());
-    }
-
-    @Test
-    public void testOnEnderChestOpenNotEnderChest() {
-        when(clickedBlock.getType()).thenReturn(Material.STONE);
-        BlockFace clickedBlockFace = BlockFace.EAST;
-        PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
-        new EnderChestListener().onEnderChestOpen(e);
+        new BlockInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
     public void testOnEnderChestOpenEnderChestNotInWorld() {
-        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Not in world
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-        new EnderChestListener().onEnderChestOpen(e);
+        new BlockInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
     public void testOnEnderChestOpenEnderChestOpPlayer() {
-        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Op player
         when(player.isOp()).thenReturn(true);
-        new EnderChestListener().onEnderChestOpen(e);
+        new BlockInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
     public void testOnEnderChestOpenEnderChestHasBypassPerm() {
-        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Has bypass perm
         when(player.hasPermission(Mockito.anyString())).thenReturn(true);
-        new EnderChestListener().onEnderChestOpen(e);
+        new BlockInteractionListener().onPlayerInteract(e);
         assertFalse(e.isCancelled());
     }
 
     @Test
     public void testOnEnderChestOpenEnderChestOkay() {
-        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is okay
         Flags.ENDER_CHEST.setSetting(world, true);
-        new EnderChestListener().onEnderChestOpen(e);
+        BlockInteractionListener bil = new BlockInteractionListener();
+        bil.setUser(User.getInstance(player));
+        bil.onPlayerInteract(e);
         assertFalse(e.isCancelled());
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.anyObject(), Mockito.anyString());
     }
 
     @Test
     public void testOnEnderChestOpenEnderChestBlocked() {
-        when(clickedBlock.getType()).thenReturn(Material.ENDER_CHEST);
         BlockFace clickedBlockFace = BlockFace.EAST;
         PlayerInteractEvent e = new PlayerInteractEvent(player, action, item, clickedBlock, clickedBlockFace);
         // Enderchest use is blocked
         Flags.ENDER_CHEST.setSetting(world, false);
-        new EnderChestListener().onEnderChestOpen(e);
-
+        new BlockInteractionListener().onPlayerInteract(e);
         assertTrue(e.isCancelled());
         Mockito.verify(notifier).notify(Mockito.any(User.class), Mockito.eq("protection.protected"));
     }

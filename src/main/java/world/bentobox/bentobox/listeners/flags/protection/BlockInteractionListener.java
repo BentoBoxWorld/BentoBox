@@ -10,6 +10,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -34,6 +35,9 @@ public class BlockInteractionListener extends FlagListener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
+        // Set user
+        this.setUser(User.getInstance(e.getPlayer()));
+        // Check clicked block
         checkClickedBlock(e, e.getClickedBlock().getLocation(), e.getClickedBlock().getType());
 
         // Now check for in-hand items

@@ -9,7 +9,6 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.Listener;
 import org.bukkit.metadata.MetadataValue;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
@@ -157,6 +156,7 @@ public abstract class FlagListener implements Listener {
             report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);
             return true;
         }
+
         // Get the island and if present
         Optional<Island> island = getIslands().getProtectedIslandAt(loc);
         // Handle Settings Flag
@@ -190,6 +190,20 @@ public abstract class FlagListener implements Listener {
             }
             user = null;
             return true;
+        }
+
+        // Handle World Settings
+        if (flag.getType().equals(Flag.Type.WORLD_SETTING)) {
+            if (flag.isSetForWorld(loc.getWorld())) {
+                report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
+                user = null;
+                return true;
+            }
+            report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
+            noGo(e, flag, silent);
+            // Clear the user for the next time
+            user = null;
+            return false;
         }
 
         // Check if the plugin is set in User (required for testing)
