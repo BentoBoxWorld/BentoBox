@@ -21,6 +21,7 @@ import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 
 /**
  * Combines {@link Player}, {@link OfflinePlayer} and {@link CommandSender} to provide convenience methods related to
@@ -103,6 +104,8 @@ public class User {
     private Player player;
     private final UUID playerUUID;
     private final CommandSender sender;
+
+    private Addon addon;
 
     private User(CommandSender sender) {
         player = null;
@@ -236,6 +239,21 @@ public class User {
     }
 
     /**
+     * Gets a translation for a specific world
+     * @param world - world of translation
+     * @param reference - reference found in a locale file
+     * @param variables - variables to insert into translated string. Variables go in pairs, for example
+     *                  "[name]", "tastybento"
+     * @return Translated string with colors converted, or the reference if nothing has been found
+     */
+    public String getTranslation(World world, String reference, String... variables) {
+        // Get translation.
+        String addonPrefix = plugin.getIWM()
+                .getAddon(world).map(a -> a.getDescription().getName().toLowerCase() + ".").orElse("");
+        return translate(addonPrefix, reference, variables);
+    }
+
+    /**
      * Gets a translation of this reference for this user. Translations may be overridden by Addons
      * by using the same reference prefixed by the addon name (from the Addon Description) in lower case.
      * @param reference - reference found in a locale file
@@ -244,9 +262,12 @@ public class User {
      * @return Translated string with colors converted, or the reference if nothing has been found
      */
     public String getTranslation(String reference, String... variables) {
-        // Get translation.
-        String addonPrefix = plugin.getIWM()
-                .getAddon(getWorld()).map(a -> a.getDescription().getName().toLowerCase() + ".").orElse("");
+        // Get addonPrefix
+        String addonPrefix = addon == null ? "" : addon.getDescription().getName().toLowerCase() + ".";
+        return translate(addonPrefix, reference, variables);
+    }
+
+    private String translate(String addonPrefix, String reference, String[] variables) {
         String translation = plugin.getLocalesManager().get(this, addonPrefix + reference);
 
         if (translation == null) {
@@ -310,6 +331,21 @@ public class User {
      */
     public void notify(String reference, String... variables) {
         String message = getTranslation(reference, variables);
+        if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
+            plugin.getNotifier().notify(this, message);
+        }
+    }
+
+    /**
+     * Sends a message to sender if message is not empty and if the same wasn't sent within the previous {@link Notifier#NOTIFICATION_DELAY} seconds.
+     * @param world - the world the translation should come from
+     * @param reference - language file reference
+     * @param variables - CharSequence target, replacement pairs
+     *
+     * @see Notifier
+     */
+    public void notify(World world, String reference, String... variables) {
+        String message = getTranslation(world, reference, variables);
         if (!ChatColor.stripColor(message).trim().isEmpty() && sender != null) {
             plugin.getNotifier().notify(this, message);
         }
@@ -452,4 +488,13 @@ public class User {
             return other.playerUUID == null;
         } else return playerUUID.equals(other.playerUUID);
     }
+
+    /**
+     * Set the addon context when a command is executed
+     * @param addon - the addon executing the command
+     */
+    public void setAddon(Addon addon) {
+        this.addon = addon;
+    }
+
 }

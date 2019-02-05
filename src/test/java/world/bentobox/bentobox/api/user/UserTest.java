@@ -261,6 +261,8 @@ public class UserTest {
         GameModeAddon addon = mock(GameModeAddon.class);
         AddonDescription desc = new AddonDescription.Builder("mock", "name", "1.0").build();
         when(addon.getDescription()).thenReturn(desc);
+        // Set addon context
+        user.setAddon(addon);
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
         when(lm.get(any(), Mockito.eq("name.a.reference"))).thenReturn("mockmockmock");
