@@ -1,7 +1,7 @@
 /**
  *
  */
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners.flags.settings;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

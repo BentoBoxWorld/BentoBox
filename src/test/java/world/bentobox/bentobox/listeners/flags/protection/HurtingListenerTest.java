@@ -1,7 +1,7 @@
 /**
  *
  */
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;

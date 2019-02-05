@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import org.bukkit.Location;
 import org.bukkit.World;

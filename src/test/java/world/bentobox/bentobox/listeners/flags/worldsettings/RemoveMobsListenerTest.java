@@ -1,7 +1,7 @@
 /**
  *
  */
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
