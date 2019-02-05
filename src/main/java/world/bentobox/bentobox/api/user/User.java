@@ -245,6 +245,7 @@ public class User {
      * @param variables - variables to insert into translated string. Variables go in pairs, for example
      *                  "[name]", "tastybento"
      * @return Translated string with colors converted, or the reference if nothing has been found
+     * @since 1.3.0
      */
     public String getTranslation(World world, String reference, String... variables) {
         // Get translation.
@@ -343,6 +344,7 @@ public class User {
      * @param variables - CharSequence target, replacement pairs
      *
      * @see Notifier
+     * @since 1.3.0
      */
     public void notify(World world, String reference, String... variables) {
         String message = getTranslation(world, reference, variables);
