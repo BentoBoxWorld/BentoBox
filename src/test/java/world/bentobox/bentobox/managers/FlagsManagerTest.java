@@ -33,7 +33,7 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
-import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.lists.Flags;
 
 @RunWith(PowerMockRunner.class)

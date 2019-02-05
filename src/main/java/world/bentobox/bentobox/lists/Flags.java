@@ -10,47 +10,51 @@ import org.bukkit.Material;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
-import world.bentobox.bentobox.listeners.ObsidianScoopingListener;
-import world.bentobox.bentobox.listeners.flags.BlockInteractionListener;
-import world.bentobox.bentobox.listeners.flags.BreakBlocksListener;
-import world.bentobox.bentobox.listeners.flags.BreedingListener;
-import world.bentobox.bentobox.listeners.flags.BucketListener;
-import world.bentobox.bentobox.listeners.flags.ChestDamageListener;
-import world.bentobox.bentobox.listeners.flags.CleanSuperFlatListener;
-import world.bentobox.bentobox.listeners.flags.CoarseDirtTillingListener;
-import world.bentobox.bentobox.listeners.flags.CreeperListener;
-import world.bentobox.bentobox.listeners.flags.EggListener;
-import world.bentobox.bentobox.listeners.flags.EnderChestListener;
-import world.bentobox.bentobox.listeners.flags.EndermanListener;
-import world.bentobox.bentobox.listeners.flags.EnterExitListener;
-import world.bentobox.bentobox.listeners.flags.EntityInteractListener;
-import world.bentobox.bentobox.listeners.flags.ExperiencePickupListener;
-import world.bentobox.bentobox.listeners.flags.FireListener;
-import world.bentobox.bentobox.listeners.flags.GeoLimitMobsListener;
-import world.bentobox.bentobox.listeners.flags.HurtingListener;
-import world.bentobox.bentobox.listeners.flags.InventoryListener;
-import world.bentobox.bentobox.listeners.flags.InvincibleVisitorsListener;
-import world.bentobox.bentobox.listeners.flags.IslandRespawnListener;
-import world.bentobox.bentobox.listeners.flags.ItemDropPickUpListener;
-import world.bentobox.bentobox.listeners.flags.ItemFrameListener;
-import world.bentobox.bentobox.listeners.flags.LeashListener;
-import world.bentobox.bentobox.listeners.flags.LockAndBanListener;
-import world.bentobox.bentobox.listeners.flags.MobSpawnListener;
-import world.bentobox.bentobox.listeners.flags.OfflineRedstoneListener;
-import world.bentobox.bentobox.listeners.flags.PVPListener;
-import world.bentobox.bentobox.listeners.flags.PhysicalInteractionListener;
-import world.bentobox.bentobox.listeners.flags.PistonPushListener;
-import world.bentobox.bentobox.listeners.flags.PlaceBlocksListener;
-import world.bentobox.bentobox.listeners.flags.PortalListener;
-import world.bentobox.bentobox.listeners.flags.RemoveMobsListener;
-import world.bentobox.bentobox.listeners.flags.ShearingListener;
-import world.bentobox.bentobox.listeners.flags.TNTListener;
-import world.bentobox.bentobox.listeners.flags.TeleportationListener;
-import world.bentobox.bentobox.listeners.flags.ThrowingListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.CommandRankClickListener;
 import world.bentobox.bentobox.listeners.flags.clicklisteners.GeoLimitClickListener;
+import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
+import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.EggListener;
+import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
+import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
+import world.bentobox.bentobox.listeners.flags.protection.FireListener;
+import world.bentobox.bentobox.listeners.flags.protection.HurtingListener;
+import world.bentobox.bentobox.listeners.flags.protection.InventoryListener;
+import world.bentobox.bentobox.listeners.flags.protection.ItemDropPickUpListener;
+import world.bentobox.bentobox.listeners.flags.protection.LeashListener;
+import world.bentobox.bentobox.listeners.flags.protection.LockAndBanListener;
+import world.bentobox.bentobox.listeners.flags.protection.PhysicalInteractionListener;
+import world.bentobox.bentobox.listeners.flags.protection.PlaceBlocksListener;
+import world.bentobox.bentobox.listeners.flags.protection.PortalListener;
+import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
+import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
+import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
+import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
+import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CleanSuperFlatListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CoarseDirtTillingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.CreeperListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnderChestListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EndermanListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.EnterExitListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.GeoLimitMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.InvincibleVisitorsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
+/**
+ * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
+ */
 public final class Flags {
 
     private Flags() {}
@@ -58,10 +62,21 @@ public final class Flags {
     // Disabled setting 'rank'
     private static final int DISABLED = -1;
 
+    /**
+     * Prevents players from breaking blocks on one's island.
+     * @see BreakBlocksListener
+     */
     public static final Flag BREAK_BLOCKS = new Flag.Builder("BREAK_BLOCKS", Material.STONE).listener(new BreakBlocksListener()).build();
+    /**
+     * Prevents players from placing blocks on one's island.
+     * @see PlaceBlocksListener
+     */
     public static final Flag PLACE_BLOCKS = new Flag.Builder("PLACE_BLOCKS", Material.GRASS).listener(new PlaceBlocksListener()).build();
 
-    // Frost walker - uses the place block listener
+    /**
+     * Prevents players from generating Frosted Ice on one's island using "Frost Walker" enchanted boots.
+     * @see PlaceBlocksListener
+     */
     public static final Flag FROST_WALKER = new Flag.Builder("FROST_WALKER", Material.ICE).build();
 
     // Block interactions - all use BlockInteractionListener()
@@ -115,7 +130,7 @@ public final class Flags {
     // Throwing things
     public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
     /**
-     * Prevents players from throwing potions / exp bottles.
+     * Prevents players from throwing potions / experience bottles.
      * @since 1.1
      */
     public static final Flag POTION_THROWING = new Flag.Builder("POTION_THROWING", Material.SPLASH_POTION).listener(new ThrowingListener()).build();
@@ -145,8 +160,16 @@ public final class Flags {
     public static final Flag LEASH = new Flag.Builder("LEASH", Material.LEAD).listener(new LeashListener()).build();
 
     // Portal use protection
+    /**
+     * Prevents players from going through the Nether Portal.
+     * @see PortalListener
+     */
     public static final Flag NETHER_PORTAL = new Flag.Builder("NETHER_PORTAL", Material.NETHERRACK).listener(new PortalListener()).build();
-    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).listener(new PortalListener()).build();
+    /**
+     * Prevents players from going through the End Portal.
+     * @see PortalListener
+     */
+    public static final Flag END_PORTAL = new Flag.Builder("END_PORTAL", Material.END_PORTAL_FRAME).build();
 
     // Shearing
     public static final Flag SHEARING = new Flag.Builder("SHEARING", Material.SHEARS).listener(new ShearingListener()).build();
@@ -182,6 +205,7 @@ public final class Flags {
     public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING)
             .listener(new MobSpawnListener()).build();
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
+
     public static final Flag FIRE_SPREAD = new Flag.Builder("FIRE_SPREAD", Material.FIREWORK_STAR).defaultSetting(true).type(Type.SETTING).build();
 
     /*
@@ -233,10 +257,10 @@ public final class Flags {
     public static final Flag CREEPER_DAMAGE = new Flag.Builder("CREEPER_DAMAGE", Material.GREEN_SHULKER_BOX).listener(new CreeperListener()).type(Type.WORLD_SETTING)
             .defaultSetting(true).build();
     /**
-     * Prevents creeper griefing. This is where a visitor will trigger a creeper to blow up an island.
+     * Prevents visitors from triggering a creeper to blow up an island.
+     * @see CreeperListener
      */
-    public static final Flag CREEPER_GRIEFING = new Flag.Builder("CREEPER_GRIEFING", Material.CREEPER_HEAD).type(Type.WORLD_SETTING)
-            .build();
+    public static final Flag CREEPER_GRIEFING = new Flag.Builder("CREEPER_GRIEFING", Material.CREEPER_HEAD).type(Type.WORLD_SETTING).build();
 
     public static final Flag COMMAND_RANKS = new Flag.Builder("COMMAND_RANKS", Material.PLAYER_HEAD).type(Type.WORLD_SETTING)
             .clickHandler(new CommandRankClickListener()).usePanel(true).build();
@@ -247,7 +271,23 @@ public final class Flags {
 
     public static final Flag OBSIDIAN_SCOOPING = new Flag.Builder("OBSIDIAN_SCOOPING", Material.OBSIDIAN).type(Type.WORLD_SETTING)
             .listener(new ObsidianScoopingListener()).defaultSetting(true).build();
+
     /**
+     * Prevents liquids from flowing outside the protection range, in order to avoid cobblestone/stone/obsidian being generated and remaining unbreakable by players.
+     * @since 1.3.0
+     * @see LiquidsFlowingOutListener
+     */
+    public static final Flag LIQUIDS_FLOWING_OUT = new Flag.Builder("LIQUIDS_FLOWING_OUT", Material.WATER_BUCKET).type(Type.WORLD_SETTING)
+            .listener(new LiquidsFlowingOutListener()).build();
+
+    /**
+     * Enables toggling for removal of the end exit island. May not be required on some servers, e.g. PaperSpigot.
+     * @since 1.3.0
+     */
+    public static final Flag REMOVE_END_EXIT_ISLAND = new Flag.Builder("REMOVE_END_EXIT_ISLAND", Material.DRAGON_HEAD).type(Type.WORLD_SETTING).defaultSetting(true).build();
+
+    /**
+     * Provides a list of all the Flag instances contained in this class using reflection.
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {

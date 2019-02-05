@@ -24,7 +24,8 @@ public class TeamEvent {
         INFO,
         DELETE,
         UNKNOWN,
-        UNINVITE
+        UNINVITE,
+        JOINED
     }
 
     public static TeamEventBuilder builder() {
@@ -33,6 +34,24 @@ public class TeamEvent {
 
     public static class TeamJoinEvent extends IslandBaseEvent {
         private TeamJoinEvent(Island island, UUID player, boolean admin, Location location) {
+            // Final variables have to be declared in the constructor
+            super(island, player, admin, location);
+        }
+    }
+    /**
+     * Called after a player has joined an island
+     * @since 1.3.0
+     */
+    public static class TeamJoinedEvent extends IslandBaseEvent {
+        /**
+         * Called after a player has joined an island
+         * @param island - island
+         * @param player - player
+         * @param admin - whether this was due to an admin action
+         * @param location - location
+         * @since 1.3.0
+         */
+        private TeamJoinedEvent(Island island, UUID player, boolean admin, Location location) {
             // Final variables have to be declared in the constructor
             super(island, player, admin, location);
         }
@@ -161,6 +180,8 @@ public class TeamEvent {
             switch (reason) {
             case JOIN:
                 return new TeamJoinEvent(island, player, admin, location);
+            case JOINED:
+                return new TeamJoinedEvent(island, player, admin, location);
             case INVITE:
                 return new TeamInviteEvent(island, player, admin, location);
             case LEAVE:

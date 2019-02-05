@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -66,7 +68,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
                 .reason(TeamEvent.Reason.SETOWNER)
                 .involvedPlayer(targetUUID)
                 .build();
-        getPlugin().getServer().getPluginManager().callEvent(event);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return false;
         }
@@ -81,7 +83,7 @@ public class IslandTeamSetownerCommand extends CompositeCommand {
         List<String> options = new ArrayList<>();
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
         for (UUID member : getPlugin().getIslands().getMembers(getWorld(), user.getUniqueId())) {
-            options.add(getPlugin().getServer().getOfflinePlayer(member).getName());
+            options.add(Bukkit.getServer().getOfflinePlayer(member).getName());
         }
         return Optional.of(Util.tabLimit(options, lastArg));
     }

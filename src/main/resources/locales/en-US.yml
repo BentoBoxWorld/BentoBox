@@ -206,8 +206,8 @@ commands:
     why:
       parameters: "<player>"
       description:  "toggle console protection debug reporting"
-      turning-on: "Turning on console debug for [name]"
-      turning-off: "Turning off console debug for [name]"
+      turning-on: "Turning on console debug for [name]."
+      turning-off: "Turning off console debug for [name]."
     deaths:
       description: "edit deaths of players"
       reset:
@@ -222,19 +222,19 @@ commands:
       description: "display copyright and license info"
     reload:
       description: "reloads addons (if supported) and locale files"
-      locales-reloaded: "&2Languages reloaded"
-      addons-reloaded: "&2Addons reloaded"
+      locales-reloaded: "&2Languages reloaded."
+      addons-reloaded: "&2Addons reloaded."
     version:
-      plugin-version: "&2Bentobox version: &3[name]"
+      plugin-version: "&2BentoBox version: &3[name]"
       description: "display info"
-      loaded-addons: "Loaded Add-Ons"
+      loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version]" 
       game-worlds: "&2[name] &3([addon])"
   confirmation:
-    confirm: "&cType command again within &b[seconds]s&c to confirm"
-    previous-request-cancelled: "&6Previous confirmation request cancelled"
-    request-cancelled: "&cConfirmation timeout - &brequest cancelled"
+    confirm: "&cType command again within &b[seconds]s&c to confirm."
+    previous-request-cancelled: "&6Previous confirmation request cancelled."
+    request-cancelled: "&cConfirmation timeout - &brequest cancelled."
   island:
     about:
       description: "About this addon"
@@ -612,6 +612,10 @@ protection:
       description: "Toggle hurting"
       name: "Hurt villagers"
       hint: "No villager hurting"
+    ITEM_FRAME:
+      name: "Item Frame"
+      description: "Toggle interaction"
+      hint: "Item Frame use disabled"
     ITEM_FRAME_DAMAGE:
       description: |-
           &aMobs can damage
@@ -647,6 +651,14 @@ protection:
       description: "Toggle use"
       name: "Lever use"
       hint: "No lever use"
+    LIQUIDS_FLOWING_OUT:
+      name: "Liquids flowing outside islands"
+      description: |-
+        &aToggle whether liquids can flow outside
+        &aof the island's protection range.
+        &aDisabling it helps avoiding lava and water
+        &agenerating cobblestone in the area between
+        &atwo islands.
     LOCK: 
       description: "Toggle lock"
       name: "Lock island"
@@ -674,10 +686,10 @@ protection:
     OBSIDIAN_SCOOPING:
       name: "Obsidian scooping"
       description: | 
-        Toggle scooping
-        Allow obsidian to be scooped up
-        with an empty bucket back into lava.
-        Protects newbies. Reduces resets.
+        &aToggle scooping
+        &aAllow obsidian to be scooped up
+        &awith an empty bucket back into lava.
+        &aProtects newbies. Reduces resets.
     OFFLINE_REDSTONE:
       description: |-
           &aWhen disabled, redstone
@@ -736,15 +748,21 @@ protection:
       description: "Toggle use"
       name: "Redstone items"
       hint: "No redstone item use"
-    RIDING: 
-      description: "Toggle riding"
-      name: "Animal riding"
-      hint: "No animal riding allowed"
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &aPrevents the end exit
+        &aisland from generating
+        &aat coordinates 0,0
+      name: "Remove end exit island"
     REMOVE_MOBS: 
       description: |-
         &aRemove monsters when
         &ateleporting to island
       name: "Remove monsters"
+    RIDING: 
+      description: "Toggle riding"
+      name: "Animal riding"
+      hint: "No animal riding allowed"
     SHEARING: 
       description: "Toggle shearing"
       name: "Shearing"

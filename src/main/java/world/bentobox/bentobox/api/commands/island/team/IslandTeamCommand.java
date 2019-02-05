@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -74,7 +76,7 @@ public class IslandTeamCommand extends CompositeCommand {
                 .reason(TeamEvent.Reason.INFO)
                 .involvedPlayer(user.getUniqueId())
                 .build();
-        getPlugin().getServer().getPluginManager().callEvent(event);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         return event.isCancelled();
     }
 

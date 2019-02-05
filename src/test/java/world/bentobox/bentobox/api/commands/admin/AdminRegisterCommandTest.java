@@ -13,7 +13,9 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.Before;
@@ -118,6 +120,13 @@ public class AdminRegisterCommandTest {
         idm = mock(IslandDeletionManager.class);
         when(idm.inDeletion(Mockito.any())).thenReturn(false);
         when(plugin.getIslandDeletionManager()).thenReturn(idm);
+
+        // Plugin Manager
+        Server server = mock(Server.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getServer()).thenReturn(server);
+
     }
 
 

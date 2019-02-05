@@ -2,11 +2,11 @@
 
 [![Discord](https://img.shields.io/discord/272499714048524288.svg?logo=discord)](https://discord.bentobox.world)
 [![Build Status](https://ci.codemc.org/buildStatus/icon?job=BentoBoxWorld/BentoBox)](https://ci.codemc.org/job/BentoBoxWorld/job/BentoBox/)
-![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=ncloc)
-![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=sqale_rating)
-![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=reliability_rating)
-![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=security_rating)
-![Bugs](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=bugs)
+[![Lines Of Code](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=ncloc)](https://sonarcloud.io/component_measures?id=world.bentobox%3Abentobox%3Adevelop&metric=ncloc)
+[![Maintainability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=sqale_rating)](https://sonarcloud.io/component_measures?id=world.bentobox%3Abentobox%3Adevelop&metric=Maintainability)
+[![Reliability Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=reliability_rating)](https://sonarcloud.io/component_measures?id=world.bentobox%3Abentobox%3Adevelop&metric=Reliability)
+[![Security Rating](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=security_rating)](https://sonarcloud.io/component_measures?id=world.bentobox%3Abentobox%3Adevelop&metric=Security)
+[![Bugs](https://sonarcloud.io/api/project_badges/measure?project=world.bentobox%3Abentobox%3Adevelop&metric=bugs)](https://sonarcloud.io/project/issues?id=world.bentobox%3Abentobox%3Adevelop&resolved=false&types=BUG)
 
 BentoBox is an expandable Minecraft **1.13+ Spigot plugin** for island-type games like SkyBlock or AcidIsland.
 

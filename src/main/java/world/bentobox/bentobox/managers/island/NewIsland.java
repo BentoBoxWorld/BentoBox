@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.util.Vector;
 
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BStats;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -71,7 +72,6 @@ public class NewIsland {
     /**
      * Build a new island for a player
      * @author tastybento
-     *
      */
     public static class Builder {
         private Island oldIsland2;
@@ -232,11 +232,14 @@ public class NewIsland {
      * Get the location of next free island spot
      * @return Location of island spot or null if one cannot be found
      */
+    @Nullable
     private Location getNextIsland() {
         Location last = plugin.getIslands().getLast(world);
         if (last == null) {
-            last = new Location(world, plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
-                    plugin.getIWM().getIslandHeight(world), plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
+            last = new Location(world,
+                    (double) plugin.getIWM().getIslandXOffset(world) + plugin.getIWM().getIslandStartX(world),
+                    plugin.getIWM().getIslandHeight(world),
+                    (double) plugin.getIWM().getIslandZOffset(world) + plugin.getIWM().getIslandStartZ(world));
         }
         // Find a free spot
         Map<Result, Integer> result = new EnumMap<>(Result.class);

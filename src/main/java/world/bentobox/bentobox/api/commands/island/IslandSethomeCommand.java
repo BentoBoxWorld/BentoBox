@@ -92,7 +92,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
             // Check if a confirmation is required
             if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInTheEnd()) {
-                askConfirmation(user, "commands.island.sethome.the-end.confirmation", setHomeRunnable);
+                askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"), setHomeRunnable);
             } else {
                 setHomeRunnable.run();
             }

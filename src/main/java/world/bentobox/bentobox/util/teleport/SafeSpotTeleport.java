@@ -306,7 +306,7 @@ public class SafeSpotTeleport {
     }
 
     private boolean safe(ChunkSnapshot chunk, int x, int y, int z, World world) {
-        Vector newSpot = new Vector((chunk.getX() << 4) + x + 0.5D, y + 1, (chunk.getZ() << 4) + z + 0.5D);
+        Vector newSpot = new Vector((chunk.getX() << 4) + x + 0.5D, y + 1.0D, (chunk.getZ() << 4) + z + 0.5D);
         if (portal) {
             if (bestSpot == null) {
                 // Stash the best spot

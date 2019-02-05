@@ -67,13 +67,13 @@ public class FlagTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
-        
+
         PowerMockito.mockStatic(Bukkit.class);
         ItemFactory itemF = mock(ItemFactory.class);
         ItemMeta im = mock(ItemMeta.class);
         when(itemF.getItemMeta(Mockito.any())).thenReturn(im);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
-        
+
     }
 
     @Test
@@ -129,9 +129,9 @@ public class FlagTest {
         assertTrue(id.isSetForWorld(mock(World.class)));
         id.setDefaultSetting(false);
         assertFalse(id.isSetForWorld(mock(World.class)));
-        
+
     }
-    
+
     @Test
     public void testIsDefaultSetting_World_Setting() {
         Type type = Type.WORLD_SETTING;
@@ -162,31 +162,31 @@ public class FlagTest {
     public void testEqualsObject() {
         Flag flag1 = null;
         Flag flag2 = new Flag(null, null, null, null, 0, null, false);
-        
+
         assertFalse(flag2.equals(null));
         int i = 45;
         assertFalse(flag2.equals(i));
-        
+
         flag1 = new Flag(null, null, null, null, 0, null, false);
         flag2 = flag1;
         assertTrue(flag1.equals(flag2));
         assertTrue(flag2.equals(flag1));
-        
+
         flag2 = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false);
         assertFalse(flag1.equals(flag2));
         assertFalse(flag2.equals(flag1));
-        
+
     }
 
     @Test
     public void testToPanelItem() throws Exception {
         BentoBox plugin = mock(BentoBox.class);
-        
+
         IslandsManager im = mock(IslandsManager.class);
-        
+
         Island island = mock(Island.class);
         when(island.getFlag(Mockito.any())).thenReturn(RanksManager.VISITOR_RANK);
-        
+
         User user = mock(User.class);
         when(user.getUniqueId()).thenReturn(UUID.randomUUID());
         Answer<String> answer = invocation -> {
@@ -195,30 +195,29 @@ public class FlagTest {
             sb.append("mock");
             return sb.toString();
         };
-        
-        when(user.getTranslation(Mockito.anyVararg())).thenAnswer(answer);
-        when(user.getTranslation(Mockito.any(),Mockito.any(),Mockito.any())).thenAnswer(answer);
-        
+
+        when(user.getTranslation(Mockito.any(String.class),Mockito.any(),Mockito.any())).thenAnswer(answer);
+
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
         when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
         Optional<Island> oL = Optional.of(island);
         when(im.getIslandAt(Mockito.any(Location.class))).thenReturn(oL);
         when(plugin.getIslands()).thenReturn(im);
-        
+
         RanksManager rm = mock(RanksManager.class);
         when(plugin.getRanksManager()).thenReturn(rm);
         when(rm.getRank(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn("Visitor");
         when(rm.getRank(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn("Owner");
-        
+
         Flag id = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false);
-        
+
         PanelItem pi = id.toPanelItem(plugin, user);
-        
+
         verify(user).getTranslation(Mockito.eq("protection.flags.id.name"));
         verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), Mockito.anyVararg());
-        
+
         assertEquals(Material.ACACIA_DOOR, pi.getItem().getType());
-        
+
     }
 
     @Test

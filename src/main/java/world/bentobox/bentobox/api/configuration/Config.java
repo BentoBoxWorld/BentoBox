@@ -61,6 +61,7 @@ public class Config<T> {
         } catch (InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException
                 | ClassNotFoundException | IntrospectionException | NoSuchMethodException | SecurityException e) {
             logger.severe(() -> "Could not load config object! " + e.getMessage());
+            e.printStackTrace();
         }
 
         return null;

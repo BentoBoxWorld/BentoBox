@@ -24,7 +24,7 @@ public final class AddonDescription {
      */
     private final boolean metrics;
 
-    private AddonDescription(Builder builder) {
+    private AddonDescription(@NonNull Builder builder) {
         this.main = builder.main;
         this.name = builder.name;
         this.version = builder.version;
@@ -94,17 +94,6 @@ public final class AddonDescription {
         private @NonNull List<String> dependencies = new ArrayList<>();
         private @NonNull List<String> softDependencies = new ArrayList<>();
         private boolean metrics = false;
-
-        /**
-         * @deprecated As of 1.1, use {@link Builder#Builder(String, String, String)} instead.
-         */
-        @Deprecated
-        public Builder(@NonNull String main, @NonNull String name) {
-            this.main = main;
-            this.name = name;
-            this.version = "";
-        }
-
         /**
          * @since 1.1
          */
@@ -112,16 +101,6 @@ public final class AddonDescription {
             this.main = main;
             this.name = name;
             this.version = version;
-        }
-
-        /**
-         * @deprecated As of 1.1, for removal.
-         */
-        @Deprecated
-        @NonNull
-        public Builder version(@NonNull String version) {
-            this.version = version;
-            return this;
         }
 
         @NonNull

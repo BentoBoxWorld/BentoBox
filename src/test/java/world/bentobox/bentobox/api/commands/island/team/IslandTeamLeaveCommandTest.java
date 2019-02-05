@@ -10,9 +10,11 @@ import java.util.HashMap;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +82,7 @@ public class IslandTeamLeaveCommandTest {
         ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
 
-        // Player has island to begin with 
+        // Player has island to begin with
         im = mock(IslandsManager.class);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(true);
         when(im.isOwner(Mockito.any(), Mockito.any())).thenReturn(true);
@@ -99,6 +101,12 @@ public class IslandTeamLeaveCommandTest {
         // Island World Manager
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
+
+        // Plugin Manager
+        Server server = mock(Server.class);
+        PluginManager pim = mock(PluginManager.class);
+        when(server.getPluginManager()).thenReturn(pim);
+        when(Bukkit.getServer()).thenReturn(server);
     }
 
     /**
@@ -111,7 +119,7 @@ public class IslandTeamLeaveCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
     }
-    
+
     /**
      * Test method for .
      */
@@ -121,7 +129,7 @@ public class IslandTeamLeaveCommandTest {
         assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.team.leave.cannot-leave"));
     }
-    
+
     /**
      * Test method for .
      */
@@ -138,7 +146,7 @@ public class IslandTeamLeaveCommandTest {
         Mockito.verify(im).setLeaveTeam(Mockito.any(), Mockito.eq(uuid));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
-    
+
     /**
      * Test method for .
      */
@@ -168,7 +176,7 @@ public class IslandTeamLeaveCommandTest {
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Add a team owner - null
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(null);
-        
+
         // Require resets
         when(iwm.isOnLeaveResetEnderChest(Mockito.any())).thenReturn(true);
         Inventory enderChest = mock(Inventory.class);
@@ -182,7 +190,7 @@ public class IslandTeamLeaveCommandTest {
         assertTrue(itl.execute(user, itl.getLabel(), new ArrayList<>()));
         Mockito.verify(im).setLeaveTeam(Mockito.any(), Mockito.eq(uuid));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
-        
+
         Mockito.verify(enderChest).clear();
         Mockito.verify(inv).clear();
     }

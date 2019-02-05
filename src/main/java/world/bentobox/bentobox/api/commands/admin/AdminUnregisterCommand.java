@@ -5,9 +5,14 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminUnregisterCommand extends CompositeCommand {
@@ -15,7 +20,7 @@ public class AdminUnregisterCommand extends CompositeCommand {
     public AdminUnregisterCommand(CompositeCommand parent) {
         super(parent, "unregister");
     }
-    
+
     @Override
     public void setup() {
         setPermission("admin.unregister");
@@ -36,22 +41,28 @@ public class AdminUnregisterCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
+        if (!getIslands().hasIsland(getWorld(), targetUUID) && !getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-        if (getIslands().inTeam(getWorld(), targetUUID)) {
-            user.sendMessage("commands.admin.unregister.cannot-unregister-team-player");
-            return false;
-        }
+
         // Unregister island
-        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(getIslands().getIsland(getWorld(), targetUUID).getCenter().toVector()));
+        Island oldIsland = getIslands().getIsland(getWorld(), targetUUID);
+        user.sendMessage("commands.admin.unregister.unregistered-island", "[xyz]", Util.xyz(oldIsland.getCenter().toVector()));
         getIslands().removePlayer(getWorld(), targetUUID);
         getPlayers().clearHomeLocations(getWorld(), targetUUID);
         user.sendMessage("general.success");
+        IslandBaseEvent event = IslandEvent.builder()
+                .island(oldIsland)
+                .location(oldIsland.getCenter())
+                .reason(IslandEvent.Reason.UNREGISTERED)
+                .involvedPlayer(targetUUID)
+                .admin(true)
+                .build();
+        Bukkit.getServer().getPluginManager().callEvent(event);
         return true;
     }
-    
+
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
         String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";

@@ -43,10 +43,11 @@ public class AddonTest {
     @Mock
     static BentoBox plugin;
     static JavaPlugin javaPlugin;
+    private Server server;
 
     @Before
     public void setUp() throws Exception {
-        Server server = mock(Server.class);
+        server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
@@ -134,7 +135,7 @@ public class AddonTest {
     @Test
     public void testGetServer() {
         TestClass test = new TestClass();
-        assertEquals(plugin.getServer(), test.getServer());
+        assertEquals(server, test.getServer());
     }
 
     @Test

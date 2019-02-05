@@ -3,6 +3,8 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -10,7 +12,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 public class IslandTeamInviteRejectCommand extends CompositeCommand {
-    
+
     private IslandTeamCommand itc;
 
     public IslandTeamInviteRejectCommand(IslandTeamCommand islandTeamCommand) {
@@ -37,7 +39,7 @@ public class IslandTeamInviteRejectCommand extends CompositeCommand {
                     .reason(TeamEvent.Reason.REJECT)
                     .involvedPlayer(playerUUID)
                     .build();
-            getPlugin().getServer().getPluginManager().callEvent(event);
+            Bukkit.getServer().getPluginManager().callEvent(event);
             if (event.isCancelled()) {
                 return false;
             }

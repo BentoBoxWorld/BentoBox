@@ -3,6 +3,7 @@ package world.bentobox.bentobox.api.commands.island.team;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 
@@ -59,12 +60,12 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 .reason(TeamEvent.Reason.JOIN)
                 .involvedPlayer(playerUUID)
                 .build();
-        getPlugin().getServer().getPluginManager().callEvent(event);
+        Bukkit.getServer().getPluginManager().callEvent(event);
         if (event.isCancelled()) {
             return true;
         }
 
-        askConfirmation(user, "commands.island.team.invite.accept.confirmation", () -> {
+        askConfirmation(user, user.getTranslation("commands.island.team.invite.accept.confirmation"), () -> {
             // Remove the invite
             itc.getInviteCommand().getInviteList().remove(playerUUID);
             // Put player into Spectator mode
@@ -113,6 +114,14 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
                 inviter.sendMessage("commands.island.team.invite.accept.name-joined-your-island", TextVariables.NAME, user.getName());
             }
             getIslands().save(teamIsland);
+            // Fire event
+            IslandBaseEvent e = TeamEvent.builder()
+                    .island(getIslands()
+                            .getIsland(getWorld(), prospectiveOwnerUUID))
+                    .reason(TeamEvent.Reason.JOINED)
+                    .involvedPlayer(playerUUID)
+                    .build();
+            Bukkit.getServer().getPluginManager().callEvent(e);
         });
 
         return true;

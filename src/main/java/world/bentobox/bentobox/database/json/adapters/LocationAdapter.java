@@ -2,9 +2,9 @@ package world.bentobox.bentobox.database.json.adapters;
 
 import java.io.IOException;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.plugin.Plugin;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -12,12 +12,6 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 public class LocationAdapter extends TypeAdapter<Location> {
-
-    private Plugin plugin;
-
-    public LocationAdapter(Plugin plugin) {
-        this.plugin = plugin;
-    }
 
     @Override
     public void write(JsonWriter out, Location location) throws IOException {
@@ -42,7 +36,7 @@ public class LocationAdapter extends TypeAdapter<Location> {
             return null;
         }
         in.beginArray();
-        World world = plugin.getServer().getWorld(in.nextString());
+        World world = Bukkit.getServer().getWorld(in.nextString());
         double x = in.nextDouble();
         double y = in.nextDouble();
         double z = in.nextDouble();

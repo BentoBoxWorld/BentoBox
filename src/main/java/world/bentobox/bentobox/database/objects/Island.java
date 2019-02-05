@@ -107,6 +107,12 @@ public class Island implements DataObject {
     private int levelHandicap;
     @Expose
     private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
+    
+    /**
+     * This flag is used to quarantine islands that cannot be loaded and should be purged at some point
+     */
+    @Expose
+    private boolean doNotLoad;
 
     public Island() {}
 
@@ -800,5 +806,19 @@ public class Island implements DataObject {
      */
     public void setHistory(List<LogEntry> history) {
         this.history = history;
+    }
+
+    /**
+     * @return the doNotLoad
+     */
+    public boolean isDoNotLoad() {
+        return doNotLoad;
+    }
+
+    /**
+     * @param doNotLoad the doNotLoad to set
+     */
+    public void setDoNotLoad(boolean doNotLoad) {
+        this.doNotLoad = doNotLoad;
     }
 }

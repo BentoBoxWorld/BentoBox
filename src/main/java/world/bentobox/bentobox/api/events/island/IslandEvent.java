@@ -6,8 +6,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
-import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.IslandDeletion;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -107,7 +107,17 @@ public class IslandEvent extends IslandBaseEvent {
         /**
          * Reserved
          */
-        UNKNOWN
+        UNKNOWN,
+        /**
+         * Player was unregistered from the island by admin
+         * @since 1.3.0
+         */
+        UNREGISTERED,
+        /**
+         * Player was registered to the island by admin
+         * @since 1.3.0
+         */
+        REGISTERED
     }
 
     public static IslandEventBuilder builder() {
@@ -209,6 +219,27 @@ public class IslandEvent extends IslandBaseEvent {
             return deletedIslandInfo;
         }
     }
+
+    /**
+     * Fired when a player is unregistered from an island.
+     * @since 1.3.0
+     */
+    public static class IslandUnregisteredEvent extends IslandBaseEvent {
+        private IslandUnregisteredEvent(Island island, UUID player, boolean admin, Location location) {
+            super(island, player, admin, location);
+        }
+    }
+
+    /**
+     * Fired when a player is registered from an island.
+     * @since 1.3.0
+     */
+    public static class IslandRegisteredEvent extends IslandBaseEvent {
+        private IslandRegisteredEvent(Island island, UUID player, boolean admin, Location location) {
+            super(island, player, admin, location);
+        }
+    }
+
     /**
      * Fired when an a player enters an island.
      * Cancellation has no effect.
@@ -389,6 +420,14 @@ public class IslandEvent extends IslandBaseEvent {
                 IslandUnlockEvent unlock = new IslandUnlockEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(unlock);
                 return unlock;
+            case REGISTERED:
+                IslandRegisteredEvent reg = new IslandRegisteredEvent(island, player, admin, location);
+                Bukkit.getServer().getPluginManager().callEvent(reg);
+                return reg;
+            case UNREGISTERED:
+                IslandUnregisteredEvent unreg = new IslandUnregisteredEvent(island, player, admin, location);
+                Bukkit.getServer().getPluginManager().callEvent(unreg);
+                return unreg;
             default:
                 IslandGeneralEvent general = new IslandGeneralEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(general);

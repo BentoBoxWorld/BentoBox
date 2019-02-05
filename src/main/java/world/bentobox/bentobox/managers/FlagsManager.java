@@ -10,7 +10,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
 
 import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
@@ -45,7 +44,7 @@ public class FlagsManager {
     public boolean registerFlag(@NonNull Flag flag) {
         // Check in case the flag id or icon already exists
         for (Flag fl : flags) {
-            if (fl.getID().equals(flag.getID()) || fl.getIcon().equals(flag.getIcon())) {
+            if (fl.getID().equals(flag.getID())) {
                 return false;
             }
         }
@@ -81,18 +80,6 @@ public class FlagsManager {
     @NonNull
     public List<Flag> getFlags() {
         return flags;
-    }
-
-    /**
-     * Get flag by ID
-     * @param id unique id for this flag
-     * @return Flag or null if not known
-     * @deprecated As of 1.1, use {@link #getFlag(String)} instead.
-     */
-    @Deprecated
-    @Nullable
-    public Flag getFlagByID(@NonNull String id) {
-        return getFlag(id).orElse(null);
     }
 
     /**

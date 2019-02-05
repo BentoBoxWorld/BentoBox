@@ -6,9 +6,9 @@ api-version: 1.13
 authors: [tastybento, Poslovitch]
 website: https://bentobox.world
 
-softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI]
+loadbefore: [Multiverse-Core, Residence]
 
-loadbefore: [Multiverse-Core]
+softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI]
 
 permissions:    
   bentobox.admin:

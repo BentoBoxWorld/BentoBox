@@ -7,7 +7,9 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -33,7 +35,9 @@ import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
+import world.bentobox.bentobox.schems.Clipboard;
 
 /**
  * @author tastybento
@@ -115,6 +119,12 @@ public class IslandResetCommandTest {
         when(iwm.getResetLimit(Mockito.any())).thenReturn(3);
 
 
+        // Schems manager - custom schem
+        SchemsManager sm = mock(SchemsManager.class);
+        Map<String, Clipboard> map = new HashMap<>();
+        map.put("custom", null);
+        when(sm.get(Mockito.any())).thenReturn(map);
+        when(plugin.getSchemsManager()).thenReturn(sm);
     }
 
     /**
@@ -317,5 +327,77 @@ public class IslandResetCommandTest {
         Mockito.verify(user).sendMessage("commands.island.create.unable-create-island");
 
 
+    }
+
+    @Test
+    public void testNoConfirmationRequiredCustomSchemNoPermission() throws IOException {
+        IslandResetCommand irc = new IslandResetCommand(ic);
+        // Now has island, but is not the owner
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Now is owner, but still has team
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Now has no team
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        // Give the user some resets
+        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+
+        // Old island mock
+        Island oldIsland = mock(Island.class);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
+
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(Mockito.any())).thenReturn(builder);
+        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
+        when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.name(Mockito.any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(Island.class));
+        PowerMockito.mockStatic(NewIsland.class);
+        when(NewIsland.builder()).thenReturn(builder);
+
+
+        // Reset command, no confirmation required
+        assertFalse(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
+        Mockito.verify(user).sendMessage("general.errors.no-permission","[permission]","nullisland.create.custom");
+    }
+
+    @Test
+    public void testNoConfirmationRequiredCustomSchemHasPermission() throws IOException {
+        IslandResetCommand irc = new IslandResetCommand(ic);
+        // Now has island, but is not the owner
+        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Now is owner, but still has team
+        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        // Now has no team
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        // Give the user some resets
+        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        // Set so no confirmation required
+        when(s.isResetConfirmation()).thenReturn(false);
+
+        // Old island mock
+        Island oldIsland = mock(Island.class);
+        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
+
+        // Mock up NewIsland builder
+        NewIsland.Builder builder = mock(NewIsland.Builder.class);
+        when(builder.player(Mockito.any())).thenReturn(builder);
+        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
+        when(builder.reason(Mockito.any())).thenReturn(builder);
+        when(builder.name(Mockito.any())).thenReturn(builder);
+        when(builder.build()).thenReturn(mock(Island.class));
+        PowerMockito.mockStatic(NewIsland.class);
+        when(NewIsland.builder()).thenReturn(builder);
+
+        // Permission
+        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
+        // Reset command, no confirmation required
+        assertTrue(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
+        // Verify that build new island was called and the number of resets left shown
+        Mockito.verify(builder).build();
+        // This should not be shown
+        Mockito.verify(user, Mockito.never()).sendMessage("commands.island.reset.resets-left", "[number]", "1");
     }
 }
