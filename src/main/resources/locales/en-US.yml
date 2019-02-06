@@ -661,6 +661,11 @@ protection:
         &aDisabling it helps avoiding lava and water
         &agenerating cobblestone in the area between
         &atwo islands.
+
+        &cNote that liquids will still flow vertically.
+        &cThey will also not spread horizontally if
+        &cthey are placed outside an island's
+        &cprotection range.
     LOCK: 
       description: "Toggle lock"
       name: "Lock island"

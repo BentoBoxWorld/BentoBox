@@ -273,7 +273,10 @@ public final class Flags {
             .listener(new ObsidianScoopingListener()).defaultSetting(true).build();
 
     /**
-     * Prevents liquids from flowing outside the protection range, in order to avoid cobblestone/stone/obsidian being generated and remaining unbreakable by players.
+     * Toggles whether liquids can flow outside an island's protection range or not.
+     * It is disabled by default in order to avoid cobblestone/stone/obsidian being generated outside an island's protection range and remaining unbreakable by players.
+     * Liquids will still flow vertically, however they won't spread horizontally if they're placed outside an island's protection range.
+     *
      * @since 1.3.0
      * @see LiquidsFlowingOutListener
      */
