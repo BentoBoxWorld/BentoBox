@@ -1,5 +1,8 @@
 package world.bentobox.bentobox.versions;
 
+import org.bukkit.Server;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 
 /**
@@ -100,6 +103,7 @@ public class ServerCompatibility {
         }
 
         @Override
+        @NonNull
         public String toString() {
             return super.toString().substring(1).replace("_", ".");
         }
@@ -114,7 +118,7 @@ public class ServerCompatibility {
     public Compatibility checkCompatibility(BentoBox plugin) {
         if (result == null) {
             // Check the server version first
-            ServerVersion version = getServerVersion(plugin.getServer().getBukkitVersion());
+            ServerVersion version = getServerVersion(plugin.getServer());
 
             if (version == null || version.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'Version = null' means that it's not listed. And therefore, it's implicitly incompatible.
@@ -123,7 +127,7 @@ public class ServerCompatibility {
             }
 
             // Now, check the server software
-            ServerSoftware software = getServerSoftware(plugin.getServer().getVersion());
+            ServerSoftware software = getServerSoftware(plugin.getServer());
 
             if (software == null || software.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'software = null' means that it's not listed. And therefore, it's implicitly incompatible.
@@ -149,18 +153,32 @@ public class ServerCompatibility {
         return result;
     }
 
-    private ServerSoftware getServerSoftware(String server) {
+    /**
+     * Returns the {@link ServerSoftware} entry corresponding to the current server software, may be null.
+     * @param server the {@link Server} instance, must not be null.
+     * @return the {@link ServerSoftware} run by this server or null.
+     * @since 1.3.0
+     */
+    @Nullable
+    public ServerSoftware getServerSoftware(@NonNull Server server) {
+        String serverSoftware = server.getVersion().substring(4).split("-")[0];
         try {
-            String serverSoftware = server.substring(4).split("-")[0];
             return ServerSoftware.valueOf(serverSoftware.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
         }
     }
 
-    private ServerVersion getServerVersion(String bukkitVersion) {
+    /**
+     * Returns the {@link ServerVersion} entry corresponding to the current server software, may be null.
+     * @param server the {@link Server} instance, must not be null.
+     * @return the {@link ServerVersion} run by this server or null.
+     * @since 1.3.0
+     */
+    @Nullable
+    public ServerVersion getServerVersion(@NonNull Server server) {
+        String serverVersion = server.getBukkitVersion().split("-")[0].replace(".", "_");
         try {
-            String serverVersion = bukkitVersion.split("-")[0].replace(".", "_");
             return ServerVersion.valueOf("V" + serverVersion.toUpperCase());
         } catch (IllegalArgumentException e) {
             return null;
