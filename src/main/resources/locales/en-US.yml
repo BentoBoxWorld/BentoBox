@@ -13,6 +13,7 @@ meta:
 
 general:
   success: "&aSuccess!"
+  invalid: "Invalid"
   errors:
     command-cancelled: "&cCommand cancelled."
     no-permission: "&cYou don't have the permission to execute this command (&7[permission]&c)."
@@ -231,6 +232,7 @@ commands:
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version]" 
       game-worlds: "&2[name] &3([addon])"
+      server: "&2Running &3[name] [version]&2."
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
