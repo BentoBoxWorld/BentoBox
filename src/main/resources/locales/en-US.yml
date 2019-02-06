@@ -222,9 +222,10 @@ commands:
     about:
       description: "display copyright and license info"
     reload:
-      description: "reloads addons (if supported) and locale files"
+      description: "reloads settings, addons (if supported) and locales"
       locales-reloaded: "&2Languages reloaded."
       addons-reloaded: "&2Addons reloaded."
+      settings-reloaded: "&2Settings reloaded."
     version:
       plugin-version: "&2BentoBox version: &3[version]"
       description: "display info"

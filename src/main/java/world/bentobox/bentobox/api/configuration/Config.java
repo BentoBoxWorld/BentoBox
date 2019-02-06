@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
 
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
@@ -55,6 +56,7 @@ public class Config<T> {
      * @param uniqueId - unique id of the object
      * @return the object or null if it cannot be loaded
      */
+    @Nullable
     public T loadConfigObject(String uniqueId) {
         try {
             return handler.loadObject(uniqueId);
@@ -71,6 +73,7 @@ public class Config<T> {
      * Loads a config object
      * @return the object or null if it cannot be loaded
      */
+    @Nullable
     public T loadConfigObject() {
         return loadConfigObject("");
     }

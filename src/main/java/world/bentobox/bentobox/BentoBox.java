@@ -101,14 +101,13 @@ public class BentoBox extends JavaPlugin {
         // Load Flags
         flagsManager = new FlagsManager(this);
 
-        // Load settings from config.yml. This will check if there are any issues with it too.
-        settings = new Config<>(this, Settings.class).loadConfigObject("");
-        if (settings == null) {
-            // Settings did no load correctly. Disable plugin.
-            logError("Settings did not load correctly - disabling plugin - please check config.yml");
-            getPluginLoader().disablePlugin(this);
+        if (!loadSettings()) {
+            // We're aborting the load.
             return;
         }
+        // Saving the config now.
+        new Config<>(this, Settings.class).saveConfigObject(settings);
+
         // Start Database managers
         playersManager = new PlayersManager(this);
         // Check if this plugin is now disabled (due to bad database handling)
@@ -223,10 +222,6 @@ public class BentoBox extends JavaPlugin {
         if (islandsManager != null) {
             islandsManager.shutdown();
         }
-        // Save settings - ensures admins always have the latest config file
-        if (settings != null) {
-            new Config<>(this, Settings.class).saveConfigObject(settings);
-        }
     }
 
     /**
@@ -300,6 +295,25 @@ public class BentoBox extends JavaPlugin {
      */
     public Settings getSettings() {
         return settings;
+    }
+
+    /**
+     * Loads the settings from the config file.
+     * If it fails, it can shut the plugin down.
+     * @return {@code true} if it loaded successfully.
+     * @since 1.3.0
+     */
+    public boolean loadSettings() {
+        log("Loading Settings from config.yml...");
+        // Load settings from config.yml. This will check if there are any issues with it too.
+        settings = new Config<>(this, Settings.class).loadConfigObject();
+        if (settings == null) {
+            // Settings did not load correctly. Disable plugin.
+            logError("Settings did not load correctly - disabling plugin - please check config.yml");
+            getPluginLoader().disablePlugin(this);
+            return false;
+        }
+        return true;
     }
 
     /**
@@ -387,11 +401,21 @@ public class BentoBox extends JavaPlugin {
         return Optional.ofNullable(metrics);
     }
 
+    // Overriding default JavaPlugin methods
+
     /* (non-Javadoc)
      * @see org.bukkit.plugin.java.JavaPlugin#getDefaultWorldGenerator(java.lang.String, java.lang.String)
      */
     @Override
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         return addonsManager.getDefaultWorldGenerator(worldName, id);
+    }
+
+    /* (non-Javadoc)
+     * @see org.bukkit.plugin.java.JavaPlugin#reloadConfig()
+     */
+    @Override
+    public void reloadConfig() {
+        loadSettings();
     }
 }
