@@ -203,7 +203,7 @@ commands:
       description: "重载所有语言文件"
       locales-reloaded: "&2语言文件已重载"
     version:
-      plugin-version: "&2Bentobox 版本：&3[name]"
+      plugin-version: "&2Bentobox 版本：&3[version]"
       description: "显示信息"
       loaded-addons: "已加载组件"
       loaded-game-worlds: "已加载游戏世界："

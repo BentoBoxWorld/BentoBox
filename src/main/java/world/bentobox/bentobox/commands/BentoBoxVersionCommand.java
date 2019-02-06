@@ -28,12 +28,11 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.NAME, getPlugin().getDescription().getVersion());
+        user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION, getPlugin().getDescription().getVersion());
         user.sendMessage("commands.bentobox.version.loaded-game-worlds");
         getIWM().getOverWorldNames().forEach((k,v) -> user.sendMessage("commands.bentobox.version.game-worlds", TextVariables.NAME, k, "[addon]", v));
         user.sendMessage("commands.bentobox.version.loaded-addons");
-        getPlugin().getAddonsManager()
-        .getAddons()
+        getPlugin().getAddonsManager().getAddons()
         .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
                 TextVariables.VERSION, a.getDescription().getVersion()));
 

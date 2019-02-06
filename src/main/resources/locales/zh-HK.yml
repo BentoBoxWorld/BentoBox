@@ -224,7 +224,7 @@ commands:
       locales-reloaded: "&2語言文件已經重新載入"
       addons-reloaded: "&2組件已經重新載入"
     version:
-      plugin-version: "&2Bentobox 版本：&3[name]"
+      plugin-version: "&2Bentobox 版本：&3[version]"
       description: "顯示信息"
       loaded-addons: "已加載組件"
       loaded-game-worlds: "已加載遊戲世界："
