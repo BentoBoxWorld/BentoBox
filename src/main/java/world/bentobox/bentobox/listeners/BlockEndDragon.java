@@ -1,23 +1,17 @@
 package world.bentobox.bentobox.listeners;
 
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 import world.bentobox.bentobox.BentoBox;
@@ -36,8 +30,6 @@ public class BlockEndDragon implements Listener {
 
     private BentoBox plugin;
 
-    private Set<UUID> enderDragons = new HashSet<>();
-    
     public BlockEndDragon(BentoBox plugin) {
         this.plugin = plugin;
     }
@@ -50,31 +42,19 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public boolean onDragonSpawn(CreatureSpawnEvent e) {
-        if (!e.getSpawnReason().equals(SpawnReason.NATURAL) 
-                || !e.getEntityType().equals(EntityType.ENDER_DRAGON) 
-                || plugin.getIWM().isDragonSpawn(e.getEntity().getWorld())) {
+        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getIWM().isDragonSpawn(e.getEntity().getWorld())) {
             return true;
         }
-        EnderDragon d = (EnderDragon)e.getEntity();
-        d.getBossBar().setVisible(false);
-        d.setHealth(0);
-        enderDragons.add(d.getUniqueId());
+        e.getEntity().setHealth(0);
+        e.getEntity().remove();
+        e.setCancelled(true);
         return false;
     }
 
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public void onDragonDeath(EntityDeathEvent e) {
-        if (enderDragons.contains(e.getEntity().getUniqueId())) {
-            plugin.logDebug("removing drops");
-            e.setDroppedExp(0);
-            e.getDrops().clear();
-            enderDragons.remove(e.getEntity().getUniqueId());
-        }
-    }
 
     /**
      * This listener aims to delete the end trophy from the end when it is generated
-     * It is added by special code in the server that can't be overridden so the only
+     * It is added by special code in the server that can't be overidden so the only
      * option is to delete it manually. This means that any island at 0,0 will have
      * a dead zone of a few blocks directly above it. Hopefully this will not be a
      * major issue.

@@ -7,12 +7,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.bukkit.Bukkit;
-import org.bukkit.boss.BossBar;
-import org.bukkit.entity.EnderDragon;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.event.entity.CreatureSpawnEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -38,7 +35,7 @@ public class BlockEndDragonTest {
     public void testOnDragonSpawnWrongEntityOkayToSpawn() {
         LivingEntity le = mock(LivingEntity.class);
         when(le.getType()).thenReturn(EntityType.AREA_EFFECT_CLOUD);
-        CreatureSpawnEvent event = new CreatureSpawnEvent(le, SpawnReason.NATURAL);
+        CreatureSpawnEvent event = new CreatureSpawnEvent(le, null);
         BentoBox plugin = mock(BentoBox.class);
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -53,7 +50,7 @@ public class BlockEndDragonTest {
     public void testOnDragonSpawnWrongEntityNoDragonSpawn() {
         LivingEntity le = mock(LivingEntity.class);
         when(le.getType()).thenReturn(EntityType.AREA_EFFECT_CLOUD);
-        CreatureSpawnEvent event = new CreatureSpawnEvent(le, SpawnReason.NATURAL);
+        CreatureSpawnEvent event = new CreatureSpawnEvent(le, null);
         BentoBox plugin = mock(BentoBox.class);
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -66,9 +63,9 @@ public class BlockEndDragonTest {
     
     @Test
     public void testOnDragonSpawnRightEntityOkayToSpawn() {
-        EnderDragon le = mock(EnderDragon.class);
+        LivingEntity le = mock(LivingEntity.class);
         when(le.getType()).thenReturn(EntityType.ENDER_DRAGON);
-        CreatureSpawnEvent event = new CreatureSpawnEvent(le, SpawnReason.NATURAL);
+        CreatureSpawnEvent event = new CreatureSpawnEvent(le, null);
         BentoBox plugin = mock(BentoBox.class);
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -81,10 +78,9 @@ public class BlockEndDragonTest {
     
     @Test
     public void testOnDragonSpawnRightEntityNotOkayToSpawn() {
-        EnderDragon le = mock(EnderDragon.class);
-        when(le.getBossBar()).thenReturn(mock(BossBar.class));
+        LivingEntity le = mock(LivingEntity.class);
         when(le.getType()).thenReturn(EntityType.ENDER_DRAGON);
-        CreatureSpawnEvent event = new CreatureSpawnEvent(le, SpawnReason.NATURAL);
+        CreatureSpawnEvent event = new CreatureSpawnEvent(le, null);
         BentoBox plugin = mock(BentoBox.class);
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -92,6 +88,9 @@ public class BlockEndDragonTest {
         when(iwm.isDragonSpawn(Mockito.any())).thenReturn(false);
         BlockEndDragon bed = new BlockEndDragon(plugin);
         assertFalse(bed.onDragonSpawn(event));
+        Mockito.verify(le).remove();
+        Mockito.verify(le).setHealth(0);
+        assertTrue(event.isCancelled());
     }
 
 }
