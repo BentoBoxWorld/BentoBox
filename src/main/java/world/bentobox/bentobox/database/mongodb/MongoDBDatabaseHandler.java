@@ -68,7 +68,11 @@ public class MongoDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             // The deprecated serialize option does not have a viable alternative without involving a huge amount of custom code
             String json = JSON.serialize(document);
             json = json.replaceFirst(MONGO_ID, UNIQUEID);
-            list.add(gson.fromJson(json, dataObject));
+            try {
+                list.add(gson.fromJson(json, dataObject));
+            } catch (Exception e) {
+                plugin.logError("Could not load object :" + e.getMessage());
+            }
         }
         return list;
     }

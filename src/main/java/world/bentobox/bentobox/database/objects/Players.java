@@ -72,6 +72,8 @@ public class Players implements DataObject {
      * @return Location of this home or null if not available
      */
     public Location getHomeLocation(World world, int number) {
+        // Remove any lost worlds/locations
+        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
         return homeLocations.entrySet().stream()
                 .filter(en -> Util.sameWorld(en.getKey().getWorld(), world) && en.getValue() == number)
                 .map(Map.Entry::getKey)
@@ -84,6 +86,8 @@ public class Players implements DataObject {
      * @return List of home locations
      */
     public Map<Location, Integer> getHomeLocations(World world) {
+        // Remove any lost worlds/locations
+        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
         return homeLocations.entrySet().stream().filter(e -> Util.sameWorld(e.getKey().getWorld(),world))
                 .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
     }
@@ -92,6 +96,8 @@ public class Players implements DataObject {
      * @return the homeLocations
      */
     public Map<Location, Integer> getHomeLocations() {
+        // Remove any lost worlds/locations
+        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
         return homeLocations;
     }
 
@@ -100,6 +106,8 @@ public class Players implements DataObject {
      */
     public void setHomeLocations(Map<Location, Integer> homeLocations) {
         this.homeLocations = homeLocations;
+        // Remove any lost worlds/locations
+        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null);
     }
 
     /**

@@ -92,6 +92,8 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                         }
                     }
                 }
+            } catch (Exception e) {
+                plugin.logError("Could not load objects " + e.getMessage());
             }
         } catch (SQLException e) {
             plugin.logError("Could not load objects " + e.getMessage());
@@ -113,6 +115,8 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                     Gson gson = getGson();
                     return gson.fromJson(resultSet.getString("json"), dataObject);
                 }
+            } catch (Exception e) {
+                plugin.logError("Could not load object " + uniqueId + " " + e.getMessage());
             }
         } catch (SQLException e) {
             plugin.logError("Could not load object " + uniqueId + " " + e.getMessage());

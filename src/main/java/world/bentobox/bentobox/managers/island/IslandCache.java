@@ -10,9 +10,9 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
 
@@ -43,7 +43,12 @@ public class IslandCache {
      */
     public boolean addIsland(@NonNull Island island) {
         if (island.getCenter() == null || island.getWorld() == null) {
-            return false;
+            /* Special handling - return true.
+               The island will not be quarantined, but just not loaded
+               This can occur when a gamemode is removed temporarily from the server
+               TODO: have an option to remove these when the purge command is added
+             */
+            return true;
         }
         if (addToGrid(island)) {
             islandsByLocation.put(island.getCenter(), island);
