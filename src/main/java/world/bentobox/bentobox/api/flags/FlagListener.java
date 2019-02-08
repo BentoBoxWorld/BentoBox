@@ -182,7 +182,7 @@ public abstract class FlagListener implements Listener {
         }
 
         // Ops or "bypass everywhere" moderators can do anything
-        if (user.isOp() || user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
+        if (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
             if (user.isOp()) {
                 report(user, e, loc, flag,  Why.OP);
             } else {
