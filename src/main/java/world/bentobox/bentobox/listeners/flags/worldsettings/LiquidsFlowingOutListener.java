@@ -14,7 +14,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class LiquidsFlowingOutListener extends FlagListener {
 
-    @EventHandler(priority = EventPriority.NORMAL)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onLiquidFlow(BlockFromToEvent e) {
         Block from = e.getBlock();
         if (!from.isLiquid()) {
