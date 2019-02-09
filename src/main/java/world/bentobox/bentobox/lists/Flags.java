@@ -50,6 +50,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingLis
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.managers.RanksManager;
 
 /**
@@ -291,8 +292,19 @@ public final class Flags {
     /**
      * Enables toggling for removal of the end exit island. May not be required on some servers, e.g. PaperSpigot.
      * @since 1.3.0
+     * @see world.bentobox.bentobox.listeners.BlockEndDragon
      */
     public static final Flag REMOVE_END_EXIT_ISLAND = new Flag.Builder("REMOVE_END_EXIT_ISLAND", Material.DRAGON_HEAD).type(Type.WORLD_SETTING).defaultSetting(true).build();
+
+    /**
+     * Toggles whether trees can grow outside an island's protection range or not.
+     * Not only will it prevent saplings placed outside an island's protection range from growing, but it will also block generation of leaves/logs outside of it, thus "cutting" the tree.
+     * It is disabled by default in order to avoid leaves/logs being generated outside an island's protection range and remaining unbreakable by players.
+     *
+     * @since 1.3.0
+     * @see TreesGrowingOutsideRangeListener
+     */
+    public static final Flag TREES_GROWING_OUTSIDE_RANGE = new Flag.Builder("TREES_GROWING_OUTSIDE_RANGE", Material.OAK_SAPLING).type(Type.WORLD_SETTING).listener(new TreesGrowingOutsideRangeListener()).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.

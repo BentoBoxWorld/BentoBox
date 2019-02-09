@@ -790,6 +790,16 @@ protection:
       description: "Toggle access"
       name: "Trap doors"
       hint: "No trapdoor use"
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: "Trees growing outside range"
+      description: |-
+        &aToggle whether trees can grow outside an
+        &aisland's protection range or not.
+        &aNot only will it prevent saplings placed
+        &aoutside an island's protection range from
+        &agrowing, but it will also block generation
+        &aof leaves/logs outside of the island, thus
+        &acutting the tree.
     TURTLE_EGGS:
       description: "Toggle crushing"
       name: "Turtle Eggs"
