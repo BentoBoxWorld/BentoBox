@@ -702,17 +702,17 @@ public class IslandsManager {
         // Only load non-quarantined island
         // TODO: write a purge admin command to delete these records
         handler.loadObjects().stream().filter(i -> !i.isDoNotLoad()).forEach(island -> {
-            if (!islandCache.addIsland(island)) {
-                // Quarantine the offending island
-                toQuarantine.add(island);
-            }
+           if (!islandCache.addIsland(island)) {
+               // Quarantine the offending island
+               toQuarantine.add(island);
+           }
         });
         if (!toQuarantine.isEmpty()) {
             plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; quarantining.");
             toQuarantine.forEach(i -> {
                 i.setDoNotLoad(true);
                 handler.saveObject(i);
-            });
+            });          
         }
     }
 
@@ -929,16 +929,6 @@ public class IslandsManager {
      */
     public void save(Island island) {
         handler.saveObject(island);
-    }
-
-    /**
-     * Get island by unique id
-     * @param uniqueId - unique id
-     * @return optional island
-     * @since 1.3.0
-     */
-    public Optional<Island> getIsland(String uniqueId) {
-        return handler.objectExists(uniqueId) ? Optional.ofNullable(handler.loadObject(uniqueId)) : Optional.empty();
     }
 
 }
