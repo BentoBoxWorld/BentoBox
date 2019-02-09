@@ -74,7 +74,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
         // Permission check if the name is not the default one
         String permission = getPermissionPrefix() + "island.create." + name;
-        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && !user.isOp() && !user.hasPermission(permission)) {
+        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && !user.hasPermission(permission)) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;
         }

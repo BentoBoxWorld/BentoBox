@@ -356,15 +356,15 @@ public abstract class Addon {
     }
 
     public void log(String string) {
-        getPlugin().log(string);
+        getPlugin().log(getDescription() != null ? "[" + getDescription().getName() + "] " + string : string);
     }
 
     public void logWarning(String string) {
-        getPlugin().logWarning(string);
+        getPlugin().logWarning(getDescription() != null ? "[" + getDescription().getName() + "] " + string : string);
     }
 
     public void logError(String string) {
-        getPlugin().logError(string);
+        getPlugin().logError(getDescription() != null ? "[" + getDescription().getName() + "] " + string : string);
     }
 
     /**

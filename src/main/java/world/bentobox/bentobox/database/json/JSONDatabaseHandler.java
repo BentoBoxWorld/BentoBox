@@ -58,6 +58,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 list.add(getGson().fromJson(new FileReader(file), dataObject));
             } catch (FileNotFoundException e) {
                 plugin.logError("Could not load file '" + file.getName() + "': File not found.");
+            } catch (Exception e) {
+                plugin.logError("Could not load objects " + file.getName() + " " + e.getMessage());
             }
         }
         return list;
@@ -78,6 +80,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             result = getGson().fromJson(new FileReader(new File(plugin.getDataFolder(), fileName)), dataObject);
         } catch (FileNotFoundException e) {
             plugin.logError("Could not load file '" + fileName + "': File not found.");
+        } catch (Exception e) {
+            plugin.logError("Could not load objects " + fileName + " " + e.getMessage());
         }
 
         return result;

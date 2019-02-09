@@ -104,10 +104,8 @@ public class YamlDatabaseConnector implements DatabaseConnector {
                 line = line.replace("!!java.util.UUID", "");
                 writer.println(line);
             }
-            if (yamlFile.delete()) {
-                if (!temp.renameTo(yamlFile)) {
-                    plugin.logError("Could not rename fixed Island object. Are the writing permissions correctly setup?");
-                }
+            if (yamlFile.delete() && !temp.renameTo(yamlFile)) {
+                plugin.logError("Could not rename fixed Island object. Are the writing permissions correctly setup?");
             }
         } catch (Exception e) {
             plugin.logError("Could not fix Island object - skipping - " + e.getMessage());

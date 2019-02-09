@@ -215,6 +215,16 @@ public class UserTest {
         assertTrue(user.hasPermission("perm"));
     }
 
+    /**
+     * Asserts that {@link User#hasPermission(String)} returns true when the user is op.
+     * @since 1.3.0
+     */
+    @Test
+    public void testHasNotPermissionButIsOp() {
+        when(user.isOp()).thenReturn(true);
+        assertTrue(user.hasPermission(""));
+    }
+
     @Test
     public void testIsOnline() {
         when(player.isOnline()).thenReturn(true);

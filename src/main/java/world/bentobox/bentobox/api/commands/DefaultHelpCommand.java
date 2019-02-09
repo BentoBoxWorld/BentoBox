@@ -93,7 +93,7 @@ public class DefaultHelpCommand extends CompositeCommand {
         // Show the help
         if (user.isPlayer()) {
             // Player. Check perms
-            if (user.isOp() || user.hasPermission(parent.getPermission())) {
+            if (user.hasPermission(parent.getPermission())) {
                 if (params == null || params.isEmpty()) {
                     user.sendMessage(HELP_SYNTAX_NO_PARAMETERS_REF, USAGE_PLACEHOLDER, usage, DESC_PLACEHOLDER, desc);
                 } else {

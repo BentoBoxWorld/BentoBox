@@ -7,15 +7,15 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
 /**
- * Reloads addons and localization.
+ * Reloads settings, addons and localization.
  *
  * @author tastybento
  */
 public class BentoBoxReloadCommand extends ConfirmableCommand {
 
     /**
-     * Reloads locales command
-     * @param parent - command parent
+     * Reloads settings, addons and localization command
+     * @param parent command parent
      */
     public BentoBoxReloadCommand(CompositeCommand parent) {
         super(parent, "reload");
@@ -30,6 +30,10 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         this.askConfirmation(user, () -> {
+            // Reload settings
+            getPlugin().loadSettings();
+            user.sendMessage("commands.bentobox.reload.settings-reloaded");
+
             // Reload addons
             getPlugin().getAddonsManager().reloadAddons();
             user.sendMessage("commands.bentobox.reload.addons-reloaded");
@@ -38,6 +42,6 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
             getPlugin().getLocalesManager().reloadLanguages();
             user.sendMessage("commands.bentobox.reload.locales-reloaded");
         });
-        return false;
+        return true;
     }
 }

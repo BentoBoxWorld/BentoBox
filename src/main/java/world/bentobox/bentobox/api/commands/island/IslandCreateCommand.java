@@ -54,7 +54,7 @@ public class IslandCreateCommand extends CompositeCommand {
             name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
             // Permission check
             String permission = this.getPermissionPrefix() + "island.create." + name;
-            if (!user.isOp() && !user.hasPermission(permission)) {
+            if (!user.hasPermission(permission)) {
                 user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
                 return false;
             }

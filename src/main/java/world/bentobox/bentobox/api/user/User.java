@@ -174,10 +174,10 @@ public class User {
 
     /**
      * @param permission permission string
-     * @return true if permission is empty or if the player has that permission.
+     * @return true if permission is empty or if the player has that permission or if the player is op.
      */
     public boolean hasPermission(String permission) {
-        return permission.isEmpty() || sender.hasPermission(permission);
+        return permission.isEmpty() || isOp() || sender.hasPermission(permission);
     }
 
     public boolean isOnline() {

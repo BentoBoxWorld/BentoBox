@@ -382,11 +382,15 @@ public class Clipboard {
                 }
             }
             if (e instanceof AbstractHorse) {
-                Horse horse = (Horse)e;
+                AbstractHorse horse = (AbstractHorse)e;
                 horse.setDomestication(ent.getInt("domestication"));
-                ConfigurationSection inv = ent.getConfigurationSection(INVENTORY);
-                inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
-                horse.setStyle(Horse.Style.valueOf(ent.getString("style", "NONE")));
+                if (ent.isConfigurationSection(INVENTORY)) {
+                    ConfigurationSection inv = ent.getConfigurationSection(INVENTORY);
+                    inv.getKeys(false).forEach(i -> horse.getInventory().setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+                }
+            }
+            if (e instanceof Horse) {
+                ((Horse)e).setStyle(Horse.Style.valueOf(ent.getString("style", "NONE")));
             }
         });
 

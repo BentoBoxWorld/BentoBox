@@ -82,7 +82,7 @@ public class IslandWorldManager {
      * @return true if in a world or false if not. False if in standard Nether or standard End.
      */
     public boolean inWorld(@Nullable Location loc) {
-        return loc == null ? false : inWorld(loc.getWorld());
+        return loc != null && inWorld(loc.getWorld());
     }
 
     /**
@@ -92,7 +92,7 @@ public class IslandWorldManager {
      * @return true if in a world or false if not
      */
     public boolean inWorld(@Nullable World world) {
-        return world == null ? false : ((world.getEnvironment().equals(Environment.NETHER) && isIslandNether(world))
+        return world != null && ((world.getEnvironment().equals(Environment.NETHER) && isIslandNether(world))
                 || (world.getEnvironment().equals(Environment.THE_END) && isIslandEnd(world))
                 || (world.getEnvironment().equals(Environment.NORMAL)) && gameModes.containsKey(world));
     }
@@ -190,10 +190,10 @@ public class IslandWorldManager {
     /**
      * Get the settings for this world or sub-worlds (nether, end)
      *
-     * @param world
-     *            - world
+     * @param world world
      * @return world settings, or null if world is unknown
      */
+    @Nullable
     public WorldSettings getWorldSettings(@NonNull World world) {
         if (gameModes.containsKey(world)) {
             return gameModes.get(world).getWorldSettings();
@@ -328,7 +328,7 @@ public class IslandWorldManager {
      * @return true if world is a known and valid nether world
      */
     public boolean isNether(@Nullable World world) {
-        return world == null ? false : world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherGenerate();
+        return world != null && (world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherGenerate());
     }
 
     /**
@@ -338,8 +338,8 @@ public class IslandWorldManager {
      * @return true if world is a known and valid nether world
      */
     public boolean isIslandNether(@Nullable World world) {
-        return world == null ? false : world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherGenerate()
-                && gameModes.get(world).getWorldSettings().isNetherIslands();
+        return world != null && (world.getEnvironment().equals(Environment.NETHER) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherGenerate()
+                && gameModes.get(world).getWorldSettings().isNetherIslands());
     }
 
     /**
@@ -349,7 +349,7 @@ public class IslandWorldManager {
      * @return true if world is a known and valid end world
      */
     public boolean isEnd(@Nullable World world) {
-        return world == null ? false : world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isEndGenerate();
+        return world != null && (world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isEndGenerate());
     }
 
     /**
@@ -360,8 +360,8 @@ public class IslandWorldManager {
      * @return true if world is a known and valid nether world
      */
     public boolean isIslandEnd(@Nullable World world) {
-        return world == null ? false : world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isEndGenerate()
-                && gameModes.get(world).getWorldSettings().isEndIslands();
+        return world != null && (world.getEnvironment().equals(Environment.THE_END) && gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isEndGenerate()
+                && gameModes.get(world).getWorldSettings().isEndIslands());
     }
 
     /**
@@ -370,6 +370,7 @@ public class IslandWorldManager {
      * @param overWorld - overworld
      * @return nether world, or null if it does not exist
      */
+    @Nullable
     public World getNetherWorld(@Nullable World overWorld) {
         if (gameModes.containsKey(overWorld)) {
             return gameModes.get(overWorld).getNetherWorld();
@@ -383,6 +384,7 @@ public class IslandWorldManager {
      * @param overWorld - overworld
      * @return end world, or null if it does not exist
      */
+    @Nullable
     public World getEndWorld(@Nullable World overWorld) {
         if (gameModes.containsKey(overWorld)) {
             return gameModes.get(overWorld).getEndWorld();
@@ -397,18 +399,17 @@ public class IslandWorldManager {
      * @return true or false
      */
     public boolean isNetherTrees(@Nullable World world) {
-        return world == null ? false : gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherTrees();
+        return world != null && (gameModes.containsKey(world) && gameModes.get(world).getWorldSettings().isNetherTrees());
     }
 
     /**
      * Whether the End Dragon can spawn or not in this world
      *
-     * @param world
-     *            - world
+     * @param world world
      * @return true (default) if it can spawn or not
      */
     public boolean isDragonSpawn(@Nullable World world) {
-        return world == null ? true : !gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isDragonSpawn();
+        return world == null || (!gameModes.containsKey(world) || gameModes.get(world).getWorldSettings().isDragonSpawn());
     }
 
     /**
@@ -426,10 +427,10 @@ public class IslandWorldManager {
     /**
      * Gets world from friendly name
      *
-     * @param friendlyWorldName
-     *            - friendly world name. Used for commands.
+     * @param friendlyWorldName friendly world name. Used for commands.
      * @return world, or null if not known
      */
+    @Nullable
     public World getIslandWorld(String friendlyWorldName) {
         return gameModes.entrySet().stream().filter(e -> e.getValue().getWorldSettings().getFriendlyName().equalsIgnoreCase(friendlyWorldName)).findFirst()
                 .map(Map.Entry::getKey).orElse(null);

@@ -60,7 +60,7 @@ public class IslandSetnameCommand extends CompositeCommand {
         }
 
         // Set the name
-        if (user.isOp() || user.hasPermission(this.getPermissionPrefix() + ".island.name.format")) {
+        if (user.hasPermission(this.getPermissionPrefix() + ".island.name.format")) {
             getIslands().getIsland(getWorld(), playerUUID).setName(ChatColor.translateAlternateColorCodes('&', name));
         } else {
             getIslands().getIsland(getWorld(), playerUUID).setName(name);

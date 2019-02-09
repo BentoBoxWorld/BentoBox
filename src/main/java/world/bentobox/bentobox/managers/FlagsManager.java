@@ -25,7 +25,9 @@ public class FlagsManager {
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
-     * Value is true if the listener has been registered already
+     * Value is true if the listener has been registered already.
+     * This helps to make sure each flag listener is loaded correctly.
+     * @see #registerListeners()
      */
     private Map<@NonNull Listener, @NonNull Boolean> registeredListeners = new HashMap<>();
 
