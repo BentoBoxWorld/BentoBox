@@ -128,10 +128,15 @@ public final class Flags {
     public static final Flag TURTLE_EGGS = new Flag.Builder("TURTLE_EGGS", Material.TURTLE_EGG).build();
 
     // Throwing things
+    /**
+     * Prevents players from throwing eggs.
+     * @see EggListener
+     */
     public static final Flag EGGS = new Flag.Builder("EGGS", Material.EGG).listener(new EggListener()).build();
     /**
      * Prevents players from throwing potions / experience bottles.
      * @since 1.1
+     * @see ThrowingListener
      */
     public static final Flag POTION_THROWING = new Flag.Builder("POTION_THROWING", Material.SPLASH_POTION).listener(new ThrowingListener()).build();
 
