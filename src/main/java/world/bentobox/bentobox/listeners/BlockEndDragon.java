@@ -1,8 +1,5 @@
 package world.bentobox.bentobox.listeners;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
@@ -16,17 +13,9 @@ import org.bukkit.event.world.ChunkLoadEvent;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
-import world.bentobox.bentobox.util.Pair;
+
 
 public class BlockEndDragon implements Listener {
-
-    private static final List<Pair<Integer, Integer>> CHUNKS = Arrays.asList(
-            new Pair<Integer, Integer>(0,0),
-            new Pair<Integer, Integer>(-1,0),
-            new Pair<Integer, Integer>(-1, -1),
-            new Pair<Integer, Integer>(0, -1));
-
-    private static final int DEAD_ZONE_Y = 250;
 
     private BentoBox plugin;
 
@@ -66,8 +55,8 @@ public class BlockEndDragon implements Listener {
                 || !(e.getChunk().getX() == 0 && e.getChunk().getZ() == 0)) {
             return;
         }
-        // Setting a bedrock block here forces the spike to be placed as high as possible
-        e.getChunk().getBlock(0, 255, 0).setType(Material.BEDROCK);
+        // Setting a End Portal at the top will trick dragon legacy check.
+        e.getChunk().getBlock(0, 255, 0).setType(Material.END_PORTAL);
     }
 
     /**
@@ -78,13 +67,14 @@ public class BlockEndDragon implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockPlace(BlockPlaceEvent e) {
         if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
-                || e.getBlock().getY() < DEAD_ZONE_Y
+                || e.getBlock().getY() != 255
+                || e.getBlock().getX() != 0
+                || e.getBlock().getZ() != 0
+                || !e.getBlock().getType().equals(Material.END_PORTAL)
                 || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
                 || !plugin.getIWM().inWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
-                || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())
-                || !CHUNKS.contains(new Pair<Integer, Integer>(e.getBlock().getChunk().getX(), e.getBlock().getChunk().getZ()))
-                ) {
+                || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())) {
             return;
         }
         e.setCancelled(true);
@@ -98,13 +88,14 @@ public class BlockEndDragon implements Listener {
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockBreak(BlockBreakEvent e) {
         if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
-                || e.getBlock().getY() < DEAD_ZONE_Y
+                || e.getBlock().getY() != 255
+                || e.getBlock().getX() != 0
+                || e.getBlock().getZ() != 0
+                || !e.getBlock().getType().equals(Material.END_PORTAL)
                 || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
                 || !plugin.getIWM().inWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
-                || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())
-                || !CHUNKS.contains(new Pair<Integer, Integer>(e.getBlock().getChunk().getX(), e.getBlock().getChunk().getZ()))
-                ) {
+                || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())) {
             return;
         }
         e.setCancelled(true);
