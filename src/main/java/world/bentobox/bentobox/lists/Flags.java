@@ -46,6 +46,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.InvincibleVisitorsL
 import world.bentobox.bentobox.listeners.flags.worldsettings.IslandRespawnListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
@@ -305,6 +306,15 @@ public final class Flags {
      * @see TreesGrowingOutsideRangeListener
      */
     public static final Flag TREES_GROWING_OUTSIDE_RANGE = new Flag.Builder("TREES_GROWING_OUTSIDE_RANGE", Material.OAK_SAPLING).type(Type.WORLD_SETTING).listener(new TreesGrowingOutsideRangeListener()).build();
+
+    /**
+     * Toggles whether monsters and animals can spawn naturally outside an island's protection range or not.
+     * It is allowed by default.
+     *
+     * @since 1.3.0
+     * @see NaturalSpawningOutsideRangeListener
+     */
+    public static final Flag NATURAL_SPAWNING_OUTSIDE_RANGE = new Flag.Builder("NATURAL_SPAWNING_OUTSIDE_RANGE", Material.ZOMBIE_SPAWN_EGG).type(Type.WORLD_SETTING).listener(new NaturalSpawningOutsideRangeListener()).defaultSetting(true).build();
 
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.

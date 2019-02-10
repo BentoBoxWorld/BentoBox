@@ -687,6 +687,16 @@ protection:
       name: "Name tags"
       description: "Toggle use"
       hint: "No name tags use"
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: "Natural creature spawning outside range"
+      description: |-
+        &aToggle whether creatures (animals and
+        &amonsters) can spawn naturally outside
+        &aan island's protection range.
+
+        &cNote that it doesn't prevent creatures
+        &cto spawn via a mob spawner or a spawn
+        &cegg.
     NOTE_BLOCK: 
       description: "Toggle use"
       name: "Note block"
