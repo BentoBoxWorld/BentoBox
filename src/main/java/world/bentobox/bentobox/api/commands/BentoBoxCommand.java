@@ -24,11 +24,26 @@ public interface BentoBoxCommand {
     void setup();
 
     /**
+     * Returns whether the command can be executed by this user or not.
+     * It is recommended to send messages to let this user know why they could not execute the command.
+     * Note that this is run previous to {@link #execute(User, String, List)}.
+     * @param user the {@link User} who is executing this command.
+     * @param label the label which has been used to execute this command.
+     *              It can be {@link CompositeCommand#getLabel()} or an alias.
+     * @param args the command arguments.
+     * @return {@code true} if this command can be executed, {@code false} otherwise.
+     * @since 1.3.0
+     */
+    default boolean canExecute(User user, String label, List<String> args) {
+        return true;
+    }
+
+    /**
      * Defines what will be executed when this command is run.
-     * @param user The {@link User} who is executing this command.
-     * @param label The label which has been used to execute this command.
-     *             It can be {@link CompositeCommand#getLabel()} or an alias.
-     * @param args The command arguments.
+     * @param user the {@link User} who is executing this command.
+     * @param label the label which has been used to execute this command.
+     *              It can be {@link CompositeCommand#getLabel()} or an alias.
+     * @param args the command arguments.
      * @return {@code true} if the command executed successfully, {@code false} otherwise.
      */
     boolean execute(User user, String label, List<String> args);
@@ -37,9 +52,9 @@ public interface BentoBoxCommand {
      * Tab Completer for CompositeCommands.
      * Note that any registered sub-commands will be automatically added to the list.
      * Use this to add tab-complete for things like names.
-     * @param user The {@link User} who is executing this command.
-     * @param alias Alias for command
-     * @param args Command arguments
+     * @param user the {@link User} who is executing this command.
+     * @param alias alias for command
+     * @param args command arguments
      * @return List of strings that could be used to complete this command.
      */
     default Optional<List<String>> tabComplete(User user, String alias, List<String> args) {

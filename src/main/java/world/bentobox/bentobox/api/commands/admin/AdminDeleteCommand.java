@@ -26,12 +26,7 @@ public class AdminDeleteCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        // If args are not right, show help
-        if (args.size() != 1) {
-            showHelp(this, user);
-            return false;
-        }
+    public boolean canExecute(User user, String label, List<String> args) {
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
@@ -47,6 +42,18 @@ public class AdminDeleteCommand extends ConfirmableCommand {
             user.sendMessage("commands.admin.delete.cannot-delete-owner");
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        // If args are not right, show help
+        if (args.size() != 1) {
+            showHelp(this, user);
+            return false;
+        }
+        // Get target
+        UUID targetUUID = getPlayers().getUUID(args.get(0));
         // Confirm
         askConfirmation(user, () -> deletePlayer(user, targetUUID));
         return true;

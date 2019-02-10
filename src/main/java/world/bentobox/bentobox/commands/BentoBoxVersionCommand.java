@@ -45,5 +45,4 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
         return true;
     }
-
 }
