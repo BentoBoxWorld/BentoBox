@@ -674,6 +674,10 @@ protection:
       description: "Toggle cow milking"
       name: "Milking"
       hint: "No milking allowed"
+    MINECART:
+      name: "Minecarts"
+      description: "Toggle minecart interactions"
+      hint: "No minecart interaction allowed"
     MONSTER_SPAWN: 
       description: "Toggle spawning"
       name: "Monster spawning"

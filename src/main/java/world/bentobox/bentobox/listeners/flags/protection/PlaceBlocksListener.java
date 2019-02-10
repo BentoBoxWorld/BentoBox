@@ -65,7 +65,7 @@ public class PlaceBlocksListener extends FlagListener {
         case ACTIVATOR_RAIL:
             if (e.getMaterial() != null && (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.CHEST_MINECART || e.getMaterial() == Material.HOPPER_MINECART
             || e.getMaterial() == Material.TNT_MINECART || e.getMaterial() == Material.FURNACE_MINECART)) {
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                checkIsland(e, e.getClickedBlock().getLocation(), Flags.MINECART);
             }
             return;
         default:
