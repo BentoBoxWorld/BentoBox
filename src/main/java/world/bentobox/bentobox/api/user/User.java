@@ -94,7 +94,9 @@ public class User {
      * @param player the player
      */
     public static void removePlayer(Player player) {
-        users.remove(player.getUniqueId());
+        if (player != null) {
+            users.remove(player.getUniqueId());
+        }
     }
 
     // ----------------------------------------------------

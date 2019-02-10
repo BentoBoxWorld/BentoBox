@@ -66,6 +66,7 @@ public class IslandCreateCommand extends CompositeCommand {
             }
 
         }
+
         try {
             NewIsland.builder()
             .player(user)
@@ -78,7 +79,6 @@ public class IslandCreateCommand extends CompositeCommand {
             user.sendMessage("commands.island.create.unable-create-island");
             return false;
         }
-
         if (getSettings().isResetCooldownOnCreate()) {
             getParent().getSubCommand("reset").ifPresent(resetCommand -> resetCommand.setCooldown(user.getUniqueId(), null, getSettings().getResetCooldown()));
         }
