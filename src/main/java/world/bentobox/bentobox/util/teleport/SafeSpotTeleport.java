@@ -52,7 +52,7 @@ public class SafeSpotTeleport {
      * @param plugin - plugin object
      * @param entity - entity to teleport
      * @param location - the location
-     * @param failureMessage - already translated failure message
+     * @param failureMessage - locale key for the failure message
      * @param portal - true if this is a portal teleport
      * @param homeNumber - home number to go to
      */
@@ -122,7 +122,7 @@ public class SafeSpotTeleport {
             }
         } else if (entity instanceof Player && !failureMessage.isEmpty()) {
             // Failed, no safe spot
-            entity.sendMessage(failureMessage);
+            User.getInstance(entity).notify(failureMessage);
             if (overrideGamemode && ((Player)entity).getGameMode().equals(GameMode.SPECTATOR)) {
                 if (plugin.getIWM().inWorld(entity.getLocation())) {
                     ((Player)entity).setGameMode(plugin.getIWM().getDefaultGameMode(entity.getWorld()));
@@ -416,7 +416,7 @@ public class SafeSpotTeleport {
                 return null;
             }
             if (failureMessage.isEmpty() && entity instanceof Player) {
-                failureMessage = User.getInstance(entity).getTranslation("general.errors.warp-not-safe");
+                failureMessage = "general.errors.warp-not-safe";
             }
             return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber, overrideGamemode);
         }
