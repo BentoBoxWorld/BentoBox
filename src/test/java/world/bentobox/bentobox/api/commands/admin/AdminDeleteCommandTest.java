@@ -140,7 +140,7 @@ public class AdminDeleteCommandTest {
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
@@ -153,7 +153,7 @@ public class AdminDeleteCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.hasIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(false);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.player-has-no-island"));
     }
 
@@ -167,7 +167,7 @@ public class AdminDeleteCommandTest {
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         AdminDeleteCommand itl = new AdminDeleteCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("commands.admin.delete.cannot-delete-owner");
     }
 

@@ -32,5 +32,4 @@ public class BentoBoxAboutCommand extends CompositeCommand {
         user.sendRawMessage("See https://www.eclipse.org/legal/epl-2.0/ for license information.");
         return true;
     }
-
 }

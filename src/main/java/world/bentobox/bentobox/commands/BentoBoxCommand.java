@@ -27,5 +27,4 @@ public class BentoBoxCommand extends CompositeCommand {
         showHelp(this, user);
         return true;
     }
-
 }

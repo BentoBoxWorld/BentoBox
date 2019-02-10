@@ -107,6 +107,20 @@ public final class Flags {
     // Entity interactions
     public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).build();
     public static final Flag RIDING = new Flag.Builder("RIDING", Material.GOLDEN_HORSE_ARMOR).build();
+    /**
+     * Prevents players from issuing any kind of interactions with Minecarts (entering, placing and opening if chest).
+     * @since 1.3.0
+     * @see EntityInteractListener
+     * @see PlaceBlocksListener
+     */
+    public static final Flag MINECART = new Flag.Builder("MINECART", Material.MINECART).build();
+    /**
+     * Prevents players from issuing any kind of interactions with Boats (entering, placing).
+     * @since 1.3.0
+     * @see EntityInteractListener
+     * @see PlaceBlocksListener
+     */
+    public static final Flag BOAT = new Flag.Builder("BOAT", Material.OAK_BOAT).build();
     public static final Flag TRADING = new Flag.Builder("TRADING", Material.EMERALD).defaultSetting(true).build();
     public static final Flag NAME_TAG = new Flag.Builder("NAME_TAG", Material.NAME_TAG).build();
 

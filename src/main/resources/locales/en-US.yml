@@ -439,6 +439,10 @@ protection:
       description: "Toggle interaction"
       name: "Beds"
       hint: "Bed use disabled"
+    BOAT:
+      name: "Boats"
+      description: "Toggle boats interactions"
+      hint: "No boat interaction allowed"
     BREAK_BLOCKS: 
       description: "Toggle breaking"
       name: "Break blocks"
@@ -674,6 +678,10 @@ protection:
       description: "Toggle cow milking"
       name: "Milking"
       hint: "No milking allowed"
+    MINECART:
+      name: "Minecarts"
+      description: "Toggle minecart interactions"
+      hint: "No minecart interaction allowed"
     MONSTER_SPAWN: 
       description: "Toggle spawning"
       name: "Monster spawning"

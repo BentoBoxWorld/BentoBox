@@ -65,20 +65,22 @@ public class PlaceBlocksListener extends FlagListener {
         case ACTIVATOR_RAIL:
             if (e.getMaterial() != null && (e.getMaterial() == Material.MINECART || e.getMaterial() == Material.CHEST_MINECART || e.getMaterial() == Material.HOPPER_MINECART
             || e.getMaterial() == Material.TNT_MINECART || e.getMaterial() == Material.FURNACE_MINECART)) {
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                checkIsland(e, e.getClickedBlock().getLocation(), Flags.MINECART);
             }
             return;
         default:
             // Check in-hand items
-            if (e.getMaterial() != null
-            && (e.getMaterial().equals(Material.FIREWORK_ROCKET)
-                    || e.getMaterial().equals(Material.ARMOR_STAND)
-                    || e.getMaterial().equals(Material.END_CRYSTAL)
-                    //|| Tag.DOORS.isTagged(e.getMaterial())
-                    || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)
-                    || (e.getMaterial().name().contains("BOAT")
-                            && !e.getClickedBlock().isLiquid()))) {
-                checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
+            if (e.getMaterial() != null) {
+                if (e.getMaterial().equals(Material.FIREWORK_ROCKET)
+                        || e.getMaterial().equals(Material.ARMOR_STAND)
+                        || e.getMaterial().equals(Material.END_CRYSTAL)
+                        //|| Tag.DOORS.isTagged(e.getMaterial())
+                        || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)) {
+                    checkIsland(e, e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
+                }
+                else if (e.getMaterial().name().contains("BOAT")) {
+                    checkIsland(e, e.getPlayer().getLocation(), Flags.BOAT);
+                }
             }
         }
     }

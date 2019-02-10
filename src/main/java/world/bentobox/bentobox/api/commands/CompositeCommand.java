@@ -244,7 +244,11 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         // Set the user's addon context
         user.setAddon(addon);
         // Execute and trim args
-        return cmd.execute(user, (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label, Arrays.asList(args).subList(cmd.subCommandLevel, args.length));
+
+        String cmdLabel = (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label;
+        List<String> cmdArgs = Arrays.asList(args).subList(cmd.subCommandLevel, args.length);
+
+        return cmd.canExecute(user, cmdLabel, cmdArgs) && cmd.execute(user, cmdLabel, cmdArgs);
     }
 
     /**
