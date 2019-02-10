@@ -439,6 +439,10 @@ protection:
       description: "Toggle interaction"
       name: "Beds"
       hint: "Bed use disabled"
+    BOAT:
+      name: "Boats"
+      description: "Toggle boats interactions"
+      hint: "No boat interaction allowed"
     BREAK_BLOCKS: 
       description: "Toggle breaking"
       name: "Break blocks"

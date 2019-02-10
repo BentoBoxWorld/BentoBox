@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Boat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Minecart;
 import org.bukkit.entity.Vehicle;
@@ -39,6 +40,10 @@ public class EntityInteractListener extends FlagListener {
             // Minecart riding
             else if (e.getRightClicked() instanceof Minecart) {
                 checkIsland(e, e.getRightClicked().getLocation(), Flags.MINECART);
+            }
+            // Boat riding
+            else if (e.getRightClicked() instanceof Boat) {
+                checkIsland(e, e.getRightClicked().getLocation(), Flags.BOAT);
             }
         }
         // Villager trading

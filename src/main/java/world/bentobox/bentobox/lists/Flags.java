@@ -114,6 +114,13 @@ public final class Flags {
      * @see PlaceBlocksListener
      */
     public static final Flag MINECART = new Flag.Builder("MINECART", Material.MINECART).build();
+    /**
+     * Prevents players from issuing any kind of interactions with Boats (entering, placing).
+     * @since 1.3.0
+     * @see EntityInteractListener
+     * @see PlaceBlocksListener
+     */
+    public static final Flag BOAT = new Flag.Builder("BOAT", Material.OAK_BOAT).build();
     public static final Flag TRADING = new Flag.Builder("TRADING", Material.EMERALD).defaultSetting(true).build();
     public static final Flag NAME_TAG = new Flag.Builder("NAME_TAG", Material.NAME_TAG).build();
 
