@@ -73,10 +73,16 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         getIslands().removePlayer(getWorld(), targetUUID);
         // Remove money inventory etc.
         if (getIWM().isOnLeaveResetEnderChest(getWorld())) {
-            user.getPlayer().getEnderChest().clear();
+            if (target.isOnline()) {
+                target.getPlayer().getEnderChest().clear();
+            }
+            // FIXME need some special handling here if the target's offline.
         }
         if (getIWM().isOnLeaveResetInventory(getWorld())) {
-            user.getPlayer().getInventory().clear();
+            if (target.isOnline()) {
+                target.getPlayer().getInventory().clear();
+            }
+            // FIXME need some special handling here if the target's offline.
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));
