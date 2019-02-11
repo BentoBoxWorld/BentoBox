@@ -680,7 +680,6 @@ public class IslandsManager {
                 oldSpawn.setSpawn(false);
             }
         }
-
         this.spawn.put(spawn.getWorld(), spawn);
         spawn.setSpawn(true);
     }
@@ -702,17 +701,19 @@ public class IslandsManager {
         // Only load non-quarantined island
         // TODO: write a purge admin command to delete these records
         handler.loadObjects().stream().filter(i -> !i.isDoNotLoad()).forEach(island -> {
-           if (!islandCache.addIsland(island)) {
-               // Quarantine the offending island
-               toQuarantine.add(island);
-           }
+            if (!islandCache.addIsland(island)) {
+                // Quarantine the offending island
+                toQuarantine.add(island);
+            } else if (island.isSpawn()) {
+                this.setSpawn(island);
+            }
         });
         if (!toQuarantine.isEmpty()) {
             plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; quarantining.");
             toQuarantine.forEach(i -> {
                 i.setDoNotLoad(true);
                 handler.saveObject(i);
-            });          
+            });
         }
     }
 
