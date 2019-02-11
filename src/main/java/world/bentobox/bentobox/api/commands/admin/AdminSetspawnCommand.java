@@ -2,9 +2,16 @@ package world.bentobox.bentobox.api.commands.admin;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
+
+import org.bukkit.Bukkit;
+
+import com.google.common.collect.ImmutableSet;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.events.IslandBaseEvent;
+import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
@@ -38,14 +45,35 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
             }
 
             // Everything's fine, we can set the island as spawn :)
-            askConfirmation(user, user.getTranslation("commands.admin.setspawn.confirmation"), () -> {
-                getIslands().setSpawn(island.get());
-                user.sendMessage("general.success");
-            });
+            askConfirmation(user, user.getTranslation("commands.admin.setspawn.confirmation"), () -> setSpawn(user, island.get()));
             return true;
         } else {
             user.sendMessage("commands.admin.setspawn.no-island-here");
             return false;
         }
+    }
+
+    private void setSpawn(User user, Island i) {
+        if (!i.getMembers().isEmpty()) {
+            if (i.getOwner() != null) {
+                // Fire event
+                IslandBaseEvent event = IslandEvent.builder()
+                        .island(i)
+                        .location(i.getCenter())
+                        .reason(IslandEvent.Reason.UNREGISTERED)
+                        .involvedPlayer(i.getOwner())
+                        .admin(true)
+                        .build();
+                Bukkit.getServer().getPluginManager().callEvent(event);
+            }
+            // If island is owned, then unregister the owner and any members
+            new ImmutableSet.Builder<UUID>().addAll(i.getMembers().keySet()).build().forEach(m -> {
+                getIslands().removePlayer(getWorld(), m);
+                getPlayers().clearHomeLocations(getWorld(), m);
+            });
+        }
+        getIslands().setSpawn(i);
+        user.sendMessage("general.success");
+
     }
 }
