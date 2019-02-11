@@ -24,7 +24,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
      // Check island
-        if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
+        if (!getPlugin().getIslands().hasIsland(getWorld(), user)) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
@@ -39,8 +39,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             // island sethome
-            setHome(user, 1);
-            return true;
+            return setHome(user, 1);
         } else {
             // Dynamic home sizes with permissions
             int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
@@ -53,8 +52,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
                         user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
                         return false;
                     } else {
-                        setHome(user, number);
-                        return true;
+                        return setHome(user, number);
                     }
                 } catch (Exception e) {
                     user.sendMessage("commands.island.sethome.num-homes", TextVariables.NUMBER, String.valueOf(maxHomes));
@@ -67,30 +65,31 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         }
     }
 
-    private void setHome(User user, int number) {
+    private boolean setHome(User user, int number) {
         // Check if the player is in the Nether
-        if (getIWM().isNether(user.getLocation().getWorld())) {
+        if (getIWM().isNether(user.getWorld())) {
             // Check if he is (not) allowed to set his home here
-            if (!getIWM().getWorldSettings(user.getLocation().getWorld()).isAllowSetHomeInNether()) {
+            if (!getIWM().getWorldSettings(user.getWorld()).isAllowSetHomeInNether()) {
                 user.sendMessage("commands.island.sethome.nether.not-allowed");
-                return;
+                return false;
             }
 
             // Check if a confirmation is required
-            if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInNether()) {
-                askConfirmation(user, "commands.island.sethome.nether.confirmation", () -> doSetHome(user, number));
+            if (getIWM().getWorldSettings(user.getWorld()).isRequireConfirmationToSetHomeInNether()) {
+                System.out.println(user.getTranslation("commands.island.sethome.nether.confirmation"));
+                askConfirmation(user, user.getTranslation("commands.island.sethome.nether.confirmation"), () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);
             }
-        } else if (getIWM().isEnd(user.getLocation().getWorld())) { // Check if the player is in the End
+        } else if (getIWM().isEnd(user.getWorld())) { // Check if the player is in the End
             // Check if he is (not) allowed to set his home here
-            if (!getIWM().getWorldSettings(user.getLocation().getWorld()).isAllowSetHomeInTheEnd()) {
+            if (!getIWM().getWorldSettings(user.getWorld()).isAllowSetHomeInTheEnd()) {
                 user.sendMessage("commands.island.sethome.the-end.not-allowed");
-                return;
+                return false;
             }
 
             // Check if a confirmation is required
-            if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInTheEnd()) {
+            if (getIWM().getWorldSettings(user.getWorld()).isRequireConfirmationToSetHomeInTheEnd()) {
                 askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"), () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);
@@ -98,6 +97,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         } else { // The player is in the Overworld, no need to run a check
             doSetHome(user, number);
         }
+        return true;
     }
 
     private void doSetHome(User user, int number) {
