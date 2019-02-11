@@ -264,12 +264,16 @@ public class BlockInteractionListener extends FlagListener {
     }
 
     /**
-     * Prevents blocks that are protected from being broken, which would bypass the protection
+     * When breaking blocks is allowed, this protects
+     * specific blocks from being broken, which would bypass the protection.
+     * For example, player enables break blocks, but chests are still protected
+     * Fires after the BreakBlocks check.
      *
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
+        setUser(User.getInstance(e.getPlayer()));
         checkClickedBlock(e, e.getBlock().getLocation(), e.getBlock().getType());
     }
 }
