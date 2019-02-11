@@ -6,6 +6,7 @@ import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -262,4 +263,13 @@ public class BlockInteractionListener extends FlagListener {
         }
     }
 
+    /**
+     * Prevents blocks that are protected from being broken, which would bypass the protection
+     *
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onBlockBreak(final BlockBreakEvent e) {
+        checkClickedBlock(e, e.getBlock().getLocation(), e.getBlock().getType());
+    }
 }
