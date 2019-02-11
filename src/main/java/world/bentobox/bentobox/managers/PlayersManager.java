@@ -144,8 +144,7 @@ public class PlayersManager {
      * @param number - a number - 1 is default. Can be any number.
      */
     public void setHomeLocation(User user, Location location, int number) {
-        addPlayer(user.getUniqueId());
-        playerCache.get(user.getUniqueId()).setHomeLocation(location,number);
+        setHomeLocation(user.getUniqueId(), location,number);
     }
 
     /**
@@ -165,8 +164,7 @@ public class PlayersManager {
      * @param location - the location
      */
     public void setHomeLocation(UUID playerUUID, Location location) {
-        addPlayer(playerUUID);
-        playerCache.get(playerUUID).setHomeLocation(location,1);
+        setHomeLocation(playerUUID, location,1);
     }
 
     /**
