@@ -22,16 +22,21 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        // Check island
+    public boolean canExecute(User user, String label, List<String> args) {
+     // Check island
         if (getPlugin().getIslands().getIsland(getWorld(), user.getUniqueId()) == null) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getPlugin().getIslands().userIsOnIsland(getWorld(), user)) {
+        if (!getPlugin().getIslands().userIsOnIsland(user.getWorld(), user)) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return false;
         }
+        return true;
+    }
+    
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             // island sethome
             setHome(user, 1);

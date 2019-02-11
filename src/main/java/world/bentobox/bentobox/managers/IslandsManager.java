@@ -289,7 +289,7 @@ public class IslandsManager {
 
     /**
      * Gets the island for this player. If they are in a team, the team island is returned.
-     * @param world world to check
+     * @param world world to check. Includes nether and end worlds.
      * @param uuid user's uuid
      * @return Island or null
      */
@@ -736,7 +736,7 @@ public class IslandsManager {
     /**
      * Checks if an online player is in the protected area of an island he owns or he is part of.
      *
-     * @param world the World to check, if null the method will always return {@code false}.
+     * @param world the World to check. Typically this is the user's world. Does not check nether or end worlds. If null the method will always return {@code false}. 
      * @param user the User to check, if null or if this is not a Player the method will always return {@code false}.
      *
      * @return {@code true} if this User is located within the protected area of an island he owns or he is part of,

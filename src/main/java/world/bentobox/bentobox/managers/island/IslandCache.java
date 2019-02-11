@@ -116,8 +116,8 @@ public class IslandCache {
 
     /**
      * Returns island referenced by UUID
-     * @param world world to check
-     * @param uuid player
+     * @param world world to check. Includes nether and end worlds.
+     * @param uuid player's UUID
      * @return island or null if none
      */
     @Nullable
