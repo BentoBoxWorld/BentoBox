@@ -63,12 +63,6 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     }
 
     private void setHome(User user, int number) {
-        // Define a runnable as we will be using it often in the code below.
-        Runnable setHomeRunnable = () -> {
-            getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
-            user.sendMessage("commands.island.sethome.home-set");
-        };
-
         // Check if the player is in the Nether
         if (getIWM().isNether(user.getLocation().getWorld())) {
             // Check if he is (not) allowed to set his home here
@@ -79,9 +73,9 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
             // Check if a confirmation is required
             if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInNether()) {
-                askConfirmation(user, "commands.island.sethome.nether.confirmation", setHomeRunnable);
+                askConfirmation(user, "commands.island.sethome.nether.confirmation", () -> doSetHome(user, number));
             } else {
-                setHomeRunnable.run();
+                doSetHome(user, number);
             }
         } else if (getIWM().isEnd(user.getLocation().getWorld())) { // Check if the player is in the End
             // Check if he is (not) allowed to set his home here
@@ -92,13 +86,19 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
             // Check if a confirmation is required
             if (getIWM().getWorldSettings(user.getLocation().getWorld()).isRequireConfirmationToSetHomeInTheEnd()) {
-                askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"), setHomeRunnable);
+                askConfirmation(user, user.getTranslation("commands.island.sethome.the-end.confirmation"), () -> doSetHome(user, number));
             } else {
-                setHomeRunnable.run();
+                doSetHome(user, number);
             }
         } else { // The player is in the Overworld, no need to run a check
-            setHomeRunnable.run();
+            doSetHome(user, number);
         }
     }
 
+    private void doSetHome(User user, int number) {
+        // Define a runnable as we will be using it often in the code below.
+        getPlugin().getPlayers().setHomeLocation(user, user.getLocation(), number);
+        user.sendMessage("commands.island.sethome.home-set");
+
+    }
 }
