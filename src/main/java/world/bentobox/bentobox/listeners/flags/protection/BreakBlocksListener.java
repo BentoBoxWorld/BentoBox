@@ -29,7 +29,7 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-        checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
+        setUser(User.getInstance(e.getPlayer())).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
     }
 
     /**
