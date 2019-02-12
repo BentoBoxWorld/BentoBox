@@ -15,7 +15,7 @@ import java.net.URL;
  */
 public class GitHubURL {
 
-    private @NonNull final URL url;
+    private final @NonNull URL url;
 
     public GitHubURL(@NonNull String repository, @Nullable String suffix) throws MalformedURLException {
         suffix = (suffix != null && !suffix.isEmpty()) ? "/" + suffix : "";

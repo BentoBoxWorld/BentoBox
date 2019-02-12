@@ -46,10 +46,9 @@ public class GitHubConnector {
 
         // Parse the data
         /* It must be done in a specific order:
-
-            1. repository;
-            2. contributors;
-            3. releases.
+            1. repository
+            2. contributors
+            3. releases
          */
         parseRepositoryData(repositoryData);
         parseContributorsData(contributorData);

@@ -27,9 +27,7 @@ public class LiquidsFlowingOutListener extends FlagListener {
             return;
         }
 
-        // TODO: Make a less restrictive check - try to see where the border is, so that
-        //  water can still flows sideways.
-        //  see: https://github.com/BentoBoxWorld/BentoBox/issues/511#issuecomment-460040287
+        // https://github.com/BentoBoxWorld/BentoBox/issues/511#issuecomment-460040287
         // Time to do some maths! We've got the vector FromTo, let's check if its y coordinate is different from zero.
         if (to.getLocation().toVector().subtract(from.getLocation().toVector()).getY() != 0) {
             // We do not run any checks if this is a vertical flow - would be too much resource consuming.
