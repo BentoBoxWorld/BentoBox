@@ -22,6 +22,8 @@ import world.bentobox.bentobox.util.Util;
 public class IslandCache {
     @NonNull
     private Map<@NonNull Location, @NonNull Island> islandsByLocation;
+    @NonNull
+    private Map<@NonNull String, @NonNull Island> islandsById;
     /**
      * Every player who is associated with an island is in this map.
      */
@@ -32,6 +34,7 @@ public class IslandCache {
 
     public IslandCache() {
         islandsByLocation = new HashMap<>();
+        islandsById = new HashMap<>();
         islandsByUUID = new HashMap<>();
         grids = new HashMap<>();
     }
@@ -52,6 +55,7 @@ public class IslandCache {
         }
         if (addToGrid(island)) {
             islandsByLocation.put(island.getCenter(), island);
+            islandsById.put(island.getUniqueId(), island);
             // Make world
             islandsByUUID.putIfAbsent(island.getWorld(), new HashMap<>());
             // Only add islands to this map if they are owned
@@ -86,6 +90,7 @@ public class IslandCache {
 
     public void clear() {
         islandsByLocation.clear();
+        islandsById.clear();
         islandsByUUID.clear();
     }
 
@@ -98,6 +103,7 @@ public class IslandCache {
         if (!islandsByLocation.remove(island.getCenter(), island) || !islandsByUUID.containsKey(island.getWorld())) {
             return false;
         }
+        islandsById.remove(island.getUniqueId());
         islandsByUUID.get(island.getWorld()).entrySet().removeIf(en -> en.getValue().equals(island));
         // Remove from grid
         grids.putIfAbsent(island.getWorld(), new IslandGrid());
@@ -244,5 +250,16 @@ public class IslandCache {
         islandsByUUID.putIfAbsent(Util.getWorld(island.getWorld()), new HashMap<>());
         islandsByUUID.get(Util.getWorld(island.getWorld())).put(newOwnerUUID, island);
         islandsByLocation.put(island.getCenter(), island);
+        islandsById.put(island.getUniqueId(), island);
+    }
+
+    /**
+     * Get the island by unique id
+     * @param uniqueId
+     * @return island or null if none found
+     * @since 1.3.0
+     */
+    public Island getIslandById(String uniqueId) {
+        return islandsById.get(uniqueId);
     }
 }

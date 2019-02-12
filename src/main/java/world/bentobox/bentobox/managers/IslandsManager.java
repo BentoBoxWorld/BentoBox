@@ -736,7 +736,7 @@ public class IslandsManager {
     /**
      * Checks if an online player is in the protected area of an island he owns or he is part of.
      *
-     * @param world the World to check. Typically this is the user's world. Does not check nether or end worlds. If null the method will always return {@code false}. 
+     * @param world the World to check. Typically this is the user's world. Does not check nether or end worlds. If null the method will always return {@code false}.
      * @param user the User to check, if null or if this is not a Player the method will always return {@code false}.
      *
      * @return {@code true} if this User is located within the protected area of an island he owns or he is part of,
@@ -932,4 +932,12 @@ public class IslandsManager {
         handler.saveObject(island);
     }
 
+    /**
+     * Try to get an island by its unique id
+     * @param uniqueId - unique id string
+     * @return optional island
+     */
+    public Optional<Island> getIslandById(String uniqueId) {
+        return Optional.ofNullable(islandCache.getIslandById(uniqueId));
+    }
 }

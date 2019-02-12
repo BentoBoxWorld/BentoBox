@@ -1101,4 +1101,18 @@ public class IslandsManagerTest {
         Mockito.verify(wither, Mockito.never()).remove();
         Mockito.verify(creeper).remove();
     }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandById(String)}.
+     */
+    @Test
+    public void testGetIslandByIdString() {
+        Island island = mock(Island.class);
+        String uuid = UUID.randomUUID().toString();
+        when(islandCache.getIslandById(Mockito.anyString())).thenReturn(island);
+        // Test
+        IslandsManager im = new IslandsManager(plugin);
+        im.setIslandCache(islandCache);
+        assertEquals(island, im.getIslandById(uuid).get());
+    }
 }
