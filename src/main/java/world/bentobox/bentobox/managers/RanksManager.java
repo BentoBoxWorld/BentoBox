@@ -31,7 +31,6 @@ public class RanksManager {
     private LinkedHashMap<String, Integer> ranks = new LinkedHashMap<>();
 
     public RanksManager() {
-        super();
         // Hard coded ranks
         ranksPut(ADMIN_RANK_REF, ADMIN_RANK);
         ranksPut(MOD_RANK_REF, MOD_RANK);
