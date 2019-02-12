@@ -23,7 +23,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
-     // Check island
+        // Check island
         if (!getPlugin().getIslands().hasIsland(getWorld(), user)) {
             user.sendMessage("general.errors.no-island");
             return false;
@@ -34,7 +34,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
         }
         return true;
     }
-    
+
     @Override
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
@@ -76,7 +76,6 @@ public class IslandSethomeCommand extends ConfirmableCommand {
 
             // Check if a confirmation is required
             if (getIWM().getWorldSettings(user.getWorld()).isRequireConfirmationToSetHomeInNether()) {
-                System.out.println(user.getTranslation("commands.island.sethome.nether.confirmation"));
                 askConfirmation(user, user.getTranslation("commands.island.sethome.nether.confirmation"), () -> doSetHome(user, number));
             } else {
                 doSetHome(user, number);
