@@ -2,13 +2,11 @@ package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.World.Environment;
-import org.bukkit.entity.EntityType;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
 import world.bentobox.bentobox.BentoBox;
@@ -22,24 +20,6 @@ public class BlockEndDragon implements Listener {
     public BlockEndDragon(BentoBox plugin) {
         this.plugin = plugin;
     }
-
-    /**
-     * This handles end dragon spawning prevention. Does not kill dragon because that generates random portal placement
-     *
-     * @param e - event
-     * @return true if dragon can spawn, false if not
-     */
-    @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
-    public boolean onDragonSpawn(CreatureSpawnEvent e) {
-        if (!e.getEntityType().equals(EntityType.ENDER_DRAGON) || plugin.getIWM().isDragonSpawn(e.getEntity().getWorld())) {
-            return true;
-        }
-        e.getEntity().setHealth(0);
-        e.getEntity().remove();
-        e.setCancelled(true);
-        return false;
-    }
-
 
     /**
      * This listener moves the end exit island high up in the sky
