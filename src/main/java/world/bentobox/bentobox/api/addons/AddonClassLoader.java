@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.InvalidDescriptionException;
 import org.bukkit.util.permissions.DefaultPermissions;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
@@ -82,10 +83,11 @@ public class AddonClassLoader extends URLClassLoader {
         DefaultPermissions.registerPermission(perm, desc, pd);
     }
 
+    @NonNull
     private AddonDescription asDescription(YamlConfiguration data) {
         AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"), data.getString("version"))
                 .authors(data.getString("authors"))
-                .metrics(data.getBoolean("metrics"));
+                .metrics(data.getBoolean("metrics", false));
 
         if (data.getString("depend") != null) {
             builder.dependencies(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
