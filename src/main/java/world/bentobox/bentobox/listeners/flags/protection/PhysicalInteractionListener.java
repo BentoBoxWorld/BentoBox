@@ -28,6 +28,7 @@ public class PhysicalInteractionListener extends FlagListener {
         if (!e.getAction().equals(Action.PHYSICAL)) {
             return;
         }
+        setUser(User.getInstance(e.getPlayer()));
         switch (e.getClickedBlock().getType()) {
         case FARMLAND:
             // Crop trample
@@ -46,10 +47,10 @@ public class PhysicalInteractionListener extends FlagListener {
             // Pressure plates
             checkIsland(e, e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             break;
-            
+
         case TURTLE_EGG:
             checkIsland(e, e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
-            break;   
+            break;
 
         default:
             break;

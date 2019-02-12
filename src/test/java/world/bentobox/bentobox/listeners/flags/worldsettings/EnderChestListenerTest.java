@@ -196,7 +196,6 @@ public class EnderChestListenerTest {
         // Enderchest use is okay
         Flags.ENDER_CHEST.setSetting(world, true);
         BlockInteractionListener bil = new BlockInteractionListener();
-        bil.setUser(User.getInstance(player));
         bil.onPlayerInteract(e);
         assertFalse(e.isCancelled());
         Mockito.verify(notifier, Mockito.never()).notify(Mockito.anyObject(), Mockito.anyString());
