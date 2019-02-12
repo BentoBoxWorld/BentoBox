@@ -20,7 +20,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class FlagsManager {
 
-    private BentoBox plugin;
+    private @NonNull BentoBox plugin;
     private List<@NonNull Flag> flags = new ArrayList<>();
 
     /**
