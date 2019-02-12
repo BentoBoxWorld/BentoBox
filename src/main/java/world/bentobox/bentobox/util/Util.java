@@ -1,6 +1,9 @@
 package world.bentobox.bentobox.util;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
@@ -15,6 +18,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 
@@ -268,6 +273,22 @@ public class Util {
             return 247.5F;
         default:
             return 0F;
+        }
+    }
+
+    /**
+     * Returns a Date instance corresponding to the input, or null if the input could not be parsed.
+     * @param gitHubDate the input to parse
+     * @return the Date instance following a {@code yyyy-MM-dd HH:mm:ss} format, or {@code null}.
+     * @since 1.3.0
+     */
+    @Nullable
+    public static Date parseGitHubDate(@NonNull String gitHubDate) {
+        SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            return format.parse(gitHubDate.replace('T', ' ').replace("Z", ""));
+        } catch (ParseException e) {
+            return null;
         }
     }
 }

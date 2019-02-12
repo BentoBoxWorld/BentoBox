@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.api.addons;
 
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,6 +24,12 @@ public final class AddonDescription {
      * @since 1.1
      */
     private final boolean metrics;
+    /**
+     * Name of the GitHub repository of the addon or an empty String.
+     * It follows an {@code Owner/Name} format.
+     * @since 1.3.0
+     */
+    private final @NonNull String repository;
 
     private AddonDescription(@NonNull Builder builder) {
         this.main = builder.main;
@@ -33,6 +40,7 @@ public final class AddonDescription {
         this.dependencies = builder.dependencies;
         this.softDependencies = builder.softDependencies;
         this.metrics = builder.metrics;
+        this.repository = builder.repository;
     }
 
     @NonNull
@@ -85,6 +93,17 @@ public final class AddonDescription {
         return metrics;
     }
 
+    /**
+     * Returns the name of the GitHub repository of the addon.
+     * It follows a {@code Owner/Name} format.
+     * @return the name of the GitHub repository of the addon or an empty String.
+     * @since 1.3.0
+     */
+    @NonNull
+    public String getRepository() {
+        return repository;
+    }
+
     public static class Builder {
         private @NonNull String main;
         private @NonNull String name;
@@ -94,6 +113,7 @@ public final class AddonDescription {
         private @NonNull List<String> dependencies = new ArrayList<>();
         private @NonNull List<String> softDependencies = new ArrayList<>();
         private boolean metrics = false;
+        private @NonNull String repository = "";
         /**
          * @since 1.1
          */
@@ -133,6 +153,16 @@ public final class AddonDescription {
         @NonNull
         public Builder metrics(boolean metrics) {
             this.metrics = metrics;
+            return this;
+        }
+
+        /**
+         * Sets the name of the GitHub repository.
+         * Must follow the {@code Owner/Name} format.
+         * @since 1.3.0
+         */
+        public Builder repository(@NonNull String repository) {
+            this.repository = repository;
             return this;
         }
 

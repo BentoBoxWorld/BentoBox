@@ -36,6 +36,7 @@ import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.managers.SchemsManager;
+import world.bentobox.bentobox.managers.WebManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
 
@@ -61,6 +62,7 @@ public class BentoBox extends JavaPlugin {
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
     private IslandDeletionManager islandDeletionManager;
+    private WebManager webManager;
 
     // Settings
     private Settings settings;
@@ -176,6 +178,9 @@ public class BentoBox extends JavaPlugin {
             // Make sure all worlds are already registered to Multiverse.
             hooksManager.registerHook(new MultiverseCoreHook());
             islandWorldManager.registerWorldsToMultiverse();
+
+            webManager = new WebManager(this);
+            webManager.requestGitHubData();
 
             // Show banner
             User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
