@@ -8,9 +8,10 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
 import world.bentobox.bentobox.api.flags.clicklisteners.IslandToggleClick;
@@ -71,11 +72,12 @@ public class Flag implements Comparable<Flag> {
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
+    private final GameModeAddon gameModeAddon;
 
     /**
      * {@link Flag.Builder} should be used instead. This is only used for testing.
      */
-    Flag(String id, Material icon, Listener listener, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel) {
+    Flag(String id, Material icon, Listener listener, Type type, int defaultRank, PanelItem.ClickHandler clickListener, boolean subPanel, GameModeAddon gameModeAddon) {
         this.id = id;
         this.icon = icon;
         this.listener = listener;
@@ -83,6 +85,7 @@ public class Flag implements Comparable<Flag> {
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
         this.subPanel = subPanel;
+        this.gameModeAddon = gameModeAddon;
     }
 
     private Flag(Builder builder) {
@@ -94,6 +97,7 @@ public class Flag implements Comparable<Flag> {
         this.defaultRank = builder.defaultRank;
         this.clickHandler = builder.clickHandler;
         this.subPanel = builder.usePanel;
+        this.gameModeAddon = builder.gameModeAddon;
     }
 
     public String getID() {
@@ -227,6 +231,13 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
+     * @return the gameModeAddon
+     */
+    public GameModeAddon getGameModeAddon() {
+        return gameModeAddon;
+    }
+
+    /**
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
@@ -298,6 +309,7 @@ public class Flag implements Comparable<Flag> {
     }
 
     /**
+     * Builder for making flags
      * @author tastybento, Poslovitch
      */
     public static class Builder {
@@ -321,41 +333,94 @@ public class Flag implements Comparable<Flag> {
         // Whether there is a sub-panel or not
         private boolean usePanel = false;
 
+        // GameModeAddon
+        private GameModeAddon gameModeAddon;
+
+        /**
+         * Builder for making flags
+         * @param id - a unique id that MUST be the same as the enum of the flag
+         * @param icon - a material that will be used as the icon in the GUI
+         */
         public Builder(String id, Material icon) {
             this.id = id;
             this.icon = icon;
         }
 
+        /**
+         * The listener that should be instantiated to handle events this flag cares about.
+         * If the listener class already exists, then do not create it again in another flag.
+         * @param listener - Bukkit Listener
+         * @return Builder
+         */
         public Builder listener(Listener listener) {
             this.listener = listener;
             return this;
         }
 
+        /**
+         * The type of flag.
+         * @param type {@link Type#PROTECTION}, {@link Type#SETTING} or {@link Type#WORLD_SETTING}
+         * @return Builder
+         */
         public Builder type(Type type) {
             this.type = type;
             return this;
         }
 
+        /**
+         * The click handler to use when this icon is clicked
+         * @param clickHandler - click handler
+         * @return Builder
+         */
         public Builder clickHandler(PanelItem.ClickHandler clickHandler) {
             this.clickHandler = clickHandler;
             return this;
         }
 
+        /**
+         * Set the default setting for {@link Type#SETTING} or {@link Type#WORLD_SETTING} flags
+         * @param defaultSetting - true or false
+         * @return Builder
+         */
         public Builder defaultSetting(boolean defaultSetting) {
             this.defaultSetting = defaultSetting;
             return this;
         }
 
+        /**
+         * Set the default rank for {@link Type#PROTECTION} flags
+         * @param defaultRank - default rank
+         * @return Builder
+         */
         public Builder defaultRank(int defaultRank) {
             this.defaultRank = defaultRank;
             return this;
         }
 
+        /**
+         * Set that this flag icon will open up a sub-panel
+         * @param usePanel - true or false
+         * @return Builder
+         */
         public Builder usePanel(boolean usePanel) {
             this.usePanel = usePanel;
             return this;
         }
 
+        /**
+         * Make this flag specific to this gameMode
+         * @param gameModeAddon
+         * @return
+         */
+        public Builder setGameMode(GameModeAddon gameModeAddon) {
+            this.gameModeAddon = gameModeAddon;
+            return this;
+        }
+
+        /**
+         * Build the flag
+         * @return Flag
+         */
         public Flag build() {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
