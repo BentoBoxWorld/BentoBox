@@ -1,8 +1,10 @@
 package world.bentobox.bentobox.api.flags;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -72,7 +74,7 @@ public class Flag implements Comparable<Flag> {
     private final int defaultRank;
     private final PanelItem.ClickHandler clickHandler;
     private final boolean subPanel;
-    private final GameModeAddon gameModeAddon;
+    private Set<GameModeAddon> gameModes = new HashSet<>();
 
     /**
      * {@link Flag.Builder} should be used instead. This is only used for testing.
@@ -85,7 +87,9 @@ public class Flag implements Comparable<Flag> {
         this.defaultRank = defaultRank;
         this.clickHandler = clickListener;
         this.subPanel = subPanel;
-        this.gameModeAddon = gameModeAddon;
+        if (gameModeAddon != null) {
+            this.gameModes.add(gameModeAddon);
+        }
     }
 
     private Flag(Builder builder) {
@@ -97,7 +101,9 @@ public class Flag implements Comparable<Flag> {
         this.defaultRank = builder.defaultRank;
         this.clickHandler = builder.clickHandler;
         this.subPanel = builder.usePanel;
-        this.gameModeAddon = builder.gameModeAddon;
+        if (builder.gameModeAddon != null) {
+            this.gameModes.add(builder.gameModeAddon);
+        }
     }
 
     public String getID() {
@@ -233,8 +239,32 @@ public class Flag implements Comparable<Flag> {
     /**
      * @return the gameModeAddon
      */
-    public GameModeAddon getGameModeAddon() {
-        return gameModeAddon;
+    public Set<GameModeAddon> getGameModes() {
+        return gameModes;
+    }
+
+    /**
+     * @param gameModeAddon the gameModeAddon to set
+     */
+    public void setGameModes(Set<GameModeAddon> gameModeAddon) {
+        this.gameModes = gameModeAddon;
+    }
+
+    /**
+     * Add a gameModeAddon to this flag
+     * @param gameModeAddon - game mode addon
+     */
+    public void addGameModeAddon(GameModeAddon gameModeAddon) {
+        this.gameModes.add(gameModeAddon);
+    }
+
+    /**
+     * Remove a gameModeAddon to this flag
+     * @param gameModeAddon - game mode addon
+     * @return <tt>true</tt> if this set contained the specified element
+     */
+    public boolean removeGameModeAddon(GameModeAddon gameModeAddon) {
+        return this.gameModes.remove(gameModeAddon);
     }
 
     /**
