@@ -20,7 +20,7 @@ public class EggListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEggThrow(PlayerEggThrowEvent e) {
-        if (!checkIsland(e, e.getEgg().getLocation(), Flags.EGGS)) {
+        if (!checkIsland(e, e.getPlayer(), e.getEgg().getLocation(), Flags.EGGS)) {
             e.setHatching(false);
         }
     }

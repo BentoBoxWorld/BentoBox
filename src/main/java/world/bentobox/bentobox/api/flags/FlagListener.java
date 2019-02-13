@@ -102,25 +102,27 @@ public abstract class FlagListener implements Listener {
     /**
      * Check if flag is allowed at location. Uses player object because Bukkit events provide player.
      * @param e - event
+     * @param player - player affected by this flag, or null if none
      * @param loc - location
      * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
-     * @param player - player affected by this flag, or null if none
      * @return true if allowed, false if not
      */
     public boolean checkIsland(@NonNull Event e, @Nullable Player player, @NonNull Location loc, @NonNull Flag flag) {
-        return checkIsland(e, loc, flag, false, User.getInstance(player));
+        return checkIsland(e, player, loc, flag, false);
     }
 
     /**
      * Check if flag is allowed at location
      * @param e - event
+     * @param player - player affected by this flag, or null if none
      * @param loc - location
      * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
      * @param silent - if true, no attempt is made to tell the user
-     * @param user - user affected by this flag, or null if none
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(@NonNull Event e, @Nullable User user, @NonNull Location loc, @NonNull Flag flag, boolean silent) {
+    public boolean checkIsland(@NonNull Event e, @Nullable Player player, @NonNull Location loc, @NonNull Flag flag, boolean silent) {
+        // Set user
+        user = User.getInstance(player);
         // If this is not an Island World or a standard Nether or End, skip
         if (!plugin.getIWM().inWorld(loc)) {
             report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);

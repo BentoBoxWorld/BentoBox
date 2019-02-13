@@ -9,13 +9,13 @@ import org.bukkit.block.Furnace;
 import org.bukkit.block.Hopper;
 import org.bukkit.block.ShulkerBox;
 import org.bukkit.entity.Animals;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.inventory.InventoryClickEvent;
-
 import org.bukkit.inventory.InventoryHolder;
+
 import world.bentobox.bentobox.api.flags.FlagListener;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -31,34 +31,34 @@ public class InventoryListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onInventoryClick(InventoryClickEvent e) {
         InventoryHolder inventoryHolder = e.getInventory().getHolder();
-        if (inventoryHolder == null) {
+        if (inventoryHolder == null || !(e.getWhoClicked() instanceof Player)) {
             return;
         }
-        setUser(User.getInstance(e.getWhoClicked()));
+        Player player = (Player)e.getWhoClicked();
         if (inventoryHolder instanceof Animals) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.MOUNT_INVENTORY);
         }
         else if (inventoryHolder instanceof Chest
                 || inventoryHolder instanceof ShulkerBox) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.CONTAINER);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.CONTAINER);
         }
         else if (inventoryHolder instanceof Dispenser) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.DISPENSER);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.DISPENSER);
         }
         else if (inventoryHolder instanceof Dropper) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.DROPPER);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.DROPPER);
         }
         else if (inventoryHolder instanceof Hopper) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.HOPPER);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.HOPPER);
         }
         else if (inventoryHolder instanceof Furnace) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.FURNACE);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.FURNACE);
         }
         else if (inventoryHolder instanceof BrewingStand) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.BREWING);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.BREWING);
         }
         else if (inventoryHolder instanceof Beacon) {
-            checkIsland(e, e.getInventory().getLocation(), Flags.BEACON);
+            checkIsland(e, player, e.getInventory().getLocation(), Flags.BEACON);
         }
     }
 }

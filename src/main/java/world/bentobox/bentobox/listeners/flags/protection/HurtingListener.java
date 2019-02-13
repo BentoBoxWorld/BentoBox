@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import java.util.HashMap;
-import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
@@ -32,7 +31,6 @@ import org.bukkit.potion.PotionEffect;
 
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -42,7 +40,7 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class HurtingListener extends FlagListener {
 
-    private HashMap<Integer, UUID> thrownPotions = new HashMap<>();
+    private HashMap<Integer, Player> thrownPotions = new HashMap<>();
 
     /**
      * Handles mob and monster protection
@@ -72,11 +70,11 @@ public class HurtingListener extends FlagListener {
     private void respond(EntityDamageByEntityEvent e, Entity damager, Flag flag) {
         // Get the attacker
         if (damager instanceof Player) {
-            setUser(User.getInstance(damager)).checkIsland(e, damager.getLocation(), flag);
+            checkIsland(e, (Player)damager, damager.getLocation(), flag);
         } else if (damager instanceof Projectile) {
             // Find out who fired the projectile
             Projectile p = (Projectile) damager;
-            if (p.getShooter() instanceof Player && !setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, damager.getLocation(), flag)) {
+            if (p.getShooter() instanceof Player && !checkIsland(e, (Player)p.getShooter(), damager.getLocation(), flag)) {
                 e.getEntity().setFireTicks(0);
                 damager.remove();
             }
@@ -93,14 +91,14 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_ANIMALS))
-                || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_MONSTERS))
-                || (e.getCaught() instanceof Villager && checkIsland(e, e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
+        if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
+                || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
+                || (e.getCaught() instanceof Villager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
 
         // Handle Armor stands that can be pulled using a rod
-        if (e.getCaught() instanceof ArmorStand && checkIsland(e, e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
+        if (e.getCaught() instanceof ArmorStand && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.ARMOR_STAND)) {
             e.getHook().remove();
         }
     }
@@ -114,7 +112,7 @@ public class HurtingListener extends FlagListener {
         if (e.getRightClicked() instanceof Parrot
                 && (e.getHand().equals(EquipmentSlot.HAND) && e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.COOKIE))
                 || (e.getHand().equals(EquipmentSlot.OFF_HAND) && e.getPlayer().getInventory().getItemInOffHand().getType().equals(Material.COOKIE))) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
+            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.HURT_ANIMALS);
         }
     }
 
@@ -128,7 +126,6 @@ public class HurtingListener extends FlagListener {
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player) {
             Player attacker = (Player)projectile.getShooter();
-            setUser(User.getInstance(attacker));
             // Run through all the affected entities
             for (LivingEntity entity: e.getAffectedEntities()) {
                 // Self damage
@@ -137,7 +134,7 @@ public class HurtingListener extends FlagListener {
                 }
                 // Monsters being hurt
                 if ((entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
-                        && !setUser(User.getInstance(attacker)).checkIsland(e, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -145,14 +142,14 @@ public class HurtingListener extends FlagListener {
 
                 // Mobs being hurt
                 if ((entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman)
-                        && !checkIsland(e, entity.getLocation(), Flags.HURT_ANIMALS)) {
+                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
                 }
 
                 // Villagers being hurt
-                if (entity instanceof Villager && !checkIsland(e, entity.getLocation(), Flags.HURT_VILLAGERS)) {
+                if (entity instanceof Villager && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -170,9 +167,8 @@ public class HurtingListener extends FlagListener {
         // Try to get the shooter
         Projectile projectile = e.getEntity();
         if (projectile.getShooter() instanceof Player) {
-            UUID uuid = ((Player)projectile.getShooter()).getUniqueId();
             // Store it and remove it when the effect is gone
-            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), uuid);
+            thrownPotions.put(e.getAreaEffectCloud().getEntityId(), (Player)projectile.getShooter());
             getPlugin().getServer().getScheduler().runTaskLater(getPlugin(), () -> thrownPotions.remove(e.getAreaEffectCloud().getEntityId()), e.getAreaEffectCloud().getDuration());
         }
     }
@@ -184,23 +180,23 @@ public class HurtingListener extends FlagListener {
         }
 
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
-            UUID attacker = thrownPotions.get(e.getDamager().getEntityId());
+            Player attacker = thrownPotions.get(e.getDamager().getEntityId());
             // Self damage
-            if (attacker.equals(e.getEntity().getUniqueId())) {
+            if (attacker == null || attacker.equals(e.getEntity())) {
                 return;
             }
             Entity entity = e.getEntity();
             // Monsters being hurt
             if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
-                checkIsland(e, entity.getLocation(), Flags.HURT_MONSTERS);
+                checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS);
             }
             // Mobs being hurt
             if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman) {
-                checkIsland(e, entity.getLocation(), Flags.HURT_ANIMALS);
+                checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS);
             }
             // Villagers being hurt
             if (entity instanceof Villager) {
-                checkIsland(e, entity.getLocation(), Flags.HURT_VILLAGERS);
+                checkIsland(e, attacker, entity.getLocation(), Flags.HURT_VILLAGERS);
             }
         }
     }

@@ -469,15 +469,15 @@ public class TestBentoBox {
 
         // checking events - vistor
         Event e3 = new BlockBreakEvent(block, visitorToIsland);
-        Assert.assertFalse(fl.checkIsland(e3, location, Flags.BREAK_BLOCKS, true));
+        Assert.assertFalse(fl.checkIsland(e3, visitorToIsland, location, Flags.BREAK_BLOCKS, true));
 
         // checking events - owner
         Event e = new BlockBreakEvent(block, ownerOfIsland);
-        Assert.assertTrue(fl.checkIsland(e, location, Flags.BREAK_BLOCKS, true));
+        Assert.assertTrue(fl.checkIsland(e, ownerOfIsland, location, Flags.BREAK_BLOCKS, true));
 
         // checking events - member
         Event e2 = new BlockBreakEvent(block, player);
-        Assert.assertTrue(fl.checkIsland(e2, location, Flags.BREAK_BLOCKS, true));
+        Assert.assertTrue(fl.checkIsland(e2, player, location, Flags.BREAK_BLOCKS, true));
 
     }
 

@@ -23,7 +23,7 @@ public class LeashListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onLeash(PlayerLeashEntityEvent e) {
-        checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
+        checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.LEASH);
     }
 
     /**
@@ -33,7 +33,7 @@ public class LeashListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onUnleash(PlayerUnleashEntityEvent e) {
-        checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
+        checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.LEASH);
     }
 
     /**
@@ -43,7 +43,7 @@ public class LeashListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerLeashHitch(final HangingPlaceEvent e) {
         if (e.getEntity() != null && e.getEntity().getType().equals(EntityType.LEASH_HITCH)) {
-            checkIsland(e, e.getEntity().getLocation(), Flags.LEASH);
+            checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.LEASH);
         }
     }
 
