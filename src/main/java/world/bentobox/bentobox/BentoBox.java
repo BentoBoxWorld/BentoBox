@@ -2,6 +2,7 @@ package world.bentobox.bentobox;
 
 import java.util.Optional;
 
+import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
 import org.bukkit.plugin.PluginManager;
@@ -345,6 +346,16 @@ public class BentoBox extends JavaPlugin {
 
     public void logError(String error) {
         getLogger().severe(() -> error);
+    }
+
+    /**
+     * Logs the stacktrace of a Throwable that was thrown by an error.
+     * It should be used preferably instead of {@link Throwable#printStackTrace()} as it does not risk exposing sensitive information.
+     * @param throwable the Throwable that was thrown by an error.
+     * @since 1.3.0
+     */
+    public void logStacktrace(@NonNull Throwable throwable) {
+        logError(ExceptionUtils.getStackTrace(throwable));
     }
 
     public void logWarning(String warning) {

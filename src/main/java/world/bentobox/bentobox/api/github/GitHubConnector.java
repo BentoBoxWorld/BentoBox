@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
 
 import java.io.BufferedReader;
@@ -39,8 +40,8 @@ public class GitHubConnector {
             contributorData = getData("contributors");
             releasesData = getData("releases");
         } catch (IOException e) {
-            e.printStackTrace();
-            // TODO better logging and do not override data instead
+            BentoBox.getInstance().logStacktrace(e);
+            // TODO do not override data instead
             return;
         }
 

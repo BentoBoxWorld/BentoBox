@@ -178,7 +178,7 @@ public class AddonsManager {
         addon.setState(Addon.State.ERROR);
         plugin.logError("Skipping " + addon.getDescription().getName() + " due to an unhandled exception...");
         // Send stacktrace, required for addon development
-        plugin.logError(ExceptionUtils.getStackTrace(throwable));
+        plugin.logStacktrace(throwable);
     }
 
     /**
