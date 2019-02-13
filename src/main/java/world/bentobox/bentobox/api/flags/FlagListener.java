@@ -120,7 +120,7 @@ public abstract class FlagListener implements Listener {
      * @param user - user affected by this flag, or null if none
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag, boolean silent, User user) {
+    public boolean checkIsland(@NonNull Event e, @Nullable User user, @NonNull Location loc, @NonNull Flag flag, boolean silent) {
         // If this is not an Island World or a standard Nether or End, skip
         if (!plugin.getIWM().inWorld(loc)) {
             report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);
