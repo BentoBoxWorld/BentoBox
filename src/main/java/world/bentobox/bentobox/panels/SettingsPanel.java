@@ -44,7 +44,8 @@ public class SettingsPanel {
         List<Flag> flags = plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(flagType))
                 .sorted(Comparator.comparing(flag -> user.getTranslation(flag.getNameReference())))
                 .collect(Collectors.toList());
-
+        // Remove any that are not for this game mode
+        plugin.getIWM().getAddon(world).ifPresent(gm -> flags.removeIf(f -> !f.getGameModes().isEmpty() && !f.getGameModes().contains(gm)));
         // Use paging
         flags.stream().skip(page * 43L).limit(page * 43L + 43L).forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user))));
         // Add forward and backward icons
