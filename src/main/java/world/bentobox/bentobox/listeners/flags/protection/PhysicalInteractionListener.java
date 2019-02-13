@@ -9,7 +9,6 @@ import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -31,7 +30,7 @@ public class PhysicalInteractionListener extends FlagListener {
         switch (e.getClickedBlock().getType()) {
         case FARMLAND:
             // Crop trample
-            checkIsland(e, e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
+            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.CROP_TRAMPLE);
             break;
 
         case ACACIA_PRESSURE_PLATE:
@@ -44,12 +43,12 @@ public class PhysicalInteractionListener extends FlagListener {
         case SPRUCE_PRESSURE_PLATE:
         case STONE_PRESSURE_PLATE:
             // Pressure plates
-            checkIsland(e, e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
+            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PRESSURE_PLATE);
             break;
-            
+
         case TURTLE_EGG:
-            checkIsland(e, e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
-            break;   
+            checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.TURTLE_EGGS);
+            break;
 
         default:
             break;
@@ -68,8 +67,6 @@ public class PhysicalInteractionListener extends FlagListener {
         }
         Projectile p = (Projectile)e.getEntity();
         if (p.getShooter() instanceof Player && e.getBlock() != null) {
-            // Set the user to the shooter
-            setUser(User.getInstance((Player)p.getShooter()));
 
             switch(e.getBlock().getType()) {
             case ACACIA_BUTTON:
@@ -79,7 +76,7 @@ public class PhysicalInteractionListener extends FlagListener {
             case SPRUCE_BUTTON:
             case STONE_BUTTON:
             case DARK_OAK_BUTTON:
-                checkIsland(e, e.getBlock().getLocation(), Flags.BUTTON);
+                checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.BUTTON);
                 break;
             case ACACIA_PRESSURE_PLATE:
             case BIRCH_PRESSURE_PLATE:
@@ -91,7 +88,7 @@ public class PhysicalInteractionListener extends FlagListener {
             case SPRUCE_PRESSURE_PLATE:
             case STONE_PRESSURE_PLATE:
                 // Pressure plates
-                checkIsland(e, e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
+                checkIsland(e, (Player)p.getShooter(), e.getBlock().getLocation(), Flags.PRESSURE_PLATE);
                 break;
             default:
                 break;

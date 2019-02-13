@@ -17,7 +17,6 @@ import org.bukkit.event.vehicle.VehicleDamageEvent;
 import org.bukkit.util.BlockIterator;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 public class BreakBlocksListener extends FlagListener {
@@ -29,7 +28,7 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-        setUser(User.getInstance(e.getPlayer())).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
+        checkIsland(e, e.getPlayer(), e.getBlock().getLocation(), Flags.BREAK_BLOCKS);
     }
 
     /**
@@ -40,7 +39,7 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW)
     public void onBreakHanging(final HangingBreakByEntityEvent e) {
         if (e.getRemover() instanceof Player) {
-            setUser(User.getInstance(e.getRemover())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+            checkIsland(e, (Player)e.getRemover(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
         }
     }
 
@@ -62,7 +61,7 @@ public class BreakBlocksListener extends FlagListener {
             while (iterator.hasNext()) {
                 Block lastBlock = iterator.next();
                 if (lastBlock.getType().toString().endsWith("_SKULL") || (lastBlock.getType().toString().endsWith("_HEAD") && !lastBlock.getType().equals(Material.PISTON_HEAD))) {
-                    checkIsland(e, lastBlock.getLocation(), Flags.BREAK_BLOCKS);
+                    checkIsland(e, e.getPlayer(), lastBlock.getLocation(), Flags.BREAK_BLOCKS);
                     return;
                 }
             }
@@ -74,7 +73,7 @@ public class BreakBlocksListener extends FlagListener {
         case CAKE:
         case DRAGON_EGG:
         case SPAWNER:
-            setUser(User.getInstance(e.getPlayer())).checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
             break;
         default:
             break;
@@ -88,8 +87,7 @@ public class BreakBlocksListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onVehicleDamageEvent(VehicleDamageEvent e) {
         if (getIWM().inWorld(e.getVehicle().getLocation()) && e.getAttacker() instanceof Player) {
-            setUser(User.getInstance((Player) e.getAttacker()));
-            checkIsland(e, e.getVehicle().getLocation(), Flags.BREAK_BLOCKS);
+            checkIsland(e, (Player)e.getAttacker(), e.getVehicle().getLocation(), Flags.BREAK_BLOCKS);
         }
     }
 
@@ -106,11 +104,11 @@ public class BreakBlocksListener extends FlagListener {
 
         // Get the attacker
         if (e.getDamager() instanceof Player) {
-            setUser(User.getInstance(e.getDamager())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
+            checkIsland(e, (Player)e.getDamager(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
         } else if (e.getDamager() instanceof Projectile) {
             // Find out who fired the arrow
             Projectile p = (Projectile) e.getDamager();
-            if (p.getShooter() instanceof Player && !setUser(User.getInstance((Player)p.getShooter())).checkIsland(e, e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
+            if (p.getShooter() instanceof Player && !checkIsland(e, (Player)p.getShooter(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS)) {
                 e.getEntity().setFireTicks(0);
                 e.getDamager().remove();
             }

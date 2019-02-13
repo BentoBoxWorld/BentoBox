@@ -24,9 +24,9 @@ public class TeleportationListener extends FlagListener {
     public void onPlayerTeleport(final PlayerTeleportEvent e) {
         if (e.getCause() != null) {
             if (e.getCause().equals(TeleportCause.ENDER_PEARL)) {
-                checkIsland(e, e.getTo(), Flags.ENDER_PEARL);
+                checkIsland(e, e.getPlayer(), e.getTo(), Flags.ENDER_PEARL);
             } else if (e.getCause().equals(TeleportCause.CHORUS_FRUIT)) {
-                checkIsland(e, e.getTo(), Flags.CHORUS_FRUIT);
+                checkIsland(e, e.getPlayer(), e.getTo(), Flags.CHORUS_FRUIT);
             }
         }
     }

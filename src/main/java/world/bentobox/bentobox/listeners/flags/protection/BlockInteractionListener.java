@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -10,10 +11,10 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
+ * Handle interaction with blocks
  * @author tastybento
  */
 public class BlockInteractionListener extends FlagListener {
@@ -27,7 +28,7 @@ public class BlockInteractionListener extends FlagListener {
         // For some items, we need to do a specific check for RIGHT_CLICK_BLOCK
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && e.getClickedBlock().getType().equals(Material.ITEM_FRAME)) {
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.ITEM_FRAME);
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.ITEM_FRAME);
             return;
         }
 
@@ -35,23 +36,21 @@ public class BlockInteractionListener extends FlagListener {
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
-        // Set user
-        this.setUser(User.getInstance(e.getPlayer()));
         // Check clicked block
-        checkClickedBlock(e, e.getClickedBlock().getLocation(), e.getClickedBlock().getType());
+        checkClickedBlock(e, e.getPlayer(), e.getClickedBlock().getLocation(), e.getClickedBlock().getType());
 
         // Now check for in-hand items
         if (e.getItem() != null) {
             if (e.getItem().getType().name().contains("BOAT")) {
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
                 return;
             }
             switch (e.getItem().getType()) {
             case ENDER_PEARL:
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
+                checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.ENDER_PEARL);
                 break;
             case BONE_MEAL:
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
+                checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.PLACE_BLOCKS);
                 break;
             case BAT_SPAWN_EGG:
             case BLAZE_SPAWN_EGG:
@@ -104,7 +103,7 @@ public class BlockInteractionListener extends FlagListener {
             case ZOMBIE_PIGMAN_SPAWN_EGG:
             case ZOMBIE_SPAWN_EGG:
             case ZOMBIE_VILLAGER_SPAWN_EGG:
-                checkIsland(e, e.getClickedBlock().getLocation(), Flags.SPAWN_EGGS);
+                checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.SPAWN_EGGS);
                 break;
             default:
                 break;
@@ -116,21 +115,22 @@ public class BlockInteractionListener extends FlagListener {
     /**
      * Check if an action can occur on a clicked block
      * @param e - event called
+     * @param player - player
      * @param loc - location of clicked block
      * @param type - material type of clicked block
      */
-    private void checkClickedBlock(Event e, Location loc, Material type) {
+    private void checkClickedBlock(Event e, Player player, Location loc, Material type) {
         // Handle pots
         if (type.name().startsWith("POTTED")) {
-            checkIsland(e, loc, Flags.CONTAINER);
+            checkIsland(e, player, loc, Flags.CONTAINER);
             return;
         }
         switch (type) {
         case ANVIL:
-            checkIsland(e, loc, Flags.ANVIL);
+            checkIsland(e, player, loc, Flags.ANVIL);
             break;
         case BEACON:
-            checkIsland(e, loc, Flags.BEACON);
+            checkIsland(e, player, loc, Flags.BEACON);
             break;
         case BLACK_BED:
         case BLUE_BED:
@@ -148,11 +148,11 @@ public class BlockInteractionListener extends FlagListener {
         case RED_BED:
         case WHITE_BED:
         case YELLOW_BED:
-            checkIsland(e, loc, Flags.BED);
+            checkIsland(e, player, loc, Flags.BED);
             break;
         case BREWING_STAND:
         case CAULDRON:
-            checkIsland(e, loc, Flags.BREWING);
+            checkIsland(e, player, loc, Flags.BREWING);
             break;
         case CHEST:
         case CHEST_MINECART:
@@ -175,17 +175,17 @@ public class BlockInteractionListener extends FlagListener {
         case YELLOW_SHULKER_BOX:
         case SHULKER_BOX:
         case FLOWER_POT:
-            checkIsland(e, loc, Flags.CONTAINER);
+            checkIsland(e, player, loc, Flags.CONTAINER);
             break;
         case DISPENSER:
-            checkIsland(e, loc, Flags.DISPENSER);
+            checkIsland(e, player, loc, Flags.DISPENSER);
             break;
         case DROPPER:
-            checkIsland(e, loc, Flags.DROPPER);
+            checkIsland(e, player, loc, Flags.DROPPER);
             break;
         case HOPPER:
         case HOPPER_MINECART:
-            checkIsland(e, loc, Flags.HOPPER);
+            checkIsland(e, player, loc, Flags.HOPPER);
             break;
         case ACACIA_DOOR:
         case BIRCH_DOOR:
@@ -194,7 +194,7 @@ public class BlockInteractionListener extends FlagListener {
         case JUNGLE_DOOR:
         case SPRUCE_DOOR:
         case OAK_DOOR:
-            checkIsland(e, loc, Flags.DOOR);
+            checkIsland(e, player, loc, Flags.DOOR);
             break;
         case ACACIA_TRAPDOOR:
         case BIRCH_TRAPDOOR:
@@ -203,7 +203,7 @@ public class BlockInteractionListener extends FlagListener {
         case JUNGLE_TRAPDOOR:
         case SPRUCE_TRAPDOOR:
         case IRON_TRAPDOOR:
-            checkIsland(e, loc, Flags.TRAPDOOR);
+            checkIsland(e, player, loc, Flags.TRAPDOOR);
             break;
         case ACACIA_FENCE_GATE:
         case BIRCH_FENCE_GATE:
@@ -211,25 +211,25 @@ public class BlockInteractionListener extends FlagListener {
         case OAK_FENCE_GATE:
         case JUNGLE_FENCE_GATE:
         case SPRUCE_FENCE_GATE:
-            checkIsland(e, loc, Flags.GATE);
+            checkIsland(e, player, loc, Flags.GATE);
             break;
         case FURNACE:
-            checkIsland(e, loc, Flags.FURNACE);
+            checkIsland(e, player, loc, Flags.FURNACE);
             break;
         case ENCHANTING_TABLE:
-            checkIsland(e, loc, Flags.ENCHANTING);
+            checkIsland(e, player, loc, Flags.ENCHANTING);
             break;
         case ENDER_CHEST:
-            checkIsland(e, loc, Flags.ENDER_CHEST);
+            checkIsland(e, player, loc, Flags.ENDER_CHEST);
             break;
         case JUKEBOX:
-            checkIsland(e, loc, Flags.JUKEBOX);
+            checkIsland(e, player, loc, Flags.JUKEBOX);
             break;
         case NOTE_BLOCK:
-            checkIsland(e, loc, Flags.NOTE_BLOCK);
+            checkIsland(e, player, loc, Flags.NOTE_BLOCK);
             break;
         case CRAFTING_TABLE:
-            checkIsland(e, loc, Flags.CRAFTING);
+            checkIsland(e, player, loc, Flags.CRAFTING);
             break;
         case STONE_BUTTON:
         case ACACIA_BUTTON:
@@ -238,24 +238,24 @@ public class BlockInteractionListener extends FlagListener {
         case JUNGLE_BUTTON:
         case OAK_BUTTON:
         case SPRUCE_BUTTON:
-            checkIsland(e, loc, Flags.BUTTON);
+            checkIsland(e, player, loc, Flags.BUTTON);
             break;
         case LEVER:
-            checkIsland(e, loc, Flags.LEVER);
+            checkIsland(e, player, loc, Flags.LEVER);
             break;
         case REPEATER:
         case COMPARATOR:
         case DAYLIGHT_DETECTOR:
-            checkIsland(e, loc, Flags.REDSTONE);
+            checkIsland(e, player, loc, Flags.REDSTONE);
             break;
         case DRAGON_EGG:
-            checkIsland(e, loc, Flags.BREAK_BLOCKS);
+            checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
             break;
         case END_PORTAL_FRAME:
-            checkIsland(e, loc, Flags.PLACE_BLOCKS);
+            checkIsland(e, player, loc, Flags.PLACE_BLOCKS);
             break;
         case ITEM_FRAME:
-            checkIsland(e, loc, Flags.ITEM_FRAME);
+            checkIsland(e, player, loc, Flags.ITEM_FRAME);
             break;
         default:
             break;
@@ -273,7 +273,6 @@ public class BlockInteractionListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
-        setUser(User.getInstance(e.getPlayer()));
-        checkClickedBlock(e, e.getBlock().getLocation(), e.getBlock().getType());
+        checkClickedBlock(e, e.getPlayer(), e.getBlock().getLocation(), e.getBlock().getType());
     }
 }

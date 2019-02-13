@@ -77,7 +77,7 @@ public class FireListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getMaterial() != null && e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.FIRE);
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.FIRE);
         }
         // Look along player's sight line to see if any blocks are fire. Players can hit fire out quite a long way away.
         try {
@@ -85,7 +85,7 @@ public class FireListener extends FlagListener {
             while (iter.hasNext()) {
                 Block lastBlock = iter.next();
                 if (lastBlock.getType().equals(Material.FIRE)) {
-                    checkIsland(e, lastBlock.getLocation(), Flags.FIRE_EXTINGUISH);
+                    checkIsland(e, e.getPlayer(), lastBlock.getLocation(), Flags.FIRE_EXTINGUISH);
                 }
             }
         } catch (Exception ex) {

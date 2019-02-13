@@ -12,7 +12,6 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
-import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
@@ -37,9 +36,7 @@ public class TNTListener extends FlagListener {
             Projectile projectile = (Projectile) e.getEntity();
             // Find out who fired it
             if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0) {
-                Player shooter = (Player)projectile.getShooter();
-                setUser(User.getInstance(shooter));
-                if (!setUser(User.getInstance(shooter)).checkIsland(e, e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+                if (!checkIsland(e, (Player)projectile.getShooter(), e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
                     // Remove the arrow
                     projectile.remove();
                     e.setCancelled(true);
@@ -59,7 +56,7 @@ public class TNTListener extends FlagListener {
                 && e.getClickedBlock().getType().equals(Material.TNT)
                 && e.getMaterial() != null
                 && e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
-            checkIsland(e, e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
+            checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
         }
     }
 

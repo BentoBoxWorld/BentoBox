@@ -17,7 +17,7 @@ public class ShearingListener extends FlagListener {
     // Protect sheep
     @EventHandler(priority = EventPriority.LOW)
     public void onShear(final PlayerShearEntityEvent e) {
-        checkIsland(e, e.getEntity().getLocation(), Flags.SHEARING);
+        checkIsland(e, e.getPlayer(), e.getEntity().getLocation(), Flags.SHEARING);
     }
 
 }

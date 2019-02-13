@@ -72,7 +72,7 @@ public class PVPListener extends FlagListener {
         // Get the attacker
         if (damager instanceof Player) {
             User user = User.getInstance(damager);
-            if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
+            if (!checkIsland((Event)e, (Player)damager, damager.getLocation(), flag)) {
                 user.notify(Flags.PVP_OVERWORLD.getHintReference());
                 e.setCancelled(true);
             }
@@ -86,7 +86,7 @@ public class PVPListener extends FlagListener {
                     return;
                 }
                 User user = User.getInstance((Player)p.getShooter());
-                if (!setUser(user).checkIsland((Event)e, damager.getLocation(), flag)) {
+                if (!checkIsland((Event)e, (Player)entity, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     hurtEntity.setFireTicks(0);
                     damager.remove();
@@ -108,7 +108,7 @@ public class PVPListener extends FlagListener {
             if (protectedVisitor((Player)e.getCaught())) {
                 User.getInstance(e.getPlayer()).notify(Flags.INVINCIBLE_VISITORS.getHintReference());
                 e.setCancelled(true);
-            } else if (!checkIsland(e, e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
+            } else if (!checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), getFlag(e.getCaught().getWorld()))) {
                 e.getHook().remove();
                 User.getInstance(e.getPlayer()).notify(Flags.PVP_OVERWORLD.getHintReference());
                 e.setCancelled(true);
@@ -149,7 +149,7 @@ public class PVPListener extends FlagListener {
                 return true;
             }
             // Check if PVP is allowed or not
-            if (!checkIsland(e, le.getLocation(), flag)) {
+            if (!checkIsland(e, user.getPlayer(), le.getLocation(), flag)) {
                 user.notify(Flags.PVP_OVERWORLD.getHintReference());
                 return true;
             }

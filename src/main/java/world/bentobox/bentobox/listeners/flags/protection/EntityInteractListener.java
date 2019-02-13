@@ -26,7 +26,7 @@ public class EntityInteractListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onPlayerInteractAtEntity(final PlayerInteractAtEntityEvent e) {
         if (e.getRightClicked() instanceof ArmorStand) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
+            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.ARMOR_STAND);
         }
     }
 
@@ -35,24 +35,24 @@ public class EntityInteractListener extends FlagListener {
         if (e.getRightClicked() instanceof Vehicle) {
             // Animal riding
             if (e.getRightClicked() instanceof Animals) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flags.RIDING);
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING);
             }
             // Minecart riding
             else if (e.getRightClicked() instanceof Minecart) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flags.MINECART);
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART);
             }
             // Boat riding
             else if (e.getRightClicked() instanceof Boat) {
-                checkIsland(e, e.getRightClicked().getLocation(), Flags.BOAT);
+                checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BOAT);
             }
         }
         // Villager trading
         else if (e.getRightClicked().getType().equals(EntityType.VILLAGER)) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flags.TRADING);
+            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.TRADING);
         }
         // Name tags
         else if (e.getPlayer().getInventory().getItemInMainHand().getType().equals(Material.NAME_TAG)) {
-            checkIsland(e, e.getRightClicked().getLocation(), Flags.NAME_TAG);
+            checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.NAME_TAG);
         }
     }
 }

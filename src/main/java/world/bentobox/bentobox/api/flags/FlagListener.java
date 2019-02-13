@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.api.flags;
 
-import java.lang.reflect.Method;
 import java.util.Optional;
 
 import org.bukkit.Location;
@@ -69,37 +68,6 @@ public abstract class FlagListener implements Listener {
         this.plugin = plugin;
     }
 
-    /**
-     * Sets the player associated with this event.
-     * If the user is a fake player, they are not counted.
-     * @param e - event
-     * @return true if found, otherwise false
-     */
-    private boolean createEventUser(@NonNull Event e) {
-        try {
-            // Use reflection to get the getPlayer method if it exists
-            Method getPlayer = e.getClass().getMethod("getPlayer");
-            if (getPlayer != null) {
-                setUser(User.getInstance((Player)getPlayer.invoke(e)));
-                return true;
-            }
-        } catch (Exception e1) {  // Do nothing
-        }
-        return false;
-    }
-
-    /**
-     * Explicitly set the user for the next {@link #checkIsland(Event, Location, Flag)} or {@link #checkIsland(Event, Location, Flag, boolean)}
-     * @param user - the User
-     */
-    @NonNull
-    public FlagListener setUser(@NonNull User user) {
-        if (!plugin.getSettings().getFakePlayers().contains(user.getName())) {
-            this.user = user;
-        }
-        return this;
-    }
-
     /*
      * The following methods cover the cancellable events and enable a simple noGo(e) to be used to cancel and send the error message
      */
@@ -132,25 +100,29 @@ public abstract class FlagListener implements Listener {
     }
 
     /**
-     * Check if flag is allowed at location
+     * Check if flag is allowed at location. Uses player object because Bukkit events provide player.
      * @param e - event
+     * @param player - player affected by this flag, or null if none
      * @param loc - location
      * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
      * @return true if allowed, false if not
      */
-    public boolean checkIsland(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag) {
-        return checkIsland(e, loc, flag, false);
+    public boolean checkIsland(@NonNull Event e, @Nullable Player player, @NonNull Location loc, @NonNull Flag flag) {
+        return checkIsland(e, player, loc, flag, false);
     }
 
     /**
      * Check if flag is allowed at location
      * @param e - event
+     * @param player - player affected by this flag, or null if none
      * @param loc - location
      * @param flag - flag {@link world.bentobox.bentobox.lists.Flags}
      * @param silent - if true, no attempt is made to tell the user
      * @return true if the check is okay, false if it was disallowed
      */
-    public boolean checkIsland(@NonNull Event e, @NonNull Location loc, @NonNull Flag flag, boolean silent) {
+    public boolean checkIsland(@NonNull Event e, @Nullable Player player, @NonNull Location loc, @NonNull Flag flag, boolean silent) {
+        // Set user
+        user = User.getInstance(player);
         // If this is not an Island World or a standard Nether or End, skip
         if (!plugin.getIWM().inWorld(loc)) {
             report(user, e, loc, flag,  Why.UNPROTECTED_WORLD);
@@ -171,15 +143,6 @@ public abstract class FlagListener implements Listener {
         }
 
         // Protection flag
-        // If the user is not set already, try to get it from the event
-        // Set the user associated with this event
-        // The user is not set, and the event does not hold a getPlayer, so return false
-        // TODO: is this the correct handling here?
-        if (user == null && !createEventUser(e)) {
-            plugin.logError("Check island had no associated user! " + e.getEventName());
-            report(user, e, loc, flag,  Why.ERROR_NO_ASSOCIATED_USER);
-            return false;
-        }
 
         // Ops or "bypass everywhere" moderators can do anything
         if (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".everywhere")) {
@@ -188,7 +151,6 @@ public abstract class FlagListener implements Listener {
             } else {
                 report(user, e, loc, flag,  Why.BYPASS_EVERYWHERE);
             }
-            user = null;
             return true;
         }
 
@@ -196,13 +158,11 @@ public abstract class FlagListener implements Listener {
         if (flag.getType().equals(Flag.Type.WORLD_SETTING)) {
             if (flag.isSetForWorld(loc.getWorld())) {
                 report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
-                user = null;
                 return true;
             }
             report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
             noGo(e, flag, silent);
             // Clear the user for the next time
-            user = null;
             return false;
         }
 
@@ -213,28 +173,23 @@ public abstract class FlagListener implements Listener {
             // If it is not allowed on the island, "bypass island" moderators can do anything
             if (island.get().isAllowed(user, flag)) {
                 report(user, e, loc, flag,  Why.RANK_ALLOWED);
-                user = null;
                 return true;
             } else if (user.hasPermission(getIWM().getPermissionPrefix(loc.getWorld()) + ".mod.bypass." + flag.getID() + ".island")) {
                 report(user, e, loc, flag,  Why.BYPASS_ISLAND);
-                user = null;
                 return true;
             }
             report(user, e, loc, flag,  Why.NOT_ALLOWED_ON_ISLAND);
             noGo(e, flag, silent);
             // Clear the user for the next time
-            user = null;
             return false;
         }
         // The player is in the world, but not on an island, so general world settings apply
         if (flag.isSetForWorld(loc.getWorld())) {
             report(user, e, loc, flag,  Why.ALLOWED_IN_WORLD);
-            user = null;
             return true;
         } else {
             report(user, e, loc, flag,  Why.NOT_ALLOWED_IN_WORLD);
             noGo(e, flag, silent);
-            user = null;
             return false;
         }
     }
