@@ -35,12 +35,11 @@ public class TNTListener extends FlagListener {
         if (e.getEntity() instanceof Projectile) {
             Projectile projectile = (Projectile) e.getEntity();
             // Find out who fired it
-            if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0) {
-                if (!checkIsland(e, (Player)projectile.getShooter(), e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
-                    // Remove the arrow
-                    projectile.remove();
-                    e.setCancelled(true);
-                }
+            if (projectile.getShooter() instanceof Player && projectile.getFireTicks() > 0
+                    && !checkIsland(e, (Player)projectile.getShooter(), e.getBlock().getLocation(), Flags.BREAK_BLOCKS)) {
+                // Remove the arrow
+                projectile.remove();
+                e.setCancelled(true);
             }
         }
     }
@@ -73,5 +72,4 @@ public class TNTListener extends FlagListener {
             e.setCancelled(true);
         }
     }
-
 }

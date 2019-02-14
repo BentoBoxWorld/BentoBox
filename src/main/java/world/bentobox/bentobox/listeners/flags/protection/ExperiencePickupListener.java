@@ -19,11 +19,10 @@ public class ExperiencePickupListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExperienceOrbTargetPlayer(EntityTargetLivingEntityEvent e) {
         // Make sure the target is a Player and the entity is an experience orb
-        if (e.getTarget() instanceof Player && e.getEntity() instanceof ExperienceOrb) {
-            if (!checkIsland(e, (Player) e.getTarget(), e.getEntity().getLocation(), Flags.EXPERIENCE_PICKUP)) {
-                // Canceling the event won't be enough, we need to explicitly set the target to null
-                e.setTarget(null);
-            }
+        if (e.getTarget() instanceof Player && e.getEntity() instanceof ExperienceOrb
+                && !checkIsland(e, (Player) e.getTarget(), e.getEntity().getLocation(), Flags.EXPERIENCE_PICKUP)) {
+            // Cancelling the event won't work, we need to explicitly set the target to null
+            e.setTarget(null);
         }
     }
 }
