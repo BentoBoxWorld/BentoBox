@@ -25,6 +25,7 @@ import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.NetherPortals;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
+import world.bentobox.bentobox.listeners.flags.NetherTreesListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
@@ -195,7 +196,7 @@ public class BentoBox extends JavaPlugin {
     }
 
     /**
-     * Register listeners
+     * Registers listeners.
      */
     private void registerListeners() {
         PluginManager manager = getServer().getPluginManager();
@@ -205,6 +206,8 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new PanelListenerManager(), this);
         // Nether portals
         manager.registerEvents(new NetherPortals(this), this);
+        // Nether trees conversion
+        manager.registerEvents(new NetherTreesListener(this), this);
         // End dragon blocking
         manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands

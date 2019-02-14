@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners;
 
 import static org.junit.Assert.assertFalse;
@@ -70,9 +67,6 @@ public class NetherPortalsTest {
     private World nether;
     private World end;
 
-    /**
-     * @throws java.lang.Exception
-     */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -157,14 +151,6 @@ public class NetherPortalsTest {
     private void wrongWorld() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         when(iwm.inWorld(any(Location.class))).thenReturn(false);
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#NetherPortals(world.bentobox.bentobox.BentoBox)}.
-     */
-    @Test
-    public void testNetherPortals() {
-        assertNotNull(new NetherPortals(plugin));
     }
 
     /**
@@ -739,50 +725,4 @@ public class NetherPortalsTest {
         Mockito.verify(block).getLocation();
         assertTrue(e.isCancelled());
     }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onTreeGrow(org.bukkit.event.world.StructureGrowEvent)}.
-     */
-    @Test
-    public void testOnTreeGrow() {
-        NetherPortals np = new NetherPortals(plugin);
-        Location loc = mock(Location.class);
-        // Wrong world to start
-        when(loc.getWorld()).thenReturn(world);
-        BlockState log = mock(BlockState.class);
-        when(log.getType()).thenReturn(Material.OAK_LOG);
-        BlockState log2 = mock(BlockState.class);
-        when(log2.getType()).thenReturn(Material.ACACIA_LOG);
-        BlockState leaves = mock(BlockState.class);
-        when(leaves.getType()).thenReturn(Material.OAK_LEAVES);
-        BlockState leaves2 = mock(BlockState.class);
-        when(leaves2.getType()).thenReturn(Material.OAK_LEAVES);
-        List<BlockState> blocks = new ArrayList<>();
-        blocks.add(log);
-        blocks.add(log2);
-        blocks.add(leaves);
-        blocks.add(leaves2);
-        StructureGrowEvent e = new StructureGrowEvent(loc, TreeType.ACACIA, false, null, blocks);
-        // No nether trees
-        when(iwm.isNetherTrees(world)).thenReturn(false);
-        assertFalse(np.onTreeGrow(e));
-        // nether trees, wrong world
-        e = new StructureGrowEvent(loc, TreeType.ACACIA, false, null, blocks);
-        when(iwm.isNetherTrees(world)).thenReturn(true);
-        assertFalse(np.onTreeGrow(e));
-        // Make the world nether
-        when(iwm.isNetherTrees(nether)).thenReturn(true);
-        when(loc.getWorld()).thenReturn(nether);
-        e = new StructureGrowEvent(loc, TreeType.ACACIA, false, null, blocks);
-        /*
-         * Temporary
-         * TODO: Fix for 1.13
-        assertTrue(np.onTreeGrow(e));
-        Mockito.verify(log).setType(Material.GRAVEL);
-        Mockito.verify(log2).setType(Material.GRAVEL);
-        Mockito.verify(leaves).setType(Material.GLOWSTONE);
-        Mockito.verify(leaves2).setType(Material.GLOWSTONE);
-         */
-    }
-
 }

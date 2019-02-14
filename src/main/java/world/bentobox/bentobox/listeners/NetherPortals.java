@@ -257,24 +257,4 @@ public class NetherPortals implements Listener {
             e.setCancelled(true);
         }
     }
-
-    /**
-     * Converts trees to gravel and glowstone
-     *
-     * @param e - event
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public boolean onTreeGrow(StructureGrowEvent e) {
-        if (!plugin.getIWM().isNetherTrees(e.getWorld()) || !e.getWorld().getEnvironment().equals(Environment.NETHER)) {
-            return false;
-        }
-        for (BlockState b : e.getBlocks()) {
-            if (Tag.LOGS.isTagged(b.getType())) {
-                b.setType(Material.GRAVEL);
-            } else if (Tag.LEAVES.isTagged(b.getType())) {
-                b.setType(Material.GLOWSTONE);
-            }
-        }
-        return true;
-    }
 }
