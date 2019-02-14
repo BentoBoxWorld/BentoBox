@@ -129,6 +129,7 @@ commands:
       team-member-format: "&b[name] [rank]"
       island-location: "Island location: [xyz]"
       island-coords: "Island coordinates: [xz1] to [xz2]"
+      islands-in-trash: "Player has islands in trash. Use [label] trash <player> to view them"
       protection-range: "Protection range: [range]"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"

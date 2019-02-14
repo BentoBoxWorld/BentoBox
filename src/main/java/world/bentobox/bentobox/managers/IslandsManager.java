@@ -2,12 +2,14 @@ package world.bentobox.bentobox.managers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -70,6 +72,8 @@ public class IslandsManager {
     // Island Cache
     @NonNull
     private IslandCache islandCache;
+    @NonNull
+    private Map<UUID, List<Island>> quarantineCache;
 
     /**
      * Islands Manager
@@ -80,6 +84,7 @@ public class IslandsManager {
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(plugin, Island.class);
         islandCache = new IslandCache();
+        quarantineCache = new HashMap<>();
         spawn = new HashMap<>();
         last = new HashMap<>();
     }
@@ -700,12 +705,18 @@ public class IslandsManager {
         List<Island> toQuarantine = new ArrayList<>();
         // Only load non-quarantined island
         // TODO: write a purge admin command to delete these records
-        handler.loadObjects().stream().filter(i -> !i.isDoNotLoad()).forEach(island -> {
-            if (!islandCache.addIsland(island)) {
-                // Quarantine the offending island
-                toQuarantine.add(island);
-            } else if (island.isSpawn()) {
-                this.setSpawn(island);
+        handler.loadObjects().stream().forEach(island -> {
+            if (island.isDoNotLoad() && island.getWorld() != null && island.getCenter() != null) {
+                // Add to quarantine cache
+                quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
+            } else {
+                if (!islandCache.addIsland(island)) {
+                    // Quarantine the offending island
+                    toQuarantine.add(island);
+                } else if (island.isSpawn()) {
+                    // Success, but check island
+                    this.setSpawn(island);
+                }
             }
         });
         if (!toQuarantine.isEmpty()) {
@@ -936,8 +947,47 @@ public class IslandsManager {
      * Try to get an island by its unique id
      * @param uniqueId - unique id string
      * @return optional island
+     * @since 1.3.0
      */
     public Optional<Island> getIslandById(String uniqueId) {
         return Optional.ofNullable(islandCache.getIslandById(uniqueId));
     }
+
+    /**
+     * Try to get a list of quarantined islands owned by uuid in this world
+     *
+     * @param world - world
+     * @param uuid - target player's UUID
+     * @return list of islands, may be empty
+     * @since 1.3.0
+     */
+    public List<Island> getQuarantinedIslandByUser(World world, UUID uuid) {
+        return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
+                .filter(i -> i.getWorld().equals(world)).collect(Collectors.toList());
+    }
+
+    /**
+     * @return the quarantineCache
+     * @since 1.3.0
+     */
+    public Map<UUID, List<Island>> getQuarantineCache() {
+        return quarantineCache;
+    }
+
+    /**
+     * Remove a quarantined island and delete it from the database completely.
+     * This is NOT recoverable unless you have database backups.
+     * @param island island
+     * @return <tt>true</tt> if island is quarantined and removed
+     */
+    public boolean purgeQuarantinedIsland(Island island) {
+        if (quarantineCache.containsKey(island.getOwner())) {
+            if (quarantineCache.get(island.getOwner()).remove(island)) {
+                handler.deleteObject(island);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }
