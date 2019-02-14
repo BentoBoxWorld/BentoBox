@@ -5,7 +5,6 @@ import java.util.Optional;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
-import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -199,24 +198,29 @@ public class BentoBox extends JavaPlugin {
      * Registers listeners.
      */
     private void registerListeners() {
-        PluginManager manager = getServer().getPluginManager();
-        // Player join events
-        manager.registerEvents(new JoinLeaveListener(this), this);
+        // Player join/leave events
+        new JoinLeaveListener(this);
+
         // Panel listener manager
-        manager.registerEvents(new PanelListenerManager(), this);
+        new PanelListenerManager(this);
+
         // Nether portals
-        manager.registerEvents(new NetherPortals(this), this);
+        new NetherPortals(this);
+
         // Nether trees conversion
-        manager.registerEvents(new NetherTreesListener(this), this);
+        new NetherTreesListener(this);
+
         // End dragon blocking
-        manager.registerEvents(new BlockEndDragon(this), this);
+        new BlockEndDragon(this);
+
         // Banned visitor commands
-        manager.registerEvents(new BannedVisitorCommands(this), this);
+        new BannedVisitorCommands(this);
+
         // Death counter
-        manager.registerEvents(new DeathListener(this), this);
-        // Island Delete Manager
+        new DeathListener(this);
+
+        // Island Deletion Manager
         islandDeletionManager = new IslandDeletionManager(this);
-        manager.registerEvents(islandDeletionManager, this);
     }
 
     @Override

@@ -5,6 +5,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -21,8 +22,9 @@ public class BannedVisitorCommands implements Listener {
     /**
      * @param plugin - plugin
      */
-    public BannedVisitorCommands(BentoBox plugin) {
+    public BannedVisitorCommands(@NonNull BentoBox plugin) {
         this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**

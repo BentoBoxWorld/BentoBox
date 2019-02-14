@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -29,9 +30,10 @@ public class JoinLeaveListener implements Listener {
     /**
      * @param plugin - plugin object
      */
-    public JoinLeaveListener(BentoBox plugin) {
+    public JoinLeaveListener(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        players = plugin.getPlayers();
+        this.players = plugin.getPlayers();
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

@@ -1,11 +1,8 @@
 package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -18,9 +15,9 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -32,8 +29,9 @@ public class NetherPortals implements Listener {
     private static final String SPAWN_PROTECTED = "protection.spawn-protected";
     private final BentoBox plugin;
 
-    public NetherPortals(BentoBox plugin) {
+    public NetherPortals(@NonNull BentoBox plugin) {
         this.plugin = plugin;
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**
