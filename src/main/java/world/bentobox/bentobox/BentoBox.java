@@ -24,7 +24,7 @@ import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.NetherPortals;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
-import world.bentobox.bentobox.listeners.flags.NetherTreesListener;
+import world.bentobox.bentobox.listeners.NetherTreesListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;

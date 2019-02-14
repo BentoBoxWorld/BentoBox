@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.listeners.flags;
+package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Material;
 import org.bukkit.Tag;
