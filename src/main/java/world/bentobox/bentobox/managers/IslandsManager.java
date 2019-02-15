@@ -232,13 +232,16 @@ public class IslandsManager {
      * @return Island or null if the island could not be created for some reason
      */
     @Nullable
-    public Island createIsland(@NonNull Location location, @Nullable UUID owner){
+    public Island createIsland(@NonNull Location location, @Nullable UUID owner) {
         Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        // Game the gamemode name and prefix the uniqueId
+        String gmName = plugin.getIWM().getAddon(location.getWorld()).map(gm -> gm.getDescription().getName()).orElse("");
+        island.setUniqueId(gmName + island.getUniqueId());
         while (handler.objectExists(island.getUniqueId())) {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
             // it will be bad if this does occur and the server should crash.
             plugin.logWarning("Duplicate island UUID occurred");
-            island.setUniqueId(UUID.randomUUID().toString());
+            island.setUniqueId(gmName + UUID.randomUUID().toString());
         }
         if (islandCache.addIsland(island)) {
             return island;
