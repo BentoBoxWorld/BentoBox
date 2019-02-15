@@ -960,13 +960,28 @@ public class IslandsManager {
      * Try to get a list of quarantined islands owned by uuid in this world
      *
      * @param world - world
-     * @param uuid - target player's UUID
-     * @return list of islands, may be empty
+     * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
+     * @return list of islands; may be empty
      * @since 1.3.0
      */
-    public List<Island> getQuarantinedIslandByUser(World world, UUID uuid) {
+    public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
         return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
                 .filter(i -> i.getWorld().equals(world)).collect(Collectors.toList());
+    }
+
+    /**
+     * Delete quarantined islands owned by uuid in this world
+     *
+     * @param world - world
+     * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
+     * @since 1.3.0
+     */
+    public void deleteQuarantinedIslandByUser(World world, @Nullable UUID uuid) {
+        if (quarantineCache.containsKey(uuid)) {
+            quarantineCache.get(uuid).stream().filter(i -> i.getWorld().equals(world))
+            .forEach(i -> handler.deleteObject(i));
+            quarantineCache.get(uuid).removeIf(i -> i.getWorld().equals(world));
+        }
     }
 
     /**

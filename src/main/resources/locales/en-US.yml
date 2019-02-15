@@ -129,7 +129,7 @@ commands:
       team-member-format: "&b[name] [rank]"
       island-location: "Island location: [xyz]"
       island-coords: "Island coordinates: [xz1] to [xz2]"
-      islands-in-trash: "Player has islands in trash. Use [label] trash <player> to view them"
+      islands-in-trash: "&dPlayer has islands in trash."
       protection-range: "Protection range: [range]"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
@@ -137,6 +137,14 @@ commands:
       banned-players: "Banned players:"
       banned-format: "&c[name]"
       unowned: "&cUnowned"
+      trash:
+        no-unowned-in-trash: "&cNo unowned islands in trash"
+        parameters: "[player]"
+        description: "show unowned islands or player's islands in trash"
+        title: "&d=========== Islands in Trash ==========="
+        count: "&l&dIsland [number]:"
+        use-switch: "&aUse &l[label] switch <player> <number>&r&a to switch player to island in trash"
+        use-emptytrash: "&aUse &l[label] emptytrash [player]&r&a to permanently remove trash items"
     version:
       description: "display BentoBox and addons versions"
     setrange:

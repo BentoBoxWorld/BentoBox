@@ -4,22 +4,23 @@ import java.util.List;
 import java.util.UUID;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
-public class AdminTrashCommand extends CompositeCommand {
+public class AdminEmptyTrashCommand extends ConfirmableCommand {
 
-    public AdminTrashCommand(CompositeCommand parent) {
-        super(parent, "trash");
+    public AdminEmptyTrashCommand(CompositeCommand parent) {
+        super(parent, "emptytrash");
     }
 
     @Override
     public void setup() {
         setPermission("admin.info.trash");
         setOnlyPlayer(false);
-        setParametersHelp("commands.admin.info.trash.parameters");
-        setDescription("commands.admin.info.trash.description");
+        setParametersHelp("commands.admin.info.emptytrash.parameters");
+        setDescription("commands.admin.info.emptytrash.description");
     }
 
     @Override
@@ -35,8 +36,8 @@ public class AdminTrashCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        // Show trash can info for this player
-        List<Island> islands = getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID);
+        // Remove trash for this player
+        final List<Island> islands = getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID);
         if (islands.isEmpty()) {
             if (args.isEmpty()) {
                 user.sendMessage("commands.admin.info.trash.no-unowned-in-trash");
@@ -45,14 +46,10 @@ public class AdminTrashCommand extends CompositeCommand {
             }
             return false;
         } else {
-            user.sendMessage("commands.admin.info.trash.title");
-            int count = 1;
-            islands.forEach(i -> {
-                user.sendMessage("commands.admin.info.trash.count", TextVariables.NUMBER, String.valueOf(count));
-                i.showInfo(user);
+            this.askConfirmation(user, () -> {
+                getIslands().deleteQuarantinedIslandByUser(getWorld(), targetUUID);
+                user.sendMessage("general.success");
             });
-            user.sendMessage("commands.admin.info.trash.use-switch", TextVariables.LABEL, getTopLabel());
-            user.sendMessage("commands.admin.info.trash.use-emptytrash", TextVariables.LABEL, getTopLabel());
             return true;
         }
     }
