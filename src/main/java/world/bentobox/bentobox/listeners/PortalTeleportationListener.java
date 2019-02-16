@@ -90,23 +90,6 @@ public class PortalTeleportationListener implements Listener {
     }
 
     /**
-     * When returning from the standard nether, teleport to the player's island
-     * @param e
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onNetherPortalStandardNether(PlayerPortalEvent e) {
-        World fromWorld = e.getFrom().getWorld();
-        if (e.getCause().equals(TeleportCause.NETHER_PORTAL)
-                && plugin.getIWM().inWorld(Util.getWorld(fromWorld))
-                && !plugin.getIWM().isNetherIslands(fromWorld)
-                && fromWorld.getEnvironment().equals(Environment.NETHER)
-                && plugin.getPlayers().isKnown(e.getPlayer().getUniqueId())) {
-            e.setCancelled(true);
-            plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
-        }
-    }
-
-    /**
      * Handles nether portals
      * @param e - event
      */
@@ -116,18 +99,22 @@ public class PortalTeleportationListener implements Listener {
             return false;
         }
         World fromWorld = e.getFrom().getWorld();
-        if (!e.getCause().equals(TeleportCause.NETHER_PORTAL) || !plugin.getIWM().inWorld(e.getFrom())
-                || !plugin.getIWM().isNetherGenerate(fromWorld)) {
+        if (e.getCause() != TeleportCause.NETHER_PORTAL || !plugin.getIWM().isNetherGenerate(fromWorld)) {
             // Do nothing special
             return false;
         }
 
         // STANDARD NETHER
         if (plugin.getIWM().isNetherGenerate(fromWorld) && !plugin.getIWM().isNetherIslands(fromWorld)) {
-            if (fromWorld.getEnvironment().equals(Environment.NORMAL)) {
+            if (fromWorld.getEnvironment() == Environment.NORMAL) {
                 // To Standard Nether
                 e.setTo(plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation());
                 e.useTravelAgent(true);
+            }
+            // From standard nether
+            else if (fromWorld.getEnvironment() == Environment.NETHER) {
+                e.setCancelled(true);
+                plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
             }
             return false;
         }
@@ -135,7 +122,7 @@ public class PortalTeleportationListener implements Listener {
         // FROM NETHER
         World overWorld = Util.getWorld(fromWorld);
         // If entering a nether portal in the nether, teleport to portal in overworld if there is one
-        if (fromWorld.getEnvironment().equals(Environment.NETHER)) {
+        if (fromWorld.getEnvironment() == Environment.NETHER) {
             // If this is from the island nether, then go to the same vector, otherwise try island home location
             Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
             e.setCancelled(true);
