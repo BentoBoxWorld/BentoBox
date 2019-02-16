@@ -29,16 +29,35 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
-public class NetherPortals implements Listener {
+/**
+ * Handles teleportation via the Nether/End portals to the Nether and End dimensions of the worlds added by the GameModeAddons.
+ *
+ * @author tastybento
+ */
+public class PortalTeleportationListener implements Listener {
 
     private final BentoBox plugin;
 
-    public NetherPortals(@NonNull BentoBox plugin) {
+    public PortalTeleportationListener(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
 
     /**
-     * Handle end portals
+     * Handles non-player portal use.
+     * Currently disables portal use by entities to prevent dupe glitching.
+     *
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    public void onEntityPortal(EntityPortalEvent e) {
+        if (plugin.getIWM().inWorld(e.getFrom())) {
+            // Disable entity portal transfer due to dupe glitching
+            e.setCancelled(true);
+        }
+    }
+
+    /**
+     * Handles end portals
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -71,20 +90,6 @@ public class NetherPortals implements Listener {
     }
 
     /**
-     * This handles non-player portal use
-     * Currently disables portal use by entities
-     *
-     * @param e - event
-     */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEntityPortal(EntityPortalEvent e) {
-        if (plugin.getIWM().inWorld(e.getFrom())) {
-            // Disable entity portal transfer due to dupe glitching
-            e.setCancelled(true);
-        }
-    }
-
-    /**
      * When returning from the standard nether, teleport to the player's island
      * @param e
      */
@@ -102,7 +107,7 @@ public class NetherPortals implements Listener {
     }
 
     /**
-     * Handle nether portals
+     * Handles nether portals
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)

@@ -7,29 +7,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.Before;
@@ -57,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
-public class NetherPortalsTest {
+public class PortalTeleportationListenerTest {
 
     private BentoBox plugin;
     private IslandsManager im;
@@ -154,7 +143,7 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalNotEnd() {
@@ -162,7 +151,7 @@ public class NetherPortalsTest {
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         // Wrong cause
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.CHORUS_FRUIT);
         np.onEndIslandPortal(e);
@@ -170,7 +159,7 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalNoEndWorldGenerated() {
@@ -180,31 +169,31 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         // No end world
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.END_PORTAL);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherIslandPortalNoNetherWorldGenerated() {
         // No nether world
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.NETHER_PORTAL);
         np.onNetherPortal(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalWrongWorld() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location loc = mock(Location.class);
 
         // Right cause, end exists, wrong world
@@ -217,11 +206,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalHome() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from end
         when(from.getWorld()).thenReturn(end);
@@ -243,11 +232,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
     public void testOnEntityPortal() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Entity ent = mock(Entity.class);
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
@@ -265,21 +254,21 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalNotPortal() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.COMMAND);
         assertFalse(np.onNetherPortal(e));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalWrongWorld() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
         wrongWorld();
@@ -288,11 +277,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherIsland() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -311,11 +300,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherIslandWithSpawnDefined() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -343,11 +332,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherIslandWithNoSpawnDefined() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -374,11 +363,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherStandard() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -393,12 +382,12 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      * @throws Exception
      */
     @Test
     public void testOnNetherPortalFromNetherStandard() throws Exception {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(nether);
@@ -418,11 +407,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromNetherIsland() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(nether);
