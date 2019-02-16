@@ -403,7 +403,7 @@ public class PortalTeleportationListenerTest {
         // Player should be teleported to their island
         assertFalse(np.onNetherPortal(e));
         // Verify
-        assertFalse(e.isCancelled());
+        assertTrue(e.isCancelled());
     }
 
     /**
