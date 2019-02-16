@@ -9,15 +9,15 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
-
 
 public class BlockEndDragon implements Listener {
 
     private BentoBox plugin;
 
-    public BlockEndDragon(BentoBox plugin) {
+    public BlockEndDragon(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
 

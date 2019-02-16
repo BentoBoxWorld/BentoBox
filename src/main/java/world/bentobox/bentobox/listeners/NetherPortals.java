@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.util.Vector;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -32,7 +33,7 @@ public class NetherPortals implements Listener {
     private static final String SPAWN_PROTECTED = "protection.spawn-protected";
     private final BentoBox plugin;
 
-    public NetherPortals(BentoBox plugin) {
+    public NetherPortals(@NonNull BentoBox plugin) {
         this.plugin = plugin;
     }
 
