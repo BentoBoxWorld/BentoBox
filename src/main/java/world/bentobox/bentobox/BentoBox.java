@@ -26,6 +26,7 @@ import world.bentobox.bentobox.listeners.JoinLeaveListener;
 import world.bentobox.bentobox.listeners.NetherPortals;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.NetherTreesListener;
+import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
@@ -204,6 +205,8 @@ public class BentoBox extends JavaPlugin {
         manager.registerEvents(new JoinLeaveListener(this), this);
         // Panel listener manager
         manager.registerEvents(new PanelListenerManager(), this);
+        // Standard Nether/End spawns protection
+        manager.registerEvents(new StandardSpawnProtectionListener(this), this);
         // Nether portals
         manager.registerEvents(new NetherPortals(this), this);
         // Nether trees conversion
