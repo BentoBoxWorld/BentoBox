@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -17,6 +18,7 @@ import static org.mockito.Mockito.when;
  * @author Poslovitch
  * @since 1.3.0
  */
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class})
 public class NetherTreesListenerTest {
