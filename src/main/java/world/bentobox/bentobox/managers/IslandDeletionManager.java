@@ -9,7 +9,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteChunksEvent;
@@ -33,9 +32,8 @@ public class IslandDeletionManager implements Listener {
     private Database<IslandDeletion> handler;
     private Set<Location> inDeletion;
 
-    public IslandDeletionManager(@NonNull BentoBox plugin) {
+    public IslandDeletionManager(BentoBox plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
         handler = new Database<>(plugin, IslandDeletion.class);
         inDeletion = new HashSet<>();
     }

@@ -8,7 +8,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.world.StructureGrowEvent;
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 
@@ -21,9 +20,8 @@ public class NetherTreesListener implements Listener {
 
     private BentoBox plugin;
 
-    public NetherTreesListener(@NonNull BentoBox plugin) {
+    public NetherTreesListener(BentoBox plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**

@@ -13,7 +13,6 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
-import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -22,13 +21,6 @@ import world.bentobox.bentobox.api.user.User;
 public class PanelListenerManager implements Listener {
 
     private static HashMap<UUID, Panel> openPanels = new HashMap<>();
-
-    private BentoBox plugin;
-
-    public PanelListenerManager(@NonNull BentoBox plugin) {
-        this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
-    }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
@@ -39,7 +31,7 @@ public class PanelListenerManager implements Listener {
             // Check the name of the panel
             if (inventory.getName().equals(openPanels.get(user.getUniqueId()).getInventory().getName())) {
                 // Close inventory if clicked outside and if setting is true
-                if (plugin.getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
+                if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
                     event.getWhoClicked().closeInventory();
                     return;
                 }
