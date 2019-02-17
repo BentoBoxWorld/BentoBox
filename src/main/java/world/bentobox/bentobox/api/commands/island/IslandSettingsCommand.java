@@ -14,7 +14,7 @@ import world.bentobox.bentobox.util.Util;
 public class IslandSettingsCommand extends CompositeCommand {
 
     public IslandSettingsCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "settings", "flags");
+        super(islandCommand, "settings", "flags", "options");
     }
 
     @Override
