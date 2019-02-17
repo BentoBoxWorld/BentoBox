@@ -247,8 +247,7 @@ public class IslandCache {
      */
     public void setOwner(@NonNull Island island, @Nullable UUID newOwnerUUID) {
         island.setOwner(newOwnerUUID);
-        islandsByUUID.putIfAbsent(Util.getWorld(island.getWorld()), new HashMap<>());
-        islandsByUUID.get(Util.getWorld(island.getWorld())).put(newOwnerUUID, island);
+        islandsByUUID.computeIfAbsent(Util.getWorld(island.getWorld()), k -> new HashMap<>()).put(newOwnerUUID, island);
         islandsByLocation.put(island.getCenter(), island);
         islandsById.put(island.getUniqueId(), island);
     }
@@ -261,5 +260,21 @@ public class IslandCache {
      */
     public Island getIslandById(String uniqueId) {
         return islandsById.get(uniqueId);
+    }
+
+    /**
+     * Removes an island from the cache completely without altering the island object
+     * @param island - island to remove
+     * @since 1.3.0
+     */
+    public void removeIsland(@NonNull Island island) {
+        islandsByLocation.values().removeIf(island::equals);
+        islandsById.values().removeIf(island::equals);
+        if (islandsByUUID.containsKey(Util.getWorld(island.getWorld()))) {
+            islandsByUUID.get(Util.getWorld(island.getWorld())).values().removeIf(island::equals);
+        }
+        if (grids.containsKey(Util.getWorld(island.getWorld()))) {
+            grids.get(Util.getWorld(island.getWorld())).removeFromGrid(island);
+        }
     }
 }

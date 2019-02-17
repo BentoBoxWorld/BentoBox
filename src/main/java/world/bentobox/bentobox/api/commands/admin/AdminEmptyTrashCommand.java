@@ -11,16 +11,21 @@ import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminEmptyTrashCommand extends ConfirmableCommand {
 
+    /**
+     * Clear trash for player, or all unowned islands in trash
+     * @param parent - admin command
+     * @since 1.3.0
+     */
     public AdminEmptyTrashCommand(CompositeCommand parent) {
         super(parent, "emptytrash");
     }
 
     @Override
     public void setup() {
-        setPermission("admin.info.trash");
+        setPermission("admin.trash");
         setOnlyPlayer(false);
-        setParametersHelp("commands.admin.info.emptytrash.parameters");
-        setDescription("commands.admin.info.emptytrash.description");
+        setParametersHelp("commands.admin.emptytrash.parameters");
+        setDescription("commands.admin.emptytrash.description");
     }
 
     @Override
@@ -40,9 +45,9 @@ public class AdminEmptyTrashCommand extends ConfirmableCommand {
         final List<Island> islands = getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID);
         if (islands.isEmpty()) {
             if (args.isEmpty()) {
-                user.sendMessage("commands.admin.info.trash.no-unowned-in-trash");
+                user.sendMessage("commands.admin.trash.no-unowned-in-trash");
             } else {
-                user.sendMessage("general.errors.player-has-no-island");
+                user.sendMessage("commands.admin.trash.no-islands-in-trash");
             }
             return false;
         } else {

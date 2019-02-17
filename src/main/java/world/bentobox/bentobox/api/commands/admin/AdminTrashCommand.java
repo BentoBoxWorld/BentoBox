@@ -10,16 +10,21 @@ import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminTrashCommand extends CompositeCommand {
 
+    /**
+     * A command for viewing islands in the database trash
+     * @param parent - admin command
+     * @since 1.3.0
+     */
     public AdminTrashCommand(CompositeCommand parent) {
         super(parent, "trash");
     }
 
     @Override
     public void setup() {
-        setPermission("admin.info.trash");
+        setPermission("admin.trash");
         setOnlyPlayer(false);
-        setParametersHelp("commands.admin.info.trash.parameters");
-        setDescription("commands.admin.info.trash.description");
+        setParametersHelp("commands.admin.trash.parameters");
+        setDescription("commands.admin.trash.description");
     }
 
     @Override
@@ -39,20 +44,19 @@ public class AdminTrashCommand extends CompositeCommand {
         List<Island> islands = getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID);
         if (islands.isEmpty()) {
             if (args.isEmpty()) {
-                user.sendMessage("commands.admin.info.trash.no-unowned-in-trash");
+                user.sendMessage("commands.admin.trash.no-unowned-in-trash");
             } else {
-                user.sendMessage("general.errors.player-has-no-island");
+                user.sendMessage("commands.admin.trash.no-islands-in-trash");
             }
             return false;
         } else {
-            user.sendMessage("commands.admin.info.trash.title");
-            int count = 1;
-            islands.forEach(i -> {
-                user.sendMessage("commands.admin.info.trash.count", TextVariables.NUMBER, String.valueOf(count));
-                i.showInfo(user);
-            });
-            user.sendMessage("commands.admin.info.trash.use-switch", TextVariables.LABEL, getTopLabel());
-            user.sendMessage("commands.admin.info.trash.use-emptytrash", TextVariables.LABEL, getTopLabel());
+            user.sendMessage("commands.admin.trash.title");
+            for (int i = 0; i < islands.size(); i++) {
+                user.sendMessage("commands.admin.trash.count", TextVariables.NUMBER, String.valueOf(i+1));
+                islands.get(i).showInfo(user);
+            }
+            user.sendMessage("commands.admin.trash.use-switch", TextVariables.LABEL, getTopLabel());
+            user.sendMessage("commands.admin.trash.use-emptytrash", TextVariables.LABEL, getTopLabel());
             return true;
         }
     }

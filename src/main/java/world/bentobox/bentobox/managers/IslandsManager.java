@@ -705,9 +705,9 @@ public class IslandsManager {
      */
     public void load(){
         islandCache.clear();
+        quarantineCache.clear();
         List<Island> toQuarantine = new ArrayList<>();
         // Only load non-quarantined island
-        // TODO: write a purge admin command to delete these records
         handler.loadObjects().stream().forEach(island -> {
             if (island.isDoNotLoad() && island.getWorld() != null && island.getCenter() != null) {
                 // Add to quarantine cache
@@ -716,18 +716,18 @@ public class IslandsManager {
                 if (!islandCache.addIsland(island)) {
                     // Quarantine the offending island
                     toQuarantine.add(island);
+                    // Add to quarantine cache
+                    island.setDoNotLoad(true);
+                    quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
                 } else if (island.isSpawn()) {
-                    // Success, but check island
+                    // Success, set spawn if this is the spawn island.
                     this.setSpawn(island);
                 }
             }
         });
         if (!toQuarantine.isEmpty()) {
-            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; quarantining.");
-            toQuarantine.forEach(i -> {
-                i.setDoNotLoad(true);
-                handler.saveObject(i);
-            });
+            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
+            toQuarantine.forEach(handler::saveObject);
         }
     }
 
@@ -997,6 +997,7 @@ public class IslandsManager {
      * This is NOT recoverable unless you have database backups.
      * @param island island
      * @return <tt>true</tt> if island is quarantined and removed
+     * @since 1.3.0
      */
     public boolean purgeQuarantinedIsland(Island island) {
         if (quarantineCache.containsKey(island.getOwner())) {
@@ -1006,6 +1007,51 @@ public class IslandsManager {
             }
         }
         return false;
+    }
+
+    /**
+     * Switches active island and island in trash
+     * @param world  - game world
+     * @param target - target player's UUID
+     * @param island - island in trash
+     * @return <tt>true</tt> if successful, otherwise <tt>false</tt>
+     * @since 1.3.0
+     */
+    public boolean switchIsland(World world, UUID target, Island island) {
+        // Remove trashed island from trash
+        if (!quarantineCache.containsKey(island.getOwner()) || !quarantineCache.get(island.getOwner()).remove(island)) {
+            plugin.logError("Could not remove island from trash");
+            return false;
+        }
+        // Remove old island from cache if it exists
+        if (this.hasIsland(world, target)) {
+            Island oldIsland = islandCache.get(world, target);
+            islandCache.removeIsland(oldIsland);
+
+            // Set old island to trash
+            oldIsland.setDoNotLoad(true);
+
+            // Put old island into trash
+            quarantineCache.computeIfAbsent(target, k -> new ArrayList<>()).add(oldIsland);
+            // Save old island
+            if (!handler.saveObject(oldIsland)) {
+                plugin.logError("Could not save trashed island in database");
+                return false;
+            }
+        }
+        // Restore island from trash
+        island.setDoNotLoad(false);
+        // Add new island to cache
+        if (!islandCache.addIsland(island)) {
+            plugin.logError("Could not add recovered island to cache");
+            return false;
+        }
+        // Save new island
+        if (!handler.saveObject(island)) {
+            plugin.logError("Could not save recovered island to database");
+            return false;
+        }
+        return true;
     }
 
 }
