@@ -59,12 +59,9 @@ public class PortalTeleportationListener implements Listener {
 
         // STANDARD END
         if (!plugin.getIWM().isEndIslands(fromWorld)) {
-            System.out.println("standard end");
             if (fromWorld.getEnvironment() != Environment.THE_END) {
-                System.out.println("teleporting!");
                 // To Standard end
                 e.setTo(plugin.getIWM().getEndWorld(fromWorld).getSpawnLocation());
-                //e.useTravelAgent(true);
             }
             // From standard end
             else {
