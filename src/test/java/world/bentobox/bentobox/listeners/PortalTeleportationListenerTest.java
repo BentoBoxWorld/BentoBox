@@ -7,29 +7,18 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.TreeType;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
-import org.bukkit.block.Block;
-import org.bukkit.block.BlockState;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityPortalEvent;
-import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
-import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.util.Vector;
 import org.junit.Before;
@@ -57,7 +46,7 @@ import world.bentobox.bentobox.util.Util;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class, Util.class })
-public class NetherPortalsTest {
+public class PortalTeleportationListenerTest {
 
     private BentoBox plugin;
     private IslandsManager im;
@@ -154,108 +143,7 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
-     */
-    @Test
-    public void testOnBlockBreakNoAction() {
-        NetherPortals np = new NetherPortals(plugin);
-        Block block = mock(Block.class);
-        Player player = mock(Player.class);
-        // Ops can do anything
-        when(player.isOp()).thenReturn(true);
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
-        np.onBlockBreak(e);
-        assertFalse(e.isCancelled());
-        // not op, but not in right world
-        when(player.isOp()).thenReturn(false);
-        World w = mock(World.class);
-        when(w.getEnvironment()).thenReturn(Environment.NORMAL);
-        when(player.getWorld()).thenReturn(w);
-        np.onBlockBreak(e);
-        assertFalse(e.isCancelled());
-        // not op, island world
-        when(player.getWorld()).thenReturn(world);
-        np.onBlockBreak(e);
-        assertFalse(e.isCancelled());
-        // Nether, but not standard nether
-        when(player.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
-        np.onBlockBreak(e);
-        assertFalse(e.isCancelled());
-        // End, but not standard end
-        when(player.getWorld()).thenReturn(nether);
-        when(iwm.isEndIslands(Mockito.any())).thenReturn(true);
-        np.onBlockBreak(e);
-        assertFalse(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
-     */
-    @Test
-    public void testOnBlockBreakActionAwayFromSpawn() {
-        NetherPortals np = new NetherPortals(plugin);
-        Block block = mock(Block.class);
-        Location far = mock(Location.class);
-        when(far.toVector()).thenReturn(new Vector(10000, 56, 2000));
-        when(far.getWorld()).thenReturn(nether);
-        when(block.getLocation()).thenReturn(far);
-        Player player = mock(Player.class);
-        // Standard nether
-        when(player.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
-        np.onBlockBreak(e);
-        assertFalse(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onBlockBreak(org.bukkit.event.block.BlockBreakEvent)}.
-     */
-    @Test
-    public void testOnBlockBreakActionAtSpawn() {
-        NetherPortals np = new NetherPortals(plugin);
-        Block block = mock(Block.class);
-        Location near = mock(Location.class);
-        when(near.toVector()).thenReturn(new Vector(0, 56, 0));
-        when(near.getWorld()).thenReturn(nether);
-        when(block.getLocation()).thenReturn(near);
-        Player player = mock(Player.class);
-        // Standard nether
-        when(player.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-
-        BlockBreakEvent e = new BlockBreakEvent(block, player);
-        np.onBlockBreak(e);
-        Mockito.verify(block).getLocation();
-        assertTrue(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onBucketEmpty(org.bukkit.event.player.PlayerBucketEmptyEvent)}.
-     */
-    @Test
-    public void testOnBucketEmpty() {
-        NetherPortals np = new NetherPortals(plugin);
-        Block block = mock(Block.class);
-        Location near = mock(Location.class);
-        when(near.toVector()).thenReturn(new Vector(0, 56, 0));
-        when(near.getWorld()).thenReturn(nether);
-        when(block.getLocation()).thenReturn(near);
-        Player player = mock(Player.class);
-        // Standard nether
-        when(player.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-
-        PlayerBucketEmptyEvent e = new PlayerBucketEmptyEvent(player, block, null, null, null);
-        np.onBucketEmpty(e);
-        Mockito.verify(block).getLocation();
-        assertTrue(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalNotEnd() {
@@ -263,7 +151,7 @@ public class NetherPortalsTest {
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
         when(from.toVector()).thenReturn(new Vector(1,2,3));
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         // Wrong cause
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.CHORUS_FRUIT);
         np.onEndIslandPortal(e);
@@ -271,7 +159,7 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalNoEndWorldGenerated() {
@@ -281,31 +169,31 @@ public class NetherPortalsTest {
         when(from.toVector()).thenReturn(new Vector(1,2,3));
         // No end world
         when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, from, null, null, TeleportCause.END_PORTAL);
         np.onEndIslandPortal(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherIslandPortalNoNetherWorldGenerated() {
         // No nether world
         when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.NETHER_PORTAL);
         np.onNetherPortal(e);
         assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalWrongWorld() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location loc = mock(Location.class);
 
         // Right cause, end exists, wrong world
@@ -318,11 +206,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnEndIslandPortalHome() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from end
         when(from.getWorld()).thenReturn(end);
@@ -344,11 +232,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onEntityPortal(org.bukkit.event.entity.EntityPortalEvent)}.
      */
     @Test
     public void testOnEntityPortal() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Entity ent = mock(Entity.class);
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
@@ -366,185 +254,21 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onExplosion(org.bukkit.event.entity.EntityExplodeEvent)}.
-     */
-    @Test
-    public void testOnExplosionNotInWorld() {
-        NetherPortals np = new NetherPortals(plugin);
-        // Null entity
-        Entity en = null;
-        // Entity, Location, list of Blocks, yield
-        Block block = mock(Block.class);
-        Location blockLoc = mock(Location.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(10000,0,10000));
-        when(block.getLocation()).thenReturn(blockLoc);
-        when(blockLoc.getWorld()).thenReturn(nether);
-        // One block will be blown up by the wither
-        List<Block> affectedBlocks = new ArrayList<>();
-        affectedBlocks.add(block);
-
-        Location from = mock(Location.class);
-        when(from.getWorld()).thenReturn(mock(World.class));
-        // Not in world
-        wrongWorld();
-
-        EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
-
-        assertFalse(np.onExplosion(e));
-    }
-
-
-    @Test
-    public void testOnExplosionInWorldNotNetherOrEnd() {
-        NetherPortals np = new NetherPortals(plugin);
-        // Null entity
-        Entity en = null;
-        // Entity, Location, list of Blocks, yield
-        Block block = mock(Block.class);
-        Location blockLoc = mock(Location.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(10000,0,10000));
-        when(block.getLocation()).thenReturn(blockLoc);
-        when(blockLoc.getWorld()).thenReturn(nether);
-        // One block will be blown up by the wither
-        List<Block> affectedBlocks = new ArrayList<>();
-        affectedBlocks.add(block);
-
-        Location from = mock(Location.class);
-        when(from.getWorld()).thenReturn(mock(World.class));
-        EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
-        assertFalse(np.onExplosion(e));
-    }
-
-    @Test
-    public void testOnExplosionIslands() {
-        NetherPortals np = new NetherPortals(plugin);
-        // Null entity
-        Entity en = null;
-        // Entity, Location, list of Blocks, yield
-        Block block = mock(Block.class);
-        Location blockLoc = mock(Location.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(10000,0,10000));
-        when(block.getLocation()).thenReturn(blockLoc);
-        when(blockLoc.getWorld()).thenReturn(nether);
-        // One block will be blown up by the wither
-        List<Block> affectedBlocks = new ArrayList<>();
-        affectedBlocks.add(block);
-
-        Location from = mock(Location.class);
-
-        // In world, in nether, nether islands
-        when(from.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(true);
-        EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
-        assertFalse(np.onExplosion(e));
-
-        // In world, in end, end islands
-        when(from.getWorld()).thenReturn(end);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-        when(iwm.isEndIslands(world)).thenReturn(true);
-        assertFalse(np.onExplosion(e));
-    }
-
-    @Test
-    public void testOnExplosionNullEntity() {
-        NetherPortals np = new NetherPortals(plugin);
-        // Entity, Location, list of Blocks, yield
-        Block block = mock(Block.class);
-        Location blockLoc = mock(Location.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(10000,0,10000));
-        when(block.getLocation()).thenReturn(blockLoc);
-        when(blockLoc.getWorld()).thenReturn(nether);
-        // One block will be blown up by the wither
-        List<Block> affectedBlocks = new ArrayList<>();
-        affectedBlocks.add(block);
-
-        Location from = mock(Location.class);
-        // In world, in nether, nether islands
-        when(from.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-        EntityExplodeEvent e = new EntityExplodeEvent(null, from, affectedBlocks, 0);
-        assertFalse(np.onExplosion(e));
-    }
-
-    @Test
-    public void testOnExplosionAwayFromSpawn() {
-        NetherPortals np = new NetherPortals(plugin);
-        // Null entity
-        Entity en = mock(Entity.class);
-        // Entity, Location, list of Blocks, yield
-        Block block = mock(Block.class);
-        Location blockLoc = mock(Location.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(10000,0,10000));
-        when(block.getLocation()).thenReturn(blockLoc);
-        when(blockLoc.getWorld()).thenReturn(nether);
-        // One block will be blown up by the wither
-        List<Block> affectedBlocks = new ArrayList<>();
-        affectedBlocks.add(block);
-
-        Location from = mock(Location.class);
-
-        // In world, in nether, standard nether, null entity
-        when(from.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-
-        EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
-        // Real entity, away from spawn
-        assertTrue(np.onExplosion(e));
-        // Block should still exist because it is away from spawn
-        assertFalse(e.blockList().isEmpty());
-    }
-
-    @Test
-    public void testOnExplosion() {
-        NetherPortals np = new NetherPortals(plugin);
-        // Null entity
-        Entity en = null;
-        // Entity, Location, list of Blocks, yield
-        Block block = mock(Block.class);
-        Location blockLoc = mock(Location.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(10000,0,10000));
-        when(block.getLocation()).thenReturn(blockLoc);
-        when(blockLoc.getWorld()).thenReturn(nether);
-        // One block will be blown up by the wither
-        List<Block> affectedBlocks = new ArrayList<>();
-        affectedBlocks.add(block);
-
-        Location from = mock(Location.class);
-        when(from.getWorld()).thenReturn(mock(World.class));
-        // In world, in nether, standard nether, null entity
-        when(from.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-
-
-        // Real entity, next to  spawn
-        en = mock(Entity.class);
-        when(blockLoc.toVector()).thenReturn(new Vector(0,0,0));
-        EntityExplodeEvent e = new EntityExplodeEvent(en, from, affectedBlocks, 0);
-        // Block exists before
-        assertFalse(e.blockList().isEmpty());
-        assertTrue(np.onExplosion(e));
-        // Block removed
-        assertTrue(e.blockList().isEmpty());
-
-    }
-
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalNotPortal() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.COMMAND);
         assertFalse(np.onNetherPortal(e));
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalWrongWorld() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         when(from.getWorld()).thenReturn(mock(World.class));
         wrongWorld();
@@ -553,11 +277,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherIsland() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -576,11 +300,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherIslandWithSpawnDefined() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -608,11 +332,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherIslandWithNoSpawnDefined() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -639,11 +363,11 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromWorldToNetherStandard() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from world to nether
         when(from.getWorld()).thenReturn(world);
@@ -658,12 +382,12 @@ public class NetherPortalsTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      * @throws Exception
      */
     @Test
     public void testOnNetherPortalFromNetherStandard() throws Exception {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(nether);
@@ -679,15 +403,15 @@ public class NetherPortalsTest {
         // Player should be teleported to their island
         assertFalse(np.onNetherPortal(e));
         // Verify
-        assertFalse(e.isCancelled());
+        assertTrue(e.isCancelled());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     * Test method for {@link PortalTeleportationListener#onNetherPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
     public void testOnNetherPortalFromNetherIsland() {
-        NetherPortals np = new NetherPortals(plugin);
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);
         // Teleport from nether to world
         when(from.getWorld()).thenReturn(nether);
@@ -702,27 +426,5 @@ public class NetherPortalsTest {
         // If regular nether, then to = island location
         Mockito.verify(from).toVector();
         Mockito.verify(im, Mockito.never()).getIslandLocation(Mockito.any(), Mockito.any());
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.listeners.NetherPortals#onPlayerBlockPlace(org.bukkit.event.block.BlockPlaceEvent)}.
-     */
-    @Test
-    public void testOnPlayerBlockPlace() {
-        NetherPortals np = new NetherPortals(plugin);
-        Block block = mock(Block.class);
-        Location near = mock(Location.class);
-        when(near.toVector()).thenReturn(new Vector(0, 56, 0));
-        when(near.getWorld()).thenReturn(nether);
-        when(block.getLocation()).thenReturn(near);
-        Player player = mock(Player.class);
-        // Standard nether
-        when(player.getWorld()).thenReturn(nether);
-        when(iwm.isNetherIslands(world)).thenReturn(false);
-        when(iwm.isNetherGenerate(world)).thenReturn(true);
-        BlockPlaceEvent e = new BlockPlaceEvent(block, null, block, null, player, false, null);
-        np.onPlayerBlockPlace(e);
-        Mockito.verify(block).getLocation();
-        assertTrue(e.isCancelled());
     }
 }

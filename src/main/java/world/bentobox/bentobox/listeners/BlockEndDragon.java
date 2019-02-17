@@ -19,7 +19,6 @@ public class BlockEndDragon implements Listener {
 
     public BlockEndDragon(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**

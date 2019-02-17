@@ -24,7 +24,6 @@ public class BannedVisitorCommands implements Listener {
      */
     public BannedVisitorCommands(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**

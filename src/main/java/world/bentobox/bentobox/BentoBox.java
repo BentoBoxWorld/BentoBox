@@ -5,6 +5,7 @@ import java.util.Optional;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
+import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -22,9 +23,10 @@ import world.bentobox.bentobox.listeners.BannedVisitorCommands;
 import world.bentobox.bentobox.listeners.BlockEndDragon;
 import world.bentobox.bentobox.listeners.DeathListener;
 import world.bentobox.bentobox.listeners.JoinLeaveListener;
-import world.bentobox.bentobox.listeners.NetherPortals;
+import world.bentobox.bentobox.listeners.PortalTeleportationListener;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.NetherTreesListener;
+import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
@@ -198,29 +200,26 @@ public class BentoBox extends JavaPlugin {
      * Registers listeners.
      */
     private void registerListeners() {
-        // Player join/leave events
-        new JoinLeaveListener(this);
-
+        PluginManager manager = getServer().getPluginManager();
+        // Player join events
+        manager.registerEvents(new JoinLeaveListener(this), this);
         // Panel listener manager
-        new PanelListenerManager(this);
-
+        manager.registerEvents(new PanelListenerManager(), this);
+        // Standard Nether/End spawns protection
+        manager.registerEvents(new StandardSpawnProtectionListener(this), this);
         // Nether portals
-        new NetherPortals(this);
-
+        manager.registerEvents(new PortalTeleportationListener(this), this);
         // Nether trees conversion
-        new NetherTreesListener(this);
-
+        manager.registerEvents(new NetherTreesListener(this), this);
         // End dragon blocking
-        new BlockEndDragon(this);
-
+        manager.registerEvents(new BlockEndDragon(this), this);
         // Banned visitor commands
-        new BannedVisitorCommands(this);
-
+        manager.registerEvents(new BannedVisitorCommands(this), this);
         // Death counter
-        new DeathListener(this);
-
-        // Island Deletion Manager
+        manager.registerEvents(new DeathListener(this), this);
+        // Island Delete Manager
         islandDeletionManager = new IslandDeletionManager(this);
+        manager.registerEvents(islandDeletionManager, this);
     }
 
     @Override

@@ -74,8 +74,6 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Island island = getIslands().getIsland(getWorld(), playerUUID);
             // Get the team's island
             Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
-            // Clear the player's inventory
-            user.getInventory().clear();
             // Move player to team's island
             User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
             Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);

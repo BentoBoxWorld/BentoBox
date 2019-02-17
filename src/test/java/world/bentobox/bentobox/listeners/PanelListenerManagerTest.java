@@ -89,7 +89,7 @@ public class PanelListenerManagerTest {
         click = ClickType.LEFT;
         inv = InventoryAction.UNKNOWN;
 
-        plm = new PanelListenerManager(plugin);
+        plm = new PanelListenerManager();
 
         // Panel
         panel = mock(Panel.class);

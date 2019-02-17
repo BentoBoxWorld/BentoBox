@@ -32,8 +32,7 @@ public class JoinLeaveListener implements Listener {
      */
     public JoinLeaveListener(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        this.players = plugin.getPlayers();
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        players = plugin.getPlayers();
     }
 
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)

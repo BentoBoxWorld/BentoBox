@@ -18,9 +18,9 @@ import static org.mockito.Mockito.when;
  * @author Poslovitch
  * @since 1.3.0
  */
+@Ignore
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class})
-@Ignore
 public class NetherTreesListenerTest {
 
     /* Plugin */

@@ -23,7 +23,6 @@ public class NetherTreesListener implements Listener {
 
     public NetherTreesListener(@NonNull BentoBox plugin) {
         this.plugin = plugin;
-        plugin.getServer().getPluginManager().registerEvents(this, plugin);
     }
 
     /**
