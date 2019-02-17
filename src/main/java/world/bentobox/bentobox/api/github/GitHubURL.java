@@ -1,12 +1,12 @@
 package world.bentobox.bentobox.api.github;
 
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Somehow wraps {@link URL} and {@link java.net.URLConnection} to avoid boilerplate code when accessing to the GitHub API.

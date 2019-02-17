@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.schems.Clipboard;
-
-import java.util.List;
 
 public class AdminSchemPasteCommand extends CompositeCommand {
 

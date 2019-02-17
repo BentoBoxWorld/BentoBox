@@ -11,9 +11,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.scheduler.BukkitTask;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;

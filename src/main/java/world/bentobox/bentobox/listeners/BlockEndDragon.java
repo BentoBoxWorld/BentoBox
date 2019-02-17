@@ -8,8 +8,8 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.world.ChunkLoadEvent;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.lists.Flags;
 

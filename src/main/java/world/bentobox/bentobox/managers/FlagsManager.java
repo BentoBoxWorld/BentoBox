@@ -8,8 +8,8 @@ import java.util.Optional;
 
 import org.bukkit.Bukkit;
 import org.bukkit.event.Listener;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;

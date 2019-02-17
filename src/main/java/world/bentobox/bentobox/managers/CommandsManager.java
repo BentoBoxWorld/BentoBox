@@ -8,9 +8,9 @@ import java.util.Set;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandMap;
-
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 
 public class CommandsManager {

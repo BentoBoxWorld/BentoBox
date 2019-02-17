@@ -1,12 +1,13 @@
 package world.bentobox.bentobox.database.mariadb;
 
-import org.bukkit.Bukkit;
-import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
-import world.bentobox.bentobox.database.DatabaseConnector;
-
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
+import org.bukkit.Bukkit;
+
+import world.bentobox.bentobox.database.DatabaseConnectionSettingsImpl;
+import world.bentobox.bentobox.database.DatabaseConnector;
 
 /**
  * @author barpec12

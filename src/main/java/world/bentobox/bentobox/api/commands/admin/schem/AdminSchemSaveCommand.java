@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
+import java.io.File;
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.schems.Clipboard;
-
-import java.io.File;
-import java.util.List;
 
 public class AdminSchemSaveCommand extends ConfirmableCommand {
 

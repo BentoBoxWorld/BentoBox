@@ -1,14 +1,14 @@
 package world.bentobox.bentobox.hooks;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.AddonPlaceholderExpansion;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlaceholderExpansion;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides implementations and interfacing needed to register and get placeholders from PlaceholderAPI.

@@ -129,6 +129,7 @@ commands:
       team-member-format: "&b[name] [rank]"
       island-location: "Island location: [xyz]"
       island-coords: "Island coordinates: [xz1] to [xz2]"
+      islands-in-trash: "&dPlayer has islands in trash."
       protection-range: "Protection range: [range]"
       max-protection-range: "Largest historical protection range: [range]"
       protection-coords: "Protection coordinates: [xz1] to [xz2]"
@@ -136,6 +137,23 @@ commands:
       banned-players: "Banned players:"
       banned-format: "&c[name]"
       unowned: "&cUnowned"
+    switchto:
+      parameters: "<player> <number>"
+      description: "switch player's island to the numbered one in trash"
+      out-of-range: "&cNumber must be between 1 and [number]. Use &l[label] trash [player] &r&cto see island numbers"
+      cannot-switch: "&cSwitch failed. See console log for error."   
+    trash:
+      no-unowned-in-trash: "&cNo unowned islands in trash"
+      no-islands-in-trash: "&cPlayer has no islands in trash"
+      parameters: "[player]"
+      description: "show unowned islands or player's islands in trash"
+      title: "&d=========== Islands in Trash ==========="
+      count: "&l&dIsland [number]:"
+      use-switch: "&aUse &l[label] switchto <player> <number>&r&a to switch player to island in trash"
+      use-emptytrash: "&aUse &l[label] emptytrash [player]&r&a to permanently remove trash items"
+    emptytrash:
+      parameters: "[player]"
+      description: "Clear trash for player, or all unowned islands in trash"
     version:
       description: "display BentoBox and addons versions"
     setrange:

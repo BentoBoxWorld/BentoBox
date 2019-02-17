@@ -6,8 +6,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.metadata.FixedMetadataValue;
-
 import org.bukkit.metadata.MetadataValue;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;

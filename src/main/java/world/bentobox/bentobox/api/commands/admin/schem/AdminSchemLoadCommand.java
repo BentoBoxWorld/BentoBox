@@ -1,13 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.schems.Clipboard;
 import world.bentobox.bentobox.util.Util;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
 
 public class AdminSchemLoadCommand extends CompositeCommand {
 

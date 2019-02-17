@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.database.json;
 
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.database.DatabaseConnector;
-
 import java.io.File;
 import java.util.UUID;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.database.DatabaseConnector;
 
 public class JSONDatabaseConnector implements DatabaseConnector {
 

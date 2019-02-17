@@ -3,18 +3,17 @@ package world.bentobox.bentobox.managers;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
-
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.jar.JarFile;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.jar.JarFile;
 
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
-
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;

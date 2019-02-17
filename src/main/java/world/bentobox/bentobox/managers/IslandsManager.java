@@ -2,12 +2,14 @@ package world.bentobox.bentobox.managers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
@@ -70,6 +72,8 @@ public class IslandsManager {
     // Island Cache
     @NonNull
     private IslandCache islandCache;
+    @NonNull
+    private Map<UUID, List<Island>> quarantineCache;
 
     /**
      * Islands Manager
@@ -80,6 +84,7 @@ public class IslandsManager {
         // Set up the database handler to store and retrieve Island classes
         handler = new Database<>(plugin, Island.class);
         islandCache = new IslandCache();
+        quarantineCache = new HashMap<>();
         spawn = new HashMap<>();
         last = new HashMap<>();
     }
@@ -227,13 +232,16 @@ public class IslandsManager {
      * @return Island or null if the island could not be created for some reason
      */
     @Nullable
-    public Island createIsland(@NonNull Location location, @Nullable UUID owner){
+    public Island createIsland(@NonNull Location location, @Nullable UUID owner) {
         Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
+        // Game the gamemode name and prefix the uniqueId
+        String gmName = plugin.getIWM().getAddon(location.getWorld()).map(gm -> gm.getDescription().getName()).orElse("");
+        island.setUniqueId(gmName + island.getUniqueId());
         while (handler.objectExists(island.getUniqueId())) {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
             // it will be bad if this does occur and the server should crash.
             plugin.logWarning("Duplicate island UUID occurred");
-            island.setUniqueId(UUID.randomUUID().toString());
+            island.setUniqueId(gmName + UUID.randomUUID().toString());
         }
         if (islandCache.addIsland(island)) {
             return island;
@@ -697,23 +705,29 @@ public class IslandsManager {
      */
     public void load(){
         islandCache.clear();
+        quarantineCache.clear();
         List<Island> toQuarantine = new ArrayList<>();
         // Only load non-quarantined island
-        // TODO: write a purge admin command to delete these records
-        handler.loadObjects().stream().filter(i -> !i.isDoNotLoad()).forEach(island -> {
-            if (!islandCache.addIsland(island)) {
-                // Quarantine the offending island
-                toQuarantine.add(island);
-            } else if (island.isSpawn()) {
-                this.setSpawn(island);
+        handler.loadObjects().stream().forEach(island -> {
+            if (island.isDoNotLoad() && island.getWorld() != null && island.getCenter() != null) {
+                // Add to quarantine cache
+                quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
+            } else {
+                if (!islandCache.addIsland(island)) {
+                    // Quarantine the offending island
+                    toQuarantine.add(island);
+                    // Add to quarantine cache
+                    island.setDoNotLoad(true);
+                    quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
+                } else if (island.isSpawn()) {
+                    // Success, set spawn if this is the spawn island.
+                    this.setSpawn(island);
+                }
             }
         });
         if (!toQuarantine.isEmpty()) {
-            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; quarantining.");
-            toQuarantine.forEach(i -> {
-                i.setDoNotLoad(true);
-                handler.saveObject(i);
-            });
+            plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
+            toQuarantine.forEach(handler::saveObject);
         }
     }
 
@@ -936,9 +950,108 @@ public class IslandsManager {
      * Try to get an island by its unique id
      * @param uniqueId - unique id string
      * @return optional island
+     * @since 1.3.0
      */
     public Optional<Island> getIslandById(String uniqueId) {
         return Optional.ofNullable(islandCache.getIslandById(uniqueId));
+    }
+
+    /**
+     * Try to get a list of quarantined islands owned by uuid in this world
+     *
+     * @param world - world
+     * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
+     * @return list of islands; may be empty
+     * @since 1.3.0
+     */
+    public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
+        return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
+                .filter(i -> i.getWorld().equals(world)).collect(Collectors.toList());
+    }
+
+    /**
+     * Delete quarantined islands owned by uuid in this world
+     *
+     * @param world - world
+     * @param uuid - target player's UUID, or <tt>null</tt> = unowned islands
+     * @since 1.3.0
+     */
+    public void deleteQuarantinedIslandByUser(World world, @Nullable UUID uuid) {
+        if (quarantineCache.containsKey(uuid)) {
+            quarantineCache.get(uuid).stream().filter(i -> i.getWorld().equals(world))
+            .forEach(i -> handler.deleteObject(i));
+            quarantineCache.get(uuid).removeIf(i -> i.getWorld().equals(world));
+        }
+    }
+
+    /**
+     * @return the quarantineCache
+     * @since 1.3.0
+     */
+    public Map<UUID, List<Island>> getQuarantineCache() {
+        return quarantineCache;
+    }
+
+    /**
+     * Remove a quarantined island and delete it from the database completely.
+     * This is NOT recoverable unless you have database backups.
+     * @param island island
+     * @return <tt>true</tt> if island is quarantined and removed
+     * @since 1.3.0
+     */
+    public boolean purgeQuarantinedIsland(Island island) {
+        if (quarantineCache.containsKey(island.getOwner())) {
+            if (quarantineCache.get(island.getOwner()).remove(island)) {
+                handler.deleteObject(island);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Switches active island and island in trash
+     * @param world  - game world
+     * @param target - target player's UUID
+     * @param island - island in trash
+     * @return <tt>true</tt> if successful, otherwise <tt>false</tt>
+     * @since 1.3.0
+     */
+    public boolean switchIsland(World world, UUID target, Island island) {
+        // Remove trashed island from trash
+        if (!quarantineCache.containsKey(island.getOwner()) || !quarantineCache.get(island.getOwner()).remove(island)) {
+            plugin.logError("Could not remove island from trash");
+            return false;
+        }
+        // Remove old island from cache if it exists
+        if (this.hasIsland(world, target)) {
+            Island oldIsland = islandCache.get(world, target);
+            islandCache.removeIsland(oldIsland);
+
+            // Set old island to trash
+            oldIsland.setDoNotLoad(true);
+
+            // Put old island into trash
+            quarantineCache.computeIfAbsent(target, k -> new ArrayList<>()).add(oldIsland);
+            // Save old island
+            if (!handler.saveObject(oldIsland)) {
+                plugin.logError("Could not save trashed island in database");
+                return false;
+            }
+        }
+        // Restore island from trash
+        island.setDoNotLoad(false);
+        // Add new island to cache
+        if (!islandCache.addIsland(island)) {
+            plugin.logError("Could not add recovered island to cache");
+            return false;
+        }
+        // Save new island
+        if (!handler.saveObject(island)) {
+            plugin.logError("Could not save recovered island to database");
+            return false;
+        }
+        return true;
     }
 
     /**

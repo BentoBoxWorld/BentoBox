@@ -46,7 +46,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
