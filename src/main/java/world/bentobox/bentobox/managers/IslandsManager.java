@@ -940,4 +940,14 @@ public class IslandsManager {
     public Optional<Island> getIslandById(String uniqueId) {
         return Optional.ofNullable(islandCache.getIslandById(uniqueId));
     }
+
+    /**
+     * Resets all flags to gamemode config.yml default
+     * @param world - world
+     * @since 1.3.0
+     */
+    public void resetAllFlags(World world) {
+        islandCache.resetAllFlags(world);
+        this.saveAll();
+    }
 }
