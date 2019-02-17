@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.api.addons.exceptions;
 
-import org.bukkit.Bukkit;
-
 import java.util.logging.Level;
+
+import org.bukkit.Bukkit;
 
 public class InvalidAddonFormatException extends AddonException {
 

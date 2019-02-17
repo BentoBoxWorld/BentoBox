@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import java.util.List;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
-
-import java.util.List;
 
 /**
  * Player command to teleport oneself to the world's spawn.

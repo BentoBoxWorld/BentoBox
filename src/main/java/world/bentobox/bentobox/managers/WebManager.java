@@ -1,13 +1,14 @@
 package world.bentobox.bentobox.managers;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.github.GitHubConnector;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 /**
  * Handles web-related stuff.

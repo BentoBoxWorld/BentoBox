@@ -4,6 +4,8 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -27,8 +29,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.util.Util;
-
-import java.util.Optional;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class })

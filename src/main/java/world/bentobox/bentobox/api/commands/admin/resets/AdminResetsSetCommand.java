@@ -1,12 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.resets;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.apache.commons.lang.math.NumberUtils;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-
-import java.util.List;
-import java.util.UUID;
 
 public class AdminResetsSetCommand extends CompositeCommand {
 

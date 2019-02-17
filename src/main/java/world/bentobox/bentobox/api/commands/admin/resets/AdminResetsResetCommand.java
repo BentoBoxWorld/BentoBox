@@ -1,14 +1,15 @@
 package world.bentobox.bentobox.api.commands.admin.resets;
 
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-
-import java.util.List;
-import java.util.UUID;
 
 public class AdminResetsResetCommand extends ConfirmableCommand {
 

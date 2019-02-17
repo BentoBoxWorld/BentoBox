@@ -1,9 +1,9 @@
 package world.bentobox.bentobox;
 
-import org.bstats.bukkit.Metrics;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.bstats.bukkit.Metrics;
 
 /**
  * @author Poslovitch

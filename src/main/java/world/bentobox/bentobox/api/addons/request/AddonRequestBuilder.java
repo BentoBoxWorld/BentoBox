@@ -1,12 +1,13 @@
 package world.bentobox.bentobox.api.addons.request;
 
-import org.apache.commons.lang.Validate;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
-
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import org.apache.commons.lang.Validate;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 
 public class AddonRequestBuilder
 {

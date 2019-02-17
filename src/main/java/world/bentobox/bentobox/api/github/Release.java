@@ -1,9 +1,9 @@
 package world.bentobox.bentobox.api.github;
 
+import java.util.Date;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import java.util.Date;
 
 /**
  * Represents a release on a Github repository.
