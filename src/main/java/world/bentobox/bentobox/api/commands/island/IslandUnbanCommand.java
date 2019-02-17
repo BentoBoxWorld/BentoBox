@@ -16,7 +16,7 @@ import world.bentobox.bentobox.util.Util;
 public class IslandUnbanCommand extends CompositeCommand {
 
     public IslandUnbanCommand(CompositeCommand islandCommand) {
-        super(islandCommand, "unban");
+        super(islandCommand, "unban", "pardon");
     }
 
     @Override
