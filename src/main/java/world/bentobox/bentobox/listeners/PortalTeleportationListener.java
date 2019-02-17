@@ -47,32 +47,61 @@ public class PortalTeleportationListener implements Listener {
      * @param e - event
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
-    public void onEndIslandPortal(PlayerPortalEvent e) {
-        if (!e.getCause().equals(TeleportCause.END_PORTAL) || !plugin.getIWM().inWorld(e.getFrom())) {
-            return;
+    public boolean onEndIslandPortal(PlayerPortalEvent e) {
+        if (e.getFrom() == null) {
+            return false;
         }
-        World overWorld = Util.getWorld(e.getFrom().getWorld());
+        World fromWorld = e.getFrom().getWorld();
+        if (e.getCause() != TeleportCause.END_PORTAL || !plugin.getIWM().isEndGenerate(fromWorld)) {
+            // Do nothing special
+            return false;
+        }
 
-        // If entering a portal in the end, teleport home if you have one, else do nothing
-        if (e.getFrom().getWorld().getEnvironment().equals(Environment.THE_END)) {
-            if (plugin.getIslands().hasIsland(overWorld, e.getPlayer().getUniqueId())) {
-                e.setCancelled(true);
-                plugin.getIslands().homeTeleport(overWorld, e.getPlayer());
+        // STANDARD END
+        if (!plugin.getIWM().isEndIslands(fromWorld)) {
+            System.out.println("standard end");
+            if (fromWorld.getEnvironment() != Environment.THE_END) {
+                System.out.println("teleporting!");
+                // To Standard end
+                e.setTo(plugin.getIWM().getEndWorld(fromWorld).getSpawnLocation());
+                //e.useTravelAgent(true);
             }
-            return;
+            // From standard end
+            else {
+                e.setCancelled(true);
+                plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
+            }
+            return false;
         }
-        // Going to the end, then go to the same location in the end world
-        if (plugin.getIWM().isEndGenerate(overWorld) && plugin.getIWM().isEndIslands(overWorld)) {
-            World endWorld = plugin.getIWM().getEndWorld(overWorld);
-            // End exists and end islands are being used
-            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
+
+        // FROM END
+        World overWorld = Util.getWorld(fromWorld);
+
+        // If entering an ender portal in the End.
+        if (fromWorld.getEnvironment() == Environment.THE_END) {
+            // If this is from the island nether, then go to the same vector, otherwise try island home location
+            Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
             e.setCancelled(true);
+            // Else other worlds teleport to the nether
             new SafeSpotTeleport.Builder(plugin)
-            .entity(e.getPlayer())
-            .location(to)
-            .portal()
-            .build();
+                    .entity(e.getPlayer())
+                    .location(to)
+                    .portal()
+                    .build();
+            return true;
         }
+        // TO END
+        World endWorld = plugin.getIWM().getNetherWorld(overWorld);
+        // If this is to island End, then go to the same vector, otherwise try spawn
+        Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
+        e.setCancelled(true);
+        // Else other worlds teleport to the nether
+        new SafeSpotTeleport.Builder(plugin)
+                .entity(e.getPlayer())
+                .location(to)
+                .portal()
+                .build();
+        return true;
     }
 
     /**
@@ -91,14 +120,14 @@ public class PortalTeleportationListener implements Listener {
         }
 
         // STANDARD NETHER
-        if (plugin.getIWM().isNetherGenerate(fromWorld) && !plugin.getIWM().isNetherIslands(fromWorld)) {
-            if (fromWorld.getEnvironment() == Environment.NORMAL) {
+        if (!plugin.getIWM().isNetherIslands(fromWorld)) {
+            if (fromWorld.getEnvironment() != Environment.NETHER) {
                 // To Standard Nether
                 e.setTo(plugin.getIWM().getNetherWorld(fromWorld).getSpawnLocation());
                 e.useTravelAgent(true);
             }
             // From standard nether
-            else if (fromWorld.getEnvironment() == Environment.NETHER) {
+            else {
                 e.setCancelled(true);
                 plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
             }
