@@ -22,6 +22,9 @@ import world.bentobox.bentobox.util.Util;
 public class IslandCache {
     @NonNull
     private Map<@NonNull Location, @NonNull Island> islandsByLocation;
+    /**
+     * Map of all islands with island uniqueId as key
+     */
     @NonNull
     private Map<@NonNull String, @NonNull Island> islandsById;
     /**
@@ -258,7 +261,8 @@ public class IslandCache {
      * @return island or null if none found
      * @since 1.3.0
      */
-    public Island getIslandById(String uniqueId) {
+    @Nullable
+    public Island getIslandById(@NonNull String uniqueId) {
         return islandsById.get(uniqueId);
     }
 
@@ -276,5 +280,15 @@ public class IslandCache {
         if (grids.containsKey(Util.getWorld(island.getWorld()))) {
             grids.get(Util.getWorld(island.getWorld())).removeFromGrid(island);
         }
+    }
+  
+    /**
+     * Resets all islands in this game mode to default flag settings
+     * @param world - world
+     * @since 1.3.0
+     */
+    public void resetAllFlags(World world) {
+        World w = Util.getWorld(world);
+        islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlagsDefaults());
     }
 }

@@ -1054,4 +1054,12 @@ public class IslandsManager {
         return true;
     }
 
+     * Resets all flags to gamemode config.yml default
+     * @param world - world
+     * @since 1.3.0
+     */
+    public void resetAllFlags(World world) {
+        islandCache.resetAllFlags(world);
+        this.saveAll();
+    }
 }

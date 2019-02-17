@@ -215,6 +215,8 @@ commands:
       save:
         parameters: "<schem name>"
         description: "save the copied clipboard"      
+    resetflags:
+      description: "Reset all islands to default flag settings in config.yml"
     world:
       description: "Manage world settings"
     delete:
