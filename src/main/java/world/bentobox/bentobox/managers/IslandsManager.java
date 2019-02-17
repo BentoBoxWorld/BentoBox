@@ -1054,6 +1054,7 @@ public class IslandsManager {
         return true;
     }
 
+    /**
      * Resets all flags to gamemode config.yml default
      * @param world - world
      * @since 1.3.0
