@@ -57,8 +57,8 @@
             <url>https://repo.codemc.org/repository/maven-public</url>
         </repository>
         <repository>
-            <id>vault-repo</id>
-            <url>http://nexus.hc.to/content/repositories/pub_releases</url>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
         </repository>
         <repository>
             <id>placeholderapi-repo</id>
@@ -105,11 +105,12 @@
 			<artifactId>mongodb-driver</artifactId>
 			<version>3.8.0</version>
 		</dependency>
-		<!-- Vault -->
+		<!-- Vault: as their maven repo is down, we need to get it from jitpack -->
+        <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
 		<dependency>
-			<groupId>net.milkbowl.vault</groupId>
+			<groupId>com.github.MilkBowl</groupId>
 			<artifactId>VaultAPI</artifactId>
-			<version>1.7</version>
+			<version>68f14ec</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Placeholders -->
