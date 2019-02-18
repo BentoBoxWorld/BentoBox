@@ -10,10 +10,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -394,12 +397,36 @@ public class Island implements DataObject {
     }
 
     /**
-     * Checks if the coords are in island space
-     * @param blockCoord - Pair(x,z) coords of block
+     * Checks if the coordinates are in full island space, not just protected space
+     * @param blockCoordinates - Pair(x,z) coordinates of block
      * @return true or false
      */
-    public boolean inIslandSpace(Pair<Integer, Integer> blockCoord) {
-        return inIslandSpace(blockCoord.x, blockCoord.z);
+    public boolean inIslandSpace(Pair<Integer, Integer> blockCoordinates) {
+        return inIslandSpace(blockCoordinates.x, blockCoordinates.z);
+    }
+
+    /**
+     * Returns a list of players that are physically inside the island's protection range and that are visitors.
+     * @return list of visitors
+     * @since 1.3.0
+     */
+    @NonNull
+    public List<Player> getVisitors() {
+        return Bukkit.getOnlinePlayers().stream()
+                .filter(player -> onIsland(player.getLocation()) && getRank(User.getInstance(player)) == RanksManager.VISITOR_RANK)
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Returns whether this Island has visitors inside its protection range.
+     * Note this is equivalent to {@code !island.getVisitors().isEmpty()}.
+     * @return {@code true} if there are visitors inside this Island's protection range, {@code false} otherwise.
+     *
+     * @since 1.3.0
+     * @see #getVisitors()
+     */
+    public boolean hasVisitors() {
+        return !getVisitors().isEmpty();
     }
 
     /**
