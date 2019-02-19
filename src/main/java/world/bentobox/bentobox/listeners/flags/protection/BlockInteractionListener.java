@@ -213,6 +213,7 @@ public class BlockInteractionListener extends FlagListener {
         case SPRUCE_FENCE_GATE:
             checkIsland(e, player, loc, Flags.GATE);
             break;
+        case FURNACE_MINECART:
         case FURNACE:
             checkIsland(e, player, loc, Flags.FURNACE);
             break;
