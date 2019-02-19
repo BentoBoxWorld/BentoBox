@@ -595,24 +595,35 @@ protection:
       name: "Enter/Exit messages"
       now-entering: "&bNow entering [name]"
       now-leaving: "&bNow leaving [name]"
-    FIRE: 
-      description: "Allow fire to exist or not"
-      name: "Fire"
-      hint: "No fire allowed"
+    FIRE_BURNING:
+      name: "Fire burning"
+      description: |-
+        &aToggle whether fire can burn
+        &ablocks or not.
     FIRE_EXTINGUISH: 
-      description: "Toggle extinguishing"
+      description: "Toggle extinguishing fires"
       name: "Fire extinguish"
       hint: "No fire extinguishing allowed"
-    FIRE_SPREAD: 
-      description: "Toggle spread"
-      name: "Fire spread"
-      hint: "No fire spread allowed"
-    FISH_SCOOPING:
+    FIRE_IGNITE:
+      name: "Fire ignition"
       description: |-
-         &aAllow scooping of
-         &atropical fish
+        &aToggle whether fire can be ignited
+        &aby non-player means or not.
+    FIRE_SPREAD:
+      name: "Fire spread"
+      description: |-
+        &aToggle whether fire can spread
+        &ato nearby blocks or not.
+    FISH_SCOOPING:
       name: "Fish Scooping"
-      hint: "No scooping of tropical fish"
+      description: "Allow scooping of fishes using a bucket"
+      hint: "No scooping of fishes"
+    FLINT_AND_STEEL:
+      name: "Flint and steel"
+      description: |-
+        &aAllow players to ignite fires using
+        &aflint and steel or fire charges.
+      hint: "No flint and steel or fire charges usage"
     FURNACE: 
       description: "Toggle use"
       name: "Furnace"

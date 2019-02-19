@@ -166,9 +166,17 @@ public final class Flags {
      * I'll take you to burn
      * - The Crazy World of Arthur Brown
      */
-    public static final Flag FIRE = new Flag.Builder("FIRE", Material.FLINT_AND_STEEL).listener(new FireListener()).build();
-
-
+    /**
+     * Prevents players from starting fires using flint and steel or fire charges.
+     * @since 1.3.0
+     *
+     * @see FireListener
+     */
+    public static final Flag FLINT_AND_STEEL = new Flag.Builder("FLINT_AND_STEEL", Material.FLINT_AND_STEEL).listener(new FireListener()).build();
+    /**
+     * Prevents players from extinguishing fires.
+     * @see FireListener
+     */
     public static final Flag FIRE_EXTINGUISH = new Flag.Builder("FIRE_EXTINGUISH", Material.POTION).build();
 
     // Inventories
@@ -224,12 +232,29 @@ public final class Flags {
     public static final Flag PVP_END = new Flag.Builder("PVP_END", Material.END_CRYSTAL).type(Type.SETTING)
             .defaultRank(DISABLED).build();
 
+    // Fire
+    /**
+     * Prevents fire from burning blocks.
+     * @since 1.3.0
+     * @see FireListener
+     */
+    public static final Flag FIRE_BURNING = new Flag.Builder("FIRE_BURNING", Material.CHARCOAL).defaultSetting(true).type(Type.SETTING).build();
+    /**
+     * Prevents fire from being ignited by non-players.
+     * @since 1.3.0
+     * @see FireListener
+     */
+    public static final Flag FIRE_IGNITE = new Flag.Builder("FIRE_IGNITE", Material.FLINT_AND_STEEL).defaultSetting(true).type(Type.SETTING).build();
+    /**
+     * Prevents fire from spreading to other blocks.
+     * @see FireListener
+     */
+    public static final Flag FIRE_SPREAD = new Flag.Builder("FIRE_SPREAD", Material.FIREWORK_STAR).defaultSetting(true).type(Type.SETTING).build();
+
     // Others
     public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING)
             .listener(new MobSpawnListener()).build();
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
-
-    public static final Flag FIRE_SPREAD = new Flag.Builder("FIRE_SPREAD", Material.FIREWORK_STAR).defaultSetting(true).type(Type.SETTING).build();
 
     /*
      * World Settings - they apply to every island in the game worlds.
