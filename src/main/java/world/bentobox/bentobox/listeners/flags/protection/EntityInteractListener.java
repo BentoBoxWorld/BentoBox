@@ -6,8 +6,6 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Vehicle;
-import org.bukkit.entity.minecart.CommandMinecart;
-import org.bukkit.entity.minecart.ExplosiveMinecart;
 import org.bukkit.entity.minecart.RideableMinecart;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -40,9 +38,7 @@ public class EntityInteractListener extends FlagListener {
                 checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.RIDING);
             }
             // Minecart riding
-            else if (e.getRightClicked() instanceof RideableMinecart
-				|| e.getRightClicked() instanceof CommandMinecart
-				|| e.getRightClicked() instanceof ExplosiveMinecart) {
+            else if (e.getRightClicked() instanceof RideableMinecart) {
                 checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.MINECART);
             }
             // Boat riding
