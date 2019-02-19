@@ -42,7 +42,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
             return setHome(user, 1);
         } else {
             // Dynamic home sizes with permissions
-            int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
+            int maxHomes = user.isOp() ? Integer.MAX_VALUE : user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (maxHomes > 1) {
                 // Check the number given is a number
                 int number;
