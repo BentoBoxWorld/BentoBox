@@ -78,7 +78,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 target.getPlayer().getEnderChest().clear();
             }
             else {
-                this.getAddon().getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
+                getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
                 this.getAddon().getPlayers().save(targetUUID);
             }
         }
