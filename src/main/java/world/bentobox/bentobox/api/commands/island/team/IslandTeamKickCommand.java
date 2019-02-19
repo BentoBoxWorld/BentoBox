@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
+
 public class IslandTeamKickCommand extends ConfirmableCommand {
 
     public IslandTeamKickCommand(CompositeCommand islandTeamCommand) {
@@ -76,13 +77,20 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             if (target.isOnline()) {
                 target.getPlayer().getEnderChest().clear();
             }
-            // FIXME need some special handling here if the target's offline.
+            else {
+                this.getAddon().getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
+                this.getAddon().getPlayers().save(targetUUID);
+            }
         }
         if (getIWM().isOnLeaveResetInventory(getWorld())) {
             if (target.isOnline()) {
                 target.getPlayer().getInventory().clear();
             }
-            // FIXME need some special handling here if the target's offline.
+            else {
+                this.getAddon().getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
+                this.getAddon().getPlayers().save(targetUUID);
+
+            }
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(target, vault.getBalance(target)));

@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.database.objects;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,13 @@ public class Players implements DataObject {
     private String locale = "";
     @Expose
     private Map<String, Integer> deaths = new HashMap<>();
+
+    /**
+     * This variable stores set of worlds where user inventory is quarantined.
+     */
+    @Expose
+    private Set<String> quarantineWorld = new HashSet<>();
+
 
     /**
      * This is required for database storage
@@ -271,4 +280,33 @@ public class Players implements DataObject {
         this.deaths = deaths;
     }
 
+
+    /**
+     * This method returns the quarantineWorld value.
+     * @return the value of quarantineWorld.
+     */
+    public Set<String> getQuarantineWorld()
+    {
+        return quarantineWorld;
+    }
+
+
+    /**
+     * This method sets the quarantineWorld value.
+     * @param quarantineWorld the quarantineWorld new value.
+     */
+    public void setQuarantineWorld(Set<String> quarantineWorld)
+    {
+        this.quarantineWorld = quarantineWorld;
+    }
+
+
+    /**
+     * This mehtod adds given world in quarantined world set.
+     * @param world World that must be added to quarantined set.
+     */
+    public void addQuarantinedWorld(World world)
+    {
+        this.quarantineWorld.add(Util.getWorld(world).getName());
+    }
 }
