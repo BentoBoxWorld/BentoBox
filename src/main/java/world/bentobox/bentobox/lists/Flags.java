@@ -167,6 +167,8 @@ public final class Flags {
      * - The Crazy World of Arthur Brown
      */
     public static final Flag FIRE = new Flag.Builder("FIRE", Material.FLINT_AND_STEEL).listener(new FireListener()).build();
+
+
     public static final Flag FIRE_EXTINGUISH = new Flag.Builder("FIRE_EXTINGUISH", Material.POTION).build();
 
     // Inventories
@@ -335,7 +337,9 @@ public final class Flags {
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
-        return Arrays.stream(Flags.class.getFields()).map(field -> {
+        return Arrays.stream(Flags.class.getFields())
+                .filter(field -> field.getAnnotation(Deprecated.class) == null) // Ensures it is not deprecated
+                .map(field -> {
             try {
                 return (Flag)field.get(null);
             } catch (IllegalArgumentException | IllegalAccessException e) {
