@@ -40,7 +40,7 @@ public class IslandGoCommand extends CompositeCommand {
         }
         if (!args.isEmpty() && NumberUtils.isDigits(args.get(0))) {
             int homeValue = Integer.parseInt(args.get(0));
-            int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
+            int maxHomes = user.isOp() ? Integer.MAX_VALUE : user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
             if (homeValue > 1 && homeValue <= maxHomes) {
                 getIslands().homeTeleport(getWorld(), user.getPlayer(), homeValue);
                 user.sendMessage("commands.island.go.tip", TextVariables.LABEL, getTopLabel());
