@@ -79,7 +79,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             }
             else {
                 getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
-                this.getAddon().getPlayers().save(targetUUID);
+                getPlayers().save(targetUUID);
             }
         }
         if (getIWM().isOnLeaveResetInventory(getWorld())) {
@@ -87,8 +87,8 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 target.getPlayer().getInventory().clear();
             }
             else {
-                this.getAddon().getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
-                this.getAddon().getPlayers().save(targetUUID);
+                getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
+                getPlayers().save(targetUUID);
 
             }
         }
