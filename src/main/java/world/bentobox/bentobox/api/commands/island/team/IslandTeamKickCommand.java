@@ -34,7 +34,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-team");
             return false;
         }
-        if (user.getUniqueId() != getOwner(getWorld(), user)) {
+        if (!user.getUniqueId().equals(getOwner(getWorld(), user))) {
             user.sendMessage("general.errors.not-owner");
             return false;
         }
