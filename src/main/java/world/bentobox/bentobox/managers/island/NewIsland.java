@@ -149,7 +149,7 @@ public class NewIsland {
         plugin.getPlayers().clearHomeLocations(world, user.getUniqueId());
 
         // Set home location
-        plugin.getPlayers().setHomeLocation(user, next.add(0.5D, 0, 0.5D), 1);
+        plugin.getPlayers().setHomeLocation(user, new Location(next.getWorld(), next.getX() + 0.5D, next.getY(), next.getZ() + 0.5D), 1);
 
         // Save the player so that if the server crashes weird things won't happen
         plugin.getPlayers().save(user.getUniqueId());
