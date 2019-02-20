@@ -64,7 +64,8 @@ public class PortalTeleportationListener implements Listener {
                 e.setTo(plugin.getIWM().getEndWorld(fromWorld).getSpawnLocation());
             }
             // From standard end - check if player has an island to go to
-            else if (plugin.getIslands().hasIsland(Util.getWorld(fromWorld), e.getPlayer().getUniqueId())) {
+            else if (plugin.getIslands().hasIsland(Util.getWorld(fromWorld), e.getPlayer().getUniqueId())
+                    || plugin.getIslands().inTeam(Util.getWorld(fromWorld), e.getPlayer().getUniqueId())) {
                 e.setCancelled(true);
                 plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
             }
