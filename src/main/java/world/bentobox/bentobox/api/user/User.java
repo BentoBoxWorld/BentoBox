@@ -204,7 +204,8 @@ public class User {
     }
 
     /**
-     * Get the maximum value of a numerical permission setting
+     * Get the maximum value of a numerical permission setting.
+     * If a player is given an explicit negative number then this is treated as "unlimited" and returned immediately.
      * @param permissionPrefix the start of the perm, e.g., {@code plugin.mypermission}
      * @param defaultValue the default value; the result may be higher or lower than this
      * @return max value
@@ -224,17 +225,17 @@ public class User {
                 } else {
                     String[] spl = perms.getPermission().split(permissionPrefix + ".");
                     if (spl.length > 1) {
-                        if (!NumberUtils.isDigits(spl[1])) {
+                        if (!NumberUtils.isNumber(spl[1])) {
                             plugin.logError("Player " + player.getName() + " has permission: '" + perms.getPermission() + "' <-- the last part MUST be a number! Ignoring...");
                         } else {
-                            value = Math.max(value, Integer.valueOf(spl[1]));
+                            int v = Integer.valueOf(spl[1]);
+                            if (v < 0) {
+                                return v;
+                            }
+                            value = Math.max(value, v);
                         }
                     }
                 }
-            }
-            // Do some sanity checking
-            if (value < 1) {
-                value = 1;
             }
         }
         return value;
