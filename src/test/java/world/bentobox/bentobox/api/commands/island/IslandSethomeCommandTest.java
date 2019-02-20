@@ -1,6 +1,3 @@
-/**
- * 
- */
 package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertEquals;
@@ -49,6 +46,7 @@ public class IslandSethomeCommandTest {
 
     private CompositeCommand ic;
     private User user;
+    private UUID uuid;
     private IslandsManager im;
     private Island island;
     private IslandWorldManager iwm;
@@ -75,7 +73,7 @@ public class IslandSethomeCommandTest {
         // Sometimes use Mockito.withSettings().verboseLogging()
         user = mock(User.class);
         when(user.isOp()).thenReturn(false);
-        UUID uuid = UUID.randomUUID();
+        uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
         when(user.getPlayer()).thenReturn(player);
         when(user.getName()).thenReturn("tastybento");
@@ -125,8 +123,6 @@ public class IslandSethomeCommandTest {
         PowerMockito.mockStatic(Util.class);
         // 1 home for now
         when(user.getPermissionValue(Mockito.anyString(), Mockito.anyInt())).thenReturn(1);
-        
-      
     }
 
     /**
@@ -153,6 +149,9 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testCanExecuteNoIsland() {
+        // Player doesn't have an island and doesn't have a team.
+        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+
         IslandSethomeCommand isc = new IslandSethomeCommand(ic);
         assertFalse(isc.canExecute(user, "island", Collections.emptyList()));
         Mockito.verify(user).sendMessage("general.errors.no-island");
