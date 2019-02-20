@@ -5,8 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Optional;
@@ -21,7 +20,6 @@ import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -137,83 +135,78 @@ public class IslandTeamKickCommandTest {
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoTeam() {
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-team"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNotTeamOwner() {
         when(im.getOwner(Mockito.any(), Mockito.any())).thenReturn(notUUID);
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-owner"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoTarget() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteUnknownPlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+        Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", "poslovitch");
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteSamePlayer() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(uuid);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.kick.cannot-kick"));
     }
 
-
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteDifferentPlayerNotInTeam() {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteNoConfirmation() {
         when(s.isKickConfirmation()).thenReturn(false);
 
-        String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
         Set<UUID> members = new HashSet<>();
@@ -221,19 +214,18 @@ public class IslandTeamKickCommandTest {
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
     @Test
     public void testExecuteWithConfirmation() {
         when(s.isKickConfirmation()).thenReturn(true);
 
-        String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
 
         Set<UUID> members = new HashSet<>();
@@ -241,46 +233,53 @@ public class IslandTeamKickCommandTest {
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         // Confirmation required
         Mockito.verify(user).sendMessage(Mockito.eq("commands.confirmation.confirm"), Mockito.eq("[seconds]"), Mockito.eq("0"));
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#execute(User, String, java.util.List)}
      */
-    @Ignore //FIXME
     @Test
     public void testExecuteTestResets() {
         when(s.isKickConfirmation()).thenReturn(false);
-
-        String[] name = {"tastybento"};
+        // Create the target user
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+        Player targetPlayer = mock(Player.class);
+        when(targetPlayer.getUniqueId()).thenReturn(notUUID);
+        when(targetPlayer.isOnline()).thenReturn(true);
+        User.getInstance(targetPlayer);
+        // Target's inventory
+        PlayerInventory inv = mock(PlayerInventory.class);
+        when(targetPlayer.getInventory()).thenReturn(inv);
+        Inventory enderChest = mock(Inventory.class);
+        when(targetPlayer.getEnderChest()).thenReturn(enderChest);
 
+        // Set the user in Users
         Set<UUID> members = new HashSet<>();
+        // Add the team members
         members.add(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
 
         // Require resets
         when(iwm.isOnLeaveResetEnderChest(Mockito.any())).thenReturn(true);
-        Inventory enderChest = mock(Inventory.class);
-        when(player.getEnderChest()).thenReturn(enderChest);
         when(iwm.isOnLeaveResetInventory(Mockito.any())).thenReturn(true);
-        PlayerInventory inv = mock(PlayerInventory.class);
-        when(player.getInventory()).thenReturn(inv);
         when(iwm.isOnLeaveResetMoney(Mockito.any())).thenReturn(true);
 
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
-        assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        // Kick the team member
+        assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
+
+        // Verify
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
         Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
-
         Mockito.verify(enderChest).clear();
         Mockito.verify(inv).clear();
     }
 
     /**
-     * Test method for .
+     * Test method for {@link IslandTeamKickCommand#setCooldown(UUID, UUID, int)}
      */
     @Test
     public void testCooldown() {
