@@ -5,8 +5,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
 
@@ -133,7 +133,7 @@ public class AdminUnregisterCommandTest {
     @Test
     public void testExecuteNoTarget() {
         AdminUnregisterCommand itl = new AdminUnregisterCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Collections.emptyList()));
         // Show help
     }
 
