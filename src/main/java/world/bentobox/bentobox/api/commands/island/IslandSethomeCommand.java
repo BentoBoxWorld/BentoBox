@@ -24,7 +24,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // Check island
-        if (!getPlugin().getIslands().hasIsland(getWorld(), user)) {
+        if (!getPlugin().getIslands().hasIsland(getWorld(), user) && !getPlugin().getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.no-island");
             return false;
         }
