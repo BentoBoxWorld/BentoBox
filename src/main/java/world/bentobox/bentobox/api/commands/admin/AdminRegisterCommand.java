@@ -87,6 +87,10 @@ public class AdminRegisterCommand extends ConfirmableCommand {
             this.askConfirmation(user, () -> {
                 // Make island here
                 Island i = getIslands().createIsland(closestIsland, targetUUID);
+                if (i == null) {
+                    user.sendMessage("commands.admin.register.cannot-make-island");
+                    return;
+                }
                 getIslands().setOwner(user, targetUUID, i);
                 getWorld().getBlockAt(i.getCenter()).setType(Material.BEDROCK);
                 user.sendMessage("commands.admin.register.registered-island", "[xyz]", Util.xyz(i.getCenter().toVector()));

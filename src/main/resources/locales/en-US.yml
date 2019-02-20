@@ -111,6 +111,7 @@ commands:
       already-owned: "&cIsland is already owned by another player!"
       no-island-here: "&cThere is no island here. Confirm to make one."
       in-deletion: "&cThis island space is currently being deleted. Try later."
+      cannot-make-island: "&cAn island cannot be placed here, sorry. See console for possible errors."
     unregister:
       parameters: "<owner>"
       description: "unregister owner from island, but keep island blocks"
