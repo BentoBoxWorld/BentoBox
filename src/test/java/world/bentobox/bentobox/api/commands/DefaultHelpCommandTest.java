@@ -4,7 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -14,7 +14,6 @@ import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -113,6 +112,9 @@ public class DefaultHelpCommandTest {
 
     }
 
+    /**
+     * Test for {@link DefaultHelpCommand}
+     */
     @Test
     public void testSetup() {
         CompositeCommand cc = mock(CompositeCommand.class);
@@ -124,6 +126,9 @@ public class DefaultHelpCommandTest {
         Mockito.verify(cc).getPermission();
     }
 
+    /**
+     * Test for {@link DefaultHelpCommand#execute(User, String, List)}
+     */
     @Test
     public void testExecuteUserListOfString() {
         CompositeCommand parent = mock(CompositeCommand.class);
@@ -136,7 +141,7 @@ public class DefaultHelpCommandTest {
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
-        dhc.execute(user, dhc.getLabel(), new ArrayList<>());
+        dhc.execute(user, dhc.getLabel(), Collections.emptyList());
         Mockito.verify(user).sendMessage("commands.help.header", "[label]", "BSkyBlock");
         Mockito.verify(user).getTranslationOrNothing("parameters");
         Mockito.verify(user).getTranslation("description");
@@ -150,6 +155,9 @@ public class DefaultHelpCommandTest {
         Mockito.verify(user).sendMessage("commands.help.end");
     }
 
+    /**
+     * Test for {@link DefaultHelpCommand#execute(User, String, List)}
+     */
     @Test
     public void testExecuteSecondLevelHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
@@ -161,9 +169,7 @@ public class DefaultHelpCommandTest {
         when(user.getTranslationOrNothing("parameters")).thenReturn("");
         when(user.getTranslation("description")).thenReturn("the main island command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
-        List<String> args = new ArrayList<>();
-        args.add("1");
-        dhc.execute(user, dhc.getLabel(), args);
+        dhc.execute(user, dhc.getLabel(), Collections.singletonList("1"));
         // There are no header or footer shown
         Mockito.verify(user).getTranslationOrNothing("parameters");
         Mockito.verify(user).getTranslation("description");
@@ -176,11 +182,14 @@ public class DefaultHelpCommandTest {
                 );
     }
 
-    @Ignore("Failing due to 'wanted but not invoked' errors")
+    /**
+     * Test for {@link DefaultHelpCommand#execute(User, String, List)}
+     */
     @Test
     public void testExecuteDirectHelpHelp() {
         CompositeCommand parent = mock(CompositeCommand.class);
         when(parent.getLabel()).thenReturn("island");
+        when(parent.getUsage()).thenReturn("island");
         when(user.getTranslation("island")).thenReturn("island");
         when(user.getTranslationOrNothing("island")).thenReturn("island");
         when(user.getTranslation("commands.help.parameters")).thenReturn("help-parameters");
@@ -188,13 +197,11 @@ public class DefaultHelpCommandTest {
         when(user.getTranslation("commands.help.description")).thenReturn("the help command");
         when(user.getTranslationOrNothing("commands.help.description")).thenReturn("the help command");
         DefaultHelpCommand dhc = new DefaultHelpCommand(parent);
-        List<String> args = new ArrayList<>();
         // Test /island help team
-        args.add("team");
-        dhc.execute(user, dhc.getLabel(), args);
+        dhc.execute(user, dhc.getLabel(), Collections.singletonList("team"));
         // There are no header or footer shown
-        Mockito.verify(user).getTranslationOrNothing("commands.help.parameters");
-        Mockito.verify(user).getTranslationOrNothing("commands.help.description");
+        Mockito.verify(user).getTranslation("commands.help.parameters");
+        Mockito.verify(user).getTranslation("commands.help.description");
         Mockito.verify(user).sendMessage(
                 "commands.help.syntax",
                 "[usage]",
