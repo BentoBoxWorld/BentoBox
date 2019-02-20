@@ -708,6 +708,7 @@ public class Island implements DataObject {
     public boolean showInfo(User user) {
         BentoBox plugin = BentoBox.getInstance();
         user.sendMessage("commands.admin.info.title");
+        user.sendMessage("commands.admin.info.island-uuid", "[uuid]", uniqueId);
         if (owner == null) {
             user.sendMessage("commands.admin.info.unowned");
         } else {

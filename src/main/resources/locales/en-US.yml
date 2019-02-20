@@ -120,6 +120,7 @@ commands:
       description: "get info on where you are or player's island"
       no-island: "&cYou are not in an island right now..."
       title: "========== Island Info ============"
+      island-uuid: "UUID: [uuid]"
       owner: "Owner: [owner] ([uuid])"
       last-login: "Last login: [date]"
       deaths: "Deaths: [number]"
