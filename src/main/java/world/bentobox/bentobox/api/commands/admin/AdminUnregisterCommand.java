@@ -33,6 +33,11 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+        // If args are not right, show help
+        if (args.size() != 1) {
+            showHelp(this, user);
+            return false;
+        }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
@@ -48,11 +53,6 @@ public class AdminUnregisterCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // If args are not right, show help
-        if (args.size() != 1) {
-            showHelp(this, user);
-            return false;
-        }
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         // Everything's fine, we can set the island as spawn :)
