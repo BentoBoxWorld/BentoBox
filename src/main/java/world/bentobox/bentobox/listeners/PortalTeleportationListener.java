@@ -63,11 +63,12 @@ public class PortalTeleportationListener implements Listener {
                 // To Standard end
                 e.setTo(plugin.getIWM().getEndWorld(fromWorld).getSpawnLocation());
             }
-            // From standard end
-            else {
+            // From standard end - check if player has an island to go to
+            else if (plugin.getIslands().hasIsland(Util.getWorld(fromWorld), e.getPlayer().getUniqueId())) {
                 e.setCancelled(true);
                 plugin.getIslands().homeTeleport(Util.getWorld(fromWorld), e.getPlayer());
             }
+            // No island, so just do nothing
             return false;
         }
 
@@ -81,10 +82,10 @@ public class PortalTeleportationListener implements Listener {
             e.setCancelled(true);
             // Else other worlds teleport to the nether
             new SafeSpotTeleport.Builder(plugin)
-                    .entity(e.getPlayer())
-                    .location(to)
-                    .portal()
-                    .build();
+            .entity(e.getPlayer())
+            .location(to)
+            .portal()
+            .build();
             return true;
         }
         // TO END
@@ -94,10 +95,10 @@ public class PortalTeleportationListener implements Listener {
         e.setCancelled(true);
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
-                .entity(e.getPlayer())
-                .location(to)
-                .portal()
-                .build();
+        .entity(e.getPlayer())
+        .location(to)
+        .portal()
+        .build();
         return true;
     }
 
