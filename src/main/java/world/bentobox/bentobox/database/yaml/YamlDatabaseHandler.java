@@ -5,6 +5,7 @@ import java.beans.PropertyDescriptor;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.lang.reflect.AnnotatedElement;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -31,6 +32,8 @@ import org.bukkit.configuration.MemorySection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.scheduler.BukkitTask;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
@@ -335,7 +338,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Null check
         if (instance == null) {
-            plugin.logError("YAML database request to store a null. ");
+            plugin.logError("YAML database request to store a null.");
             return;
         }
         // DataObject check
@@ -355,18 +358,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         String filename = storeAt == null ? "" : storeAt.filename();
 
         // See if there are any top-level comments
-        // See if there are multiple comments
-        ConfigComment.Line comments = instance.getClass().getAnnotation(ConfigComment.Line.class);
-        if (comments != null) {
-            for (ConfigComment comment : comments.value()) {
-                setComment(comment, config, yamlComments, "");
-            }
-        }
-        // Handle single line comments
-        ConfigComment comment = instance.getClass().getAnnotation(ConfigComment.class);
-        if (comment != null) {
-            setComment(comment, config, yamlComments, "");
-        }
+        handleComments(instance.getClass(), config, yamlComments, "");
 
         // Run through all the fields in the class that is being stored. EVERY field must have a get and set method
         for (Field field : dataObject.getDeclaredFields()) {
@@ -384,9 +376,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
             // If there is a config path annotation then do something
             boolean experimental = false;
+            String since = "1.0";
             if (configEntry != null && !configEntry.path().isEmpty()) {
                 storageLocation = configEntry.path();
                 experimental = configEntry.experimental();
+                since = configEntry.since();
 
                 if (configEntry.hidden()) {
                     // If the annotation tells us to not print the config entry, then we won't.
@@ -399,17 +393,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             if (storageLocation.contains(".")) {
                 parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
             }
-            // See if there are multiple comments
-            comments = field.getAnnotation(ConfigComment.Line.class);
-            if (comments != null) {
-                for (ConfigComment bodyComment : comments.value()) {
-                    setComment(bodyComment, config, yamlComments, parent);
-                }
-            }
-            // Handle single line comments
-            comment = field.getAnnotation(ConfigComment.class);
-            if (comment != null) {
-                setComment(comment, config, yamlComments, parent);
+            handleComments(field, config, yamlComments, parent);
+
+            // If the configEntry has a "since" that differs from the default one, then tell it
+            if (!since.equals("1.0")) {
+                setComment("Added since " + since + ".", config, yamlComments, parent);
             }
 
             // If the configEntry is experimental, then tell it
@@ -490,11 +478,25 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
     }
 
-    private void setComment(ConfigComment comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
-        setComment(comment.value(), config, yamlComments, parent);
+    /**
+     * Handles comments that are set on a Field or a Class using the {@link ConfigComment} annotation.
+     */
+    private void handleComments(@NonNull AnnotatedElement annotatedElement, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
+        // See if there are multiple comments
+        ConfigComment.Line comments = annotatedElement.getAnnotation(ConfigComment.Line.class);
+        if (comments != null) {
+            for (ConfigComment comment : comments.value()) {
+                setComment(comment.value(), config, yamlComments, parent);
+            }
+        }
+        // Handle single line comments
+        ConfigComment comment = annotatedElement.getAnnotation(ConfigComment.class);
+        if (comment != null) {
+            setComment(comment.value(), config, yamlComments, parent);
+        }
     }
 
-    private void setComment(String comment, YamlConfiguration config, Map<String, String> yamlComments, String parent) {
+    private void setComment(@NonNull String comment, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
         String random = "comment-" + UUID.randomUUID().toString();
         // Store placeholder
         config.set(parent + random, " ");
@@ -507,7 +509,8 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @param object - object to serialize
      * @return - serialized object
      */
-    private Object serialize(Object object) {
+    @NonNull
+    private Object serialize(@Nullable Object object) {
         // Null is a value object and is serialized as the string "null"
         if (object == null) {
             return "null";
@@ -533,6 +536,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
+    @Nullable
     private Object deserialize(Object value, Class<?> clazz) {
         // If value is already null, then it can be nothing else
         if (value == null) {
