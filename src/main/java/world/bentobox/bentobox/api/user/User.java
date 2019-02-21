@@ -102,7 +102,13 @@ public class User {
      */
     @Nullable
     public static User getInstance(OfflinePlayer offlinePlayer) {
-
+        if (offlinePlayer == null) {
+            return null;
+        }
+        if (users.containsKey(offlinePlayer.getUniqueId())) {
+            return users.get(offlinePlayer.getUniqueId());
+        }
+        return new User(offlinePlayer);
     }
 
     /**
