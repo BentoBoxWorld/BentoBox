@@ -110,7 +110,7 @@ public class Island implements DataObject {
     private int levelHandicap;
     @Expose
     private Map<Environment, Location> spawnPoint = new EnumMap<>(Environment.class);
-    
+
     /**
      * This flag is used to quarantine islands that cannot be loaded and should be purged at some point
      */
@@ -800,6 +800,7 @@ public class Island implements DataObject {
      * @param islandType - island type
      * @return - location or null if one does not exist
      */
+    @Nullable
     public Location getSpawnPoint(Environment islandType) {
         return spawnPoint.get(islandType);
     }
@@ -830,7 +831,7 @@ public class Island implements DataObject {
 
     /**
      * Sets the history of the island.
-     * @param history the list of {@link LogEntry} to se for this island.
+     * @param history the list of {@link LogEntry} to set for this island.
      */
     public void setHistory(List<LogEntry> history) {
         this.history = history;

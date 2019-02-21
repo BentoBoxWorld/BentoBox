@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 import com.google.common.collect.ImmutableSet;
 
@@ -17,7 +18,7 @@ import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Admin command (only player) to set an island as the world's spawn.
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  * @since 1.1
  */
 public class AdminSetspawnCommand extends ConfirmableCommand {
@@ -40,8 +41,8 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
         if (island.isPresent()) {
             // Check if the island is already a spawn
             if (island.map(Island::isSpawn).orElse(false)) {
+                // Show warning, but allow it because the position may change
                 user.sendMessage("commands.admin.setspawn.already-spawn");
-                return false;
             }
 
             // Everything's fine, we can set the island as spawn :)
@@ -73,6 +74,7 @@ public class AdminSetspawnCommand extends ConfirmableCommand {
             });
         }
         getIslands().setSpawn(i);
+        i.setSpawnPoint(World.Environment.NORMAL, user.getLocation());
         user.sendMessage("general.success");
 
     }

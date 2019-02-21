@@ -629,14 +629,14 @@ public class IslandsManager {
      */
     public void spawnTeleport(@NonNull World world, @NonNull Player player) {
         User user = User.getInstance(player);
-        Optional<Island> spawnIsland = getSpawn(world);
-
-        if (!spawnIsland.isPresent()) {
+        // If there's no spawn island or the spawn location is null for some reason, then error
+        Location spawnTo = getSpawn(world).map(i -> i.getSpawnPoint(World.Environment.NORMAL) == null ? i.getCenter() : i.getSpawnPoint(World.Environment.NORMAL))
+                .orElse(null);
+        if (spawnTo == null) {
             // There is no spawn here.
             user.sendMessage("commands.island.spawn.no-spawn");
         } else {
             // Teleport the player to the spawn
-
             // Stop any gliding
             player.setGliding(false);
             // Check if the player is a passenger in a boat
@@ -652,12 +652,8 @@ public class IslandsManager {
             }
 
             user.sendMessage("commands.island.spawn.teleporting");
-            player.teleport(spawnIsland.get().getSpawnPoint(World.Environment.NORMAL));
-
-            // If the player is in SPECTATOR gamemode, reset it to default
-            if (player.getGameMode().equals(GameMode.SPECTATOR)) {
-                player.setGameMode(plugin.getIWM().getDefaultGameMode(world));
-            }
+            // Safe teleport
+            new SafeSpotTeleport.Builder(plugin).entity(player).location(spawnTo).build();
         }
     }
 
