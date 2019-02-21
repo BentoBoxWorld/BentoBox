@@ -26,12 +26,6 @@ public class Settings implements DataObject {
     // ---------------------------------------------
 
     /*      GENERAL     */
-    @ConfigComment("BentoBox uses bStats.org to get global data about the plugin to help improving it.")
-    @ConfigComment("bStats has nearly no effect on your server's performance and the sent data is completely")
-    @ConfigComment("anonymous so please consider twice if you really want to disable it.")
-    @ConfigEntry(path = "general.metrics")
-    private boolean metrics = true;
-
     @ConfigComment("Default language for new players.")
     @ConfigComment("This is the filename in the locale folder without .yml.")
     @ConfigComment("If this does not exist, the default en-US will be used.")
@@ -167,6 +161,13 @@ public class Settings implements DataObject {
     @ConfigComment("who's been member of the island the longest time.")
     @ConfigEntry(path = "island.automated-ownership-transfer.ignore-ranks", hidden = true)
     private boolean autoOwnershipTransferIgnoreRanks = false;
+
+    /* WEB */
+    @ConfigComment("BentoBox uses bStats.org to get global data about the plugin to help improving it.")
+    @ConfigComment("bStats has nearly no effect on your server's performance and the sent data is completely")
+    @ConfigComment("anonymous so please consider twice if you really want to disable it.")
+    @ConfigEntry(path = "web.metrics")
+    private boolean metrics = true;
 
     //---------------------------------------------------------------------------------------/
     @ConfigComment("These settings should not be edited")
