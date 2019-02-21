@@ -88,7 +88,7 @@ public class JoinLeaveListener implements Listener {
      * This event will clean players inventor
      * @param event SwitchWorld event.
      */
-    @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event)
     {
         // Clear inventory if required
@@ -108,8 +108,8 @@ public class JoinLeaveListener implements Listener {
         // Clear inventory if required
         Players players = this.players.getPlayer(user.getUniqueId());
 
-        if (!players.getQuarantineWorld().isEmpty() &&
-            players.getQuarantineWorld().contains(world.getName()))
+        if (!players.getPendingKicks().isEmpty() &&
+            players.getPendingKicks().contains(world.getName()))
         {
             if (plugin.getIWM().isOnLeaveResetEnderChest(world))
             {
@@ -121,7 +121,7 @@ public class JoinLeaveListener implements Listener {
                 user.getPlayer().getInventory().clear();
             }
 
-            players.getQuarantineWorld().remove(world.getName());
+            players.getPendingKicks().remove(world.getName());
             this.players.save(user.getUniqueId());
         }
     }

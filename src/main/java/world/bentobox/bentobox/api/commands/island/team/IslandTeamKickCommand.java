@@ -78,7 +78,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 target.getPlayer().getEnderChest().clear();
             }
             else {
-                getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
+                getPlayers().getPlayer(targetUUID).addToPendingKick(getWorld());
                 getPlayers().save(targetUUID);
             }
         }
@@ -87,7 +87,7 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 target.getPlayer().getInventory().clear();
             }
             else {
-                getPlayers().getPlayer(targetUUID).addQuarantinedWorld(getWorld());
+                getPlayers().getPlayer(targetUUID).addToPendingKick(getWorld());
                 getPlayers().save(targetUUID);
 
             }

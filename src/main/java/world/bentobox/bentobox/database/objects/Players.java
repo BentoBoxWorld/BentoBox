@@ -37,10 +37,11 @@ public class Players implements DataObject {
     private Map<String, Integer> deaths = new HashMap<>();
 
     /**
-     * This variable stores set of worlds where user inventory is quarantined.
+     * This variable stores set of worlds where user inventory must be cleared.
+     * @since 1.3.0
      */
     @Expose
-    private Set<String> quarantineWorld = new HashSet<>();
+    private Set<String> pendingKicks = new HashSet<>();
 
 
     /**
@@ -282,31 +283,31 @@ public class Players implements DataObject {
 
 
     /**
-     * This method returns the quarantineWorld value.
-     * @return the value of quarantineWorld.
+     * This method returns the pendingKicks value.
+     * @return the value of pendingKicks.
      */
-    public Set<String> getQuarantineWorld()
+    public Set<String> getPendingKicks()
     {
-        return quarantineWorld;
+        return pendingKicks;
     }
 
 
     /**
-     * This method sets the quarantineWorld value.
-     * @param quarantineWorld the quarantineWorld new value.
+     * This method sets the pendingKicks value.
+     * @param pendingKicks the pendingKicks new value.
      */
-    public void setQuarantineWorld(Set<String> quarantineWorld)
+    public void setPendingKicks(Set<String> pendingKicks)
     {
-        this.quarantineWorld = quarantineWorld;
+        this.pendingKicks = pendingKicks;
     }
 
 
     /**
-     * This mehtod adds given world in quarantined world set.
-     * @param world World that must be added to quarantined set.
+     * This method adds given world in pendingKicks world set.
+     * @param world World that must be added to pendingKicks set.
      */
-    public void addQuarantinedWorld(World world)
+    public void addToPendingKick(World world)
     {
-        this.quarantineWorld.add(Util.getWorld(world).getName());
+        this.pendingKicks.add(Util.getWorld(world).getName());
     }
 }
