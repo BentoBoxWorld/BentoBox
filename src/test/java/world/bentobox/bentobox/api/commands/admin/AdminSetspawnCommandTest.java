@@ -174,7 +174,7 @@ public class AdminSetspawnCommandTest {
         Optional<Island> oi = Optional.of(island);
         when(im.getIslandAt(Mockito.any(Location.class))).thenReturn(oi);
         AdminSetspawnCommand c = new AdminSetspawnCommand(ac);
-        assertFalse(c.execute(user, "setspawn", Collections.emptyList()));
+        assertTrue(c.execute(user, "setspawn", Collections.emptyList()));
         Mockito.verify(user).sendMessage("commands.admin.setspawn.already-spawn");
     }
 }
