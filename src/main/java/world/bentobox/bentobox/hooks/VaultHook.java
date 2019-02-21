@@ -49,7 +49,7 @@ public class VaultHook extends Hook {
      * @return the balance of this User.
      */
     public double getBalance(User user) {
-        return (user.isPlayer()) ? economy.getBalance(user.getPlayer()) : 0.0D;
+        return (user.isOfflinePlayer()) ? economy.getBalance(user.getOfflinePlayer()) : 0.0D;
     }
 
     /**
@@ -59,13 +59,13 @@ public class VaultHook extends Hook {
      * @return the EconomyResponse of this withdrawal.
      */
     public EconomyResponse withdraw(User user, double amount) {
-        if (!user.isPlayer()) {
+        if (!user.isOfflinePlayer()) {
             throw new IllegalArgumentException("User must be a Player or an OfflinePlayer");
         }
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
-        return economy.withdrawPlayer(user.getPlayer(), amount);
+        return economy.withdrawPlayer(user.getOfflinePlayer(), amount);
     }
 
     /**
@@ -75,13 +75,13 @@ public class VaultHook extends Hook {
      * @return the EconomyResponse of this deposit.
      */
     public EconomyResponse deposit(User user, double amount) {
-        if (!user.isPlayer()) {
+        if (!user.isOfflinePlayer()) {
             throw new IllegalArgumentException("User must be a Player or an OfflinePlayer");
         }
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
-        return economy.depositPlayer(user.getPlayer(), amount);
+        return economy.depositPlayer(user.getOfflinePlayer(), amount);
     }
 
     /**
@@ -96,6 +96,6 @@ public class VaultHook extends Hook {
         if (amount < 0.0D) {
             throw new IllegalArgumentException(AMOUNT_MUST_BE_POSITIVE);
         }
-        return user.isPlayer() && economy.has(user.getPlayer(), amount);
+        return user.isOfflinePlayer() && economy.has(user.getOfflinePlayer(), amount);
     }
 }
