@@ -375,34 +375,22 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             ConfigEntry configEntry = field.getAnnotation(ConfigEntry.class);
 
             // If there is a config path annotation then do something
-            boolean experimental = false;
-            String since = "1.0";
             if (configEntry != null && !configEntry.path().isEmpty()) {
-                storageLocation = configEntry.path();
-                experimental = configEntry.experimental();
-                since = configEntry.since();
-
                 if (configEntry.hidden()) {
                     // If the annotation tells us to not print the config entry, then we won't.
                     continue;
                 }
-            }
 
-            // Get path for comments
-            String parent = "";
-            if (storageLocation.contains(".")) {
-                parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
-            }
-            handleComments(field, config, yamlComments, parent);
+                // Get the storage location
+                storageLocation = configEntry.path();
 
-            // If the configEntry has a "since" that differs from the default one, then tell it
-            if (!since.equals("1.0")) {
-                setComment("Added since " + since + ".", config, yamlComments, parent);
-            }
-
-            // If the configEntry is experimental, then tell it
-            if (experimental) {
-                setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.", config, yamlComments, parent);
+                // Get path for comments
+                String parent = "";
+                if (storageLocation.contains(".")) {
+                    parent = storageLocation.substring(0, storageLocation.lastIndexOf('.')) + ".";
+                }
+                handleComments(field, config, yamlComments, parent);
+                handleConfigEntryComments(configEntry, config, yamlComments, parent);
             }
 
             // Adapter
@@ -480,6 +468,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
 
     /**
      * Handles comments that are set on a Field or a Class using the {@link ConfigComment} annotation.
+     * @since 1.3.0
      */
     private void handleComments(@NonNull AnnotatedElement annotatedElement, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
         // See if there are multiple comments
@@ -493,6 +482,27 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         ConfigComment comment = annotatedElement.getAnnotation(ConfigComment.class);
         if (comment != null) {
             setComment(comment.value(), config, yamlComments, parent);
+        }
+    }
+
+    /**
+     * Handles comments that should be added according to the values set in the {@link ConfigEntry} annotation of a Field.
+     * @since 1.3.0
+     */
+    private void handleConfigEntryComments(@NonNull ConfigEntry configEntry, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
+        // Tell when the configEntry has been added (if it's not "1.0")
+        if (!configEntry.since().equals("1.0")) {
+            setComment("Added since " + configEntry.since() + ".", config, yamlComments, parent);
+        }
+
+        // Tell if the configEntry is experimental
+        if (configEntry.experimental()) {
+            setComment("/!\\ This feature is experimental and might not work as expected or might not work at all.", config, yamlComments, parent);
+        }
+
+        // Tell if the configEntry needs a reset.
+        if (configEntry.needsReset()) {
+            setComment("/!\\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.", config, yamlComments, parent);
         }
     }
 
