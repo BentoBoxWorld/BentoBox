@@ -713,6 +713,8 @@ public class IslandsManager {
                 // Add to quarantine cache
                 quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
             } else {
+                // Fix island center if it is off
+                fixIslandCenter(island);
                 if (!islandCache.addIsland(island)) {
                     // Quarantine the offending island
                     toQuarantine.add(island);
@@ -729,6 +731,27 @@ public class IslandsManager {
             plugin.logError(toQuarantine.size() + " islands could not be loaded successfully; moving to trash bin.");
             toQuarantine.forEach(handler::saveObject);
         }
+    }
+
+    /**
+     * Island coordinates should always be a multiple of the island distance x 2. If they are not, this method
+     * realigns the grid coordinates.
+     * @param island - island
+     */
+    public void fixIslandCenter(Island island) {
+        World world = island.getWorld();
+        if (world == null || island.getCenter() == null || !plugin.getIWM().inWorld(world)) {
+            return;
+        }
+        int distance = island.getRange() * 2;
+        long x = island.getCenter().getBlockX() - plugin.getIWM().getIslandXOffset(world);
+        long z = island.getCenter().getBlockZ() - plugin.getIWM().getIslandZOffset(world);
+        if (x % distance != 0 || z % distance != 0) {
+            // Island is off grid
+            x = Math.round((double) x / distance) * distance + plugin.getIWM().getIslandXOffset(world);
+            z = Math.round((double) z / distance) * distance + plugin.getIWM().getIslandZOffset(world);
+        }
+        island.setCenter(new Location(world, x, island.getCenter().getBlockY(), z));
     }
 
     /**
