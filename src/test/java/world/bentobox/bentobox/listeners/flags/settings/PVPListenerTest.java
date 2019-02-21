@@ -795,7 +795,7 @@ public class PVPListenerTest {
         LingeringPotionSplashEvent e = new LingeringPotionSplashEvent(tp, cloud);
         new PVPListener().onLingeringPotionSplash(e);
         // Verify
-        Mockito.verify(player, Mockito.times(4)).getUniqueId();
+        Mockito.verify(player, Mockito.times(3)).getUniqueId();
         Mockito.verify(cloud).getEntityId();
         Mockito.verify(tp, Mockito.times(2)).getShooter();
         PowerMockito.verifyStatic(Bukkit.class);
