@@ -18,9 +18,9 @@ import world.bentobox.bentobox.managers.RanksManager;
  */
 @StoreAt(filename="config.yml") // Explicitly call out what name this should have.
 @ConfigComment("BentoBox Configuration [version]")
-@ConfigComment("This config file is dynamic and saved when the server is shutdown.")
-@ConfigComment("You cannot edit it while the server is running because changes will")
-@ConfigComment("be lost! Use in-game settings GUI or edit when server is offline.")
+@ConfigComment("This config file is dynamic and is updated right after BentoBox loaded its settings from it.")
+@ConfigComment("You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.")
+@ConfigComment("However, it is a better practice to edit this file while the server is offline.")
 public class Settings implements DataObject {
 
     // ---------------------------------------------
@@ -43,7 +43,7 @@ public class Settings implements DataObject {
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
     @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
-    @ConfigEntry(path = "general.database.type")
+    @ConfigEntry(path = "general.database.type", needsReset = true)
     private DatabaseType databaseType = DatabaseType.YAML;
 
     @ConfigEntry(path = "general.database.host")
