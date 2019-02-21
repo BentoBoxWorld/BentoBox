@@ -257,7 +257,7 @@ public class IslandCache {
 
     /**
      * Get the island by unique id
-     * @param uniqueId
+     * @param uniqueId unique id of the Island.
      * @return island or null if none found
      * @since 1.3.0
      */
@@ -289,6 +289,6 @@ public class IslandCache {
      */
     public void resetAllFlags(World world) {
         World w = Util.getWorld(world);
-        islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(i -> i.setFlagsDefaults());
+        islandsById.values().stream().filter(i -> i.getWorld().equals(w)).forEach(Island::setFlagsDefaults);
     }
 }

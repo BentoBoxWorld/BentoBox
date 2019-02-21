@@ -228,7 +228,7 @@ public class User {
                         if (!NumberUtils.isNumber(spl[1])) {
                             plugin.logError("Player " + player.getName() + " has permission: '" + perms.getPermission() + "' <-- the last part MUST be a number! Ignoring...");
                         } else {
-                            int v = Integer.valueOf(spl[1]);
+                            int v = Integer.parseInt(spl[1]);
                             if (v < 0) {
                                 return v;
                             }

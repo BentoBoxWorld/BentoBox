@@ -737,6 +737,7 @@ public class IslandsManager {
      * Island coordinates should always be a multiple of the island distance x 2. If they are not, this method
      * realigns the grid coordinates.
      * @param island - island
+     * @since 1.3.0
      */
     public void fixIslandCenter(Island island) {
         World world = island.getWorld();
@@ -744,8 +745,8 @@ public class IslandsManager {
             return;
         }
         int distance = island.getRange() * 2;
-        long x = island.getCenter().getBlockX() - plugin.getIWM().getIslandXOffset(world);
-        long z = island.getCenter().getBlockZ() - plugin.getIWM().getIslandZOffset(world);
+        long x = ((long) island.getCenter().getBlockX()) - plugin.getIWM().getIslandXOffset(world);
+        long z = ((long) island.getCenter().getBlockZ()) - plugin.getIWM().getIslandZOffset(world);
         if (x % distance != 0 || z % distance != 0) {
             // Island is off grid
             x = Math.round((double) x / distance) * distance + plugin.getIWM().getIslandXOffset(world);
@@ -975,6 +976,7 @@ public class IslandsManager {
      * @return optional island
      * @since 1.3.0
      */
+    @NonNull
     public Optional<Island> getIslandById(String uniqueId) {
         return Optional.ofNullable(islandCache.getIslandById(uniqueId));
     }
@@ -987,6 +989,7 @@ public class IslandsManager {
      * @return list of islands; may be empty
      * @since 1.3.0
      */
+    @NonNull
     public List<Island> getQuarantinedIslandByUser(@NonNull World world, @Nullable UUID uuid) {
         return quarantineCache.getOrDefault(uuid, Collections.emptyList()).stream()
                 .filter(i -> i.getWorld().equals(world)).collect(Collectors.toList());
@@ -1011,6 +1014,7 @@ public class IslandsManager {
      * @return the quarantineCache
      * @since 1.3.0
      */
+    @NonNull
     public Map<UUID, List<Island>> getQuarantineCache() {
         return quarantineCache;
     }
@@ -1019,15 +1023,13 @@ public class IslandsManager {
      * Remove a quarantined island and delete it from the database completely.
      * This is NOT recoverable unless you have database backups.
      * @param island island
-     * @return <tt>true</tt> if island is quarantined and removed
+     * @return {@code true} if island is quarantined and removed
      * @since 1.3.0
      */
     public boolean purgeQuarantinedIsland(Island island) {
-        if (quarantineCache.containsKey(island.getOwner())) {
-            if (quarantineCache.get(island.getOwner()).remove(island)) {
-                handler.deleteObject(island);
-                return true;
-            }
+        if (quarantineCache.containsKey(island.getOwner()) && quarantineCache.get(island.getOwner()).remove(island)) {
+            handler.deleteObject(island);
+            return true;
         }
         return false;
     }
