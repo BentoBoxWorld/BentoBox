@@ -169,6 +169,13 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "web.metrics")
     private boolean metrics = true;
 
+    @ConfigComment("Toggle whether BentoBox can connect to GitHub to get data about updates and addons.")
+    @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
+    @ConfigComment("features that rely on the data downloaded from the GitHub API.")
+    @ConfigComment("It does not send any data.")
+    @ConfigEntry(path = "web.github.download-data", since = "1.3.0")
+    private boolean githubDownloadData = true;
+
     //---------------------------------------------------------------------------------------/
     @ConfigComment("These settings should not be edited")
     private String uniqueId = "config";
@@ -444,5 +451,13 @@ public class Settings implements DataObject {
 
     public void setResetCooldownOnCreate(boolean resetCooldownOnCreate) {
         this.resetCooldownOnCreate = resetCooldownOnCreate;
+    }
+
+    public boolean isGithubDownloadData() {
+        return githubDownloadData;
+    }
+
+    public void setGithubDownloadData(boolean githubDownloadData) {
+        this.githubDownloadData = githubDownloadData;
     }
 }
