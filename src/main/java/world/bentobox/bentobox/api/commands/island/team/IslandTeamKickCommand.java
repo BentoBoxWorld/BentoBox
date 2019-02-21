@@ -89,7 +89,6 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
             else {
                 getPlayers().getPlayer(targetUUID).addToPendingKick(getWorld());
                 getPlayers().save(targetUUID);
-
             }
         }
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
