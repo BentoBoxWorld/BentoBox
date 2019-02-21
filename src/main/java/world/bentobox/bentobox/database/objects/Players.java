@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.database.objects;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -33,6 +35,14 @@ public class Players implements DataObject {
     private String locale = "";
     @Expose
     private Map<String, Integer> deaths = new HashMap<>();
+
+    /**
+     * This variable stores set of worlds where user inventory must be cleared.
+     * @since 1.3.0
+     */
+    @Expose
+    private Set<String> pendingKicks = new HashSet<>();
+
 
     /**
      * This is required for database storage
@@ -271,4 +281,33 @@ public class Players implements DataObject {
         this.deaths = deaths;
     }
 
+
+    /**
+     * This method returns the pendingKicks value.
+     * @return the value of pendingKicks.
+     */
+    public Set<String> getPendingKicks()
+    {
+        return pendingKicks;
+    }
+
+
+    /**
+     * This method sets the pendingKicks value.
+     * @param pendingKicks the pendingKicks new value.
+     */
+    public void setPendingKicks(Set<String> pendingKicks)
+    {
+        this.pendingKicks = pendingKicks;
+    }
+
+
+    /**
+     * This method adds given world in pendingKicks world set.
+     * @param world World that must be added to pendingKicks set.
+     */
+    public void addToPendingKick(World world)
+    {
+        this.pendingKicks.add(Util.getWorld(world).getName());
+    }
 }

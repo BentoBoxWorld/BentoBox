@@ -6,9 +6,11 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.eclipse.jdt.annotation.NonNull;
@@ -17,6 +19,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
@@ -73,8 +76,56 @@ public class JoinLeaveListener implements Listener {
             if (plugin.getIWM().inWorld(user.getLocation()) && Flags.REMOVE_MOBS.isSetForWorld(user.getWorld())) {
                 plugin.getIslands().clearArea(user.getLocation());
             }
+
+            // Clear inventory if required
+            this.clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()),
+                User.getInstance(event.getPlayer()));
         }
     }
+
+
+    /**
+     * This event will clean players inventor
+     * @param event SwitchWorld event.
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event)
+    {
+        // Clear inventory if required
+        this.clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()),
+            User.getInstance(event.getPlayer()));
+    }
+
+
+    /**
+     * This method clears player inventory and ender chest if given world is quarantined
+     * in user data file and it is required by plugin settings.
+     * @param world World where cleaning must occur.
+     * @param user Targeted user.
+     */
+    private void clearPlayersInventory(World world, User user)
+    {
+        // Clear inventory if required
+        Players players = this.players.getPlayer(user.getUniqueId());
+
+        if (!players.getPendingKicks().isEmpty() &&
+            players.getPendingKicks().contains(world.getName()))
+        {
+            if (plugin.getIWM().isOnLeaveResetEnderChest(world))
+            {
+                user.getPlayer().getEnderChest().clear();
+            }
+
+            if (plugin.getIWM().isOnLeaveResetInventory(world))
+            {
+                user.getPlayer().getInventory().clear();
+            }
+
+            players.getPendingKicks().remove(world.getName());
+            this.players.save(user.getUniqueId());
+        }
+    }
+
 
     private void runAutomatedOwnershipTransfer(User user) {
         plugin.getIWM().getOverWorlds().stream()
