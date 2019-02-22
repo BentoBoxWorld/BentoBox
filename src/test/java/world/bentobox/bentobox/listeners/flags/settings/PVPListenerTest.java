@@ -780,7 +780,6 @@ public class PVPListenerTest {
         e = new PotionSplashEvent(tp, map);
         new PVPListener().onSplashPotionSplash(e);
         assertFalse(e.isCancelled());
-
     }
 
     /**
