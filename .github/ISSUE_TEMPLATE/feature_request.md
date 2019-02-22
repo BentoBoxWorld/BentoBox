@@ -1,6 +1,9 @@
 ---
 name: Feature request
 about: Suggest an idea to improve BentoBox
+title: ''
+labels: 'Type: Enhancement, Status: Pending, Priority: Low'
+assignees: ''
 
 ---
 
@@ -15,7 +18,7 @@ about: Suggest an idea to improve BentoBox
 
 #### Describe alternatives you've considered.
 <!-- A clear and concise description of any alternative solutions or features you've considered. -->
-<!-- Please type below this line -->
+<!-- Please type below this line. -->
 
 ### Additional context
 <!-- Add any other context or screenshots about the feature request here. -->

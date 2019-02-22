@@ -1,33 +1,62 @@
 ---
 name: Bug report
-about: Create a report to help us improve
+about: Report a bug or a problem you're encountering with BentoBox.
+title: ''
+labels: 'Priority: Medium, Status: Pending, Type: Bug'
+assignees: ''
 
 ---
 
-**Description**
-A clear and concise description of what the bug is.
+### Description
+#### Describe the bug
+<!-- A clear and concise description of the problem you're encountering. -->
+<!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
+<!-- Please type below this line. -->
 
-**Steps to reproduce the behavior:**
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+#### Steps to reproduce the behavior
+<!-- Step-by-step instructions for us to reproduce the bug on our side. -->
+<!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
+<!-- Please type below this line. -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+#### Screenshots and videos
+<!-- Videos and screenshots are helpful as they can provide better ingormation about your problem. -->
+<!-- Please type below this line. -->
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+#### Expected behavior
+<!-- Clear and concise description of what you actually expected to happen when you encountered this bug. -->
+<!-- Please type below this line. -->
 
-**Server Information:**
+### Environment
 
-[Please complete the following information:]
- - Database being used (YAML, JSON, MySQL, MongoDB, MariaDB): []
- - OS: [e.g. iOS]
- - Java Version: [e.g. Java 8]
- - BentoBox version: [e.g. 1.7.2.21]
- - Addons installed? [Do '/bentobox version' and copy/paste from the console]
- - Other plugins? [Do '/plugins' and copy/paste from the console]
+#### Server
+<!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
+<!-- Please replace the underscores with your answer. Do not remove the '*' characters. -->
+ - OS: **________**
+ - Java version: **________**
+ - Server software: **________** <!-- Available options: SPIGOT, PAPER, TACO -->
+ - Minecraft server version: **________** <!-- E.g.: 1.13.1, 1.13.2, 1.14... -->
 
-**Additional context**
-Add any other context about the problem here.
+#### Plugins
+<!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
+<!-- Please paste the `/plugins` output inside the code block below (remove the underscores). Do not provide an image. -->
+```
+_______
+```
+
+#### BentoBox setup
+
+##### BentoBox and Addons
+<!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
+<!-- Please paste the output of `/bentobox version` in the code block below (replace the underscores). Do not provide an image. -->
+```
+_______
+```
+
+##### Configuration
+<!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
+<!-- Please replace the underscores with your answer. Do not remove the '*' characters. -->
+ - Database: **________** <!-- Available options: YAML, JSON, MYSQL, MARIADB, MONGODB -->
+
+### Additional context
+<!-- Any additional information you'd like to provide us. -->
+<!-- Please type below this line. -->
