@@ -33,8 +33,6 @@ assignees: ''
 <!-- Please replace the underscores with your answer. Do not remove the '*' characters. -->
  - OS: **________**
  - Java version: **________**
- - Server software: **________** <!-- Available options: SPIGOT, PAPER, TACO -->
- - Minecraft server version: **________** <!-- E.g.: 1.13.1, 1.13.2, 1.14... -->
 
 #### Plugins
 <!-- /!\ Leaving this section blank will result in your ticket being closed without further explanation. -->
