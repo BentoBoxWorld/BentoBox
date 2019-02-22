@@ -1,10 +1,12 @@
 package world.bentobox.bentobox.api.user;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.math.NumberUtils;
 import org.bukkit.Bukkit;
@@ -245,11 +247,8 @@ public class User {
         if (sender != null) {
             return sender.isOp();
         }
-        if (playerUUID != null) {
-            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(playerUUID);
-            if (offlinePlayer != null) {
-                return offlinePlayer.isOp();
-            }
+        if (playerUUID != null && offlinePlayer != null) {
+            return offlinePlayer.isOp();
         }
         return false;
     }
@@ -262,33 +261,40 @@ public class User {
      * @return max value
      */
     public int getPermissionValue(String permissionPrefix, int defaultValue) {
+        int value = defaultValue;
+
         // If there is a dot at the end of the permissionPrefix, remove it
         if (permissionPrefix.endsWith(".")) {
             permissionPrefix = permissionPrefix.substring(0, permissionPrefix.length()-1);
         }
 
-        int value = defaultValue;
-        for (PermissionAttachmentInfo perms : player.getEffectivePermissions()) {
-            if (perms.getPermission().startsWith(permissionPrefix + ".")) {
-                // Get the max value should there be more than one
-                if (perms.getPermission().contains(permissionPrefix + ".*")) {
-                    return value;
-                } else {
-                    String[] spl = perms.getPermission().split(permissionPrefix + ".");
-                    if (spl.length > 1) {
-                        if (!NumberUtils.isNumber(spl[1])) {
-                            plugin.logError("Player " + player.getName() + " has permission: '" + perms.getPermission() + "' <-- the last part MUST be a number! Ignoring...");
-                        } else {
-                            int v = Integer.parseInt(spl[1]);
-                            if (v < 0) {
-                                return v;
-                            }
-                            value = Math.max(value, v);
+        final String permPrefix = permissionPrefix + ".";
+
+        List<String> permissions = player.getEffectivePermissions().stream()
+                .map(PermissionAttachmentInfo::getPermission)
+                .filter(permission -> permission.startsWith(permPrefix))
+                .collect(Collectors.toList());
+
+        for (String permission : permissions) {
+            if (permission.contains(permPrefix + "*")) {
+                // 'Star' permission
+                return value;
+            } else {
+                String[] spl = permission.split(permPrefix);
+                if (spl.length > 1) {
+                    if (!NumberUtils.isNumber(spl[1])) {
+                        plugin.logError("Player " + player.getName() + " has permission: '" + permission + "' <-- the last part MUST be a number! Ignoring...");
+                    } else {
+                        int v = Integer.parseInt(spl[1]);
+                        if (v < 0) {
+                            return v;
                         }
+                        value = Math.max(value, v);
                     }
                 }
             }
         }
+
         return value;
     }
 

@@ -78,8 +78,7 @@ public class JoinLeaveListener implements Listener {
             }
 
             // Clear inventory if required
-            this.clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()),
-                User.getInstance(event.getPlayer()));
+            clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), User.getInstance(event.getPlayer()));
         }
     }
 
@@ -89,11 +88,9 @@ public class JoinLeaveListener implements Listener {
      * @param event SwitchWorld event.
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event)
-    {
+    public void onPlayerSwitchWorld(final PlayerChangedWorldEvent event) {
         // Clear inventory if required
-        this.clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()),
-            User.getInstance(event.getPlayer()));
+        clearPlayersInventory(Util.getWorld(event.getPlayer().getWorld()), User.getInstance(event.getPlayer()));
     }
 
 
@@ -103,26 +100,21 @@ public class JoinLeaveListener implements Listener {
      * @param world World where cleaning must occur.
      * @param user Targeted user.
      */
-    private void clearPlayersInventory(World world, User user)
-    {
+    private void clearPlayersInventory(World world, @NonNull User user) {
         // Clear inventory if required
-        Players players = this.players.getPlayer(user.getUniqueId());
+        Players playerData = players.getPlayer(user.getUniqueId());
 
-        if (!players.getPendingKicks().isEmpty() &&
-            players.getPendingKicks().contains(world.getName()))
-        {
-            if (plugin.getIWM().isOnLeaveResetEnderChest(world))
-            {
+        if (!playerData.getPendingKicks().isEmpty() && playerData.getPendingKicks().contains(world.getName())) {
+            if (plugin.getIWM().isOnLeaveResetEnderChest(world)) {
                 user.getPlayer().getEnderChest().clear();
             }
 
-            if (plugin.getIWM().isOnLeaveResetInventory(world))
-            {
+            if (plugin.getIWM().isOnLeaveResetInventory(world)) {
                 user.getPlayer().getInventory().clear();
             }
 
-            players.getPendingKicks().remove(world.getName());
-            this.players.save(user.getUniqueId());
+            playerData.getPendingKicks().remove(world.getName());
+            players.save(user.getUniqueId());
         }
     }
 
