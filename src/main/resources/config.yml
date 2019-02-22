@@ -1,12 +1,8 @@
-# BentoBox Configuration 1.2.1
-# This config file is dynamic and saved when the server is shutdown.
-# You cannot edit it while the server is running because changes will
-# be lost! Use in-game settings GUI or edit when server is offline.
+# BentoBox Configuration 1.3.0
+# This config file is dynamic and is updated right after BentoBox loaded its settings from it.
+# You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
+# However, it is a better practice to edit this file while the server is offline.
 general:
-  # BentoBox uses bStats.org to get global data about the plugin to help improving it.
-  # bStats has nearly no effect on your server's performance and the sent data is completely
-  # anonymous so please consider twice if you really want to disable it.
-  metrics: true
   # Default language for new players.
   # This is the filename in the locale folder without .yml.
   # If this does not exist, the default en-US will be used.
@@ -20,6 +16,7 @@ general:
     # MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
+    # /!\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.
     type: YAML
     host: localhost
     # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.
@@ -46,6 +43,7 @@ logs:
   # It can be spammy if there are a lot of superflat chunks to regenerate.
   # However, as superflat chunks regeneration can be performance-intensive, it is recommended to keep
   # this setting set to true, as it will help you know if there are regenerations taking place.
+  # Added since 1.2.0.
   clean-super-flat-chunks: true
 island:
   cooldown:
@@ -64,6 +62,7 @@ island:
       reset: 300
     options:
       # Whether the reset cooldown should be applied when the player creates an island for the first time or not.
+      # Added since 1.2.0.
       set-reset-cooldown-on-create: true
   confirmation:
     # Time in seconds that players have to confirm sensitive commands, e.g. island reset.
@@ -80,5 +79,9 @@ island:
   # Number of blocks to paste per tick when pasting a schem
   # Smaller values will help reduce noticeable lag but will make pasting take longer
   paste-speed: 1000
-# These settings should not be edited
+web:
+  # BentoBox uses bStats.org to get global data about the plugin to help improving it.
+  # bStats has nearly no effect on your server's performance and the sent data is completely
+  # anonymous so please consider twice if you really want to disable it.
+  metrics: true
 uniqueId: config
