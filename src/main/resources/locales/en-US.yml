@@ -250,7 +250,7 @@ commands:
       settings-reloaded: "&2Settings reloaded."
     version:
       plugin-version: "&2BentoBox version: &3[version]"
-      description: "display info"
+      description: "display BentoBox and addons versions"
       loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version]" 
