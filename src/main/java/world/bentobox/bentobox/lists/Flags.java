@@ -103,6 +103,13 @@ public final class Flags {
     public static final Flag REDSTONE = new Flag.Builder("REDSTONE", Material.REDSTONE).build();
     public static final Flag SPAWN_EGGS = new Flag.Builder("SPAWN_EGGS", Material.COW_SPAWN_EGG).build();
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).build();
+    /**
+     * Prevents players from interacting with the Dragon Egg.
+     * @since 1.4.0
+     * @see BlockInteractionListener
+     * @see BreakBlocksListener
+     */
+    public static final Flag DRAGON_EGG = new Flag.Builder("DRAGON_EGG", Material.DRAGON_EGG).build();
 
     // Entity interactions
     public static final Flag ARMOR_STAND = new Flag.Builder("ARMOR_STAND", Material.ARMOR_STAND).listener(new EntityInteractListener()).build();

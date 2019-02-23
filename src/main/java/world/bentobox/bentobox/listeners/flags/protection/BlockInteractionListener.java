@@ -250,7 +250,7 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.REDSTONE);
             break;
         case DRAGON_EGG:
-            checkIsland(e, player, loc, Flags.BREAK_BLOCKS);
+            checkIsland(e, player, loc, Flags.DRAGON_EGG);
             break;
         case END_PORTAL_FRAME:
             checkIsland(e, player, loc, Flags.PLACE_BLOCKS);

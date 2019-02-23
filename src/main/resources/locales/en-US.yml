@@ -560,6 +560,14 @@ protection:
       description: "Toggle door usage"
       name: "Use doors"
       hint: "No door use"
+    DRAGON_EGG:
+      name: "Dragon Egg"
+      description: |-
+        &aPrevents interaction with Dragon Eggs.
+
+        &cThis does not protect it from being
+        &cplaced or broken.
+      hint: "No Dragon Egg interaction"
     EGGS: 
       description: "Toggle egg throwing"
       name: "Egg throwing"
