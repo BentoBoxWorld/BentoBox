@@ -41,7 +41,7 @@ public class AdminTeamKickCommand extends CompositeCommand {
             return false;
         }
         if (!getIslands().inTeam(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.not-in-team");
+            user.sendMessage("commands.admin.team.kick.not-in-team");
             return false;
         }
 

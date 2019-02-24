@@ -157,7 +157,7 @@ public class AdminTeamKickCommandTest {
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
         assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.team.kick.not-in-team"));
     }
 
     /**
