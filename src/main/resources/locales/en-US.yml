@@ -693,6 +693,9 @@ protection:
       description: "Toggle usage"
       name: "Jukebox use"
       hint: "No jukebox use allowed"
+    LEAF_DECAY:
+      name: "Leaf decay"
+      description: "Allow leaves to naturally decay"
     LEASH: 
       description: "Toggle use"
       name: "Leash use"

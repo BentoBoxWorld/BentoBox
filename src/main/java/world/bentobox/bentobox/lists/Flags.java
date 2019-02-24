@@ -32,6 +32,7 @@ import world.bentobox.bentobox.listeners.flags.protection.ShearingListener;
 import world.bentobox.bentobox.listeners.flags.protection.TNTListener;
 import world.bentobox.bentobox.listeners.flags.protection.TeleportationListener;
 import world.bentobox.bentobox.listeners.flags.protection.ThrowingListener;
+import world.bentobox.bentobox.listeners.flags.settings.DecayListener;
 import world.bentobox.bentobox.listeners.flags.settings.MobSpawnListener;
 import world.bentobox.bentobox.listeners.flags.settings.PVPListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ChestDamageListener;
@@ -262,6 +263,13 @@ public final class Flags {
     public static final Flag ANIMAL_SPAWN = new Flag.Builder("ANIMAL_SPAWN", Material.APPLE).defaultSetting(true).type(Type.SETTING)
             .listener(new MobSpawnListener()).build();
     public static final Flag MONSTER_SPAWN = new Flag.Builder("MONSTER_SPAWN", Material.SPAWNER).defaultSetting(true).type(Type.SETTING).build();
+
+    /**
+     * If {@code false}, prevents leaves from disappearing.
+     * @since 1.4.0
+     * @see DecayListener
+     */
+    public static final Flag LEAF_DECAY = new Flag.Builder("LEAF_DECAY", Material.OAK_LEAVES).type(Type.SETTING).listener(new DecayListener()).defaultSetting(true).build();
 
     /*
      * World Settings - they apply to every island in the game worlds.
