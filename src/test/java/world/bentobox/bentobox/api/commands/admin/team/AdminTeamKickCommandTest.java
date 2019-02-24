@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.commands.admin.team;
 
 import static org.junit.Assert.assertFalse;
@@ -129,37 +126,37 @@ public class AdminTeamKickCommandTest {
 
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteNoTarget() {
+    public void testCanExecuteNoTarget() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
-        assertFalse(itl.execute(user, itl.getLabel(), new ArrayList<>()));
+        assertFalse(itl.canExecute(user, itl.getLabel(), new ArrayList<>()));
         // Show help
     }
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecuteUnknownPlayer() {
+    public void testCanExecuteUnknownPlayer() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(null);
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage("general.errors.unknown-player", "[name]", name[0]);
     }
 
     /**
-     * Test method for {@link AdminTeamKickCommand#execute(User, String, List)}.
+     * Test method for {@link AdminTeamKickCommand#canExecute(User, String, List)}.
      */
     @Test
-    public void testExecutePlayerNotInTeam() {
+    public void testCanExecutePlayerNotInTeam() {
         AdminTeamKickCommand itl = new AdminTeamKickCommand(ac);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
         when(im.getMembers(Mockito.any(), Mockito.any())).thenReturn(new HashSet<>());
-        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+        assertFalse(itl.canExecute(user, itl.getLabel(), Arrays.asList(name)));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.not-in-team"));
     }
 

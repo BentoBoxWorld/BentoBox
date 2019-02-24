@@ -27,27 +27,31 @@ public class AdminTeamKickCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         // If args are not right, show help
         if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }
+
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        if (!getIslands().hasIsland(getWorld(), targetUUID)) {
-            user.sendMessage("general.errors.no-island");
-            return false;
-        }
         if (!getIslands().inTeam(getWorld(), targetUUID)) {
             user.sendMessage("general.errors.not-in-team");
             return false;
         }
-        if (getIslands().getOwner(getWorld(), targetUUID).equals(targetUUID)) {
+
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        if (targetUUID.equals(getIslands().getOwner(getWorld(), targetUUID))) {
             user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
             getIslands().getIsland(getWorld(), targetUUID).showMembers(user);
             return false;
@@ -65,8 +69,5 @@ public class AdminTeamKickCommand extends CompositeCommand {
                 .build();
         Bukkit.getServer().getPluginManager().callEvent(event);
         return true;
-
     }
-
-
 }
