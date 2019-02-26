@@ -34,12 +34,15 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
         user.sendMessage("commands.bentobox.version.server",
                 TextVariables.NAME, serverSoftware != null ? serverSoftware.toString() : user.getTranslation("general.invalid"),
-                TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid"));
+                        TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid"));
         user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION, getPlugin().getDescription().getVersion());
         user.sendMessage("commands.bentobox.version.loaded-game-worlds");
-        getIWM().getOverWorldNames().forEach((k,v) -> user.sendMessage("commands.bentobox.version.game-worlds", TextVariables.NAME, k, "[addon]", v));
+
+        getIWM().getOverWorldNames().entrySet().stream().sorted()
+        .forEach(e -> user.sendMessage("commands.bentobox.version.game-worlds", TextVariables.NAME, e.getKey(), "[addon]", e.getValue()));
+
         user.sendMessage("commands.bentobox.version.loaded-addons");
-        getPlugin().getAddonsManager().getAddons()
+        getPlugin().getAddonsManager().getAddons().stream().sorted((o1, o2)->o1.getDescription().getName().toLowerCase().compareTo(o2.getDescription().getName().toLowerCase()))
         .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
                 TextVariables.VERSION, a.getDescription().getVersion()));
 
