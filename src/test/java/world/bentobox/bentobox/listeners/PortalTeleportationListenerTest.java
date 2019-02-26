@@ -211,6 +211,31 @@ public class PortalTeleportationListenerTest {
      * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
+    public void testOnEndIslandPortalNullLocation() {
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
+        Location loc = null;
+        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
+        assertFalse(np.onEndIslandPortal(e));
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     */
+    @Test
+    public void testOnEndIslandPortalNullWorld() {
+        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
+        Location loc = mock(Location.class);
+        when(loc.getWorld()).thenReturn(null);
+        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
+        assertFalse(np.onEndIslandPortal(e));
+        assertFalse(e.isCancelled());
+    }
+
+    /**
+     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
+     */
+    @Test
     public void testOnEndIslandPortalHome() {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location from = mock(Location.class);

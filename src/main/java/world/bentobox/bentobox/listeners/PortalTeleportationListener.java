@@ -52,7 +52,7 @@ public class PortalTeleportationListener implements Listener {
             return false;
         }
         World fromWorld = e.getFrom().getWorld();
-        if (e.getCause() != TeleportCause.END_PORTAL || !plugin.getIWM().isEndGenerate(fromWorld)) {
+        if (fromWorld == null || e.getCause() != TeleportCause.END_PORTAL || !plugin.getIWM().isEndGenerate(fromWorld)) {
             // Do nothing special
             return false;
         }
