@@ -81,7 +81,7 @@ public class PortalTeleportationListener implements Listener {
             // If this is from the island nether, then go to the same vector, otherwise try island home location
             Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NORMAL)).orElse(e.getFrom().toVector().toLocation(overWorld));
             e.setCancelled(true);
-            // Else other worlds teleport to the nether
+            // Else other worlds teleport to the overworld
             new SafeSpotTeleport.Builder(plugin)
             .entity(e.getPlayer())
             .location(to)
@@ -90,7 +90,7 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO END
-        World endWorld = plugin.getIWM().getNetherWorld(overWorld);
+        World endWorld = plugin.getIWM().getEndWorld(overWorld);
         // If this is to island End, then go to the same vector, otherwise try spawn
         Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
         e.setCancelled(true);
