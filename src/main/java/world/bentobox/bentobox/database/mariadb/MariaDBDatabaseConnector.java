@@ -26,7 +26,8 @@ public class MariaDBDatabaseConnector implements DatabaseConnector {
     MariaDBDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
-        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";
+        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true"
+        + "&sessionVariables=character_set_client=utf8mb4,character_set_results=utf8mb4,character_set_connection=utf8mb4,collation_connection=utf8mb4_unicode_ci";
     }
 
     @Override
