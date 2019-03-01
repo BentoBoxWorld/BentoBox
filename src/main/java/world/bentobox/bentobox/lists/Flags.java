@@ -163,6 +163,12 @@ public final class Flags {
      * @see ThrowingListener
      */
     public static final Flag POTION_THROWING = new Flag.Builder("POTION_THROWING", Material.SPLASH_POTION).listener(new ThrowingListener()).build();
+    /**
+     * Prevents players from throwing experience bottles.
+     * @since 1.3.1
+     * @see ThrowingListener
+     */
+    public static final Flag EXPERIENCE_BOTTLE_THROWING = new Flag.Builder("EXPERIENCE_BOTTLE_THROWING", Material.EXPERIENCE_BOTTLE).build();
 
     /*
      * Fire

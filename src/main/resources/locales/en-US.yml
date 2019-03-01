@@ -606,6 +606,10 @@ protection:
       name: "Enter/Exit messages"
       now-entering: "&bNow entering [name]"
       now-leaving: "&bNow leaving [name]"
+    EXPERIENCE_BOTTLE_THROWING:
+      name: "Experience bottle throwing"
+      description: "Toggle throwing experience bottles."
+      hint: "Not allowed to throw experience bottles"
     FIRE_BURNING:
       name: "Fire burning"
       description: |-
@@ -781,8 +785,7 @@ protection:
       name: "Potion throwing"
       description: |-
         &aToggle throwing potions.
-        &aThis include splash and lingering
-        &apotions and experience bottles.
+        &aThis include splash and lingering potions.
       hint: "Not allowed to throw potions"
     NETHER_PORTAL:
       description: "Toggle use"

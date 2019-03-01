@@ -11,7 +11,7 @@ import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
 /**
- * Handles {@link world.bentobox.bentobox.lists.Flags#POTION_THROWING}.
+ * Handles {@link Flags#POTION_THROWING} and {@link Flags#EXPERIENCE_BOTTLE_THROWING}.
  * @author Poslovitch
  * @since 1.1
  */
@@ -23,9 +23,12 @@ public class ThrowingListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerThrowPotion(ProjectileLaunchEvent e) {
-        if (e.getEntity().getShooter() instanceof Player
-                && (e.getEntity() instanceof ThrownPotion || e.getEntity() instanceof ThrownExpBottle)) {
-            checkIsland(e, (Player)e.getEntity().getShooter(), e.getEntity().getLocation(), Flags.POTION_THROWING);
+        if (e.getEntity().getShooter() instanceof Player && (e.getEntity() instanceof ThrownPotion)) {
+            if (e.getEntity() instanceof ThrownPotion) {
+                checkIsland(e, (Player) e.getEntity().getShooter(), e.getEntity().getLocation(), Flags.POTION_THROWING);
+            } else if (e.getEntity() instanceof ThrownExpBottle) {
+                checkIsland(e, (Player) e.getEntity().getShooter(), e.getEntity().getLocation(), Flags.EXPERIENCE_BOTTLE_THROWING);
+            }
         }
     }
 }
