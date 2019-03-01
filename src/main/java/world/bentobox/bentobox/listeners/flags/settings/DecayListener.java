@@ -12,7 +12,7 @@ import java.util.Optional;
 /**
  * Handles {@link world.bentobox.bentobox.lists.Flags#LEAF_DECAY}.
  * @author Poslovitch
- * @since 1.4.0
+ * @since 1.3.1
  */
 public class DecayListener extends FlagListener {
 

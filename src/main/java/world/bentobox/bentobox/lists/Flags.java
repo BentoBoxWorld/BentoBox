@@ -106,7 +106,7 @@ public final class Flags {
     public static final Flag ITEM_FRAME = new Flag.Builder("ITEM_FRAME", Material.ITEM_FRAME).build();
     /**
      * Prevents players from interacting with the Dragon Egg.
-     * @since 1.4.0
+     * @since 1.3.1
      * @see BlockInteractionListener
      * @see BreakBlocksListener
      */
@@ -272,7 +272,7 @@ public final class Flags {
 
     /**
      * If {@code false}, prevents leaves from disappearing.
-     * @since 1.4.0
+     * @since 1.3.1
      * @see DecayListener
      */
     public static final Flag LEAF_DECAY = new Flag.Builder("LEAF_DECAY", Material.OAK_LEAVES).type(Type.SETTING).listener(new DecayListener()).defaultSetting(true).build();
