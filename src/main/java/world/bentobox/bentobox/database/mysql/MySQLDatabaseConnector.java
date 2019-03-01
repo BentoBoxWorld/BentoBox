@@ -22,7 +22,7 @@ public class MySQLDatabaseConnector implements DatabaseConnector {
     MySQLDatabaseConnector(DatabaseConnectionSettingsImpl dbSettings) {
         this.dbSettings = dbSettings;
         connectionUrl = "jdbc:mysql://" + dbSettings.getHost() + ":" + dbSettings.getPort() + "/" + dbSettings.getDatabaseName()
-        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true";
+        + "?autoReconnect=true&useSSL=false&allowMultiQueries=true&useUnicode=true&characterEncoding=UTF-8";
     }
 
     @Override
