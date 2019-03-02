@@ -22,33 +22,47 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class IslandRespawnListener extends FlagListener {
     
-    Map<UUID, World> respawn = new HashMap<>();
+    private final Map<UUID, UUID> respawn = new HashMap<>();
 
     /**
      * Tag players who die in island space and have an island
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerDeath(PlayerDeathEvent e) {
-        if (getIWM().inWorld(e.getEntity().getLocation()) && Flags.ISLAND_RESPAWN.isSetForWorld(e.getEntity().getWorld()) 
-                && getIslands().hasIsland(e.getEntity().getWorld(), e.getEntity().getUniqueId())) {
-            respawn.put(e.getEntity().getUniqueId(), e.getEntity().getWorld());
+        if (!getIWM().inWorld(e.getEntity().getLocation())) {
+            return; // not in the island world
         }
+        if (!Flags.ISLAND_RESPAWN.isSetForWorld(e.getEntity().getWorld())) {
+            return; // world doesn't have the island respawn flag
+        }
+        if (!getIslands().hasIsland(e.getEntity().getWorld(), e.getEntity().getUniqueId())) {
+            return; // doesn't have an island in this world
+        }
+        
+        respawn.put(e.getEntity().getUniqueId(), e.getEntity().getWorld().getUID());
     }
     
     /**
      * Place players back on their island if respawn on island is true and active
      * @param e - event
      */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onPlayerRespawn(PlayerRespawnEvent e) {
-        if (Flags.ISLAND_RESPAWN.isSetForWorld(e.getPlayer().getWorld()) && respawn.containsKey(e.getPlayer().getUniqueId())) {
-            World world = respawn.get(e.getPlayer().getUniqueId()); 
-            respawn.remove(e.getPlayer().getUniqueId());
-            Location respawnLocation = getIslands().getSafeHomeLocation(world, User.getInstance(e.getPlayer().getUniqueId()), 1);
-            if (respawnLocation != null) {
-                e.setRespawnLocation(respawnLocation);
-            }
+        final UUID worldUUID = respawn.remove(e.getPlayer().getUniqueId());
+        if (worldUUID == null) {
+            return; // no respawn world set
+        }
+        
+        final World world = e.getPlayer().getServer().getWorld(worldUUID);
+        if (world == null) {
+            return; // world no longer available
+        }
+        
+        final Location respawnLocation = getIslands().getSafeHomeLocation(world, User.getInstance(e.getPlayer().getUniqueId()), 1);
+        if (respawnLocation != null) {
+            e.setRespawnLocation(respawnLocation);
         }
     }
+    
 }
