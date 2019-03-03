@@ -7,11 +7,16 @@ import java.util.Map;
 import org.bukkit.entity.Player;
 
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
 
+/**
+ * @author Poslovitch
+ */
 abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
-    private Map<String, PlaceholderReplacer> placeholders;
+    @NonNull
+    private Map<@NonNull String, @NonNull PlaceholderReplacer> placeholders;
 
     BasicPlaceholderExpansion() {
         this.placeholders = new HashMap<>();
@@ -22,8 +27,17 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
         return getName().toLowerCase(Locale.ENGLISH);
     }
 
-    public void registerPlaceholder(String placeholder, PlaceholderReplacer replacer) {
+    public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         placeholders.putIfAbsent(placeholder, replacer);
+    }
+
+    /**
+     * Unregisters a placeholder from the expansion.
+     * @param placeholder the placeholder to unregister.
+     * @since 1.4.0
+     */
+    public void unregisterPlaceholder(@NonNull String placeholder) {
+        placeholders.remove(placeholder);
     }
 
     @Override

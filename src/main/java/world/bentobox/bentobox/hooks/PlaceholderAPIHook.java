@@ -3,6 +3,8 @@ package world.bentobox.bentobox.hooks;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.hooks.Hook;
@@ -41,16 +43,33 @@ public class PlaceholderAPIHook extends Hook {
         return "could not register BentoBox's expansion";
     }
 
+    /**
+     * @deprecated As of 1.4.0, renamed to {@link #registerPlaceholder(String, PlaceholderReplacer)}.
+     */
+    @Deprecated
     public void registerBentoBoxPlaceholder(String placeholder, PlaceholderReplacer replacer) {
+        registerPlaceholder(placeholder, replacer);
+    }
+
+    /**
+     * Registers this placeholder into BentoBox's PlaceholderAPI expansion.
+     * @param placeholder the placeholder to register, not null
+     * @param replacer its replacement, not null
+     * @since 1.4.0
+     */
+    public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         bentoboxExpansion.registerPlaceholder(placeholder, replacer);
     }
 
-    public void registerAddonPlaceholder(Addon addon, String placeholder, PlaceholderReplacer replacer) {
-        // If addon is null, then register the placeholder in BentoBox's expansion.
-        if (addon == null) {
-            registerBentoBoxPlaceholder(placeholder, replacer);
-        }
-
+    /**
+     * Registers this placeholder into this addon's PlaceholderAPI expansion.
+     * It will register the expansion if it previously did not exist.
+     * @param addon the addon, not null
+     * @param placeholder the placeholder to register, not null
+     * @param replacer its replacement, not null
+     * @since 1.4.0
+     */
+    public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         // Check if the addon expansion does not exist
         if (!addonsExpansions.containsKey(addon)) {
             AddonPlaceholderExpansion addonPlaceholderExpansion = new AddonPlaceholderExpansion(addon);
@@ -59,5 +78,34 @@ public class PlaceholderAPIHook extends Hook {
         }
 
         addonsExpansions.get(addon).registerPlaceholder(placeholder, replacer);
+    }
+
+    /**
+     * Unregisters this placeholder from the BentoBox PlaceholderAPI expansion.
+     * @param placeholder the placeholder to unregister, not null
+     * @since 1.4.0
+     */
+    public void unregisterPlaceholder(@NonNull String placeholder) {
+        bentoboxExpansion.unregisterPlaceholder(placeholder);
+    }
+
+    /**
+     * Unregister this placeholder from this addon's PlaceholderAPI expansion.
+     * @param addon the addon, not null
+     * @param placeholder the placeholder to unregister, not null
+     * @since 1.4.0
+     */
+    public void unregisterPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
+        if (addonsExpansions.containsKey(addon)) {
+            addonsExpansions.get(addon).unregisterPlaceholder(placeholder);
+        }
+    }
+
+    /**
+     * @deprecated As of 1.4.0, renamed to {@link #registerPlaceholder(Addon, String, PlaceholderReplacer)}.
+     */
+    @Deprecated
+    public void registerAddonPlaceholder(Addon addon, String placeholder, PlaceholderReplacer replacer) {
+        registerPlaceholder(addon, placeholder, replacer);
     }
 }
