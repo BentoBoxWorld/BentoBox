@@ -74,7 +74,7 @@ public class IslandBanCommand extends CompositeCommand {
         }
         User target = User.getInstance(targetUUID);
         // Cannot ban ops
-        if (target.isOp() || target.hasPermission("admin.noban")) {
+        if (target.hasPermission("admin.noban")) {
             user.sendMessage("commands.island.ban.cannot-ban");
             return false;
         }
