@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.mockito.Matchers.any;
@@ -35,6 +32,7 @@ import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -59,19 +57,19 @@ public class EnterExitListenerTest {
     private Location inside;
     private EnterExitListener listener;
     private LocalesManager lm;
+    private World world;
 
     /**
      * @throws java.lang.Exception
      */
     @Before
     public void setUp() throws Exception {
-
         // Set up plugin
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // World
-        World world = mock(World.class);
+        world = mock(World.class);
 
         // Server
         Server server = mock(Server.class);
@@ -174,6 +172,8 @@ public class EnterExitListenerTest {
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
 
+        // Flags
+        Flags.ENTER_EXIT_MESSAGES.setSetting(world, true);
     }
 
     /**
@@ -256,4 +256,18 @@ public class EnterExitListenerTest {
         Mockito.verify(island, Mockito.times(2)).getName();
     }
 
+    /**
+     * Asserts that no notifications are sent if {@link world.bentobox.bentobox.lists.Flags#ENTER_EXIT_MESSAGES Flags#ENTER_EXIT_MESSAGES} flag is set to false.
+     * @since 1.4.0
+     */
+    @Test
+    public void testNoNotificationIfDisabled() {
+        // No notifications should be sent
+        Flags.ENTER_EXIT_MESSAGES.setSetting(world, false);
+
+        PlayerMoveEvent e = new PlayerMoveEvent(user.getPlayer(), inside, outside);
+        listener.onMove(e);
+        // No messages should be sent
+        Mockito.verify(user, Mockito.never()).sendMessage(Mockito.anyVararg());
+    }
 }
