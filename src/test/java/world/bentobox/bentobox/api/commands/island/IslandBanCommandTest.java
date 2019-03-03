@@ -224,6 +224,7 @@ public class IslandBanCommandTest {
         PowerMockito.mockStatic(User.class);
         User opUser = mock(User.class);
         when(opUser.isOp()).thenReturn(true);
+        when(opUser.hasPermission(Mockito.anyString())).thenReturn(true);
         when(opUser.isPlayer()).thenReturn(true);
         when(User.getInstance(Mockito.any(UUID.class))).thenReturn(opUser);
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));

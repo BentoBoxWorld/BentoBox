@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
 import static org.junit.Assert.assertEquals;
@@ -21,6 +18,7 @@ import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.ItemStack;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -63,6 +61,7 @@ public class IslandRespawnListenerTest {
 
         // World
         world = mock(World.class);
+        when(world.getUID()).thenReturn(UUID.randomUUID());
 
         // Settings
         Settings s = mock(Settings.class);
@@ -115,6 +114,7 @@ public class IslandRespawnListenerTest {
     /**
      * Test method for {@link IslandRespawnListener#onPlayerRespawn(org.bukkit.event.player.PlayerRespawnEvent)}.
      */
+    @Ignore("mock of the server needed")
     @Test
     public void testOnPlayerRespawn() {
         // Die
