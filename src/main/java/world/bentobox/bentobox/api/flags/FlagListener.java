@@ -44,7 +44,8 @@ public abstract class FlagListener implements Listener {
         SETTING_ALLOWED_ON_ISLAND,
         SETTING_NOT_ALLOWED_ON_ISLAND,
         SETTING_ALLOWED_IN_WORLD,
-        SETTING_NOT_ALLOWED_IN_WORLD
+        SETTING_NOT_ALLOWED_IN_WORLD,
+        NULL_LOCATION
     }
 
     @NonNull
@@ -124,7 +125,9 @@ public abstract class FlagListener implements Listener {
         // Set user
         user = User.getInstance(player);
         if (loc == null) {
-            // We cannot report that it's null here (#report(...) would throw a NPE)
+            if (user.getLocation() != null && user.getLocation().getWorld() != null) {
+                report(user, e, user.getLocation(), flag, Why.NULL_LOCATION);
+            }
             return true;
         }
 
