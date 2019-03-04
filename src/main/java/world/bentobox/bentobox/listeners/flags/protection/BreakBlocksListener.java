@@ -3,6 +3,7 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.EnderCrystal;
 import org.bukkit.entity.ItemFrame;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
@@ -99,11 +100,12 @@ public class BreakBlocksListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(EntityDamageByEntityEvent e) {
-        // Only handle item frames and armor stands
-        if (!(e.getEntity() instanceof ItemFrame) && !(e.getEntity() instanceof ArmorStand)) {
+        // Only handle item frames, armor stands and end crystals
+        if (!(e.getEntity() instanceof ItemFrame)
+                && !(e.getEntity() instanceof ArmorStand)
+                && !(e.getEntity() instanceof EnderCrystal)) {
             return;
         }
-
         // Get the attacker
         if (e.getDamager() instanceof Player) {
             checkIsland(e, (Player)e.getDamager(), e.getEntity().getLocation(), Flags.BREAK_BLOCKS);
