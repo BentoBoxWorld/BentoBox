@@ -49,6 +49,7 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.ItemFrameListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.LiquidsFlowingOutListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.NaturalSpawningOutsideRangeListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.ObsidianScoopingListener;
+import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineGrowthListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.OfflineRedstoneListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
@@ -321,6 +322,14 @@ public final class Flags {
      */
     public static final Flag OFFLINE_REDSTONE = new Flag.Builder("OFFLINE_REDSTONE", Material.COMPARATOR).type(Type.WORLD_SETTING)
             .listener(new OfflineRedstoneListener()).defaultSetting(true).build();
+
+    /**
+     * If disabled, prevents crops/plants from growing on islands whose members are offline.
+     * @since 1.4.0
+     * @see OfflineGrowthListener
+     */
+    public static final Flag OFFLINE_GROWTH = new Flag.Builder("OFFLINE_GROWTH", Material.WHEAT_SEEDS).type(Type.WORLD_SETTING)
+            .listener(new OfflineGrowthListener()).defaultSetting(true).build();
 
     public static final Flag CLEAN_SUPER_FLAT = new Flag.Builder("CLEAN_SUPER_FLAT", Material.BEDROCK).type(Type.WORLD_SETTING)
             .listener(new CleanSuperFlatListener()).build();
