@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertFalse;
