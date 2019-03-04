@@ -154,18 +154,18 @@ public class JoinLeaveListener implements Listener {
         .filter(world -> plugin.getIslands().isOwner(world, user.getUniqueId()))
         .forEach(world -> {
             Island island = plugin.getIslands().getIsland(world, user);
+            if (island != null) {
+                // Check if new owner has a different range permission than the island size
+                int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", island.getProtectionRange());
 
-            // Check if new owner has a different range permission than the island size
-            int range = user.getPermissionValue(plugin.getIWM().getAddon(island.getWorld()).get().getPermissionPrefix() + "island.range", plugin.getIWM().getIslandProtectionRange(Util.getWorld(island.getWorld())));
-
-            // Range can go up or down
-            if (range != island.getProtectionRange()) {
-                user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
-                plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
-                        + range + " for " + user.getName() + " due to permission.");
+                // Range can go up or down
+                if (range != island.getProtectionRange()) {
+                    user.sendMessage("commands.admin.setrange.range-updated", TextVariables.NUMBER, String.valueOf(range));
+                    plugin.log("Island protection range changed from " + island.getProtectionRange() + " to "
+                            + range + " for " + user.getName() + " due to permission.");
+                }
+                island.setProtectionRange(range);
             }
-
-            island.setProtectionRange(range);
         });
     }
 
