@@ -315,6 +315,10 @@ public final class Flags {
     public static final Flag ISLAND_RESPAWN = new Flag.Builder("ISLAND_RESPAWN", Material.TORCH).type(Type.WORLD_SETTING)
             .listener(new IslandRespawnListener()).defaultSetting(true).build();
 
+    /**
+     * If disabled, prevents redstone from operating on islands whose members are offline.
+     * @see OfflineRedstoneListener
+     */
     public static final Flag OFFLINE_REDSTONE = new Flag.Builder("OFFLINE_REDSTONE", Material.COMPARATOR).type(Type.WORLD_SETTING)
             .listener(new OfflineRedstoneListener()).defaultSetting(true).build();
 
