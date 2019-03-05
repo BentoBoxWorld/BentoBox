@@ -6,7 +6,7 @@
 
     <groupId>world.bentobox</groupId>
     <artifactId>bentobox</artifactId>
-    <version>1.4.0-SNAPSHOT</version>
+    <version>${revision}</version>
 
     <name>BentoBox</name>
     <description>Expandable Minecraft Spigot plugin for island-type games like SkyBlock or AcidIsland.</description>
@@ -44,8 +44,89 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <java.version>1.8</java.version>
+        <!-- Non-minecraft related dependencies -->
         <powermock.version>1.7.4</powermock.version>
+        <mongodb.version>3.8.0</mongodb.version>
+        <!-- More visible way how to change dependency versions -->
+        <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
+        <bstats.version>1.4</bstats.version>
+        <vault.version>68f14ec</vault.version>
+        <placeholder.version>2.9.2</placeholder.version>
+        <!-- Revision variable removes warning about dynamic version -->
+        <revision>${build.version}</revision>
+        <!-- This allows to change between versions. -->
+        <build.version>1.4.0</build.version>
     </properties>
+
+    <!-- Profiles will allow to automatically change build version. -->
+    <profiles>
+        <profile>
+            <!-- Local profile is activated by default. It adds '-SNAPSHOT' at the end of ${build.version} -->
+            <!-- This profile will be used only if develop and master fails. -->
+            <id>local</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <revision>${build.version}-SNAPSHOT</revision>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Develop profile is activated if there exist environment variable BUILD_NUMBER. It adds
+                '-SNAPSHOT #BUILD_NUMBER' at the end of ${build.version}. -->
+            <!-- This profile will be used only if exist environment variable BUILD_NUMBER and master fails. -->
+            <id>develop</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <!-- If exist BUILD_NUMBER  -->
+                <revision>${build.version}-SNAPSHOT #${env.BUILD_NUMBER}</revision>
+            </properties>
+        </profile>
+        <profile>
+            <!-- Master profile is activated if exist environment variable GIT_BRANCH and its value is
+                origin/master. It will not add anything at the end of '${build.version}'. -->
+            <!-- This profile will be used only if exist environment variable GIT_BRANCH with value origin/master. -->
+            <id>master</id>
+            <activation>
+                <property>
+                    <name>env.GIT_BRANCH</name>
+                    <value>origin/master</value>
+                </property>
+            </activation>
+            <properties>
+                <!-- If current branch is Master, the we do not want to add anything extra. -->
+                <revision>${build.version}</revision>
+            </properties>
+        </profile>
+        <profile>
+            <id>sonar</id>
+            <properties>
+                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
+                <sonar.organization>tastybento-github</sonar.organization>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.sonarsource.scanner.maven</groupId>
+                        <artifactId>sonar-maven-plugin</artifactId>
+                        <version>3.4.1.1168</version>
+                        <executions>
+                            <execution>
+                                <phase>verify</phase>
+                                <goals>
+                                    <goal>sonar</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 
     <repositories>
         <repository>
@@ -71,14 +152,14 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.13.2-R0.1-SNAPSHOT</version>
+			<version>${spigot.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Metrics -->
 		<dependency>
 			<groupId>org.bstats</groupId>
 			<artifactId>bstats-bukkit</artifactId>
-			<version>1.4</version>
+			<version>${bstats.version}</version>
 		</dependency>
 		<!-- Mockito (Unit testing) -->
 		<dependency>
@@ -103,21 +184,21 @@
 		<dependency>
 			<groupId>org.mongodb</groupId>
 			<artifactId>mongodb-driver</artifactId>
-			<version>3.8.0</version>
+			<version>${mongodb.version}</version>
 		</dependency>
 		<!-- Vault: as their maven repo is down, we need to get it from jitpack -->
         <!-- See https://github.com/MilkBowl/VaultAPI/issues/69 -->
 		<dependency>
 			<groupId>com.github.MilkBowl</groupId>
 			<artifactId>VaultAPI</artifactId>
-			<version>68f14ec</version>
+			<version>${vault.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Placeholders -->
 		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
-			<version>2.9.2</version>
+			<version>${placeholder.version}</version>
 			<scope>provided</scope>
 		</dependency>
 		<!-- Static analysis -->
@@ -272,31 +353,4 @@
             </plugin>
         </plugins>
     </build>
-
-    <profiles>
-        <profile>
-            <id>sonar</id>
-            <properties>
-                <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-                <sonar.organization>tastybento-github</sonar.organization>
-            </properties>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.sonarsource.scanner.maven</groupId>
-                        <artifactId>sonar-maven-plugin</artifactId>
-                        <version>3.4.1.1168</version>
-                        <executions>
-                            <execution>
-                                <phase>verify</phase>
-                                <goals>
-                                    <goal>sonar</goal>
-                                </goals>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-        </profile>
-    </profiles>
 </project>
