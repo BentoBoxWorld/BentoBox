@@ -4,6 +4,7 @@ import java.util.Optional;
 
 import org.bukkit.entity.Animals;
 import org.bukkit.entity.Monster;
+import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Slime;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -43,7 +44,7 @@ public class MobSpawnListener extends FlagListener {
 
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
-            if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) {
+            if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime || e.getEntity() instanceof Phantom)) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;

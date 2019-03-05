@@ -11,6 +11,7 @@ import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Monster;
 import org.bukkit.entity.Parrot;
+import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
 import org.bukkit.entity.PufferFish;
@@ -55,7 +56,7 @@ public class HurtingListener extends FlagListener {
             respond(e, e.getDamager(), Flags.HURT_ANIMALS);
         } else if (e.getEntity() instanceof Villager) {
             respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
-        } else if (e.getEntity() instanceof Monster || e.getEntity() instanceof Squid
+        } else if (e.getEntity() instanceof Monster || e.getEntity() instanceof Phantom || e.getEntity() instanceof Squid
                 || e.getEntity() instanceof Slime || e.getEntity() instanceof PufferFish) {
             respond(e, e.getDamager(), Flags.HURT_MONSTERS);
         }
@@ -92,7 +93,7 @@ public class HurtingListener extends FlagListener {
         }
 
         if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
-                || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
+                || ((e.getCaught() instanceof Monster  || e.getCaught() instanceof Phantom || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
                 || (e.getCaught() instanceof Villager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
@@ -133,7 +134,7 @@ public class HurtingListener extends FlagListener {
                     continue;
                 }
                 // Monsters being hurt
-                if ((entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
+                if ((entity instanceof Monster || e.getEntity() instanceof Phantom || entity instanceof Slime || entity instanceof Squid)
                         && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
@@ -187,7 +188,7 @@ public class HurtingListener extends FlagListener {
             }
             Entity entity = e.getEntity();
             // Monsters being hurt
-            if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
+            if (entity instanceof Monster || e.getEntity() instanceof Phantom || entity instanceof Slime || entity instanceof Squid) {
                 checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS);
             }
             // Mobs being hurt
