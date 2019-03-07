@@ -42,6 +42,7 @@ public class OfflineRedstoneListenerTest {
     private IslandsManager im;
     private Location inside;
     private Block block;
+    private IslandWorldManager iwm;
 
     @Before
     public void setUp() throws Exception {
@@ -84,7 +85,8 @@ public class OfflineRedstoneListenerTest {
         when(Util.getWorld(Mockito.any())).thenReturn(world);
 
         // World Settings
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
+        iwm = mock(IslandWorldManager.class);
+        when(iwm.inWorld(Mockito.any(World.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
@@ -94,6 +96,9 @@ public class OfflineRedstoneListenerTest {
         PowerMockito.mockStatic(Bukkit.class);
     }
 
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
     @Test
     public void testOnBlockRedstoneDoNothing() {
         // Make an event to give some current to block
@@ -105,6 +110,9 @@ public class OfflineRedstoneListenerTest {
         assertEquals(10, e.getNewCurrent());
     }
 
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
     @Test
     public void testOnBlockRedstoneMembersOnline() {
         // Make an event to give some current to block
@@ -120,6 +128,9 @@ public class OfflineRedstoneListenerTest {
         assertEquals(10, e.getNewCurrent());
     }
 
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
     @Test
     public void testOnBlockRedstoneMembersOffline() {
         // Make an event to give some current to block
@@ -135,8 +146,27 @@ public class OfflineRedstoneListenerTest {
         assertEquals(0, e.getNewCurrent());
     }
 
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
     @Test
     public void testOnBlockRedstoneNonIsland() {
+        // Make an event to give some current to block
+        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
+        OfflineRedstoneListener orl = new OfflineRedstoneListener();
+        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(Optional.empty());
+        orl.onBlockRedstone(e);
+        // Current remains 10
+        assertEquals(10, e.getNewCurrent());
+    }
+
+    /**
+     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     */
+    @Test
+    public void testOnBlockRedstoneNonBentoBoxWorldIsland() {
+        when(iwm.inWorld(Mockito.any(World.class))).thenReturn(false);
         // Make an event to give some current to block
         BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
         OfflineRedstoneListener orl = new OfflineRedstoneListener();
