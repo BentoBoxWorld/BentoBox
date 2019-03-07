@@ -89,7 +89,6 @@ public class PVPListener extends FlagListener {
                 if (!checkIsland((Event)e, (Player)entity, damager.getLocation(), flag)) {
                     damager.setFireTicks(0);
                     hurtEntity.setFireTicks(0);
-                    damager.remove();
                     user.notify(Flags.PVP_OVERWORLD.getHintReference());
                     e.setCancelled(true);
                 }
