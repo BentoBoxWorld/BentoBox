@@ -67,8 +67,8 @@ public class CycleClick implements PanelItem.ClickHandler {
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
         // Get the user's island
-        island = plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId());
-        if (island != null && user.getUniqueId().equals(island.getOwner())) {
+        island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
+        if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()))) {
             changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {

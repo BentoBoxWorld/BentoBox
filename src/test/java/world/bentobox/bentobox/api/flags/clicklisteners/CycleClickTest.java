@@ -159,6 +159,7 @@ public class CycleClickTest {
         when(im.getProtectedIslandAt(Mockito.eq(inside))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(Mockito.eq(inside2))).thenReturn(opIsland);
         when(im.getProtectedIslandAt(Mockito.eq(outside))).thenReturn(Optional.empty());
+        when(im.getIslandAt(Mockito.any())).thenReturn(opIsland);
 
         PanelItem panelItem = mock(PanelItem.class);
         flag = mock(Flag.class);
