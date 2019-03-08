@@ -166,7 +166,7 @@ commands:
     world:
       description: "世界の設定を管理する"
     delete:
-      parameters: ""
+      parameters: "<player>"
       description: "プレイヤーの島を削除します。"
       cannot-delete-owner: "&cすべての島のメンバーは、それを削除する前に島から追い出される必要があります。"
       deleted-island: "&2[xyz] の島は正常に削除されました。"

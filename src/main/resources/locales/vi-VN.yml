@@ -56,6 +56,11 @@ commands:
       parameters: "[player]"
       description: "Dịch chuyển đến đảo người chơi"
       manual: "&cKhông tìm thấy cổng dịch chuyển an toàn! Hãy tp tới địa điểm &b[location] &cvà kiểm tra"
+    delete:
+      parameters: "<player>"
+      description: "deletes a player's island"
+      cannot-delete-owner: "&cAll island members have to be kicked from the island before deleting it."
+      deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."
   island:
     about:
       description: "hiện thông tin về BentoBox"
