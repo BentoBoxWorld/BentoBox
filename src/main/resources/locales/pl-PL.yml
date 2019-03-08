@@ -138,6 +138,11 @@ commands:
       look-at-a-block: "&cSpójrz na blok w ciągu 20 bloków, aby ustawić"
     world:
       description: "Zarządzaj ustawieniami świata"
+    delete:
+      parameters: "<player>"
+      description: "deletes a player's island"
+      cannot-delete-owner: "&cAll island members have to be kicked from the island before deleting it."
+      deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."
   island:
     about:
       description: "wyświetl informacje o prawach autorskich i licencji"

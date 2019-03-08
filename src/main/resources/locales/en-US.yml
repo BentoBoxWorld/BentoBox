@@ -223,7 +223,7 @@ commands:
     world:
       description: "Manage world settings"
     delete:
-      parameters: ""
+      parameters: "<player>"
       description: "deletes a player's island"
       cannot-delete-owner: "&cAll island members have to be kicked from the island before deleting it."
       deleted-island: "&aIsland at &e[xyz] &ahas been successfully deleted."

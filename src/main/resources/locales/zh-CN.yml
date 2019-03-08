@@ -186,7 +186,7 @@ commands:
     world:
       description: "管理世界设置"
     delete:
-      parameters: ""
+      parameters: "<player>"
       description: "删除玩家的岛屿"
       cannot-delete-owner: "&c删除之前必须将所有岛屿成员都踢出岛屿。"
       deleted-island: "&a位于 &e[xyz] &a的岛屿已经被成功删除。"

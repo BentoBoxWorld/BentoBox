@@ -27,6 +27,10 @@ public class AdminDeleteCommand extends ConfirmableCommand {
 
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
+		if (args.size() != 1) {
+			showHelp(this, user);
+			return false;
+		}
         // Get target
         UUID targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
