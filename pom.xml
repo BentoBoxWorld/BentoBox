@@ -83,7 +83,7 @@
             </activation>
             <properties>
                 <!-- If exist BUILD_NUMBER  -->
-                <revision>${build.version}-SNAPSHOT #${env.BUILD_NUMBER}</revision>
+                <revision>${build.version}-SNAPSHOT-#${env.BUILD_NUMBER}</revision>
             </properties>
         </profile>
         <profile>
