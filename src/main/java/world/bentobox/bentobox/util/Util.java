@@ -294,11 +294,11 @@ public class Util {
 
 
     /**
-     * This method returns if given entity is a monster.
+     * This method returns if given entity is a hostile mob..
      * @param entity Given entity that must be checked.
      * @return <code>true</code> if entity is a monster, otherwise <code>false</code>.
      */
-    public static boolean isMonsterEntity(Entity entity)
+    public static boolean isHostileEntity(Entity entity)
     {
     	// MagmaCube extends Slime
 		// Slime extends Mob
@@ -307,25 +307,26 @@ public class Util {
 		// Shulker is Golem, but other Golems cannot be added here.
 		// EnderDragon extends LivingEntity
 		// Most of hostile mobs extends Monster.
+        // PufferFus is a unique fix.
 
         return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
-            entity instanceof Shulker || entity instanceof EnderDragon;
+            entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
     }
 
 
     /**
-     * This method returns if given entity is a animal.
+     * This method returns if given entity is a passive mob.
      * @param entity Given entity that must be checked.
      * @return <code>true</code> if entity is a animal, otherwise <code>false</code>.
      */
-    public static boolean isAnimalEntity(Entity entity)
+    public static boolean isPassiveEntity(Entity entity)
     {
     	// IronGolem and Snowman extends Golem, but Shulker also extends Golem
-		// Fishes, Dolphin and Squid extends WaterMob
+		// Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
 		// Bat extends Mob
 		// Most of passive mobs extends Animals
 
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-            entity instanceof WaterMob || entity instanceof Bat;
+            entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
     }
 }

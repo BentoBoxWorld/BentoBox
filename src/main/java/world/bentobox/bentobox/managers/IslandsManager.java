@@ -22,8 +22,6 @@ import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Openable;
 import org.bukkit.entity.Boat;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Phantom;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
@@ -943,7 +941,7 @@ public class IslandsManager {
      */
     public void clearArea(Location loc) {
         loc.getWorld().getNearbyEntities(loc, 5D, 5D, 5D).stream()
-        .filter(en -> Util.isMonsterEntity(en) && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType()))
+        .filter(en -> Util.isHostileEntity(en) && !plugin.getIWM().getRemoveMobsWhitelist(loc.getWorld()).contains(en.getType()))
         .forEach(Entity::remove);
     }
 

@@ -42,11 +42,11 @@ public class MobSpawnListener extends FlagListener {
 
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
-            if (Util.isMonsterEntity(e.getEntity())) {
+            if (Util.isHostileEntity(e.getEntity())) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;
-            } else if (Util.isAnimalEntity(e.getEntity())) {
+            } else if (Util.isPassiveEntity(e.getEntity())) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.ANIMAL_SPAWN)).orElse(!Flags.ANIMAL_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;

@@ -44,11 +44,11 @@ public class HurtingListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
         // Mobs being hurt
-        if (Util.isAnimalEntity(e.getEntity())) {
+        if (Util.isPassiveEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_ANIMALS);
         } else if (e.getEntity() instanceof Villager) {
             respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
-        } else if (Util.isMonsterEntity(e.getEntity())) {
+        } else if (Util.isHostileEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_MONSTERS);
         }
     }
@@ -83,8 +83,8 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if ((Util.isAnimalEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
-            || (Util.isMonsterEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
+        if ((Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
+            || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
             || (e.getCaught() instanceof Villager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
@@ -125,14 +125,14 @@ public class HurtingListener extends FlagListener {
                     continue;
                 }
                 // Monsters being hurt
-                if (Util.isMonsterEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
                 }
 
                 // Mobs being hurt
-                if (Util.isAnimalEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+                if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -177,11 +177,11 @@ public class HurtingListener extends FlagListener {
             }
             Entity entity = e.getEntity();
             // Monsters being hurt
-            if (Util.isMonsterEntity(entity)) {
+            if (Util.isHostileEntity(entity)) {
                 checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS);
             }
             // Mobs being hurt
-            if (Util.isAnimalEntity(entity)) {
+            if (Util.isPassiveEntity(entity)) {
                 checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS);
             }
             // Villagers being hurt
