@@ -15,7 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -290,5 +290,42 @@ public class Util {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+
+    /**
+     * This method returns if given entity is a monster.
+     * @param entity Given entity that must be checked.
+     * @return <code>true</code> if entity is a monster, otherwise <code>false</code>.
+     */
+    public static boolean isMonsterEntity(Entity entity)
+    {
+    	// MagmaCube extends Slime
+		// Slime extends Mob
+		// Ghast and Phantom extends Flying
+		// Flying extends Mob
+		// Shulker is Golem, but other Golems cannot be added here.
+		// EnderDragon extends LivingEntity
+		// Most of hostile mobs extends Monster.
+
+        return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
+            entity instanceof Shulker || entity instanceof EnderDragon;
+    }
+
+
+    /**
+     * This method returns if given entity is a animal.
+     * @param entity Given entity that must be checked.
+     * @return <code>true</code> if entity is a animal, otherwise <code>false</code>.
+     */
+    public static boolean isAnimalEntity(Entity entity)
+    {
+    	// IronGolem and Snowman extends Golem, but Shulker also extends Golem
+		// Fishes, Dolphin and Squid extends WaterMob
+		// Bat extends Mob
+		// Most of passive mobs extends Animals
+
+        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+            entity instanceof WaterMob || entity instanceof Bat;
     }
 }
