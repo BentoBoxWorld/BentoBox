@@ -13,6 +13,8 @@ import world.bentobox.bentobox.database.objects.Island;
 
 public class AdminSwitchtoCommand extends ConfirmableCommand {
 
+    private UUID targetUUID;
+
     /**
      * Switch player's island to the numbered one in trash
      * @param parent - admin command
@@ -31,18 +33,23 @@ public class AdminSwitchtoCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 2) {
             // Show help
             showHelp(this, user);
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Check island number
         List<Island> islands = getIslands().getQuarantinedIslandByUser(getWorld(), targetUUID);
         if (islands.isEmpty()) {
