@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -28,6 +29,9 @@ import world.bentobox.bentobox.database.objects.DataObject;
  * @param <T>
  */
 public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
+
+    private static final String COULD_NOT_LOAD_OBJECTS = "Could not load objects ";
+    private static final String COULD_NOT_LOAD_OBJECT = "Could not load object ";
 
     /**
      * Connection to the database
@@ -70,33 +74,39 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     @Override
     public List<T> loadObjects() {
+        try (Statement preparedStatement = connection.createStatement()) {
+            return loadIt(preparedStatement);
+        } catch (SQLException e) {
+            plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
+        }
+        return Collections.emptyList();
+    }
+
+    private List<T> loadIt(Statement preparedStatement) {
         List<T> list = new ArrayList<>();
         StringBuilder sb = new StringBuilder();
         sb.append("SELECT `json` FROM `");
         sb.append(dataObject.getCanonicalName());
         sb.append("`");
-        try (Statement preparedStatement = connection.createStatement()) {
-            try (ResultSet resultSet = preparedStatement.executeQuery(sb.toString())) {
-                // Load all the results
-                Gson gson = getGson();
-                while (resultSet.next()) {
-                    String json = resultSet.getString("json");
-                    if (json != null) {
-                        try {
-                            T gsonResult = gson.fromJson(json, dataObject);
-                            if (gsonResult != null) {
-                                list.add(gsonResult);
-                            }
-                        } catch (JsonSyntaxException ex) {
-                            plugin.logError("Could not load object " + ex.getMessage());
+
+        try (ResultSet resultSet = preparedStatement.executeQuery(sb.toString())) {
+            // Load all the results
+            Gson gson = getGson();
+            while (resultSet.next()) {
+                String json = resultSet.getString("json");
+                if (json != null) {
+                    try {
+                        T gsonResult = gson.fromJson(json, dataObject);
+                        if (gsonResult != null) {
+                            list.add(gsonResult);
                         }
+                    } catch (JsonSyntaxException ex) {
+                        plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
                     }
                 }
-            } catch (Exception e) {
-                plugin.logError("Could not load objects " + e.getMessage());
             }
-        } catch (SQLException e) {
-            plugin.logError("Could not load objects " + e.getMessage());
+        } catch (Exception e) {
+            plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
         }
         return list;
     }
@@ -116,10 +126,10 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                     return gson.fromJson(resultSet.getString("json"), dataObject);
                 }
             } catch (Exception e) {
-                plugin.logError("Could not load object " + uniqueId + " " + e.getMessage());
+                plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
             }
         } catch (SQLException e) {
-            plugin.logError("Could not load object " + uniqueId + " " + e.getMessage());
+            plugin.logError(COULD_NOT_LOAD_OBJECT + uniqueId + " " + e.getMessage());
         }
         return null;
     }
