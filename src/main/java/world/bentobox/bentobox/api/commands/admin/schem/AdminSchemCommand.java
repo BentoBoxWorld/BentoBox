@@ -54,11 +54,11 @@ public class AdminSchemCommand extends ConfirmableCommand {
         return true;
     }
 
-    Map<UUID, Clipboard> getClipboards() {
+    protected Map<UUID, Clipboard> getClipboards() {
         return clipboards;
     }
 
-    void showClipboard(User user) {
+    protected void showClipboard(User user) {
         displayClipboards.putIfAbsent(user, Bukkit.getScheduler().scheduleSyncRepeatingTask(getPlugin(), () -> {
             if (!user.getPlayer().isOnline()) {
                 hideClipboard(user);
@@ -67,55 +67,60 @@ public class AdminSchemCommand extends ConfirmableCommand {
             if (clipboards.containsKey(user.getUniqueId())) {
                 Clipboard clipboard = clipboards.get(user.getUniqueId());
                 if (clipboard.getPos1() != null && clipboard.getPos2() != null) {
-                    int minX = Math.min(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
-                    int minY = Math.min(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
-                    int minZ = Math.min(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
-                    int maxX = Math.max(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
-                    int maxY = Math.max(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
-                    int maxZ = Math.max(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
-
-                    // Drawing x-axes
-                    for (int x = minX; x <= maxX; x++) {
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, minY, minZ);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, maxY, minZ);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, minY, maxZ);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, maxY, maxZ);
-                    }
-
-                    // Drawing y-axes
-                    for (int y = minY; y <= maxY; y++) {
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, y, minZ);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, y, minZ);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, y, maxZ);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, y, maxZ);
-                    }
-
-                    // Drawing z-axes
-                    for (int z = minZ; z <= maxZ; z++) {
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, minY, z);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, minY, z);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, maxY, z);
-                        user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, maxY, z);
-                    }
-
-                    // Drawing origin
-                    if (clipboard.getOrigin() != null) {
-                        user.spawnParticle(Particle.VILLAGER_HAPPY, null, clipboard.getOrigin().getBlockX() + 0.5, clipboard.getOrigin().getBlockY() + 0.5, clipboard.getOrigin().getBlockZ() + 0.5);
-                    }
+                    paintAxis(user, clipboard);
                 }
             }
 
         }, 20, 20));
     }
 
-    void hideClipboard(User user) {
+    private void paintAxis(User user, Clipboard clipboard) {
+        int minX = Math.min(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
+        int minY = Math.min(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
+        int minZ = Math.min(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
+        int maxX = Math.max(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
+        int maxY = Math.max(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
+        int maxZ = Math.max(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
+
+        // Drawing x-axes
+        for (int x = minX; x <= maxX; x++) {
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, minY, minZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, maxY, minZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, minY, maxZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, x, maxY, maxZ);
+        }
+
+        // Drawing y-axes
+        for (int y = minY; y <= maxY; y++) {
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, y, minZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, y, minZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, y, maxZ);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, y, maxZ);
+        }
+
+        // Drawing z-axes
+        for (int z = minZ; z <= maxZ; z++) {
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, minY, z);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, minY, z);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, minX, maxY, z);
+            user.spawnParticle(PARTICLE, PARTICLE_DUST_OPTIONS, maxX, maxY, z);
+        }
+
+        // Drawing origin
+        if (clipboard.getOrigin() != null) {
+            user.spawnParticle(Particle.VILLAGER_HAPPY, null, clipboard.getOrigin().getBlockX() + 0.5, clipboard.getOrigin().getBlockY() + 0.5, clipboard.getOrigin().getBlockZ() + 0.5);
+        }
+
+    }
+
+    protected void hideClipboard(User user) {
         if (displayClipboards.containsKey(user)) {
             Bukkit.getScheduler().cancelTask(displayClipboards.get(user));
             displayClipboards.remove(user);
         }
     }
 
-    File getSchemsFolder() {
+    protected File getSchemsFolder() {
         return new File(getIWM().getDataFolder(getWorld()), SchemsManager.FOLDER_NAME);
     }
 }
