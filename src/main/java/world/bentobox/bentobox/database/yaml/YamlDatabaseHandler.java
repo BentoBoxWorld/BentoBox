@@ -221,13 +221,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                     method.invoke(instance, (Object)null);
                 } else if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Maps
-                    deserializeMap(method, instance, propertyDescriptor, storageLocation, config);
+                    deserializeMap(method, instance, storageLocation, config);
                 } else if (Set.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Sets
-                    deserializeSet(method, instance, propertyDescriptor, storageLocation, config);
+                    deserializeSet(method, instance, storageLocation, config);
                 } else if (List.class.isAssignableFrom(propertyDescriptor.getPropertyType())) {
                     // Lists
-                    deserializeLists(method, instance, propertyDescriptor, storageLocation, config);
+                    deserializeLists(method, instance, storageLocation, config);
                 } else {
                     // Non-collections
                     deserializeValue(method, instance, propertyDescriptor, storageLocation, config);
@@ -238,8 +238,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         return instance;
     }
 
-    private void deserializeValue(Method method, T instance, PropertyDescriptor propertyDescriptor, String storageLocation,
-            YamlConfiguration config) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private void deserializeValue(Method method, T instance, PropertyDescriptor propertyDescriptor, String storageLocation, YamlConfiguration config) throws IllegalAccessException, InvocationTargetException {
         // Not a collection. Get the value and rely on YAML to supply it
         Object value = config.get(storageLocation);
         // If the value is a yml MemorySection then something is wrong, so ignore it. Maybe an admin did some bad editing
@@ -254,7 +253,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
     }
 
-    private void deserializeLists(Method method, T instance, PropertyDescriptor propertyDescriptor, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private void deserializeLists(Method method, T instance, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         // Note that we have no idea what type of List this is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
@@ -271,7 +270,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         method.invoke(instance, value);
     }
 
-    private void deserializeSet(Method method, T instance, PropertyDescriptor propertyDescriptor, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private void deserializeSet(Method method, T instance, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         // Note that we have no idea what type this set is
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be only 1 long
@@ -288,7 +287,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         method.invoke(instance, value);
     }
 
-    private void deserializeMap(Method method, T instance, PropertyDescriptor propertyDescriptor, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private void deserializeMap(Method method, T instance, String storageLocation, YamlConfiguration config) throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
         // Note that we have no idea what type of map this is, so we need to find out
         List<Type> collectionTypes = getCollectionParameterTypes(method);
         // collectionTypes should be 2 long because there are two parameters in a Map (key, value)
@@ -416,7 +415,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             // Set the filename if it has not be set already
             if (filename.isEmpty() && method.getName().equals("getUniqueId")) {
                 // Save the name for when the file is saved
-                filename = getFilename(field, propertyDescriptor, instance, (String)value);
+                filename = getFilename(propertyDescriptor, instance, (String)value);
             }
             // Collections need special serialization
             if (Map.class.isAssignableFrom(propertyDescriptor.getPropertyType()) && value != null) {
@@ -470,7 +469,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         config.set(storageLocation, result);
     }
 
-    private String getFilename(Field field, PropertyDescriptor propertyDescriptor, T instance, String id) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+    private String getFilename(PropertyDescriptor propertyDescriptor, T instance, String id) throws IllegalAccessException, InvocationTargetException {
         // If the object does not have a unique name assigned to it already, one is created at random
         if (id == null || id.isEmpty()) {
             id = databaseConnector.getUniqueId(dataObject.getSimpleName());
