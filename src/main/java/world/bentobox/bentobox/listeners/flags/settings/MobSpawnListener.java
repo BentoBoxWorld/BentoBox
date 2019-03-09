@@ -2,9 +2,7 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.Optional;
 
-import org.bukkit.entity.Animals;
-import org.bukkit.entity.Monster;
-import org.bukkit.entity.Slime;
+import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -13,6 +11,8 @@ import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
+
 
 /**
  * Handles natural mob spawning.
@@ -43,11 +43,11 @@ public class MobSpawnListener extends FlagListener {
 
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
-            if ((e.getEntity() instanceof Monster || e.getEntity() instanceof Slime)) {
+            if (Util.isHostileEntity(e.getEntity()) && !(e.getEntity() instanceof PufferFish)) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;
-            } else if (e.getEntity() instanceof Animals) {
+            } else if (Util.isPassiveEntity(e.getEntity()) || e.getEntity() instanceof PufferFish) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.ANIMAL_SPAWN)).orElse(!Flags.ANIMAL_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;

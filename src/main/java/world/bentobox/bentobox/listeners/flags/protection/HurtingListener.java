@@ -3,20 +3,12 @@ package world.bentobox.bentobox.listeners.flags.protection;
 import java.util.HashMap;
 
 import org.bukkit.Material;
-import org.bukkit.entity.Animals;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Fish;
-import org.bukkit.entity.IronGolem;
 import org.bukkit.entity.LivingEntity;
-import org.bukkit.entity.Monster;
 import org.bukkit.entity.Parrot;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Projectile;
-import org.bukkit.entity.PufferFish;
-import org.bukkit.entity.Slime;
-import org.bukkit.entity.Snowman;
-import org.bukkit.entity.Squid;
 import org.bukkit.entity.Villager;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -32,6 +24,8 @@ import org.bukkit.potion.PotionEffect;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.util.Util;
+
 
 /**
  * Handles hurting of monsters and animals directly and indirectly
@@ -50,13 +44,11 @@ public class HurtingListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onEntityDamage(final EntityDamageByEntityEvent e) {
         // Mobs being hurt
-        if (e.getEntity() instanceof Animals || e.getEntity() instanceof IronGolem || e.getEntity() instanceof Snowman
-                || (e.getEntity() instanceof Fish && !(e.getEntity() instanceof PufferFish))) {
+        if (Util.isPassiveEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_ANIMALS);
         } else if (e.getEntity() instanceof Villager) {
             respond(e, e.getDamager(), Flags.HURT_VILLAGERS);
-        } else if (e.getEntity() instanceof Monster || e.getEntity() instanceof Squid
-                || e.getEntity() instanceof Slime || e.getEntity() instanceof PufferFish) {
+        } else if (Util.isHostileEntity(e.getEntity())) {
             respond(e, e.getDamager(), Flags.HURT_MONSTERS);
         }
     }
@@ -91,9 +83,9 @@ public class HurtingListener extends FlagListener {
             return;
         }
 
-        if (((e.getCaught() instanceof Animals || e.getCaught() instanceof IronGolem || e.getCaught() instanceof Snowman) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
-                || ((e.getCaught() instanceof Monster || e.getCaught() instanceof Squid || e.getCaught() instanceof Slime) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
-                || (e.getCaught() instanceof Villager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
+        if ((Util.isPassiveEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_ANIMALS))
+            || (Util.isHostileEntity(e.getCaught()) && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_MONSTERS))
+            || (e.getCaught() instanceof Villager && checkIsland(e, e.getPlayer(), e.getCaught().getLocation(), Flags.HURT_VILLAGERS))) {
             e.getHook().remove();
         }
 
@@ -133,16 +125,14 @@ public class HurtingListener extends FlagListener {
                     continue;
                 }
                 // Monsters being hurt
-                if ((entity instanceof Monster || entity instanceof Slime || entity instanceof Squid)
-                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
+                if (Util.isHostileEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
                 }
 
                 // Mobs being hurt
-                if ((entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman)
-                        && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
+                if (Util.isPassiveEntity(entity) && !checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS)) {
                     for (PotionEffect effect : e.getPotion().getEffects()) {
                         entity.removePotionEffect(effect.getType());
                     }
@@ -187,11 +177,11 @@ public class HurtingListener extends FlagListener {
             }
             Entity entity = e.getEntity();
             // Monsters being hurt
-            if (entity instanceof Monster || entity instanceof Slime || entity instanceof Squid) {
+            if (Util.isHostileEntity(entity)) {
                 checkIsland(e, attacker, entity.getLocation(), Flags.HURT_MONSTERS);
             }
             // Mobs being hurt
-            if (entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman) {
+            if (Util.isPassiveEntity(entity)) {
                 checkIsland(e, attacker, entity.getLocation(), Flags.HURT_ANIMALS);
             }
             // Villagers being hurt

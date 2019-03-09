@@ -15,7 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -290,5 +290,44 @@ public class Util {
         } catch (ParseException e) {
             return null;
         }
+    }
+
+
+    /**
+     * Returns whether this entity is naturally hostile towards the player or not.
+     * @param entity the entity to check.
+     * @return {@code true} if this entity is hostile, {@code false} otherwise.
+     * @since 1.4.0
+     */
+    public static boolean isHostileEntity(Entity entity) {
+        // MagmaCube extends Slime
+        // Slime extends Mob
+        // Ghast and Phantom extends Flying
+        // Flying extends Mob
+        // Shulker is Golem, but other Golems cannot be added here.
+        // EnderDragon extends LivingEntity
+        // Most of hostile mobs extends Monster.
+        // PufferFish is a unique fix.
+
+        return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
+            entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
+    }
+
+
+    /**
+     * Returns whether this entity is naturally passive towards the player or not.
+     * This means that this entity normally won't hurt the player.
+     * @param entity the entity to check.
+     * @return {@code true} if this entity is passive, {@code false} otherwise.
+     * @since 1.4.0
+     */
+    public static boolean isPassiveEntity(Entity entity) {
+        // IronGolem and Snowman extends Golem, but Shulker also extends Golem
+        // Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
+        // Bat extends Mob
+        // Most of passive mobs extends Animals
+
+        return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
+            entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
     }
 }
