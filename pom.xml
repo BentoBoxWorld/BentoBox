@@ -72,21 +72,6 @@
             </properties>
         </profile>
         <profile>
-            <!-- Develop profile is activated if there exist environment variable BUILD_NUMBER. It adds
-                '-SNAPSHOT #BUILD_NUMBER' at the end of ${build.version}. -->
-            <!-- This profile will be used only if exist environment variable BUILD_NUMBER and master fails. -->
-            <id>develop</id>
-            <activation>
-                <property>
-                    <name>env.BUILD_NUMBER</name>
-                </property>
-            </activation>
-            <properties>
-                <!-- If exist BUILD_NUMBER  -->
-                <revision>${build.version}-SNAPSHOT-#${env.BUILD_NUMBER}</revision>
-            </properties>
-        </profile>
-        <profile>
             <!-- Master profile is activated if exist environment variable GIT_BRANCH and its value is
                 origin/master. It will not add anything at the end of '${build.version}'. -->
             <!-- This profile will be used only if exist environment variable GIT_BRANCH with value origin/master. -->
