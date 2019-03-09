@@ -2,6 +2,7 @@ package world.bentobox.bentobox.listeners.flags.settings;
 
 import java.util.Optional;
 
+import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
@@ -42,11 +43,11 @@ public class MobSpawnListener extends FlagListener {
 
             Optional<Island> island = getIslands().getIslandAt(e.getLocation());
             // Cancel the event if these are true
-            if (Util.isHostileEntity(e.getEntity())) {
+            if (Util.isHostileEntity(e.getEntity()) && !(e.getEntity() instanceof PufferFish)) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.MONSTER_SPAWN)).orElse(!Flags.MONSTER_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;
-            } else if (Util.isPassiveEntity(e.getEntity())) {
+            } else if (Util.isPassiveEntity(e.getEntity()) || e.getEntity() instanceof PufferFish) {
                 boolean cancel = island.map(i -> !i.isAllowed(Flags.ANIMAL_SPAWN)).orElse(!Flags.ANIMAL_SPAWN.isSetForWorld(e.getEntity().getWorld()));
                 e.setCancelled(cancel);
                 return cancel;
