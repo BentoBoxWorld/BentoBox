@@ -294,20 +294,20 @@ public class Util {
 
 
     /**
-     * This method returns if given entity is a hostile mob..
-     * @param entity Given entity that must be checked.
-     * @return <code>true</code> if entity is a monster, otherwise <code>false</code>.
+     * Returns whether this entity is naturally hostile towards the player or not.
+     * @param entity the entity to check.
+     * @return {@code true} if this entity is hostile, {@code false} otherwise.
+     * @since 1.4.0
      */
-    public static boolean isHostileEntity(Entity entity)
-    {
-    	// MagmaCube extends Slime
-		// Slime extends Mob
-		// Ghast and Phantom extends Flying
-		// Flying extends Mob
-		// Shulker is Golem, but other Golems cannot be added here.
-		// EnderDragon extends LivingEntity
-		// Most of hostile mobs extends Monster.
-        // PufferFus is a unique fix.
+    public static boolean isHostileEntity(Entity entity) {
+        // MagmaCube extends Slime
+        // Slime extends Mob
+        // Ghast and Phantom extends Flying
+        // Flying extends Mob
+        // Shulker is Golem, but other Golems cannot be added here.
+        // EnderDragon extends LivingEntity
+        // Most of hostile mobs extends Monster.
+        // PufferFish is a unique fix.
 
         return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
             entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
@@ -315,16 +315,17 @@ public class Util {
 
 
     /**
-     * This method returns if given entity is a passive mob.
-     * @param entity Given entity that must be checked.
-     * @return <code>true</code> if entity is a animal, otherwise <code>false</code>.
+     * Returns whether this entity is naturally passive towards the player or not.
+     * This means that this entity normally won't hurt the player.
+     * @param entity the entity to check.
+     * @return {@code true} if this entity is passive, {@code false} otherwise.
+     * @since 1.4.0
      */
-    public static boolean isPassiveEntity(Entity entity)
-    {
-    	// IronGolem and Snowman extends Golem, but Shulker also extends Golem
-		// Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
-		// Bat extends Mob
-		// Most of passive mobs extends Animals
+    public static boolean isPassiveEntity(Entity entity) {
+        // IronGolem and Snowman extends Golem, but Shulker also extends Golem
+        // Fishes, Dolphin and Squid extends WaterMob | Excludes PufferFish
+        // Bat extends Mob
+        // Most of passive mobs extends Animals
 
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
             entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
