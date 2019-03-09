@@ -72,6 +72,19 @@
             </properties>
         </profile>
         <profile>
+            <id>develop</id>
+            <activation>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
+            </activation>
+            <properties>
+                <!-- Override only if necessary -->
+                <revision>${build.version}-SNAPSHOT-b${env.BUILD_NUMBER}</revision>
+                <!-- GIT_BRANCH -->
+            </properties>
+        </profile>
+        <profile>
             <!-- Master profile is activated if exist environment variable GIT_BRANCH and its value is
                 origin/master. It will not add anything at the end of '${build.version}'. -->
             <!-- This profile will be used only if exist environment variable GIT_BRANCH with value origin/master. -->
