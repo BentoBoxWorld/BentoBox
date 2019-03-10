@@ -13,7 +13,7 @@ import world.bentobox.bentobox.managers.island.NewIsland;
 /**
  * /island create - Create an island.
  *
- * @author Tastybento
+ * @author tastybento
  */
 public class IslandCreateCommand extends CompositeCommand {
 
@@ -34,7 +34,7 @@ public class IslandCreateCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (getIslands().hasIsland(getWorld(), user.getUniqueId())
                 || getIslands().inTeam(getWorld(), user.getUniqueId())) {
             user.sendMessage("general.errors.already-have-island");
@@ -46,8 +46,11 @@ public class IslandCreateCommand extends CompositeCommand {
             user.sendMessage("commands.island.create.too-many-islands");
             return false;
         }
+        return true;
+    }
 
-        user.sendMessage("commands.island.create.creating-island");
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Default schem is 'island'
         String name = "island";
         if (!args.isEmpty()) {
@@ -66,7 +69,7 @@ public class IslandCreateCommand extends CompositeCommand {
             }
 
         }
-
+        user.sendMessage("commands.island.create.creating-island");
         try {
             NewIsland.builder()
             .player(user)
