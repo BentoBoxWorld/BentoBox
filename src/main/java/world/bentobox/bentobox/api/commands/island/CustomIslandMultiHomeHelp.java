@@ -28,29 +28,19 @@ public class CustomIslandMultiHomeHelp extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        // This will only be shown if it is for a player
-        if (user.isPlayer()) {
-            // Get elements
-            String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
-            String params = "";
-            String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
-
-            showPrettyHelp(user, usage, params, desc);
-            return true;
-        }
-        return false;
+    public boolean canExecute(User user, String label, List<String> args) {
+        return user.isPlayer() && user.hasPermission(getPermission());
     }
 
-    private void showPrettyHelp(User user, String usage, String params, String desc) {
-        // Player. Check perms
-        if (user.hasPermission(getPermission())) {
-            int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
-            if (maxHomes > 1) {
-                params = getParameters().isEmpty() ? "" : user.getTranslation(getParameters());
-            }
-            user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
-        }   
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
+        // Get elements
+        String usage = parent.getUsage().isEmpty() ? "" : user.getTranslation(parent.getUsage());
+        int maxHomes = user.getPermissionValue(getPermissionPrefix() + "island.maxhomes", getIWM().getMaxHomes(getWorld()));
+        String params = maxHomes > 1 ? user.getTranslation(getParameters()) : "";
+        String desc = getDescription().isEmpty() ? "" : user.getTranslation(getDescription());
+        user.sendMessage("commands.help.syntax", "[usage]", usage, "[parameters]", params, "[description]", desc);
+        return true;
     }
 
 }
