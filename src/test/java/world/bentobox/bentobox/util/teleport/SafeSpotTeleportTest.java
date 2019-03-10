@@ -19,11 +19,13 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.scheduler.BukkitScheduler;
-import org.junit.BeforeClass;
+import org.bukkit.scheduler.BukkitTask;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
@@ -40,19 +42,31 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( { BentoBox.class })
+@PrepareForTest( { BentoBox.class, Bukkit.class })
 public class SafeSpotTeleportTest {
 
     @Mock
-    static BentoBox plugin;
+    private BentoBox plugin;
     @Mock
-    private static World world;
+    private World world;
     @Mock
-    private static BukkitScheduler sch;
+    private BukkitScheduler sch;
+    @Mock
+    private IslandsManager im;
+    @Mock
+    private Player player;
+    @Mock
+    private Location loc;
 
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-        world = mock(World.class);
+
+    @Before
+    public void setUp() throws Exception {
+        // Bukkit and scheduler
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getScheduler()).thenReturn(sch);
+        BukkitTask task = mock(BukkitTask.class);
+        when(sch.runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.any(Long.class),Mockito.any(Long.class))).thenReturn(task);
+
         Server server = mock(Server.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
@@ -61,13 +75,10 @@ public class SafeSpotTeleportTest {
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
 
-        Bukkit.setServer(server);
-
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
 
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        plugin = mock(BentoBox.class);
         // Users
         User.setPlugin(plugin);
         // Locales - final
@@ -76,8 +87,9 @@ public class SafeSpotTeleportTest {
         when(lm.get(any(), any())).thenReturn("mock translation");
 
         // Island Manager
-        IslandsManager im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
+        // Safe location
+        when(im.isSafeLocation(Mockito.any())).thenReturn(true);
 
         Island island = mock(Island.class);
         when(island.getCenter()).thenReturn(mock(Location.class));
@@ -89,15 +101,21 @@ public class SafeSpotTeleportTest {
         // Island world manager
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         when(iwm.getIslandProtectionRange(Mockito.any())).thenReturn(1);
+        when(iwm.getDefaultGameMode(Mockito.any())).thenReturn(GameMode.SURVIVAL);
         when(plugin.getIWM()).thenReturn(iwm);
-
-        // Server & Scheduler
-        sch = mock(BukkitScheduler.class);
-        when(server.getScheduler()).thenReturn(sch);
 
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
 
+        // Player
+        // Return first survival and then spectator
+        when(player.getGameMode()).thenReturn(GameMode.SURVIVAL, GameMode.SPECTATOR);
+        when(loc.getWorld()).thenReturn(world);
+        when(loc.getBlockX()).thenReturn(0);
+        when(loc.getBlockY()).thenReturn(120);
+        when(loc.getBlockZ()).thenReturn(0);
+        Block block = mock(Block.class);
+        when(loc.getBlock()).thenReturn(block);
 
     }
 
@@ -105,20 +123,40 @@ public class SafeSpotTeleportTest {
      * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
      */
     @Test
-    public void testSafeSpotTeleport() throws Exception {
-
-        Player player = mock(Player.class);
-        when(player.getGameMode()).thenReturn(GameMode.SURVIVAL);
-        Location loc = mock(Location.class);
-        when(loc.getWorld()).thenReturn(world);
-        when(loc.getBlockX()).thenReturn(0);
-        when(loc.getBlockY()).thenReturn(120);
-        when(loc.getBlockZ()).thenReturn(0);
-        Block block = mock(Block.class);
-        when(loc.getBlock()).thenReturn(block);
+    public void testSafeSpotTeleportImmediateSafe() throws Exception {
         boolean portal = false;
         int homeNumber = 1;
         new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, true);
+        Mockito.verify(player).setGameMode(GameMode.SPECTATOR);
+        Mockito.verify(player).teleport(loc);
+        Mockito.verify(player).setGameMode(GameMode.SURVIVAL);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
+     */
+    @Test
+    public void testSafeSpotTeleportImmediateSafeNoOverride() throws Exception {
+        boolean portal = false;
+        int homeNumber = 1;
+        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, false);
+        Mockito.verify(player, Mockito.never()).setGameMode(GameMode.SPECTATOR);
+        Mockito.verify(player).teleport(loc);
+        Mockito.verify(player, Mockito.never()).setGameMode(GameMode.SURVIVAL);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.util.teleport.SafeSpotTeleport#SafeSpotTeleport(world.bentobox.bentobox.BentoBox, org.bukkit.entity.Entity, org.bukkit.Location, java.lang.String, boolean, int)}.
+     */
+    @Test
+    public void testSafeSpotTeleportNotImmediatelySafe() throws Exception {
+        when(im.isSafeLocation(Mockito.any())).thenReturn(false);
+        boolean portal = false;
+        int homeNumber = 1;
+        new SafeSpotTeleport(plugin, player, loc, "failure message", portal, homeNumber, true);
+        Mockito.verify(player).setGameMode(GameMode.SPECTATOR);
+        Mockito.verify(player, Mockito.never()).teleport(loc);
+        Mockito.verify(sch).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
 
     }
 
