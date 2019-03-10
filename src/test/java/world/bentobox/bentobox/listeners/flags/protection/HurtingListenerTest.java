@@ -152,6 +152,10 @@ public class HurtingListenerTest {
         // Addon
         when(iwm.getAddon(Mockito.any())).thenReturn(Optional.empty());
 
+        // Utils
+        when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
+        when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
+
     }
 
     /**
