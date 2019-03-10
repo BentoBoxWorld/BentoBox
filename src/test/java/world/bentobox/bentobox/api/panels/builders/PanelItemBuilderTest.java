@@ -24,10 +24,12 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import world.bentobox.bentobox.api.panels.Panel;
@@ -35,31 +37,32 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 
 @RunWith(PowerMockRunner.class)
+@PrepareForTest( {Bukkit.class})
 public class PanelItemBuilderTest {
 
 
     @SuppressWarnings("deprecation")
-    @BeforeClass
-    public static void setUp() throws Exception {       
+    @Before
+    public void setUp() throws Exception {
+        PowerMockito.mockStatic(Bukkit.class);
+
         Server server = mock(Server.class);
         World world = mock(World.class);
         world = mock(World.class);
         Mockito.when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         Mockito.when(server.getWorld("world")).thenReturn(world);
         Mockito.when(server.getVersion()).thenReturn("BSB_Mocking");
-        
+
         PluginManager pluginManager = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pluginManager);
-        
+
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
-        
-        Bukkit.setServer(server);
-        
+
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(skullMeta.getOwner()).thenReturn("tastybento");
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
-        
+
         OfflinePlayer offlinePlayer = mock(OfflinePlayer.class);
         when(Bukkit.getOfflinePlayer(any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("tastybento");
@@ -122,7 +125,7 @@ public class PanelItemBuilderTest {
         List<String> test = Arrays.asList("test line 3", "test line 4");
         builder.description("test line 3", "test line 4");
         PanelItem item = builder.build();
-        assertEquals(test, item.getDescription());  
+        assertEquals(test, item.getDescription());
     }
 
     @Test
@@ -131,7 +134,7 @@ public class PanelItemBuilderTest {
         List<String> test = Collections.singletonList("test line 5");
         builder.description("test line 5");
         PanelItem item = builder.build();
-        assertEquals(test, item.getDescription());  
+        assertEquals(test, item.getDescription());
     }
 
     @Test
@@ -140,7 +143,7 @@ public class PanelItemBuilderTest {
         // Test without click handler
         PanelItem item = builder.clickHandler(null).build();
         assertFalse(item.getClickHandler().isPresent());
-        
+
         item = builder.clickHandler(new Clicker()).build();
         assertTrue(item.getClickHandler().isPresent());
         assertTrue(item.getClickHandler().map(x -> x.onClick(null, null, ClickType.LEFT, 0)).orElse(false));
@@ -164,6 +167,6 @@ public class PanelItemBuilderTest {
         public boolean onClick(Panel panel, User user, ClickType click, int slot) {
             return true;
         }
-        
+
     }
 }
