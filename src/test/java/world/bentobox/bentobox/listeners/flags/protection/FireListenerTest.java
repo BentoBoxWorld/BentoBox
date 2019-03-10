@@ -28,7 +28,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -52,14 +51,15 @@ import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest( {BentoBox.class, Bukkit.class, Flags.class, Util.class} )
 public class FireListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
+    private Location location;
+    private BentoBox plugin;
 
-    @BeforeClass
-    public static void setUpClass() {
+    @Before
+    public void setUp() {
+        PowerMockito.mockStatic(Bukkit.class);
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -75,8 +75,6 @@ public class FireListenerTest {
 
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
-
-        Bukkit.setServer(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -113,13 +111,9 @@ public class FireListenerTest {
         Mockito.when(settings.getFakePlayers()).thenReturn(new HashSet<>());
 
         // Users
-        //User user = mock(User.class);
-        ///user.setPlugin(plugin);
         User.setPlugin(plugin);
 
-
         // Locales - final
-
         LocalesManager lm = mock(LocalesManager.class);
         when(plugin.getLocalesManager()).thenReturn(lm);
         when(lm.get(any(), any())).thenReturn("mock translation");
@@ -134,10 +128,7 @@ public class FireListenerTest {
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
         Map<String, Boolean> worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
-    }
 
-    @Before
-    public void setUp() {
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
     }
