@@ -22,7 +22,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -46,10 +45,6 @@ import world.bentobox.bentobox.util.Util;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class FlagTest {
-
-    @BeforeClass
-    public static void setUpBeforeClass() throws Exception {
-    }
 
     @Before
     public void setUp() throws Exception {
