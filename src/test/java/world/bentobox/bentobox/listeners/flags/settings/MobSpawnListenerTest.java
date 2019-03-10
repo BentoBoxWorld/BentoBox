@@ -121,6 +121,11 @@ public class MobSpawnListenerTest {
 
         // Default - plugin is loaded
         when(plugin.isLoaded()).thenReturn(true);
+
+        // Utils
+        when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
+        when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
+
     }
 
     @Test
