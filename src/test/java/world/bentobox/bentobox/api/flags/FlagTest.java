@@ -1,3 +1,6 @@
+/**
+ *
+ */
 package world.bentobox.bentobox.api.flags;
 
 import static org.junit.Assert.assertEquals;
@@ -10,8 +13,10 @@ import static org.mockito.Mockito.when;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -21,9 +26,11 @@ import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -32,8 +39,8 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
-import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
@@ -42,10 +49,24 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
+/**
+ * @author tastybento
+ *
+ */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({ BentoBox.class, Util.class, Bukkit.class })
 public class FlagTest {
 
+    private Flag f;
+    @Mock
+    private Listener listener;
+    @Mock
+    private World world;
+    private Map<String, Boolean> worldFlags;
+
+    /**
+     * @throws java.lang.Exception
+     */
     @Before
     public void setUp() throws Exception {
         // Set up plugin
@@ -60,7 +81,8 @@ public class FlagTest {
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
         when(iwm.getWorldSettings(Mockito.any())).thenReturn(ws);
-        Map<String, Boolean> worldFlags = new HashMap<>();
+
+        worldFlags = new HashMap<>();
         when(ws.getWorldFlags()).thenReturn(worldFlags);
 
         PowerMockito.mockStatic(Bukkit.class);
@@ -69,112 +91,234 @@ public class FlagTest {
         when(itemF.getItemMeta(Mockito.any())).thenReturn(im);
         when(Bukkit.getItemFactory()).thenReturn(itemF);
 
+        // Flag
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).listener(listener).build();
+
     }
 
+    /**
+     * @throws java.lang.Exception
+     */
+    @After
+    public void tearDown() throws Exception {
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#hashCode()}.
+     */
     @Test
     public void testHashCode() {
-        Flag flag1 = new Flag(null, null, null, null, 0, null, false, null);
-        Flag flag2 = new Flag(null, null, null, null, 0, null, false, null);
+        Flag flag1 = new Flag.Builder("id", Material.ACACIA_BOAT).build();
+        Flag flag2 = new Flag.Builder("id", Material.ACACIA_BOAT).build();
+        Flag flag3 = new Flag.Builder("id2", Material.ACACIA_BUTTON).build();
         assertTrue(flag1.hashCode() == flag2.hashCode());
+        assertFalse(flag1.hashCode() == flag3.hashCode());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#Flag(java.lang.String, org.bukkit.Material, org.bukkit.event.Listener, world.bentobox.bentobox.api.flags.Flag.Type, int, world.bentobox.bentobox.api.panels.PanelItem.ClickHandler, boolean, world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     */
     @Test
     public void testFlag() {
-        assertNotNull(new Flag(null, null, null, null, 0, null, false, null));
+        assertNotNull(f);
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getID()}.
+     */
     @Test
     public void testGetID() {
-        Flag id = new Flag("id", null, null, null, 0, null, false, null);
-        assertEquals("id", id.getID());
+        assertEquals("flagID", f.getID());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getIcon()}.
+     */
     @Test
     public void testGetIcon() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, null, 0, null, false, null);
-        assertEquals(Material.ACACIA_DOOR, id.getIcon());
+        assertEquals(Material.ACACIA_PLANKS, f.getIcon());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getListener()}.
+     */
     @Test
     public void testGetListener() {
-        Listener l = mock(Listener.class);
-        Flag id = new Flag("id", Material.ACACIA_DOOR, l, null, 0, null, false, null);
-        Optional<Listener> ol = Optional.ofNullable(l);
-        assertEquals(ol, id.getListener());
-        id = new Flag("id", Material.ACACIA_DOOR, null, null, 0, null, false, null);
-        assertEquals(Optional.empty(), id.getListener());
+        assertEquals(listener, f.getListener().get());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getListener()}.
+     */
     @Test
-    public void testIsDefaultSetting() {
-        Type type = Type.SETTING;
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, type , 0, null, false, null);
-        assertFalse(id.isSetForWorld(mock(World.class)));
-        id = new Flag("id", Material.ACACIA_DOOR, null, type, 0, null, false, null);
-        id.setDefaultSetting(true);
-        assertTrue(id.isSetForWorld(mock(World.class)));
+    public void testGetListenerNone() {
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).build();
+        assertEquals(Optional.empty(), f.getListener());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
+     */
     @Test
-    public void testSetDefaultSetting() {
-        Type type = Type.SETTING;
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, type, 0, null, false, null);
-        assertFalse(id.isSetForWorld(mock(World.class)));
-        id.setDefaultSetting(true);
-        assertTrue(id.isSetForWorld(mock(World.class)));
-        id.setDefaultSetting(false);
-        assertFalse(id.isSetForWorld(mock(World.class)));
-
+    public void testIsSetForWorld() {
+        assertFalse(f.isSetForWorld(world));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#isSetForWorld(org.bukkit.World)}.
+     */
     @Test
-    public void testIsDefaultSetting_World_Setting() {
-        Type type = Type.WORLD_SETTING;
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, type , 0, null, false, null);
-        assertFalse(id.isSetForWorld(mock(World.class)));
-        // Default can only be set once with world settings, so use a new id for flag
-        id = new Flag("id2", Material.ACACIA_DOOR, null, type, 0, null, false, null);
-        id.setDefaultSetting(true);
-        assertTrue(id.isSetForWorld(mock(World.class)));
+    public void testIsSetForWorldWorldSetting() {
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).build();
+        // Nothing in world flags
+        assertFalse(f.isSetForWorld(world));
+        worldFlags.put("flagID", true);
+        assertTrue(f.isSetForWorld(world));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setSetting(org.bukkit.World, boolean)}.
+     */
+    @Test
+    public void testSetSetting() {
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).build();
+        assertTrue(worldFlags.isEmpty());
+        f.setSetting(world, true);
+        assertTrue(worldFlags.get("flagID"));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(boolean)}.
+     */
+    @Test
+    public void testSetDefaultSettingBoolean() {
+        f.setDefaultSetting(true);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setDefaultSetting(org.bukkit.World, boolean)}.
+     */
+    @Test
+    public void testSetDefaultSettingWorldBoolean() {
+        f.setDefaultSetting(world, true);
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getType()}.
+     */
     @Test
     public void testGetType() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false, null);
-        assertEquals(Flag.Type.PROTECTION,id.getType());
-        id = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.SETTING, 0, null, false, null);
-        assertEquals(Flag.Type.SETTING,id.getType());
+        assertEquals(Flag.Type.PROTECTION, f.getType());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getDefaultRank()}.
+     */
     @Test
     public void testGetDefaultRank() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 100, null, false, null);
-        assertEquals(100, id.getDefaultRank());
+        assertEquals(RanksManager.MEMBER_RANK, f.getDefaultRank());
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#hasSubPanel()}.
+     */
+    @Test
+    public void testHasSubPanel() {
+        assertFalse(f.hasSubPanel());
+        f = new Flag.Builder("flagID", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).usePanel(true).build();
+        assertTrue(f.hasSubPanel());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#equals(java.lang.Object)}.
+     */
     @SuppressWarnings("unlikely-arg-type")
     @Test
     public void testEqualsObject() {
         Flag flag1 = null;
-        Flag flag2 = new Flag(null, null, null, null, 0, null, false, null);
 
-        assertFalse(flag2.equals(null));
+        assertFalse(f.equals(null));
         int i = 45;
-        assertFalse(flag2.equals(i));
+        assertFalse(f.equals(i));
 
-        flag1 = new Flag(null, null, null, null, 0, null, false, null);
-        flag2 = flag1;
-        assertTrue(flag1.equals(flag2));
-        assertTrue(flag2.equals(flag1));
+        assertTrue(f.equals(f));
 
-        flag2 = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false, null);
-        assertFalse(flag1.equals(flag2));
-        assertFalse(flag2.equals(flag1));
-
+        Flag f2 = new Flag.Builder("flagID2", Material.ACACIA_PLANKS).type(Flag.Type.WORLD_SETTING).usePanel(true).build();
+        assertFalse(f.equals(f2));
+        assertFalse(f2.equals(flag1));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getNameReference()}.
+     */
     @Test
-    public void testToPanelItem() throws Exception {
+    public void testGetNameReference() {
+        assertEquals("protection.flags.flagID.name", f.getNameReference());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getDescriptionReference()}.
+     */
+    @Test
+    public void testGetDescriptionReference() {
+        assertEquals("protection.flags.flagID.description", f.getDescriptionReference());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getHintReference()}.
+     */
+    @Test
+    public void testGetHintReference() {
+        assertEquals("protection.flags.flagID.hint", f.getHintReference());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#getGameModes()}.
+     */
+    @Test
+    public void testGetGameModes() {
+        assertTrue(f.getGameModes().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#setGameModes(java.util.Set)}.
+     */
+    @Test
+    public void testSetGameModes() {
+        Set<GameModeAddon> set = new HashSet<>();
+        set.add(mock(GameModeAddon.class));
+        assertTrue(f.getGameModes().isEmpty());
+        f.setGameModes(set);
+        assertFalse(f.getGameModes().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#addGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     */
+    @Test
+    public void testAddGameModeAddon() {
+        GameModeAddon gameModeAddon = mock(GameModeAddon.class);
+        f.addGameModeAddon(gameModeAddon);
+        assertTrue(f.getGameModes().contains(gameModeAddon));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#removeGameModeAddon(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     */
+    @Test
+    public void testRemoveGameModeAddon() {
+        GameModeAddon gameModeAddon = mock(GameModeAddon.class);
+        f.addGameModeAddon(gameModeAddon);
+        assertTrue(f.getGameModes().contains(gameModeAddon));
+        f.removeGameModeAddon(gameModeAddon);
+        assertTrue(f.getGameModes().isEmpty());
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toPanelItem(world.bentobox.bentobox.BentoBox, world.bentobox.bentobox.api.user.User)}.
+     */
+    @Test
+    public void testToPanelItem() {
         BentoBox plugin = mock(BentoBox.class);
 
         IslandsManager im = mock(IslandsManager.class);
@@ -204,27 +348,35 @@ public class FlagTest {
         when(rm.getRank(Mockito.eq(RanksManager.VISITOR_RANK))).thenReturn("Visitor");
         when(rm.getRank(Mockito.eq(RanksManager.OWNER_RANK))).thenReturn("Owner");
 
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false, null);
 
-        PanelItem pi = id.toPanelItem(plugin, user);
+        PanelItem pi = f.toPanelItem(plugin, user);
 
-        verify(user).getTranslation(Mockito.eq("protection.flags.id.name"));
+        verify(user).getTranslation(Mockito.eq("protection.flags.flagID.name"));
         verify(user).getTranslation(Mockito.eq("protection.panel.flag-item.name-layout"), Mockito.anyVararg());
 
-        assertEquals(Material.ACACIA_DOOR, pi.getItem().getType());
+        assertEquals(Material.ACACIA_PLANKS, pi.getItem().getType());
 
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#toString()}.
+     */
     @Test
     public void testToString() {
-        Flag id = new Flag("id", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false, null);
-        assertEquals("Flag [id=id, icon=ACACIA_DOOR, listener=null, type=PROTECTION, defaultSetting=false, defaultRank=0, clickHandler=null, subPanel=false]", id.toString());
+        assertTrue(f.toString().startsWith("Flag [id=flagID, icon=ACACIA_PLANKS, listener=listener, type=PROTECTION, "
+                + "defaultSetting=false, defaultRank=500, "
+                + "clickHandler="));
+        // Handler changes so check start and end
+        assertTrue(f.toString().endsWith(", subPanel=false]"));
     }
 
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.flags.Flag#compareTo(world.bentobox.bentobox.api.flags.Flag)}.
+     */
     @Test
     public void testCompareTo() {
-        Flag aaa = new Flag("AAA", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false, null);
-        Flag bbb = new Flag("BBB", Material.ACACIA_DOOR, null, Flag.Type.PROTECTION, 0, null, false, null);
+        Flag aaa = new Flag.Builder("AAA", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
+        Flag bbb = new Flag.Builder("BBB", Material.ACACIA_DOOR).type(Flag.Type.PROTECTION).build();
         assertTrue(aaa.compareTo(bbb) < bbb.compareTo(aaa));
         assertTrue(aaa.compareTo(aaa) == 0);
     }

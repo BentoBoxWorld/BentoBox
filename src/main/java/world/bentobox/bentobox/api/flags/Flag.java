@@ -224,19 +224,29 @@ public class Flag implements Comparable<Flag> {
         return type == other.type;
     }
 
+    /**
+     * @return a locale reference for the name of this protection flag
+     */
     public String getNameReference() {
         return PROTECTION_FLAGS + this.id + ".name";
     }
 
+    /**
+     * @return a locale reference for the description of this protection flag
+     */
     public String getDescriptionReference() {
         return PROTECTION_FLAGS + this.id + ".description";
     }
 
+    /**
+     * @return a locale reference for the hint of this protection flag
+     */
     public String getHintReference() {
         return PROTECTION_FLAGS + this.id + ".hint";
     }
 
     /**
+     * A set of game mode addons that use this flag. If empty, flag applies to all.
      * @return the gameModeAddon
      */
     public Set<GameModeAddon> getGameModes() {
