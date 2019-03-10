@@ -25,10 +25,10 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -45,20 +45,24 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class })
+@PrepareForTest( {BentoBox.class, Bukkit.class, Flags.class, Util.class })
 public class MobSpawnListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
-    private static Zombie zombie;
-    private static Slime slime;
-    private static Cow cow;
-    private static IslandWorldManager iwm;
+    private Location location;
+    @Mock
+    private BentoBox plugin;
+    @Mock
+    private Zombie zombie;
+    @Mock
+    private Slime slime;
+    @Mock
+    private Cow cow;
+    @Mock
+    private IslandWorldManager iwm;
 
-    @BeforeClass
-    public static void setUpBeforeClass() {
+    @Before
+    public void setUp() {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         IslandsManager im = mock(IslandsManager.class);
@@ -76,10 +80,9 @@ public class MobSpawnListenerTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        Bukkit.setServer(server);
-
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
+        PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
         location = mock(Location.class);
@@ -93,25 +96,20 @@ public class MobSpawnListenerTest {
         when(plugin.getFlagsManager()).thenReturn(flagsManager);
 
         // Monsters and animals
-        zombie = mock(Zombie.class);
         when(zombie.getLocation()).thenReturn(location);
-        slime = mock(Slime.class);
         when(slime.getLocation()).thenReturn(location);
-        cow = mock(Cow.class);
         when(cow.getLocation()).thenReturn(location);
 
-    }
-
-    @Before
-    public void setUp() {
         // Worlds
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
 
+        // Util class
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
+        when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
 
         // World Settings
         WorldSettings ws = mock(WorldSettings.class);
@@ -121,11 +119,6 @@ public class MobSpawnListenerTest {
 
         // Default - plugin is loaded
         when(plugin.isLoaded()).thenReturn(true);
-
-        // Utils
-        when(Util.isPassiveEntity(Mockito.any())).thenCallRealMethod();
-        when(Util.isHostileEntity(Mockito.any())).thenCallRealMethod();
-
     }
 
     @Test
