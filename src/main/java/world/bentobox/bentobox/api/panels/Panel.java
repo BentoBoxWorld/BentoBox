@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.panels;
 
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -41,10 +42,12 @@ public class Panel implements HeadRequester {
             // Fill the inventory and return
             for (Map.Entry<Integer, PanelItem> en: items.entrySet()) {
                 //TODO allow multi-paging
-                if (en.getKey() < 54) inventory.setItem(en.getKey(), en.getValue().getItem());
-                // Get player head async
-                if (en.getValue().isPlayerHead()) {
-                    HeadGetter.getHead(en.getValue(), this);
+                if (en.getKey() < 54) {
+                    inventory.setItem(en.getKey(), en.getValue().getItem());
+                    // Get player head async
+                    if (en.getValue().isPlayerHead()) {
+                        HeadGetter.getHead(en.getValue(), this);
+                    }
                 }
             }
         } else {
@@ -124,16 +127,23 @@ public class Panel implements HeadRequester {
         this.user = user;
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.util.heads.HeadRequester#setHead(world.bentobox.bentobox.api.panels.PanelItem)
+     */
     @Override
     public void setHead(PanelItem item) {
         // Update the panel item
-        items.values().stream().filter(i -> i.getName().equals(item.getName())).forEach(i -> i = item);
+        // Replace the item in the item list if the name is the same
+        items = items.entrySet().stream()
+                .collect(Collectors.toMap(Map.Entry::getKey, e -> (item.getName().equals(e.getValue().getName()) ? item : e.getValue())));
+        // Replace the inventory slot item
         for (int i = 0; i < inventory.getSize(); i++) {
             ItemStack it = inventory.getItem(i);
             if (it != null && it.getType().equals(Material.PLAYER_HEAD)) {
                 ItemMeta meta = it.getItemMeta();
                 if (item.getName().equals(meta.getLocalizedName())) {
                     inventory.setItem(i, item.getItem());
+                    // If one is found, we are done
                     return;
                 }
             }
