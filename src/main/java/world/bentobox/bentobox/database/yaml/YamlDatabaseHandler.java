@@ -65,7 +65,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * possible to load something before it has been saved. So, in general, load your objects and then
      * save them async only when you do not need the data again immediately.
      */
-    private Queue<Runnable> saveQueue;
+    private Queue<Runnable> processQueue;
 
     /**
      * Async save task that runs repeatedly
@@ -87,13 +87,13 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     YamlDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
-        saveQueue = new ConcurrentLinkedQueue<>();
+        processQueue = new ConcurrentLinkedQueue<>();
         if (plugin.isEnabled()) {
             asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 // Loop continuously
-                while (plugin.isEnabled() || !saveQueue.isEmpty()) {
-                    while (!saveQueue.isEmpty()) {
-                        saveQueue.poll().run();
+                while (plugin.isEnabled() || !processQueue.isEmpty()) {
+                    while (!processQueue.isEmpty()) {
+                        processQueue.poll().run();
                     }
                     // Clear the queue and then sleep
                     try {
@@ -439,7 +439,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     private void save(String name, String data, String path, Map<String, String> yamlComments) {
         if (plugin.isEnabled()) {
             // Async
-            saveQueue.add(() -> ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
+            processQueue.add(() -> ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments));
         } else {
             // Sync for shutdown
             ((YamlDatabaseConnector)databaseConnector).saveYamlFile(data, path, name, yamlComments);
@@ -640,7 +640,15 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     @Override
-    public boolean deleteID(String uniqueId) {
+    public void deleteID(String uniqueId) {
+        if (plugin.isEnabled()) {
+            processQueue.add(() -> delete(uniqueId));
+        } else {
+            delete(uniqueId);
+        }
+    }
+
+    private void delete(String uniqueId) {
         // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
         if (!uniqueId.endsWith(YML)) {
             uniqueId = uniqueId + YML;
@@ -653,12 +661,10 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
             File file = new File(tableFolder, uniqueId);
             try {
                 Files.delete(file.toPath());
-                return true;
             } catch (IOException e) {
                 plugin.logError("Could not delete yml database object! " + file.getName() + " - " + e.getMessage());
             }
         }
-        return false;
     }
 
     /* (non-Javadoc)
@@ -668,7 +674,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Null check
         if (instance == null) {
-            plugin.logError("YAM database request to delete a null. ");
+            plugin.logError("YAML database request to delete a null. ");
             return;
         }
         if (!(instance instanceof DataObject)) {

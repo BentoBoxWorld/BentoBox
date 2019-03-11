@@ -120,8 +120,7 @@ public abstract class AbstractDatabaseHandler<T> {
     /**
      * Attempts to delete the object with the uniqueId
      * @param uniqueId - uniqueId of object
-     * @return true if successful, false if there is no such uniqueId
      * @since 1.1
      */
-    public abstract boolean deleteID(String uniqueId);
+    public abstract void deleteID(String uniqueId);
 }

@@ -42,12 +42,12 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     private Connection connection;
 
     /**
-     * FIFO queue for saves. Note that the assumption here is that most database objects will be held
+     * FIFO queue for saves or deletions. Note that the assumption here is that most database objects will be held
      * in memory because loading is not handled with this queue. That means that it is theoretically
      * possible to load something before it has been saved. So, in general, load your objects and then
      * save them async only when you do not need the data again immediately.
      */
-    private Queue<Runnable> saveQueue;
+    private Queue<Runnable> processQueue;
 
     /**
      * Async save task that runs repeatedly
@@ -72,13 +72,13 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
         // Check if the table exists in the database and if not, create it
         createSchema();
-        saveQueue = new ConcurrentLinkedQueue<>();
+        processQueue = new ConcurrentLinkedQueue<>();
         if (plugin.isEnabled()) {
             asyncSaveTask = Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
                 // Loop continuously
-                while (plugin.isEnabled() || !saveQueue.isEmpty()) {
-                    while (!saveQueue.isEmpty()) {
-                        saveQueue.poll().run();
+                while (plugin.isEnabled() || !processQueue.isEmpty()) {
+                    while (!processQueue.isEmpty()) {
+                        processQueue.poll().run();
                     }
                     // Clear the queue and then sleep
                     try {
@@ -189,7 +189,7 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         String toStore = gson.toJson(instance);
         if (plugin.isEnabled()) {
             // Async
-            saveQueue.add(() -> store(instance, toStore, sb));
+            processQueue.add(() -> store(instance, toStore, sb));
         } else {
             // Sync
             store(instance, toStore, sb);
@@ -206,8 +206,19 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
     }
 
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.database.AbstractDatabaseHandler#deleteID(java.lang.String)
+     */
     @Override
-    public boolean deleteID(String uniqueId) {
+    public void deleteID(String uniqueId) {
+        if (plugin.isEnabled()) {
+            processQueue.add(() -> delete(uniqueId));
+        } else {
+            delete(uniqueId);
+        }
+    }
+
+    private void delete(String uniqueId) {
         String sb = "DELETE FROM `" +
                 dataObject.getCanonicalName() +
                 "` WHERE uniqueId = ?";
@@ -215,10 +226,8 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             preparedStatement.execute();
-            return preparedStatement.getUpdateCount() > 0;
         } catch (Exception e) {
             plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
-            return false;
         }
     }
 

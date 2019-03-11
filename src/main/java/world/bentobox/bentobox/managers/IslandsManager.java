@@ -34,6 +34,7 @@ import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.logs.LogEntry;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
 import world.bentobox.bentobox.database.objects.Island;
@@ -72,8 +73,12 @@ public class IslandsManager {
     // Island Cache
     @NonNull
     private IslandCache islandCache;
+    // Quarantined islands
     @NonNull
     private Map<UUID, List<Island>> quarantineCache;
+    // Deleted islands
+    @NonNull
+    private List<String> deletedIslands;
 
     /**
      * Islands Manager
@@ -87,6 +92,9 @@ public class IslandsManager {
         quarantineCache = new HashMap<>();
         spawn = new HashMap<>();
         last = new HashMap<>();
+        // This list should always be empty unless database deletion failed
+        // In that case a purge utility may be required in the future
+        deletedIslands = new ArrayList<>();
     }
 
     /**
@@ -266,7 +274,13 @@ public class IslandsManager {
         if (removeBlocks) {
             // Remove island from the cache
             islandCache.deleteIslandFromCache(island);
-            // Remove the island from the database
+            // Log the deletion (it shouldn't matter but may be useful)
+            island.log(new LogEntry.Builder("DELETED").build());
+            // Set the delete flag which will prevent it from being loaded even if database deletion fails
+            island.setDeleted(true);
+            // Save the island
+            handler.saveObject(island);
+            // Delete the island
             handler.deleteObject(island);
             // Remove players from island
             removePlayersFromIsland(island);
@@ -703,9 +717,12 @@ public class IslandsManager {
         islandCache.clear();
         quarantineCache.clear();
         List<Island> toQuarantine = new ArrayList<>();
-        // Only load non-quarantined island
+        // Attempt to load islands
         handler.loadObjects().stream().forEach(island -> {
-            if (island.isDoNotLoad() && island.getWorld() != null && island.getCenter() != null) {
+            if (island.isDeleted()) {
+                // These will be deleted later
+                deletedIslands.add(island.getUniqueId());
+            } else if (island.isDoNotLoad() && island.getWorld() != null && island.getCenter() != null) {
                 // Add to quarantine cache
                 quarantineCache.computeIfAbsent(island.getOwner(), k -> new ArrayList<>()).add(island);
             } else {
@@ -809,8 +826,7 @@ public class IslandsManager {
     }
 
     /**
-     * This removes players from an island overworld and nether - used when reseting or deleting an island
-     * Mobs are killed when the chunks are refreshed.
+     * This teleports players away from an island - used when reseting or deleting an island
      * @param island to remove players from
      */
     public void removePlayersFromIsland(Island island) {

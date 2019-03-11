@@ -158,7 +158,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public boolean deleteID(String uniqueId) {
+    public void deleteID(String uniqueId) {
         String sb = "DELETE FROM `" +
                 dataObject.getCanonicalName() +
                 "` WHERE uniqueId = ?";
@@ -166,10 +166,8 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             // UniqueId needs to be placed in quotes
             preparedStatement.setString(1, "\"" + uniqueId + "\"");
             preparedStatement.execute();
-            return preparedStatement.getUpdateCount() > 0;
         } catch (Exception e) {
             plugin.logError("Could not delete object " + dataObject.getCanonicalName() + " " + uniqueId + " " + e.getMessage());
-            return false;
         }
     }
 

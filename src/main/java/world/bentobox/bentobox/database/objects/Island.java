@@ -44,10 +44,14 @@ import world.bentobox.bentobox.util.Util;
  * Managed by IslandsManager
  * Responsible for team information as well.
  *
- * @author Tastybento
+ * @author tastybento
  * @author Poslovitch
  */
 public class Island implements DataObject {
+
+    // True if this island is deleted and pending deletion from the database
+    @Expose
+    private boolean deleted = false;
 
     @Expose
     private String uniqueId = UUID.randomUUID().toString();
@@ -849,5 +853,19 @@ public class Island implements DataObject {
      */
     public void setDoNotLoad(boolean doNotLoad) {
         this.doNotLoad = doNotLoad;
+    }
+
+    /**
+     * @return the deleted
+     */
+    public boolean isDeleted() {
+        return deleted;
+    }
+
+    /**
+     * @param deleted the deleted to set
+     */
+    public void setDeleted(boolean deleted) {
+        this.deleted = deleted;
     }
 }
