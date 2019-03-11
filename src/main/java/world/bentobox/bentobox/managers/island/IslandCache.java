@@ -281,7 +281,7 @@ public class IslandCache {
             grids.get(Util.getWorld(island.getWorld())).removeFromGrid(island);
         }
     }
-  
+
     /**
      * Resets all islands in this game mode to default flag settings
      * @param world - world

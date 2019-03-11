@@ -127,7 +127,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     }
 
     @Override
-    public boolean deleteID(String uniqueId) {
+    public void deleteID(String uniqueId) {
         // The filename of the JSON file is the value of uniqueId field plus .json. Sometimes the .json is already appended.
         if (!uniqueId.endsWith(JSON)) {
             uniqueId = uniqueId + JSON;
@@ -140,12 +140,10 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             File file = new File(tableFolder, uniqueId);
             try {
                 Files.delete(file.toPath());
-                return true;
             } catch (IOException e) {
                 plugin.logError("Could not delete json database object! " + file.getName() + " - " + e.getMessage());
             }
         }
-        return false;
     }
 
     @Override

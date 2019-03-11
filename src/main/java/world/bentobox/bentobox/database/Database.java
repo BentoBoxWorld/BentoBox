@@ -79,9 +79,9 @@ public class Database<T> {
     }
 
     /**
-     * Save config object
+     * Save config object. Saving may be done async.
      * @param instance to save
-     * @return true if successfully saved
+     * @return true if no immediate errors. If async, errors may occur later.
      */
     public boolean saveObject(T instance) {
         try {
@@ -106,11 +106,10 @@ public class Database<T> {
     /**
      * Attempts to delete the object with the uniqueId
      * @param uniqueId - uniqueId of object
-     * @return true if successful, false if there is no such uniqueId
      * @since 1.1
      */
-    public boolean deleteID(String uniqueId) {
-        return handler.deleteID(uniqueId);
+    public void deleteID(String uniqueId) {
+        handler.deleteID(uniqueId);
     }
 
     /**
