@@ -616,7 +616,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
         }
         if (clazz.equals(World.class)) {
             // Get world by name - may be null...
-            value = plugin.getServer().getWorld((String)value);
+            value = Bukkit.getServer().getWorld((String)value);
         }
         // Enums
         if (Enum.class.isAssignableFrom(clazz)) {
@@ -674,7 +674,7 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
         // Null check
         if (instance == null) {
-            plugin.logError("YAML database request to delete a null. ");
+            plugin.logError("YAML database request to delete a null.");
             return;
         }
         if (!(instance instanceof DataObject)) {

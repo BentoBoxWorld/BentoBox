@@ -53,6 +53,7 @@ public class DatabaseTest {
     @Captor
     private ArgumentCaptor<Supplier<String>> registerMessageLambdaCaptor;
     private List<Object> objectList;
+    @Mock
     private Island island;
 
     /**
@@ -72,7 +73,6 @@ public class DatabaseTest {
         when(dbSetup.getHandler(Mockito.any())).thenReturn(handler);
         when(DatabaseSetup.getDatabase()).thenReturn(dbSetup);
 
-        island = mock(Island.class);
         when(handler.loadObject(Mockito.anyString())).thenReturn(island);
         objectList = new ArrayList<>();
         objectList.add(mock(Island.class));
