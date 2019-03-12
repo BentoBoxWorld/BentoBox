@@ -35,7 +35,6 @@ import org.bukkit.inventory.ItemFactory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.plugin.PluginManager;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
@@ -63,15 +62,15 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest( {BentoBox.class, Flags.class, Util.class} )
+@PrepareForTest( {Bukkit.class, BentoBox.class, Flags.class, Util.class} )
 public class ChestDamageListenerTest {
 
-    private static Location location;
-    private static BentoBox plugin;
-    private static World world;
+    private Location location;
+    private BentoBox plugin;
+    private World world;
 
-    @BeforeClass
-    public static void setUpClass() {
+    @Before
+    public void setUpClass() {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
@@ -88,7 +87,9 @@ public class ChestDamageListenerTest {
         ItemFactory itemFactory = mock(ItemFactory.class);
         when(server.getItemFactory()).thenReturn(itemFactory);
 
-        Bukkit.setServer(server);
+        // Bukkit
+        PowerMockito.mockStatic(Bukkit.class);
+        when(Bukkit.getServer()).thenReturn(server);
 
         SkullMeta skullMeta = mock(SkullMeta.class);
         when(itemFactory.getItemMeta(any())).thenReturn(skullMeta);
@@ -155,12 +156,11 @@ public class ChestDamageListenerTest {
         Optional<Island> optional = Optional.of(island);
         when(im.getProtectedIslandAt(Mockito.any())).thenReturn(optional);
 
-    }
-
-    @Before
-    public void setUp() {
+        // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+
+
     }
 
     /**
