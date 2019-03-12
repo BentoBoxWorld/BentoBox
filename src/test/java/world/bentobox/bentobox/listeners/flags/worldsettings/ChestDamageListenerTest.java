@@ -70,7 +70,7 @@ public class ChestDamageListenerTest {
     private World world;
 
     @Before
-    public void setUpClass() {
+    public void setUp() {
         // Set up plugin
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
