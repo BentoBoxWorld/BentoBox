@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -31,7 +32,7 @@ public class HeadGetter {
 
     @SuppressWarnings("deprecation")
     private void runPlayerHeadGetter() {
-        plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> {
+        Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> {
             synchronized(names) {
                 Iterator<Entry<String, PanelItem>> it = names.entrySet().iterator();
                 if (it.hasNext()) {
@@ -46,7 +47,7 @@ public class HeadGetter {
                     if (headRequesters.containsKey(en.getKey())) {
                         for (HeadRequester req : headRequesters.get(en.getKey())) {
                             en.getValue().setHead(playerSkull.clone());
-                            plugin.getServer().getScheduler().runTask(plugin, () -> req.setHead(en.getValue()));
+                            Bukkit.getServer().getScheduler().runTask(plugin, () -> req.setHead(en.getValue()));
                         }
                     }
                     it.remove();
@@ -54,12 +55,12 @@ public class HeadGetter {
             }
         }, 0L, 20L);
     }
-    
-     /**
+
+    /**
      * @param panelItem - head to update
      * @param requester - callback class
      */
-    public static void getHead(PanelItem panelItem, HeadRequester requester) {        
+    public static void getHead(PanelItem panelItem, HeadRequester requester) {
         // Check if in cache
         if (cachedHeads.containsKey(panelItem.getName())) {
             panelItem.setHead(cachedHeads.get(panelItem.getName()).clone());
@@ -73,5 +74,5 @@ public class HeadGetter {
             names.put(panelItem.getName(), panelItem);
         }
     }
-    
+
 }

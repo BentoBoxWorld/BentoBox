@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.versions;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -119,7 +120,7 @@ public class ServerCompatibility {
     public Compatibility checkCompatibility(BentoBox plugin) {
         if (result == null) {
             // Check the server version first
-            ServerVersion version = getServerVersion(plugin.getServer());
+            ServerVersion version = getServerVersion(Bukkit.getServer());
 
             if (version == null || version.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'Version = null' means that it's not listed. And therefore, it's implicitly incompatible.
@@ -128,7 +129,7 @@ public class ServerCompatibility {
             }
 
             // Now, check the server software
-            ServerSoftware software = getServerSoftware(plugin.getServer());
+            ServerSoftware software = getServerSoftware(Bukkit.getServer());
 
             if (software == null || software.getCompatibility().equals(Compatibility.INCOMPATIBLE)) {
                 // 'software = null' means that it's not listed. And therefore, it's implicitly incompatible.

@@ -720,8 +720,8 @@ public class Island implements DataObject {
             user.sendMessage("commands.admin.info.owner", "[owner]", plugin.getPlayers().getName(owner), "[uuid]", owner.toString());
 
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
-            long lastPlayed = (plugin.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
-                    plugin.getServer().getOfflinePlayer(owner).getLastPlayed() : plugin.getServer().getOfflinePlayer(owner).getFirstPlayed();
+            long lastPlayed = (Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
+                    Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(owner).getFirstPlayed();
                     user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
                     user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
