@@ -50,7 +50,7 @@
         <!-- More visible way how to change dependency versions -->
         <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
         <bstats.version>1.4</bstats.version>
-        <vault.version>68f14ec</vault.version>
+        <vault.version>1.7</vault.version>
         <placeholder.version>2.9.2</placeholder.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}</revision>
