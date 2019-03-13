@@ -15,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.TreeSpecies;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -28,6 +29,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
@@ -54,6 +57,15 @@ import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 public class IslandsManager {
 
     private BentoBox plugin;
+
+    // Tree species to boat material map
+    private final static Map<TreeSpecies, Material> TREE_TO_BOAT = ImmutableMap.<TreeSpecies, Material>builder().
+            put(TreeSpecies.ACACIA, Material.ACACIA_BOAT).
+            put(TreeSpecies.BIRCH, Material.BIRCH_BOAT).
+            put(TreeSpecies.DARK_OAK, Material.DARK_OAK_BOAT).
+            put(TreeSpecies.JUNGLE, Material.JUNGLE_BOAT).
+            put(TreeSpecies.GENERIC, Material.OAK_BOAT).
+            put(TreeSpecies.REDWOOD, Material.SPRUCE_BOAT).build();
 
     /**
      * One island can be spawn, this is the one - otherwise, this value is null
@@ -594,7 +606,7 @@ public class IslandsManager {
                 player.leaveVehicle();
                 // Remove the boat so they don't lie around everywhere
                 boat.remove();
-                player.getInventory().addItem(new ItemStack(Material.getMaterial(((Boat) boat).getWoodType().toString() + "_BOAT"), 1));
+                player.getInventory().addItem(new ItemStack(TREE_TO_BOAT.getOrDefault(((Boat) boat).getWoodType(), Material.OAK_BOAT)));
                 player.updateInventory();
             }
         }
