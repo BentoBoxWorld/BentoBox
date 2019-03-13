@@ -139,11 +139,15 @@ public class IslandWorldManager {
 
     /**
      * Adds a GameMode to island world manager
-     * @param gameMode
+     * @param gameMode - game mode to add
+     * @throws NullPointerException - exception if the game mode overworld is null
      */
-    public void addGameMode(@NonNull GameModeAddon gameMode) {
+    public void addGameMode(@NonNull GameModeAddon gameMode) throws NullPointerException {
         WorldSettings settings = gameMode.getWorldSettings();
         World world = gameMode.getOverWorld();
+        if (world == null) {
+            throw new NullPointerException("Gamemode overworld object is null for " + gameMode.getDescription().getName());
+        }
         String friendlyName = settings.getFriendlyName().isEmpty() ? world.getName() : settings.getFriendlyName();
         // Add worlds to map
         gameModes.put(world, gameMode);
