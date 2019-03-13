@@ -28,7 +28,7 @@ public class IslandSethomeCommand extends ConfirmableCommand {
             user.sendMessage("general.errors.no-island");
             return false;
         }
-        if (!getPlugin().getIslands().userIsOnIsland(user.getWorld(), user)) {
+        if (!getPlugin().getIslands().locationIsOnIsland(user.getPlayer(), user.getLocation())) {
             user.sendMessage("commands.island.sethome.must-be-on-your-island");
             return false;
         }
