@@ -38,7 +38,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         user.sendMessage("commands.bentobox.version.plugin-version", TextVariables.VERSION, getPlugin().getDescription().getVersion());
         user.sendMessage("commands.bentobox.version.loaded-game-worlds");
 
-        getIWM().getOverWorldNames().entrySet().stream()
+        getIWM().getOverWorldNames().entrySet().stream().sorted((o1, o2)-> o1.getKey().compareTo(o2.getKey()))
         .forEach(e -> user.sendMessage("commands.bentobox.version.game-worlds", TextVariables.NAME, e.getKey(), "[addon]", e.getValue()));
 
         user.sendMessage("commands.bentobox.version.loaded-addons");
