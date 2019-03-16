@@ -194,7 +194,7 @@ public class Island implements DataObject {
      * @return clone of the center Location
      */
     public Location getCenter(){
-        return center.clone();
+        return center == null ? null : center.clone();
     }
 
     /**
