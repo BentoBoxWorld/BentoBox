@@ -280,13 +280,15 @@ public class PlaceBlocksListenerTest {
     @Test
     public void testOnPlayerInteract() {
         ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ARMOR_STAND);
+        when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.JUNGLE_BOAT);
         Block clickedBlock = mock(Block.class);
         when(clickedBlock.getLocation()).thenReturn(location);
         when(clickedBlock.getType()).thenReturn(Material.GRASS_BLOCK);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
-        pbl.onPlayerInteract(e);
-        assertFalse(e.isCancelled());
+        for (int i = 0; i < 7; i++) {
+            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
+            pbl.onPlayerInteract(e);
+            assertFalse("Failed on " + item.getType().toString(), e.isCancelled());
+        }
     }
 
     /**
@@ -296,14 +298,16 @@ public class PlaceBlocksListenerTest {
     public void testOnPlayerInteractNotAllowed() {
         when(island.isAllowed(Mockito.any(), Mockito.any())).thenReturn(false);
         ItemStack item = mock(ItemStack.class);
-        when(item.getType()).thenReturn(Material.ARMOR_STAND);
+        when(item.getType()).thenReturn(Material.ARMOR_STAND, Material.FIREWORK_ROCKET, Material.ITEM_FRAME, Material.END_CRYSTAL, Material.CHEST, Material.TRAPPED_CHEST, Material.DARK_OAK_BOAT);
         Block clickedBlock = mock(Block.class);
         when(clickedBlock.getLocation()).thenReturn(location);
         when(clickedBlock.getType()).thenReturn(Material.GRASS_BLOCK);
-        PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
-        pbl.onPlayerInteract(e);
-        assertTrue(e.isCancelled());
-        Mockito.verify(notifier).notify(Mockito.any(), Mockito.eq("protection.protected"));
+        for (int i = 0; i < 7; i++) {
+            PlayerInteractEvent e = new PlayerInteractEvent(player, Action.RIGHT_CLICK_BLOCK, item, clickedBlock, BlockFace.UP, EquipmentSlot.HAND);
+            pbl.onPlayerInteract(e);
+            assertTrue("Failed on " + item.getType().toString(), e.isCancelled());
+        }
+        Mockito.verify(notifier, Mockito.times(7)).notify(Mockito.any(), Mockito.eq("protection.protected"));
     }
 
     /**

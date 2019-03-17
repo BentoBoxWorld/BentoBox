@@ -44,7 +44,7 @@ public class PlaceBlocksListener extends FlagListener {
     }
 
     /**
-     * Handle placing of fireworks, mine carts, end crystals, doors, chests and boats on land
+     * Handle placing of fireworks, item frames, mine carts, end crystals, chests and boats on land
      * The doors and chests are related to an exploit.
      * @param e - event
      */
@@ -73,8 +73,10 @@ public class PlaceBlocksListener extends FlagListener {
                 if (e.getMaterial().equals(Material.FIREWORK_ROCKET)
                         || e.getMaterial().equals(Material.ARMOR_STAND)
                         || e.getMaterial().equals(Material.END_CRYSTAL)
+                        || e.getMaterial().equals(Material.ITEM_FRAME)
                         //|| Tag.DOORS.isTagged(e.getMaterial())
-                        || e.getMaterial().equals(Material.CHEST) || e.getMaterial().equals(Material.TRAPPED_CHEST)) {
+                        || e.getMaterial().equals(Material.CHEST)
+                        || e.getMaterial().equals(Material.TRAPPED_CHEST)) {
                     checkIsland(e, e.getPlayer(), e.getPlayer().getLocation(), Flags.PLACE_BLOCKS);
                 }
                 else if (e.getMaterial().name().contains("BOAT")) {
