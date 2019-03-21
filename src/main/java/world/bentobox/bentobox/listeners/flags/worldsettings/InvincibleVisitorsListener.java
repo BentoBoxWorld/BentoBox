@@ -15,6 +15,8 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.inventory.ClickType;
 
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -58,6 +60,8 @@ public class InvincibleVisitorsListener extends FlagListener implements ClickHan
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, getPanelItem(c, user).getItem());
+            // Save settings
+            BentoBox.getInstance().getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);
         } else {
             // Open the IV Settings panel
             openPanel(user, ivPanelName);
