@@ -2,12 +2,14 @@ package world.bentobox.bentobox.listeners.flags.protection;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
@@ -275,5 +277,25 @@ public class BlockInteractionListener extends FlagListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onBlockBreak(final BlockBreakEvent e) {
         checkClickedBlock(e, e.getPlayer(), e.getBlock().getLocation(), e.getBlock().getType());
+    }
+
+    /**
+     * Prevents dragon eggs from flying out of an island's protected space
+     * @param e - event
+     */
+    @EventHandler(priority = EventPriority.LOWEST)
+    public void onDragonEggTeleport(BlockFromToEvent e) {
+        Block from = e.getBlock();
+        if (!from.getType().equals(Material.DRAGON_EGG) || !getIWM().inWorld(from.getLocation())) {
+            return;
+        }
+        // If egg starts in a protected island...
+        getIslands().getProtectedIslandAt(from.getLocation()).ifPresent(fromIsland -> {
+            // Cancel if toIsland is not fromIsland or if there is no protected island there
+            // This protects against eggs dropping into adjacent islands, e.g. island distance and protection range are equal
+            e.setCancelled(getIslands().getProtectedIslandAt(e.getToBlock().getLocation()).map(toIsland -> {
+                return toIsland != fromIsland;
+            }).orElse(true));
+        });
     }
 }
