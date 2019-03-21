@@ -46,6 +46,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         new AdminSchemSaveCommand(this);
         new AdminSchemPos1Command(this);
         new AdminSchemPos2Command(this);
+        new AdminSchemListCommand(this);
     }
 
     @Override

@@ -203,6 +203,11 @@ commands:
       load:
         parameters: "<schem name>"
         description: "load schem into the clipboard"
+      list:
+        parameters: ""
+        description: "list available schems"
+        no-schems: "&cNo schems in schems folder!"
+        available-schems: "&aThese schems are available for loading:"
       origin:
         parameters: ""
         description: "set the schem's origin to your position"
