@@ -119,6 +119,10 @@ public class NewIsland {
             return this;
         }
 
+        /**
+         * @return Island
+         * @throws IOException - if there are insufficient parameters defined
+         */
         public Island build() throws IOException {
             if (user2 != null) {
                 NewIsland newIsland = new NewIsland(oldIsland2, user2, reason2, world2, name2, noPaste2);

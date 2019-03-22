@@ -117,11 +117,30 @@ public class IslandEvent extends IslandBaseEvent {
          * Player was registered to the island by admin
          * @since 1.3.0
          */
-        REGISTERED
+        REGISTERED,
+        /**
+         * Please was expelled
+         * @since 1.4.0
+         */
+        EXPEL
     }
 
     public static IslandEventBuilder builder() {
         return new IslandEventBuilder();
+    }
+
+    /**
+     * Fired when a player will be expelled from an island.
+     * May be cancelled.
+     * Cancellation will result in the expel being aborted.
+     *
+     * @since 1.4.0
+     */
+    public static class IslandExpelEvent extends IslandBaseEvent {
+        private IslandExpelEvent(Island island, UUID player, boolean admin, Location location) {
+            // Final variables have to be declared in the constructor
+            super(island, player, admin, location);
+        }
     }
 
     /**
@@ -368,6 +387,10 @@ public class IslandEvent extends IslandBaseEvent {
             Bukkit.getServer().getPluginManager().callEvent(new IslandEvent(island, player, admin, location, reason));
             // Generate explicit events
             switch (reason) {
+            case EXPEL:
+                IslandExpelEvent expel = new IslandExpelEvent(island, player, admin, location);
+                Bukkit.getServer().getPluginManager().callEvent(expel);
+                return expel;
             case BAN:
                 IslandBanEvent ban = new IslandBanEvent(island, player, admin, location);
                 Bukkit.getServer().getPluginManager().callEvent(ban);

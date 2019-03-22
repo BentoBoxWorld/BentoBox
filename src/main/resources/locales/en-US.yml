@@ -433,6 +433,14 @@ commands:
       description: "display island settings"
     language:
       description: "select language"
+    expel:
+      description: "expel a player from your island"
+      parameters: "<player>"
+      cannot-expel-yourself: "&cYou cannot expel yourself!"
+      cannot-expel: "&cThat player cannot be expelled."
+      cannot-ban-member: "&cYou cannot expel a team member!"
+      not-on-island: "&cThat player is not on your island!"
+      player-expelled-you: "&b[name]&c expelled you from the island!"
 
 ranks:
   owner: "Owner"
