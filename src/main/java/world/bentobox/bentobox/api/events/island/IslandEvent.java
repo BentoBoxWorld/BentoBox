@@ -119,7 +119,7 @@ public class IslandEvent extends IslandBaseEvent {
          */
         REGISTERED,
         /**
-         * Please was expelled
+         * Player was expelled
          * @since 1.4.0
          */
         EXPEL
