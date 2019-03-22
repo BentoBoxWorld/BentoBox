@@ -49,4 +49,14 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
         }
         return null;
     }
+    
+    /**
+     * Checks if a placeholder with this name is already registered
+     * @param placeholder - name of placeholder
+     * @return <tt>true</tt> if a placeholder with this name is already registered
+     * @since 1.4.0
+     */
+    public boolean isPlaceholder(@NonNull String placeholder) {
+    	return placeholders.containsKey(placeholder);
+    }
 }

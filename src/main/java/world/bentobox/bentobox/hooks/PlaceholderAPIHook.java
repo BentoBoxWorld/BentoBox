@@ -107,4 +107,15 @@ public class PlaceholderAPIHook extends Hook {
     public void registerAddonPlaceholder(Addon addon, String placeholder, PlaceholderReplacer replacer) {
         registerPlaceholder(addon, placeholder, replacer);
     }
+    
+    /**
+     * Checks if a placeholder with this name is already registered
+     * @param addon the addon, not null
+     * @param placeholder - name of placeholder
+     * @return <tt>true</tt> if a placeholder with this name is already registered
+     * @since 1.4.0
+     */
+    public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
+    	return addonsExpansions.containsKey(addon) ? addonsExpansions.get(addon).isPlaceholder(placeholder) : false;
+    }
 }
