@@ -25,10 +25,11 @@ public class PanelItem {
     private boolean glow;
     private ItemMeta meta;
     private boolean playerHead;
+    private boolean invisible;
 
-    public PanelItem(ItemStack icon, String name, List<String> description, boolean glow, ClickHandler clickHandler, boolean playerHead) {
-        this.icon = icon;
-        this.playerHead = playerHead;
+    public PanelItem(PanelItemBuilder builtItem) {
+        this.icon = builtItem.getIcon();
+        this.playerHead = builtItem.isPlayerHead();
         // Get the meta
         meta = icon.getItemMeta();
         if (meta != null) {
@@ -41,13 +42,13 @@ public class PanelItem {
             icon.setItemMeta(meta);
         }
 
-        this.clickHandler = clickHandler;
+        this.clickHandler = builtItem.getClickHandler();
 
         // Create the final item
-        setName(name);
-        setDescription(description);
-        setGlow(glow);
-
+        setName(builtItem.getName());
+        setDescription(builtItem.getDescription());
+        setGlow(builtItem.isGlow());
+        setInvisible(builtItem.isInvisible());
 
     }
 
@@ -77,6 +78,25 @@ public class PanelItem {
             meta.setDisplayName(name);
             meta.setLocalizedName(name); //Localized name cannot be overridden by the player using an anvils
             icon.setItemMeta(meta);
+        }
+    }
+
+    public boolean isInvisible() {
+        return invisible;
+    }
+
+    public void setInvisible(boolean invisible) {
+        this.invisible = invisible;
+        if (meta != null) {
+            if (invisible) {
+                meta.addEnchant(Enchantment.VANISHING_CURSE, 1, true);
+                meta.removeItemFlags(ItemFlag.HIDE_ENCHANTS);
+                icon.setItemMeta(meta);
+            } else {
+                meta.removeEnchant(Enchantment.VANISHING_CURSE);
+                meta.addItemFlags(ItemFlag.HIDE_ENCHANTS);
+                icon.setItemMeta(meta);
+            }
         }
     }
 

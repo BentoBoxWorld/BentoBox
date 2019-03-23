@@ -25,6 +25,10 @@ public class PanelBuilder {
      * @return PanelBuilder
      */
     public PanelBuilder item(PanelItem item) {
+        // Do not add null items
+        if (item == null) {
+            return this;
+        }
         return item(nextSlot(), item);
     }
 
@@ -35,6 +39,10 @@ public class PanelBuilder {
      * @return PanelBuilder
      */
     public PanelBuilder item(int slot, PanelItem item) {
+        // Do not add null items
+        if (item == null) {
+            return this;
+        }
         items.put(slot, item);
         return this;
     }

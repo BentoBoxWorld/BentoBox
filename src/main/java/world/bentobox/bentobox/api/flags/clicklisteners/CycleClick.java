@@ -66,12 +66,17 @@ public class CycleClick implements PanelItem.ClickHandler {
         }
         // Left clicking increases the rank required
         // Right clicking decreases the rank required
+        // Shift Left Click toggles player visibility
         // Get the user's island
         island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         if (island != null && (user.isOp() || user.getUniqueId().equals(island.getOwner()))) {
             changeOccurred = true;
             RanksManager rm = plugin.getRanksManager();
             plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
+
+                // Flag visibility
+                boolean invisible = false;
+                // Rank
                 int currentRank = island.getFlag(flag);
                 if (click.equals(ClickType.LEFT)) {
                     if (currentRank >= maxRank) {
@@ -79,7 +84,7 @@ public class CycleClick implements PanelItem.ClickHandler {
                     } else {
                         island.setFlag(flag, rm.getRankUpValue(currentRank));
                     }
-                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_OFF, 1F, 1F);
                 } else if (click.equals(ClickType.RIGHT)) {
                     if (currentRank <= minRank) {
                         island.setFlag(flag, maxRank);
@@ -87,9 +92,18 @@ public class CycleClick implements PanelItem.ClickHandler {
                         island.setFlag(flag, rm.getRankDownValue(currentRank));
                     }
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+                } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
+                    if (!plugin.getIWM().getVisibleSettings(user.getWorld()).contains(flag.getID())) {
+                        invisible = true;
+                        plugin.getIWM().getVisibleSettings(user.getWorld()).add(flag.getID());
+                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+                    } else {
+                        plugin.getIWM().getVisibleSettings(user.getWorld()).remove(flag.getID());
+                        user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+                    }
                 }
                 // Apply change to panel
-                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+                panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
             });
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
