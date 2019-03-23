@@ -148,7 +148,7 @@ public class PVPListenerTest {
         when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(Mockito.any(), Mockito.any())).thenReturn(item);
+        when(flag.toPanelItem(Mockito.any(), Mockito.any(), Mockito.eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 
