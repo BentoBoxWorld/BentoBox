@@ -94,12 +94,12 @@ public class CycleClick implements PanelItem.ClickHandler {
                     }
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
                 } else if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
-                    if (!plugin.getIWM().getVisibleSettings(user.getWorld()).contains(flag.getID())) {
+                    if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
                         invisible = true;
-                        plugin.getIWM().getVisibleSettings(user.getWorld()).add(flag.getID());
+                        plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                     } else {
-                        plugin.getIWM().getVisibleSettings(user.getWorld()).remove(flag.getID());
+                        plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
                     }
                     // Save changes

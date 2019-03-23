@@ -49,7 +49,7 @@ public class SettingsPanel {
 
         // Use paging
         flags.stream().skip(page * 43L).limit(page * 43L + 43L)
-        .forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user, plugin.getIWM().getVisibleSettings(world).contains(f.getID())))));
+        .forEach((f -> panelBuilder.item(f.toPanelItem(plugin, user, plugin.getIWM().getHiddenFlags(world).contains(f.getID())))));
         // Add forward and backward icons
         if (page > 0) {
             // Previous page icon

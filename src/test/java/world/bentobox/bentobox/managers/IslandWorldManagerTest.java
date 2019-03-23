@@ -618,13 +618,13 @@ public class IslandWorldManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getVisibleSettings(org.bukkit.World)}.
+     * Test method for {@link world.bentobox.bentobox.managers.IslandWorldManager#getHiddenFlags(org.bukkit.World)}.
      */
     @Test
     public void testGetVisibleSettings() {
         List<String> list = new ArrayList<>();
-        when(ws.getVisibleSettings()).thenReturn(list);
-        assertEquals(list, iwm.getVisibleSettings(world));
+        when(ws.getHiddenFlags()).thenReturn(list);
+        assertEquals(list, iwm.getHiddenFlags(world));
     }
 
     /**
