@@ -2,7 +2,6 @@ package world.bentobox.bentobox.listeners;
 
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -79,11 +78,6 @@ public class StandardSpawnProtectionListener implements Listener {
                 || plugin.getIWM().isIslandNether(e.getLocation().getWorld())
                 || plugin.getIWM().isIslandEnd(e.getLocation().getWorld())) {
             // Not used in island worlds
-            return false;
-        }
-        // Find out what is exploding
-        Entity expl = e.getEntity();
-        if (expl == null) {
             return false;
         }
         e.blockList().removeIf(b -> atSpawn(b.getLocation()));
