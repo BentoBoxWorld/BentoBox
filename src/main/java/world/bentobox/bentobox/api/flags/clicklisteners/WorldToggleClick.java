@@ -63,6 +63,7 @@ public class WorldToggleClick implements ClickHandler {
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
+
             // Save world settings
             plugin.getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);
         });
