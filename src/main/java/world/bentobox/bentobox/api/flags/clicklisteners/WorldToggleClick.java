@@ -54,6 +54,8 @@ public class WorldToggleClick implements ClickHandler {
                     plugin.getIWM().getVisibleSettings(user.getWorld()).remove(flag.getID());
                     user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
                 }
+                // Save changes
+                plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
             } else {
                 // Toggle flag
                 flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));

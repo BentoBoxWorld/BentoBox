@@ -4,6 +4,7 @@ import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -57,6 +58,8 @@ public class IslandToggleClick implements ClickHandler {
                         plugin.getIWM().getVisibleSettings(user.getWorld()).remove(flag.getID());
                         user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
                     }
+                    // Save changes
+                    plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
                 } else {
                     // Toggle flag
                     island.toggleFlag(flag);
