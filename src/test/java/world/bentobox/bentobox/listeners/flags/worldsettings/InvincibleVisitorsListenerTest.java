@@ -30,6 +30,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -37,6 +38,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -51,14 +53,21 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class InvincibleVisitorsListenerTest {
 
+	@Mock
     private IslandWorldManager iwm;
     private InvincibleVisitorsListener listener;
+    @Mock
     private Panel panel;
+    @Mock
     private User user;
+    @Mock
     private IslandsManager im;
     private List<String> ivSettings;
+    @Mock
     private Player player;
     private Optional<Island> optionalIsland;
+    @Mock
+    private GameModeAddon addon;
 
     /**
      * @throws java.lang.Exception
@@ -70,23 +79,21 @@ public class InvincibleVisitorsListenerTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         // Island World Manager
-        iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
+        Optional<GameModeAddon> optionalAddon = Optional.of(addon);
+		when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);
 
         listener = new InvincibleVisitorsListener();
 
-        panel = mock(Panel.class);
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
         when(panel.getName()).thenReturn("panel");
         // Sometimes use Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.inWorld()).thenReturn(true);
         when(user.getWorld()).thenReturn(mock(World.class));
         when(user.getLocation()).thenReturn(mock(Location.class));
-        player = mock(Player.class);
         when(user.getPlayer()).thenReturn(player);
         when(user.hasPermission(Mockito.anyString())).thenReturn(true);
         when(user.getTranslation(Mockito.anyString())).thenReturn("panel");
@@ -105,7 +112,6 @@ public class InvincibleVisitorsListenerTest {
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         // Island Manager
-        im = mock(IslandsManager.class);
         Island island = mock(Island.class);
         when(island.getOwner()).thenReturn(uuid);
         when(im.getIsland(Mockito.any(World.class), Mockito.any(User.class))).thenReturn(island);
@@ -184,7 +190,8 @@ public class InvincibleVisitorsListenerTest {
             // IV settings should not have the damage cause in it anymore
             assertFalse(ivSettings.contains(dc.name()));
         }
-
+        // The values should be saved twice because there are two clicks
+        Mockito.verify(addon, Mockito.times(DamageCause.values().length * 2)).saveWorldSettings();
     }
 
     @Test

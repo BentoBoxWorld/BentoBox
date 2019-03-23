@@ -4,6 +4,7 @@ import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem.ClickHandler;
@@ -60,6 +61,8 @@ public class WorldToggleClick implements ClickHandler {
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
+            // Save world settings
+            plugin.getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);
         });
         return true;
     }
