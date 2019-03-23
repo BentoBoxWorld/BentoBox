@@ -29,7 +29,7 @@ public class WorldToggleClick implements ClickHandler {
     }
 
     @Override
-    public boolean onClick(Panel panel, User user, ClickType clickType, int slot) {
+    public boolean onClick(Panel panel, User user, ClickType click, int slot) {
         // Get the world
         if (!plugin.getIWM().inWorld(user.getLocation())) {
             user.sendMessage("general.errors.wrong-world");
@@ -43,11 +43,27 @@ public class WorldToggleClick implements ClickHandler {
         }
         // Get flag
         plugin.getFlagsManager().getFlag(id).ifPresent(flag -> {
-            // Toggle flag
-            flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
-            user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+            // Visibility
+            boolean invisible = false;
+            if (click.equals(ClickType.SHIFT_LEFT) && user.isOp()) {
+                if (!plugin.getIWM().getHiddenFlags(user.getWorld()).contains(flag.getID())) {
+                    invisible = true;
+                    plugin.getIWM().getHiddenFlags(user.getWorld()).add(flag.getID());
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
+                } else {
+                    plugin.getIWM().getHiddenFlags(user.getWorld()).remove(flag.getID());
+                    user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_NOTE_BLOCK_CHIME, 1F, 1F);
+                }
+                // Save changes
+                plugin.getIWM().getAddon(user.getWorld()).ifPresent(GameModeAddon::saveWorldSettings);
+            } else {
+                // Toggle flag
+                flag.setSetting(user.getWorld(), !flag.isSetForWorld(user.getWorld()));
+                user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_STONE_BUTTON_CLICK_ON, 1F, 1F);
+            }
             // Apply change to panel
-            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user).getItem());
+            panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
+
             // Save world settings
             plugin.getIWM().getAddon(Util.getWorld(user.getWorld())).ifPresent(GameModeAddon::saveWorldSettings);
         });

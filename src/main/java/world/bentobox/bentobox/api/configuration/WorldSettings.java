@@ -126,9 +126,9 @@ public interface WorldSettings {
     int getSeaHeight();
 
     /**
-     * @return visible settings for player
+     * @return hidden flag list
      */
-    List<String> getVisibleSettings();
+    List<String> getHiddenFlags();
 
     /**
      * @return the visitorBannedCommands

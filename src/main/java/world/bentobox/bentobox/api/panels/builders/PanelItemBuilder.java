@@ -18,6 +18,7 @@ public class PanelItemBuilder {
     private boolean glow = false;
     private PanelItem.ClickHandler clickHandler;
     private boolean playerHead;
+    private boolean invisible;
 
     public PanelItemBuilder icon(Material icon) {
         this.icon = new ItemStack(icon);
@@ -86,13 +87,67 @@ public class PanelItemBuilder {
         return this;
     }
 
+    public PanelItemBuilder invisible(boolean invisible) {
+        this.invisible = invisible;
+        return this;
+    }
+
     public PanelItemBuilder clickHandler(ClickHandler clickHandler) {
         this.clickHandler = clickHandler;
         return this;
     }
 
     public PanelItem build() {
-        return new PanelItem(icon, name, description, glow, clickHandler, playerHead);
+        return new PanelItem(this);
+    }
+
+    /**
+     * @return the icon
+     */
+    public ItemStack getIcon() {
+        return icon;
+    }
+
+    /**
+     * @return the name
+     */
+    public String getName() {
+        return name;
+    }
+
+    /**
+     * @return the description
+     */
+    public List<String> getDescription() {
+        return description;
+    }
+
+    /**
+     * @return the glow
+     */
+    public boolean isGlow() {
+        return glow;
+    }
+
+    /**
+     * @return the clickHandler
+     */
+    public PanelItem.ClickHandler getClickHandler() {
+        return clickHandler;
+    }
+
+    /**
+     * @return the playerHead
+     */
+    public boolean isPlayerHead() {
+        return playerHead;
+    }
+
+    /**
+     * @return the invisible
+     */
+    public boolean isInvisible() {
+        return invisible;
     }
 
 }

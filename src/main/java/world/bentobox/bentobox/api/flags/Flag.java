@@ -281,14 +281,20 @@ public class Flag implements Comparable<Flag> {
      * Converts a flag to a panel item. The content of the flag will change depending on who the user is and where they are.
      * @param plugin - plugin
      * @param user - user that will see this flag
-     * @return - PanelItem for this flag
+     * @param invisible - true if this flag is not visible to players
+     * @return - PanelItem for this flag or null if item is inivisible to user
      */
-    public PanelItem toPanelItem(BentoBox plugin, User user) {
+    public PanelItem toPanelItem(BentoBox plugin, User user, boolean invisible) {
+        // Invisibility
+        if (!user.isOp() && invisible) {
+            return null;
+        }
         // Start the flag conversion
         PanelItemBuilder pib = new PanelItemBuilder()
                 .icon(new ItemStack(icon))
                 .name(user.getTranslation("protection.panel.flag-item.name-layout", TextVariables.NAME, user.getTranslation(getNameReference())))
-                .clickHandler(clickHandler);
+                .clickHandler(clickHandler)
+                .invisible(invisible);
         if (hasSubPanel()) {
             pib.description(user.getTranslation("protection.panel.flag-item.menu-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())));
             return pib.build();
@@ -483,4 +489,5 @@ public class Flag implements Comparable<Flag> {
             return new Flag(this);
         }
     }
+
 }

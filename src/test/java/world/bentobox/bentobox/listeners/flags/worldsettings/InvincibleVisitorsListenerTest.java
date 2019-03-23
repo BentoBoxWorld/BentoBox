@@ -53,7 +53,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class InvincibleVisitorsListenerTest {
 
-	@Mock
+    @Mock
     private IslandWorldManager iwm;
     private InvincibleVisitorsListener listener;
     @Mock
@@ -83,7 +83,7 @@ public class InvincibleVisitorsListenerTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
-		when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
+        when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);
 
         listener = new InvincibleVisitorsListener();
@@ -107,7 +107,7 @@ public class InvincibleVisitorsListenerTest {
         when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(Mockito.any(), Mockito.eq(user))).thenReturn(item);
+        when(flag.toPanelItem(Mockito.any(), Mockito.eq(user), Mockito.eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
 

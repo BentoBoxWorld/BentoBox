@@ -36,7 +36,7 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest({BentoBox.class, Util.class })
 public class WorldToggleClickTest {
 
-	@Mock
+    @Mock
     private IslandWorldManager iwm;
     private WorldToggleClick listener;
     @Mock
@@ -45,7 +45,7 @@ public class WorldToggleClickTest {
     private User user;
     private Flag flag;
     @Mock
-	private GameModeAddon addon;
+    private GameModeAddon addon;
 
     /**
      * @throws java.lang.Exception
@@ -61,20 +61,20 @@ public class WorldToggleClickTest {
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(iwm.getPermissionPrefix(Mockito.any())).thenReturn("bskyblock");
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
-		when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
+        when(iwm.getAddon(Mockito.any())).thenReturn(optionalAddon);
         when(plugin.getIWM()).thenReturn(iwm);
 
         listener = new WorldToggleClick("test");
 
         // Panel
         when(panel.getInventory()).thenReturn(mock(Inventory.class));
-        
+
         // User
         // Sometimes use Mockito.withSettings().verboseLogging()
         when(user.getWorld()).thenReturn(mock(World.class));
         when(user.getLocation()).thenReturn(mock(Location.class));
         when(user.getPlayer()).thenReturn(mock(Player.class));
-        
+
         // Util
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
@@ -83,10 +83,10 @@ public class WorldToggleClickTest {
         FlagsManager fm = mock(FlagsManager.class);
         flag = mock(Flag.class);
         when(flag.isSetForWorld(Mockito.any())).thenReturn(false);
-        
+
         PanelItem item = mock(PanelItem.class);
         when(item.getItem()).thenReturn(mock(ItemStack.class));
-        when(flag.toPanelItem(Mockito.any(), Mockito.eq(user))).thenReturn(item);
+        when(flag.toPanelItem(Mockito.any(), Mockito.eq(user), Mockito.eq(false))).thenReturn(item);
         when(fm.getFlag(Mockito.anyString())).thenReturn(Optional.of(flag));
         when(plugin.getFlagsManager()).thenReturn(fm);
     }

@@ -604,8 +604,13 @@ public class IslandWorldManager {
         return gameModes.get(world).getWorldSettings().getDefaultIslandFlags();
     }
 
-    public List<String> getVisibleSettings(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().getVisibleSettings();
+    /**
+     * Returns a list of flags that should NOT be visible to the player
+     * @param world - world
+     * @return list of hidden flags
+     */
+    public List<String> getHiddenFlags(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().getHiddenFlags();
     }
 
     /**
