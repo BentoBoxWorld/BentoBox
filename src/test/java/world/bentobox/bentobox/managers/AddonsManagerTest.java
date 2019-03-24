@@ -16,7 +16,7 @@ import world.bentobox.bentobox.BentoBox;
 @PrepareForTest( { BentoBox.class} )
 public class AddonsManagerTest {
 
-    private static BentoBox plugin;
+    private BentoBox plugin;
 
     @Before
     public void setup() {

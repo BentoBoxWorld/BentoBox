@@ -1,13 +1,14 @@
 package world.bentobox.bentobox.managers;
 
-import com.mongodb.lang.NonNull;
-import com.mongodb.lang.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
 
 import java.util.Optional;
+
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * Manages placeholder integration.
@@ -84,5 +85,16 @@ public class PlaceholdersManager {
      */
     private Optional<PlaceholderAPIHook> getPlaceholderAPIHook() {
         return plugin.getHooks().getHook("PlaceholderAPI").map(hook -> (PlaceholderAPIHook) hook);
+    }
+    
+    /**
+     * Checks if a placeholder with this name is already registered
+     * @param addon the addon, not null
+     * @param placeholder - name of placeholder
+     * @return <tt>true</tt> if a placeholder with this name is already registered
+     * @since 1.4.0
+     */
+    public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
+    	return addon == null ? false : getPlaceholderAPIHook().map(h -> h.isPlaceholder(addon, placeholder)).orElse(false);
     }
 }
