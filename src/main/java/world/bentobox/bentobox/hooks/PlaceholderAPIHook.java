@@ -1,8 +1,5 @@
 package world.bentobox.bentobox.hooks;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -10,6 +7,9 @@ import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.AddonPlaceholderExpansion;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlaceholderExpansion;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Provides implementations and interfacing needed to register and get placeholders from PlaceholderAPI.
@@ -112,10 +112,10 @@ public class PlaceholderAPIHook extends Hook {
      * Checks if a placeholder with this name is already registered
      * @param addon the addon, not null
      * @param placeholder - name of placeholder
-     * @return <tt>true</tt> if a placeholder with this name is already registered
+     * @return {@code true} if a placeholder with this name is already registered
      * @since 1.4.0
      */
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
-    	return addonsExpansions.containsKey(addon) ? addonsExpansions.get(addon).isPlaceholder(placeholder) : false;
+    	return addonsExpansions.containsKey(addon) && addonsExpansions.get(addon).isPlaceholder(placeholder);
     }
 }
