@@ -1,17 +1,10 @@
 package world.bentobox.bentobox.api.flags;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.eclipse.jdt.annotation.NonNull;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
@@ -25,6 +18,12 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class Flag implements Comparable<Flag> {
 
@@ -304,15 +303,15 @@ public class Flag implements Comparable<Flag> {
         case PROTECTION:
             return createProtectionFlag(plugin, user, island, pib).build();
         case SETTING:
-            return createSettingFlag(plugin, user, island, pib).build();
+            return createSettingFlag(user, island, pib).build();
         case WORLD_SETTING:
-            return createWorldSettingFlag(plugin, user, pib).build();
+            return createWorldSettingFlag(user, pib).build();
         default:
             return pib.build();
         }
     }
 
-    private PanelItemBuilder createWorldSettingFlag(BentoBox plugin, User user, PanelItemBuilder pib) {
+    private PanelItemBuilder createWorldSettingFlag(User user, PanelItemBuilder pib) {
         String worldSetting = this.isSetForWorld(user.getWorld()) ? user.getTranslation("protection.panel.flag-item.setting-active")
                 : user.getTranslation("protection.panel.flag-item.setting-disabled");
         pib.description(user.getTranslation("protection.panel.flag-item.setting-layout", TextVariables.DESCRIPTION, user.getTranslation(getDescriptionReference())
@@ -320,7 +319,7 @@ public class Flag implements Comparable<Flag> {
         return pib;
     }
 
-    private PanelItemBuilder createSettingFlag(BentoBox plugin, User user, Island island, PanelItemBuilder pib) {
+    private PanelItemBuilder createSettingFlag(User user, Island island, PanelItemBuilder pib) {
         if (island != null) {
             String islandSetting = island.isAllowed(this) ? user.getTranslation("protection.panel.flag-item.setting-active")
                     : user.getTranslation("protection.panel.flag-item.setting-disabled");

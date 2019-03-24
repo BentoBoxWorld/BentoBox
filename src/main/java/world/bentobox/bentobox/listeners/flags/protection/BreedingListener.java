@@ -1,8 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.Arrays;
-import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.entity.Animals;
 import org.bukkit.event.EventHandler;
@@ -10,9 +7,11 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+
+import java.util.Arrays;
+import java.util.List;
 
 /**
  * Handles breeding protection
@@ -40,7 +39,7 @@ public class BreedingListener extends FlagListener {
             if (e.getHand().equals(EquipmentSlot.OFF_HAND)) {
                 inHand = e.getPlayer().getInventory().getItemInOffHand();
             }
-            if (inHand != null && BREEDING_ITEMS.contains(inHand.getType()) && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BREEDING)) {
+            if (BREEDING_ITEMS.contains(inHand.getType()) && !checkIsland(e, e.getPlayer(), e.getRightClicked().getLocation(), Flags.BREEDING)) {
                 ((Animals)e.getRightClicked()).setBreed(false);
             }
         }

@@ -1,17 +1,16 @@
 package world.bentobox.bentobox.listeners.flags.settings;
 
-import java.util.Optional;
-
 import org.bukkit.entity.PufferFish;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.entity.CreatureSpawnEvent;
 import org.bukkit.event.entity.CreatureSpawnEvent.SpawnReason;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.Optional;
 
 
 /**
@@ -30,7 +29,7 @@ public class MobSpawnListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNaturalMobSpawn(CreatureSpawnEvent e) {
         // If not in the right world, return
-        if (e.getEntity() == null || !getIWM().inWorld(e.getEntity().getLocation())) {
+        if (!getIWM().inWorld(e.getEntity().getLocation())) {
             return false;
         }
         // Deal with natural spawning

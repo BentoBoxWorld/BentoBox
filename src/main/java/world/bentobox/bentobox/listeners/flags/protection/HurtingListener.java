@@ -1,7 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
-import java.util.HashMap;
-
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
@@ -20,11 +18,12 @@ import org.bukkit.event.player.PlayerFishEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.potion.PotionEffect;
-
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.HashMap;
 
 
 /**
@@ -165,10 +164,6 @@ public class HurtingListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled=true)
     public void onLingeringPotionDamage(final EntityDamageByEntityEvent e) {
-        if (e.getEntity() == null || e.getEntity().getUniqueId() == null) {
-            return;
-        }
-
         if (e.getCause().equals(DamageCause.ENTITY_ATTACK) && thrownPotions.containsKey(e.getDamager().getEntityId())) {
             Player attacker = thrownPotions.get(e.getDamager().getEntityId());
             // Self damage

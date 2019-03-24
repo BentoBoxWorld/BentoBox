@@ -1,9 +1,4 @@
-/**
- * 
- */
 package world.bentobox.bentobox.managers;
-
-import static org.mockito.Mockito.when;
 
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.After;
@@ -14,10 +9,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+
+import static org.mockito.Mockito.when;
 
 /**
  * @author tastybento
@@ -34,13 +30,8 @@ public class GameModePlaceholderManagerTest {
 	@Mock
 	private PlaceholdersManager pm;
 	
-	
-	
 	private GameModePlaceholderManager gpm;
 
-	/**
-	 * @throws java.lang.Exception
-	 */
 	@Before
 	public void setUp() throws Exception {
 		gpm = new GameModePlaceholderManager(plugin);

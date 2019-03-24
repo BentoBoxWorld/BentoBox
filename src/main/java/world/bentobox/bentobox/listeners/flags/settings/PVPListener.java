@@ -1,8 +1,5 @@
 package world.bentobox.bentobox.listeners.flags.settings;
 
-import java.util.HashMap;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -19,11 +16,13 @@ import org.bukkit.event.entity.EntityDamageEvent.DamageCause;
 import org.bukkit.event.entity.LingeringPotionSplashEvent;
 import org.bukkit.event.entity.PotionSplashEvent;
 import org.bukkit.event.player.PlayerFishEvent;
-
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.lists.Flags;
+
+import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * Handles PVP
@@ -173,7 +172,7 @@ public class PVPListener extends FlagListener {
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLingeringPotionDamage(AreaEffectCloudApplyEvent e) {
-        if (e.getEntity() != null && thrownPotions.containsKey(e.getEntity().getEntityId())) {
+        if (thrownPotions.containsKey(e.getEntity().getEntityId())) {
             User user = User.getInstance(thrownPotions.get(e.getEntity().getEntityId()));
             // Run through affected entities and delete them if they are safe
             e.getAffectedEntities().removeIf(le -> !le.getUniqueId().equals(user.getUniqueId()) && blockPVP(user, le, e, getFlag(e.getEntity().getWorld())));

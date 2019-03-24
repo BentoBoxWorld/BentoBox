@@ -9,7 +9,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -27,11 +26,9 @@ public class BucketListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onBucketEmpty(final PlayerBucketEmptyEvent e) {
-        if (e.getBlockClicked() != null) {
-            // This is where the water or lava actually will be dumped
-            Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
-            checkIsland(e, e.getPlayer(), dumpBlock.getLocation(), Flags.BUCKET);
-        }
+        // This is where the water or lava actually will be dumped
+        Block dumpBlock = e.getBlockClicked().getRelative(e.getBlockFace());
+        checkIsland(e, e.getPlayer(), dumpBlock.getLocation(), Flags.BUCKET);
     }
 
     /**

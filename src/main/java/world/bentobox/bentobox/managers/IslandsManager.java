@@ -1,16 +1,6 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.ImmutableMap;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -29,9 +19,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.collect.ImmutableMap;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -48,6 +35,17 @@ import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 /**
  * The job of this class is manage all island related data.
  * It also handles island ownership, including team, trustees, coops, etc.
@@ -59,7 +57,7 @@ public class IslandsManager {
     private BentoBox plugin;
 
     // Tree species to boat material map
-    private final static Map<TreeSpecies, Material> TREE_TO_BOAT = ImmutableMap.<TreeSpecies, Material>builder().
+    private static final Map<TreeSpecies, Material> TREE_TO_BOAT = ImmutableMap.<TreeSpecies, Material>builder().
             put(TreeSpecies.ACACIA, Material.ACACIA_BOAT).
             put(TreeSpecies.BIRCH, Material.BIRCH_BOAT).
             put(TreeSpecies.DARK_OAK, Material.DARK_OAK_BOAT).

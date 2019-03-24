@@ -10,7 +10,6 @@ import org.bukkit.event.entity.EntityPortalEvent;
 import org.bukkit.event.player.PlayerPortalEvent;
 import org.bukkit.event.player.PlayerTeleportEvent.TeleportCause;
 import org.eclipse.jdt.annotation.NonNull;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
@@ -48,7 +47,7 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onEndIslandPortal(PlayerPortalEvent e) {
-        if (e.getFrom() == null || e.getCause() != TeleportCause.END_PORTAL) {
+        if (e.getCause() != TeleportCause.END_PORTAL) {
             return false;
         }
         World fromWorld = e.getFrom().getWorld();
@@ -109,7 +108,7 @@ public class PortalTeleportationListener implements Listener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public boolean onNetherPortal(PlayerPortalEvent e) {
-        if (e.getFrom() == null || e.getCause() != TeleportCause.NETHER_PORTAL) {
+        if (e.getCause() != TeleportCause.NETHER_PORTAL) {
             return false;
         }
         World fromWorld = e.getFrom().getWorld();

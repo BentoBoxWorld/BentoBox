@@ -12,7 +12,6 @@ import org.bukkit.event.block.BlockIgniteEvent;
 import org.bukkit.event.block.BlockSpreadEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.util.BlockIterator;
-
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
@@ -76,7 +75,7 @@ public class FireListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onPlayerInteract(PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK) && e.getMaterial() != null
+        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
                 && (e.getMaterial() == Material.FLINT_AND_STEEL || e.getMaterial() == Material.FIRE_CHARGE)) {
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.FLINT_AND_STEEL);
         }

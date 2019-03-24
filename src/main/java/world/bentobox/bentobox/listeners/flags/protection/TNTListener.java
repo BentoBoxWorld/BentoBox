@@ -10,7 +10,6 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityChangeBlockEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -52,8 +51,8 @@ public class TNTListener extends FlagListener {
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onTNTPriming(PlayerInteractEvent e) {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)
+                && e.getClickedBlock() != null
                 && e.getClickedBlock().getType().equals(Material.TNT)
-                && e.getMaterial() != null
                 && e.getMaterial().equals(Material.FLINT_AND_STEEL)) {
             checkIsland(e, e.getPlayer(), e.getClickedBlock().getLocation(), Flags.BREAK_BLOCKS);
         }
@@ -66,7 +65,7 @@ public class TNTListener extends FlagListener {
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
         // Remove any blocks from the explosion list if they are inside a protected area and if the entity was a TNT
-        if (e.getEntity() != null && e.getEntityType().equals(EntityType.PRIMED_TNT)
+        if (e.getEntityType().equals(EntityType.PRIMED_TNT)
                 && e.blockList().removeIf(b -> getIslands().getProtectedIslandAt(b.getLocation()).map(i -> !i.isAllowed(Flags.TNT)).orElse(false))) {
             // If any were removed, then prevent damage too
             e.setCancelled(true);

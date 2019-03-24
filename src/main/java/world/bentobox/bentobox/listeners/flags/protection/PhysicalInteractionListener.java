@@ -7,7 +7,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.EntityInteractEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -66,8 +65,7 @@ public class PhysicalInteractionListener extends FlagListener {
             return;
         }
         Projectile p = (Projectile)e.getEntity();
-        if (p.getShooter() instanceof Player && e.getBlock() != null) {
-
+        if (p.getShooter() instanceof Player) {
             switch(e.getBlock().getType()) {
             case ACACIA_BUTTON:
             case BIRCH_BUTTON:

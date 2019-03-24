@@ -1,13 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
@@ -17,12 +9,19 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
+
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Handles registration and management of worlds
@@ -142,7 +141,7 @@ public class IslandWorldManager {
      * @param gameMode - game mode to add
      * @throws NullPointerException - exception if the game mode overworld is null
      */
-    public void addGameMode(@NonNull GameModeAddon gameMode) throws NullPointerException {
+    public void addGameMode(@NonNull GameModeAddon gameMode) {
         WorldSettings settings = gameMode.getWorldSettings();
         World world = gameMode.getOverWorld();
         if (world == null) {
