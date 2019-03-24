@@ -2,6 +2,7 @@ package world.bentobox.bentobox.managers;
 
 import java.text.DateFormat;
 import java.time.Instant;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
@@ -23,13 +24,23 @@ import world.bentobox.bentobox.util.Util;
 public class GameModePlaceholderManager {
 	
 	enum Placeholders {
-		FRIENDLY_NAME,
-		ISLAND_DISTANCE,
-		ISLAND_PROTECTION_RANGE,
-		ISLAND_OWNER,
-		ISLAND_CREATION_DATE,
-		ISLAND_SPAWNPOINT,
-		ISLAND_NAME
+		WORLD_FRIENDLY_NAME("world-friendlyname"),
+		ISLAND_DISTANCE("island-distance"),
+		ISLAND_PROTECTION_RANGE("island-protection-range"),
+		ISLAND_OWNER("island-owner"),
+		ISLAND_CREATION_DATE("island-creation-date"),
+		ISLAND_SPAWNPOINT("island-spawnpoint"),
+		ISLAND_NAME("island-name");
+
+		private String placeholder;
+
+		Placeholders(String placeholder) {
+			this.placeholder = placeholder;
+		}
+
+		public String getPlaceholder() {
+			return placeholder;
+		}
 	}
 	
 	private BentoBox plugin;
@@ -42,13 +53,7 @@ public class GameModePlaceholderManager {
 	public void registerGameModePlaceholders(GameModeAddon addon) {
 		String prefix = addon.getDescription().getName().toLowerCase();
 		Map<Placeholders, String> placeholders = new EnumMap<>(Placeholders.class);
-		placeholders.put(Placeholders.FRIENDLY_NAME, prefix + "-world-friendlyname");
-		placeholders.put(Placeholders.ISLAND_DISTANCE, prefix + "-island-distance");
-		placeholders.put(Placeholders.ISLAND_PROTECTION_RANGE, prefix + "-island-protection-range");
-		placeholders.put(Placeholders.ISLAND_OWNER, prefix + "-island-owner");
-		placeholders.put(Placeholders.ISLAND_CREATION_DATE, prefix + "-island-creation-date");
-		placeholders.put(Placeholders.ISLAND_SPAWNPOINT, prefix + "-island-spawnpoint");
-		placeholders.put(Placeholders.ISLAND_NAME, prefix + "-island-name");
+		Arrays.stream(Placeholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder()));
 		
 		// Register placeholders only if they have not already been registered by the addon itself
 		placeholders.entrySet().stream().filter(en -> !plugin.getPlaceholdersManager().isPlaceholder(addon, en.getValue()))
@@ -74,7 +79,7 @@ class DefaultPlaceholder implements PlaceholderReplacer {
 		}
 		Island island = addon.getIslands().getIsland(addon.getOverWorld(), user);
 		switch (type) {
-		case FRIENDLY_NAME:
+		case WORLD_FRIENDLY_NAME:
 			return addon.getWorldSettings().getFriendlyName();
 		case ISLAND_CREATION_DATE:
 			return island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())));
