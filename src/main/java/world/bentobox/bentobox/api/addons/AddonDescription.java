@@ -111,7 +111,7 @@ public final class AddonDescription {
         private @NonNull List<String> authors = new ArrayList<>();
         private @NonNull List<String> dependencies = new ArrayList<>();
         private @NonNull List<String> softDependencies = new ArrayList<>();
-        private boolean metrics = false;
+        private boolean metrics = true;
         private @NonNull String repository = "";
         /**
          * @since 1.1

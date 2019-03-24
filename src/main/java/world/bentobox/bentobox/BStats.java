@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.bstats.bukkit.Metrics;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 
 /**
  * @author Poslovitch
@@ -35,13 +36,12 @@ public class BStats {
         // Simple Pie Charts
         registerDefaultLanguageChart();
         registerDatabaseTypeChart();
+        registerAddonsChart();
+        registerGameModeAddonsChart();
 
         // Single Line charts
         registerIslandsCountChart();
         registerIslandsCreatedChart();
-
-        // Simple Bar Charts
-        registerAddonsChart();
     }
 
     private void registerDefaultLanguageChart() {
@@ -76,16 +76,30 @@ public class BStats {
     }
 
     /**
-     * Sends the enabled addons of this server.
+     * Sends the enabled addons (except GameModeAddons) of this server.
      * @since 1.1
      */
     private void registerAddonsChart() {
-        metrics.addCustomChart(new Metrics.SimpleBarChart("addons", () -> {
-            Map<String, Integer> map = new HashMap<>();
+        metrics.addCustomChart(new Metrics.AdvancedPie("addons", () -> {
+            Map<String, Integer> values = new HashMap<>();
             plugin.getAddonsManager().getEnabledAddons().stream()
-                    .filter(addon -> addon.getDescription().isMetrics())
-                    .forEach(addon -> map.put(addon.getDescription().getName(), 1));
-            return map;
+                    .filter(addon -> !(addon instanceof GameModeAddon) && addon.getDescription().isMetrics())
+                    .forEach(addon -> values.put(addon.getDescription().getName(), 1));
+            return values;
+        }));
+    }
+
+    /**
+     * Sends the enabled GameModeAddons of this server.
+     * @since 1.4.0
+     */
+    private void registerGameModeAddonsChart() {
+        metrics.addCustomChart(new Metrics.AdvancedPie("gameModeAddons", () -> {
+            Map<String, Integer> values = new HashMap<>();
+            plugin.getAddonsManager().getGameModeAddons().stream()
+                    .filter(gameModeAddon -> gameModeAddon.getDescription().isMetrics())
+                    .forEach(gameModeAddon -> values.put(gameModeAddon.getDescription().getName(), 1));
+            return values;
         }));
     }
 }

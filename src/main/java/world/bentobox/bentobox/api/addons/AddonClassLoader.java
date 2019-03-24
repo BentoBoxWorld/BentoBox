@@ -87,7 +87,7 @@ public class AddonClassLoader extends URLClassLoader {
     private AddonDescription asDescription(YamlConfiguration data) {
         AddonDescription.Builder builder = new AddonDescription.Builder(data.getString("main"), data.getString("name"), data.getString("version"))
                 .authors(data.getString("authors"))
-                .metrics(data.getBoolean("metrics", false))
+                .metrics(data.getBoolean("metrics", true))
                 .repository(data.getString("repository", ""));
 
         if (data.getString("depend") != null) {
