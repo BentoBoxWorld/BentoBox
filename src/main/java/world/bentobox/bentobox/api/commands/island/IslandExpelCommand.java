@@ -20,6 +20,9 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class IslandExpelCommand extends CompositeCommand {
 
+    private static final String CANNOT_EXPEL = "commands.island.expel.cannot-expel";
+    private static final String SUCCESS = "general.success";
+
     private @Nullable User target;
 
     public IslandExpelCommand(CompositeCommand islandCommand) {
@@ -82,7 +85,7 @@ public class IslandExpelCommand extends CompositeCommand {
         }
         // Cannot ban ops
         if (target.isOp() || target.hasPermission("admin.noexpel")) {
-            user.sendMessage("commands.island.expel.cannot-expel");
+            user.sendMessage(CANNOT_EXPEL);
             return false;
         }
         return true;
@@ -101,7 +104,7 @@ public class IslandExpelCommand extends CompositeCommand {
                 .reason(IslandEvent.Reason.EXPEL)
                 .build();
         if (expelEvent.isCancelled()) {
-            user.sendMessage("commands.island.expel.cannot-expel");
+            user.sendMessage(CANNOT_EXPEL);
             return false;
         }
 
@@ -109,28 +112,28 @@ public class IslandExpelCommand extends CompositeCommand {
         island.getWorld().playSound(target.getLocation(), Sound.ENTITY_GENERIC_EXPLODE, 1F, 1F);
         if (getIslands().hasIsland(getWorld(), target)) {
             // Success
-            user.sendMessage("general.success");
+            user.sendMessage(SUCCESS);
             // Teleport home
             getIslands().homeTeleport(getWorld(), target.getPlayer());
             return true;
         } else if (getIslands().getSpawn(getWorld()).isPresent()){
             // Success
-            user.sendMessage("general.success");
+            user.sendMessage(SUCCESS);
             getIslands().spawnTeleport(getWorld(), user.getPlayer());
             return true;
         } else if (getIWM().getAddon(getWorld())
                 .map(gm -> gm.getPlayerCommand()
                         .map(pc -> pc.getSubCommand("create").isPresent())
                         .orElse(false))
-                .orElse(false)) {
-            if (target.performCommand(this.getTopLabel() + " create")) {
-                getAddon().logWarning("Expel: " + target.getName() + " had no island, so one was created");
-                user.sendMessage("general.success");
-                return true;
-            }
+                .orElse(false)
+                && target.performCommand(this.getTopLabel() + " create")) {
+            getAddon().logWarning("Expel: " + target.getName() + " had no island, so one was created");
+            user.sendMessage(SUCCESS);
+            return true;
         }
+
         getAddon().logError("Expel: " + target.getName() + " had no island, and one could not be created");
-        user.sendMessage("commands.island.expel.cannot-expel");
+        user.sendMessage(CANNOT_EXPEL);
         return false;
 
     }
