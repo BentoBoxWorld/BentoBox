@@ -1,19 +1,19 @@
 package world.bentobox.bentobox.managers;
 
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.lists.GameModePlaceholders;
+import world.bentobox.bentobox.util.Util;
+
 import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.GameModePlaceholderManager.Placeholders;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * 
@@ -22,26 +22,6 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class GameModePlaceholderManager {
-	
-	enum Placeholders {
-		WORLD_FRIENDLY_NAME("world-friendlyname"),
-		ISLAND_DISTANCE("island-distance"),
-		ISLAND_PROTECTION_RANGE("island-protection-range"),
-		ISLAND_OWNER("island-owner"),
-		ISLAND_CREATION_DATE("island-creation-date"),
-		ISLAND_SPAWNPOINT("island-spawnpoint"),
-		ISLAND_NAME("island-name");
-
-		private String placeholder;
-
-		Placeholders(String placeholder) {
-			this.placeholder = placeholder;
-		}
-
-		public String getPlaceholder() {
-			return placeholder;
-		}
-	}
 	
 	private BentoBox plugin;
 
@@ -52,8 +32,8 @@ public class GameModePlaceholderManager {
 	
 	public void registerGameModePlaceholders(GameModeAddon addon) {
 		String prefix = addon.getDescription().getName().toLowerCase();
-		Map<Placeholders, String> placeholders = new EnumMap<>(Placeholders.class);
-		Arrays.stream(Placeholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder()));
+		Map<GameModePlaceholders, String> placeholders = new EnumMap<>(GameModePlaceholders.class);
+		Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder()));
 		
 		// Register placeholders only if they have not already been registered by the addon itself
 		placeholders.entrySet().stream().filter(en -> !plugin.getPlaceholdersManager().isPlaceholder(addon, en.getValue()))
@@ -63,8 +43,8 @@ public class GameModePlaceholderManager {
 
 class DefaultPlaceholder implements PlaceholderReplacer {
 	private final GameModeAddon addon;
-	private final GameModePlaceholderManager.Placeholders type;
-	public DefaultPlaceholder(GameModeAddon addon, Placeholders type) {
+	private final GameModePlaceholders type;
+	public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholders type) {
 		super();
 		this.addon = addon;
 		this.type = type;
