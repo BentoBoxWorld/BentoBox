@@ -86,13 +86,10 @@ public class BentoBox extends JavaPlugin {
     public void onEnable(){
         if (!ServerCompatibility.getInstance().checkCompatibility(this).isCanLaunch()) {
             // The server's most likely incompatible.
-            // For safety reasons, we must stop BentoBox from loading.
-
-            getServer().getLogger().severe("Aborting BentoBox enabling.");
-            getServer().getLogger().severe("BentoBox cannot be loaded on this server.");
-            getServer().getLogger().severe("You must use a compatible server software (Spigot) and run on a supported version (1.13.2).");
-
-            getServer().getPluginManager().disablePlugin(this);
+            // Show a warning
+        	getServer().getLogger().warning("************ Disclaminer **************");
+            getServer().getLogger().warning("BentoBox may not be compatible with this server!");
+            getServer().getLogger().warning("BentoBox is tested only on the latest version of Spigot.");
             return;
         }
 
