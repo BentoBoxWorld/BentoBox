@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.protection;
 
 import static org.junit.Assert.assertFalse;
@@ -317,21 +314,6 @@ public class PhysicalInteractionListenerTest {
         ProjectileSource source = mock(Creeper.class);
         when(entity.getShooter()).thenReturn(source);
         Block block = mock(Block.class);
-        EntityInteractEvent e = new EntityInteractEvent(entity, block);
-        PhysicalInteractionListener i = new PhysicalInteractionListener();
-        i.onProjectileHit(e);
-        assertFalse(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link PhysicalInteractionListener#onProjectileHit(org.bukkit.event.entity.EntityInteractEvent)}.
-     */
-    @Test
-    public void testOnProjectileHitProjectileBlockNullPlayer() {
-        Projectile entity = mock(Projectile.class);
-        ProjectileSource source = mock(Player.class);
-        when(entity.getShooter()).thenReturn(source);
-        Block block = null;
         EntityInteractEvent e = new EntityInteractEvent(entity, block);
         PhysicalInteractionListener i = new PhysicalInteractionListener();
         i.onProjectileHit(e);

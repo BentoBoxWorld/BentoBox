@@ -181,19 +181,6 @@ public class PortalTeleportationListenerTest {
      * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
      */
     @Test
-    public void testOnNetherIslandPortalNoNetherWorldGenerated() {
-        // No nether world
-        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
-        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
-        PlayerPortalEvent e = new PlayerPortalEvent(null, null, null, null, TeleportCause.NETHER_PORTAL);
-        np.onNetherPortal(e);
-        assertFalse(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
-     */
-    @Test
     public void testOnEndIslandPortalWrongWorld() {
         PortalTeleportationListener np = new PortalTeleportationListener(plugin);
         Location loc = mock(Location.class);
@@ -204,18 +191,6 @@ public class PortalTeleportationListenerTest {
         PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
         when(iwm.isEndGenerate(world)).thenReturn(true);
         np.onEndIslandPortal(e);
-        assertFalse(e.isCancelled());
-    }
-
-    /**
-     * Test method for {@link PortalTeleportationListener#onEndIslandPortal(org.bukkit.event.player.PlayerPortalEvent)}.
-     */
-    @Test
-    public void testOnEndIslandPortalNullLocation() {
-        PortalTeleportationListener np = new PortalTeleportationListener(plugin);
-        Location loc = null;
-        PlayerPortalEvent e = new PlayerPortalEvent(null, loc, null, null, TeleportCause.END_PORTAL);
-        assertFalse(np.onEndIslandPortal(e));
         assertFalse(e.isCancelled());
     }
 
