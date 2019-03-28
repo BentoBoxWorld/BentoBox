@@ -70,9 +70,11 @@ public class ServerCompatibility {
     public enum ServerSoftware {
         CRAFTBUKKIT(Compatibility.INCOMPATIBLE),
         BUKKIT(Compatibility.INCOMPATIBLE),
+        GLOWSTONE(Compatibility.INCOMPATIBLE),
         SPIGOT(Compatibility.COMPATIBLE),
         PAPER(Compatibility.NOT_SUPPORTED),
-        TACOSPIGOT(Compatibility.NOT_SUPPORTED);
+        TACOSPIGOT(Compatibility.NOT_SUPPORTED),        
+        AKARIN(Compatibility.NOT_SUPPORTED);
 
         private Compatibility compatibility;
 
