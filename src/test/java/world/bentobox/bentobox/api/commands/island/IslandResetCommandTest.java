@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -37,7 +36,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
-import world.bentobox.bentobox.schems.Clipboard;
 
 /**
  * @author tastybento
@@ -121,9 +119,7 @@ public class IslandResetCommandTest {
 
         // Schems manager - custom schem
         SchemsManager sm = mock(SchemsManager.class);
-        Map<String, Clipboard> map = new HashMap<>();
-        map.put("custom", null);
-        when(sm.get(Mockito.any())).thenReturn(map);
+        when(sm.validate(Mockito.any(), Mockito.any())).thenReturn("custom");
         when(plugin.getSchemsManager()).thenReturn(sm);
     }
 

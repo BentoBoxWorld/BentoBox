@@ -268,7 +268,7 @@ public class IslandCreateCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringKnownSchem() throws IOException {
-        when(sm.get(Mockito.any())).thenReturn(Collections.singletonMap("custom", mock(Clipboard.class)));
+        when(sm.validate(Mockito.any(), Mockito.any())).thenReturn("custom");
         assertTrue(cc.execute(user, "", Collections.singletonList("custom")));
         Mockito.verify(builder).player(Mockito.eq(user));
         Mockito.verify(builder).world(Mockito.any());
