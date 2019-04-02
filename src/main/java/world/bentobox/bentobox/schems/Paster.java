@@ -50,7 +50,11 @@ public class Paster {
         CANCEL
     }
 
-    BentoBox plugin;
+    private BentoBox plugin;
+    // The minimum block position (x,y,z)
+    private Location pos1;
+    // The maximum block position (x,y,z)
+    private Location pos2;
 
     // Speed of pasting
     private int pasteSpeed;
@@ -68,7 +72,17 @@ public class Paster {
 
 
 
-    public Paster(final BentoBox plugin, final YamlConfiguration blockConfig, final World world, final Island island, final Location loc, final Runnable task) {
+    /**
+     * Pastes a schem
+     * @param plugin - BentoBox instance
+     * @param clipboard - the clipboard that called this paster
+     * @param blockConfig - the schem Yaml File
+     * @param world - the world to paste into
+     * @param island - the island object
+     * @param loc - the location to paste to
+     * @param task - the task the run after pasting
+     */
+    public Paster(final BentoBox plugin, Clipboard clipboard, final YamlConfiguration blockConfig, final World world, final Island island, final Location loc, final Runnable task) {
         this.plugin = plugin;
         if (!blockConfig.contains(BLOCKS_YAML_PREFIX)) {
             plugin.logError("Clipboard has no block data in it to paste!");
@@ -117,6 +131,11 @@ public class Paster {
             }
             if (pasteState.equals(PasteState.DONE)) {
                 // All done. Cancel task
+                // Set pos1 and 2 if this was a clipboard paste
+                if (island == null && (clipboard.getPos1() == null || clipboard.getPos2() == null)) {
+                    clipboard.setPos1(pos1);
+                    clipboard.setPos2(pos2);
+                }
                 if (task != null) {
                     // Run follow-on task if it exists
                     Bukkit.getScheduler().runTask(plugin, task);
@@ -144,6 +163,42 @@ public class Paster {
         // Entities (legacy)
         if (config.isConfigurationSection(ENTITY)) {
             setEntity(block.getLocation(), config.getConfigurationSection(ENTITY));
+        }
+        // pos1 and pos2 update
+        updatePos(world, x,y,z);
+    }
+
+    /**
+     * Tracks the minimum and maximum block positions
+     * @param world - world
+     * @param x - x
+     * @param y - y
+     * @param z - z
+     */
+    private void updatePos(World world, int x, int y, int z) {
+        if (pos1 == null) {
+            pos1 = new Location(world, x, y, z);
+        }
+        if (pos2 == null) {
+            pos2 = new Location(world, x, y, z);
+        }
+        if (x < pos1.getBlockX()) {
+            pos1.setX(x);
+        }
+        if (x > pos2.getBlockX()) {
+            pos2.setX(x);
+        }
+        if (y < pos1.getBlockY()) {
+            pos1.setY(y);
+        }
+        if (y > pos2.getBlockY()) {
+            pos2.setY(y);
+        }
+        if (z < pos1.getBlockZ()) {
+            pos1.setZ(z);
+        }
+        if (z > pos2.getBlockZ()) {
+            pos2.setZ(z);
         }
     }
 

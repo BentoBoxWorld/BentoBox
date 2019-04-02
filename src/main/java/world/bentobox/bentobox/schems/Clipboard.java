@@ -118,7 +118,7 @@ public class Clipboard {
     /**
      * Copy the blocks between pos1 and pos2 to the clipboard
      * @param user - user
-     * @return true if successful, false if pos1 or pos2 are undefined
+     * @return true if successful, false if pos1 or pos2 are undefined or something is already in the clipboard
      */
     public boolean copy(User user, boolean copyAir) {
         if (pos1 == null || pos2 == null) {
@@ -166,7 +166,8 @@ public class Clipboard {
     }
 
     /**
-     * Pastes the clipboard to island location
+     * Pastes the clipboard to island location.
+     * If pos1 and pos2 are not set already, they are automatically set to the pasted coordinates
      * @param world - world in which to paste
      * @param island - location to paste
      * @param task - task to run after pasting
@@ -185,7 +186,7 @@ public class Clipboard {
     }
 
     private void paste(World world, Island island, Location loc, Runnable task) {
-        new Paster(plugin, blockConfig, world, island, loc, task);
+        new Paster(plugin, this, blockConfig, world, island, loc, task);
     }
 
     /**
@@ -392,6 +393,9 @@ public class Clipboard {
         blockConfig.load(file);
         copied = true;
         Files.delete(file.toPath());
+        // Clear pos1 and 2
+        setPos1(null);
+        setPos2(null);
     }
 
     /*
@@ -400,7 +404,7 @@ public class Clipboard {
     /**
      * @param user - use trying to load
      * @param fileName - filename
-     * @return - ture if load is successful, false if not
+     * @return - <tt>true</tt> if load is successful, <tt>false</tt> if not
      */
     public boolean load(User user, String fileName) {
         try {

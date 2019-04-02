@@ -55,7 +55,7 @@
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}</revision>
         <!-- This allows to change between versions. -->
-        <build.version>1.4.1-SNAPSHOT</build.version>
+        <build.version>1.4.1</build.version>
     </properties>
 
     <!-- Profiles will allow to automatically change build version. -->
