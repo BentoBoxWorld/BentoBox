@@ -6,20 +6,15 @@ import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.GameModePlaceholders;
-import world.bentobox.bentobox.util.Util;
 
-import java.text.DateFormat;
-import java.time.Instant;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.EnumMap;
 import java.util.Map;
 
 /**
- * 
  * Registers default placeholders for all GameModes. Will not overwrite any that the gamemode addon itself implements.
  * @author tastybento
- *
+ * @since 1.4.0
  */
 public class GameModePlaceholderManager {
 	
@@ -41,6 +36,11 @@ public class GameModePlaceholderManager {
 	}
 }
 
+/**
+ * Registers default placeholders for all GameModes. Will not overwrite any that the gamemode addon itself implements.
+ * @author tastybento
+ * @since 1.4.0
+ */
 class DefaultPlaceholder implements PlaceholderReplacer {
 	private final GameModeAddon addon;
 	private final GameModePlaceholders type;
@@ -58,26 +58,12 @@ class DefaultPlaceholder implements PlaceholderReplacer {
 			return "";
 		}
 		Island island = addon.getIslands().getIsland(addon.getOverWorld(), user);
-		switch (type) {
-		case WORLD_FRIENDLY_NAME:
-			return addon.getWorldSettings().getFriendlyName();
-		case ISLAND_CREATION_DATE:
-			return island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())));
-		case ISLAND_DISTANCE:
-			return String.valueOf(addon.getWorldSettings().getIslandDistance());
-		case ISLAND_NAME:
-			return island == null ? "" : (island.getName() == null ? "" : island.getName());
-		case ISLAND_OWNER:
-			return island == null ? "" : addon.getPlayers().getName(island.getOwner());
-		case ISLAND_PROTECTION_RANGE:			
-			return island == null ? "" : String.valueOf(island.getProtectionRange());
-		case ISLAND_SPAWNPOINT:
-			return island == null ? "" : Util.xyz(island.getCenter().toVector());
-		default:
-			return "";		
+		if (island == null) {
+			return "";
 		}
+
+		return type.getReplacer().onReplace(addon, user, island);
 	}
-	
 }
 
 
