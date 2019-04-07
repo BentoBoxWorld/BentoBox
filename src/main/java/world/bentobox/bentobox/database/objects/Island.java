@@ -52,11 +52,13 @@ public class Island implements DataObject {
     private boolean deleted = false;
 
     @Expose
+    @NonNull
     private String uniqueId = UUID.randomUUID().toString();
 
     //// Island ////
     // The center of the island itself
     @Expose
+    @Nullable
     private Location center;
 
     // Island range
@@ -77,6 +79,7 @@ public class Island implements DataObject {
 
     // Display name
     @Expose
+    @Nullable
     private String name;
 
     // Time parameters
@@ -87,7 +90,8 @@ public class Island implements DataObject {
 
     //// Team ////
     @Expose
-    private @Nullable UUID owner;
+    @Nullable
+    private UUID owner;
 
     @Expose
     private Map<UUID, Integer> members = new HashMap<>();
