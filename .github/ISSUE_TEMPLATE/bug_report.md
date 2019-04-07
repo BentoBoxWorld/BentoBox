@@ -19,7 +19,7 @@ assignees: ''
 <!-- Please type below this line. -->
 
 #### Screenshots and videos
-<!-- Videos and screenshots are helpful as they can provide better ingormation about your problem. -->
+<!-- Videos and screenshots are helpful as they can provide better information about your problem. -->
 <!-- Please type below this line. -->
 
 #### Expected behavior
