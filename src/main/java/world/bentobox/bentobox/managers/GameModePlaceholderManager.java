@@ -21,7 +21,6 @@ public class GameModePlaceholderManager {
     private BentoBox plugin;
 
     public GameModePlaceholderManager(BentoBox plugin) {
-        super();
         this.plugin = plugin;
     }
 
@@ -37,7 +36,6 @@ public class GameModePlaceholderManager {
 }
 
 /**
- * Registers default placeholders for all GameModes. Will not overwrite any that the gamemode addon itself implements.
  * @author tastybento
  * @since 1.4.0
  */
@@ -45,7 +43,6 @@ class DefaultPlaceholder implements PlaceholderReplacer {
     private final GameModeAddon addon;
     private final GameModePlaceholders type;
     public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholders type) {
-        super();
         this.addon = addon;
         this.type = type;
     }
