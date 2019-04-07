@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.hooks;
 
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.Plugin;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author Poslovitch
@@ -30,6 +31,7 @@ public abstract class Hook {
      * Returns the Plugin instance related to this Hook or null if it could not be found.
      * @return the Plugin instance of the plugin this Hook hooks into.
      */
+    @Nullable
     public Plugin getPlugin() {
         return Bukkit.getPluginManager().getPlugin(pluginName);
     }
