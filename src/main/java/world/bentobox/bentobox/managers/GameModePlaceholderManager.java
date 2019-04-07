@@ -17,23 +17,23 @@ import java.util.Map;
  * @since 1.4.0
  */
 public class GameModePlaceholderManager {
-	
-	private BentoBox plugin;
 
-	public GameModePlaceholderManager(BentoBox plugin) {
-		super();
-		this.plugin = plugin;
-	}
-	
-	public void registerGameModePlaceholders(GameModeAddon addon) {
-		String prefix = addon.getDescription().getName().toLowerCase();
-		Map<GameModePlaceholders, String> placeholders = new EnumMap<>(GameModePlaceholders.class);
-		Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder()));
-		
-		// Register placeholders only if they have not already been registered by the addon itself
-		placeholders.entrySet().stream().filter(en -> !plugin.getPlaceholdersManager().isPlaceholder(addon, en.getValue()))
-		.forEach(en -> plugin.getPlaceholdersManager().registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
-	}
+    private BentoBox plugin;
+
+    public GameModePlaceholderManager(BentoBox plugin) {
+        super();
+        this.plugin = plugin;
+    }
+
+    public void registerGameModePlaceholders(GameModeAddon addon) {
+        String prefix = addon.getDescription().getName().toLowerCase();
+        Map<GameModePlaceholders, String> placeholders = new EnumMap<>(GameModePlaceholders.class);
+        Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder()));
+
+        // Register placeholders only if they have not already been registered by the addon itself
+        placeholders.entrySet().stream().filter(en -> !plugin.getPlaceholdersManager().isPlaceholder(addon, en.getValue()))
+                .forEach(en -> plugin.getPlaceholdersManager().registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
+    }
 }
 
 /**
@@ -42,28 +42,28 @@ public class GameModePlaceholderManager {
  * @since 1.4.0
  */
 class DefaultPlaceholder implements PlaceholderReplacer {
-	private final GameModeAddon addon;
-	private final GameModePlaceholders type;
-	public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholders type) {
-		super();
-		this.addon = addon;
-		this.type = type;
-	}
-	/* (non-Javadoc)
-	 * @see world.bentobox.bentobox.api.placeholders.PlaceholderReplacer#onReplace(world.bentobox.bentobox.api.user.User)
-	 */
-	@Override
-	public String onReplace(User user) {
-		if (user == null) {
-			return "";
-		}
-		Island island = addon.getIslands().getIsland(addon.getOverWorld(), user);
-		if (island == null) {
-			return "";
-		}
+    private final GameModeAddon addon;
+    private final GameModePlaceholders type;
+    public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholders type) {
+        super();
+        this.addon = addon;
+        this.type = type;
+    }
+    /* (non-Javadoc)
+     * @see world.bentobox.bentobox.api.placeholders.PlaceholderReplacer#onReplace(world.bentobox.bentobox.api.user.User)
+     */
+    @Override
+    public String onReplace(User user) {
+        if (user == null) {
+            return "";
+        }
+        Island island = addon.getIslands().getIsland(addon.getOverWorld(), user);
+        if (island == null) {
+            return "";
+        }
 
-		return type.getReplacer().onReplace(addon, user, island);
-	}
+        return type.getReplacer().onReplace(addon, user, island);
+    }
 }
 
 
