@@ -9,33 +9,38 @@ import java.util.Date;
 
 public enum GameModePlaceholders {
 
-    WORLD_FRIENDLY_NAME("world-friendlyname", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
-    ISLAND_DISTANCE("island-distance", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
-    ISLAND_PROTECTION_RANGE("island-protection-range", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
-    ISLAND_OWNER("island-owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
-    ISLAND_CREATION_DATE("island-creation-date", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
-    ISLAND_SPAWNPOINT("island-spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
-    ISLAND_NAME("island-name", (addon, user, island) -> island == null ? "" : (island.getName() == null ? "" : island.getName())),
+    /* World-related */
+    WORLD_FRIENDLY_NAME("world_friendly_name", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
+
+    /* Island-related */
+    ISLAND_DISTANCE("island_distance", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
+    ISLAND_PROTECTION_RANGE("island_protection_range", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
+    ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
+    ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
+    ISLAND_SPAWNPOINT("island_spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
+    ISLAND_NAME("island_name", (addon, user, island) -> island == null ? "" : (island.getName() == null ? "" : island.getName())),
     /**
      * Displays the coordinates of the island's center.
      * @since 1.5.0
      */
-    ISLAND_CENTER("island-center", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
+    ISLAND_CENTER("island_center", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
     /**
      * Displays the X coordinate of the island's center.
      * @since 1.5.0
      */
-    ISLAND_CENTER_X("island-center-x", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockX())),
+    ISLAND_CENTER_X("island_center_x", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockX())),
     /**
      * Displays the Y coordinate of the island's center.
      * @since 1.5.0
      */
-    ISLAND_CENTER_Y("island-center-y", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockY())),
+    ISLAND_CENTER_Y("island_center_y", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockY())),
     /**
      * Displays the Z coordinate of the island's center.
      * @since 1.5.0
      */
-    ISLAND_CENTER_Z("island-center-z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ())),
+    ISLAND_CENTER_Z("island_center_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ())),
+
+    /* Player-related */
     /**
      * Displays whether this player has an island or not.
      * @since 1.5.0

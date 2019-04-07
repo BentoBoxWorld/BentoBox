@@ -26,10 +26,15 @@ public class GameModePlaceholderManager {
         this.plugin = plugin;
     }
 
-    public void registerGameModePlaceholders(GameModeAddon addon) {
+    public void registerGameModePlaceholders(@NonNull GameModeAddon addon) {
+        Arrays.stream(GameModePlaceholders.values())
+                .filter(placeholder -> !plugin.getPlaceholdersManager().isPlaceholder(addon, placeholder.getPlaceholder()))
+                .forEach(placeholder -> plugin.getPlaceholdersManager().registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
+
+        // TODO legacy placeholders, do not forget to remove at some point
         String prefix = addon.getDescription().getName().toLowerCase();
         Map<GameModePlaceholders, String> placeholders = new EnumMap<>(GameModePlaceholders.class);
-        Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder()));
+        Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder().replace('_', '-')));
 
         // Register placeholders only if they have not already been registered by the addon itself
         placeholders.entrySet().stream().filter(en -> !plugin.getPlaceholdersManager().isPlaceholder(addon, en.getValue()))
