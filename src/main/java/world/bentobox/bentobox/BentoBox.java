@@ -1,7 +1,5 @@
 package world.bentobox.bentobox;
 
-import java.util.Optional;
-
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
@@ -9,7 +7,6 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -30,7 +27,6 @@ import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
-import world.bentobox.bentobox.managers.GameModePlaceholderManager;
 import world.bentobox.bentobox.managers.HooksManager;
 import world.bentobox.bentobox.managers.IslandDeletionManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
@@ -43,6 +39,8 @@ import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.WebManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
+
+import java.util.Optional;
 
 /**
  * Main BentoBox class
@@ -154,8 +152,7 @@ public class BentoBox extends JavaPlugin {
         addonsManager.enableAddons();
         
         // Register default gamemode placeholders
-        GameModePlaceholderManager gmp = new GameModePlaceholderManager(this);
-        addonsManager.getGameModeAddons().forEach(gmp::registerGameModePlaceholders);
+        addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
 
         getServer().getScheduler().runTask(instance, () -> {
             // Register Listeners

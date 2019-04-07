@@ -9,15 +9,13 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.GameModePlaceholders;
 
-import java.util.Arrays;
-import java.util.EnumMap;
-import java.util.Map;
-
 /**
  * Registers default placeholders for all GameModes. Will not overwrite any that the gamemode addon itself implements.
  * @author tastybento
  * @since 1.4.0
+ * @deprecated As of 1.5.0, for removal.
  */
+@Deprecated
 public class GameModePlaceholderManager {
 
     private BentoBox plugin;
@@ -26,19 +24,13 @@ public class GameModePlaceholderManager {
         this.plugin = plugin;
     }
 
+    /**
+     * @since 1.4.0
+     * @deprecated As of 1.5.0, for removal. Use {@link PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)} instead.
+     */
+    @Deprecated
     public void registerGameModePlaceholders(@NonNull GameModeAddon addon) {
-        Arrays.stream(GameModePlaceholders.values())
-                .filter(placeholder -> !plugin.getPlaceholdersManager().isPlaceholder(addon, placeholder.getPlaceholder()))
-                .forEach(placeholder -> plugin.getPlaceholdersManager().registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
-
-        // TODO legacy placeholders, do not forget to remove at some point
-        String prefix = addon.getDescription().getName().toLowerCase();
-        Map<GameModePlaceholders, String> placeholders = new EnumMap<>(GameModePlaceholders.class);
-        Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder().replace('_', '-')));
-
-        // Register placeholders only if they have not already been registered by the addon itself
-        placeholders.entrySet().stream().filter(en -> !plugin.getPlaceholdersManager().isPlaceholder(addon, en.getValue()))
-                .forEach(en -> plugin.getPlaceholdersManager().registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
+        plugin.getPlaceholdersManager().registerDefaultPlaceholders(addon);
     }
 }
 

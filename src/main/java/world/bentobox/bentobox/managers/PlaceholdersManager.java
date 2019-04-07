@@ -4,9 +4,14 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
+import world.bentobox.bentobox.lists.GameModePlaceholders;
 
+import java.util.Arrays;
+import java.util.EnumMap;
+import java.util.Map;
 import java.util.Optional;
 
 /**
@@ -48,6 +53,26 @@ public class PlaceholdersManager {
         }
         // Register it in PlaceholderAPI
         getPlaceholderAPIHook().ifPresent(hook -> hook.registerPlaceholder(addon, placeholder, replacer));
+    }
+
+    /**
+     * Registers default placeholders for this gamemode addon.
+     * @param addon the gamemode addon to register the default placeholders too.
+     * @since 1.5.0
+     */
+    public void registerDefaultPlaceholders(@NonNull GameModeAddon addon) {
+        Arrays.stream(GameModePlaceholders.values())
+                .filter(placeholder -> !isPlaceholder(addon, placeholder.getPlaceholder()))
+                .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
+
+        // TODO legacy placeholders, do not forget to remove at some point
+        String prefix = addon.getDescription().getName().toLowerCase();
+        Map<GameModePlaceholders, String> placeholders = new EnumMap<>(GameModePlaceholders.class);
+        Arrays.stream(GameModePlaceholders.values()).forEach(placeholder -> placeholders.put(placeholder, prefix + "-" + placeholder.getPlaceholder().replace('_', '-')));
+
+        // Register placeholders only if they have not already been registered by the addon itself
+        placeholders.entrySet().stream().filter(en -> !isPlaceholder(addon, en.getValue()))
+                .forEach(en -> registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
     }
 
     /**

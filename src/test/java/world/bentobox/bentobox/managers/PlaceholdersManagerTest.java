@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest( {BentoBox.class} )
-public class GameModePlaceholderManagerTest {
+public class PlaceholdersManagerTest {
 
     @Mock
     private BentoBox plugin;
@@ -29,11 +29,8 @@ public class GameModePlaceholderManagerTest {
     @Mock
     private PlaceholdersManager pm;
 
-    private GameModePlaceholderManager gpm;
-
     @Before
     public void setUp() throws Exception {
-        gpm = new GameModePlaceholderManager(plugin);
         // Addon
         @NonNull
         AddonDescription desc = new AddonDescription.Builder("main", "bskyblock", "1.0").build();
@@ -45,24 +42,24 @@ public class GameModePlaceholderManagerTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.GameModePlaceholderManager#registerGameModePlaceholders(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)}.
      */
     @Test
     public void testRegisterGameModePlaceholdersAllDefaults() {
-        gpm.registerGameModePlaceholders(addon);
+        pm.registerDefaultPlaceholders(addon);
         // 7 registrations for this addon
         Mockito.verify(pm, Mockito.atLeast(1)).registerPlaceholder(Mockito.anyString(), Mockito.any());
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.managers.GameModePlaceholderManager#registerGameModePlaceholders(world.bentobox.bentobox.api.addons.GameModeAddon)}.
+     * Test method for {@link world.bentobox.bentobox.managers.PlaceholdersManager#registerDefaultPlaceholders(GameModeAddon)}.
      */
     @Test
-    public void testRegisterGameModePlaceholdersSomePreregistered() {
+    public void testRegisterDefaultPlaceholdersSomePreregistered() {
         // Some duplicates
         when(pm.isPlaceholder(Mockito.any(), Mockito.any())).thenReturn(false, true, true, false, false, true, false);
 
-        gpm.registerGameModePlaceholders(addon);
+        pm.registerDefaultPlaceholders(addon);
 
         // 3 registrations for this addon
         Mockito.verify(pm, Mockito.atLeast(1)).registerPlaceholder(Mockito.anyString(), Mockito.any());
