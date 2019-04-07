@@ -43,14 +43,6 @@ public class PlaceholderAPIHook extends Hook {
     }
 
     /**
-     * @deprecated As of 1.4.0, renamed to {@link #registerPlaceholder(String, PlaceholderReplacer)}.
-     */
-    @Deprecated
-    public void registerBentoBoxPlaceholder(String placeholder, PlaceholderReplacer replacer) {
-        registerPlaceholder(placeholder, replacer);
-    }
-
-    /**
      * Registers this placeholder into BentoBox's PlaceholderAPI expansion.
      * @param placeholder the placeholder to register, not null
      * @param replacer its replacement, not null
@@ -98,14 +90,6 @@ public class PlaceholderAPIHook extends Hook {
         if (addonsExpansions.containsKey(addon)) {
             addonsExpansions.get(addon).unregisterPlaceholder(placeholder);
         }
-    }
-
-    /**
-     * @deprecated As of 1.4.0, renamed to {@link #registerPlaceholder(Addon, String, PlaceholderReplacer)}.
-     */
-    @Deprecated
-    public void registerAddonPlaceholder(Addon addon, String placeholder, PlaceholderReplacer replacer) {
-        registerPlaceholder(addon, placeholder, replacer);
     }
     
     /**
