@@ -35,7 +35,12 @@ public enum GameModePlaceholders {
      * Displays the Z coordinate of the island's center.
      * @since 1.5.0
      */
-    ISLAND_CENTER_Z("island-center-z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ()));
+    ISLAND_CENTER_Z("island-center-z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ())),
+    /**
+     * Displays whether this player has an island or not.
+     * @since 1.5.0
+     */
+    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(island != null));
 
     private String placeholder;
     /**
