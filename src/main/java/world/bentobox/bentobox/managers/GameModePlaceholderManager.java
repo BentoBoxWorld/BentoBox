@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.managers;
 
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
@@ -49,15 +51,13 @@ class DefaultPlaceholder implements PlaceholderReplacer {
     /* (non-Javadoc)
      * @see world.bentobox.bentobox.api.placeholders.PlaceholderReplacer#onReplace(world.bentobox.bentobox.api.user.User)
      */
+    @NonNull
     @Override
-    public String onReplace(User user) {
+    public String onReplace(@Nullable User user) {
         if (user == null) {
             return "";
         }
         Island island = addon.getIslands().getIsland(addon.getOverWorld(), user);
-        if (island == null) {
-            return "";
-        }
 
         return type.getReplacer().onReplace(addon, user, island);
     }
