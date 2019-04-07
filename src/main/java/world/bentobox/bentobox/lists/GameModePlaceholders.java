@@ -17,6 +17,11 @@ public enum GameModePlaceholders {
     ISLAND_SPAWNPOINT("island-spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
     ISLAND_NAME("island-name", (addon, user, island) -> island == null ? "" : (island.getName() == null ? "" : island.getName())),
     /**
+     * Displays the coordinates of the island's center.
+     * @since 1.5.0
+     */
+    ISLAND_CENTER("island-center", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
+    /**
      * Displays the X coordinate of the island's center.
      * @since 1.5.0
      */
