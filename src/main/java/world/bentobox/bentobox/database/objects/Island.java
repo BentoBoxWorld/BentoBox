@@ -89,10 +89,21 @@ public class Island implements DataObject {
     private long updatedDate;
 
     //// Team ////
+    /**
+     * Owner of the island.
+     * There can only be one per island.
+     * If it is {@code null}, then the island is considered as unowned.
+     */
     @Expose
     @Nullable
     private UUID owner;
 
+    /**
+     * Members of the island.
+     * It contains any player which has one of the following rank on this island: {@link RanksManager#COOP_RANK COOP},
+     * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
+     * {@link RanksManager#OWNER_RANK OWNER}.
+     */
     @Expose
     private Map<UUID, Integer> members = new HashMap<>();
 
@@ -234,16 +245,24 @@ public class Island implements DataObject {
     }
 
     /**
-     * Get the team members of the island. If this is empty or cleared, there is no team.
-     * @return the members - key is the UUID, value is the RanksManager enum, e.g. RanksManager.MEMBER_RANK
+     * Returns the members of this island.
+     * It contains any player which has one of the following rank on this island: {@link RanksManager#COOP_RANK COOP},
+     * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
+     * {@link RanksManager#OWNER_RANK OWNER}.
+     *
+     * @return the members - key is the UUID, value is the RanksManager enum, e.g. {@link RanksManager#MEMBER_RANK}.
+     * @see #getMemberSet()
      */
     public Map<UUID, Integer> getMembers() {
         return members;
     }
 
     /**
-     * Members >= MEMBER_RANK
+     * Returns an immutable set containing the UUIDs of players that are truly members of this island.
+     * This includes any player which has one of the following rank on this island: {@link RanksManager#MEMBER_RANK MEMBER},
+     * {@link RanksManager#SUB_OWNER_RANK SUB_OWNER}, {@link RanksManager#OWNER_RANK OWNER}.
      * @return the members of the island (owner included)
+     * @see #getMembers()
      */
     public ImmutableSet<UUID> getMemberSet(){
         Builder<UUID> result = new ImmutableSet.Builder<>();
