@@ -47,10 +47,16 @@ public enum GameModePlaceholders {
      */
     HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(island != null)),
     /**
-     * Displays how many resets this player has already done.
+     * Displays how many times this player reset his island.
      * @since 1.5.0
      */
-    RESETS("resets", (addon, user, island) -> String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId())));
+    RESETS("resets", (addon, user, island) -> String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId()))),
+    /**
+     * Displays how many times this player can reset his island.
+     * {@code -1} is unlimited.
+     * @since 1.5.0
+     */
+    RESETS_LEFT("resets_left", (addon, user, island) -> String.valueOf(addon.getPlayers().getResetsLeft(addon.getOverWorld(), user.getUniqueId())));
 
     private String placeholder;
     /**
