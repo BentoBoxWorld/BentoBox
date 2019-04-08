@@ -45,7 +45,12 @@ public enum GameModePlaceholders {
      * Displays whether this player has an island or not.
      * @since 1.5.0
      */
-    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(island != null));
+    HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(island != null)),
+    /**
+     * Displays how many resets this player has already done.
+     * @since 1.5.0
+     */
+    RESETS("resets", (addon, user, island) -> String.valueOf(addon.getPlayers().getResets(addon.getOverWorld(), user.getUniqueId())));
 
     private String placeholder;
     /**
