@@ -1,5 +1,15 @@
 package world.bentobox.bentobox.managers;
 
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.objects.Names;
+import world.bentobox.bentobox.database.objects.Players;
+
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,16 +17,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
-
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.eclipse.jdt.annotation.NonNull;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.Database;
-import world.bentobox.bentobox.database.objects.Names;
-import world.bentobox.bentobox.database.objects.Players;
 
 public class PlayersManager {
 
@@ -228,7 +228,8 @@ public class PlayersManager {
      * @param name - name of player
      * @return UUID of player or null if unknown
      */
-    public UUID getUUID(String name) {
+    @Nullable
+    public UUID getUUID(@NonNull String name) {
         // See if this is a UUID
         // example: 5988eecd-1dcd-4080-a843-785b62419abb
         if (name.length() == 36 && name.contains("-")) {
@@ -249,7 +250,7 @@ public class PlayersManager {
      * Sets the player's name and updates the name>UUID database
      * @param user - the User
      */
-    public void setPlayerName(User user) {
+    public void setPlayerName(@NonNull User user) {
         addPlayer(user.getUniqueId());
         playerCache.get(user.getUniqueId()).setPlayerName(user.getName());
         Names newName = new Names(user.getName(), user.getUniqueId());
@@ -273,15 +274,31 @@ public class PlayersManager {
     }
 
     /**
-     * Gets how many island resets the player has done
-     * @param world - world
-     *
-     * @param playerUUID - the player's UUID
+     * Returns how many island resets the player has done.
+     * @param world world
+     * @param playerUUID the player's UUID
      * @return number of resets
      */
     public int getResets(World world, UUID playerUUID) {
         addPlayer(playerUUID);
         return playerCache.get(playerUUID).getResets(world);
+    }
+
+    /**
+     * Returns how many island resets the player can still do.
+     * @param world world
+     * @param playerUUID the player's UUID
+     * @return number of resets the player can do (always {@code >= 0}), or {@code -1} if unlimited.
+     * @since 1.5.0
+     * @see #getResets(World, UUID)
+     */
+    public int getResetsLeft(World world, UUID playerUUID) {
+        addPlayer(playerUUID);
+        if (plugin.getIWM().getResetLimit(world) == -1) {
+            return -1;
+        } else {
+            return Math.max(plugin.getIWM().getResetLimit(world) - getResets(world, playerUUID), 0);
+        }
     }
 
     /**
