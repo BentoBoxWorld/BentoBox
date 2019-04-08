@@ -11,6 +11,11 @@ public enum GameModePlaceholders {
 
     /* World-related */
     WORLD_FRIENDLY_NAME("world_friendly_name", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
+    /**
+     * Displays the amount of islands in the world.
+     * @since 1.5.0
+     */
+    WORLD_ISLANDS("world_islands", (addon, user, island) -> String.valueOf(addon.getIslands().getIslandCount(addon.getOverWorld()))),
 
     /* Island-related */
     ISLAND_DISTANCE("island_distance", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
@@ -46,6 +51,11 @@ public enum GameModePlaceholders {
      * @since 1.5.0
      */
     HAS_ISLAND("has_island", (addon, user, island) -> String.valueOf(island != null)),
+    /**
+     * Displays the rank this player has on his island.
+     * @since 1.5.0
+     */
+    RANK("rank", (addon, user, island) -> (island == null || user == null) ? "" : addon.getPlugin().getLocalesManager().get(user, addon.getPlugin().getRanksManager().getRank(island.getRank(user)))),
     /**
      * Displays how many times this player reset his island.
      * @since 1.5.0
