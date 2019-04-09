@@ -623,7 +623,7 @@ public class IslandsManagerTest {
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
-        when(islandCache.getMembers(Mockito.any(), Mockito.any())).thenReturn(members);
+        when(islandCache.getMembers(Mockito.any(), Mockito.any(), Mockito.anyInt())).thenReturn(members);
         IslandsManager im = new IslandsManager(plugin);
         im.setIslandCache(islandCache);
         assertEquals(members, im.getMembers(world, UUID.randomUUID()));

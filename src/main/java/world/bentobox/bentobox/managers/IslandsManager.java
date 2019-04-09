@@ -391,7 +391,22 @@ public class IslandsManager {
     }
 
     /**
-     * Returns a set of island member UUID's for the island of playerUUID
+     * Returns a set of island member UUID's for the island of playerUUID of rank <tt>minimumRank</tt>
+     * and above.
+     * This includes the owner of the island. If there is no island, this set will be empty.
+     *
+     * @param world - world to check
+     * @param playerUUID - the player's UUID
+     * @param minimumRank - the minimum rank to be included in the set.
+     * @return Set of team UUIDs
+     */
+    public Set<UUID> getMembers(World world, UUID playerUUID, int minimumRank) {
+        return islandCache.getMembers(world, playerUUID, minimumRank);
+    }
+    
+    /**
+     * Returns a set of island member UUID's for the island of playerUUID.
+     * Only includes players of rank {@link RanksManager.MEMBER_RANK} and above.
      * This includes the owner of the island. If there is no island, this set will be empty.
      *
      * @param world - world to check
@@ -399,7 +414,7 @@ public class IslandsManager {
      * @return Set of team UUIDs
      */
     public Set<UUID> getMembers(World world, UUID playerUUID) {
-        return islandCache.getMembers(world, playerUUID);
+        return islandCache.getMembers(world, playerUUID, RanksManager.MEMBER_RANK);
     }
 
     /**
