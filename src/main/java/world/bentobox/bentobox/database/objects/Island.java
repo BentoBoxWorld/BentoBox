@@ -246,9 +246,9 @@ public class Island implements DataObject {
 
     /**
      * Returns the members of this island.
-     * It contains any player which has one of the following rank on this island: {@link RanksManager#COOP_RANK COOP},
+     * It contains all players that have any rank on this island, including {@link RanksManager#BANNED},
      * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
-     * {@link RanksManager#OWNER_RANK OWNER}.
+     * {@link RanksManager#OWNER_RANK OWNER}, etc.
      *
      * @return the members - key is the UUID, value is the RanksManager enum, e.g. {@link RanksManager#MEMBER_RANK}.
      * @see #getMemberSet()
@@ -265,13 +265,19 @@ public class Island implements DataObject {
      * @see #getMembers()
      */
     public ImmutableSet<UUID> getMemberSet(){
-        Builder<UUID> result = new ImmutableSet.Builder<>();
+        return (getMemberSet(RanksManager.MEMBER_RANK));
+    }
 
-        for (Entry<UUID, Integer> member: members.entrySet()) {
-            if (member.getValue() >= RanksManager.MEMBER_RANK) {
-                result.add(member.getKey());
-            }
-        }
+    /**
+     * Returns an immutable set containing the UUIDs of players with rank above that requested rank inclusive
+     * @param minimumRank - minimum rank (inclusive) of members
+     * @return immutable set of UUIDs
+     * @see #getMembers()
+     * @since 1.5.0
+     */
+    public @NonNull ImmutableSet<UUID> getMemberSet(@NonNull int minimumRank) {
+        Builder<UUID> result = new ImmutableSet.Builder<>();
+        members.entrySet().stream().filter(e -> e.getValue() >= minimumRank).map(Map.Entry::getKey).forEach(result::add);
         return result.build();
     }
 
@@ -554,9 +560,9 @@ public class Island implements DataObject {
         BentoBox plugin = BentoBox.getInstance();
         Map<Flag, Integer> result = new HashMap<>();
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+                .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+                .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
     }
 
@@ -744,14 +750,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(owner).getFirstPlayed();
-                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-                    // Show team members
-                    showMembers(user);
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
