@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.panels;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -54,7 +55,7 @@ public class ManagementPanel {
                 for (Addon addon : addons) {
                     PanelItem addonItem = new PanelItemBuilder()
                             .icon(addon.getDescription().getIcon())
-                            .name(addon.getDescription().getName())
+                            .name(ChatColor.WHITE + addon.getDescription().getName())
                             .build();
 
                     builder.item(startSlot + i, addonItem);
