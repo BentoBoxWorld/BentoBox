@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a bug or a problem you're encountering with BentoBox.
 title: ''
-labels: 'Priority: Medium, Status: Pending, Type: Bug'
+labels: 'Status: Pending, Type: Bug'
 assignees: ''
 
 ---
