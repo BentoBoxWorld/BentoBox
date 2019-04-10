@@ -262,6 +262,8 @@ commands:
       addon-syntax: "&2[name] &3[version]" 
       game-worlds: "&2[name] &3([addon])"
       server: "&2Running &3[name] [version]&2."
+    manage:
+      description: "display the management panel"
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
@@ -939,6 +941,37 @@ language:
   panel-title: "Select your language"
   selected: "&aCurrently selected."
   edited: "&aChanged your language to &e[lang]&a."
+
+management:
+  panel:
+    title: "BentoBox Management"
+    views:
+      gamemodes:
+        name: "&6Gamemodes"
+        description: "&eClick &ato display currently loaded Gamemodes"
+        schems:
+          name: "&6Schems"
+          description: "&aOpens the Admin Schem menu."
+      addons:
+        name: "&6Addons"
+        description: "&eClick &ato display currently loaded Addons"
+      hooks:
+        name: "&6Hooks"
+        description: "&eClick &ato display currently loaded Hooks"
+    actions:
+      check-updates:
+        name: "&6Check for updates"
+        description: "&eClick &ato check for updates"
+      reload:
+        name: "&cReload"
+        description: "&eClick &c&ltwice &r&ato reload BentoBox"
+    buttons:
+      catalog:
+        name: "&6Addons Catalog"
+        description: "&aOpens the Addons Catalog"
+      empty-here:
+        name: "&bThis looks empty here..."
+        description: "&aWhat if you take a look at our catalog?"
 
 successfully-loaded: |
 
