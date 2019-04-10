@@ -780,6 +780,13 @@ protection:
         &aAllow obsidian to be scooped up
         &awith an empty bucket back into lava.
         &aProtects newbies. Reduces resets.
+    OFFLINE_GROWTH:
+      description: |-
+        &aWhen disabled, plants
+        &awill not grow on islands
+        &awhere all members are offline.
+        &aMay help reduce lag.
+      name: "Offline Growth"
     OFFLINE_REDSTONE:
       description: |-
           &aWhen disabled, redstone
