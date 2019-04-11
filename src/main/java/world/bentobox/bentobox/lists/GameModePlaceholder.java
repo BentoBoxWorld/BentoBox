@@ -46,6 +46,11 @@ public enum GameModePlaceholder {
      */
     ISLAND_CENTER_Z("island_center_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ())),
     /**
+     * Displays the maximum number of members the island can have
+     * @since 1.5.0
+     */
+    ISLAND_MEMBERS_MAX("island_members_max", (addon, user, island) -> island == null ? "" : String.valueOf(user.getPermissionValue(addon.getPermissionPrefix() + "team.maxsize", addon.getPlugin().getIWM().getMaxTeamSize(addon.getOverWorld())))),
+    /**
      * Displays the amount of players that are at least MEMBER on this island.
      * @since 1.5.0
      */
