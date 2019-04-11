@@ -14,6 +14,9 @@ import java.util.Optional;
 public class HooksManager {
 
     private BentoBox plugin;
+    /**
+     * List of successfully registered hooks.
+     */
     private List<Hook> hooks;
 
     public HooksManager(BentoBox plugin) {
@@ -34,6 +37,10 @@ public class HooksManager {
         // We may have in the near future almost ~25 hooks, which would basically spam the console and make users nervous.
     }
 
+    /**
+     * Returns the list of successfully registered hooks.
+     * @return list of successfully registered hooks.
+     */
     public List<Hook> getHooks() {
         return hooks;
     }
