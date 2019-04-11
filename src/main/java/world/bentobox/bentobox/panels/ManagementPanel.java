@@ -5,6 +5,7 @@ import org.bukkit.Material;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -83,7 +84,7 @@ public class ManagementPanel {
                 for (Addon addon : addons) {
                     PanelItem addonItem = new PanelItemBuilder()
                             .icon(addon.getDescription().getIcon())
-                            .name(addon.getDescription().getName())
+                            .name(ChatColor.WHITE + addon.getDescription().getName())
                             .build();
 
                     builder.item(startSlot + i, addonItem);
@@ -91,8 +92,19 @@ public class ManagementPanel {
                 }
                 break;
             case HOOKS:
-                looksEmpty(builder, user);
+                if (plugin.getHooks().getHooks().isEmpty()) {
+                    looksEmpty(builder, user);
+                    break;
+                }
+                for (Hook hook : plugin.getHooks().getHooks()) {
+                    PanelItem hookItem = new PanelItemBuilder()
+                            .icon(hook.getIcon())
+                            .name(ChatColor.WHITE + hook.getPluginName())
+                            .build();
 
+                    builder.item(startSlot + i, hookItem);
+                    i++;
+                }
                 break;
         }
 
