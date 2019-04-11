@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.lists;
 
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 import java.text.DateFormat;
@@ -44,6 +45,21 @@ public enum GameModePlaceholder {
      * @since 1.5.0
      */
     ISLAND_CENTER_Z("island_center_z", (addon, user, island) -> island == null ? "" : String.valueOf(island.getCenter().getBlockZ())),
+    /**
+     * Displays the amount of players that are at least MEMBER on this island.
+     * @since 1.5.0
+     */
+    ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.MEMBER_RANK).size())),
+    /**
+     * Displays the amount of players that are currently visiting the island.
+     * @since 1.5.0
+     */
+    ISLAND_VISITORS_COUNT("island_visitors_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getVisitors().size())),
+    /**
+     * Displays the amount of players banned from the island.
+     * @since 1.5.0
+     */
+    ISLAND_BANS_COUNT("island_bans_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getBanned().size())),
 
     /* Player-related */
     /**
