@@ -54,12 +54,12 @@ public enum GameModePlaceholder {
      * Displays the amount of players that are TRUSTED on this island.
      * @since 1.5.0
      */
-    ISLAND_TRUSTED_COUNT("island_trusted_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.TRUSTED_RANK, false).size())),
+    ISLAND_TRUSTEES_COUNT("island_trustees_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.TRUSTED_RANK, false).size())),
     /**
      * Displays the amount of players that are TRUSTED on this island.
      * @since 1.5.0
      */
-    ISLAND_COOP_COUNT("island_coop_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.COOP_RANK, false).size())),
+    ISLAND_COOPS_COUNT("island_coops_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.COOP_RANK, false).size())),
     /**
      * Displays the amount of players that are currently visiting the island.
      * @since 1.5.0
