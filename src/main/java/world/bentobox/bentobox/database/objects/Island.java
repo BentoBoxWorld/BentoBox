@@ -246,7 +246,7 @@ public class Island implements DataObject {
 
     /**
      * Returns the members of this island.
-     * It contains all players that have any rank on this island, including {@link RanksManager#BANNED},
+     * It contains all players that have any rank on this island, including {@link RanksManager#BANNED_RANK BANNED},
      * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
      * {@link RanksManager#OWNER_RANK OWNER}, etc.
      *
@@ -265,19 +265,37 @@ public class Island implements DataObject {
      * @see #getMembers()
      */
     public ImmutableSet<UUID> getMemberSet(){
-        return (getMemberSet(RanksManager.MEMBER_RANK));
+        return getMemberSet(RanksManager.MEMBER_RANK);
     }
 
     /**
      * Returns an immutable set containing the UUIDs of players with rank above that requested rank inclusive
-     * @param minimumRank - minimum rank (inclusive) of members
+     * @param minimumRank minimum rank (inclusive) of members
      * @return immutable set of UUIDs
      * @see #getMembers()
      * @since 1.5.0
      */
-    public @NonNull ImmutableSet<UUID> getMemberSet(@NonNull int minimumRank) {
+    public @NonNull ImmutableSet<UUID> getMemberSet(int minimumRank) {
         Builder<UUID> result = new ImmutableSet.Builder<>();
         members.entrySet().stream().filter(e -> e.getValue() >= minimumRank).map(Map.Entry::getKey).forEach(result::add);
+        return result.build();
+    }
+
+    /**
+     * Returns an immutable set containing the UUIDs of players with rank equal or above that requested rank (inclusive).
+     * @param rank rank to request
+     * @param includeAboveRanks whether including players with rank above the requested rank or not
+     * @return immutable set of UUIDs
+     * @see #getMemberSet(int)
+     * @see #getMembers()
+     * @since 1.5.0
+     */
+    public @NonNull ImmutableSet<UUID> getMemberSet(int rank, boolean includeAboveRanks) {
+        if (includeAboveRanks) {
+            return getMemberSet(rank);
+        }
+        Builder<UUID> result = new ImmutableSet.Builder<>();
+        members.entrySet().stream().filter(e -> e.getValue() == rank).map(Map.Entry::getKey).forEach(result::add);
         return result.build();
     }
 

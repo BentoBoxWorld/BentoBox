@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.lists;
 
 import world.bentobox.bentobox.api.placeholders.GameModePlaceholderReplacer;
-import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 import java.text.DateFormat;
@@ -49,7 +48,7 @@ public enum GameModePlaceholder {
      * Displays the amount of players that are at least MEMBER on this island.
      * @since 1.5.0
      */
-    ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet(RanksManager.MEMBER_RANK).size())),
+    ISLAND_MEMBERS_COUNT("island_members_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getMemberSet().size())),
     /**
      * Displays the amount of players that are currently visiting the island.
      * @since 1.5.0
