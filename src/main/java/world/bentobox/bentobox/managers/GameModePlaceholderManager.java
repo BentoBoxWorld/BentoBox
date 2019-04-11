@@ -7,7 +7,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.lists.GameModePlaceholders;
+import world.bentobox.bentobox.lists.GameModePlaceholder;
 
 /**
  * Registers default placeholders for all GameModes. Will not overwrite any that the gamemode addon itself implements.
@@ -40,8 +40,8 @@ public class GameModePlaceholderManager {
  */
 class DefaultPlaceholder implements PlaceholderReplacer {
     private final GameModeAddon addon;
-    private final GameModePlaceholders type;
-    public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholders type) {
+    private final GameModePlaceholder type;
+    public DefaultPlaceholder(GameModeAddon addon, GameModePlaceholder type) {
         this.addon = addon;
         this.type = type;
     }

@@ -7,7 +7,7 @@ import java.text.DateFormat;
 import java.time.Instant;
 import java.util.Date;
 
-public enum GameModePlaceholders {
+public enum GameModePlaceholder {
 
     /* World-related */
     WORLD_FRIENDLY_NAME("world_friendly_name", (addon, user, island) -> addon.getWorldSettings().getFriendlyName()),
@@ -74,7 +74,7 @@ public enum GameModePlaceholders {
      */
     private GameModePlaceholderReplacer replacer;
 
-    GameModePlaceholders(String placeholder, GameModePlaceholderReplacer replacer) {
+    GameModePlaceholder(String placeholder, GameModePlaceholderReplacer replacer) {
         this.placeholder = placeholder;
         this.replacer = replacer;
     }
