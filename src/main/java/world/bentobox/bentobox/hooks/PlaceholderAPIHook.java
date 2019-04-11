@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.hooks;
 
+import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -22,7 +23,7 @@ public class PlaceholderAPIHook extends Hook {
     private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
 
     public PlaceholderAPIHook() {
-        super("PlaceholderAPI");
+        super("PlaceholderAPI", Material.PAPER);
         this.addonsExpansions = new HashMap<>();
     }
 

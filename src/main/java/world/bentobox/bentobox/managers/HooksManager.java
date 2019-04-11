@@ -1,11 +1,12 @@
 package world.bentobox.bentobox.managers;
 
+import org.eclipse.jdt.annotation.NonNull;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.hooks.Hook;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.hooks.Hook;
 
 /**
  * @author Poslovitch
@@ -20,7 +21,7 @@ public class HooksManager {
         this.hooks = new ArrayList<>();
     }
 
-    public void registerHook(Hook hook) {
+    public void registerHook(@NonNull Hook hook) {
         if (hook.isPluginAvailable()) {
             plugin.log("Hooking with " + hook.getPluginName() + "...");
             if (hook.hook()) {
