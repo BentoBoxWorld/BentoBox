@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.hooks;
 
+import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -22,7 +23,7 @@ public class PlaceholderAPIHook extends Hook {
     private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
 
     public PlaceholderAPIHook() {
-        super("PlaceholderAPI");
+        super("PlaceholderAPI", Material.PAPER);
         this.addonsExpansions = new HashMap<>();
     }
 
@@ -40,14 +41,6 @@ public class PlaceholderAPIHook extends Hook {
     @Override
     public String getFailureCause() {
         return "could not register BentoBox's expansion";
-    }
-
-    /**
-     * @deprecated As of 1.4.0, renamed to {@link #registerPlaceholder(String, PlaceholderReplacer)}.
-     */
-    @Deprecated
-    public void registerBentoBoxPlaceholder(String placeholder, PlaceholderReplacer replacer) {
-        registerPlaceholder(placeholder, replacer);
     }
 
     /**
@@ -98,14 +91,6 @@ public class PlaceholderAPIHook extends Hook {
         if (addonsExpansions.containsKey(addon)) {
             addonsExpansions.get(addon).unregisterPlaceholder(placeholder);
         }
-    }
-
-    /**
-     * @deprecated As of 1.4.0, renamed to {@link #registerPlaceholder(Addon, String, PlaceholderReplacer)}.
-     */
-    @Deprecated
-    public void registerAddonPlaceholder(Addon addon, String placeholder, PlaceholderReplacer replacer) {
-        registerPlaceholder(addon, placeholder, replacer);
     }
     
     /**

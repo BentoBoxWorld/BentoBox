@@ -1,35 +1,50 @@
 package world.bentobox.bentobox.api.hooks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.plugin.Plugin;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 /**
  * @author Poslovitch
  */
 public abstract class Hook {
 
-    private String pluginName;
+    private @NonNull String pluginName;
+    private @NonNull Material icon;
 
-    public Hook(String pluginName) {
-        if (pluginName == null || pluginName.isEmpty()) {
-            throw new IllegalArgumentException("Plugin name cannot be null nor empty.");
+    public Hook(@NonNull String pluginName, @NonNull Material icon) {
+        if (pluginName.isEmpty()) {
+            throw new IllegalArgumentException("Plugin name cannot be empty.");
         }
         this.pluginName = pluginName;
+        this.icon = icon;
     }
 
     /**
      * Returns the name of the plugin related to this Hook.
-     * Cannot be null.
      * @return the plugin name.
      */
+    @NonNull
     public String getPluginName() {
         return pluginName;
+    }
+
+    /**
+     * Returns the icon representing this Hook.
+     * @return the icon.
+     */
+    @NonNull
+    public Material getIcon() {
+        return icon;
     }
 
     /**
      * Returns the Plugin instance related to this Hook or null if it could not be found.
      * @return the Plugin instance of the plugin this Hook hooks into.
      */
+    @Nullable
     public Plugin getPlugin() {
         return Bukkit.getPluginManager().getPlugin(pluginName);
     }

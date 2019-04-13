@@ -2,7 +2,7 @@
 name: Bug report
 about: Report a bug or a problem you're encountering with BentoBox.
 title: ''
-labels: 'Priority: Medium, Status: Pending, Type: Bug'
+labels: 'Status: Pending, Type: Bug'
 assignees: ''
 
 ---
@@ -19,7 +19,7 @@ assignees: ''
 <!-- Please type below this line. -->
 
 #### Screenshots and videos
-<!-- Videos and screenshots are helpful as they can provide better ingormation about your problem. -->
+<!-- Videos and screenshots are helpful as they can provide better information about your problem. -->
 <!-- Please type below this line. -->
 
 #### Expected behavior

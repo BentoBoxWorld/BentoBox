@@ -1,11 +1,12 @@
 package world.bentobox.bentobox.managers;
 
+import org.eclipse.jdt.annotation.NonNull;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.hooks.Hook;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.hooks.Hook;
 
 /**
  * @author Poslovitch
@@ -13,6 +14,9 @@ import world.bentobox.bentobox.api.hooks.Hook;
 public class HooksManager {
 
     private BentoBox plugin;
+    /**
+     * List of successfully registered hooks.
+     */
     private List<Hook> hooks;
 
     public HooksManager(BentoBox plugin) {
@@ -20,7 +24,7 @@ public class HooksManager {
         this.hooks = new ArrayList<>();
     }
 
-    public void registerHook(Hook hook) {
+    public void registerHook(@NonNull Hook hook) {
         if (hook.isPluginAvailable()) {
             plugin.log("Hooking with " + hook.getPluginName() + "...");
             if (hook.hook()) {
@@ -33,6 +37,10 @@ public class HooksManager {
         // We may have in the near future almost ~25 hooks, which would basically spam the console and make users nervous.
     }
 
+    /**
+     * Returns the list of successfully registered hooks.
+     * @return list of successfully registered hooks.
+     */
     public List<Hook> getHooks() {
         return hooks;
     }

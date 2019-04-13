@@ -2,7 +2,7 @@
 name: Feature request
 about: Suggest an idea to improve BentoBox
 title: ''
-labels: 'Priority: Low, Status: Pending, Type: Enhancement'
+labels: 'Status: Pending, Type: Enhancement'
 assignees: ''
 
 ---

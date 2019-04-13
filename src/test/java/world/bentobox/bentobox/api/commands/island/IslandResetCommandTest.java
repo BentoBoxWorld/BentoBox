@@ -114,8 +114,6 @@ public class IslandResetCommandTest {
         iwm = mock(IslandWorldManager.class);
         when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
-        when(iwm.getResetLimit(Mockito.any())).thenReturn(3);
-
 
         // Schems manager - custom schem
         SchemsManager sm = mock(SchemsManager.class);
@@ -182,7 +180,7 @@ public class IslandResetCommandTest {
         // Now has no team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(2);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -216,8 +214,6 @@ public class IslandResetCommandTest {
         when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
         // Now has no team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        // Give the user some resets
-        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -235,7 +231,7 @@ public class IslandResetCommandTest {
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
         // Test with unlimited resets
-        when(iwm.getResetLimit(Mockito.any())).thenReturn(-1);
+        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(-1);
 
         // Reset
         assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
@@ -255,7 +251,7 @@ public class IslandResetCommandTest {
         // Now has no team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -284,7 +280,6 @@ public class IslandResetCommandTest {
 
         // Send command again to confirm
         assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-
     }
 
     @Test
@@ -297,7 +292,7 @@ public class IslandResetCommandTest {
         // Now has no team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -321,8 +316,6 @@ public class IslandResetCommandTest {
         // Reset
         assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
         Mockito.verify(user).sendMessage("commands.island.create.unable-create-island");
-
-
     }
 
     @Test
@@ -335,7 +328,7 @@ public class IslandResetCommandTest {
         // Now has no team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -369,7 +362,7 @@ public class IslandResetCommandTest {
         // Now has no team
         when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResets(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
@@ -393,7 +386,6 @@ public class IslandResetCommandTest {
         assertTrue(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
         // Verify that build new island was called and the number of resets left shown
         Mockito.verify(builder).build();
-        // This should not be shown
-        Mockito.verify(user, Mockito.never()).sendMessage("commands.island.reset.resets-left", "[number]", "1");
+        Mockito.verify(user).sendMessage("commands.island.reset.resets-left", "[number]", "1");
     }
 }

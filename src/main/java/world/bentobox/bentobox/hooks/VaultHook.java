@@ -1,10 +1,10 @@
 package world.bentobox.bentobox.hooks;
 
-import org.bukkit.Bukkit;
-import org.bukkit.plugin.RegisteredServiceProvider;
-
 import net.milkbowl.vault.economy.Economy;
 import net.milkbowl.vault.economy.EconomyResponse;
+import org.bukkit.Bukkit;
+import org.bukkit.Material;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.user.User;
 
@@ -17,7 +17,7 @@ public class VaultHook extends Hook {
     private Economy economy;
 
     public VaultHook() {
-        super("Vault");
+        super("Vault", Material.GOLD_NUGGET);
     }
 
     @Override

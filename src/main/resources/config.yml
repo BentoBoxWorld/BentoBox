@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.3.1
+# BentoBox Configuration 1.4.0
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -32,7 +32,7 @@ general:
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
-    - '[CoFH]'
+  - '[CoFH]'
   # Rank required to use a command. e.g., use the invite command. Default is owner rank is required.
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   rank-command: {}

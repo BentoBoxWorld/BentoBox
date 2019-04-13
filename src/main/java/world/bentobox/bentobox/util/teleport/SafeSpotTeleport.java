@@ -1,10 +1,5 @@
 package world.bentobox.bentobox.util.teleport;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChunkSnapshot;
 import org.bukkit.GameMode;
@@ -15,11 +10,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
-
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Pair;
+
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * A class that calculates finds a safe spot asynchronously and then teleports the player there.
@@ -414,6 +414,7 @@ public class SafeSpotTeleport {
          * Try to teleport the player
          * @return SafeSpotTeleport
          */
+        @Nullable
         public SafeSpotTeleport build() {
             // Error checking
             if (entity == null) {
@@ -425,7 +426,7 @@ public class SafeSpotTeleport {
                 return null;
             }
             if (failureMessage.isEmpty() && entity instanceof Player) {
-                failureMessage = "general.errors.warp-not-safe";
+                failureMessage = "general.errors.no-safe-location-found";
             }
             return new SafeSpotTeleport(plugin, entity, location, failureMessage, portal, homeNumber, overrideGamemode);
         }

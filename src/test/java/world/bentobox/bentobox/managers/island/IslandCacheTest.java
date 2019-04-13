@@ -29,6 +29,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Util;
 
 @RunWith(PowerMockRunner.class)
@@ -76,6 +77,7 @@ public class IslandCacheTest {
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
         members.add(UUID.randomUUID());
+        when(island.getMemberSet(Mockito.anyInt())).thenReturn(members.build());
         when(island.getMemberSet()).thenReturn(members.build());
         when(island.getMinX()).thenReturn(-200);
         when(island.getMinZ()).thenReturn(-200);
@@ -209,10 +211,10 @@ public class IslandCacheTest {
         IslandCache ic = new IslandCache();
         ic.addIsland(island);
 
-        assertTrue(ic.getMembers(world, null).isEmpty());
-        assertTrue(ic.getMembers(world, UUID.randomUUID()).isEmpty());
-        assertFalse(ic.getMembers(world, island.getOwner()).isEmpty());
-        assertEquals(3, ic.getMembers(world, island.getOwner()).size());
+        assertTrue(ic.getMembers(world, null, RanksManager.MEMBER_RANK).isEmpty());
+        assertTrue(ic.getMembers(world, UUID.randomUUID(), RanksManager.MEMBER_RANK).isEmpty());
+        assertFalse(ic.getMembers(world, island.getOwner(), RanksManager.MEMBER_RANK).isEmpty());
+        assertEquals(3, ic.getMembers(world, island.getOwner(), RanksManager.MEMBER_RANK).size());
 
     }
     @Test

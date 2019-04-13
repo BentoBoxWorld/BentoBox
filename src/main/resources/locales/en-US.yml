@@ -23,14 +23,13 @@ general:
     player-has-island: "&cPlayer already has an island!"
     player-has-no-island: "&cThat player has no island!"
     already-have-island: "&cYou already have an island!"
-    no-safe-location: "&cNo safe location found on island!"
+    no-safe-location-found: "&cCould not find a safe spot to teleport you to on the island."
     not-owner: "&cYou are not the owner of your island!"
     not-in-team: "&cThat player is not in your team!"
     offline-player: "&cThat player is offline or doesn't exist."
     unknown-player: "&c[name] is an unknown player!"
     general: "&cThat command is not ready yet - contact admin"
     unknown-command: "&cUnknown command. Do &b/[label] help &cfor help."
-    warp-not-safe: "&cThat warp is not safe right now!"
     wrong-world: "&cYou are not in the right world to do that!"
     you-must-wait: "&cYou must wait [number]s before you can do that command again."
     must-be-positive-number: "&c[number] is not a valid positive number."
@@ -262,6 +261,8 @@ commands:
       addon-syntax: "&2[name] &3[version]" 
       game-worlds: "&2[name] &3([addon])"
       server: "&2Running &3[name] [version]&2."
+    manage:
+      description: "display the management panel"
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
@@ -778,6 +779,13 @@ protection:
         &aAllow obsidian to be scooped up
         &awith an empty bucket back into lava.
         &aProtects newbies. Reduces resets.
+    OFFLINE_GROWTH:
+      description: |-
+        &aWhen disabled, plants
+        &awill not grow on islands
+        &awhere all members are offline.
+        &aMay help reduce lag.
+      name: "Offline Growth"
     OFFLINE_REDSTONE:
       description: |-
           &aWhen disabled, redstone
@@ -939,6 +947,37 @@ language:
   panel-title: "Select your language"
   selected: "&aCurrently selected."
   edited: "&aChanged your language to &e[lang]&a."
+
+management:
+  panel:
+    title: "BentoBox Management"
+    views:
+      gamemodes:
+        name: "&6Gamemodes"
+        description: "&eClick &ato display currently loaded Gamemodes"
+        schems:
+          name: "&6Schems"
+          description: "&aOpens the Admin Schem menu."
+      addons:
+        name: "&6Addons"
+        description: "&eClick &ato display currently loaded Addons"
+      hooks:
+        name: "&6Hooks"
+        description: "&eClick &ato display currently loaded Hooks"
+    actions:
+      check-updates:
+        name: "&6Check for updates"
+        description: "&eClick &ato check for updates"
+      reload:
+        name: "&cReload"
+        description: "&eClick &c&ltwice &r&ato reload BentoBox"
+    buttons:
+      catalog:
+        name: "&6Addons Catalog"
+        description: "&aOpens the Addons Catalog"
+      empty-here:
+        name: "&bThis looks empty here..."
+        description: "&aWhat if you take a look at our catalog?"
 
 successfully-loaded: |
 

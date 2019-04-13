@@ -1,12 +1,8 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -15,6 +11,9 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
  * @author tastybento
@@ -52,12 +51,15 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.reset.must-remove-members");
             return false;
         }
-        if (getIWM().getResetLimit(getWorld()) >= 0) {
-            int resetsLeft = getIWM().getResetLimit(getWorld()) - getPlayers().getResets(getWorld(), user.getUniqueId());
-            if (resetsLeft <= 0) {
+        int resetsLeft = getPlayers().getResetsLeft(getWorld(), user.getUniqueId());
+        if (resetsLeft != -1) {
+            // Resets are not unlimited here
+            if (resetsLeft == 0) {
+                // No resets allowed
                 user.sendMessage("commands.island.reset.none-left");
                 return false;
             } else {
+                // Still some resets left
                 // Notify how many resets are left
                 user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(resetsLeft));
             }

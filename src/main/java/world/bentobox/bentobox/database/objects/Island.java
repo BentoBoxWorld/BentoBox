@@ -1,17 +1,8 @@
 package world.bentobox.bentobox.database.objects;
 
-import java.util.Date;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.ImmutableSet.Builder;
+import com.google.gson.annotations.Expose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -20,11 +11,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.common.collect.ImmutableSet;
-import com.google.common.collect.ImmutableSet.Builder;
-import com.google.gson.annotations.Expose;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
@@ -38,6 +24,18 @@ import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.Date;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Stores all the info about an island
@@ -54,11 +52,13 @@ public class Island implements DataObject {
     private boolean deleted = false;
 
     @Expose
+    @NonNull
     private String uniqueId = UUID.randomUUID().toString();
 
     //// Island ////
     // The center of the island itself
     @Expose
+    @Nullable
     private Location center;
 
     // Island range
@@ -77,8 +77,16 @@ public class Island implements DataObject {
     @Expose
     private World world;
 
+    /**
+     * Name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * @since 1.5.0
+     */
+    @Expose
+    private String gameMode;
+
     // Display name
     @Expose
+    @Nullable
     private String name;
 
     // Time parameters
@@ -88,9 +96,21 @@ public class Island implements DataObject {
     private long updatedDate;
 
     //// Team ////
+    /**
+     * Owner of the island.
+     * There can only be one per island.
+     * If it is {@code null}, then the island is considered as unowned.
+     */
     @Expose
-    private @Nullable UUID owner;
+    @Nullable
+    private UUID owner;
 
+    /**
+     * Members of the island.
+     * It contains any player which has one of the following rank on this island: {@link RanksManager#COOP_RANK COOP},
+     * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
+     * {@link RanksManager#OWNER_RANK OWNER}.
+     */
     @Expose
     private Map<UUID, Integer> members = new HashMap<>();
 
@@ -193,6 +213,7 @@ public class Island implements DataObject {
      * Returns a clone of the location of the center of this island.
      * @return clone of the center Location
      */
+    @Nullable
     public Location getCenter(){
         return center == null ? null : center.clone();
     }
@@ -231,25 +252,57 @@ public class Island implements DataObject {
     }
 
     /**
-     * Get the team members of the island. If this is empty or cleared, there is no team.
-     * @return the members - key is the UUID, value is the RanksManager enum, e.g. RanksManager.MEMBER_RANK
+     * Returns the members of this island.
+     * It contains all players that have any rank on this island, including {@link RanksManager#BANNED_RANK BANNED},
+     * {@link RanksManager#TRUSTED_RANK TRUSTED}, {@link RanksManager#MEMBER_RANK MEMBER}, {@link RanksManager#SUB_OWNER_RANK SUB_OWNER},
+     * {@link RanksManager#OWNER_RANK OWNER}, etc.
+     *
+     * @return the members - key is the UUID, value is the RanksManager enum, e.g. {@link RanksManager#MEMBER_RANK}.
+     * @see #getMemberSet()
      */
     public Map<UUID, Integer> getMembers() {
         return members;
     }
 
     /**
-     * Members >= MEMBER_RANK
+     * Returns an immutable set containing the UUIDs of players that are truly members of this island.
+     * This includes any player which has one of the following rank on this island: {@link RanksManager#MEMBER_RANK MEMBER},
+     * {@link RanksManager#SUB_OWNER_RANK SUB_OWNER}, {@link RanksManager#OWNER_RANK OWNER}.
      * @return the members of the island (owner included)
+     * @see #getMembers()
      */
     public ImmutableSet<UUID> getMemberSet(){
-        Builder<UUID> result = new ImmutableSet.Builder<>();
+        return getMemberSet(RanksManager.MEMBER_RANK);
+    }
 
-        for (Entry<UUID, Integer> member: members.entrySet()) {
-            if (member.getValue() >= RanksManager.MEMBER_RANK) {
-                result.add(member.getKey());
-            }
+    /**
+     * Returns an immutable set containing the UUIDs of players with rank above that requested rank inclusive
+     * @param minimumRank minimum rank (inclusive) of members
+     * @return immutable set of UUIDs
+     * @see #getMembers()
+     * @since 1.5.0
+     */
+    public @NonNull ImmutableSet<UUID> getMemberSet(int minimumRank) {
+        Builder<UUID> result = new ImmutableSet.Builder<>();
+        members.entrySet().stream().filter(e -> e.getValue() >= minimumRank).map(Map.Entry::getKey).forEach(result::add);
+        return result.build();
+    }
+
+    /**
+     * Returns an immutable set containing the UUIDs of players with rank equal or above that requested rank (inclusive).
+     * @param rank rank to request
+     * @param includeAboveRanks whether including players with rank above the requested rank or not
+     * @return immutable set of UUIDs
+     * @see #getMemberSet(int)
+     * @see #getMembers()
+     * @since 1.5.0
+     */
+    public @NonNull ImmutableSet<UUID> getMemberSet(int rank, boolean includeAboveRanks) {
+        if (includeAboveRanks) {
+            return getMemberSet(rank);
         }
+        Builder<UUID> result = new ImmutableSet.Builder<>();
+        members.entrySet().stream().filter(e -> e.getValue() == rank).map(Map.Entry::getKey).forEach(result::add);
         return result.build();
     }
 
@@ -532,9 +585,9 @@ public class Island implements DataObject {
         BentoBox plugin = BentoBox.getInstance();
         Map<Flag, Integer> result = new HashMap<>();
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+                .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+                .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
     }
 
@@ -722,14 +775,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(owner).getFirstPlayed();
-                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-                    // Show team members
-                    showMembers(user);
+            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+            // Show team members
+            showMembers(user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -868,5 +921,23 @@ public class Island implements DataObject {
      */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * Returns the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * @return the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * @since 1.5.0
+     */
+    public String getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * Sets the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * Note this has no effect over the actual location of the island, however this may cause issues with addons using this data.
+     * @since 1.5.0
+     */
+    public void setGameMode(String gameMode) {
+        this.gameMode = gameMode;
     }
 }

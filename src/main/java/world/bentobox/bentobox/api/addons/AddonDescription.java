@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.api.addons;
 
+import org.bukkit.Material;
+import org.eclipse.jdt.annotation.NonNull;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
-import org.eclipse.jdt.annotation.NonNull;
 
 /**
  * @author tastybento, Poslovitch
@@ -25,10 +26,15 @@ public final class AddonDescription {
     private final boolean metrics;
     /**
      * Name of the GitHub repository of the addon or an empty String.
-     * It follows an {@code Owner/Name} format.
+     * It follows a {@code Owner/Name} format.
      * @since 1.3.0
      */
     private final @NonNull String repository;
+    /**
+     * Icon representing the addon in various menus.
+     * @since 1.5.0
+     */
+    private final @NonNull Material icon;
 
     private AddonDescription(@NonNull Builder builder) {
         this.main = builder.main;
@@ -40,6 +46,7 @@ public final class AddonDescription {
         this.softDependencies = builder.softDependencies;
         this.metrics = builder.metrics;
         this.repository = builder.repository;
+        this.icon = builder.icon;
     }
 
     @NonNull
@@ -103,6 +110,16 @@ public final class AddonDescription {
         return repository;
     }
 
+    /**
+     * Returns the material representing the addon as an icon.
+     * @return the material representing the addon as an icon.
+     * @since 1.5.0
+     */
+    @NonNull
+    public Material getIcon() {
+        return icon;
+    }
+
     public static class Builder {
         private @NonNull String main;
         private @NonNull String name;
@@ -113,6 +130,8 @@ public final class AddonDescription {
         private @NonNull List<String> softDependencies = new ArrayList<>();
         private boolean metrics = true;
         private @NonNull String repository = "";
+        private @NonNull Material icon = Material.PAPER;
+
         /**
          * @since 1.1
          */
@@ -160,8 +179,20 @@ public final class AddonDescription {
          * Must follow the {@code Owner/Name} format.
          * @since 1.3.0
          */
+        @NonNull
         public Builder repository(@NonNull String repository) {
             this.repository = repository;
+            return this;
+        }
+
+        /**
+         * Sets the icon representing the addon.
+         * @param icon Material to set as the icon. Default is {@link Material#PAPER}.
+         * @since 1.5.0
+         */
+        @NonNull
+        public Builder icon(@NonNull Material icon) {
+            this.icon = icon;
             return this;
         }
 

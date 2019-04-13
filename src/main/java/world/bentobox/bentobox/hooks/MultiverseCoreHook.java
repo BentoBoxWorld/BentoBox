@@ -1,8 +1,8 @@
 package world.bentobox.bentobox.hooks;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Material;
 import org.bukkit.World;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.hooks.Hook;
 
@@ -17,7 +17,7 @@ public class MultiverseCoreHook extends Hook {
     private static final String MULTIVERSE_IMPORT = "mv import ";
 
     public MultiverseCoreHook() {
-        super("Multiverse-Core");
+        super("Multiverse-Core", Material.COMPASS);
     }
 
     public void registerWorld(World world) {

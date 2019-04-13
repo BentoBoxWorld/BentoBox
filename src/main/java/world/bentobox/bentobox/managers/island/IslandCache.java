@@ -161,14 +161,15 @@ public class IslandCache {
     /**
      * @param world world to check
      * @param uuid uuid of player to check
+     * @param minimumRank minimum rank requested
      * @return set of UUID's of island members. If there is no island, this set will be empty
      */
     @NonNull
-    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid) {
+    public Set<UUID> getMembers(@NonNull World world, @NonNull UUID uuid, @NonNull int minimumRank) {
         islandsByUUID.putIfAbsent(Util.getWorld(world), new HashMap<>());
         Island island = islandsByUUID.get(Util.getWorld(world)).get(uuid);
         if (island != null) {
-            return island.getMemberSet();
+            return island.getMemberSet(minimumRank);
         }
         return new HashSet<>(0);
     }
