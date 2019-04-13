@@ -254,6 +254,7 @@ public class IslandsManager {
         Island island = new Island(location, owner, plugin.getIWM().getIslandProtectionRange(location.getWorld()));
         // Game the gamemode name and prefix the uniqueId
         String gmName = plugin.getIWM().getAddon(location.getWorld()).map(gm -> gm.getDescription().getName()).orElse("");
+        island.setGameMode(gmName);
         island.setUniqueId(gmName + island.getUniqueId());
         while (handler.objectExists(island.getUniqueId())) {
             // This should never happen, so although this is a potential infinite loop I'm going to leave it here because
@@ -406,7 +407,7 @@ public class IslandsManager {
     
     /**
      * Returns a set of island member UUID's for the island of playerUUID.
-     * Only includes players of rank {@link RanksManager.MEMBER_RANK} and above.
+     * Only includes players of rank {@link RanksManager#MEMBER_RANK} and above.
      * This includes the owner of the island. If there is no island, this set will be empty.
      *
      * @param world - world to check
@@ -763,6 +764,11 @@ public class IslandsManager {
                     // Success, set spawn if this is the spawn island.
                     this.setSpawn(island);
                 }
+            }
+
+            // Update some of their fields
+            if (island.getGameMode() == null) {
+                island.setGameMode(plugin.getIWM().getAddon(island.getWorld()).map(gm -> gm.getDescription().getName()).orElse(""));
             }
         });
         if (!toQuarantine.isEmpty()) {

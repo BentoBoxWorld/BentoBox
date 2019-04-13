@@ -77,6 +77,13 @@ public class Island implements DataObject {
     @Expose
     private World world;
 
+    /**
+     * Name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * @since 1.5.0
+     */
+    @Expose
+    private String gameMode;
+
     // Display name
     @Expose
     @Nullable
@@ -914,5 +921,23 @@ public class Island implements DataObject {
      */
     public void setDeleted(boolean deleted) {
         this.deleted = deleted;
+    }
+
+    /**
+     * Returns the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * @return the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * @since 1.5.0
+     */
+    public String getGameMode() {
+        return gameMode;
+    }
+
+    /**
+     * Sets the name of the {@link world.bentobox.bentobox.api.addons.GameModeAddon GameModeAddon} this island is handled by.
+     * Note this has no effect over the actual location of the island, however this may cause issues with addons using this data.
+     * @since 1.5.0
+     */
+    public void setGameMode(String gameMode) {
+        this.gameMode = gameMode;
     }
 }
