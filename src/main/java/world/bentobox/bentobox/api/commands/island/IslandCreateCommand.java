@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
@@ -62,12 +61,11 @@ public class IslandCreateCommand extends CompositeCommand {
                 return false;
             }
             // Check the schem name exists
-            Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
-            if (!validNames.contains(name)) {
+            name = getPlugin().getSchemsManager().validate(getWorld(), name);
+            if (name == null) {
                 user.sendMessage("commands.island.create.unknown-schem");
                 return false;
             }
-
         }
         user.sendMessage("commands.island.create.creating-island");
         try {

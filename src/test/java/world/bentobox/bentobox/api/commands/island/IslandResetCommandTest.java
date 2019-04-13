@@ -1,5 +1,16 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -13,6 +24,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -24,19 +36,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
-import world.bentobox.bentobox.schems.Clipboard;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * @author tastybento
@@ -118,9 +117,7 @@ public class IslandResetCommandTest {
 
         // Schems manager - custom schem
         SchemsManager sm = mock(SchemsManager.class);
-        Map<String, Clipboard> map = new HashMap<>();
-        map.put("custom", null);
-        when(sm.get(Mockito.any())).thenReturn(map);
+        when(sm.validate(Mockito.any(), Mockito.any())).thenReturn("custom");
         when(plugin.getSchemsManager()).thenReturn(sm);
     }
 

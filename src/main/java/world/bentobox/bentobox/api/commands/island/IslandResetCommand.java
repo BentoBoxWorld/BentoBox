@@ -14,7 +14,6 @@ import world.bentobox.bentobox.managers.island.NewIsland;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 
 /**
  * @author tastybento
@@ -103,13 +102,7 @@ public class IslandResetCommand extends ConfirmableCommand {
         if (args.isEmpty()) {
             return SchemsManager.DEFAULT_SCHEM_NAME;
         }
-
-        String name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
-        Set<String> validNames = getPlugin().getSchemsManager().get(getWorld()).keySet();
-        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && !validNames.contains(name)) {
-            return null;
-        }
-        return name;
+        return getPlugin().getSchemsManager().validate(getWorld(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
     }
 
     private boolean resetIsland(User user, String name) {

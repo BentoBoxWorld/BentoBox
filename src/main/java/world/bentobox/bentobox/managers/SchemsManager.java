@@ -7,12 +7,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
 
 import org.bukkit.World;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -91,19 +93,30 @@ public class SchemsManager {
         FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(FILE_EXTENSION)
                 && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("nether-")
                 && !name.toLowerCase(java.util.Locale.ENGLISH).startsWith("end-");
-        Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).forEach(name -> {
-            if (!plugin.getSchemsManager().loadSchem(addon.getOverWorld(), schems, name)) {
-                plugin.logError("Could not load " + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
-            }
-            if (addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands()
-                    && !plugin.getSchemsManager().loadSchem(addon.getNetherWorld(), schems, "nether-" + name)) {
-                plugin.logError("Could not load nether-" + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
-            }
-            if (addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands()
-                    && !plugin.getSchemsManager().loadSchem(addon.getEndWorld(), schems, "end-" + name)) {
-                plugin.logError("Could not load end-" + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
-            }
-        });
+        Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).forEach(name -> importSchem(addon, schems, name));
+    }
+
+
+
+    /**
+     * Imports one schem to the game mode
+     * @param addon
+     * @param schems
+     * @param name
+     */
+    private void importSchem(GameModeAddon addon, File schems, String name) {
+        if (!plugin.getSchemsManager().loadSchem(addon.getOverWorld(), schems, name)) {
+            plugin.logError("Could not load " + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
+        }
+        if (addon.getWorldSettings().isNetherGenerate() && addon.getWorldSettings().isNetherIslands()
+                && !plugin.getSchemsManager().loadSchem(addon.getNetherWorld(), schems, "nether-" + name)) {
+            plugin.logError("Could not load nether-" + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
+        }
+        if (addon.getWorldSettings().isEndGenerate() && addon.getWorldSettings().isEndIslands()
+                && !plugin.getSchemsManager().loadSchem(addon.getEndWorld(), schems, "end-" + name)) {
+            plugin.logError("Could not load end-" + name + ".schem for " + addon.getWorldSettings().getFriendlyName());
+        }
+
     }
 
     private boolean loadSchem(World world, File schems, String name) {
@@ -145,5 +158,23 @@ public class SchemsManager {
             plugin.logError("Tried to paste schem '" + name + "' for " + world.getName() + " but the schem is not loaded!");
             plugin.log("This might be due to an invalid schem format. Keep in mind that schems are not schematics.");
         }
+    }
+
+
+    /**
+     * Check if a schem is valid for this game mode or not
+     * @param world - the world to check
+     * @param name - name of schem (not including .schem)
+     * @return name if valid, <tt>null</tt> if not
+     */
+    public @Nullable String validate(World world, String name) {
+        Set<String> validNames = get(world).keySet();
+        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && !validNames.contains(name)) {
+            // See if it has not been loaded yet
+
+            return null;
+        }
+        return name;
+
     }
 }
