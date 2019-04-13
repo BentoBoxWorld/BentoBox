@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.Notifier;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.hooks.DynmapHook;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
 import world.bentobox.bentobox.hooks.PlaceholderAPIHook;
 import world.bentobox.bentobox.hooks.VaultHook;
@@ -180,6 +181,9 @@ public class BentoBox extends JavaPlugin {
             // Make sure all worlds are already registered to Multiverse.
             hooksManager.registerHook(new MultiverseCoreHook());
             islandWorldManager.registerWorldsToMultiverse();
+
+            // Register additional hooks
+            hooksManager.registerHook(new DynmapHook());
 
             webManager = new WebManager(this);
             webManager.requestGitHubData();
