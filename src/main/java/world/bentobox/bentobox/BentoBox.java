@@ -26,6 +26,7 @@ import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.listeners.PortalTeleportationListener;
 import world.bentobox.bentobox.listeners.StandardSpawnProtectionListener;
 import world.bentobox.bentobox.managers.AddonsManager;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.FlagsManager;
 import world.bentobox.bentobox.managers.HooksManager;
@@ -62,6 +63,7 @@ public class BentoBox extends JavaPlugin {
     private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
     private SchemsManager schemsManager;
+    private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
     private IslandDeletionManager islandDeletionManager;
@@ -135,6 +137,7 @@ public class BentoBox extends JavaPlugin {
         islandWorldManager = new IslandWorldManager(this);
         // Load schems manager
         schemsManager = new SchemsManager(this);
+        blueprintsManager = new BlueprintsManager(this);
 
         // Locales manager must be loaded before addons
         localesManager = new LocalesManager(this);
@@ -379,6 +382,15 @@ public class BentoBox extends JavaPlugin {
     }
 
     /**
+     * Returns the instance of the {@link BlueprintsManager}.
+     * @return the {@link BlueprintsManager}.
+     * @since 1.5.0
+     */
+    public BlueprintsManager getBlueprintsManager() {
+        return blueprintsManager;
+    }
+
+    /**
      * Returns whether BentoBox is fully loaded or not.
      * This basically means that all managers are instantiated and can therefore be safely accessed.
      * @return whether BentoBox is fully loaded or not.
@@ -432,7 +444,7 @@ public class BentoBox extends JavaPlugin {
      * @see org.bukkit.plugin.java.JavaPlugin#getDefaultWorldGenerator(java.lang.String, java.lang.String)
      */
     @Override
-    public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
+    public ChunkGenerator getDefaultWorldGenerator(@NonNull String worldName, String id) {
         return addonsManager.getDefaultWorldGenerator(worldName, id);
     }
 
