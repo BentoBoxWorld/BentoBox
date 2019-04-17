@@ -1,6 +1,16 @@
 package world.bentobox.bentobox.managers;
 
-import com.google.common.collect.ImmutableMap;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -19,6 +29,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -34,17 +47,6 @@ import world.bentobox.bentobox.managers.island.IslandCache;
 import world.bentobox.bentobox.util.DeleteIslandChunks;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * The job of this class is manage all island related data.
@@ -404,7 +406,7 @@ public class IslandsManager {
     public Set<UUID> getMembers(World world, UUID playerUUID, int minimumRank) {
         return islandCache.getMembers(world, playerUUID, minimumRank);
     }
-    
+
     /**
      * Returns a set of island member UUID's for the island of playerUUID.
      * Only includes players of rank {@link RanksManager#MEMBER_RANK} and above.

@@ -15,7 +15,19 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.block.BlockFace;
-import org.bukkit.entity.*;
+import org.bukkit.entity.Animals;
+import org.bukkit.entity.Bat;
+import org.bukkit.entity.EnderDragon;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.Flying;
+import org.bukkit.entity.IronGolem;
+import org.bukkit.entity.Monster;
+import org.bukkit.entity.Player;
+import org.bukkit.entity.PufferFish;
+import org.bukkit.entity.Shulker;
+import org.bukkit.entity.Slime;
+import org.bukkit.entity.Snowman;
+import org.bukkit.entity.WaterMob;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -199,8 +211,8 @@ public class Util {
      * @param world - world
      * @return over world
      */
-    public static World getWorld(World world) {
-        return world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
+    public static World getWorld(@Nullable World world) {
+        return world == null ? null : world.getEnvironment().equals(Environment.NORMAL) ? world : Bukkit.getWorld(world.getName().replaceAll(NETHER, "").replaceAll(THE_END, ""));
     }
 
     /**
@@ -310,7 +322,7 @@ public class Util {
         // PufferFish is a unique fix.
 
         return entity instanceof Monster || entity instanceof Flying || entity instanceof Slime ||
-            entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
+                entity instanceof Shulker || entity instanceof EnderDragon || entity instanceof PufferFish;
     }
 
 
@@ -328,6 +340,6 @@ public class Util {
         // Most of passive mobs extends Animals
 
         return entity instanceof Animals || entity instanceof IronGolem || entity instanceof Snowman ||
-            entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
+                entity instanceof WaterMob && !(entity instanceof PufferFish) || entity instanceof Bat;
     }
 }
