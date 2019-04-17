@@ -978,6 +978,47 @@ management:
       empty-here:
         name: "&bThis looks empty here..."
         description: "&aWhat if you take a look at our catalog?"
+    information:
+      state:
+        name: "&6Compatibility"
+        description:
+          COMPATIBLE: |+
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on a
+            &a&lCOMPATIBLE &r&aserver software and
+            &aversion.
+
+            &aIts features are fully designed to
+            &arun in this environment.
+          SUPPORTED: |+
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on a
+            &a&lSUPPORTED &r&aserver software and
+            &aversion.
+
+            &aMost of its features will run smoothly
+            &ain this environment.
+          NOT_SUPPORTED: |+
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on a
+            &6&lNOT SUPPORTED &r&aserver software or
+            &aversion.
+
+            &aWhile most of its features will run
+            &acorrectly, &6platform-specific bugs or
+            &6issues are to be expected&a.
+          INCOMPATIBLE: |+
+            &aRunning &e[name] [version]&a.
+
+            &aBentoBox is currently running on an
+            &c&lINCOMPATIBLE &r&aserver software or
+            &aversion.
+
+            &cWeird behaviour and bugs can occur
+            &cand most features may be unstable.
 
 successfully-loaded: |
 

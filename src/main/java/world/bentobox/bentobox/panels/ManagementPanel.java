@@ -6,10 +6,12 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.hooks.Hook;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.versions.ServerCompatibility;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,7 +23,7 @@ import java.util.stream.Collectors;
 public class ManagementPanel {
 
     private static final String LOCALE_REF = "management.panel.";
-    private static final int[] PANES = {0, 4, 7, 8, 9, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    private static final int[] PANES = {0, 4, 8, 9, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
     private ManagementPanel() {}
 
@@ -194,6 +196,32 @@ public class ManagementPanel {
 
         builder.item(5, checkUpdatesItem);
         builder.item(6, reloadItem);
+
+        // BentoBox state icon
+        ServerCompatibility.Compatibility compatibility = ServerCompatibility.getInstance().checkCompatibility(BentoBox.getInstance());
+        ServerCompatibility.ServerSoftware serverSoftware = ServerCompatibility.getInstance().getServerSoftware(BentoBox.getInstance().getServer());
+        ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion(BentoBox.getInstance().getServer());
+
+        PanelItemBuilder compatibilityItemBuilder = new PanelItemBuilder()
+                .name(user.getTranslation(LOCALE_REF + "information.state.name"))
+                .description(user.getTranslation(LOCALE_REF + "information.state.description." + compatibility,
+                        TextVariables.NAME, serverSoftware != null ? serverSoftware.toString() : user.getTranslation("general.invalid"),
+                        TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid")));
+
+        switch (compatibility) {
+            case COMPATIBLE:
+            case SUPPORTED:
+                compatibilityItemBuilder.icon(Material.GREEN_CONCRETE);
+                break;
+            case NOT_SUPPORTED:
+                compatibilityItemBuilder.icon(Material.ORANGE_CONCRETE);
+                break;
+            case INCOMPATIBLE:
+                compatibilityItemBuilder.icon(Material.RED_CONCRETE);
+                break;
+        }
+
+        builder.item(7, compatibilityItemBuilder.build());
     }
 
     private static void looksEmpty(PanelBuilder builder, User user) {
