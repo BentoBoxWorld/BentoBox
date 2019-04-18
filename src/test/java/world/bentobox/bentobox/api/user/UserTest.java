@@ -84,6 +84,7 @@ public class UserTest {
         when(Bukkit.getServer()).thenReturn(server);
         when(Bukkit.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
+        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
 
         iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
@@ -451,8 +452,8 @@ public class UserTest {
         User u = User.getInstance(player);
         assertEquals(33, u.getPermissionValue("bskyblock.max", 2));
     }
-    
-    
+
+
     /**
      * Test for {@link User#getPermissionValue(String, int)}
      */
@@ -473,7 +474,7 @@ public class UserTest {
         User u = User.getInstance(player);
         assertEquals(-1, u.getPermissionValue("bskyblock.max", 2));
     }
-    
+
     /**
      * Test for {@link User#getPermissionValue(String, int)}
      */
