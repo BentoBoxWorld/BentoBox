@@ -52,6 +52,7 @@
         <bstats.version>1.4</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholder.version>2.9.2</placeholder.version>
+        <githubapi.version>1.0</githubapi.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}</revision>
         <!-- This allows to change between versions. -->
@@ -144,6 +145,12 @@
 			<version>${spigot.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <!-- Some APIs from us :D -->
+        <dependency>
+            <groupId>world.bentobox</groupId>
+            <artifactId>GitHubAPI4Java</artifactId>
+            <version>${githubapi.version}</version>
+        </dependency>
 		<!-- Metrics -->
 		<dependency>
 			<groupId>org.bstats</groupId>
@@ -292,6 +299,10 @@
                         <relocation>
                             <pattern>org.bstats</pattern>
                             <shadedPattern>world.bentobox.bentobox.util.metrics</shadedPattern>
+                        </relocation>
+                        <relocation>
+                            <pattern>world.bentobox.githubapi4java</pattern>
+                            <shadedPattern>world.bentobox.bentobox.api.github</shadedPattern>
                         </relocation>
                     </relocations>
                     <artifactSet>
