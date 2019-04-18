@@ -117,7 +117,7 @@ public class ManagementPanel {
                 .name(user.getTranslation(LOCALE_REF + "buttons.catalog.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.catalog.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage("opening the catalog... (not implemented yet)");
+                    CatalogPanel.openPanel(user);
                     return true;
                 })
                 .build();
@@ -230,7 +230,7 @@ public class ManagementPanel {
                 .name(user.getTranslation(LOCALE_REF + "buttons.empty-here.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.empty-here.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage("opening the catalog... (not implemented yet)");
+                    CatalogPanel.openPanel(user);
                     return true;
                 })
                 .build();
