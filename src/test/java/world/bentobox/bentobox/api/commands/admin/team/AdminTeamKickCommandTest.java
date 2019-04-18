@@ -107,6 +107,7 @@ public class AdminTeamKickCommandTest {
         BukkitScheduler sch = mock(BukkitScheduler.class);
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
+        when(Bukkit.getPluginManager()).thenReturn(mock(PluginManager.class));
 
         // Locales
         LocalesManager lm = mock(LocalesManager.class);
