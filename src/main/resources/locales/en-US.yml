@@ -263,6 +263,8 @@ commands:
       server: "&2Running &3[name] [version]&2."
     manage:
       description: "display the management panel"
+    catalog:
+      description: "display the Addons catalog"
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
