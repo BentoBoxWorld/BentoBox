@@ -23,7 +23,7 @@ public class PlaceholderAPIHook extends Hook {
     private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
 
     public PlaceholderAPIHook() {
-        super("PlaceholderAPI", Material.PAPER);
+        super("PlaceholderAPI", Material.NAME_TAG);
         this.addonsExpansions = new HashMap<>();
     }
 
