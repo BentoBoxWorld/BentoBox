@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.4.0
+# BentoBox Configuration 1.5.0-SNAPSHOT
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -32,7 +32,7 @@ general:
   # Add other fake player names here if required
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   fakeplayers:
-  - '[CoFH]'
+    - '[CoFH]'
   # Rank required to use a command. e.g., use the invite command. Default is owner rank is required.
   # /!\ This feature is experimental and might not work as expected or might not work at all.
   rank-command: {}
@@ -84,4 +84,17 @@ web:
   # bStats has nearly no effect on your server's performance and the sent data is completely
   # anonymous so please consider twice if you really want to disable it.
   metrics: true
+  github:
+    # Toggle whether BentoBox can connect to GitHub to get data about updates and addons.
+    # Disabling this will result in the deactivation of the update checker and of some other
+    # features that rely on the data downloaded from the GitHub API.
+    # It does not send any data.
+    # Added since 1.5.0.
+    download-data: true
+    # Toggle whether the downloaded data should be flushed to files.
+    # It helps to prevent previously downloaded data being lost due to a more recent connection that failed
+    # to connect to the GitHub API.
+    # Such files are stored in JSON format and do not usually take up more than a few kilobytes of disk space each.
+    # Added since 1.5.0.
+    flush-data-to-files: true
 uniqueId: config

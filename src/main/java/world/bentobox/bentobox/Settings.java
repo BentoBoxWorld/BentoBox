@@ -1,16 +1,16 @@
 package world.bentobox.bentobox;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 import world.bentobox.bentobox.managers.RanksManager;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * All the plugin settings are here
@@ -173,8 +173,8 @@ public class Settings implements DataObject {
     @ConfigComment("Disabling this will result in the deactivation of the update checker and of some other")
     @ConfigComment("features that rely on the data downloaded from the GitHub API.")
     @ConfigComment("It does not send any data.")
-    @ConfigEntry(path = "web.github.download-data", since = "1.3.0", hidden = true)
-    private boolean githubDownloadData = false; // Set as false for now so it disables the whole GitHub thing.
+    @ConfigEntry(path = "web.github.download-data", since = "1.5.0")
+    private boolean githubDownloadData = true;
 
     @ConfigComment("Time in minutes between each connection to the GitHub API.")
     @ConfigComment("This allows for up-to-the-minute information gathering.")
@@ -188,7 +188,7 @@ public class Settings implements DataObject {
     @ConfigComment("It helps to prevent previously downloaded data being lost due to a more recent connection that failed")
     @ConfigComment("to connect to the GitHub API.")
     @ConfigComment("Such files are stored in JSON format and do not usually take up more than a few kilobytes of disk space each.")
-    @ConfigEntry(path = "web.github.flush-data-to-files", since = "1.3.0", hidden = true)
+    @ConfigEntry(path = "web.github.flush-data-to-files", since = "1.5.0")
     private boolean githubFlushDataToFiles = true;
 
     @ConfigEntry(path = "web.updater.check-updates.bentobox", since = "1.3.0", hidden = true)
