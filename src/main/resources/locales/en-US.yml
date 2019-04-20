@@ -1022,6 +1022,10 @@ management:
             &cWeird behaviour and bugs can occur
             &cand most features may be unstable.
 
+catalog:
+  panel:
+    title: "Addons Catalog"
+
 successfully-loaded: |
 
   &6  ____             _        ____
