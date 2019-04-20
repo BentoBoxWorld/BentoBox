@@ -181,7 +181,7 @@ public class Settings implements DataObject {
     @ConfigComment("However, as the GitHub API data does not get updated instantly, it is recommended to keep")
     @ConfigComment("this value greater than 15 minutes.")
     @ConfigComment("Setting this to 0 will make BentoBox download data only at startup.")
-    @ConfigEntry(path = "web.github.connection-interval", since = "1.3.0", hidden = true)
+    @ConfigEntry(path = "web.github.connection-interval", since = "1.5.0")
     private int githubConnectionInterval = 60;
 
     @ConfigComment("Toggle whether the downloaded data should be flushed to files.")

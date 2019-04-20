@@ -91,6 +91,13 @@ web:
     # It does not send any data.
     # Added since 1.5.0.
     download-data: true
+    # Time in minutes between each connection to the GitHub API.
+    # This allows for up-to-the-minute information gathering.
+    # However, as the GitHub API data does not get updated instantly, it is recommended to keep
+    # this value greater than 15 minutes.
+    # Setting this to 0 will make BentoBox download data only at startup.
+    # Added since 1.5.0.
+    connection-interval: 60
     # Toggle whether the downloaded data should be flushed to files.
     # It helps to prevent previously downloaded data being lost due to a more recent connection that failed
     # to connect to the GitHub API.
