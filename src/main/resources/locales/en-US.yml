@@ -1024,7 +1024,29 @@ management:
 
 catalog:
   panel:
-    title: "Addons Catalog"
+    GAMEMODES:
+      title: "Gamemodes Catalog"
+    ADDONS:
+      title: "Addons Catalog"
+    views:
+      gamemodes:
+        name: "&6Gamemodes"
+        description: |+
+          &eClick &ato browse through the
+          &aavailable official Gamemodes.
+      addons:
+        name: "&6Addons"
+        description: |+
+          &eClick &ato browse through the
+          &aavailable official Addons.
+    already-installed: "&aAlready installed!"
+    empty-here:
+      name: "&bThis looks empty here..."
+      description: |+
+        &cBentoBox could not connect to GitHub.
+
+        &aAllow BentoBox to connect to GitHub in
+        &athe configuration or try again later.
 
 successfully-loaded: |
 

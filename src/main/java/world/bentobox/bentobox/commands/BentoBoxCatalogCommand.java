@@ -25,7 +25,7 @@ public class BentoBoxCatalogCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        CatalogPanel.openPanel(user);
+        CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
         return true;
     }
 }

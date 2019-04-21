@@ -1,7 +1,17 @@
 package world.bentobox.bentobox.managers;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
+import world.bentobox.githubapi4java.GitHub;
+import world.bentobox.githubapi4java.objects.GitHubGist;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Handles web-related stuff.
@@ -12,26 +22,75 @@ import world.bentobox.bentobox.BentoBox;
 public class WebManager {
 
     private @NonNull BentoBox plugin;
+    private @Nullable GitHub gitHub;
+    private @NonNull List<JsonObject> addonsCatalog;
+    private @NonNull List<JsonObject> gamemodesCatalog;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
+        this.addonsCatalog = new ArrayList<>();
+        this.gamemodesCatalog = new ArrayList<>();
+
+        // Setup the GitHub connection
         if (plugin.getSettings().isGithubDownloadData()) {
-            setupAddonsGitHubConnectors();
+            this.gitHub = new GitHub();
+
+            long connectionInterval = plugin.getSettings().getGithubConnectionInterval() * 20L * 60L;
+            if (connectionInterval == 0) {
+                plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> requestGitHubData(true), 20L);
+            } else {
+                plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> requestGitHubData(true), 20L, connectionInterval);
+            }
         }
     }
 
-    /**
-     * Setups the {@code GitHubConnector} instances for each addons.
-     */
-    private void setupAddonsGitHubConnectors() {
-        plugin.getAddonsManager().getEnabledAddons().stream()
-                .filter(addon -> !addon.getDescription().getRepository().isEmpty());
+    public void requestGitHubData(boolean clearCache) {
+        getGitHub().ifPresent(gh -> {
+            if (clearCache) {
+                gh.clearCache(); // TODO might be better to not clear cache, check
+                this.addonsCatalog.clear();
+                this.gamemodesCatalog.clear();
+            }
+
+            plugin.log("Updating data from GitHub...");
+            try {
+                String catalogContent = new GitHubGist(gh, "bccabc20bce17f358d0f94bbbe83babd").getRawResponseAsJson()
+                        .getAsJsonObject().getAsJsonObject("files").getAsJsonObject("catalog.json").get("content").getAsString()
+                        .replace("\\", "");
+
+                JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
+                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(gamemode.getAsJsonObject()));
+                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(addon.getAsJsonObject()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
     }
 
     /**
+     * Returns the contents of the addons catalog (may be an empty list).
+     * @return the contents of the addons catalog.
      */
-    public void requestGitHubData() {
-        if (plugin.getSettings().isGithubDownloadData()) {
-        }
+    @NonNull
+    public List<JsonObject> getAddonsCatalog() {
+        return addonsCatalog;
+    }
+
+    /**
+     * Returns the contents of the gamemodes catalog (may be an empty list).
+     * @return the contents of the gamemodes catalog.
+     */
+    @NonNull
+    public List<JsonObject> getGamemodesCatalog() {
+        return gamemodesCatalog;
+    }
+
+    /**
+     * Returns an optional that may contain the {@link GitHub} instance only and only if {@link Settings#isGithubDownloadData()} is {@code true}.
+     * @return the GitHub instance.
+     */
+    @NonNull
+    public Optional<GitHub> getGitHub() {
+        return Optional.ofNullable(gitHub);
     }
 }

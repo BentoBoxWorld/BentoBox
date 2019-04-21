@@ -189,7 +189,6 @@ public class BentoBox extends JavaPlugin {
             hooksManager.registerHook(new DynmapHook());
 
             webManager = new WebManager(this);
-            webManager.requestGitHubData();
 
             // Show banner
             User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
@@ -436,6 +435,14 @@ public class BentoBox extends JavaPlugin {
     @NonNull
     public Optional<BStats> getMetrics() {
         return Optional.ofNullable(metrics);
+    }
+
+    /**
+     * @return the {@link WebManager}.
+     * @since 1.5.0
+     */
+    public WebManager getWebManager() {
+        return webManager;
     }
 
     // Overriding default JavaPlugin methods
