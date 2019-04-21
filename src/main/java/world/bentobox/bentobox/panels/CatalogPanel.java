@@ -88,6 +88,13 @@ public class CatalogPanel {
                 // If the addon is already installed, then tell the user it's already installed
                 plugin.getAddonsManager().getAddonByName(name).ifPresent(addon1 -> itemBuilder.glow(true).description(user.getTranslation(LOCALE_REF + "already-installed")));
 
+                // Set the link to the latest release
+                String repository = addon.get("repository").getAsString();
+                itemBuilder.clickHandler((panel, user1, clickType, slot) -> {
+                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + repository + "/releases/latest");
+                    return true;
+                });
+
                 builder.item(addon.get("slot").getAsInt(), itemBuilder.build());
             }
         }
