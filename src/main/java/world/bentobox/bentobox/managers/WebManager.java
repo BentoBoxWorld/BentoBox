@@ -36,7 +36,7 @@ public class WebManager {
             this.gitHub = new GitHub();
 
             long connectionInterval = plugin.getSettings().getGithubConnectionInterval() * 20L * 60L;
-            if (connectionInterval == 0) {
+            if (connectionInterval <= 0) {
                 plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> requestGitHubData(true), 20L);
             } else {
                 plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> requestGitHubData(true), 20L, connectionInterval);
