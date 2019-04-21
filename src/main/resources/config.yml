@@ -97,11 +97,5 @@ web:
     # this value greater than 15 minutes.
     # Setting this to 0 will make BentoBox download data only at startup.
     # Added since 1.5.0.
-    connection-interval: 60
-    # Toggle whether the downloaded data should be flushed to files.
-    # It helps to prevent previously downloaded data being lost due to a more recent connection that failed
-    # to connect to the GitHub API.
-    # Such files are stored in JSON format and do not usually take up more than a few kilobytes of disk space each.
-    # Added since 1.5.0.
-    flush-data-to-files: true
+    connection-interval: 10
 uniqueId: config

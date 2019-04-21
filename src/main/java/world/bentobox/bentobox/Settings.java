@@ -184,13 +184,6 @@ public class Settings implements DataObject {
     @ConfigEntry(path = "web.github.connection-interval", since = "1.5.0")
     private int githubConnectionInterval = 60;
 
-    @ConfigComment("Toggle whether the downloaded data should be flushed to files.")
-    @ConfigComment("It helps to prevent previously downloaded data being lost due to a more recent connection that failed")
-    @ConfigComment("to connect to the GitHub API.")
-    @ConfigComment("Such files are stored in JSON format and do not usually take up more than a few kilobytes of disk space each.")
-    @ConfigEntry(path = "web.github.flush-data-to-files", since = "1.5.0")
-    private boolean githubFlushDataToFiles = true;
-
     @ConfigEntry(path = "web.updater.check-updates.bentobox", since = "1.3.0", hidden = true)
     private boolean checkBentoBoxUpdates = true;
 
@@ -488,14 +481,6 @@ public class Settings implements DataObject {
 
     public void setGithubConnectionInterval(int githubConnectionInterval) {
         this.githubConnectionInterval = githubConnectionInterval;
-    }
-
-    public boolean isGithubFlushDataToFiles() {
-        return githubFlushDataToFiles;
-    }
-
-    public void setGithubFlushDataToFiles(boolean githubFlushDataToFiles) {
-        this.githubFlushDataToFiles = githubFlushDataToFiles;
     }
 
     public boolean isCheckBentoBoxUpdates() {
