@@ -56,7 +56,7 @@ public class WebManager {
             try {
                 String catalogContent = new GitHubGist(gh, "bccabc20bce17f358d0f94bbbe83babd").getRawResponseAsJson()
                         .getAsJsonObject().getAsJsonObject("files").getAsJsonObject("catalog.json").get("content").getAsString()
-                        .replace("\\", "");
+                        .replace("\n", "").replace("\\", "");
 
                 JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
                 catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(gamemode.getAsJsonObject()));
