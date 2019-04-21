@@ -1039,7 +1039,18 @@ catalog:
         description: |+
           &eClick &ato browse through the
           &aavailable official Addons.
-    already-installed: "&aAlready installed!"
+    icon:
+      description-template: |+
+        &8[topic]
+        &a[install]
+
+        &7&o[description]
+
+        &eClick &ato get the link to the
+        &alatest release.
+      already-installed: "Already installed!"
+      install-now: "Install now!"
+
     empty-here:
       name: "&bThis looks empty here..."
       description: |+

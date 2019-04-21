@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.panels;
 
 import com.google.gson.JsonObject;
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
@@ -86,7 +87,18 @@ public class CatalogPanel {
                         .name(ChatColor.WHITE + name);
 
                 // If the addon is already installed, then tell the user it's already installed
-                plugin.getAddonsManager().getAddonByName(name).ifPresent(addon1 -> itemBuilder.glow(true).description(user.getTranslation(LOCALE_REF + "already-installed")));
+                String install;
+                if (plugin.getAddonsManager().getAddonByName(name).isPresent()) {
+                    itemBuilder.glow(true);
+                    install = user.getTranslation(LOCALE_REF + "icon.already-installed");
+                } else {
+                    install = user.getTranslation(LOCALE_REF + "icon.install-now");
+                }
+
+                itemBuilder.description(user.getTranslation(LOCALE_REF + "icon.description-template",
+                        "[topic]", StringUtils.capitalize(addon.get("topic").getAsString()),
+                        "[install]", install,
+                        "[description]", addon.get("description").getAsString()));
 
                 // Set the link to the latest release
                 String repository = addon.get("repository").getAsString();
