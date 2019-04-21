@@ -2,6 +2,7 @@ package world.bentobox.bentobox.panels;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -31,7 +32,7 @@ public class ManagementPanel {
      * Dynamically creates the panel.
      * @param user the User to show the panel to
      */
-    public static void openPanel(User user, View view) {
+    public static void openPanel(@NonNull User user, View view) {
         BentoBox plugin = BentoBox.getInstance();
 
         PanelBuilder builder = new PanelBuilder()
@@ -123,7 +124,7 @@ public class ManagementPanel {
                 .name(user.getTranslation(LOCALE_REF + "buttons.catalog.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.catalog.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
-                    CatalogPanel.openPanel(user);
+                    CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
                     return true;
                 })
                 .build();
@@ -230,13 +231,13 @@ public class ManagementPanel {
         builder.item(7, compatibilityItemBuilder.build());
     }
 
-    private static void looksEmpty(PanelBuilder builder, User user) {
+    private static void looksEmpty(@NonNull PanelBuilder builder, @NonNull User user) {
         PanelItem emptyHere = new PanelItemBuilder()
                 .icon(Material.STRUCTURE_VOID)
                 .name(user.getTranslation(LOCALE_REF + "buttons.empty-here.name"))
                 .description(user.getTranslation(LOCALE_REF + "buttons.empty-here.description"))
                 .clickHandler((panel, user1, clickType, slot) -> {
-                    CatalogPanel.openPanel(user);
+                    CatalogPanel.openPanel(user, CatalogPanel.View.GAMEMODES);
                     return true;
                 })
                 .build();
