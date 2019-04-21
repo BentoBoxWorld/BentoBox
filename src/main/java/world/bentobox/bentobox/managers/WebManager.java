@@ -70,6 +70,7 @@ public class WebManager {
     /**
      * Returns the contents of the addons catalog (may be an empty list).
      * @return the contents of the addons catalog.
+     * @since 1.5.0
      */
     @NonNull
     public List<JsonObject> getAddonsCatalog() {
@@ -79,6 +80,7 @@ public class WebManager {
     /**
      * Returns the contents of the gamemodes catalog (may be an empty list).
      * @return the contents of the gamemodes catalog.
+     * @since 1.5.0
      */
     @NonNull
     public List<JsonObject> getGamemodesCatalog() {
@@ -88,6 +90,7 @@ public class WebManager {
     /**
      * Returns an optional that may contain the {@link GitHub} instance only and only if {@link Settings#isGithubDownloadData()} is {@code true}.
      * @return the GitHub instance.
+     * @since 1.5.0
      */
     @NonNull
     public Optional<GitHub> getGitHub() {
