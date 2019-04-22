@@ -37,6 +37,7 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Colorable;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import world.bentobox.bentobox.BentoBox;
@@ -131,35 +132,24 @@ public class Clipboard {
         blockConfig = new YamlConfiguration();
 
         int count = 0;
-        int minX = Math.max(pos1.getBlockX(),pos2.getBlockX());
-        int maxX = Math.min(pos1.getBlockX(), pos2.getBlockX());
-        int minY = Math.max(pos1.getBlockY(),pos2.getBlockY());
-        int maxY = Math.min(pos1.getBlockY(), pos2.getBlockY());
-        int minZ = Math.max(pos1.getBlockZ(),pos2.getBlockZ());
-        int maxZ = Math.min(pos1.getBlockZ(), pos2.getBlockZ());
+        BoundingBox toCopy = BoundingBox.of(pos1, pos2);
 
-        for (int x = Math.min(pos1.getBlockX(), pos2.getBlockX()); x <= Math.max(pos1.getBlockX(),pos2.getBlockX()); x++) {
-            for (int y = Math.min(pos1.getBlockY(), pos2.getBlockY()); y <= Math.max(pos1.getBlockY(),pos2.getBlockY()); y++) {
-                for (int z = Math.min(pos1.getBlockZ(), pos2.getBlockZ()); z <= Math.max(pos1.getBlockZ(),pos2.getBlockZ()); z++) {
+        for (int x = (int)toCopy.getMinX(); x <= toCopy.getMaxX(); x++) {
+            for (int y = (int)toCopy.getMinY(); y <= toCopy.getMaxY(); y++) {
+                for (int z = (int)toCopy.getMinZ(); z <= toCopy.getMaxZ(); z++) {
                     Block block = world.getBlockAt(x, y, z);
                     if (copyBlock(block, origin == null ? user.getLocation() : origin, copyAir, world.getLivingEntities().stream()
                             .filter(Objects::nonNull)
                             .filter(e -> !(e instanceof Player) && e.getLocation().getBlock().equals(block))
                             .collect(Collectors.toList()))) {
-                        minX = Math.min(minX, x);
-                        maxX = Math.max(maxX, x);
-                        minY = Math.min(minY, y);
-                        maxY = Math.max(maxY, y);
-                        minZ = Math.min(minZ, z);
-                        maxZ = Math.max(maxZ, z);
                         count ++;
                     }
                 }
             }
         }
-        blockConfig.set("size.xsize", maxX - minX + 1);
-        blockConfig.set("size.ysize", maxY - minY + 1);
-        blockConfig.set("size.zsize", maxZ - minZ + 1);
+        blockConfig.set("size.xsize", toCopy.getWidthX());
+        blockConfig.set("size.ysize", toCopy.getHeight());
+        blockConfig.set("size.zsize", toCopy.getWidthZ());
         user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
         copied = true;
         return true;
