@@ -98,7 +98,7 @@ public class ServerCompatibility {
         /*
          * @since 1.5.0
          */
-        V1_14(Compatibility.NOT_SUPPORTED);
+        V1_14(Compatibility.INCOMPATIBLE);
 
         private Compatibility compatibility;
 
