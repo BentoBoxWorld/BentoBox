@@ -4,7 +4,7 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.schems.Clipboard;
+import world.bentobox.bentobox.blueprints.Clipboard;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminSchemPos2Command extends CompositeCommand {
@@ -22,7 +22,7 @@ public class AdminSchemPos2Command extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
-        Clipboard clipboard = parent.getClipboards().getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), parent.getSchemsFolder()));
+        Clipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new Clipboard());
 
         if (user.getLocation().equals(clipboard.getPos1())) {
             user.sendMessage("commands.admin.schem.set-different-pos");

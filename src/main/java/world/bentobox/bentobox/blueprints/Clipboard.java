@@ -1,20 +1,9 @@
-package world.bentobox.bentobox.schems;
+package world.bentobox.bentobox.blueprints;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-import java.util.zip.ZipOutputStream;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -38,12 +27,9 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Colorable;
 import org.bukkit.util.BoundingBox;
-import org.bukkit.util.Vector;
 
-import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * @author tastybento
@@ -56,66 +42,28 @@ public class Clipboard {
     private static final String BLOCKS_YAML_PREFIX = "blocks.";
     private static final String BEDROCK = "bedrock";
     private static final String COLOR = "color";
-    private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
     private static final String LINES = "lines";
 
     private YamlConfiguration blockConfig = new YamlConfiguration();
     private Location pos1;
     private Location pos2;
     private Location origin;
-    private BentoBox plugin;
     private boolean copied;
 
-    private File schemFolder;
-
-    public Clipboard(BentoBox plugin, File schemFolder) {
+    public Clipboard(String contents) throws InvalidConfigurationException {
         super();
-        this.plugin = plugin;
-        if (!schemFolder.exists()) {
-            schemFolder.mkdirs();
-        }
-        this.schemFolder = schemFolder;
+        set(contents);
     }
 
-    /**
-     * @return the pos1
-     */
-    public Location getPos1() {
-        return pos1;
-    }
-    /**
-     * @param pos1 the pos1 to set
-     */
-    public void setPos1(Location pos1) {
-        origin = null;
-        this.pos1 = pos1;
-    }
-    /**
-     * @return the pos2
-     */
-    public Location getPos2() {
-        return pos2;
-    }
-    /**
-     * @param pos2 the pos2 to set
-     */
-    public void setPos2(Location pos2) {
-        origin = null;
-        this.pos2 = pos2;
+    public Clipboard(YamlConfiguration config) {
+        super();
+        blockConfig = config;
     }
 
-    /**
-     * @return the origin
-     */
-    public Location getOrigin() {
-        return origin;
+    public Clipboard() {
+        super();
     }
-    /**
-     * @param origin the origin to set
-     */
-    public void setOrigin(Location origin) {
-        this.origin = origin;
-    }
+
     /**
      * Copy the blocks between pos1 and pos2 to the clipboard
      * @param user - user
@@ -153,42 +101,6 @@ public class Clipboard {
         user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
         copied = true;
         return true;
-    }
-
-    /**
-     * Pastes the clipboard to island location.
-     * If pos1 and pos2 are not set already, they are automatically set to the pasted coordinates
-     * @param world - world in which to paste
-     * @param island - location to paste
-     * @param task - task to run after pasting
-     */
-    public void pasteIsland(World world, Island island, Runnable task) {
-        // Offset due to bedrock
-        Vector off = new Vector(0,0,0);
-        if (blockConfig.contains(BEDROCK)) {
-            String[] offset = blockConfig.getString(BEDROCK).split(",");
-            off = new Vector(Integer.valueOf(offset[0]), Integer.valueOf(offset[1]), Integer.valueOf(offset[2]));
-        }
-        // Calculate location for pasting
-        Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
-        // Paste
-        paste(world, island, loc, task);
-    }
-
-    private void paste(World world, Island island, Location loc, Runnable task) {
-        new Paster(plugin, this, blockConfig, world, island, loc, task);
-    }
-
-    /**
-     * Paste clipboard at this location
-     * @param location - location
-     */
-    public void pasteClipboard(Location location) {
-        if (blockConfig.contains(BLOCKS_YAML_PREFIX)) {
-            paste(location.getWorld(), null, location, null);
-        } else {
-            plugin.logError("Clipboard has no block data in it to paste!");
-        }
     }
 
     private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
@@ -301,142 +213,89 @@ public class Clipboard {
     /**
      * @return the blockConfig
      */
-    private YamlConfiguration getBlockConfig() {
+    public YamlConfiguration getBlockConfig() {
         return blockConfig;
     }
 
-    private void unzip(final String zipFilePath) throws IOException {
-        Path path = Paths.get(zipFilePath);
-        if (!(path.toFile().exists())) {
-            throw new IOException("No file exists!");
-        }
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
-            ZipEntry entry = zipInputStream.getNextEntry();
-            while (entry != null) {
-                Path filePath = Paths.get(path.getParent().toString(), entry.getName());
-                if (!entry.isDirectory()) {
-                    unzipFiles(zipInputStream, filePath);
-                } else {
-                    Files.createDirectories(filePath);
-                }
-
-                zipInputStream.closeEntry();
-                entry = zipInputStream.getNextEntry();
-            }
-        }
+    /**
+     * @return the origin
+     */
+    public Location getOrigin() {
+        return origin;
     }
-
-    private static void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
-
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
-            byte[] bytesIn = new byte[1024];
-            int read;
-            while ((read = zipInputStream.read(bytesIn)) != -1) {
-                bos.write(bytesIn, 0, read);
-            }
-        }
-
+    /**
+     * @return the pos1
+     */
+    public Location getPos1() {
+        return pos1;
     }
-
-    private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
-            zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
-            try (FileInputStream inputStream = new FileInputStream(targetFile)) {
-                final byte[] buffer = new byte[1024];
-                int length;
-                while((length = inputStream.read(buffer)) >= 0) {
-                    zipOutputStream.write(buffer, 0, length);
-                }
-                try {
-                    Files.delete(targetFile.toPath());
-                } catch (Exception e) {
-                    plugin.logError(e.getMessage());
-                }
-            }
-        }
+    /**
+     * @return the pos2
+     */
+    public Location getPos2() {
+        return pos2;
     }
-
     public boolean isFull() {
         return copied;
     }
 
-
     /**
-     * Load a file to clipboard
-     * @param fileName - filename in schems folder
-     * @throws IOException - if there's a load error with unziping or name
-     * @throws InvalidConfigurationException - the YAML of the schem is at fault
+     * Set the clipboard from a YAML string
+     * @param contents
+     * @return
+     * @throws InvalidConfigurationException
      */
-    public void load(String fileName) throws IOException, InvalidConfigurationException {
-        File zipFile = new File(schemFolder, fileName + ".schem");
-        if (!zipFile.exists()) {
-            plugin.logError(LOAD_ERROR + zipFile.getName());
-            throw new IOException(LOAD_ERROR + zipFile.getName());
-        }
-        unzip(zipFile.getAbsolutePath());
-        File file = new File(schemFolder, fileName);
-        if (!file.exists()) {
-            plugin.logError(LOAD_ERROR + file.getName());
-            throw new IOException(LOAD_ERROR + file.getName());
-        }
-        blockConfig = new YamlConfiguration();
-        blockConfig.load(file);
+    public Clipboard set(String contents) throws InvalidConfigurationException {
+        this.blockConfig.loadFromString(contents);
         copied = true;
-        Files.delete(file.toPath());
-        // Clear pos1 and 2
         setPos1(null);
         setPos2(null);
-    }
-
-    /*
-      Load a file to clipboard
-     */
-    /**
-     * @param user - use trying to load
-     * @param fileName - filename
-     * @return - <tt>true</tt> if load is successful, <tt>false</tt> if not
-     */
-    public boolean load(User user, String fileName) {
-        try {
-            load(fileName);
-        } catch (IOException e1) {
-            user.sendMessage("commands.admin.schem.could-not-load");
-            plugin.logError("Could not load schems file: " + fileName + " " + e1.getMessage());
-            return false;
-        } catch (InvalidConfigurationException e1) {
-            user.sendMessage("commands.admin.schem.could-not-load");
-            plugin.logError("Could not load schems file - YAML error : " + fileName + " " + e1.getMessage());
-            return false;
-        }
-        user.sendMessage("general.success");
-        return true;
+        return this;
     }
 
     /**
-     * Save the clipboard to a file
-     * @param user - user who is copying
-     * @param newFile - filename
-     * @return - true if successful, false if error
+     * Set the clipboard contents from a YAML configuration
+     * @param set the blockConfig
      */
-    public boolean save(User user, String newFile) {
-        File file = new File(schemFolder, newFile);
-        try {
-            getBlockConfig().save(file);
-        } catch (IOException e) {
-            user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not save temp schems file.");
-            plugin.logError("Could not save temporary schems file: " + file.getName());
-            return false;
-        }
-        try {
-            zip(file);
-        } catch (IOException e) {
-            user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not zip temp schems file.");
-            plugin.logError("Could not zip temporary schems file: " + file.getName());
-            return false;
-        }
-        user.sendMessage("general.success");
-        return true;
+    public Clipboard set(YamlConfiguration blockConfig) {
+        this.blockConfig = blockConfig;
+        copied = true;
+        setPos1(null);
+        setPos2(null);
+        return this;
     }
 
+    /**
+     * @param origin the origin to set
+     */
+    public void setOrigin(Location origin) {
+        this.origin = origin;
+    }
+
+    /**
+     * @param pos1 the pos1 to set
+     */
+    public void setPos1(Location pos1) {
+        origin = null;
+        this.pos1 = pos1;
+    }
+
+    /**
+     * @param pos2 the pos2 to set
+     */
+    public void setPos2(Location pos2) {
+        origin = null;
+        this.pos2 = pos2;
+    }
+
+
+    /**
+     * Get the clipboard
+     * @return the clipboard as a string
+     */
+    @Override
+    public String toString() {
+        return blockConfig.saveToString();
+    }
 
 }

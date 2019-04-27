@@ -1,9 +1,7 @@
 package world.bentobox.bentobox.schems;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -51,7 +49,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.blueprints.Clipboard;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
@@ -173,15 +171,12 @@ public class ClipboardTest {
 
     @Test
     public void testClipboard() {
-        when(schemFolder.exists()).thenReturn(false);
-        new Clipboard(plugin, schemFolder);
-        Mockito.verify(schemFolder).mkdirs();
-
+        new Clipboard();
     }
 
     @Test
     public void testSetGetPos1() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         assertNull(cb.getPos1());
         cb.setPos1(loc);
         assertEquals(loc, cb.getPos1());
@@ -190,7 +185,7 @@ public class ClipboardTest {
 
     @Test
     public void testSetGetPos2() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         assertNull(cb.getPos2());
         cb.setPos2(loc);
         assertEquals(loc, cb.getPos2());
@@ -198,7 +193,7 @@ public class ClipboardTest {
 
     @Test
     public void testSetGetOrigin() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         assertNull(cb.getOrigin());
         cb.setOrigin(loc);
         assertEquals(loc, cb.getOrigin());
@@ -206,14 +201,14 @@ public class ClipboardTest {
 
     @Test
     public void testCopyNoPos1Pos2() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.copy(user, false);
         Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.schem.need-pos1-pos2"));
     }
 
     @Test
     public void testCopyNoPos2() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.setPos1(loc);
         cb.copy(user, false);
         Mockito.verify(user).sendMessage(Mockito.eq("commands.admin.schem.need-pos1-pos2"));
@@ -221,7 +216,7 @@ public class ClipboardTest {
 
     @Test
     public void testCopy() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -235,7 +230,7 @@ public class ClipboardTest {
         String[] lines = {"line1", "line2", "line3", "line4"};
         when(bs.getLines()).thenReturn(lines);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -253,7 +248,7 @@ public class ClipboardTest {
         when(inv.getContents()).thenReturn(contents);
         when(bs.getInventory()).thenReturn(inv);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -268,7 +263,7 @@ public class ClipboardTest {
         CreatureSpawner bs = mock(CreatureSpawner.class);
         when(bs.getSpawnedType()).thenReturn(EntityType.CAVE_SPIDER);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.setPos1(loc);
         cb.setPos2(loc2);
         cb.copy(user, false);
@@ -284,7 +279,7 @@ public class ClipboardTest {
         when(block.getType()).thenReturn(Material.AIR);
         BlockState bs = mock(BlockState.class);
         when(block.getState()).thenReturn(bs);
-        Clipboard cb = new Clipboard(plugin, schemFolder);
+        Clipboard cb = new Clipboard();
         cb.setPos1(loc);
         cb.setPos2(loc2);
         // Do not copy air
@@ -293,61 +288,5 @@ public class ClipboardTest {
         cb.copy(user, true);
         Mockito.verify(user).sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, "8");
     }
-
-
-    @Test
-    public void testPasteIslandNoData() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
-        Island island = mock(Island.class);
-        when(island.getCenter()).thenReturn(loc);
-        cb.pasteIsland(world, island, () -> {});
-        Mockito.verify(plugin).logError(Mockito.eq("Clipboard has no block data in it to paste!"));
-        // Verify the task is run
-        Mockito.verify(sched, Mockito.never()).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
-    }
-
-    @Test
-    public void testPasteIslandWithData() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
-        Island island = mock(Island.class);
-        when(island.getCenter()).thenReturn(loc);
-        cb.setPos1(loc);
-        cb.setPos2(loc2);
-        cb.copy(user, false);
-        cb.pasteIsland(world, island, () -> {});
-        // Verify the task is run
-        Mockito.verify(sched).runTaskTimer(Mockito.any(), Mockito.any(Runnable.class), Mockito.eq(0L), Mockito.eq(1L));
-    }
-
-    @Test
-    public void testPasteClipboardNoData() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
-        cb.pasteClipboard(loc);
-        Mockito.verify(plugin).logError(Mockito.eq("Clipboard has no block data in it to paste!"));
-    }
-
-    @Test
-    public void testPasteClipboard() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
-        cb.setPos1(loc);
-        cb.setPos2(loc2);
-        cb.copy(user, false);
-        cb.pasteClipboard(loc);
-        // No verification possible on the new constructor
-    }
-
-    @Test
-    public void testIsFull() {
-        Clipboard cb = new Clipboard(plugin, schemFolder);
-        assertFalse(cb.isFull());
-        cb.setPos1(loc);
-        cb.setPos2(loc2);
-        cb.copy(user, false);
-        assertTrue(cb.isFull());
-    }
-
-    /*
-     * Will not test the file system methods
-     */
 
 }

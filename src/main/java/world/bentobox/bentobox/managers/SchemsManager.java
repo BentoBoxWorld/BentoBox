@@ -1,16 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import org.bukkit.World;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.schems.Clipboard;
-import world.bentobox.bentobox.util.Util;
-
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -21,6 +10,19 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.jar.JarFile;
+
+import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.blueprints.Clipboard;
+import world.bentobox.bentobox.blueprints.Paster;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
 
 public class SchemsManager {
 
@@ -71,9 +73,9 @@ public class SchemsManager {
     }
 
     /**
-     * Get all the schems for this world
+     * Get all the blueprints for this world
      * @param world world
-     * @return map of schems for this world or an empty map if there are none registered
+     * @return map of blueprints for this world or an empty map if there are none registered
      */
     public Map<String, Clipboard> get(World world) {
         return islandSchems.getOrDefault(world, new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
@@ -120,9 +122,9 @@ public class SchemsManager {
         plugin.log("Loading " + name + ".schem for " + world.getName());
         Map<String, Clipboard> schemList = islandSchems.getOrDefault(world, new TreeMap<>(String.CASE_INSENSITIVE_ORDER));
         try {
-            Clipboard cb = new Clipboard(plugin, schems);
+            ClipboardManager cb = new ClipboardManager(plugin, schems);
             cb.load(name);
-            schemList.put(name, cb);
+            schemList.put(name, cb.getClipBoard());
             islandSchems.put(world, schemList);
         } catch (IOException | InvalidConfigurationException e) {
             plugin.logError("Could not load " + name + " schem, skipping!");
@@ -150,7 +152,7 @@ public class SchemsManager {
      */
     public void paste(World world, Island island, String name, Runnable task) {
         if (islandSchems.containsKey(world) && islandSchems.get(world).containsKey(name)) {
-            islandSchems.get(world).get(name).pasteIsland(world, island, task);
+            new Paster(plugin, islandSchems.get(world).get(name), world, island, task);
         } else {
             plugin.logError("Tried to paste schem '" + name + "' for " + world.getName() + " but the schem is not loaded!");
             plugin.log("This might be due to an invalid schem format. Keep in mind that schems are not schematics.");

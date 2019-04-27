@@ -4,7 +4,7 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.schems.Clipboard;
+import world.bentobox.bentobox.blueprints.Clipboard;
 
 public class AdminSchemCopyCommand extends CompositeCommand {
 
@@ -27,7 +27,7 @@ public class AdminSchemCopyCommand extends CompositeCommand {
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
 
-        Clipboard clipboard = parent.getClipboards().getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), parent.getSchemsFolder()));
+        Clipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new Clipboard());
         boolean copyAir = (args.size() == 1 && args.get(0).equalsIgnoreCase("air"));
         return clipboard.copy(user, copyAir);
     }

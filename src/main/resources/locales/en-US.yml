@@ -213,6 +213,7 @@ commands:
       paste:
         parameters: ""
         description: "paste the clipboard to your location"
+        pasting: "&aPasting..."
       pos1:
         parameters: ""
         description: "set 1st corner of cuboid clipboard"
