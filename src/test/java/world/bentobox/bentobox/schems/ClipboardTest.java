@@ -90,6 +90,9 @@ public class ClipboardTest {
         when(loc.getBlockZ()).thenReturn(3);
         when(loc.getBlock()).thenReturn(block);
         when(loc.toVector()).thenReturn(new Vector(1,2,3));
+        when(loc.getX()).thenReturn(1D);
+        when(loc.getY()).thenReturn(2D);
+        when(loc.getZ()).thenReturn(3D);
 
         loc2 = mock(Location.class);
         when(loc2.getWorld()).thenReturn(world);
@@ -97,6 +100,10 @@ public class ClipboardTest {
         when(loc2.getBlockY()).thenReturn(3);
         when(loc2.getBlockZ()).thenReturn(4);
         when(loc2.getBlock()).thenReturn(block);
+        when(loc2.toVector()).thenReturn(new Vector(2,3,4));
+        when(loc2.getX()).thenReturn(2D);
+        when(loc2.getY()).thenReturn(3D);
+        when(loc2.getZ()).thenReturn(4D);
         // Living entities
 
         List<LivingEntity> ents = new ArrayList<>();
