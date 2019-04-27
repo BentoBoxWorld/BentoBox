@@ -1,23 +1,5 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -32,7 +14,6 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -44,6 +25,24 @@ import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author tastybento
@@ -250,7 +249,7 @@ public class IslandBanCommandTest {
         when(island.ban(Mockito.any(), Mockito.any())).thenReturn(true);
 
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.success");
+        Mockito.verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetUser.getName());
         Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
     }
 
@@ -272,7 +271,7 @@ public class IslandBanCommandTest {
         when(island.ban(Mockito.any(), Mockito.any())).thenReturn(true);
 
         assertTrue(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user).sendMessage("general.success");
+        Mockito.verify(user).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetUser.getName());
         Mockito.verify(targetUser).sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, user.getName());
     }
 
@@ -293,7 +292,7 @@ public class IslandBanCommandTest {
         when(island.ban(Mockito.any(), Mockito.any())).thenReturn(false);
 
         assertFalse(ibc.execute(user, ibc.getLabel(), Collections.singletonList("bill")));
-        Mockito.verify(user, Mockito.never()).sendMessage("general.success");
+        Mockito.verify(user, Mockito.never()).sendMessage("commands.island.ban.player-banned", TextVariables.NAME, targetUser.getName());
         Mockito.verify(targetUser, Mockito.never()).sendMessage("commands.island.ban.owner-banned-you", "[owner]", user.getName());
     }
 

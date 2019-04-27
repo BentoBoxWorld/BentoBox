@@ -1,14 +1,9 @@
 package world.bentobox.bentobox.api.commands.island;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
-
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
@@ -16,6 +11,11 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+import java.util.stream.Collectors;
 
 public class IslandBanCommand extends CompositeCommand {
 
@@ -82,7 +82,7 @@ public class IslandBanCommand extends CompositeCommand {
         return ban(user, target);
     }
 
-    private boolean ban(User issuer, User target) {
+    private boolean ban(@NonNull User issuer, User target) {
         Island island = getIslands().getIsland(getWorld(), issuer.getUniqueId());
 
         // Check if player can ban any more players
@@ -98,7 +98,7 @@ public class IslandBanCommand extends CompositeCommand {
 
             // Event is not cancelled
             if (!banEvent.isCancelled() && island.ban(issuer.getUniqueId(), target.getUniqueId())) {
-                issuer.sendMessage("general.success");
+                issuer.sendMessage("commands.island.ban.player-banned", TextVariables.NAME, target.getName());
                 target.sendMessage("commands.island.ban.owner-banned-you", TextVariables.NAME, issuer.getName());
                 // If the player is online, has an island and on the banned island, move them home immediately
                 if (target.isOnline() && getIslands().hasIsland(getWorld(), target.getUniqueId()) && island.onIsland(target.getLocation())) {
