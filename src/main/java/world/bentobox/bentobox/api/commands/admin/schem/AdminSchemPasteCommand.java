@@ -22,7 +22,6 @@ public class AdminSchemPasteCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
-
         Clipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new Clipboard());
         if (clipboard.isFull()) {
             new Paster(getPlugin(), clipboard, user.getLocation(), () -> user.sendMessage("general.success"));

@@ -30,6 +30,18 @@ public class ClipboardManager {
 
     private static final String LOAD_ERROR = "Could not load schems file - does not exist : ";
 
+    private static void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
+
+        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
+            byte[] bytesIn = new byte[1024];
+            int read;
+            while ((read = zipInputStream.read(bytesIn)) != -1) {
+                bos.write(bytesIn, 0, read);
+            }
+        }
+
+    }
+
     private BentoBox plugin;
 
     private File schemFolder;
@@ -50,55 +62,11 @@ public class ClipboardManager {
         this.clipboard = clipboard;
     }
 
-    private void unzip(final String zipFilePath) throws IOException {
-        Path path = Paths.get(zipFilePath);
-        if (!(path.toFile().exists())) {
-            throw new IOException("No file exists!");
-        }
-        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
-            ZipEntry entry = zipInputStream.getNextEntry();
-            while (entry != null) {
-                Path filePath = Paths.get(path.getParent().toString(), entry.getName());
-                if (!entry.isDirectory()) {
-                    unzipFiles(zipInputStream, filePath);
-                } else {
-                    Files.createDirectories(filePath);
-                }
-
-                zipInputStream.closeEntry();
-                entry = zipInputStream.getNextEntry();
-            }
-        }
-    }
-
-    private static void unzipFiles(final ZipInputStream zipInputStream, final Path unzipFilePath) throws IOException {
-
-        try (BufferedOutputStream bos = new BufferedOutputStream(new FileOutputStream(unzipFilePath.toAbsolutePath().toString()))) {
-            byte[] bytesIn = new byte[1024];
-            int read;
-            while ((read = zipInputStream.read(bytesIn)) != -1) {
-                bos.write(bytesIn, 0, read);
-            }
-        }
-
-    }
-
-    private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
-            zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
-            try (FileInputStream inputStream = new FileInputStream(targetFile)) {
-                final byte[] buffer = new byte[1024];
-                int length;
-                while((length = inputStream.read(buffer)) >= 0) {
-                    zipOutputStream.write(buffer, 0, length);
-                }
-                try {
-                    Files.delete(targetFile.toPath());
-                } catch (Exception e) {
-                    plugin.logError(e.getMessage());
-                }
-            }
-        }
+    /**
+     * @return the clipboard
+     */
+    public Clipboard getClipBoard() {
+        return clipboard;
     }
 
     /**
@@ -151,6 +119,29 @@ public class ClipboardManager {
     }
 
     /**
+     * Paste clipboard to this location
+     * @param location - location
+     */
+    public void pasteClipboard(Location location) {
+        if (clipboard != null) {
+            new Paster(plugin, clipboard, location);
+        } else {
+            plugin.logError("Clipboard has no block data in it to paste!");
+        }
+    }
+
+    /**
+     * Pastes the clipboard to island location.
+     * If pos1 and pos2 are not set already, they are automatically set to the pasted coordinates
+     * @param world - world in which to paste
+     * @param island - location to paste
+     * @param task - task to run after pasting
+     */
+    public void pasteIsland(World world, Island island, Runnable task) {
+        new Paster(plugin, clipboard, world, island, task);
+    }
+
+    /**
      * Save the clipboard to a file
      * @param user - user who is copying
      * @param newFile - filename
@@ -175,34 +166,43 @@ public class ClipboardManager {
         user.sendMessage("general.success");
         return true;
     }
+    private void unzip(final String zipFilePath) throws IOException {
+        Path path = Paths.get(zipFilePath);
+        if (!(path.toFile().exists())) {
+            throw new IOException("No file exists!");
+        }
+        try (ZipInputStream zipInputStream = new ZipInputStream(new FileInputStream(zipFilePath))) {
+            ZipEntry entry = zipInputStream.getNextEntry();
+            while (entry != null) {
+                Path filePath = Paths.get(path.getParent().toString(), entry.getName());
+                if (!entry.isDirectory()) {
+                    unzipFiles(zipInputStream, filePath);
+                } else {
+                    Files.createDirectories(filePath);
+                }
 
-    /**
-     * Paste clipboard to this location
-     * @param location - location
-     */
-    public void pasteClipboard(Location location) {
-        if (clipboard != null) {
-            new Paster(plugin, clipboard, location);
-        } else {
-            plugin.logError("Clipboard has no block data in it to paste!");
+                zipInputStream.closeEntry();
+                entry = zipInputStream.getNextEntry();
+            }
         }
     }
-    /**
-     * Pastes the clipboard to island location.
-     * If pos1 and pos2 are not set already, they are automatically set to the pasted coordinates
-     * @param world - world in which to paste
-     * @param island - location to paste
-     * @param task - task to run after pasting
-     */
-    public void pasteIsland(World world, Island island, Runnable task) {
-        new Paster(plugin, clipboard, world, island, task);
-    }
 
-    /**
-     * @return the clipboard
-     */
-    public Clipboard getClipBoard() {
-        return clipboard;
+    private void zip(File targetFile) throws IOException {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + ".schem"))) {
+            zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
+            try (FileInputStream inputStream = new FileInputStream(targetFile)) {
+                final byte[] buffer = new byte[1024];
+                int length;
+                while((length = inputStream.read(buffer)) >= 0) {
+                    zipOutputStream.write(buffer, 0, length);
+                }
+                try {
+                    Files.delete(targetFile.toPath());
+                } catch (Exception e) {
+                    plugin.logError(e.getMessage());
+                }
+            }
+        }
     }
 
 }

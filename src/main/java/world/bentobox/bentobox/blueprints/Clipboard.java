@@ -44,11 +44,10 @@ public class Clipboard {
     private static final String COLOR = "color";
     private static final String LINES = "lines";
 
-    private YamlConfiguration blockConfig = new YamlConfiguration();
+    private YamlConfiguration blockConfig;
     private Location pos1;
     private Location pos2;
     private Location origin;
-    private boolean copied;
 
     public Clipboard(String contents) throws InvalidConfigurationException {
         super();
@@ -99,7 +98,6 @@ public class Clipboard {
         blockConfig.set("size.ysize", toCopy.getHeight());
         blockConfig.set("size.zsize", toCopy.getWidthZ());
         user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
-        copied = true;
         return true;
     }
 
@@ -235,8 +233,9 @@ public class Clipboard {
     public Location getPos2() {
         return pos2;
     }
+
     public boolean isFull() {
-        return copied;
+        return blockConfig != null;
     }
 
     /**
@@ -247,7 +246,6 @@ public class Clipboard {
      */
     public Clipboard set(String contents) throws InvalidConfigurationException {
         this.blockConfig.loadFromString(contents);
-        copied = true;
         setPos1(null);
         setPos2(null);
         return this;
@@ -259,7 +257,6 @@ public class Clipboard {
      */
     public Clipboard set(YamlConfiguration blockConfig) {
         this.blockConfig = blockConfig;
-        copied = true;
         setPos1(null);
         setPos2(null);
         return this;
