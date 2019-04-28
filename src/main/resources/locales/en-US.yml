@@ -63,7 +63,7 @@ commands:
         description: "add player to owner's team"
         name-not-owner: "&c[name] is not the owner."
         name-has-island: "&c[name] has an island. Unregister or delete them first!"
-        success: "&b[name]&ahas been added to &b[owner]&a's island."
+        success: "&b[name]&a has been added to &b[owner]&a's island."
       disband:
         parameters: "<owner>"
         description: "disband owner's team"
