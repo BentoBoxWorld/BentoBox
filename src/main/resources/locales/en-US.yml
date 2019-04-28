@@ -48,7 +48,6 @@ commands:
     console: "Console"
   admin:
     help:
-      parameters: ""
       description: "admin command"
     resets:
       description: "edit resets of the players"
@@ -203,21 +202,16 @@ commands:
         parameters: "<schem name>"
         description: "load schem into the clipboard"
       list:
-        parameters: ""
         description: "list available schems"
         no-schems: "&cNo schems in schems folder!"
         available-schems: "&aThese schems are available for loading:"
       origin:
-        parameters: ""
         description: "set the schem's origin to your position"
       paste:
-        parameters: ""
         description: "paste the clipboard to your location"
       pos1:
-        parameters: ""
         description: "set 1st corner of cuboid clipboard"
       pos2:
-        parameters: ""
         description: "set 2nd corner of cuboid clipboard"
       save:
         parameters: "<schem name>"
