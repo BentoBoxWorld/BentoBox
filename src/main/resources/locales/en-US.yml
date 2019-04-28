@@ -78,7 +78,8 @@ commands:
       setowner:
         parameters: "<player>"
         description: "transfers island ownership to the player"
-        already-owner: "&cPlayer is already the owner of this island!"
+        already-owner: "&c[name] is already the owner of this island!"
+
     range:
       description: "Admin island range command"
       display:
