@@ -241,9 +241,11 @@ commands:
       reset:
         description: "resets deaths of the player"
         parameters: "<player>"
+        success: "&aSuccessfully reset &b[name]&a's deaths to &b0&a."
       set:
         description: "sets deaths of the player"
         parameters: "<player> <deaths>"
+        success: "&aSuccessfully set &b[name]&a's deaths to &b[number]&a."
   bentobox:
     description: "BentoBox admin command"
     about:
@@ -392,6 +394,7 @@ commands:
         parameters: "<player>"
         owner-kicked: "&cThe owner kicked you from the island!"
         cannot-kick: "&cYou cannot kick yourself!"
+        success: "&b[name] &ahas been kicked from your island."
       demote:
         description: "demote a player on your island down a rank"
         parameters: "<player>"

@@ -1,11 +1,12 @@
 package world.bentobox.bentobox.api.commands.admin.deaths;
 
-import java.util.List;
-import java.util.UUID;
-
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Poslovitch
@@ -23,8 +24,8 @@ public class AdminDeathsResetCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() != 1) {
+    public boolean execute(User user, String label, @NonNull List<String> args) {
+        if (args.size() != 1) {
             showHelp(this, user);
             return false;
         }
@@ -35,7 +36,7 @@ public class AdminDeathsResetCommand extends CompositeCommand {
             return false;
         } else {
             getPlayers().setDeaths(getWorld(), target, 0);
-            user.sendMessage("general.success");
+            user.sendMessage("commands.admin.deaths.reset.success", TextVariables.NAME, args.get(0));
             return true;
         }
     }

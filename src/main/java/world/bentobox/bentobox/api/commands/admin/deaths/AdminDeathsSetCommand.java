@@ -1,13 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.deaths;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.apache.commons.lang.math.NumberUtils;
-
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+
+import java.util.List;
+import java.util.UUID;
 
 /**
  * @author Poslovitch
@@ -25,8 +25,8 @@ public class AdminDeathsSetCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
-        if (args.isEmpty() || args.size() != 2) {
+    public boolean execute(User user, String label, @NonNull List<String> args) {
+        if (args.size() != 2) {
             showHelp(this, user);
             return false;
         }
@@ -38,7 +38,7 @@ public class AdminDeathsSetCommand extends CompositeCommand {
             user.sendMessage("general.errors.must-be-positive-number", TextVariables.NUMBER, args.get(1));
         } else {
             getPlayers().setDeaths(getWorld(), target, Integer.valueOf(args.get(1)));
-            user.sendMessage("general.success");
+            user.sendMessage("commands.admin.deaths.set.success", TextVariables.NAME, args.get(0), TextVariables.NUMBER, args.get(1));
             return true;
         }
 
