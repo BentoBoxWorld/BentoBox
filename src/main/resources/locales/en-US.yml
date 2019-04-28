@@ -63,11 +63,13 @@ commands:
         description: "add player to owner's team"
         name-not-owner: "&c[name] is not the owner."
         name-has-island: "&c[name] has an island. Unregister or delete them first!"
+        success: "&b[name]&ahas been added to &b[owner]&a's island."
       disband:
         parameters: "<owner>"
         description: "disband owner's team"
-        use-disband-owner: "&cNot owner! Use disband [owner]"
+        use-disband-owner: "&cNot owner! Use disband [owner]."
         disbanded: "&cAdmin disbanded your team!"
+        success: "&b[name]&a's team has been disbanded."
       kick:
         parameters: "<team player>"
         description: "kick a player from a team"
@@ -79,7 +81,7 @@ commands:
         parameters: "<player>"
         description: "transfers island ownership to the player"
         already-owner: "&c[name] is already the owner of this island!"
-
+        success: "&b[name]&a is now the owner of this island."
     range:
       description: "Admin island range command"
       display:

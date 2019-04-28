@@ -189,6 +189,7 @@ public class AdminTeamSetownerCommandTest {
         when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(is);
         String[] name = {"tastybento"};
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+        when(pm.getName(Mockito.any())).thenReturn(name[0]);
         // Owner
         when(im.getOwner(Mockito.any(), Mockito.eq(notUUID))).thenReturn(uuid);
         when(pm.getName(Mockito.eq(uuid))).thenReturn("owner");
@@ -202,7 +203,6 @@ public class AdminTeamSetownerCommandTest {
         assertTrue(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
         // Add other verifications
         Mockito.verify(im).setOwner(Mockito.any(), Mockito.eq(user), Mockito.eq(notUUID));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
+        Mockito.verify(user).sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, name[0]);
     }
-
 }

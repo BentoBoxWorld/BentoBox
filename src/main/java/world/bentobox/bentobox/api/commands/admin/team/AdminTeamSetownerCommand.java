@@ -11,6 +11,10 @@ import world.bentobox.bentobox.database.objects.Island;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Sets the owner of an island.
+ * @author tastybento
+ */
 public class AdminTeamSetownerCommand extends CompositeCommand {
 
     public AdminTeamSetownerCommand(CompositeCommand parent) {
@@ -47,7 +51,7 @@ public class AdminTeamSetownerCommand extends CompositeCommand {
         }
         // Make new owner
         getIslands().setOwner(getWorld(), user, targetUUID);
-        user.sendMessage("general.success");
+        user.sendMessage("commands.admin.team.setowner.success", TextVariables.NAME, args.get(0));
         // Fire event so add-ons know
         Island island = getIslands().getIsland(getWorld(), targetUUID);
         IslandBaseEvent event = TeamEvent.builder()
