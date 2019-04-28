@@ -74,6 +74,7 @@ commands:
         cannot-kick-owner: "&cYou cannot kick the owner. Kick members first."
         not-in-team: "&cThis player is not in a team."
         admin-kicked: "&cThe admin kicked you from the team."
+        success: "&b[name] &ahas been kicked from &b[owner]&a's island."
       setowner:
         parameters: "<player>"
         description: "transfers island ownership to the player"

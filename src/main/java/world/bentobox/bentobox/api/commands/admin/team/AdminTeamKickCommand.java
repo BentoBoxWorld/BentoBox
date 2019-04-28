@@ -1,10 +1,7 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
-
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
@@ -12,11 +9,17 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 
+import java.util.List;
+import java.util.UUID;
+
+/**
+ * Kicks the specified player from the island team.
+ * @author tastybento
+ */
 public class AdminTeamKickCommand extends CompositeCommand {
 
     public AdminTeamKickCommand(CompositeCommand parent) {
         super(parent, "kick");
-
     }
 
     @Override
@@ -49,18 +52,23 @@ public class AdminTeamKickCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean execute(User user, String label, @NonNull List<String> args) {
         UUID targetUUID = getPlayers().getUUID(args.get(0));
-        if (targetUUID.equals(getIslands().getOwner(getWorld(), targetUUID))) {
+
+        Island island = getIslands().getIsland(getWorld(), targetUUID);
+
+        if (targetUUID.equals(island.getOwner())) {
             user.sendMessage("commands.admin.team.kick.cannot-kick-owner");
-            getIslands().getIsland(getWorld(), targetUUID).showMembers(user);
+            island.showMembers(user);
             return false;
         }
-        User.getInstance(targetUUID).sendMessage("commands.admin.team.kick.admin-kicked");
+        User target = User.getInstance(targetUUID);
+        target.sendMessage("commands.admin.team.kick.admin-kicked");
+
         getIslands().removePlayer(getWorld(), targetUUID);
-        user.sendMessage("general.success");
+        user.sendMessage("commands.admin.team.kick.success", TextVariables.NAME, target.getName(), "[owner]", getPlayers().getName(island.getOwner()));
+
         // Fire event so add-ons know
-        Island island = getIslands().getIsland(getWorld(), targetUUID);
         IslandBaseEvent event = TeamEvent.builder()
                 .island(island)
                 .reason(TeamEvent.Reason.KICK)
