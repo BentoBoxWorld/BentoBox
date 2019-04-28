@@ -22,6 +22,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Colorable;
 import org.bukkit.util.BoundingBox;
+import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -45,7 +46,7 @@ public class Clipboard {
     private static final String COLOR = "color";
     private static final String LINES = "lines";
 
-    private YamlConfiguration blockConfig;
+    private @Nullable YamlConfiguration blockConfig;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
     private @Nullable Location origin;
@@ -54,7 +55,7 @@ public class Clipboard {
         set(contents);
     }
 
-    public Clipboard(YamlConfiguration config) {
+    public Clipboard(@NonNull YamlConfiguration config) {
         this.blockConfig = config;
     }
 
@@ -63,7 +64,8 @@ public class Clipboard {
     }
 
     /**
-     * Copy the blocks between pos1 and pos2 into the clipboard
+     * Copy the blocks between pos1 and pos2 into the clipboard.
+     * This will erase any previously registered data from the clipboard.
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
@@ -210,6 +212,7 @@ public class Clipboard {
     /**
      * @return the blockConfig
      */
+    @Nullable
     public YamlConfiguration getBlockConfig() {
         return blockConfig;
     }
@@ -257,7 +260,7 @@ public class Clipboard {
      * Set the clipboard contents from a YAML configuration
      * @param blockConfig the blockConfig
      */
-    public Clipboard set(YamlConfiguration blockConfig) {
+    public Clipboard set(@NonNull YamlConfiguration blockConfig) {
         this.blockConfig = blockConfig;
         setPos1(null);
         setPos2(null);
@@ -287,10 +290,9 @@ public class Clipboard {
         this.pos2 = pos2;
     }
 
-
     /**
-     * Get the clipboard
-     * @return the clipboard as a string
+     * Returns the clipboard as a String using {@link YamlConfiguration#saveToString()}.
+     * @return the clipboard as a String.
      */
     @Override
     public String toString() {
