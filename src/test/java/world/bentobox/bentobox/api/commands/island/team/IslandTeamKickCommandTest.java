@@ -1,17 +1,5 @@
 package world.bentobox.bentobox.api.commands.island.team;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Server;
 import org.bukkit.entity.Player;
@@ -27,16 +15,28 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlayersManager;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Optional;
+import java.util.Set;
+import java.util.UUID;
+
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * @author tastybento
@@ -209,6 +209,7 @@ public class IslandTeamKickCommandTest {
         when(s.isKickConfirmation()).thenReturn(false);
 
         when(pm.getUUID(Mockito.any())).thenReturn(notUUID);
+        when(pm.getName(notUUID)).thenReturn("poslovitch");
 
         Set<UUID> members = new HashSet<>();
         members.add(notUUID);
@@ -217,7 +218,7 @@ public class IslandTeamKickCommandTest {
         IslandTeamKickCommand itl = new IslandTeamKickCommand(ic);
         assertTrue(itl.execute(user, itl.getLabel(), Collections.singletonList("poslovitch")));
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
+        Mockito.verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
     }
 
     /**
@@ -250,6 +251,7 @@ public class IslandTeamKickCommandTest {
         Player targetPlayer = mock(Player.class);
         when(targetPlayer.getUniqueId()).thenReturn(notUUID);
         when(targetPlayer.isOnline()).thenReturn(true);
+        when(targetPlayer.getName()).thenReturn("poslovitch");
         User.getInstance(targetPlayer);
         // Target's inventory
         PlayerInventory inv = mock(PlayerInventory.class);
@@ -274,7 +276,7 @@ public class IslandTeamKickCommandTest {
 
         // Verify
         Mockito.verify(im).removePlayer(Mockito.any(), Mockito.eq(notUUID));
-        Mockito.verify(user).sendMessage(Mockito.eq("general.success"));
+        Mockito.verify(user).sendMessage("commands.island.team.kick.success", TextVariables.NAME, "poslovitch");
         Mockito.verify(enderChest).clear();
         Mockito.verify(inv).clear();
     }

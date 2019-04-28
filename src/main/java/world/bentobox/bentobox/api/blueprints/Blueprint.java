@@ -25,13 +25,13 @@ public class Blueprint {
     private List<String> description; //TODO
     private World.Environment environment;
 
-    private Clipboard clipboard;
-
     public Blueprint(@NonNull String name, @NonNull ZipFile zip) throws IOException {
         this.name = name;
         try (JsonReader reader = new Gson().newJsonReader(new InputStreamReader(zip.getInputStream(zip.getEntry("properties.json"))))) {
             readProperties(reader);
         }
+
+        //System.out.println(new Gson().toJson(this));
     }
 
     private void readProperties(@NonNull JsonReader reader) throws IOException {
@@ -76,9 +76,5 @@ public class Blueprint {
 
     public World.Environment getEnvironment() {
         return environment;
-    }
-
-    public Clipboard getClipboard() {
-        return clipboard;
     }
 }

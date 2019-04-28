@@ -1,16 +1,15 @@
 package world.bentobox.bentobox.api.commands.admin.team;
 
-import java.util.List;
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.team.TeamEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+
+import java.util.List;
+import java.util.UUID;
 
 public class AdminTeamAddCommand extends CompositeCommand {
 
@@ -68,7 +67,7 @@ public class AdminTeamAddCommand extends CompositeCommand {
         Island teamIsland = getIslands().getIsland(getWorld(), ownerUUID);
         if (teamIsland != null) {
             getIslands().setJoinTeam(teamIsland, targetUUID);
-            user.sendMessage("general.success");
+            user.sendMessage("commands.admin.team.add.success", TextVariables.NAME, target.getName(), "[owner]", owner.getName());
             IslandBaseEvent event = TeamEvent.builder()
                     .island(teamIsland)
                     .reason(TeamEvent.Reason.JOINED)
@@ -81,8 +80,5 @@ public class AdminTeamAddCommand extends CompositeCommand {
             user.sendMessage("general.errors.player-has-no-island");
             return false;
         }
-
     }
-
-
 }

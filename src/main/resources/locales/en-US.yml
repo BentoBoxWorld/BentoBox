@@ -48,7 +48,6 @@ commands:
     console: "Console"
   admin:
     help:
-      parameters: ""
       description: "admin command"
     resets:
       description: "edit resets of the players"
@@ -64,27 +63,31 @@ commands:
         description: "add player to owner's team"
         name-not-owner: "&c[name] is not the owner."
         name-has-island: "&c[name] has an island. Unregister or delete them first!"
+        success: "&b[name]&a has been added to &b[owner]&a's island."
       disband:
         parameters: "<owner>"
         description: "disband owner's team"
-        use-disband-owner: "&cNot owner! Use disband [owner]"
+        use-disband-owner: "&cNot owner! Use disband [owner]."
         disbanded: "&cAdmin disbanded your team!"
+        success: "&b[name]&a's team has been disbanded."
       kick:
         parameters: "<team player>"
         description: "kick a player from a team"
         cannot-kick-owner: "&cYou cannot kick the owner. Kick members first."
         not-in-team: "&cThis player is not in a team."
         admin-kicked: "&cThe admin kicked you from the team."
+        success: "&b[name] &ahas been kicked from &b[owner]&a's island."
       setowner:
         parameters: "<player>"
         description: "transfers island ownership to the player"
-        already-owner: "&cPlayer is already the owner of this island!"
+        already-owner: "&c[name] is already the owner of this island!"
+        success: "&b[name]&a is now the owner of this island."
     range:
       description: "Admin island range command"
       display:
         already-off: "&cIndicators are already off"
         already-on: "&cIndicators are already on"
-        description: "Show/hide island range indicators"
+        description: "show/hide island range indicators"
         hiding: "&2Hiding range indicators"
         hint: |-
           &cRed Barrier icons &fshow the current island protected range limit.
@@ -93,17 +96,17 @@ commands:
         showing: "&2Showing range indicators"
       set:
         parameters: "<player> <range>"
-        description: "Sets the island protected range"
+        description: "sets the island protected range"
         invalid-value:
           not-numeric: "&c[number] is not a whole number!"
-          too-low: "&cThe protection range must be greater than 1!"
-          too-high: "&cThe protection range should be equal or less than [number]!"
-          same-as-before: "&cThe protection range is already set to [number]!"
-        success: "&2Set island protection range to [number]"
+          too-low: "&cThe protection range must be greater than &b1&c!"
+          too-high: "&cThe protection range should be equal or less than &b[number]&c!"
+          same-as-before: "&cThe protection range is already set to &b[number]&c!"
+        success: "&aSet island protection range to &b[number]&a."
       reset:
         parameters: "<player>"
-        description: "Resets the island protected range to the world default"
-        success: "&2Reset island protection range to [number]"
+        description: "resets the island protected range to the world default"
+        success: "&aReset island protection range to &b[number]&a."
     register:
       parameters: "<player>"
       description: "register player to unowned island you are on"
@@ -203,21 +206,17 @@ commands:
         parameters: "<schem name>"
         description: "load schem into the clipboard"
       list:
-        parameters: ""
         description: "list available schems"
         no-schems: "&cNo schems in schems folder!"
         available-schems: "&aThese schems are available for loading:"
       origin:
-        parameters: ""
         description: "set the schem's origin to your position"
       paste:
-        parameters: ""
         description: "paste the clipboard to your location"
+        pasting: "&aPasting..."
       pos1:
-        parameters: ""
         description: "set 1st corner of cuboid clipboard"
       pos2:
-        parameters: ""
         description: "set 2nd corner of cuboid clipboard"
       save:
         parameters: "<schem name>"
@@ -241,9 +240,11 @@ commands:
       reset:
         description: "resets deaths of the player"
         parameters: "<player>"
+        success: "&aSuccessfully reset &b[name]&a's deaths to &b0&a."
       set:
         description: "sets deaths of the player"
         parameters: "<player> <deaths>"
+        success: "&aSuccessfully set &b[name]&a's deaths to &b[number]&a."
   bentobox:
     description: "BentoBox admin command"
     about:
@@ -392,6 +393,7 @@ commands:
         parameters: "<player>"
         owner-kicked: "&cThe owner kicked you from the island!"
         cannot-kick: "&cYou cannot kick yourself!"
+        success: "&b[name] &ahas been kicked from your island."
       demote:
         description: "demote a player on your island down a rank"
         parameters: "<player>"

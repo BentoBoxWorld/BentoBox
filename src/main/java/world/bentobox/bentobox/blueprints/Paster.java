@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.schems;
+package world.bentobox.bentobox.blueprints;
 
 import java.util.Iterator;
 import java.util.List;
@@ -14,7 +14,6 @@ import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
 import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -28,6 +27,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Colorable;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -50,48 +51,78 @@ public class Paster {
         CANCEL
     }
 
-    private BentoBox plugin;
-    // The minimum block position (x,y,z)
-    private Location pos1;
-    // The maximum block position (x,y,z)
-    private Location pos2;
-
-    // Speed of pasting
-    private int pasteSpeed;
-    private PasteState pasteState;
-    private BukkitTask pastingTask;
+    private static final String BEDROCK = "bedrock";
 
     // Commonly used texts along this class.
     private static final String ATTACHED_YAML_PREFIX = "attached.";
     private static final String ENTITIES_YAML_PREFIX = "entities.";
     private static final String BLOCKS_YAML_PREFIX = "blocks.";
+
     private static final String INVENTORY = "inventory";
     private static final String ENTITY = "entity";
     private static final String COLOR = "color";
+
     private static final String LINES = "lines";
-
-
+    private BentoBox plugin;
+    // The minimum block position (x,y,z)
+    private Location pos1;
+    // The maximum block position (x,y,z)
+    private Location pos2;
+    // Speed of pasting
+    private int pasteSpeed;
+    private PasteState pasteState;
+    private BukkitTask pastingTask;
 
     /**
-     * Pastes a schem
-     * @param plugin - BentoBox instance
-     * @param clipboard - the clipboard that called this paster
-     * @param blockConfig - the schem Yaml File
-     * @param world - the world to paste into
-     * @param island - the island object
-     * @param loc - the location to paste to
-     * @param task - the task the run after pasting
+     * Paste a clipboard
+     * @param plugin - BentoBox
+     * @param clipboard - clipboard to paste
+     * @param location - location to paste to
      */
-    public Paster(final BentoBox plugin, Clipboard clipboard, final YamlConfiguration blockConfig, final World world, final Island island, final Location loc, final Runnable task) {
+    public Paster(@NonNull BentoBox plugin, @NonNull Clipboard clipboard, @NonNull Location location) {
         this.plugin = plugin;
-        if (!blockConfig.contains(BLOCKS_YAML_PREFIX)) {
-            plugin.logError("Clipboard has no block data in it to paste!");
-            return;
+        paste(location.getWorld(), null, location, clipboard, null);
+    }
+
+    /**
+     * Paste a clipboard
+     * @param plugin - BentoBox
+     * @param clipboard - clipboard to paste
+     * @param location - location to paste to
+     * @param task - task to run after pasting
+     */
+    public Paster(@NonNull BentoBox plugin, @NonNull Clipboard clipboard, @NonNull Location location, @Nullable Runnable task) {
+        this.plugin = plugin;
+        paste(location.getWorld(), null, location, clipboard, task);
+    }
+
+    /**
+     * Pastes a clipboard
+     * @param plugin - BentoBox
+     * @param clipboard - clipboard to paste
+     * @param world - world to paste to
+     * @param island - island related to this paste
+     * @param task - task to run after pasting
+     */
+    public Paster(@NonNull BentoBox plugin, @NonNull Clipboard clipboard, @NonNull World world, @NonNull Island island, @Nullable Runnable task) {
+        this.plugin = plugin;
+        // Offset due to bedrock
+        Vector off = new Vector(0,0,0);
+        if (clipboard.getBlockConfig().contains(BEDROCK)) {
+            String[] offset = clipboard.getBlockConfig().getString(BEDROCK).split(",");
+            off = new Vector(Integer.valueOf(offset[0]), Integer.valueOf(offset[1]), Integer.valueOf(offset[2]));
         }
+        // Calculate location for pasting
+        Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
+        // Paste
+        paste(world, island, loc, clipboard, task);
+    }
+
+    private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull Clipboard clipboard, @Nullable Runnable task) {
         // Iterators for the various schem sections
-        Iterator<String> it = blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).iterator();
-        Iterator<String> it2 = blockConfig.contains(ATTACHED_YAML_PREFIX) ? blockConfig.getConfigurationSection(ATTACHED_YAML_PREFIX).getKeys(false).iterator() : null;
-        Iterator<String> it3 = blockConfig.contains(ENTITIES_YAML_PREFIX) ? blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX).getKeys(false).iterator() : null;
+        Iterator<String> it = clipboard.getBlockConfig().getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).iterator();
+        Iterator<String> it2 = clipboard.getBlockConfig().contains(ATTACHED_YAML_PREFIX) ? clipboard.getBlockConfig().getConfigurationSection(ATTACHED_YAML_PREFIX).getKeys(false).iterator() : null;
+        Iterator<String> it3 = clipboard.getBlockConfig().contains(ENTITIES_YAML_PREFIX) ? clipboard.getBlockConfig().getConfigurationSection(ENTITIES_YAML_PREFIX).getKeys(false).iterator() : null;
 
         // Initial state & speed
         pasteState = PasteState.BLOCKS;
@@ -100,15 +131,15 @@ public class Paster {
         pastingTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
             int count = 0;
             while (pasteState.equals(PasteState.BLOCKS) && count < pasteSpeed && it.hasNext()) {
-                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(BLOCKS_YAML_PREFIX + it.next()));
+                pasteBlock(world, island, loc, clipboard.getBlockConfig().getConfigurationSection(BLOCKS_YAML_PREFIX + it.next()));
                 count++;
             }
             while (it2 != null && pasteState.equals(PasteState.ATTACHMENTS) && count < pasteSpeed && it2.hasNext()) {
-                pasteBlock(world, island, loc, blockConfig.getConfigurationSection(ATTACHED_YAML_PREFIX + it2.next()));
+                pasteBlock(world, island, loc, clipboard.getBlockConfig().getConfigurationSection(ATTACHED_YAML_PREFIX + it2.next()));
                 count++;
             }
             while (it3 != null && pasteState.equals(PasteState.ENTITIES) && count < pasteSpeed && it3.hasNext()) {
-                pasteEntity(world, loc, blockConfig.getConfigurationSection(ENTITIES_YAML_PREFIX + it3.next()));
+                pasteEntity(world, loc, clipboard.getBlockConfig().getConfigurationSection(ENTITIES_YAML_PREFIX + it3.next()));
                 count++;
             }
             // STATE SHIFT
@@ -168,40 +199,6 @@ public class Paster {
         updatePos(world, x,y,z);
     }
 
-    /**
-     * Tracks the minimum and maximum block positions
-     * @param world - world
-     * @param x - x
-     * @param y - y
-     * @param z - z
-     */
-    private void updatePos(World world, int x, int y, int z) {
-        if (pos1 == null) {
-            pos1 = new Location(world, x, y, z);
-        }
-        if (pos2 == null) {
-            pos2 = new Location(world, x, y, z);
-        }
-        if (x < pos1.getBlockX()) {
-            pos1.setX(x);
-        }
-        if (x > pos2.getBlockX()) {
-            pos2.setX(x);
-        }
-        if (y < pos1.getBlockY()) {
-            pos1.setY(y);
-        }
-        if (y > pos2.getBlockY()) {
-            pos2.setY(y);
-        }
-        if (z < pos1.getBlockZ()) {
-            pos1.setZ(z);
-        }
-        if (z > pos2.getBlockZ()) {
-            pos2.setZ(z);
-        }
-    }
-
     private void pasteEntity(World world, Location location, ConfigurationSection config) {
         String[] pos = config.getName().split(",");
         int x = location.getBlockX() + Integer.valueOf(pos[0]);
@@ -215,6 +212,47 @@ public class Paster {
         block.setBlockData(Bukkit.createBlockData(blockData));
         // Set the block state for chests, signs and mob spawners
         setBlockState(island, block, config);
+    }
+
+    /**
+     * Handles signs, chests and mob spawner blocks
+     * @param island - island
+     * @param block - block
+     * @param config - config
+     */
+    private void setBlockState(Island island, Block block, ConfigurationSection config) {
+        // Get the block state
+        BlockState bs = block.getState();
+        // Signs
+        if (bs instanceof Sign) {
+            List<String> lines = config.getStringList(LINES);
+            writeSign(island, block, lines);
+        }
+        // Chests, in general
+        if (bs instanceof InventoryHolder) {
+            bs.update(true, false);
+            Inventory ih = ((InventoryHolder)bs).getInventory();
+            if (config.isConfigurationSection(INVENTORY)) {
+                ConfigurationSection inv = config.getConfigurationSection(INVENTORY);
+                // Double chests are pasted as two blocks so inventory is filled twice. This code stops over filling for the first block.
+                inv.getKeys(false).stream()
+                .filter(i -> Integer.valueOf(i) < ih.getSize())
+                .forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
+            }
+        }
+        // Mob spawners
+        if (bs instanceof CreatureSpawner) {
+            CreatureSpawner spawner = ((CreatureSpawner) bs);
+            spawner.setSpawnedType(EntityType.valueOf(config.getString("spawnedType", "PIG")));
+            spawner.setMaxNearbyEntities(config.getInt("maxNearbyEntities", 16));
+            spawner.setMaxSpawnDelay(config.getInt("maxSpawnDelay", 2*60*20));
+            spawner.setMinSpawnDelay(config.getInt("minSpawnDelay", 5*20));
+
+            spawner.setDelay(config.getInt("delay", -1));
+            spawner.setRequiredPlayerRange(config.getInt("requiredPlayerRange", 16));
+            spawner.setSpawnRange(config.getInt("spawnRange", 4));
+            bs.update(true, false);
+        }
     }
 
     /**
@@ -263,43 +301,36 @@ public class Paster {
     }
 
     /**
-     * Handles signs, chests and mob spawner blocks
-     * @param island - island
-     * @param block - block
-     * @param config - config
+     * Tracks the minimum and maximum block positions
+     * @param world - world
+     * @param x - x
+     * @param y - y
+     * @param z - z
      */
-    private void setBlockState(Island island, Block block, ConfigurationSection config) {
-        // Get the block state
-        BlockState bs = block.getState();
-        // Signs
-        if (bs instanceof Sign) {
-            List<String> lines = config.getStringList(LINES);
-            writeSign(island, block, lines);
+    private void updatePos(World world, int x, int y, int z) {
+        if (pos1 == null) {
+            pos1 = new Location(world, x, y, z);
         }
-        // Chests, in general
-        if (bs instanceof InventoryHolder) {
-            bs.update(true, false);
-            Inventory ih = ((InventoryHolder)bs).getInventory();
-            if (config.isConfigurationSection(INVENTORY)) {
-                ConfigurationSection inv = config.getConfigurationSection(INVENTORY);
-                // Double chests are pasted as two blocks so inventory is filled twice. This code stops over filling for the first block.
-                inv.getKeys(false).stream()
-                .filter(i -> Integer.valueOf(i) < ih.getSize())
-                .forEach(i -> ih.setItem(Integer.valueOf(i), (ItemStack)inv.get(i)));
-            }
+        if (pos2 == null) {
+            pos2 = new Location(world, x, y, z);
         }
-        // Mob spawners
-        if (bs instanceof CreatureSpawner) {
-            CreatureSpawner spawner = ((CreatureSpawner) bs);
-            spawner.setSpawnedType(EntityType.valueOf(config.getString("spawnedType", "PIG")));
-            spawner.setMaxNearbyEntities(config.getInt("maxNearbyEntities", 16));
-            spawner.setMaxSpawnDelay(config.getInt("maxSpawnDelay", 2*60*20));
-            spawner.setMinSpawnDelay(config.getInt("minSpawnDelay", 5*20));
-
-            spawner.setDelay(config.getInt("delay", -1));
-            spawner.setRequiredPlayerRange(config.getInt("requiredPlayerRange", 16));
-            spawner.setSpawnRange(config.getInt("spawnRange", 4));
-            bs.update(true, false);
+        if (x < pos1.getBlockX()) {
+            pos1.setX(x);
+        }
+        if (x > pos2.getBlockX()) {
+            pos2.setX(x);
+        }
+        if (y < pos1.getBlockY()) {
+            pos1.setY(y);
+        }
+        if (y > pos2.getBlockY()) {
+            pos2.setY(y);
+        }
+        if (z < pos1.getBlockZ()) {
+            pos1.setZ(z);
+        }
+        if (z > pos2.getBlockZ()) {
+            pos2.setZ(z);
         }
     }
 
