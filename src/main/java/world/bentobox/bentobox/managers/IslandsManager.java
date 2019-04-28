@@ -785,7 +785,7 @@ public class IslandsManager {
      * @param island - island
      * @since 1.3.0
      */
-    public void fixIslandCenter(Island island) {
+    private void fixIslandCenter(Island island) {
         World world = island.getWorld();
         if (world == null || island.getCenter() == null || !plugin.getIWM().inWorld(world)) {
             return;
