@@ -124,7 +124,7 @@ public class SchemsManager {
         try {
             ClipboardManager cb = new ClipboardManager(plugin, schems);
             cb.load(name);
-            schemList.put(name, cb.getClipBoard());
+            schemList.put(name, cb.getClipboard());
             islandSchems.put(world, schemList);
         } catch (IOException | InvalidConfigurationException e) {
             plugin.logError("Could not load " + name + " schem, skipping!");

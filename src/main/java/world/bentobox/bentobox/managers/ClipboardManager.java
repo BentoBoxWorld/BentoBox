@@ -65,7 +65,7 @@ public class ClipboardManager {
     /**
      * @return the clipboard
      */
-    public Clipboard getClipBoard() {
+    public Clipboard getClipboard() {
         return clipboard;
     }
 
