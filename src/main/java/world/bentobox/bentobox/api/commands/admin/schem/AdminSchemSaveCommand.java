@@ -5,7 +5,8 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.schems.Clipboard;
+import world.bentobox.bentobox.blueprints.Clipboard;
+import world.bentobox.bentobox.managers.ClipboardManager;
 
 public class AdminSchemSaveCommand extends ConfirmableCommand {
 
@@ -27,7 +28,7 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
         }
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
-        Clipboard clipboard = parent.getClipboards().getOrDefault(user.getUniqueId(), new Clipboard(getPlugin(), parent.getSchemsFolder()));
+        Clipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new Clipboard());
 
         if (clipboard.isFull()) {
             // Check if file exists
@@ -35,12 +36,12 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
                     parent.hideClipboard(user);
-                    clipboard.save(user, args.get(0));
+                    new ClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
                 });
                 return false;
             } else {
                 parent.hideClipboard(user);
-                return clipboard.save(user, args.get(0));
+                return new ClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
             }
         } else {
             user.sendMessage("commands.admin.schem.copy-first");

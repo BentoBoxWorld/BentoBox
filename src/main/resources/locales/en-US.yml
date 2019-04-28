@@ -213,6 +213,7 @@ commands:
         description: "set the schem's origin to your position"
       paste:
         description: "paste the clipboard to your location"
+        pasting: "&aPasting..."
       pos1:
         description: "set 1st corner of cuboid clipboard"
       pos2:
