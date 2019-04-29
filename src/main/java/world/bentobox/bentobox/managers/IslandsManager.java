@@ -369,7 +369,9 @@ public class IslandsManager {
     }
 
     /**
+     * Returns the IslandCache instance.
      * @return the islandCache
+     * @since 1.5.0
      */
     public IslandCache getIslandCache() {
         return islandCache;
