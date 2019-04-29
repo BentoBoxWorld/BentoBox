@@ -27,6 +27,7 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Objects;
@@ -64,15 +65,32 @@ public class Clipboard {
     }
 
     /**
-     * Copy the blocks between pos1 and pos2 into the clipboard.
+     * Copy the blocks between pos1 and pos2 into the clipboard for a user.
      * This will erase any previously registered data from the clipboard.
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
     public boolean copy(User user, boolean copyAir) {
-        if (pos1 == null || pos2 == null) {
-            user.sendMessage("commands.admin.schem.need-pos1-pos2");
+        origin = origin == null ? user.getLocation() : origin;
+        try {
+            int count = copy(copyAir);
+            user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+            return true;
+        } catch (Exception e) {
+            user.sendMessage(e.getMessage());
             return false;
+        }
+    }
+
+    /**
+     * Copy the blocks between pos1 and pos2 into the clipboard.
+     * This will erase any previously registered data from the clipboard.
+     * @return number of blocks copied
+     * @throws IOException - if pos1 or pos2 are undefined
+     */
+    public int copy(boolean copyAir) throws IOException {
+        if (pos1 == null || pos2 == null) {
+            throw new IOException("commands.admin.schem.need-pos1-pos2");
         }
         // World
         World world = pos1.getWorld();
@@ -86,7 +104,7 @@ public class Clipboard {
             for (int y = (int)toCopy.getMinY(); y <= toCopy.getMaxY(); y++) {
                 for (int z = (int)toCopy.getMinZ(); z <= toCopy.getMaxZ(); z++) {
                     Block block = world.getBlockAt(x, y, z);
-                    if (copyBlock(block, origin == null ? user.getLocation() : origin, copyAir, world.getLivingEntities().stream()
+                    if (copyBlock(block, origin, copyAir, world.getLivingEntities().stream()
                             .filter(Objects::nonNull)
                             .filter(e -> !(e instanceof Player) && e.getLocation().getBlock().equals(block))
                             .collect(Collectors.toList()))) {
@@ -98,8 +116,7 @@ public class Clipboard {
         blockConfig.set("size.xsize", toCopy.getWidthX());
         blockConfig.set("size.ysize", toCopy.getHeight());
         blockConfig.set("size.zsize", toCopy.getWidthZ());
-        user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
-        return true;
+        return count;
     }
 
     private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
@@ -245,9 +262,9 @@ public class Clipboard {
 
     /**
      * Set the clipboard from a YAML string
-     * @param contents
-     * @return
-     * @throws InvalidConfigurationException
+     * @param contents - YAML config as a string
+     * @return clipboard
+     * @throws InvalidConfigurationException - if YAML config is bad
      */
     public Clipboard set(String contents) throws InvalidConfigurationException {
         this.blockConfig.loadFromString(contents);
