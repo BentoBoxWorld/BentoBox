@@ -369,6 +369,13 @@ public class IslandsManager {
     }
 
     /**
+     * @return the islandCache
+     */
+    public IslandCache getIslandCache() {
+        return islandCache;
+    }
+
+    /**
      * Used for testing only to inject the islandCache mock object
      * @param islandCache - island cache
      */
