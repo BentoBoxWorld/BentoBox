@@ -2,6 +2,7 @@ package world.bentobox.bentobox.api.addons;
 
 import java.util.Optional;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
@@ -129,4 +130,11 @@ public abstract class GameModeAddon extends Addon {
 	 * @since 1.4.0
 	 */
 	public abstract void saveWorldSettings();
+	
+	/**
+	 * When called, the game mode must regenerate the chunk to its original state.
+	 * Used when an island is deleted.
+	 * @param chunk - chunk to regenerate
+	 */
+	public abstract void regerateChunk(Chunk chunk);
 }
