@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.addons;
 
 import java.util.Optional;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.generator.ChunkGenerator;
