@@ -122,6 +122,7 @@ public class AddonsManager {
             // Addon successfully loaded
             addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
+            e.printStackTrace();
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
             handleAddonIncompatibility(addon);
         } catch (Exception e) {
@@ -144,6 +145,7 @@ public class AddonsManager {
                     addon.setState(Addon.State.ENABLED);
                     plugin.log("Enabling " + addon.getDescription().getName() + "...");
                 } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
+                    e.printStackTrace();
                     // Looks like the addon is incompatible, because it tries to refer to missing classes...
                     handleAddonIncompatibility(addon);
                 } catch (Exception e) {

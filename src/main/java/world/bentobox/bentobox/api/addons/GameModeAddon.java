@@ -124,17 +124,11 @@ public abstract class GameModeAddon extends Addon {
     @NonNull
     public abstract ChunkGenerator getDefaultWorldGenerator(String worldName, String id);
 
-	/**
-	 * Tells the Game Mode Addon to save its settings. Used when world settings are changed
-	 * in-game and need to be saved.
-	 * @since 1.4.0
-	 */
-	public abstract void saveWorldSettings();
-	
-	/**
-	 * When called, the game mode must regenerate the chunk to its original state.
-	 * Used when an island is deleted.
-	 * @param chunk - chunk to regenerate
-	 */
-	public abstract void regerateChunk(Chunk chunk);
+    /**
+     * Tells the Game Mode Addon to save its settings. Used when world settings are changed
+     * in-game and need to be saved.
+     * @since 1.4.0
+     */
+    public abstract void saveWorldSettings();
+
 }
