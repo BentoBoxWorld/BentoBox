@@ -119,7 +119,7 @@ public class IslandExpelCommand extends CompositeCommand {
         } else if (getIslands().getSpawn(getWorld()).isPresent()){
             // Success
             user.sendMessage(SUCCESS);
-            getIslands().spawnTeleport(getWorld(), user.getPlayer());
+            getIslands().spawnTeleport(getWorld(), target.getPlayer());
             return true;
         } else if (getIWM().getAddon(getWorld())
                 .map(gm -> gm.getPlayerCommand()
