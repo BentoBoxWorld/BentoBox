@@ -223,11 +223,7 @@ public class IslandWorldManager {
      * @return the islandDistance
      */
     public int getIslandDistance(@NonNull World world) {
-        return getNextMultipleOf16(gameModes.get(world).getWorldSettings().getIslandDistance());
-    }
-
-    private int getNextMultipleOf16(int num) {
-        return num + 16 - (num % 16);
+        return gameModes.get(world).getWorldSettings().getIslandDistance();
     }
 
     /**
