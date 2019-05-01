@@ -266,6 +266,11 @@ commands:
       description: "display the management panel"
     catalog:
       description: "display the Addons catalog"
+    locale:
+      description: "perform locale analysis"
+      see-console: |-
+        &aCheck the console to see the feedback.
+        &aThis command is so spammy that the feedback cannot be read from chat...
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."

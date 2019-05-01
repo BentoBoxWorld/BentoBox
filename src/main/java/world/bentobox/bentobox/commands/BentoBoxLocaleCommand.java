@@ -1,15 +1,16 @@
 package world.bentobox.bentobox.commands;
 
-import java.util.List;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
+import java.util.List;
+
 /**
- * Manages localization.
+ * Performs localization analysis.
  *
  * @author tastybento
+ * @since 1.5.0
  */
 public class BentoBoxLocaleCommand extends ConfirmableCommand {
 
@@ -30,7 +31,8 @@ public class BentoBoxLocaleCommand extends ConfirmableCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         // Basic operation to start
-        getPlugin().getLocalesManager().analyzeLocales(user, false);
+        user.sendMessage("commands.bentobox.locale.see-console");
+        getPlugin().getLocalesManager().analyzeLocales(false);
         return true;
     }
 }
