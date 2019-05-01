@@ -1,0 +1,369 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+# This locale is always current with the latest version
+
+meta:
+  authors:
+    - Poslovitch
+  banner: "WHITE_BANNER:1:STRIPE_TOP:BLUE:STRIPE_BOTTOM:RED"
+
+general:
+  success: "&aSuccès!"
+  invalid: "Invalide"
+  errors:
+    command-cancelled: "&cCommande annulée."
+    no-permission: "&cVous n'avez pas la permission d'exécuter cette commande (&7[permission]&c)."
+    use-in-game: "&cCette commande n'est disponible que pour les joueurs."
+    no-team: "&cVous n'avez pas d'équipe !"
+    no-island: "&cVous n'avez pas d'île !"
+    player-has-island: "&cCe joueur a déjà une île !"
+    player-has-no-island: "&cCe joueur n'a pas d'île !"
+    already-have-island: "&cVous avez déjà une île !"
+    no-safe-location-found: "&cImpossible de trouver un endroit sécurisé où vous téléporter sur cette île."
+    not-owner: "&cVous n'êtes pas le propriétaire de votre île !"
+    not-in-team: "&cCe joueur n'est pas membre de votre île !"
+    offline-player: "&cCe joueur est déconnecté ou n'existe pas."
+    unknown-player: "&c[name] est inconnu !"
+    general: "&cCette commande ne peut fonctionner actuellement, contactez un administrateur."
+    unknown-command: "&cCommande inconnue. Entrez &b/[label] help &cpour afficher l'aide."
+    wrong-world: "&cVous ne pouvez pas faire ça dans ce monde !"
+    you-must-wait: "&cVous devez attendre [number]s avant de pouvoir utiliser cette commande."
+    must-be-positive-number: "&c[number] n'est pas un nombre positif."
+  tips:
+    changing-obsidian-to-lava: |+
+      Transformation de l'obsidienne en lave
+      &cSoyez plus prudent la prochaine fois !
+
+commands:
+  # Parameters in <> are required, parameters in [] are optional
+  help:
+    header: "&7=========== &cAide de [label] &7==========="
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    syntax-no-parameters: "&b[usage]&7: &e[description]"
+    end: "&7================================="
+    parameters: "[command]"
+    description: "affiche l'aide"
+    console: "Console"
+  admin:
+    help:
+      description: "commande d'administration"
+    resets:
+      description: "modifie le nombre de resets des joueurs"
+      set:
+        description: "modifie le nombre de resets de ce joueur"
+        parameters: "<joueur> <resets>"
+      reset:
+        description: "réinitialise le nombre de resets de ce joueur"
+        parameters: "<joueur>"
+    team:
+      add:
+        parameters: "<propriétaire> <joueur>"
+        description: "ajoute le joueur à une île"
+        name-not-owner: "&c[name] n'est pas le propriétaire d'une île."
+        name-has-island: "&c[name] a une île. Supprimez son île ou retirez-le d'elle."
+        success: "&b[name]&a a été ajouté à l'île de &b[owner]&a."
+      disband:
+        parameters: "<propriétaire>"
+        description: "dissout l'équipe du propriétaire"
+        use-disband-owner: "&cCe joueur n'est pas propriétaire de l'île ! Utilisez &bdisband [owner]&c."
+        disbanded: "&cUn administrateur a dissous votre équipe!"
+        success: "&aL'équipe de &b[name]&a a été dissoute."
+      kick:
+        parameters: "<membre>"
+        description: "expulse un membre de l'île"
+        cannot-kick-owner: "&cVous ne pouvez pas expulser le propriétaire. Expulsez les membres d'abord."
+        not-in-team: "&cCe joueur ne fait pas partie d'une île."
+        admin-kicked: "&cUn administrateur vous a expulsé de l'île."
+        success: "&b[name] &aa été expulsé de l'île de &b[owner]&a."
+      setowner:
+        parameters: "<joueur>"
+        description: "transfère la propriété d'une île à un joueur"
+        already-owner: "&c[name] est déjà le propriétaire de cette île !"
+        success: "&b[name]&a est désormais le propriétaire de cette île."
+    range:
+      description: "commande de gestion des portées des zones de protection"
+      display:
+        already-off: "&cLes indicateurs sont déjà désactivés."
+        already-on: "&cLes indicateurs sont déjà activés."
+        description: "affiche/cache les indicateurs des zones de protection"
+        hiding: "&2Désactivation des indicateurs des zones de protection."
+        hint: |-
+          &fLes &cicônes rouge des barrières &fmontrent la portée actuelle de la zone de protection de l'île.
+          &fLes &7particules grises &fmontrent la portée maximum que peut avoir la zone de protection.
+          &fLes &aparticules vertes &fmontrent la portée par défaut de la zone de protection (uniquement si la portée actuelle est différente).
+        showing: "&2Affichage des indicateurs des zones de protection."
+      set:
+        parameters: "<joueur> <portée>"
+        description: "modifie la portée de la zone de protection de l'île"
+        invalid-value:
+          not-numeric: "&c[number] n'est pas un nombre entier !"
+          too-low: "&cLa portée doit être supérieure à &b1 &c!"
+          too-high: "&cLa portée doit être inférieure ou égale à &b[number] &c!"
+          same-as-before: "&cLa portée est déjà de &b[number] &cblocs!"
+        success: "&aPortée modifiée à &b[number]&a blocs."
+      reset:
+        parameters: "<joueur>"
+        description: "réinitialise la portée de la zone de protection de l'île à la valeur par défaut"
+        success: "&aPortée réinitialisée à &b[number]&a blocs."
+    register:
+      parameters: "<joueur>"
+    info:
+      parameters: "<joueur>"
+    version:
+      description: "affiche la version de BentoBox et des addons"
+    tp:
+      parameters: "<joueur>"
+    getrank:
+      parameters: "<joueur>"
+    delete:
+      parameters: "<joueur>"
+    why:
+      parameters: "<joueur>"
+    deaths:
+      reset:
+        parameters: "<joueur>"
+      set:
+        parameters: "<joueur> <morts>"
+  bentobox:
+    description: "commande administrateur de BentoBox"
+    about:
+      description: "affiche le copyright et la licence."
+    reload:
+      description: "recharge paramètres, addons (si supportés) et langues"
+      locales-reloaded: "&2Langues rechargées."
+      addons-reloaded: "&2Addons rechargés."
+      settings-reloaded: "&2Paramètres rechargés."
+    version:
+      plugin-version: "&2Version de BentoBox : &3[version]"
+      description: "affiche la version de BentoBox et des addons"
+      loaded-addons: "Addons :"
+      loaded-game-worlds: "Mondes de jeu :"
+      addon-syntax: "&2[name] &3[version]"
+      game-worlds: "&2[name] &3([addon])"
+      server: "&2Serveur : &3[name] [version]&2."
+    manage:
+      description: "affiche le menu de gestion"
+    catalog:
+      description: "affiche le catalogue"
+  confirmation:
+    confirm: "&cEntrez cette commande à nouveau sous &b[seconds] secondes &cpour confirmer."
+    previous-request-cancelled: "&6La demande de confirmation a été annulée."
+    request-cancelled: "&cLa demande de confirmation a expiré."
+  island:
+    about:
+      description: "à propos de cet addon"
+    info:
+      parameters: "<joueur>"
+    team:
+      description: "gère votre équipe"
+      coop:
+        parameters: "<joueur>"
+      uncoop:
+        parameters: "<joueur>"
+      trust:
+        parameters: "<joueur>"
+      untrust:
+        parameters: "<joueur>"
+      invite:
+        invitation-sent: "&aInvitation envoyée à &b[name]&a."
+        removing-invite: "&cInvitation supprimée."
+        parameters: "<joueur>"
+        you-can-invite: "&aVous pouvez inviter &b[number] &ajoueurs supplémentaires."
+      kick:
+        parameters: "<joueur>"
+      demote:
+        parameters: "<joueur>"
+      promote:
+        parameters: "<joueur>"
+      setowner:
+        parameters: "<joueur>"
+    ban:
+      parameters: "<joueur>"
+    unban:
+      parameters: "<joueur>"
+    settings:
+      description: "affiche les paramètres de l'île"
+    language:
+      description: "sélectionne la langue"
+    expel:
+      parameters: "<joueur>"
+
+ranks:
+  owner: "Propriétaire"
+  sub-owner: "Officier"
+  member: "Membre"
+  trusted: "Trust"
+  coop: "Coop"
+  visitor: "Visiteur"
+  banned: "Banni"
+  admin: "Administrateur"
+  mod: "Modérateur"
+
+protection:
+  command-is-banned: "Cette commande ne peut pas être utilisée par les visiteurs."
+  locked: "&cCette île est verrouillée!"
+  protected: "&cÎle protégée: [description]"
+  spawn-protected: "&cSpawn protégé: [description]"
+
+  panel:
+    next: "Page suivante"
+    previous: "Page précédente"
+    PROTECTION:
+      title: "&6Protection"
+      description: |-
+        &aParamètres de protection
+        &apour cette île
+    SETTING:
+      title: "&6Options"
+      description: |-
+        &aParamètres génériques
+        &apour cette île
+    WORLD_SETTING:
+      title: "&6Options &b[world_name]"
+      description: "&aParamètres pour ce monde"
+    flag-item:
+      name-layout: "&a[name]"
+      description-layout: |
+        &a[description]
+
+        &7Autorisé pour :
+      allowed-rank: "&3- &a"
+      blocked-rank: "&3- &c"
+      minimal-rank: "&3- &2"
+      menu-layout: "&a[description]"
+      setting-layout: |
+        &a[description]
+
+        &7État : [setting]
+      setting-active: "&aActivé"
+      setting-disabled: "&cDésactivé"
+
+language:
+  panel-title: "Choisissez votre langue"
+  selected: "&aActuellement sélectionné."
+  edited: "&aLangue modifiée en &e[lang]&a."
+
+management:
+  panel:
+    title: "Gestion de BentoBox"
+    views:
+      gamemodes:
+        name: "&6Modes de jeu"
+        description: "&eCliquez &apour afficher les modes de jeu chargés."
+        schems:
+          name: "&6Schems"
+          description: "&aAffiche le menu de gestion des Schems."
+      addons:
+        name: "&6Addons"
+        description: "&eCliquez &apour afficher les addons chargés."
+      hooks:
+        name: "&6Intégrations"
+        description: "&eCliquez &apour afficher les intégrations actuelles."
+    actions:
+      check-updates:
+        name: "&6Vérifiez les mises à jour"
+        description: "&eCliquez &apour lancer une vérification des mises à jour."
+      reload:
+        name: "&cReload"
+        description: "&eCliquez &c&ldeux fois &r&apour reload BentoBox."
+    buttons:
+      catalog:
+        name: "&6Catalogue d'addons"
+        description: "&aOuvre le Catalogue d'addons."
+      empty-here:
+        name: "&bC'est vide ici..."
+        description: "&aEt si vous jetiez un œil à notre catalogue ?"
+    information:
+      state:
+        name: "&6Compatibilité"
+        description:
+          COMPATIBLE: |+
+            &aServeur : &e[name] [version]&a.
+
+            &aBentoBox fonctionne actuellement sur
+            &aune plateforme logicielle dont la
+            &aversion est &lCOMPATIBLE&r&a.
+
+            &aLes fonctionnalités sont parfaitement
+            &aconçues pour fonctionner dans cet
+            &aenvironnement.
+          SUPPORTED: |+
+            &aServeur : &e[name] [version]&a.
+
+            &aBentoBox fonctionne actuellement sur
+            &aune plateforme logicielle dont la
+            &aversion est &lSUPPORTÉE&r&a.
+
+            &aLa majorité des fonctionnalités
+            &avont fonctionner correctement dans
+            &acet environnement.
+          NOT_SUPPORTED: |+
+            &aServeur : &e[name] [version]&a.
+
+            &aBentoBox fonctionne actuellement sur
+            &aune plateforme logicielle dont la
+            &aversion est &6&lNON-SUPPORTÉE&r&a.
+
+            &aMême si la majorité des fonctionnalités
+            &afonctionneront correctement, &6des
+            &6bugs spécifiques à la plateforme sont
+            &6possibles.
+          INCOMPATIBLE: |+
+            &aServeur : &e[name] [version]&a.
+
+            &aBentoBox fonctionne actuellement sur
+            &aune plateforme logicielle dont la
+            &aversion est &c&lINCOMPATIBLE&r&a.
+
+            &cDes bugs ou comportements étranges
+            &cpeuvent survenir et la majorité des
+            &cfonctionnalités peuvent être instables.
+
+catalog:
+  panel:
+    GAMEMODES:
+      title: "Catalogue de modes de jeu"
+    ADDONS:
+      title: "Catalogue d'addons"
+    views:
+      gamemodes:
+        name: "&6Modes de jeu"
+        description: |+
+          &eCliquez &apour naviguer dans la liste
+          &ades modes de jeu officiels disponibles.
+      addons:
+        name: "&6Addons"
+        description: |+
+          &eCliquez &apour naviguer dans la liste
+          &ades addons officiels disponibles.
+    icon:
+      description-template: |+
+        &8[topic]
+        &a[install]
+
+        &7&o[description]
+
+        &eCliquez &apour obtenir un lien vers la
+        &amise à jour la plus récente.
+      already-installed: "Déjà installé!"
+      install-now: "Installez maintenant!"
+
+    empty-here:
+      name: "&bC'est vide ici..."
+      description: |+
+        &cBentoBox n'a pas pu se connecter à GitHub.
+
+        &aAutorisez BentoBox à se connecter à GitHub
+        &adans la configuration ou réessayez plus tard.
+
+successfully-loaded: |
+
+  &6  ____             _        ____
+  &6 |  _ \           | |      |  _ \             &7par &atastybento &7and &aPoslovitch
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2019
+  &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version]
+  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8Chargement réussi en &e[time]&8ms.
