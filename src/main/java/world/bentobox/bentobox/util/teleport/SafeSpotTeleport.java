@@ -31,6 +31,7 @@ public class SafeSpotTeleport {
     private static final int MAX_CHUNKS = 200;
     private static final long SPEED = 1;
     private static final int MAX_RADIUS = 200;
+    private static final int MAX_HEIGHT = 235;
     private boolean checking;
     private BukkitTask task;
 
@@ -219,14 +220,12 @@ public class SafeSpotTeleport {
      * @return true if a safe spot was found
      */
     private boolean scanChunk(ChunkSnapshot chunk) {
-        // Max height
-        int maxHeight = location.getWorld().getMaxHeight() - 20;
         // Run through the chunk
         for (int x = 0; x< 16; x++) {
             for (int z = 0; z < 16; z++) {
                 // Work down from the entry point up
-                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), maxHeight); y >= 0; y--) {
-                    if (checkBlock(chunk, x,y,z, maxHeight)) {
+                for (int y = Math.min(chunk.getHighestBlockYAt(x, z), MAX_HEIGHT); y >= 0; y--) {
+                    if (checkBlock(chunk, x,y,z, MAX_HEIGHT)) {
                         return true;
                     }
                 } // end y

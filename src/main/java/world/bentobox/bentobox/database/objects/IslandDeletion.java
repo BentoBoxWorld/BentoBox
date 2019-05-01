@@ -4,6 +4,8 @@ import java.util.UUID;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 import com.google.gson.annotations.Expose;
 
@@ -32,24 +34,35 @@ public class IslandDeletion implements DataObject {
     @Expose
     private int maxZChunk;
 
+    @Expose
+    private int minX;
+
+    @Expose
+    private int minZ;
+
+    @Expose
+    private int maxX;
+
+    @Expose
+    private int maxZ;
+
+    @Expose
+    BoundingBox box;
+
     public IslandDeletion() {}
 
     public IslandDeletion(Island island) {
         uniqueId = UUID.randomUUID().toString();
         location = island.getCenter();
-        minXChunk =  (location.getBlockX() - island.getMaxEverProtectionRange()) >> 4;
-        maxXChunk = (island.getMaxEverProtectionRange() + location.getBlockX() - 1) >> 4;
-        minZChunk = (location.getBlockZ() - island.getMaxEverProtectionRange()) >> 4;
-        maxZChunk = (island.getMaxEverProtectionRange() + location.getBlockZ() - 1) >> 4;
-    }
-
-    public IslandDeletion(Location location, int minXChunk, int maxXChunk, int minZChunk, int maxZChunk) {
-        this.uniqueId = UUID.randomUUID().toString();
-        this.location = location;
-        this.minXChunk = minXChunk;
-        this.maxXChunk = maxXChunk;
-        this.minZChunk = minZChunk;
-        this.maxZChunk = maxZChunk;
+        minX = location.getBlockX() - island.getMaxEverProtectionRange();
+        minXChunk =  minX >> 4;
+        maxX = island.getMaxEverProtectionRange() + location.getBlockX();
+        maxXChunk = maxX >> 4;
+        minZ = location.getBlockZ() - island.getMaxEverProtectionRange();
+        minZChunk = minZ >> 4;
+        maxZ = island.getMaxEverProtectionRange() + location.getBlockZ();
+        maxZChunk = maxZ >> 4;
+        box = BoundingBox.of(new Vector(minX, 0, minZ), new Vector(maxX, 255, maxZ));
     }
 
     /* (non-Javadoc)
@@ -170,9 +183,60 @@ public class IslandDeletion implements DataObject {
         this.minZChunk = minZChunk;
     }
 
+    public int getMinX() {
+        return minX;
+    }
+
+    public void setMinX(int minX) {
+        this.minX = minX;
+    }
+
+    public int getMinZ() {
+        return minZ;
+    }
+
+    public void setMinZ(int minZ) {
+        this.minZ = minZ;
+    }
+
+    public int getMaxX() {
+        return maxX;
+    }
+
+    public void setMaxX(int maxX) {
+        this.maxX = maxX;
+    }
+
+    public int getMaxZ() {
+        return maxZ;
+    }
+
+    public void setMaxZ(int maxZ) {
+        this.maxZ = maxZ;
+    }
+
     @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
+
+    public boolean inBounds(int x, int z) {
+        return box.contains(new Vector(x, 0, z));
+    }
+
+    /**
+     * @return the box
+     */
+    public BoundingBox getBox() {
+        return box;
+    }
+
+    /**
+     * @param box the box to set
+     */
+    public void setBox(BoundingBox box) {
+        this.box = box;
+    }
+
 }
 
