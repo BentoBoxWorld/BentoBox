@@ -1,7 +1,7 @@
 package world.bentobox.bentobox.managers;
 
-import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
@@ -32,6 +32,7 @@ public class LocalesManager {
     private Map<Locale, BentoBoxLocale> languages = new HashMap<>();
     private static final String LOCALE_FOLDER = "locales";
     private static final String BENTOBOX = "BentoBox";
+    private static final String SPACER = "*************************************************";
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
@@ -252,16 +253,16 @@ public class LocalesManager {
 
         User user = User.getInstance(Bukkit.getConsoleSender());
 
-        user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+        user.sendRawMessage(ChatColor.AQUA + SPACER);
         plugin.log(ChatColor.AQUA + "Analyzing BentoBox locale files");
-        user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+        user.sendRawMessage(ChatColor.AQUA + SPACER);
         loadLocalesFromFile(BENTOBOX);
         analyze(fix);
         user.sendRawMessage(ChatColor.AQUA + "Analyzing Addon locale files");
         plugin.getAddonsManager().getAddons().forEach(addon -> {
-            user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+            user.sendRawMessage(ChatColor.AQUA + SPACER);
             user.sendRawMessage(ChatColor.AQUA + "Analyzing addon " + addon.getDescription().getName());
-            user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+            user.sendRawMessage(ChatColor.AQUA + SPACER);
             languages.clear();
             loadLocalesFromFile(addon.getDescription().getName());
             analyze(fix);
@@ -285,25 +286,26 @@ public class LocalesManager {
         languages.forEach((k,v) -> user.sendRawMessage(ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayLanguage() + " " + k.getDisplayCountry()));
         // Start with US English
         YamlConfiguration usConfig = languages.get(Locale.US).getConfig();
-
+        // Fix config
+        YamlConfiguration fixConfig = new YamlConfiguration();
         languages.values().stream().filter(l -> !l.toLanguageTag().equals(Locale.US.toLanguageTag())).forEach(l -> {
-            System.out.println(l.toLanguageTag());
-            user.sendRawMessage(ChatColor.GREEN + "*************************************************");
+            user.sendRawMessage(ChatColor.GREEN + SPACER);
             user.sendRawMessage(ChatColor.GREEN + "Analyzing locale file " + l.toLanguageTag() + ":");
             YamlConfiguration c = l.getConfig();
             boolean complete = true;
             for (String path : usConfig.getKeys(true)) {
                 if (!c.contains(path, true)) {
                     complete = false;
-                    user.sendRawMessage(ChatColor.RED + "Missing " + path);
-                    if (fix) {
-                        // TODO: add an option to add missing strings to locale files.
-                    }
+                    fixConfig.set(path, user.getTranslationOrNothing(path));
                 }
             }
             if (complete) {
                 user.sendRawMessage(ChatColor.GREEN + "Language file covers all strings.");
+            } else {
+                user.sendRawMessage(ChatColor.RED + "The following YAML is missing. Please translate it:");
+                plugin.log("\n" + fixConfig.saveToString());
             }
+
         });
     }
 }
