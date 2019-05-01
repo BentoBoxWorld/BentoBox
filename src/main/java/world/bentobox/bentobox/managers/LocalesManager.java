@@ -15,6 +15,7 @@ import java.util.jar.JarFile;
 
 import org.bukkit.configuration.file.YamlConfiguration;
 
+import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.localization.BentoBoxLocale;
@@ -238,5 +239,57 @@ public class LocalesManager {
         });
     }
 
+    /**
+     * Loads all the locales available in the locale folder given. Used for loading all locales from plugin and addons
+     *
+     * @param localeFolder - locale folder location relative to the plugin's data folder
+     */
+    public void analyzeLocales(User user, boolean fix) {
+        languages.clear();
+        user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+        plugin.log(ChatColor.AQUA + "Analyzing BentoBox locale files");
+        user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+        loadLocalesFromFile(BENTOBOX);
+        analyze(user, fix);
+        user.sendRawMessage(ChatColor.AQUA + "Analyzing Addon locale files");
+        plugin.getAddonsManager().getAddons().forEach(addon -> {
+            user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+            user.sendRawMessage(ChatColor.AQUA + "Analyzing addon " + addon.getDescription().getName());
+            user.sendRawMessage(ChatColor.AQUA + "*************************************************");
+            languages.clear();
+            loadLocalesFromFile(addon.getDescription().getName());
+            analyze(user, fix);
+        });
+        reloadLanguages();
+    }
+
+    private void analyze(User user, boolean fix) {
+        if (!languages.containsKey(Locale.US)) return;
+        user.sendRawMessage(ChatColor.GREEN + "The following locales are supported:");
+        languages.forEach((k,v) -> {
+            user.sendRawMessage(ChatColor.GOLD + k.toLanguageTag() + " " + k.getDisplayCountry() + " " + k.getDisplayLanguage());
+        });
+        // Start with US English
+        YamlConfiguration usConfig = languages.get(Locale.US).getConfig();
+        languages.entrySet().stream().filter(e -> !e.getKey().equals(Locale.US)).map(Map.Entry::getValue).forEach(l -> {
+            user.sendRawMessage(ChatColor.GREEN + "*************************************************");
+            user.sendRawMessage(ChatColor.GREEN + "Analyzing locale file " + l.toLanguageTag() + ":");
+            YamlConfiguration c = l.getConfig();
+            boolean complete = true;
+            for (String path : usConfig.getKeys(true)) {
+                if (!c.contains(path, true)) {
+                    complete = false;
+                    user.sendRawMessage(ChatColor.RED + "Missing " + path);
+                    if (fix) {
+                        // TODO: add an option to add missing strings to locale files.
+                    }
+                }
+            }
+            if (complete) {
+                user.sendRawMessage(ChatColor.GREEN + "Language file covers all strings.");
+            }
+        });
+
+    }
 
 }

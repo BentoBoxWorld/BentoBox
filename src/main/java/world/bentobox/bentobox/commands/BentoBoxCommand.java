@@ -22,6 +22,7 @@ public class BentoBoxCommand extends CompositeCommand {
         new BentoBoxManageCommand(this);
         new BentoBoxCatalogCommand(this);
         new BentoBoxReloadCommand(this);
+        new BentoBoxLocaleCommand(this);
     }
 
     @Override

@@ -119,4 +119,11 @@ public class BentoBoxLocale {
             }
         }
     }
+
+    /**
+     * @return the config
+     */
+    public YamlConfiguration getConfig() {
+        return config;
+    }
 }
