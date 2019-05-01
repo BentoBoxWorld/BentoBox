@@ -296,7 +296,7 @@ public class LocalesManager {
             for (String path : usConfig.getKeys(true)) {
                 if (!c.contains(path, true)) {
                     complete = false;
-                    fixConfig.set(path, user.getTranslationOrNothing(path));
+                    fixConfig.set(path, user.getTranslationOrNothing(path).replace('§', '&'));
                 }
             }
             if (complete) {
