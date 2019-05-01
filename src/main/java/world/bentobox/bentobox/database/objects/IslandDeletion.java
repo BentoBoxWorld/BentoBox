@@ -33,19 +33,20 @@ public class IslandDeletion implements DataObject {
 
     @Expose
     private int maxZChunk;
-    
+
     @Expose
     private int minX;
-    
+
     @Expose
     private int minZ;
-    
+
     @Expose
     private int maxX;
-    
+
     @Expose
     private int maxZ;
-    
+
+    @Expose
     BoundingBox box;
 
     public IslandDeletion() {}
@@ -55,11 +56,11 @@ public class IslandDeletion implements DataObject {
         location = island.getCenter();
         minX = location.getBlockX() - island.getMaxEverProtectionRange();
         minXChunk =  minX >> 4;
-        maxX = island.getMaxEverProtectionRange() + location.getBlockX() - 1;
+        maxX = island.getMaxEverProtectionRange() + location.getBlockX();
         maxXChunk = maxX >> 4;
         minZ = location.getBlockZ() - island.getMaxEverProtectionRange();
         minZChunk = minZ >> 4;
-        maxZ = island.getMaxEverProtectionRange() + location.getBlockZ() - 1;
+        maxZ = island.getMaxEverProtectionRange() + location.getBlockZ();
         maxZChunk = maxZ >> 4;
         box = BoundingBox.of(new Vector(minX, 0, minZ), new Vector(maxX, 255, maxZ));
     }
@@ -183,45 +184,59 @@ public class IslandDeletion implements DataObject {
     }
 
     public int getMinX() {
-		return minX;
-	}
+        return minX;
+    }
 
-	public void setMinX(int minX) {
-		this.minX = minX;
-	}
+    public void setMinX(int minX) {
+        this.minX = minX;
+    }
 
-	public int getMinZ() {
-		return minZ;
-	}
+    public int getMinZ() {
+        return minZ;
+    }
 
-	public void setMinZ(int minZ) {
-		this.minZ = minZ;
-	}
+    public void setMinZ(int minZ) {
+        this.minZ = minZ;
+    }
 
-	public int getMaxX() {
-		return maxX;
-	}
+    public int getMaxX() {
+        return maxX;
+    }
 
-	public void setMaxX(int maxX) {
-		this.maxX = maxX;
-	}
+    public void setMaxX(int maxX) {
+        this.maxX = maxX;
+    }
 
-	public int getMaxZ() {
-		return maxZ;
-	}
+    public int getMaxZ() {
+        return maxZ;
+    }
 
-	public void setMaxZ(int maxZ) {
-		this.maxZ = maxZ;
-	}
+    public void setMaxZ(int maxZ) {
+        this.maxZ = maxZ;
+    }
 
-	@Override
+    @Override
     public void setUniqueId(String uniqueId) {
         this.uniqueId = uniqueId;
     }
-    
-	public boolean inBounds(int x, int z) {
-		return box.contains(new Vector(x, 0, z));
-	}
-    
+
+    public boolean inBounds(int x, int z) {
+        return box.contains(new Vector(x, 0, z));
+    }
+
+    /**
+     * @return the box
+     */
+    public BoundingBox getBox() {
+        return box;
+    }
+
+    /**
+     * @param box the box to set
+     */
+    public void setBox(BoundingBox box) {
+        this.box = box;
+    }
+
 }
 
