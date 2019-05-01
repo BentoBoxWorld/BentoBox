@@ -16,6 +16,7 @@ import world.bentobox.bentobox.listeners.flags.protection.BlockInteractionListen
 import world.bentobox.bentobox.listeners.flags.protection.BreakBlocksListener;
 import world.bentobox.bentobox.listeners.flags.protection.BreedingListener;
 import world.bentobox.bentobox.listeners.flags.protection.BucketListener;
+import world.bentobox.bentobox.listeners.flags.protection.DyeListener;
 import world.bentobox.bentobox.listeners.flags.protection.EggListener;
 import world.bentobox.bentobox.listeners.flags.protection.EntityInteractListener;
 import world.bentobox.bentobox.listeners.flags.protection.ExperiencePickupListener;
@@ -391,6 +392,14 @@ public final class Flags {
      */
     public static final Flag NATURAL_SPAWNING_OUTSIDE_RANGE = new Flag.Builder("NATURAL_SPAWNING_OUTSIDE_RANGE", Material.ZOMBIE_SPAWN_EGG).type(Type.WORLD_SETTING).listener(new NaturalSpawningOutsideRangeListener()).defaultSetting(true).build();
 
+    /**
+     * Protects against visitors dying stuff, like sheep or signs
+     * 
+     * @since 1.5.0
+     * @see DyeListener
+     */
+    public static final Flag DYE = new Flag.Builder("DYE", Material.LIGHT_BLUE_DYE).type(Type.PROTECTION).listener(new DyeListener()).build();
+    
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * @return List of all the flags in this class

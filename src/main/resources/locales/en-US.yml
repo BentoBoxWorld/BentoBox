@@ -594,6 +594,10 @@ protection:
         &cThis does not protect it from being
         &cplaced or broken.
       hint: "No Dragon Egg interaction"
+    DYE:
+      description: "Prevent dye use"
+      name: "Dye use"
+      hint: "No dying allowed"
     EGGS: 
       description: "Toggle egg throwing"
       name: "Egg throwing"
