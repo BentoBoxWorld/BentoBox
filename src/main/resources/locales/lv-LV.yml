@@ -1,0 +1,1076 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+# This locale is always current with the latest version
+
+meta:
+  authors:
+  - BONNe1704
+  banner: "RED_BANNER:1:STRIPE_MIDDLE:WHITE"
+
+general:
+  success: "&aDarīts!"
+  invalid: "Nederīgs"
+  errors:
+    command-cancelled: "&cKomanda atcleta."
+    no-permission: "&cTev nav atļaujas rīkoties ar šo komandu (&7[permission]&c)."
+    use-in-game: "&cŠī komanda ir pieejama tikai spēlē."
+    no-team: "&cTev nav komandas!"
+    no-island: "&cTev nav sala!"
+    player-has-island: "&cSpēlētājam jau ir sala!"
+    player-has-no-island: "&cSpēlētājam nav salas!"
+    already-have-island: "&cTev jau ir sala!"
+    no-safe-location-found: "&cNeizdevās atrast drošu vietu teleportācijas uz salas."
+    not-owner: "&cTu neesi šīs salas īpašnieks!"
+    not-in-team: "&cSpēlētājs nav tavā komandā!"
+    offline-player: "&cŠis spēlētājs nav tiešsaitē vai neeksistē."
+    unknown-player: "&c[name] ir nezināms spēlētājs!"
+    general: "&cŠī komanda nav gatava/derīga. Sazinies ar administratoru."
+    unknown-command: "&cNezināma komanda. Izmanto &b/[label] help &clai redzētu komandas."
+    wrong-world: "&cTu neatrodies pareizajā pasaulē, lai to darītu!"
+    you-must-wait: "&cTev ir jāgaida [number]s pirms vari izmantot komandu vēlreiz."
+    must-be-positive-number: "&c[number] nav derīgs pozitīvs numurs."
+  tips:
+    changing-obsidian-to-lava: "Pārveido obsidiānu uz lavu. Esi uzmanīgāks!"
+
+commands:
+  # Parameters in <> are required, parameters in [] are optional
+  help:
+    header: "&7=========== &c[label] palīdzība &7==========="
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    syntax-no-parameters: "&b[usage]&7: &e[description]"
+    end: "&7================================="
+    parameters: "[command]"
+    description: "Palīdzības komanda"
+    console: "Konsole"
+  admin:
+    help:
+      description: "admin komanda"
+    resets:
+      description: "mainīt spēlētāja 'resetus'"
+      set:
+        description: "uzstāda 'resetus' spēlētājam"
+        parameters: "<spēlētājs> <reseti>"
+      reset:
+        description: "uzstāta spēlētājam 'resetus' uz 0"
+        parameters: "<spēlētājs>"
+    team:
+      add:
+        parameters: "<īpašnieks> <spēlētājs>"
+        description: "pievieno spēlētāju īpašnieka salai"
+        name-not-owner: "&c[name] nav salas īpašnieks."
+        name-has-island: "&c[name] jau pieder kāda sala. Atreģistrē vai izdzēs to vispirms!"
+        success: "&b[name]&a ir pieveinots &b[owner]&a salai."
+      disband:
+        parameters: "<īpašnieks>"
+        description: "izformē īpašnieka komandu"
+        use-disband-owner: "&cNav īpašnieks! Lieto /[label] disband [owner]."
+        disbanded: "&cAdmins izformēja tavu komandu!"
+        success: "&b[name]&a komanda ir izformēta."
+      kick:
+        parameters: "<komandas spēlētājs>"
+        description: "izmet spēlētāju no komandas"
+        cannot-kick-owner: "&cNevar izmest īpašnieku kamēr komandā ir citi spēlētāji."
+        not-in-team: "&cŠis spēlētājs nav komandā."
+        admin-kicked: "&cAdmins tevi izmenta no komandas."
+        success: "&b[name] &atika izmests no &b[owner]&a salas."
+      setowner:
+        parameters: "<spēlētājs>"
+        description: "iecelt par salas īpašnieku"
+        already-owner: "&c[name] jau ir salas īpašnieks!"
+        success: "&b[name]&a tagad ir šīs salas īpašnieks."
+    range:
+      description: "Admina salas distances komanda"
+      display:
+        already-off: "&cIndikātors ir jau izslēgts"
+        already-on: "&cIndikātors ir jau ieslēgts"
+        description: "rādīt/slēpt salas distances indikātoru"
+        hiding: "&2Distances indikātors paslēpts"
+        hint: |-
+          &cBarjeras ikona &frāda pašreizējo salas aizsardzības distances limitu.
+          &7Pelēkās daļiņas &frāda maksimālo salas distances lielumu.
+          &aZaļās daļiņas &frāda noklusējuma aizsardzības distanci, ja pašreizējā distance no tās atšķiras.
+        showing: "&2Distances indikātors tiek rādīts"
+      set:
+        parameters: "<spēlētājs> <distance>"
+        description: "uzstāda salas aizsardzības rādiusa distanci"
+        invalid-value:
+          not-numeric: "&c[number] nav vesels nummurs!"
+          too-low: "&cAizsardzības distancei jābūt lielākai par &b1&c!"
+          too-high: "&cAizsardzības distance nedrīkst būt lielāka par &b[number]&c!"
+          same-as-before: "&cAizsardzības distance jau bija uzstādīta &b[number]&c!"
+        success: "&aSalas aizsardzības distance nomainīta uz &b[number]&a."
+      reset:
+        parameters: "<spēlētājs>"
+        description: "atiesta aizsardzības distanci uz pasaules noklusējuma vērtību"
+        success: "&aSalas aizsardzības distance atiestīta uz &b[number]&a."
+    register:
+      parameters: "<spēlētājs>"
+      description: "piereģistrē spēlētāju pie salas, kurai nav īpašnieka un uz kuras tu stāvi"
+      registered-island: "&aPiereģistrē spēlētāju pie salas ar koordinātēm [xyz]."
+      already-owned: "&cSala jau pieder citam spēlētājam!"
+      no-island-here: "&cŠeit neatrodas neviena sala! Apstiprini, lai izveidotu."
+      in-deletion: "&cŠī salas pozīcija šobrīt tiek dzēsta. Mēģini vēlāk."
+      cannot-make-island: "&cAtvaino, bet neizdevās izveidot šeit salu. Iespējams konsulē ir kļūdas paziņojumi."
+    unregister:
+      parameters: "<īpašnieks>"
+      description: "atreģistrē īpašnieku no salas paturot salas blokus"
+      unregistered-island: "&aSpēlētājs atreģistrēts no salas ar koordinātēm [xyz]."
+    info:
+      parameters: "<spēlētājs>"
+      description: "atgriež informāciju par spēlētāja salu vai esošo pozīciju"
+      no-island: "&cTu neesi uz salas šobrīd..."
+      title: "========== Salas informācija ============"
+      island-uuid: "UUID: [uuid]"
+      owner: "Īpašnieks: [owner] ([uuid])"
+      last-login: "Pēdējā pieslēgšanās: [date]"
+      deaths: "Nāves: [number]"
+      resets-left: "Sākšanas no jauna: [number] (Maksimālais: [total])"
+      team-members-title: "Komandas biedri:"
+      team-owner-format: "&a[name] [rank]"
+      team-member-format: "&b[name] [rank]"
+      island-location: "Salas centrs: [xyz]"
+      island-coords: "Salas kooridinātes: no [xz1] līdz [xz2]"
+      islands-in-trash: "&dSpēlētājam sala ir atkritnē."
+      protection-range: "Aizsardzības distance: [range]"
+      max-protection-range: "Lielākā aizsardzības distance salas vēsturē: [range]"
+      protection-coords: "Aizsardzības koordinātes: no [xz1] līdz [xz2]"
+      is-spawn: "Šī ir sākuma sala"
+      banned-players: "Spēlētāji, kam liegts atrasties uz salas:"
+      banned-format: "&c[name]"
+      unowned: "&cBez īpašnieka"
+    switchto:
+      parameters: "<spēlētājs> <numurs>"
+      description: "uzstāda spēlētāja salu kā pirmo (vai doto) atkritnē"
+      out-of-range: "&cNumuram jābūt starp 1 un [number]. Lieto &l[label] trash [player]&r&c, lai redzētu salas numuru"
+      cannot-switch: "&cPārslēgšana neizdevās! Skaties kļūdu paziņojumu konsulē."
+    trash:
+      no-unowned-in-trash: "&cNav salas atkritnē bez īpašniekiem"
+      no-islands-in-trash: "&cSpēlētājam nav salas atkritnē"
+      parameters: "[spēlētājs]"
+      description: "attaino salas ar vai bez īpašniekiem, kas atrodas atkritnē"
+      title: "&d=========== Salas atkritnē ==========="
+      count: "&l&dSala [number]:"
+      use-switch: "&aLieto &l[label] switchto [spēlētājs] <numurs>&r&a, lai pārslēgtos uz spēlētāja salu no atkritnes."
+      use-emptytrash: "&aLieto &l[label] emptytrash [spēlētājs]&r&a, lai iztīrītu atkritni."
+    emptytrash:
+      parameters: "[spēlētājs]"
+      description: "iztīra atkritni no spēlētāja salām vai salām bez īpašnieka"
+    version:
+      description: "attaino BentoBox un papildinājumu versijas"
+    setrange:
+      parameters: "<spēlētājs> <distance>"
+      description: "uzstāda aizsardzības distanci spēlētāja salai"
+      range-updated: "Aizsardzības distance uzstādīta uz [number]"
+    reload:
+      description: "pārlādēt"
+    tp:
+      parameters: "<spēlētājs>"
+      description: "pārvietoto uz spēlētāja salu"
+      manual: "&cNeizdevās atrast drošu nosēšanās vietu! Pārvietojies manuāli ar tp blakus &b[location]&c, lai pārbaudītu iemeslu."
+    getrank:
+      parameters: "<spēlētājs>"
+      description: "atgriež spēlētāja rangu komandā"
+      rank-is: "&aSpēlētājam ir [rank] rangs uz viņa salas."
+    setrank:
+      parameters: "<spēlētājs> <rangs>"
+      description: "uzstāda spēlētājam rangu uz viņa salas"
+      unknown-rank: "&cNezināms rangs!"
+      rank-set: "&aSpēlētājam nomainīts rangs no [from] uz [to]."
+    setspawn:
+      description: "uzstāda kā sākuma salu šajā pasaulē visiem spēlētājiem"
+      already-spawn: "&cŠī sala jau ir uzstādīta kā sākuma sala!"
+      no-island-here: "&cŠeit nav neveinas salas."
+      confirmation: "&cVai tiešām vēlies uzstādīt šo salu kā sākuma salu?"
+    schem:
+      parameters: "<load/copy/paste/pos1/pos2/save>"
+      description: "manipulē ar shēmām"
+      copy-first: "&cKopē shēmu sākumā!"
+      file-exists: "&cFails jau eksistē, vai pārrakstīt?"
+      no-such-file: "&cNav šāda faila!"
+      could-not-load: "&cNeizdevās ielādēt šo failu!"
+      could-not-save: "&cHmm, kaut kas nogāja greizi saglabājot failu: [message]"
+      set-pos1: "&aPozīcija 1 uzstādīta uz [vector]"
+      set-pos2: "&aPozīcija 2 uzstādīta uz [vector]"
+      set-different-pos: "&cUzstādi citu pozīciju - šī jau ir uzstādīta!"
+      need-pos1-pos2: "&cUzstādi pos1 un pos2 sākumā!"
+      copied-blocks: "&bNokopēti [number] bloki iekš starpliktuves."
+      look-at-a-block: "&cSkaties uz bloku nevariāk kā 20 bloku attālumā, lai uzstādītu."
+      copy:
+        parameters: "[air]"
+        description: "kopē starpliktuvi no pos1 uz pos2 un arī ar AIR blokiem, ja prasīts"
+      load:
+        parameters: "<shēmas nosaukums>"
+        description: "ielādē shēmu starpliktuvē"
+      list:
+        description: "attaino visas pieejamās shēmas"
+        no-schems: "&cNav shēmas iekš schems mapītes!"
+        available-schems: "&aŠīs shēmas ir pieejamas ielādei:"
+      origin:
+        description: "uzstāda shēmas sākuma punktu tavā pozīcijā"
+      paste:
+        description: "ielīmē starpieliktuvi šajā pozīcijā"
+        pasting: "&aIelīmē..."
+      pos1:
+        description: "uzstāda pirmo stūri priekš kuboīda iekš starpieliktuves"
+      pos2:
+        description: "uzstāda otro stūri priekš kuboīda iekš starpieliktuves"
+      save:
+        parameters: "<shēmas nosaukums>"
+        description: "saglabā kopēto shēmu no starpieliktuves"
+    resetflags:
+      description: "Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml"
+    world:
+      description: "Pārvaldīt pasaules iestatījumus"
+    delete:
+      parameters: "<spēlētājs>"
+      description: "izdzēš spēlētāja salu"
+      cannot-delete-owner: "&cVisi spēlētāja komandas biedriem ir jābūt izmestiem no komandas pirms salas dzēšanas."
+      deleted-island: "&aSala ar centru &e[xyz] &atika veiksmīgi dzēsta."
+    why:
+      parameters: "<spēlētājs>"
+      description:  "ieslēdz/izslēdz kļūdu atrašanas paziņojumus konsulē"
+      turning-on: "Ieslēdz kļūdu atrašanas ziņojumus priekš [name]."
+      turning-off: "Izslēdz kļūdu atrašanas ziņojumus priekš [name]."
+    deaths:
+      description: "maina nāvju skaitu spēlētājam"
+      reset:
+        description: "uzstāda nāvju skaitu spēlētājam uz 0"
+        parameters: "<spēlētājs>"
+        success: "&aSpēlētājam &b[name]&a nāvju skaits uzstādīts uz &b0&a."
+      set:
+        description: "maina nāvju skaitu spēlētājam"
+        parameters: "<spēlētājs> <nāves>"
+        success: "&aSpēlētājam &b[name]&a nāvju skaits uzstādīts uz &b[number]&a."
+  bentobox:
+    description: "BentoBox admina komandas"
+    about:
+      description: "parādīt autortiesības un licenses informāciju"
+    reload:
+      description: "parādīt iestatījumu, papildinājumus (ja atbalstīts) un valodas"
+      locales-reloaded: "&2Valodas faili pārlādēti."
+      addons-reloaded: "&2Papildinājumu pārlādēti."
+      settings-reloaded: "&2Iestatījumi pārlādēti."
+    version:
+      plugin-version: "&2BentoBox versija: &3[version]"
+      description: "parādīt BentoBox un papildinājumu versijas"
+      loaded-addons: "Ielādētie Papildinājumi:"
+      loaded-game-worlds: "Ielādētās spēles pasaules:"
+      addon-syntax: "&2[name] &3[version]" 
+      game-worlds: "&2[name] &3([addon])"
+      server: "&2Darbojas uz &3[name] [version]&2."
+    manage:
+      description: "parādīt pārvaldīšanas paneli"
+    catalog:
+      description: "parādīt papildinājumu katalogu"
+  confirmation:
+    confirm: "&cIevadi komandu atkārtoti &b[seconds]s&c laikā, lai apstiprinātu."
+    previous-request-cancelled: "&6Iepriekšējais apstiprinājumu pieprasījums ir apturēts."
+    request-cancelled: "&cApstiprinājuma noilgums - &bpieprasījums apturēts."
+  island:
+    about:
+      description: "Par šo režīmu"
+    go:
+      parameters: "[mājas numurs]"
+      description: "pārvieto tevi uz tavu salu"
+      teleport: "&aTu tiec pārvietots uz savu salu."
+      teleported: "&aEsi pārvietots uz savu salu &e#[number]."
+      tip: "&bRaksti /[label] help &apēc palīdzības."
+    help:
+      description: "Galvenā salas komanda"
+      pick-world: "&cNorādai pasauli no [worlds]"
+    spawn:
+      description: "pārvieto tevi uz sākumu"
+      teleporting: "&aTu tiec pārvietots uz sākumu."
+      no-spawn: "&cŠai pasaulei nav sākums."
+    create:
+      description: "izveido salu, ar iespēju izmantot shēmas (nepieciešamas atļaujas)"
+      parameters: "<shēma>"
+      too-many-islands: "&cŠajā pasaulē ir sasniegts salu limits. Tavai salai nav vietas."
+      unable-create-island: "&cNeizdevās izveidot tavu salu, ziņo par kļūdu administratoram."
+      creating-island: "&aTiek veidota tava sala. Uzgaidi mirklīti..."
+      pick-world: "&cIzvēkies pasauli no [worlds]."
+      unknown-schem: "&cŠī shēma nav ielādēta vai tā neeksistē."
+    info:
+      description: "parāda informāciju par tavu vai spēlētāja salu"
+      parameters: "<spēlētājs>"
+    reset:
+      description: "pārstartē salu vai izdzēš iepriekšējo"
+      parameters: "<shēma>"
+      must-remove-members: "&cTev nepieciešams izmest visus spēlētājus no komandas pirms vari pārstartēt salu (/island team kick <spēlētājs>)."
+      none-left: "&cTu esi sasniedzis restartu limitu!"
+      resets-left: "&cTev palikuši [number] restarti"
+    sethome:
+      description: "uzstāda teleportācijas mājas punktu"
+      must-be-on-your-island: "&cTev nepieciešams būt uz savas salas!"
+      num-homes: "&cMājas var būt no 1 līdz [number]."
+      home-set: "&6Tavas salas mājas punkts uzstādīts šajā punktā."
+      nether:
+        not-allowed: "&cTev nav atļaujas uzstādīt mājas punktu Ellē."
+        confirmation: "&cVai tiešām vēlies uzstādīt mājas punktu Ellē?"
+      the-end:
+        not-allowed: "&cTev nav atļaujas uzstādīt mājas punktu Beigās."
+        confirmation: "&cVai tiešām vēlies uzstādīt mājas punktu Beigās?"
+      parameters: "[mājas numurs]"
+    setname:
+      description: "uzstāda nosaukumu tavai salai"
+      name-too-short: "&cPārāk īss. Minimālais izmērs ir [number] simboli."
+      name-too-long: "&cPārāk garšs. Maksimālais izmērs ir [number] simboli."
+      parameters: "<nosaukums>"
+    resetname:
+      description: "noņemt salas nosaukumu"
+    team:
+      description: "pārvaldīt savu komandu"
+      info:
+        description: "parādīt detalizētu informāciju par tavu komandu"
+      coop:
+        description: "uzstādīt spēlētājam sabiedrotā rangu"
+        parameters: "<spēlētājs>"
+        cannot-coop-yourself: "&cTu nevari uzlikt sev šo rangu!"
+        already-has-rank: "&cSpēlētājam jau ir šis rangs!"
+        you-are-a-coop-member: "&2Tu esi uzstādīts kā sabiedrotajs spēlētājam [name]"
+      uncoop:
+        description: "noņemt spēlētājam sabiedrotā rangu"
+        parameters: "<spēlētājs>"
+        cannot-coop-yourself: "&cTu nevari noņemt sev šo rangu!"
+        cannot-uncoop-member: "&cTu nevari noņemt šo rangu komandas spēlētājam!"
+        player-not-cooped: "&cSpēlētājs nav tavs sabiedrotais!"
+        you-are-no-longer-a-coop-member: "&cTu vairs neesi sabiedrotais [name] salā."
+        all-members-logged-off: "&cVisi salas spēlētāji ir izgājuši, tā ka tu vairs neesi sabiedrotais [name] salā."
+      trust:
+        description: "uzstādīt spēlētājam uzticams rangu"
+        parameters: "<spēlētājs>"
+        trust-in-yourself: "&cTu jau sev esi uzticams!"
+        members-trusted: "&cKomandas biedriem jau ir šis rangs!"
+        player-already-trusted: "&cSpēlētājam jau ir šis rangs!"
+        you-are-trusted: "&2Spēlētājs [name] tev uzticas!"
+      untrust:
+        description: "noņemt spēlētājam uzticams rangu"
+        parameters: "<spēlētājs>"
+        cannot-untrust-yourself: "&cTu nevari noņemt sev šo rangu!"
+        cannot-untrust-member: "&cTu nevari noņemt šo rangu komandas spēlētājam!"
+        player-not-trusted: "&cSpēlētājam nav šis rangs!"
+        you-are-no-longer-trusted: "&cSpēlētājs [name] vairs tev neuzticas!"
+      invite:
+        description: "uzaicini spēlētāju pievienoties tavai salai"
+        invitation-sent: "&aIelūgums nosūtīts [name]"
+        removing-invite: "&cIelūgumu atsauc"
+        name-has-invited-you: "&a[name] ielūdza tevi pievienoties viņa komandai."
+        to-accept-or-reject: "&aRaksti /[label] team accept, lai pievienotos komandai vai /[label] team reject, lai noraidītu ielūgumu"
+        you-will-lose-your-island: "&cUZMANĪBU! Tava sala tiks iznīcināta, ja pievienosies komandai!"
+        errors:
+          cannot-invite-self: "&cTu nevari ielūgt pats sevi!"
+          cooldown: "&cTu nevari sūtīt ielūgumu šim spēlētājam vēl [number] sekundes"
+          island-is-full: "&cTava komanda ir pilna, tu vairs nevari ielūgt jaunus spēlētājus."
+          none-invited-you: "&cNeviens tevi nav ielūdzis :c."
+          you-already-are-in-team: "&cTu jau esi komandā!"
+          already-on-team: "&cŠis spēlētājs jau ir tavā komandā!"
+          invalid-invite: "&cAtvaino, bet ielūgums vairāk nav derīgs!"
+        parameters: "<spēlētājs>"
+        you-can-invite: "&aTu vari ielūgt vēl [number] spēlētājus."
+        accept:
+          description: "akceptēt ielūgumu"
+          you-joined-island: "&aTu pievienojies komandai! Raksti /[label] team info, lai redzētu savus komandas biedrus."
+          name-joined-your-island: "&a[name] pievienojās tavai komandai!"
+          confirmation: |-
+            &cVai tiešām vēlies akceptēt šo ielūgumu?
+            &c&lTava sala tiks iznīcināta!
+        reject:
+          description: "noraidīt ielūgumu"
+          you-rejected-invite: "&aTu noraidīji ielūgumu pievienoties komandai."
+          name-rejected-your-invite: "&c[name] noraidīja ielūgumu pievienoties komandai!"
+        cancel:
+          description: "atcelt nosūtītos ielūgumus"
+      leave:
+        cannot-leave: "&cĪpašnieks nevar pamest komandu! Nodod salu citam vai izmet visus no komandas."
+        description: "pamest savu komandu"
+        left-your-island: "&c[name] &cpameta tavu komandu!"
+      kick:
+        description: "izmest spēlētāju no tavas salas"
+        parameters: "<spēlētājs>"
+        owner-kicked: "&cSalas īpašnieks izmeta tevi no salas!"
+        cannot-kick: "&cTu nevari izmest pats sevi!"
+        success: "&b[name] &atika izmests no šīs salas."
+      demote:
+        description: "samazina spēlētāja komandas rangu"
+        parameters: "<spēlētājs>"
+        failure: "&cSpēlētājs jau sasniedzis zemāko rangu!"
+        success: "&aSpēlētājs [name] tika pazemināts uz [rank]"
+      promote:
+        description: "paaugstina spēlētāja komandas rangu"
+        parameters: "<spēlētājs>"
+        failure: "&cSpēlētājs jau sasniedzis augstāko rangu!"
+        success: "&aSpēlētājs [name] tika paaugstināts līdz [rank]"
+      setowner:
+        description: "nodod salu citam komandas spēlētājam"
+        errors:
+          cant-transfer-to-yourself: "&cTu nevari atdot salu sev! &7(&oPēc idejas, tu vari, bet mēs nevēlamies darīt nejēdzīgas lietas.&r&7)"
+          target-is-not-member: "&cŠis spēlētājs nav tavā komandā!"
+        name-is-the-owner: "&a[name] tagad ir salas īpašnieks!"
+        parameters: "<spēlētājs>"
+        you-are-the-owner: "&aTu tagad esi šīs salas īpašnieks!"
+    ban:
+      description: "liegt spēlētājam atrasties uz tavas salas"
+      parameters: "<spēlētājs>"
+      cannot-ban-yourself: "&cTu nevari liegt atrasties uz salas pats sev!"
+      cannot-ban: "&cTu nevari liegt šim spēlētājam atrasties uz salas."
+      cannot-ban-member: "&cIzmet spēlētāju no komandas un tikai tad tu varēsi viņam liegt šeit atrasties."
+      cannot-ban-more-players: "&cTu esi sasniedzis liegumu skaita limitu. Tu vairs nevienam neko liegt nevari."
+      player-already-banned: "&cSpēlētājam jau ir liegums atrasties uz salas."
+      player-banned: "&b[name]&c tika liegts atrasties uz tavas salas."
+      owner-banned-you: "&b[name]&c tev liedza atrasties uz viņa salas!"
+      you-are-banned: "&bTev ir liegts atrasties uz šīs salas!"
+    unban:
+      description: "noņemt liegumu spēlētājam būt uz tavas salas"
+      parameters: "<spēlētājs>"
+      cannot-unban-yourself: "&cTu nevari noņemt liegumu pats sev!"
+      player-not-banned: "&cSpēlētājam nav lieguma atrasties uz salas."
+      player-unbanned: "&b[name]&a ir noņemts liegums būt uz tavas salas."
+      you-are-unbanned: "&b[name]&a noņēma liegumu atrasties uz viņa salas!"
+    banlist:
+      description: "saraksts ar spēlētājiem, kam liegts atrasties uz salas"
+      noone: "&aSaraksts ir tukšs."
+      the-following: "&bSekojošajiem spēlētājiem ir liegums atrasties uz salas:"
+      names: "&c[line]"
+      you-can-ban: "&bTev vēl ir iespēja liegt &e[number] &bspēlētājiem atrasties uz tavas salas."
+    settings:
+      description: "attaino salas iestatījumus"
+    language:
+      description: "valodu izvēle"
+    expel:
+      description: "izraida spēlētāju no salas"
+      parameters: "<spēlētājs>"
+      cannot-expel-yourself: "&cTu nevari izraidīt pats sevi!"
+      cannot-expel: "&cŠis spēlētājs nevar tikt izraidīts."
+      cannot-ban-member: "&cTu nevari izraidīt komandas biedrus!"
+      not-on-island: "&cŠis spēlētājs nav uz tavas salas!"
+      player-expelled-you: "&b[name]&c izraidīja tevi no salas!"
+
+ranks:
+  owner: "Īpašnieks"
+  sub-owner: "Apakšīpašnieks"
+  member: "Biedrs"
+  trusted: "Uzticams"
+  coop: "Sabiedrotais"
+  visitor: "Apmeklētājs"
+  banned: "Aizliegtais"
+  admin: "Administrators"
+  mod: "Moderators"
+  
+protection:
+  command-is-banned: "Command is banned for visitors"
+  flags:
+    ANIMAL_SPAWN: 
+      description: "Toggle spawning"
+      name: "Animal spawning"
+    ANVIL: 
+      description: "Toggle interaction"
+      name: "Anvils"
+      hint: "Anvil use disabled"
+    ARMOR_STAND: 
+      description: "Toggle interaction"
+      name: "Armor stands"
+      hint: "Armor stand use disabled"
+    BEACON: 
+      description: "Toggle interaction"
+      name: "Beacons"
+      hint: "Beacon use disabled"
+    BED: 
+      description: "Toggle interaction"
+      name: "Beds"
+      hint: "Bed use disabled"
+    BOAT:
+      name: "Boats"
+      description: "Toggle boats interactions"
+      hint: "No boat interaction allowed"
+    BREAK_BLOCKS: 
+      description: "Toggle breaking"
+      name: "Break blocks"
+      hint: "Block breaking disabled"
+    BREEDING: 
+      description: "Toggle breeding"
+      name: "Breed animals"
+      hint: "Animal breeding protected"
+    BREWING: 
+      description: "Toggle interaction"
+      name: "Brewing stands"
+      hint: "No brewing allowed"
+    BUCKET: 
+      description: "Toggle interaction"
+      name: "Buckets"
+      hint: "No bucket use allowed"
+    BUTTON: 
+      description: "Toggle button use"
+      name: "Buttons"
+      hint: "No button use allowed"
+    CONTAINER:
+      name: "Containers"
+      description: |-
+        &aToggle interaction with chests,
+        &ashulker boxes and flower pots.
+
+        &7Other containers are handled
+        &7by dedicated flags.
+      hint: "Container access disabled"
+    DISPENSER:
+      name: "Dispensers"
+      description: "Toggle dispenser interaction"
+      hint: "Dispenser interaction disabled"
+    DROPPER:
+      name: "Droppers"
+      description: "Toggle dropper interaction"
+      hint: "Dropper interaction disabled"
+    HOPPER:
+      name: "Hoppers"
+      description: "Toggle hopper interaction"
+      hint: "Hopper interaction disabled"
+    CHEST_DAMAGE:
+      description: "Toggle chest damage from explosions"
+      name: "Chest Damage"
+    CHORUS_FRUIT: 
+      description: "Toggle teleportation"
+      name: "Chorus fruits"
+      hint: "No teleporting"
+    CLEAN_SUPER_FLAT:
+      description: |-
+          &aEnable to clean any
+          &asuper-flat chunks in
+          &aisland worlds
+      name: "Clean Super Flat"
+    COARSE_DIRT_TILLING:
+      description: |-
+          &aToggle tilling coarse
+          &adirt and breaking podzol
+          &ato obtain dirt
+      name: "Coarse dirt tilling"
+      hint: "No coarse dirt tilling"
+    COLLECT_LAVA: 
+      description: |-
+          &aToggle collecting lava
+          &a(override Buckets)
+      name: "Collect lava"
+      hint: "No lava collection"
+    COLLECT_WATER: 
+      description: |-
+          &aToggle collecting water
+          &a(override Buckets)
+      name: "Collect water"
+      hint: "No water collection"
+    COMMAND_RANKS:
+      name: "&eCommand Ranks"
+      description: "&aConfigure command ranks"
+    CRAFTING: 
+      description: "Toggle use"
+      name: "Workbenches"
+      hint: "No workbench use"
+    CREEPER_DAMAGE:
+      description: "Toggle creeper damage"
+      name: "Creeper damage"
+    CREEPER_GRIEFING:
+      description: "Toggle creeper griefing"
+      name: "Creeper griefing"
+      hint: "No creeper griefing allowed"
+    CROP_TRAMPLE: 
+      description: "Toggle crop trampling"
+      name: "Trample crops"
+      hint: "Crops are protected"
+    DOOR: 
+      description: "Toggle door usage"
+      name: "Use doors"
+      hint: "No door use"
+    DRAGON_EGG:
+      name: "Dragon Egg"
+      description: |-
+        &aPrevents interaction with Dragon Eggs.
+
+        &cThis does not protect it from being
+        &cplaced or broken.
+      hint: "No Dragon Egg interaction"
+    EGGS: 
+      description: "Toggle egg throwing"
+      name: "Egg throwing"
+      hint: "No egg throwing"
+    ELYTRA: 
+      description: "Toggle use on island"
+      name: "Elytra"
+      hint: "No elytra flying allowed"
+    ENCHANTING: 
+      description: "Toggle use"
+      name: "Enchanting table"
+      hint: "No table use"
+    ENDER_CHEST:
+      description: "Toggle use/crafting"
+      name: "Ender Chests"
+      hint: "Ender chests are disabled in this world"
+    ENDERMAN_DEATH_DROP: 
+      description: |-
+         &aEndermen will drop
+         &aany block they are
+         &aholding if killed.
+      name: "Enderman Death Drop"
+    ENDERMAN_GRIEFING: 
+      description: |-
+         &aEndermen can remove
+         &ablocks from islands
+      name: "Enderman griefing"
+    ENDER_PEARL: 
+      description: "Toggle use"
+      name: "EnderPearls"
+      hint: "No enderpearl use"
+    ENTER_EXIT_MESSAGES: 
+      description: "Display entry and exit messages"
+      island: "[name]'s island"
+      name: "Enter/Exit messages"
+      now-entering: "&bNow entering [name]"
+      now-leaving: "&bNow leaving [name]"
+    EXPERIENCE_BOTTLE_THROWING:
+      name: "Experience bottle throwing"
+      description: "Toggle throwing experience bottles."
+      hint: "Not allowed to throw experience bottles"
+    FIRE_BURNING:
+      name: "Fire burning"
+      description: |-
+        &aToggle whether fire can burn
+        &ablocks or not.
+    FIRE_EXTINGUISH: 
+      description: "Toggle extinguishing fires"
+      name: "Fire extinguish"
+      hint: "No fire extinguishing allowed"
+    FIRE_IGNITE:
+      name: "Fire ignition"
+      description: |-
+        &aToggle whether fire can be ignited
+        &aby non-player means or not.
+    FIRE_SPREAD:
+      name: "Fire spread"
+      description: |-
+        &aToggle whether fire can spread
+        &ato nearby blocks or not.
+    FISH_SCOOPING:
+      name: "Fish Scooping"
+      description: "Allow scooping of fishes using a bucket"
+      hint: "No scooping of fishes"
+    FLINT_AND_STEEL:
+      name: "Flint and steel"
+      description: |-
+        &aAllow players to ignite fires using
+        &aflint and steel or fire charges.
+      hint: "No flint and steel or fire charges usage"
+    FURNACE: 
+      description: "Toggle use"
+      name: "Furnace"
+      hint: "No furnace use"
+    GATE: 
+      description: "Toggle use"
+      name: "Gates"
+      hint: "No gate use"
+    GEO_LIMIT_MOBS: 
+      description: |-
+         &aRemove mobs that go
+         &aoutside protected
+         &aisland space
+      name: "&eLimit mobs to island"
+    HURT_ANIMALS: 
+      description: "Toggle hurting"
+      name: "Hurt animals"
+      hint: "No animal hurting allowed"
+    HURT_MONSTERS: 
+      description: "Toggle hurting"
+      name: "Hurt monsters"
+      hint: "No monster hurting"
+    HURT_VILLAGERS: 
+      description: "Toggle hurting"
+      name: "Hurt villagers"
+      hint: "No villager hurting"
+    ITEM_FRAME:
+      name: "Item Frame"
+      description: "Toggle interaction"
+      hint: "Item Frame use disabled"
+    ITEM_FRAME_DAMAGE:
+      description: |-
+          &aMobs can damage
+          &aitem frames
+      name: "Item Frame Damage"
+    INVINCIBLE_VISITORS: 
+      description: |-
+          &aConfigure invincible visitor
+          &asettings.
+      name: "&eInvincible Visitors"
+      hint: "&cVisitors protected"
+    ISLAND_RESPAWN:
+      description: |-
+        &aPlayers respawn
+        &aon island
+      name: "Island respawn"
+    ITEM_DROP: 
+      description: "Toggle dropping"
+      name: "Item drop"
+      hint: "Items cannot be dropped"
+    ITEM_PICKUP: 
+      description: "Toggle pickup"
+      name: "Item pickup"
+      hint: "Items cannot be picked up"
+    JUKEBOX:
+      description: "Toggle usage"
+      name: "Jukebox use"
+      hint: "No jukebox use allowed"
+    LEAF_DECAY:
+      name: "Leaf decay"
+      description: "Allow leaves to naturally decay"
+    LEASH: 
+      description: "Toggle use"
+      name: "Leash use"
+    LEVER:
+      description: "Toggle use"
+      name: "Lever use"
+      hint: "No lever use"
+    LIQUIDS_FLOWING_OUT:
+      name: "Liquids flowing outside islands"
+      description: |-
+        &aToggle whether liquids can flow outside
+        &aof the island's protection range.
+        &aDisabling it helps avoiding lava and water
+        &agenerating cobblestone in the area between
+        &atwo islands.
+
+        &cNote that liquids will still flow vertically.
+        &cThey will also not spread horizontally if
+        &cthey are placed outside an island's
+        &cprotection range.
+    LOCK: 
+      description: "Toggle lock"
+      name: "Lock island"
+    MILKING: 
+      description: "Toggle cow milking"
+      name: "Milking"
+      hint: "No milking allowed"
+    MINECART:
+      name: "Minecarts"
+      description: "Toggle minecart interactions"
+      hint: "No minecart interaction allowed"
+    MONSTER_SPAWN: 
+      description: "Toggle spawning"
+      name: "Monster spawning"
+    MOUNT_INVENTORY: 
+      description: |-
+        &aToggle access
+        &ato mount inventory
+      name: "Mount inventory"
+      hint: "No access to mount inventory"
+    NAME_TAG:
+      name: "Name tags"
+      description: "Toggle use"
+      hint: "No name tags use"
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: "Natural creature spawning outside range"
+      description: |-
+        &aToggle whether creatures (animals and
+        &amonsters) can spawn naturally outside
+        &aan island's protection range.
+
+        &cNote that it doesn't prevent creatures
+        &cto spawn via a mob spawner or a spawn
+        &cegg.
+    NOTE_BLOCK: 
+      description: "Toggle use"
+      name: "Note block"
+      hint: "No note block use"
+    OBSIDIAN_SCOOPING:
+      name: "Obsidian scooping"
+      description: | 
+        &aToggle scooping
+        &aAllow obsidian to be scooped up
+        &awith an empty bucket back into lava.
+        &aProtects newbies. Reduces resets.
+    OFFLINE_GROWTH:
+      description: |-
+        &aWhen disabled, plants
+        &awill not grow on islands
+        &awhere all members are offline.
+        &aMay help reduce lag.
+      name: "Offline Growth"
+    OFFLINE_REDSTONE:
+      description: |-
+          &aWhen disabled, redstone
+          &awill not operate on islands
+          &awhere all members are offline.
+          &aMay help reduce lag.
+      name: "Offline Redstone"
+    PISTON_PUSH: 
+      description: |-
+          &aAllow pistons to push
+          &ablocks outside island
+      name: "Piston Push"
+    PLACE_BLOCKS: 
+      description: "Toggle placing"
+      name: "Place blocks"
+      hint: "Not allowed to place blocks"
+    POTION_THROWING:
+      name: "Potion throwing"
+      description: |-
+        &aToggle throwing potions.
+        &aThis include splash and lingering potions.
+      hint: "Not allowed to throw potions"
+    NETHER_PORTAL:
+      description: "Toggle use"
+      name: "Nether Portal"
+      hint: "Portal use is disallowed"
+    END_PORTAL:
+      description: "Toggle use"
+      name: "End Portal"
+      hint: "Portal use is disallowed"
+    PRESSURE_PLATE: 
+      description: "Toggle usage"
+      name: "Pressure Plates"
+      hint: "No pressure plate use"
+    PVP_END: 
+      description: |-
+          &cEnable/Disable PVP
+          &cin the End.
+      name: "End PVP"
+      hint: "No PVP allowed in the End"
+    PVP_NETHER: 
+      description: |-
+          &cEnable/Disable PVP
+          &cin the Nether.
+      name: "Nether PVP"
+      hint: "No PVP allowed in the Nether"
+    PVP_OVERWORLD: 
+      description: |-
+          &cEnable/Disable PVP
+          &con island.
+      name: "Overworld PVP"
+      hint: "&cPVP is not allowed"
+      active: "&cPVP is active here!"
+    REDSTONE: 
+      description: "Toggle use"
+      name: "Redstone items"
+      hint: "No redstone item use"
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &aPrevents the end exit
+        &aisland from generating
+        &aat coordinates 0,0
+      name: "Remove end exit island"
+    REMOVE_MOBS: 
+      description: |-
+        &aRemove monsters when
+        &ateleporting to island
+      name: "Remove monsters"
+    RIDING: 
+      description: "Toggle riding"
+      name: "Animal riding"
+      hint: "No animal riding allowed"
+    SHEARING: 
+      description: "Toggle shearing"
+      name: "Shearing"
+      hint: "No shearing"
+    SPAWN_EGGS: 
+      description: "Toggle use"
+      name: "Spawn eggs"
+      hint: "No throwing spawn eggs"
+    TNT:
+      description: "Toggle TNT damage"
+      name: "TNT damage"
+    TRADING: 
+      description: "Toggle trading"
+      name: "Villager trading"
+      hint: "No villager trading"
+    TRAPDOOR:
+      description: "Toggle access"
+      name: "Trap doors"
+      hint: "No trapdoor use"
+    TREES_GROWING_OUTSIDE_RANGE:
+      name: "Trees growing outside range"
+      description: |-
+        &aToggle whether trees can grow outside an
+        &aisland's protection range or not.
+        &aNot only will it prevent saplings placed
+        &aoutside an island's protection range from
+        &agrowing, but it will also block generation
+        &aof leaves/logs outside of the island, thus
+        &acutting the tree.
+    TURTLE_EGGS:
+      description: "Toggle crushing"
+      name: "Turtle Eggs"
+      hint: "Turtle eggs cannot be crushed!"
+    FROST_WALKER:
+      description: "Toggle Frost Walker enchantment"
+      name: "Frost Walker"
+      hint: "Frost Walker cannot be used here"
+    EXPERIENCE_PICKUP:
+      name: "Experience pickup"
+      description: "Toggle experience orb pickup"
+      hint: "cannot pickup experience orb"
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: "Prevent teleport when falling"
+      description: |-
+        &aPrevent players from teleporting
+        &aback to their island using commands
+        &aif they are falling.
+      hint: "&cYou cannot teleport back to your island while you are falling."
+  locked: "&cThis island is locked!"
+  protected: "&cIsland protected: [description]"
+  spawn-protected: "&cSpawn protected: [description]"
+
+  panel:
+    next: "Nākošā Lapa"
+    previous: "Iepriekšējā Lapa"
+    PROTECTION:
+      title: "&6Aizsardzība"
+      description: |-
+        &aAizsardzības iestatījumi
+        &apriekš šis salas
+    SETTING:
+      title: "&6Iestatījumi"
+      description: |-
+        &aĢenerālie iestatījumi
+        &apriekš šīs salas
+    WORLD_SETTING:
+      title: "&b[world_name] &6Iestatījumi"
+      description: "&aSpēles režīma iestatījumi"
+    flag-item:
+      name-layout: "&a[name]"
+      description-layout: |
+        &a[description]
+
+        &7Atļauts priekš:
+      allowed-rank: "&3- &a"
+      blocked-rank: "&3- &c"
+      minimal-rank: "&3- &2"
+      menu-layout: "&a[description]"
+      setting-layout: |
+        &a[description]
+        
+        &7Šībrīža iestatījumi: [setting]
+      setting-active: "&aActive"
+      setting-disabled: "&cDisabled"
+
+language:
+  panel-title: "Izvēlies valodu"
+  selected: "&aŠobrīd izvēlēta."
+  edited: "&aValoda nomainīta uz &e[lang]&a."
+
+management:
+  panel:
+    title: "BentoBox Pārvaldīšana"
+    views:
+      gamemodes:
+        name: "&6Spēles režīmi"
+        description: "&eUzspied&a, lai redzētu uzstādītos spēles režīmus."
+        schems:
+          name: "&6Shēmas"
+          description: "&aAtver admina shēmu izvēlni."
+      addons:
+        name: "&6Papildinājumi"
+        description: "&eUzspied&a, lai redzētu uzstādītos spēles papildinājumus."
+      hooks:
+        name: "&6Iestapinājumi"
+        description: "&eUzspied&a, lai redzētu uzstādītos iestapinājumus."
+    actions:
+      check-updates:
+        name: "&6Pārbaudīt atjauninājumus"
+        description: "&eUzspied&a, lai pārbaudītu vai ir pieejami atjauninājumi."
+      reload:
+        name: "&cPārlādēt"
+        description: "&eUzspied &c&ldivreiz&r&a, lai pārlādētu BentoBox"
+    buttons:
+      catalog:
+        name: "&6Papildinājumu katalogs"
+        description: "&aAtvērt papildinājumu katalogu"
+      empty-here:
+        name: "&bŠis izskatās tukšs..."
+        description: "&aKā būtu, ja tu apskatītu katalogu?"
+    information:
+      state:
+        name: "&6Saderība"
+        description:
+          COMPATIBLE: |+
+            &aPalaista &e[name] [version]&a.
+
+            &aBentoBox šobrīd strādā ar
+            &a&lSADERĪGU &r&aservera
+            &aprogrammatūru un versiju.
+
+            &aVisas funkcionalitātes tika radītas
+            &atieši šai videi.
+          SUPPORTED: |+
+            &aPalaista &e[name] [version]&a.
+
+            &aBentoBox šobrīd strādā ar
+            &a&lATBALSTĪTU &r&aservera
+            &aprogrammatūru un versiju.
+
+
+            &aLielākā daļa funkcionalitātes strādās
+            &abez problēmām šajā vidē.
+          NOT_SUPPORTED: |+
+            &aPalaista &e[name] [version]&a.
+
+            &aBentoBox šobrīd strādā ar
+            &6&lNEATBALSTĪTU &r&aservera
+            &aprogrammatūru vai versiju.
+
+            &aKamēr lielākā daļa funkcionalitātes strādās
+            &abez problēmām, platformas specifiskas
+            &aproblēmas var rasties.
+          INCOMPATIBLE: |+
+            &aPalaista &e[name] [version]&a.
+
+            &aBentoBox šobrīd strādā ar
+            &c&lNESADERĪGU &r&aservera
+            &aprogrammatūru vai versiju.
+
+            &cDīvaina uzvedība un kļūdas ir sagaidāmas un
+            &clielākā daļa funkcionalitātes ir nestabilas.
+
+catalog:
+  panel:
+    GAMEMODES:
+      title: "Spēles Režīmu Katalogs"
+    ADDONS:
+      title: "Papildinājumu Katalogs"
+    views:
+      gamemodes:
+        name: "&6Spēles režīmi"
+        description: |+
+          &eUzspied&a, lai pārskatītu
+          &apieejamos officiālos spēles
+          &arežīmus.
+      addons:
+        name: "&6Papildinājumi"
+        description: |+
+          &eUzspied&a, lai pārskatītu
+          &apieejamos officiālos spēles
+          &apapildinājumus.
+    icon:
+      description-template: |+
+        &8[topic]
+        &a[install]
+
+        &7&o[description]
+
+        &eUzspied&a, lai iegūtu saiti
+        &auz jaunāko versiju.
+      already-installed: "Jau uzstādīts!"
+      install-now: "Uzstādīt tagad!"
+
+    empty-here:
+      name: "&bŠis izskatās tukšs..."
+      description: |+
+        &cBentoBox nevarēja sazināties ar GitHub.
+
+        &aAtļauj BentoBox savienoties ar GitHub
+        &auzstādījumos vai arī mēģini vēlāk.
+
+successfully-loaded: |
+
+  &6  ____             _        ____
+  &6 |  _ \           | |      |  _ \             &7veidoja &atastybento &7un &aPoslovitch
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2019
+  &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version]
+  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8Ielādēts &e[time]&8ms.
+  &6                                              &7Tulkoja &aBONNe1704
