@@ -799,7 +799,7 @@ public class IslandsManager {
         if (world == null || island.getCenter() == null || !plugin.getIWM().inWorld(world)) {
             return;
         }
-        int distance = island.getRange() * 2;
+        int distance = plugin.getIWM().getIslandDistance(island.getWorld()) * 2;
         long x = ((long) island.getCenter().getBlockX()) - plugin.getIWM().getIslandXOffset(world);
         long z = ((long) island.getCenter().getBlockZ()) - plugin.getIWM().getIslandZOffset(world);
         if (x % distance != 0 || z % distance != 0) {
