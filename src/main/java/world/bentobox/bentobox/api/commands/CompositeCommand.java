@@ -24,7 +24,6 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.command.CommandEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -135,10 +134,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         setDescription(COMMANDS + label + ".description");
         setParametersHelp(COMMANDS + label + ".parameters");
         permissionPrefix = (addon != null) ? addon.getPermissionPrefix() : "";
-        // Set up world if this is an AddonGameMode
-        if (addon instanceof GameModeAddon) {
-            setWorld(((GameModeAddon)addon).getOverWorld());
-        }
+
         // Run setup
         setup();
         if (!getSubCommand("help").isPresent() && !label.equals("help")) {
@@ -190,8 +186,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         setUsage("");
         // Inherit permission prefix
         this.permissionPrefix = parent.getPermissionPrefix();
-        // Inherit world
-        this.world = parent.getWorld();
 
         // Default references to description and parameters
         StringBuilder reference = new StringBuilder();
@@ -649,7 +643,8 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return the world
      */
     public World getWorld() {
-        return world;
+        // Search up the tree until the world at the top is found
+        return parent != null ? parent.getWorld() : world;
     }
 
     /**

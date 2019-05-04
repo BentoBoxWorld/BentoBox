@@ -42,12 +42,14 @@ public class AddonsManager {
     @NonNull
     private final Map<String, Class<?>> classes;
     private BentoBox plugin;
+    private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
 
     public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
         loaders = new HashMap<>();
         classes = new HashMap<>();
+        worldNames = new HashMap<>();
     }
 
     /**
@@ -107,17 +109,12 @@ public class AddonsManager {
         try {
             // Run the onLoad.
             addon.onLoad();
-            // If this is a GameModeAddon create the worlds, register it and load the schems
+            // if game mode, get the world name and generate
             if (addon instanceof GameModeAddon) {
                 GameModeAddon gameMode = (GameModeAddon) addon;
-                // Create the gameWorlds
-                gameMode.createWorlds();
-                plugin.getIWM().addGameMode(gameMode);
-                // Register the schems
-                plugin.getSchemsManager().loadIslands(gameMode);
-
-                plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
-                plugin.getBlueprintsManager().loadBlueprints(gameMode);
+                if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
+                    worldNames.put(gameMode.getWorldSettings().getWorldName(), gameMode);
+                }
             }
             // Addon successfully loaded
             addon.setState(Addon.State.LOADED);
@@ -139,7 +136,25 @@ public class AddonsManager {
 
             getLoadedAddons().forEach(addon -> {
                 try {
+                    // If this is a GameModeAddon create the worlds, register it and load the schems
+                    if (addon instanceof GameModeAddon) {
+                        GameModeAddon gameMode = (GameModeAddon) addon;
+                        // Create the gameWorlds
+                        gameMode.createWorlds();
+                        plugin.getIWM().addGameMode(gameMode);
+                        // Register the schems
+                        plugin.getSchemsManager().loadIslands(gameMode);
+
+                        plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
+                        plugin.getBlueprintsManager().loadBlueprints(gameMode);
+                    }
                     addon.onEnable();
+                    if (addon instanceof GameModeAddon) {
+                        GameModeAddon gameMode = (GameModeAddon) addon;
+                        // Set the worlds for the commands
+                        gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
+                        gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
+                    }
                     Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
                     addon.setState(Addon.State.ENABLED);
                     plugin.log("Enabling " + addon.getDescription().getName() + "...");
@@ -361,6 +376,11 @@ public class AddonsManager {
      */
     @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
-        return getGameModeAddons().stream().filter(gm -> gm.inWorld(Bukkit.getWorld(worldName))).findFirst().map(gm -> gm.getDefaultWorldGenerator(worldName, id)).orElse(null);
+        // Clean up world name
+        String w = worldName.replace("_nether", "").replace("_the_end", "");
+        if (worldNames.containsKey(w)) {
+            return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
+        }
+        return null;
     }
 }

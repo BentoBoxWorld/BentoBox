@@ -1,5 +1,15 @@
 package world.bentobox.bentobox.api.addons;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.Listener;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
+import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.PlayersManager;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,17 +19,6 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
-
-import org.bukkit.Bukkit;
-import org.bukkit.Server;
-import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.Listener;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
-import world.bentobox.bentobox.managers.IslandsManager;
-import world.bentobox.bentobox.managers.PlayersManager;
 
 /**
  * Add-on class for BentoBox. Extend this to create an add-on. The operation
@@ -44,6 +43,9 @@ public abstract class Addon {
     /**
      * Executes code when enabling the addon.
      * This is called after {@link #onLoad()}.
+     * <br/>
+     * Note that commands and worlds registration <b>must</b> be done in {@link #onLoad()}, if need be.
+     * Failure to do so <b>will</b> result in issues such as tab-completion not working for commands.
      */
     public abstract void onEnable();
 
@@ -55,7 +57,7 @@ public abstract class Addon {
     /**
      * Executes code when loading the addon.
      * This is called before {@link #onEnable()}.
-     * This should preferably be used to setup configuration and worlds.
+     * This <b>must</b> be used to setup configuration, worlds and commands.
      */
     public void onLoad() {}
 
