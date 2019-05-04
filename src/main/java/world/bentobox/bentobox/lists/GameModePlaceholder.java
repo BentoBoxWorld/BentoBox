@@ -19,10 +19,10 @@ public enum GameModePlaceholder {
     WORLD_ISLANDS("world_islands", (addon, user, island) -> String.valueOf(addon.getIslands().getIslandCount(addon.getOverWorld()))),
 
     /* Island-related */
-    ISLAND_DISTANCE("island_distance", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
-    ISLAND_PROTECTION_RANGE("island_protection_range", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
+    ISLAND_DISTANCE("island_distance", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
+    ISLAND_PROTECTION_RANGE("island_protection_range", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
     ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
-    ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
+    ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
     ISLAND_SPAWNPOINT("island_spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
     ISLAND_NAME("island_name", (addon, user, island) -> island == null ? "" : (island.getName() == null ? "" : island.getName())),
     /**
