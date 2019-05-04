@@ -2,7 +2,6 @@ package world.bentobox.bentobox.api.flags.clicklisteners;
 
 import org.bukkit.Sound;
 import org.bukkit.event.inventory.ClickType;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -109,6 +108,8 @@ public class CycleClick implements PanelItem.ClickHandler {
                 panel.getInventory().setItem(slot, flag.toPanelItem(plugin, user, invisible).getItem());
             });
         } else {
+            // Player is not the owner of the island.
+            user.getPlayer().sendMessage("general.errors.not-owner");
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }
         return true;

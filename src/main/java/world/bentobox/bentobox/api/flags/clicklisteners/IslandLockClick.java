@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.api.flags.clicklisteners;
 
 import world.bentobox.bentobox.api.events.island.IslandEvent;
