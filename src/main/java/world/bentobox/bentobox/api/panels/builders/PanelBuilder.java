@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.panels.builders;
 
+import org.bukkit.ChatColor;
 import java.util.TreeMap;
 
 import world.bentobox.bentobox.api.panels.Panel;
@@ -15,7 +16,7 @@ public class PanelBuilder {
     private PanelListener listener;
 
     public PanelBuilder name(String name) {
-        this.name = name;
+        this.name = ChatColor.translateAlternateColorCodes('&', name);
         return this;
     }
 

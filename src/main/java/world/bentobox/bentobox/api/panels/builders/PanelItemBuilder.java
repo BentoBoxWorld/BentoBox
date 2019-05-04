@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -44,7 +45,7 @@ public class PanelItemBuilder {
 
 
     public PanelItemBuilder name(String name) {
-        this.name = name;
+        this.name = ChatColor.translateAlternateColorCodes('&', name);
         return this;
     }
 
