@@ -141,9 +141,6 @@ public class AddonsManager {
                         GameModeAddon gameMode = (GameModeAddon) addon;
                         // Create the gameWorlds
                         gameMode.createWorlds();
-                        // Set the worlds for the commands
-                        gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
-                        gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
                         plugin.getIWM().addGameMode(gameMode);
                         // Register the schems
                         plugin.getSchemsManager().loadIslands(gameMode);
@@ -152,6 +149,12 @@ public class AddonsManager {
                         plugin.getBlueprintsManager().loadBlueprints(gameMode);
                     }
                     addon.onEnable();
+                    if (addon instanceof GameModeAddon) {
+                        GameModeAddon gameMode = (GameModeAddon) addon;
+                        // Set the worlds for the commands
+                        gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
+                        gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
+                    }
                     Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
                     addon.setState(Addon.State.ENABLED);
                     plugin.log("Enabling " + addon.getDescription().getName() + "...");
