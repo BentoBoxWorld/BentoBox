@@ -110,7 +110,7 @@ public class BentoBox extends JavaPlugin {
             return;
         }
         // Saving the config now.
-        new Config<>(this, Settings.class).saveConfigObject(settings);
+        saveConfig();
 
         // Start Database managers
         playersManager = new PlayersManager(this);
@@ -154,7 +154,7 @@ public class BentoBox extends JavaPlugin {
         addonsManager.loadAddons();
         // Enable addons
         addonsManager.enableAddons();
-        
+
         // Register default gamemode placeholders
         addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
 
@@ -331,6 +331,11 @@ public class BentoBox extends JavaPlugin {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public void saveConfig() {
+        if (settings != null) new Config<>(this, Settings.class).saveConfigObject(settings);
     }
 
     /**

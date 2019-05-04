@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
@@ -30,7 +30,7 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class CommandRankClickListener implements ClickHandler {
-    
+
     private BentoBox plugin = BentoBox.getInstance();
 
     /* (non-Javadoc)
@@ -107,7 +107,7 @@ public class CommandRankClickListener implements ClickHandler {
         List<String> result = new ArrayList<>();
         plugin.getCommandsManager().getCommands().values().stream()
         .filter(c -> c.getWorld() != null &&  c.getWorld().equals(world))
-        .forEach(c -> result.addAll(getCmdRecursively("/", c)));        
+        .forEach(c -> result.addAll(getCmdRecursively("/", c)));
         if (result.size() > 49) {
             Bukkit.getLogger().severe("Number of rank setting commands is too big for GUI");
             result.subList(49, result.size()).clear();
@@ -127,7 +127,7 @@ public class CommandRankClickListener implements ClickHandler {
         if (cc.isConfigurableRankCommand()) {
             result.add(newLabel);
         }
-        cc.getSubCommands().values().forEach(s -> result.addAll(getCmdRecursively(newLabel + " ", s)));     
+        cc.getSubCommands().values().forEach(s -> result.addAll(getCmdRecursively(newLabel + " ", s)));
         return result;
     }
 

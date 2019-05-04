@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
@@ -57,6 +57,9 @@ public class CommandCycleClick implements ClickHandler {
             }
             // Apply change to panel
             panel.getInventory().setItem(slot, commandRankClickListener.getPanelItem(command, user).getItem());
+            // Save config
+            plugin.saveConfig();
+
         } else {
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }

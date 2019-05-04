@@ -74,7 +74,7 @@ public class Settings implements DataObject {
     private Set<String> fakePlayers = new HashSet<>();
 
     @ConfigComment("Rank required to use a command. e.g., use the invite command. Default is owner rank is required.")
-    @ConfigEntry(path = "general.rank-command", experimental = true)
+    @ConfigEntry(path = "general.rank-command")
     private Map<String, Integer> rankCommand = new HashMap<>();
 
     @ConfigEntry(path = "panel.close-on-click-outside")
