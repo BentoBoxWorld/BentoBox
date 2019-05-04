@@ -152,13 +152,16 @@ public class BentoBox extends JavaPlugin {
         // Load addons. Addons may load worlds, so they must go before islands are loaded.
         addonsManager = new AddonsManager(this);
         addonsManager.loadAddons();
-        // Enable addons
-        addonsManager.enableAddons();
 
-        // Register default gamemode placeholders
-        addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
 
         getServer().getScheduler().runTask(instance, () -> {
+
+            // Enable addons
+            addonsManager.enableAddons();
+
+            // Register default gamemode placeholders
+            addonsManager.getGameModeAddons().forEach(placeholdersManager::registerDefaultPlaceholders);
+
             // Register Listeners
             registerListeners();
 
