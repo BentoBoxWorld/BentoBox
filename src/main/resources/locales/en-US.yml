@@ -302,6 +302,16 @@ commands:
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
+    near:
+      description: "show the name of neighboring islands around you"
+      parameters: ""
+      the-following-islands: "&aThe following islands are nearby:"
+      syntax: "&6[direction]: &a[name]"
+      north: North
+      south: South
+      east: East
+      west: West
+      no-neighbors: "&cYou have no immediate neighboring islands!"
     reset:
       description: "restart your island and remove the old one"
       parameters: "<schem>"
