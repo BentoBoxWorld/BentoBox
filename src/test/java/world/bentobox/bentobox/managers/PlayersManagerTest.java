@@ -43,6 +43,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.Database;
+import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Players;
 import world.bentobox.bentobox.util.Util;
 
@@ -90,6 +91,7 @@ public class PlayersManagerTest {
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
+        when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
 
         // Set up spawn
         Location netherSpawn = mock(Location.class);
