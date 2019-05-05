@@ -45,7 +45,7 @@ public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHan
 
         // excludeFieldsWithoutExposeAnnotation - this means that every field to be stored should use @Expose
         // enableComplexMapKeySerialization - forces GSON to use TypeAdapters even for Map keys
-        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization();
+        GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization().setPrettyPrinting();
         // Register adapters
         builder.registerTypeAdapter(Location.class, new LocationAdapter()) ;
         builder.registerTypeAdapter(World.class, new WorldAdapter());
