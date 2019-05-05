@@ -314,10 +314,7 @@ public class CycleClickTest {
 
     @Test
     public void testNotOwner() {
-        UUID u;
-        do {
-            u = UUID.randomUUID();
-        } while(u.equals(uuid));
+        UUID u = UUID.randomUUID();
 
         when(island.getOwner()).thenReturn(u);
         Mockito.verify(plugin, Mockito.never()).getRanksManager();
