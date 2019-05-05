@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.database;
 
+import java.util.Arrays;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
@@ -20,12 +22,17 @@ public interface DatabaseSetup {
      */
     static DatabaseSetup getDatabase() {
         BentoBox plugin = BentoBox.getInstance();
-        for(DatabaseType type : DatabaseType.values()){
-            if(type == plugin.getSettings().getDatabaseType()) {
-                return type.database;
-            }
+        /*
+         * @since 1.5.0
+         */
+        if (plugin.getSettings().getDatabaseType().equals(DatabaseType.YAML)) {
+            plugin.logWarning("YAML database type is deprecated and may not work with all addons.");
         }
-        return DatabaseType.YAML.database;
+        return Arrays.stream(DatabaseType.values())
+                .filter(plugin.getSettings().getDatabaseType()::equals)
+                .findFirst()
+                .map(t -> t.database)
+                .orElse(DatabaseType.JSON.database);
     }
 
     enum DatabaseType {
