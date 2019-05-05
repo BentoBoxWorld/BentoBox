@@ -197,8 +197,11 @@ commands:
       set-pos2: "&aPosition 2 set at [vector]"
       set-different-pos: "&cSet a different location - this pos is already set!"
       need-pos1-pos2: "&cSet pos1 and pos2 first!"
+      copying: "&bCopying blocks..."
       copied-blocks: "&bCopied [number] blocks to clipboard"
       look-at-a-block: "&cLook at block within 20 blocks to set"
+      mid-copy: "&cYou are mid-copy. Wait until the copy is done."
+      copied-percent: "&6Copied [number]%"
       copy:
         parameters: "[air]"
         description: "copy the clipboard set by pos1 and pos2 and optionally the air blocks"

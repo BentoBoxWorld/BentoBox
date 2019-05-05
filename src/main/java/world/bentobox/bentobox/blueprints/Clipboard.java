@@ -1,5 +1,13 @@
 package world.bentobox.bentobox.blueprints;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,17 +29,15 @@ import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Attachable;
 import org.bukkit.material.Colorable;
+import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.stream.Collectors;
 
 /**
  * @author tastybento
@@ -51,6 +57,11 @@ public class Clipboard {
     private @Nullable Location pos1;
     private @Nullable Location pos2;
     private @Nullable Location origin;
+    private BukkitTask copyTask;
+    private int count;
+    private boolean copying;
+    private int index;
+    private int lastPercentage;
 
     public Clipboard(String contents) throws InvalidConfigurationException {
         set(contents);
@@ -67,66 +78,101 @@ public class Clipboard {
     /**
      * Copy the blocks between pos1 and pos2 into the clipboard for a user.
      * This will erase any previously registered data from the clipboard.
+     * Copying is done async.
      * @param user - user
      * @return true if successful, false if pos1 or pos2 are undefined.
      */
     public boolean copy(User user, boolean copyAir) {
-        origin = origin == null ? user.getLocation() : origin;
-        try {
-            int count = copy(copyAir);
-            user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
-            return true;
-        } catch (Exception e) {
-            user.sendMessage(e.getMessage());
+        if (copying) {
+            user.sendMessage("commands.admin.schem.mid-copy");
             return false;
         }
-    }
-
-    /**
-     * Copy the blocks between pos1 and pos2 into the clipboard.
-     * This will erase any previously registered data from the clipboard.
-     * @return number of blocks copied
-     * @throws IOException - if pos1 or pos2 are undefined
-     */
-    public int copy(boolean copyAir) throws IOException {
+        origin = origin == null ? user.getLocation() : origin;
         if (pos1 == null || pos2 == null) {
-            throw new IOException("commands.admin.schem.need-pos1-pos2");
+            user.sendMessage("commands.admin.schem.need-pos1-pos2");
+            return false;
         }
+
+        user.sendMessage("commands.admin.schem.copying");
+
         // World
         World world = pos1.getWorld();
         // Clear the clipboard
         blockConfig = new YamlConfiguration();
 
-        int count = 0;
+        count = 0;
+        index = 0;
+        lastPercentage = 0;
         BoundingBox toCopy = BoundingBox.of(pos1, pos2);
-
-        for (int x = (int)toCopy.getMinX(); x <= toCopy.getMaxX(); x++) {
-            for (int y = (int)toCopy.getMinY(); y <= toCopy.getMaxY(); y++) {
-                for (int z = (int)toCopy.getMinZ(); z <= toCopy.getMaxZ(); z++) {
-                    Block block = world.getBlockAt(x, y, z);
-                    if (copyBlock(block, origin, copyAir, world.getLivingEntities().stream()
-                            .filter(Objects::nonNull)
-                            .filter(e -> !(e instanceof Player) && e.getLocation().getBlock().equals(block))
-                            .collect(Collectors.toList()))) {
-                        count ++;
-                    }
-                }
-            }
-        }
         blockConfig.set("size.xsize", toCopy.getWidthX());
         blockConfig.set("size.ysize", toCopy.getHeight());
         blockConfig.set("size.zsize", toCopy.getWidthZ());
-        return count;
+
+        BentoBox plugin = BentoBox.getInstance();
+
+        final int speed = plugin.getSettings().getPasteSpeed();
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            final List<Vector> vectorsToCopy = getVectors(toCopy);
+            copying = false;
+            copyTask = Bukkit.getScheduler().runTaskTimer(plugin, () -> {
+                if (copying) {
+                    return;
+                }
+                copying = true;
+                vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
+                    if (copyBlock(v.toLocation(world),
+                            origin,
+                            copyAir,
+                            world.getLivingEntities().stream()
+                            .filter(Objects::nonNull)
+                            .filter(e -> !(e instanceof Player) && e.getLocation().equals(v.toLocation(world)))
+                            .collect(Collectors.toList()))) {
+                        count++;
+                    }
+                });
+                index += speed;
+                int percent = (int)(index * 100 / (double)vectorsToCopy.size());
+                if (percent != lastPercentage && percent % 10 == 0) {
+                    user.sendMessage("commands.admin.schem.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
+                    lastPercentage = percent;
+                }
+                if (index > vectorsToCopy.size()) {
+                    copyTask.cancel();
+                    user.sendMessage("general.success");
+                    user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+                }
+                copying = false;
+            }, 0L, 1L);
+        });
+        return true;
     }
 
-    private boolean copyBlock(Block block, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
+    /**
+     * Get all the x,y,z coords that must be copied
+     * @param b - bounding box
+     * @return - list of vectors
+     */
+    private List<Vector> getVectors(BoundingBox b) {
+        List<Vector> r = new ArrayList<>();
+        for (int x = (int)b.getMinX(); x <= b.getMaxX(); x++) {
+            for (int y = (int)b.getMinY(); y <= b.getMaxY(); y++) {
+                for (int z = (int)b.getMinZ(); z <= b.getMaxZ(); z++) {
+                    r.add(new Vector(x,y,z));
+                }
+            }
+        }
+        return r;
+    }
+
+    private boolean copyBlock(Location l, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
+        Block block = l.getBlock();
         if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
         }
         // Create position
-        int x = block.getLocation().getBlockX() - copyOrigin.getBlockX();
-        int y = block.getLocation().getBlockY() - copyOrigin.getBlockY();
-        int z = block.getLocation().getBlockZ() - copyOrigin.getBlockZ();
+        int x = l.getBlockX() - copyOrigin.getBlockX();
+        int y = l.getBlockY() - copyOrigin.getBlockY();
+        int z = l.getBlockZ() - copyOrigin.getBlockZ();
         String pos = x + "," + y + "," + z;
 
         // Position defines the section
@@ -296,6 +342,12 @@ public class Clipboard {
      */
     public void setPos1(@Nullable Location pos1) {
         origin = null;
+        if (pos1.getBlockY() < 0) {
+            pos1.setY(0);
+        }
+        if (pos1.getBlockY() > 255) {
+            pos1.setY(255);
+        }
         this.pos1 = pos1;
     }
 
@@ -304,6 +356,12 @@ public class Clipboard {
      */
     public void setPos2(@Nullable Location pos2) {
         origin = null;
+        if (pos2.getBlockY() < 0) {
+            pos2.setY(0);
+        }
+        if (pos2.getBlockY() > 255) {
+            pos2.setY(255);
+        }
         this.pos2 = pos2;
     }
 
