@@ -7,7 +7,7 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
-import world.bentobox.bentobox.database.yaml2json.Yaml2JsonDatabase;
+import world.bentobox.bentobox.database.transitiondb.Yaml2JsonDatabase;
 
 /**
  * @author Poslovitch

@@ -77,6 +77,8 @@ public abstract class AbstractDatabaseHandler<T> {
         this.dataObject = type;
     }
 
+    protected AbstractDatabaseHandler() {}
+
     /**
      * Loads all the records in this table and returns a list of them
      * @return list of <T>
