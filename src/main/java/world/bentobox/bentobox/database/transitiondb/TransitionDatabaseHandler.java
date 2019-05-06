@@ -9,12 +9,11 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 
 /**
- * Class that creates a list of <T>s filled with values from the corresponding
- * database-table.
+ * Class that transitions from one database type to another
  *
  * @author tastybento
  *
- * @param <T> Handles flat files for Class <T>
+ * @param <T> Class <T> that is to be handled
  */
 
 public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
@@ -38,11 +37,11 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
-        // Try JSON first
+        // Try destination database first
         List<T> list = toHandler.loadObjects();
         if (list == null || list.isEmpty()) {
             list = fromHandler.loadObjects();
-            // If YAML has objects, then delete and save them as JSON
+            // If source database has objects, then delete and save them in the destination database
             if (list != null && !list.isEmpty()) {
                 for (T object : list) {
                     toHandler.saveObject(object);
@@ -58,12 +57,14 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public T loadObject(String uniqueId) throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
+        // Try destination database
         @Nullable
         T object = toHandler.loadObject(uniqueId);
         if (object == null) {
-            // Try YAML
+            // Try source database
             object = fromHandler.loadObject(uniqueId);
             if (object != null) {
+                // Save the object in the new database and delete it from the old one
                 toHandler.saveObject(object);
                 fromHandler.deleteObject(object);
             }
@@ -76,6 +77,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public boolean objectExists(String uniqueId) {
+        // True if this object is in either database
         return toHandler.objectExists(uniqueId) || fromHandler.objectExists(uniqueId);
     }
 
@@ -84,6 +86,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public void saveObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Save only in the destination database
         toHandler.saveObject(instance);
     }
 
@@ -92,6 +95,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public void deleteID(String uniqueId) {
+        // Delete in both databases if the object exists
         toHandler.deleteID(uniqueId);
         fromHandler.deleteID(uniqueId);
     }
@@ -101,6 +105,7 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public void deleteObject(T instance) throws IllegalAccessException, InvocationTargetException, IntrospectionException {
+        // Delete in both databases if the object exists
         toHandler.deleteObject(instance);
         fromHandler.deleteObject(instance);
     }
