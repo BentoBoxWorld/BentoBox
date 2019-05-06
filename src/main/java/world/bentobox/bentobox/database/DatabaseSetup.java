@@ -7,7 +7,7 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
-import world.bentobox.bentobox.database.yaml.YamlDatabase;
+import world.bentobox.bentobox.database.yaml2json.Yaml2JsonDatabase;
 
 /**
  * @author Poslovitch
@@ -22,12 +22,6 @@ public interface DatabaseSetup {
      */
     static DatabaseSetup getDatabase() {
         BentoBox plugin = BentoBox.getInstance();
-        /*
-         * @since 1.5.0
-         */
-        if (plugin.getSettings().getDatabaseType().equals(DatabaseType.YAML)) {
-            plugin.logWarning("YAML database type is deprecated and may not work with all addons.");
-        }
         return Arrays.stream(DatabaseType.values())
                 .filter(plugin.getSettings().getDatabaseType()::equals)
                 .findFirst()
@@ -36,7 +30,11 @@ public interface DatabaseSetup {
     }
 
     enum DatabaseType {
-        YAML(new YamlDatabase()),
+        /*
+         * Yaml now defaults to JSON
+         * @since 1.5.0
+         */
+        YAML(new Yaml2JsonDatabase()),
         JSON(new JSONDatabase()),
         MYSQL(new MySQLDatabase()),
         /**
