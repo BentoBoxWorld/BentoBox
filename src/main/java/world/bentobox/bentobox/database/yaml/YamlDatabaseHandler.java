@@ -249,6 +249,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
                 method.invoke(instance, setTo);
             } else {
                 plugin.logError("Default setting value will be used: " + propertyDescriptor.getReadMethod().invoke(instance));
+                plugin.logError(method.getName());
+                plugin.logError(propertyDescriptor.getReadMethod().getName());
+                plugin.logError(instance.toString());
             }
         }
     }
