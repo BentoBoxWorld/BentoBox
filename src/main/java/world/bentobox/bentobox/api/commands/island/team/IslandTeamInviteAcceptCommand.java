@@ -79,16 +79,16 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             Island island = getIslands().getIsland(getWorld(), playerUUID);
             // Get the team's island
             Island teamIsland = getIslands().getIsland(getWorld(), prospectiveOwnerUUID);
-            // Move player to team's island
-            User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
-            Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);
-            user.teleport(newHome);
             // Remove player as owner of the old island
             getIslands().removePlayer(getWorld(), playerUUID);
             // Remove money inventory etc. for leaving
             cleanPlayer(user);
             // Add the player as a team member of the new island
             getIslands().setJoinTeam(teamIsland, playerUUID);
+            //Move player to team's island
+            User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
+            Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);
+            user.teleport(newHome);
             // Set the player's home
             getPlayers().setHomeLocation(playerUUID, user.getLocation());
             // Delete the old island
@@ -132,5 +132,4 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
     }
-
 }
