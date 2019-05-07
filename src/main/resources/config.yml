@@ -11,12 +11,13 @@ general:
   # If there is no economy plugin present anyway, money will be automatically disabled.
   use-economy: true
   database:
-    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB. 
-    # JSON is a file-based database.
+    # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).
+    # Transition database options are YAML2JSON, YAML2MYSQL and JSON2MYSQL.
+    # Transition options enable migration from one database type to another.
+    # YAML and JSON are file-based databases.
     # MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
-    # /!\ BentoBox currently does not support changing this value mid-game. If you do need to change it, do a full reset of your databases and worlds.
     type: JSON
     host: localhost
     # Port 3306 is MySQL's default. Port 27017 is MongoDB's default.

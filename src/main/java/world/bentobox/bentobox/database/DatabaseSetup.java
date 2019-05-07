@@ -7,10 +7,13 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.yaml.YamlDatabase;
 import world.bentobox.bentobox.database.transitiondb.Yaml2JsonDatabase;
+import world.bentobox.bentobox.database.transitiondb.Json2MySQLDatabase;
+import world.bentobox.bentobox.database.transitiondb.Yaml2MySQLDatabase;
 
 /**
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  */
 public interface DatabaseSetup {
 
@@ -29,13 +32,28 @@ public interface DatabaseSetup {
                 .orElse(DatabaseType.JSON.database);
     }
 
+    /**
+     * Database types
+     *
+     */
     enum DatabaseType {
-        /*
-         * Yaml now defaults to JSON
+        YAML(new YamlDatabase()),
+        /**
+         * Transition database, from YAML to JSON
          * @since 1.5.0
          */
-        YAML(new Yaml2JsonDatabase()),
+        YAML2JSON(new Yaml2JsonDatabase()),
+        /**
+         * Transition database, from YAML to MySQL
+         * @since 1.5.0
+         */
+        YAML2MYSQL(new Yaml2MySQLDatabase()),
         JSON(new JSONDatabase()),
+        /**
+         * Transition database, from JSON to MySQL
+         * @since 1.5.0
+         */
+        JSON2MYSQL(new Json2MySQLDatabase()),
         MYSQL(new MySQLDatabase()),
         /**
          * @since 1.1
