@@ -85,7 +85,7 @@ public class BentoBox extends JavaPlugin {
 
     @Override
     public void onEnable(){
-        if (!ServerCompatibility.getInstance().checkCompatibility(this).isCanLaunch()) {
+        if (!ServerCompatibility.getInstance().checkCompatibility().isCanLaunch()) {
             // The server's most likely incompatible.
             // Show a warning
             logWarning("************ Disclaimer **************");
