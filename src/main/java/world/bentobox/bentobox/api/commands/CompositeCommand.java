@@ -686,7 +686,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @return true if cool down in place, false if not
      */
     protected boolean checkCooldown(User user, UUID targetUUID) {
-        if (!cooldowns.containsKey(user.getUniqueId()) || user.isOp() || user.hasPermission(getPermissionPrefix() + ".mod.bypasscooldowns")) {
+        if (!cooldowns.containsKey(user.getUniqueId()) || user.isOp() || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")) {
             return false;
         }
         cooldowns.putIfAbsent(user.getUniqueId(), new HashMap<>());
