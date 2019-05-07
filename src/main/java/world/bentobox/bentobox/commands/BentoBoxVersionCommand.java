@@ -31,8 +31,8 @@ public class BentoBoxVersionCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        ServerCompatibility.ServerSoftware serverSoftware = ServerCompatibility.getInstance().getServerSoftware(getPlugin().getServer());
-        ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion(getPlugin().getServer());
+        ServerCompatibility.ServerSoftware serverSoftware = ServerCompatibility.getInstance().getServerSoftware();
+        ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion();
 
         user.sendMessage("commands.bentobox.version.server",
                 TextVariables.NAME, serverSoftware != null ? serverSoftware.toString() : user.getTranslation("general.invalid"),
