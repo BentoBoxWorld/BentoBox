@@ -29,19 +29,29 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        this.askConfirmation(user, () -> {
-            // Reload settings
-            getPlugin().loadSettings();
-            user.sendMessage("commands.bentobox.reload.settings-reloaded");
+        if (args.isEmpty()) {
+            this.askConfirmation(user, () -> {
+                // Reload settings
+                getPlugin().loadSettings();
+                user.sendMessage("commands.bentobox.reload.settings-reloaded");
 
-            // Reload addons
-            getPlugin().getAddonsManager().reloadAddons();
-            user.sendMessage("commands.bentobox.reload.addons-reloaded");
+                // Reload addons
+                getPlugin().getAddonsManager().reloadAddons();
+                user.sendMessage("commands.bentobox.reload.addons-reloaded");
 
-            // Reload locales
-            getPlugin().getLocalesManager().reloadLanguages();
-            user.sendMessage("commands.bentobox.reload.locales-reloaded");
-        });
+                // Reload locales
+                getPlugin().getLocalesManager().reloadLanguages();
+                user.sendMessage("commands.bentobox.reload.locales-reloaded");
+            });
+        } else if (args.size() == 1) {
+            if (!getPlugin().getAddonsManager().getAddonByName(args.get(0)).isPresent()) {
+                user.sendRawMessage("Unknown addon");
+                return false;
+            }
+            this.askConfirmation(user, () -> getPlugin().getAddonsManager().getAddonByName(args.get(0)).ifPresent(getPlugin().getAddonsManager()::reloadAddon));
+        } else {
+            showHelp(this, user);
+        }
         return true;
     }
 }

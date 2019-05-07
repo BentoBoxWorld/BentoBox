@@ -189,12 +189,12 @@ public abstract class Addon {
     }
 
     /**
-     * Register a listener for this addon
+     * Register a listener for this addon. This MUST be used in order for the addon to be reloadable
      *
      * @param listener - listener
      */
     public void registerListener(Listener listener) {
-        Bukkit.getPluginManager().registerEvents(listener, BentoBox.getInstance());
+        BentoBox.getInstance().getAddonsManager().registerListener(this, listener);
     }
 
     /**

@@ -3,6 +3,8 @@ package world.bentobox.bentobox.managers;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.generator.ChunkGenerator;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -17,6 +19,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,12 +46,14 @@ public class AddonsManager {
     private final Map<String, Class<?>> classes;
     private BentoBox plugin;
     private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
+    private @NonNull Map<Addon, List<Listener>> listeners;
 
     public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         addons = new ArrayList<>();
         loaders = new HashMap<>();
         classes = new HashMap<>();
+        listeners = new HashMap<>();
         worldNames = new HashMap<>();
     }
 
@@ -101,6 +106,9 @@ public class AddonsManager {
         Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
 
         // Add it to the list of addons
+        if (addons.contains(addon)) {
+            addons.remove(addon);
+        }
         addons.add(addon);
 
         // Add to the list of loaders
@@ -133,40 +141,45 @@ public class AddonsManager {
     public void enableAddons() {
         if (!getLoadedAddons().isEmpty()) {
             plugin.log("Enabling addons...");
-
-            getLoadedAddons().forEach(addon -> {
-                try {
-                    // If this is a GameModeAddon create the worlds, register it and load the schems
-                    if (addon instanceof GameModeAddon) {
-                        GameModeAddon gameMode = (GameModeAddon) addon;
-                        // Create the gameWorlds
-                        gameMode.createWorlds();
-                        plugin.getIWM().addGameMode(gameMode);
-                        // Register the schems
-                        plugin.getSchemsManager().loadIslands(gameMode);
-
-                        plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
-                        plugin.getBlueprintsManager().loadBlueprints(gameMode);
-                    }
-                    addon.onEnable();
-                    if (addon instanceof GameModeAddon) {
-                        GameModeAddon gameMode = (GameModeAddon) addon;
-                        // Set the worlds for the commands
-                        gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
-                        gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
-                    }
-                    Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
-                    addon.setState(Addon.State.ENABLED);
-                    plugin.log("Enabling " + addon.getDescription().getName() + "...");
-                } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
-                    // Looks like the addon is incompatible, because it tries to refer to missing classes...
-                    handleAddonIncompatibility(addon);
-                } catch (Exception e) {
-                    // Unhandled exception. We'll give a bit of debug here.
-                    handleAddonError(addon, e);
-                }
-            });
+            getLoadedAddons().forEach(this::enableAddon);
             plugin.log("Addons successfully enabled.");
+        }
+    }
+
+    /**
+     * Enables an addon
+     * @param addon addon
+     */
+    private void enableAddon(Addon addon) {
+        try {
+            // If this is a GameModeAddon create the worlds, register it and load the schems
+            if (addon instanceof GameModeAddon) {
+                GameModeAddon gameMode = (GameModeAddon) addon;
+                // Create the gameWorlds
+                gameMode.createWorlds();
+                plugin.getIWM().addGameMode(gameMode);
+                // Register the schems
+                plugin.getSchemsManager().loadIslands(gameMode);
+
+                plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
+                plugin.getBlueprintsManager().loadBlueprints(gameMode);
+            }
+            addon.onEnable();
+            if (addon instanceof GameModeAddon) {
+                GameModeAddon gameMode = (GameModeAddon) addon;
+                // Set the worlds for the commands
+                gameMode.getPlayerCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
+                gameMode.getAdminCommand().ifPresent(c -> c.setWorld(gameMode.getOverWorld()));
+            }
+            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.ENABLE).build());
+            addon.setState(Addon.State.ENABLED);
+            plugin.log("Enabling " + addon.getDescription().getName() + "...");
+        } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
+            // Looks like the addon is incompatible, because it tries to refer to missing classes...
+            handleAddonIncompatibility(addon);
+        } catch (Exception e) {
+            // Unhandled exception. We'll give a bit of debug here.
+            handleAddonError(addon, e);
         }
     }
 
@@ -201,14 +214,19 @@ public class AddonsManager {
      * Reloads all the enabled addons
      */
     public void reloadAddons() {
-        if (!getEnabledAddons().isEmpty()) {
-            plugin.log("Reloading addons...");
-            getEnabledAddons().stream().filter(Addon::isEnabled).forEach(addon -> {
-                plugin.log("Reloading " + addon.getDescription().getName() + "...");
-                addon.onReload();
-            });
-            plugin.log("Addons successfully reloaded.");
-        }
+        disableAddons();
+        loadAddons();
+        enableAddons();
+    }
+
+    /**
+     * Reloads one addon
+     * @param addon - addon
+     */
+    public void reloadAddon(Addon addon) {
+        Path p = addon.getFile().toPath();
+        disable(addon);
+        loadAddon(p.toFile());
     }
 
     /**
@@ -218,7 +236,7 @@ public class AddonsManager {
      */
     @NonNull
     public Optional<Addon> getAddonByName(@NonNull String name){
-        return addons.stream().filter(a -> a.getDescription().getName().contains(name)).findFirst();
+        return addons.stream().filter(a -> a.getDescription().getName().equalsIgnoreCase(name)).findFirst();
     }
 
     @NonNull
@@ -243,23 +261,14 @@ public class AddonsManager {
         if (!getEnabledAddons().isEmpty()) {
             plugin.log("Disabling addons...");
             // Disable addons
-            getEnabledAddons().forEach(addon -> {
-                if (addon.isEnabled()) {
-                    addon.onDisable();
-                    Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
-                    plugin.log("Disabling " + addon.getDescription().getName() + "...");
-                }
-            });
-
-            loaders.values().forEach(l -> {
-                try {
-                    l.close();
-                } catch (IOException ignore) {
-                    // Ignore
-                }
-            });
+            getEnabledAddons().forEach(this::disable);
             plugin.log("Addons successfully disabled.");
         }
+        // Clear all maps
+        listeners.clear();
+        addons.clear();
+        loaders.clear();
+        classes.clear();
     }
 
     @NonNull
@@ -382,5 +391,42 @@ public class AddonsManager {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
         }
         return null;
+    }
+
+    /**
+     * Register a listener
+     * @param addon - the addon registering
+     * @param listener - listener
+     */
+    public void registerListener(Addon addon, Listener listener) {
+        Bukkit.getPluginManager().registerEvents(listener, BentoBox.getInstance());
+        listeners.computeIfAbsent(addon, k -> new ArrayList<>()).add(listener);
+    }
+
+    /**
+     * Disables an addon
+     * @param addon - addon
+     */
+    private void disable(Addon addon) {
+        // Clear listeners
+        if (listeners.containsKey(addon)) {
+            listeners.get(addon).forEach(HandlerList::unregisterAll);
+            listeners.remove(addon);
+        }
+        // Disable
+        if (addon.isEnabled()) {
+            addon.onDisable();
+            Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.DISABLE).build());
+            plugin.log("Disabling " + addon.getDescription().getName() + "...");
+        }
+        // Clear loaders
+        if (loaders.containsKey(addon)) {
+            try {
+                loaders.get(addon).close();
+            } catch (IOException ignore) {
+                // Nothing
+            }
+        }
+
     }
 }
