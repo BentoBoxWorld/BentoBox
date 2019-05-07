@@ -8,6 +8,7 @@ import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.versions.ServerCompatibility;
 
 /**
  * Protects against dying things.
@@ -17,11 +18,16 @@ import world.bentobox.bentobox.lists.Flags;
 public class DyeListener extends FlagListener {
 
 	/**
-	 * Prevent dying
+	 * Prevent dying signs.
 	 * @param e - event
 	 */
 	@EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
 	public void onPlayerInteract(final PlayerInteractEvent e) {
+		if (!ServerCompatibility.getInstance().isVersion(ServerCompatibility.ServerVersion.V1_14)) {
+			// We're disabling this check for non-1.14 servers.
+			return;
+		}
+
 		if (e.getClickedBlock() == null || e.getItem() == null) {
 			return;
 		}
