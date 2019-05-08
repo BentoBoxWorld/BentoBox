@@ -65,7 +65,8 @@ public class WebManager {
                 catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(gamemode.getAsJsonObject()));
                 catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(addon.getAsJsonObject()));
             } catch (Exception e) {
-                e.printStackTrace();
+                plugin.logError("An error occurred when downloading or parsing data from GitHub...");
+                plugin.logStacktrace(e);
             }
         });
     }
