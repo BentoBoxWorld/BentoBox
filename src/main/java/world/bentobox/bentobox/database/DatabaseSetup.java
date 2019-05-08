@@ -5,12 +5,12 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
-import world.bentobox.bentobox.database.transitiondb.Json2MariaDBDatabase;
-import world.bentobox.bentobox.database.transitiondb.Json2MySQLDatabase;
-import world.bentobox.bentobox.database.transitiondb.MySQL2JsonDatabase;
-import world.bentobox.bentobox.database.transitiondb.Yaml2JsonDatabase;
-import world.bentobox.bentobox.database.transitiondb.Yaml2MariaDBDatabase;
-import world.bentobox.bentobox.database.transitiondb.Yaml2MySQLDatabase;
+import world.bentobox.bentobox.database.transition.Json2MariaDBDatabase;
+import world.bentobox.bentobox.database.transition.Json2MySQLDatabase;
+import world.bentobox.bentobox.database.transition.MySQL2JsonDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2JsonDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MariaDBDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MySQLDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 import java.util.Arrays;

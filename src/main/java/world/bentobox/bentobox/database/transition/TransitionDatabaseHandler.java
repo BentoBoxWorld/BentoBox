@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.transitiondb;
+package world.bentobox.bentobox.database.transition;
 
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;

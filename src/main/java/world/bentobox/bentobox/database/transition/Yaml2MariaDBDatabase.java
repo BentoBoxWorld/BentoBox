@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.database.transitiondb;
+package world.bentobox.bentobox.database.transition;
 
 import world.bentobox.bentobox.database.AbstractDatabaseHandler;
 import world.bentobox.bentobox.database.DatabaseSetup;
