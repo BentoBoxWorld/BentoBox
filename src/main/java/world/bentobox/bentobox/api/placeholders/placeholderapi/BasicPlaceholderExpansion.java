@@ -1,15 +1,14 @@
 package world.bentobox.bentobox.api.placeholders.placeholderapi;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import org.bukkit.entity.Player;
-
 import me.clip.placeholderapi.expansion.PlaceholderExpansion;
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.user.User;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 /**
  * @author Poslovitch
@@ -58,5 +57,10 @@ abstract class BasicPlaceholderExpansion extends PlaceholderExpansion {
      */
     public boolean isPlaceholder(@NonNull String placeholder) {
     	return placeholders.containsKey(placeholder);
+    }
+
+    @Override
+    public boolean persist() {
+        return true;
     }
 }
