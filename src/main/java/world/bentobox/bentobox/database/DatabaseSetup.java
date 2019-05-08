@@ -7,10 +7,15 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
-import world.bentobox.bentobox.database.yaml.YamlDatabase;
-import world.bentobox.bentobox.database.transitiondb.Yaml2JsonDatabase;
 import world.bentobox.bentobox.database.transitiondb.Json2MySQLDatabase;
+import world.bentobox.bentobox.database.transitiondb.Json2YamlDatabase;
+import world.bentobox.bentobox.database.transitiondb.MySQL2JsonDatabase;
+import world.bentobox.bentobox.database.transitiondb.Yaml2JsonDatabase;
 import world.bentobox.bentobox.database.transitiondb.Yaml2MySQLDatabase;
+import world.bentobox.bentobox.database.transitiondb.Yaml2MariaDBDatabase;
+import world.bentobox.bentobox.database.transitiondb.MySQL2YamlDatabase;
+
+import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
 /**
  * @author Poslovitch, tastybento
@@ -48,18 +53,41 @@ public interface DatabaseSetup {
          * @since 1.5.0
          */
         YAML2MYSQL(new Yaml2MySQLDatabase()),
+        /**
+         * Transition database, from YAML to MySQL
+         * @since 1.5.0
+         */
+        YAML2MARIA(new Yaml2MariaDBDatabase()),
+
         JSON(new JSONDatabase()),
         /**
          * Transition database, from JSON to MySQL
          * @since 1.5.0
          */
         JSON2MYSQL(new Json2MySQLDatabase()),
+        /**
+         * Transition database, from JSON to MySQL
+         * @since 1.5.0
+         */
+        JSON2YAML(new Json2YamlDatabase()),
         MYSQL(new MySQLDatabase()),
+        /**
+         * Transition database, from MySQL to JSON
+         * @since 1.5.0
+         */
+        MYSQL2JSON(new MySQL2JsonDatabase()),
+        /**
+         * Transition database, from MySQL to YAML
+         * @since 1.5.0
+         */
+        MYSQL2YAML(new MySQL2YamlDatabase()),
         /**
          * @since 1.1
          */
         MARIADB(new MariaDBDatabase()),
+
         MONGODB(new MongoDBDatabase());
+
         DatabaseSetup database;
 
         DatabaseType(DatabaseSetup database){

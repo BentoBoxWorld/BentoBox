@@ -37,19 +37,17 @@ public class TransitionDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      */
     @Override
     public List<T> loadObjects() throws InstantiationException, IllegalAccessException, InvocationTargetException, ClassNotFoundException, IntrospectionException, NoSuchMethodException {
-        // Try destination database first
-        List<T> list = toHandler.loadObjects();
-        if (list == null || list.isEmpty()) {
-            list = fromHandler.loadObjects();
-            // If source database has objects, then delete and save them in the destination database
-            if (list != null && !list.isEmpty()) {
-                for (T object : list) {
-                    toHandler.saveObject(object);
-                    fromHandler.deleteObject(object);
-                }
-            }
+        // Load all objects from both databases
+        List<T> listFrom = fromHandler.loadObjects();
+        List<T> listTo = toHandler.loadObjects();
+        // If source database has objects, then delete and save them in the destination database
+        for (T object : listFrom) {
+            toHandler.saveObject(object);
+            fromHandler.deleteObject(object);
         }
-        return list;
+        // Merge results
+        listTo.addAll(listFrom);
+        return listTo;
     }
 
     /* (non-Javadoc)

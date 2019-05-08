@@ -16,7 +16,7 @@ import world.bentobox.bentobox.api.flags.Flag;
  * Depending on your implementation, you may need to add setters.
  * @author tastybento
  */
-public interface WorldSettings {
+public interface WorldSettings extends ConfigObject {
 
     /**
      * Get the default game mode for this game world, e.g. SURVIVAL

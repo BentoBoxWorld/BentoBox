@@ -1,16 +1,16 @@
 package world.bentobox.bentobox;
 
-import world.bentobox.bentobox.api.configuration.ConfigComment;
-import world.bentobox.bentobox.api.configuration.ConfigEntry;
-import world.bentobox.bentobox.api.configuration.StoreAt;
-import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
-import world.bentobox.bentobox.database.objects.DataObject;
-import world.bentobox.bentobox.managers.RanksManager;
-
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
+import world.bentobox.bentobox.api.configuration.ConfigComment;
+import world.bentobox.bentobox.api.configuration.ConfigEntry;
+import world.bentobox.bentobox.api.configuration.ConfigObject;
+import world.bentobox.bentobox.api.configuration.StoreAt;
+import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * All the plugin settings are here
@@ -21,7 +21,7 @@ import java.util.Set;
 @ConfigComment("This config file is dynamic and is updated right after BentoBox loaded its settings from it.")
 @ConfigComment("You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.")
 @ConfigComment("However, it is a better practice to edit this file while the server is offline.")
-public class Settings implements DataObject {
+public class Settings implements ConfigObject {
 
     // ---------------------------------------------
 
@@ -39,8 +39,12 @@ public class Settings implements DataObject {
 
     // Database
     @ConfigComment("JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).")
-    @ConfigComment("Transition database options are YAML2JSON, YAML2MYSQL and JSON2MYSQL.")
-    @ConfigComment("Transition options enable migration from one database type to another.")
+    @ConfigComment("Transition database options are:")
+    @ConfigComment("  YAML2JSON, YAML2MARIADB, YAML2MYSQL")
+    @ConfigComment("  JSON2YAML, JSON2MARIADB, JSON2MYSQL")
+    @ConfigComment("  MYSQL2JSON, MYSQL2YAML")
+    @ConfigComment("If you need others, make a feature request.")
+    @ConfigComment("Transition options enable migration from one database type to another. Use /bbox migrate.")
     @ConfigComment("YAML and JSON are file-based databases.")
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
@@ -191,10 +195,6 @@ public class Settings implements DataObject {
 
     @ConfigEntry(path = "web.updater.check-updates.addons", since = "1.3.0", hidden = true)
     private boolean checkAddonsUpdates = true;
-
-    //---------------------------------------------------------------------------------------/
-    @ConfigComment("These settings should not be edited")
-    private String uniqueId = "config";
 
     //---------------------------------------------------------------------------------------/
     // Getters and setters
@@ -435,22 +435,6 @@ public class Settings implements DataObject {
 
     public void setAutoOwnershipTransferIgnoreRanks(boolean autoOwnershipTransferIgnoreRanks) {
         this.autoOwnershipTransferIgnoreRanks = autoOwnershipTransferIgnoreRanks;
-    }
-
-    /**
-     * @return the uniqueId
-     */
-    @Override
-    public String getUniqueId() {
-        return uniqueId;
-    }
-
-    /**
-     * @param uniqueId the uniqueId to set
-     */
-    @Override
-    public void setUniqueId(String uniqueId) {
-        this.uniqueId = uniqueId;
     }
 
     public boolean isLogCleanSuperFlatChunks() {

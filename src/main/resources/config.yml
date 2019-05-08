@@ -12,9 +12,12 @@ general:
   use-economy: true
   database:
     # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).
-    # Transition database options are YAML2JSON, YAML2MYSQL and JSON2MYSQL.
-    # Transition options enable migration from one database type to another.
-    # YAML and JSON are file-based databases.
+    # Transition database options are:
+    #   YAML2JSON, YAML2MARIADB, YAML2MYSQL
+    #   JSON2YAML, JSON2MARIADB, JSON2MYSQL
+    #   MYSQL2JSON, MYSQL2YAML
+    # If you need others, make a feature request.
+    # Transition options enable migration from one database type to another. Use /bbox migrate.
     # MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
