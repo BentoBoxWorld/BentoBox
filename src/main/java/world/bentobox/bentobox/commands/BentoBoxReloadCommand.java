@@ -1,9 +1,13 @@
 package world.bentobox.bentobox.commands;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 
 /**
@@ -24,8 +28,10 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
     @Override
     public void setup() {
         setPermission("admin.reload");
+        setParametersHelp("commands.bentobox.reload.parameters");
         setDescription("commands.bentobox.reload.description");
     }
+
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
@@ -44,14 +50,24 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
                 user.sendMessage("commands.bentobox.reload.locales-reloaded");
             });
         } else if (args.size() == 1) {
-            if (!getPlugin().getAddonsManager().getAddonByName(args.get(0)).isPresent()) {
-                user.sendRawMessage("Unknown addon");
+            Optional<Addon> addon = getPlugin().getAddonsManager().getAddonByName(args.get(0));
+            if (!addon.isPresent()) {
+                user.sendMessage("commands.bentobox.reload.unknown-addon");
                 return false;
             }
-            this.askConfirmation(user, () -> getPlugin().getAddonsManager().getAddonByName(args.get(0)).ifPresent(getPlugin().getAddonsManager()::reloadAddon));
+
+            this.askConfirmation(user, () -> {
+                user.sendMessage("commands.bentobox.reload.addon", TextVariables.DESCRIPTION, args.get(0));
+                addon.ifPresent(getPlugin().getAddonsManager()::reloadAddon);
+            });
         } else {
             showHelp(this, user);
         }
         return true;
+    }
+
+    @Override
+    public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
+        return Optional.of(getPlugin().getAddonsManager().getAddons().stream().map(a -> a.getDescription().getName()).collect(Collectors.toList()));
     }
 }

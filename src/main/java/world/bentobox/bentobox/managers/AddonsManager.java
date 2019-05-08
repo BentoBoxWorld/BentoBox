@@ -227,6 +227,7 @@ public class AddonsManager {
         Path p = addon.getFile().toPath();
         disable(addon);
         loadAddon(p.toFile());
+        enableAddon(addon);
     }
 
     /**

@@ -26,6 +26,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -44,6 +45,8 @@ public class AddonTest {
     static BentoBox plugin;
     static JavaPlugin javaPlugin;
     private Server server;
+    @Mock
+    private AddonsManager am;
 
     @Before
     public void setUp() throws Exception {
@@ -63,6 +66,10 @@ public class AddonTest {
 
         plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
+
+        // Addons manager
+        when(plugin.getAddonsManager()).thenReturn(am);
+
 
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
@@ -150,6 +157,7 @@ public class AddonTest {
         TestListener listener = new TestListener();
         TestClass test = new TestClass();
         test.registerListener(listener);
+        Mockito.verify(am).registerListener(Mockito.any(), Mockito.eq(listener));
     }
 
     @Test
