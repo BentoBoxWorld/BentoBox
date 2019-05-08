@@ -92,7 +92,7 @@ public class ManagementPanel {
 
                     builder.item(startSlot + i, addonItem);
                     i++;
-                    if (builder.slotOccupied(i)) {
+                    if (builder.slotOccupied(startSlot + i)) {
                         i = i+2;
                     }
                 }
@@ -110,7 +110,7 @@ public class ManagementPanel {
 
                     builder.item(startSlot + i, hookItem);
                     i++;
-                    if (builder.slotOccupied(i)) {
+                    if (builder.slotOccupied(startSlot + i)) {
                         i = i+2;
                     }
                 }
@@ -205,9 +205,9 @@ public class ManagementPanel {
         builder.item(6, reloadItem);
 
         // BentoBox state icon
-        ServerCompatibility.Compatibility compatibility = ServerCompatibility.getInstance().checkCompatibility(BentoBox.getInstance());
-        ServerCompatibility.ServerSoftware serverSoftware = ServerCompatibility.getInstance().getServerSoftware(BentoBox.getInstance().getServer());
-        ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion(BentoBox.getInstance().getServer());
+        ServerCompatibility.Compatibility compatibility = ServerCompatibility.getInstance().checkCompatibility();
+        ServerCompatibility.ServerSoftware serverSoftware = ServerCompatibility.getInstance().getServerSoftware();
+        ServerCompatibility.ServerVersion serverVersion = ServerCompatibility.getInstance().getServerVersion();
 
         PanelItemBuilder compatibilityItemBuilder = new PanelItemBuilder()
                 .name(user.getTranslation(LOCALE_REF + "information.state.name"))

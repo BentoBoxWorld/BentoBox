@@ -13,7 +13,9 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonClassLoader;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.events.addon.AddonEvent;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -428,6 +430,20 @@ public class AddonsManager {
                 // Nothing
             }
         }
+    }
 
+    /*
+     * Get a list of addon classes that are of type {@link DataObject}
+     * but not {@link ConfigObject}. Configs are not transitioned to database.
+     * Used in database transition.
+     * @return list of DataObjects
+     * @since 1.5.0
+     */
+    public List<Class<?>> getDataObjects() {
+        return classes.values().stream()
+                .filter(DataObject.class::isAssignableFrom)
+                // Do not include config files
+                .filter(c -> !ConfigObject.class.isAssignableFrom(c))
+                .collect(Collectors.toList());
     }
 }

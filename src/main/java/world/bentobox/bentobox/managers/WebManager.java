@@ -41,7 +41,7 @@ public class WebManager {
                 plugin.getServer().getScheduler().runTaskLaterAsynchronously(plugin, () -> requestGitHubData(true), 20L);
             } else {
                 // Set connection interval to be at least 15 minutes.
-                connectionInterval = Math.min(connectionInterval, 15 * 20 * 60L);
+                connectionInterval = Math.max(connectionInterval, 15 * 20 * 60L);
                 plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, () -> requestGitHubData(true), 20L, connectionInterval);
             }
         }
@@ -65,7 +65,8 @@ public class WebManager {
                 catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(gamemode.getAsJsonObject()));
                 catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(addon.getAsJsonObject()));
             } catch (Exception e) {
-                e.printStackTrace();
+                plugin.logError("An error occurred when downloading or parsing data from GitHub...");
+                plugin.logStacktrace(e);
             }
         });
     }

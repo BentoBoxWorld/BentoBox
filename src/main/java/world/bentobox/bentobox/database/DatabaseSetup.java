@@ -5,10 +5,18 @@ import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.transition.Json2MariaDBDatabase;
+import world.bentobox.bentobox.database.transition.Json2MySQLDatabase;
+import world.bentobox.bentobox.database.transition.MySQL2JsonDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2JsonDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MariaDBDatabase;
+import world.bentobox.bentobox.database.transition.Yaml2MySQLDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
+import java.util.Arrays;
+
 /**
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  */
 public interface DatabaseSetup {
 
@@ -20,23 +28,60 @@ public interface DatabaseSetup {
      */
     static DatabaseSetup getDatabase() {
         BentoBox plugin = BentoBox.getInstance();
-        for(DatabaseType type : DatabaseType.values()){
-            if(type == plugin.getSettings().getDatabaseType()) {
-                return type.database;
-            }
-        }
-        return DatabaseType.YAML.database;
+        return Arrays.stream(DatabaseType.values())
+                .filter(plugin.getSettings().getDatabaseType()::equals)
+                .findFirst()
+                .map(t -> t.database)
+                .orElse(DatabaseType.JSON.database);
     }
 
+    /**
+     * Database types
+     *
+     */
     enum DatabaseType {
         YAML(new YamlDatabase()),
+        /**
+         * Transition database, from YAML to JSON
+         * @since 1.5.0
+         */
+        YAML2JSON(new Yaml2JsonDatabase()),
+        /**
+         * Transition database, from YAML to MySQL
+         * @since 1.5.0
+         */
+        YAML2MYSQL(new Yaml2MySQLDatabase()),
+        /**
+         * Transition database, from YAML to MySQL (MariaDB)
+         * @since 1.5.0
+         */
+        YAML2MARIADB(new Yaml2MariaDBDatabase()),
+
         JSON(new JSONDatabase()),
+        /**
+         * Transition database, from JSON to MySQL
+         * @since 1.5.0
+         */
+        JSON2MYSQL(new Json2MySQLDatabase()),
+        /**
+         * Transition database, from JSON to MySQL (MariaDB)
+         * @since 1.5.0
+         */
+        JSON2MARIADB(new Json2MariaDBDatabase()),
+
         MYSQL(new MySQLDatabase()),
+        /**
+         * Transition database, from MySQL to JSON
+         * @since 1.5.0
+         */
+        MYSQL2JSON(new MySQL2JsonDatabase()),
         /**
          * @since 1.1
          */
         MARIADB(new MariaDBDatabase()),
+
         MONGODB(new MongoDBDatabase());
+
         DatabaseSetup database;
 
         DatabaseType(DatabaseSetup database){

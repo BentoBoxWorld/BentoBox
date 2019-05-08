@@ -277,6 +277,14 @@ commands:
       see-console: |-
         &aCheck the console to see the feedback.
         &aThis command is so spammy that the feedback cannot be read from chat...
+    migrate:
+      description: "migrates data from one database to another"
+      players: "&6Migrating players"
+      names: "&6Migrating names"
+      addons: "&6Migrating addons"
+      class: "&6Migrating [description]"
+      migrated: "&AMigrated"
+      
   confirmation:
     confirm: "&cType command again within &b[seconds]s&c to confirm."
     previous-request-cancelled: "&6Previous confirmation request cancelled."
