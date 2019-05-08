@@ -10,7 +10,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-public class WorldAdapter extends TypeAdapter<World> {
+public class WorldTypeAdapter extends TypeAdapter<World> {
 
     @Override
     public void write(JsonWriter out, World value) throws IOException {

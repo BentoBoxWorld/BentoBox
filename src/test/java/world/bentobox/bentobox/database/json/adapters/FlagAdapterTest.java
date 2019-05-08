@@ -65,12 +65,12 @@ public class FlagAdapterTest {
 
     @Test
     public void testFlagAdapter() {
-        new FlagAdapter(plugin);
+        new FlagTypeAdapter(plugin);
     }
 
     @Test
     public void testWriteJsonWriterFlag() throws IOException {
-        FlagAdapter fa = new FlagAdapter(plugin);
+        FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonWriter out = mock(JsonWriter.class);
         Flag value = Flags.ANIMAL_SPAWN;
         fa.write(out, value);
@@ -79,7 +79,7 @@ public class FlagAdapterTest {
 
     @Test
     public void testWriteJsonWriterFlagNull() throws IOException {
-        FlagAdapter fa = new FlagAdapter(plugin);
+        FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonWriter out = mock(JsonWriter.class);
         Flag value = null;
         fa.write(out, value);
@@ -88,7 +88,7 @@ public class FlagAdapterTest {
 
     @Test
     public void testReadJsonReaderNull() throws IOException {
-        FlagAdapter fa = new FlagAdapter(plugin);
+        FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonReader reader = mock(JsonReader.class);
         Mockito.when(reader.peek()).thenReturn(JsonToken.NULL);
         Flag flag = fa.read(reader);
@@ -98,7 +98,7 @@ public class FlagAdapterTest {
 
     @Test
     public void testReadJsonReader() throws IOException {
-        FlagAdapter fa = new FlagAdapter(plugin);
+        FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonReader reader = mock(JsonReader.class);
         Mockito.when(reader.peek()).thenReturn(JsonToken.STRING);
         Mockito.when(reader.nextString()).thenReturn("ANIMAL_SPAWN");

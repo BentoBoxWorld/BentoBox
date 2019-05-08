@@ -10,11 +10,11 @@ import com.google.gson.stream.JsonWriter;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.flags.Flag;
 
-public class FlagAdapter extends TypeAdapter<Flag> {
+public class FlagTypeAdapter extends TypeAdapter<Flag> {
 
     private BentoBox plugin;
 
-    public FlagAdapter(BentoBox plugin) {
+    public FlagTypeAdapter(BentoBox plugin) {
         this.plugin = plugin;
     }
 

@@ -11,7 +11,7 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
-public class LocationAdapter extends TypeAdapter<Location> {
+public class LocationTypeAdapter extends TypeAdapter<Location> {
 
     @Override
     public void write(JsonWriter out, Location location) throws IOException {
