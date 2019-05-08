@@ -6,7 +6,7 @@ import world.bentobox.bentobox.database.objects.DataObject;
 /**
  * Config object for YAML objects
  * @author tastybento
- *
+ * @since 1.5.0
  */
 public interface ConfigObject extends DataObject {
 
@@ -18,7 +18,6 @@ public interface ConfigObject extends DataObject {
     /**
      * @return the uniqueId
      */
-
     @Override
     default String getUniqueId() {
         return "config";
@@ -29,5 +28,4 @@ public interface ConfigObject extends DataObject {
      */
     @Override
     default void setUniqueId(String uniqueId) {}
-
 }

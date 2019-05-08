@@ -5,6 +5,10 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
+/**
+ * @author tastybento
+ * @since 1.5.0
+ */
 public class Yaml2MariaDBDatabase implements DatabaseSetup {
 
     @Override

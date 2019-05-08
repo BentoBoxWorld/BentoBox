@@ -5,6 +5,10 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
 
+/**
+ * @author tastybento
+ * @since 1.5.0
+ */
 public class Yaml2MySQLDatabase implements DatabaseSetup {
 
     @Override

@@ -1,16 +1,16 @@
 package world.bentobox.bentobox;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 import world.bentobox.bentobox.api.configuration.ConfigComment;
 import world.bentobox.bentobox.api.configuration.ConfigEntry;
 import world.bentobox.bentobox.api.configuration.ConfigObject;
 import world.bentobox.bentobox.api.configuration.StoreAt;
 import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.managers.RanksManager;
+
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * All the plugin settings are here
@@ -41,15 +41,14 @@ public class Settings implements ConfigObject {
     @ConfigComment("JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).")
     @ConfigComment("Transition database options are:")
     @ConfigComment("  YAML2JSON, YAML2MARIADB, YAML2MYSQL")
-    @ConfigComment("  JSON2YAML, JSON2MARIADB, JSON2MYSQL")
-    @ConfigComment("  MYSQL2JSON, MYSQL2YAML")
-    @ConfigComment("If you need others, make a feature request.")
+    @ConfigComment("  JSON2MARIADB, JSON2MYSQL, MYSQL2JSON")
+    @ConfigComment("If you need others, please make a feature request.")
     @ConfigComment("Transition options enable migration from one database type to another. Use /bbox migrate.")
     @ConfigComment("YAML and JSON are file-based databases.")
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
     @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
-    @ConfigEntry(path = "general.database.type", needsReset = true)
+    @ConfigEntry(path = "general.database.type")
     private DatabaseType databaseType = DatabaseType.JSON;
 
     @ConfigEntry(path = "general.database.host")

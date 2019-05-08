@@ -1,18 +1,19 @@
 package world.bentobox.bentobox.database;
 
-import java.util.Arrays;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mariadb.MariaDBDatabase;
 import world.bentobox.bentobox.database.mongodb.MongoDBDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
+import world.bentobox.bentobox.database.transitiondb.Json2MariaDBDatabase;
 import world.bentobox.bentobox.database.transitiondb.Json2MySQLDatabase;
 import world.bentobox.bentobox.database.transitiondb.MySQL2JsonDatabase;
 import world.bentobox.bentobox.database.transitiondb.Yaml2JsonDatabase;
 import world.bentobox.bentobox.database.transitiondb.Yaml2MariaDBDatabase;
 import world.bentobox.bentobox.database.transitiondb.Yaml2MySQLDatabase;
 import world.bentobox.bentobox.database.yaml.YamlDatabase;
+
+import java.util.Arrays;
 
 /**
  * @author Poslovitch, tastybento
@@ -51,10 +52,10 @@ public interface DatabaseSetup {
          */
         YAML2MYSQL(new Yaml2MySQLDatabase()),
         /**
-         * Transition database, from YAML to MySQL
+         * Transition database, from YAML to MySQL (MariaDB)
          * @since 1.5.0
          */
-        YAML2MARIA(new Yaml2MariaDBDatabase()),
+        YAML2MARIADB(new Yaml2MariaDBDatabase()),
 
         JSON(new JSONDatabase()),
         /**
@@ -62,6 +63,11 @@ public interface DatabaseSetup {
          * @since 1.5.0
          */
         JSON2MYSQL(new Json2MySQLDatabase()),
+        /**
+         * Transition database, from JSON to MySQL (MariaDB)
+         * @since 1.5.0
+         */
+        JSON2MARIADB(new Json2MariaDBDatabase()),
 
         MYSQL(new MySQLDatabase()),
         /**

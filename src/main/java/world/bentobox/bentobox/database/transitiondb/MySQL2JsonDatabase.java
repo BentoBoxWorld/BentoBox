@@ -5,6 +5,10 @@ import world.bentobox.bentobox.database.DatabaseSetup;
 import world.bentobox.bentobox.database.json.JSONDatabase;
 import world.bentobox.bentobox.database.mysql.MySQLDatabase;
 
+/**
+ * @author tastybento
+ * @since 1.5.0
+ */
 public class MySQL2JsonDatabase implements DatabaseSetup {
 
     @Override
