@@ -139,7 +139,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
             // Obtain the file and delete it
             File file = new File(tableFolder, uniqueId);
             try {
-                Files.delete(file.toPath());
+                Files.deleteIfExists(file.toPath());
             } catch (IOException e) {
                 plugin.logError("Could not delete json database object! " + file.getName() + " - " + e.getMessage());
             }

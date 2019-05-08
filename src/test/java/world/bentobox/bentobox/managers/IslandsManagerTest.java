@@ -59,6 +59,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.events.island.IslandEvent.IslandDeleteEvent;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
 import world.bentobox.bentobox.managers.island.IslandCache;
@@ -104,6 +105,7 @@ public class IslandsManagerTest {
         // Settings
         Settings s = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(s);
+        when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
 
         // Player
         player = mock(Player.class);
@@ -363,13 +365,6 @@ public class IslandsManagerTest {
      */
     @Test
     public void testBigScan() {
-        Settings settings = mock(Settings.class);
-
-        when(plugin.getSettings()).thenReturn(settings);
-
-        IslandWorldManager iwm = mock(IslandWorldManager.class);
-        when(plugin.getIWM()).thenReturn(iwm);
-
         IslandsManager manager = new IslandsManager(plugin);
 
         Location location = mock(Location.class);
