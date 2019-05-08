@@ -652,6 +652,9 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
     }
 
     private void delete(String uniqueId) {
+        if (uniqueId == null) {
+            return;
+        }
         // The filename of the YAML file is the value of uniqueId field plus .yml. Sometimes the .yml is already appended.
         if (!uniqueId.endsWith(YML)) {
             uniqueId = uniqueId + YML;
