@@ -153,7 +153,7 @@ commands:
       description: "attaino salas ar vai bez īpašniekiem, kas atrodas atkritnē"
       title: "&d=========== Salas atkritnē ==========="
       count: "&l&dSala [number]:"
-      use-switch: "&aLieto &l[label] switchto [spēlētājs] <numurs>&r&a, lai pārslēgtos uz spēlētāja salu no atkritnes."
+      use-switch: "&aLieto &l[label] switchto [spēlētājs] <numurs>&r&a, lai Pārslēdzos uz spēlētāja salu no atkritnes."
       use-emptytrash: "&aLieto &l[label] emptytrash [spēlētājs]&r&a, lai iztīrītu atkritni."
     emptytrash:
       parameters: "[spēlētājs]"
@@ -220,6 +220,9 @@ commands:
       save:
         parameters: "<shēmas nosaukums>"
         description: "saglabā kopēto shēmu no starpieliktuves"
+      copying: '&bKopē blokus...'
+      mid-copy: '&cKopēšana vēl notiek. Pagaidi, kad tā beidzas.'
+      copied-percent: '&6Nokopēti [number]%'
     resetflags:
       description: "Atiestatī visu salu noklusējuma karodziņu iestatījumus no config.yml"
     world:
@@ -265,11 +268,26 @@ commands:
       description: "parādīt pārvaldīšanas paneli"
     catalog:
       description: "parādīt papildinājumu katalogu"
+    locale:
+      description: "veikt valodas faila analīzi"
+      see-console: |-
+        &aPārbaudi izdrukas, lai redzētu trūkstošos tulkojumus.
+        &aŠī komanda var atgiezt pārāk daudz teksta, lai to rādītu sarakstē... 
   confirmation:
     confirm: "&cIevadi komandu atkārtoti &b[seconds]s&c laikā, lai apstiprinātu."
     previous-request-cancelled: "&6Iepriekšējais apstiprinājumu pieprasījums ir apturēts."
     request-cancelled: "&cApstiprinājuma noilgums - &bpieprasījums apturēts."
   island:
+    near:
+      description: "Rāda salas īpašniekus, kas ir tev apkārt"
+      parameters: ""
+      the-following-islands: "&aSekojošās salas ir tev apkārt:"
+      syntax: "&6[direction]- &a[name]"
+      north: "Ziemeļos"
+      south: "Dienvidos"
+      east: "Austrumos"
+      west: "Rietumos"
+      no-neighbors: "&cTava salai blakus nav neviena sala ar īpašnieku!"
     about:
       description: "Par šo režīmu"
     go:
@@ -334,8 +352,9 @@ commands:
       uncoop:
         description: "noņemt spēlētājam sabiedrotā rangu"
         parameters: "<spēlētājs>"
-        cannot-coop-yourself: "&cTu nevari noņemt sev šo rangu!"
+        cannot-coop-yourself: "&cTu nevari uzlikt sev šo rangu!"
         cannot-uncoop-member: "&cTu nevari noņemt šo rangu komandas spēlētājam!"
+        cannot-uncoop-yourself: '&cTu nevari noņemt sev sabiedrotā rangu!'
         player-not-cooped: "&cSpēlētājs nav tavs sabiedrotais!"
         you-are-no-longer-a-coop-member: "&cTu vairs neesi sabiedrotais [name] salā."
         all-members-logged-off: "&cVisi salas spēlētāji ir izgājuši, tā ka tu vairs neesi sabiedrotais [name] salā."
@@ -460,49 +479,53 @@ ranks:
   mod: "Moderators"
   
 protection:
+  flags:
+
+  
+protection:
   command-is-banned: "Komanda nav atļauta apmeklētājiem"
   flags:
     ANIMAL_SPAWN: 
-      description: "Pārslēgt radīšanu"
+      description: "Pārslēdz radīšanu"
       name: "Dzīvnieku radīšana"
     ANVIL: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Laktas"
       hint: "Laktas lietošana atslēgta"
     ARMOR_STAND: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Bruņu statīvi"
       hint: "Bruņu statīva lietošana atslēgta"
     BEACON: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Signāluguņi"
       hint: "Signāluguņa lietošana atslēgta"
     BED: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Gultas"
       hint: "Gultas lietošana atslēgta"
     BOAT:
       name: "Laivas"
-      description: "Pārslēgt laivas izmantošanu"
+      description: "Pārslēdz laivas izmantošanu"
       hint: "Laivu lietošana atslēgta"
     BREAK_BLOCKS: 
-      description: "Pārslēgt plēšanu"
+      description: "Pārslēdz plēšanu"
       name: "Bloku plēšana"
       hint: "Bloku plēšana atslēgta"
     BREEDING: 
-      description: "Pārslēgt vairošanu"
+      description: "Pārslēdz vairošanu"
       name: "Dzīvnieku vairošana"
       hint: "Dzīvnieku vairošana ir aizsargāta"
     BREWING: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Brūvēšanas satīvi"
       hint: "Brūvēšana nav atļauta"
     BUCKET: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Spaiņi"
       hint: "Spaiņu lietošana nav atļauta"
     BUTTON: 
-      description: "Pārslēgt pogu izmantošanu"
+      description: "Pārslēdz pogu izmantošanu"
       name: "Pogas"
       hint: "Pogu spiešana nav atļauta"
     CONTAINER:
@@ -516,21 +539,25 @@ protection:
       hint: "Konteineru atvēršana nav atļauta"
     DISPENSER:
       name: "Izšāvēji"
-      description: "Pārslēgt izšāvēju izmantošanu"
+      description: "Pārslēdz izšāvēju izmantošanu"
       hint: "Izšāvēju lietošana nav atļauta"
+    DYE:
+      description: "Pārslēdz iespēju izmantot krāsas"
+      name: "Krāsu lietošana"
+      hint: "Krāsu lietošana šeit nav atļauta"
     DROPPER:
       name: "Izmetēji"
-      description: "Pārslēgt izmetēju izmantošanu"
+      description: "Pārslēdz izmetēju izmantošanu"
       hint: "Izmetēju lietošana nav atļauta"
     HOPPER:
       name: "Piltuves"
-      description: "Pārslēgt piltuvju izmantošanu"
+      description: "Pārslēdz piltuvju izmantošanu"
       hint: "Piltuvju lietošana nav atļauta"
     CHEST_DAMAGE:
-      description: "Pārslēgt lāžu bojāšanu no sprādzieniem"
+      description: "Pārslēdz lāžu bojāšanu no sprādzieniem"
       name: "Lāžu bojāšana"
     CHORUS_FRUIT: 
-      description: "Pārslēgt teleportāciju"
+      description: "Pārslēdz teleportāciju"
       name: "Kora augļi"
       hint: "Teleportācija nav atļauta"
     CLEAN_SUPER_FLAT:
@@ -541,7 +568,7 @@ protection:
       name: "Notīrīt plakanos gabalus"
     COARSE_DIRT_TILLING:
       description: |-
-          &aPārslēgt rupjās zemes
+          &aPārslēdz rupjās zemes
           &aapstrādāšanu un podzola
           &asaplēšanu, lai iegūtu
           &amelnzemi
@@ -549,13 +576,13 @@ protection:
       hint: "Rupjās zemes apstrādāšana nav atļauta"
     COLLECT_LAVA: 
       description: |-
-          &aPārslēgt lavas savākšanu
+          &aPārslēdz lavas savākšanu
           &a(pārraksta Spaiņu lietošanu)
       name: "Savākt lavu"
       hint: "Lavas savākšana nav atļauta"
     COLLECT_WATER: 
       description: |-
-          &aPārslēgt ūdens savākšanu
+          &aPārslēdz ūdens savākšanu
           &a(pārraksta Spaiņu lietošanu)
       name: "Ūdens savākšana"
       hint: "Ūdens savākšana nav atļauta"
@@ -563,22 +590,22 @@ protection:
       name: "&eKomandas Rangi"
       description: "&aKonfigurēt komandas rangus"
     CRAFTING: 
-      description: "Pārslēgt izmantošanu"
+      description: "Pārslēdz izmantošanu"
       name: "Darbagaldi"
       hint: "Darbagaldu lietošana nav atļauta"
     CREEPER_DAMAGE:
-      description: "Pārslēgt krīpera bojājumus"
+      description: "Pārslēdz krīpera bojājumus"
       name: "Krīpera bojājumi"
     CREEPER_GRIEFING:
-      description: "Pārslēgt krīpera postījumus"
+      description: "Pārslēdz krīpera postījumus"
       name: "Krīpera postījumi"
       hint: "Krīpera postījumi ir atslēgti"
     CROP_TRAMPLE: 
-      description: "Pārslēgt augu nomīdīšanu"
+      description: "Pārslēdz augu nomīdīšanu"
       name: "Augu nomīdīšana"
       hint: "Augu nomīdīšana ir atslēgta"
     DOOR: 
-      description: "Pārslēgt durvju izmantošanu"
+      description: "Pārslēdz durvju izmantošanu"
       name: "Durvju izmantošana"
       hint: "Durvju lietošana nav atļauta"
     DRAGON_EGG:
@@ -590,19 +617,19 @@ protection:
         &csaplēst.
       hint: "Pūķa olu lietošana nav atļauta"
     EGGS: 
-      description: "Pārslēgt olu mētāšanu"
+      description: "Pārslēdz olu mētāšanu"
       name: "Olu mētāšana"
       hint: "Olu mētāšana nav atļauta"
     ELYTRA: 
-      description: "Pārslēgt deltaplāna lietošanu"
+      description: "Pārslēdz deltaplāna lietošanu"
       name: "Deltaplāns"
       hint: "Deltaplāna lietošana nav atļauta"
     ENCHANTING: 
-      description: "Pārslēgt burvestību galda lietošanu"
+      description: "Pārslēdz burvestību galda lietošanu"
       name: "Burvestību galds"
       hint: "Burvestību galda lietošana nav atļauta"
     ENDER_CHEST:
-      description: "Pārslēgt Ender lāžu veidošanu/lietošanu"
+      description: "Pārslēdz Ender lāžu veidošanu/lietošanu"
       name: "Ender lādes"
       hint: "Ender lādes ir izslēgtas šaja pasaulē"
     ENDERMAN_DEATH_DROP: 
@@ -703,7 +730,7 @@ protection:
       name: "Priekšmetu rāmju bojāšana"
     INVINCIBLE_VISITORS: 
       description: |-
-         &aPārslēgt neuzveicamos
+         &aPārslēdz neuzveicamos
          &aapmeklētājus
       name: "&eNeuzveicamie apmeklētāji"
       hint: "&cApmeklētāji ir aizsargāti"
@@ -904,7 +931,7 @@ protection:
       name: "Radīšanas olas"
       hint: "Radīšanas olu mešana nav atļauta"
     TNT:
-      description: "Pārslēgt Dinamīta bojājumus"
+      description: "Pārslēdz Dinamīta bojājumus"
       name: "Dinamīta bojājumi"
     TRADING: 
       description: |-
