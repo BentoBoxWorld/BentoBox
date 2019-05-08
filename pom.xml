@@ -51,7 +51,7 @@
         <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
         <bstats.version>1.4</bstats.version>
         <vault.version>1.7</vault.version>
-        <placeholder.version>2.9.2</placeholder.version>
+        <placeholderapi.version>2.10.1</placeholderapi.version>
         <githubapi.version>1.0</githubapi.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}</revision>
@@ -195,7 +195,7 @@
 		<dependency>
 			<groupId>me.clip</groupId>
 			<artifactId>placeholderapi</artifactId>
-			<version>${placeholder.version}</version>
+			<version>${placeholderapi.version}</version>
 			<scope>provided</scope>
 		</dependency>
         <!-- Hooks -->
