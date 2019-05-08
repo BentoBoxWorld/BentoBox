@@ -92,7 +92,7 @@ public class ManagementPanel {
 
                     builder.item(startSlot + i, addonItem);
                     i++;
-                    if (builder.slotOccupied(i)) {
+                    if (builder.slotOccupied(startSlot + i)) {
                         i = i+2;
                     }
                 }
@@ -110,7 +110,7 @@ public class ManagementPanel {
 
                     builder.item(startSlot + i, hookItem);
                     i++;
-                    if (builder.slotOccupied(i)) {
+                    if (builder.slotOccupied(startSlot + i)) {
                         i = i+2;
                     }
                 }
