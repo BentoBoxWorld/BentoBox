@@ -1,22 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.addons.AddonClassLoader;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
-import world.bentobox.bentobox.api.configuration.ConfigObject;
-import world.bentobox.bentobox.api.events.addon.AddonEvent;
-import world.bentobox.bentobox.database.objects.DataObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +18,24 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.AddonClassLoader;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.configuration.ConfigObject;
+import world.bentobox.bentobox.api.events.addon.AddonEvent;
+import world.bentobox.bentobox.database.objects.DataObject;
+
 /**
  * @author tastybento, ComminQ
  */
@@ -48,7 +49,7 @@ public class AddonsManager {
     private final Map<String, Class<?>> classes;
     private BentoBox plugin;
     private @NonNull Map<@NonNull String, @Nullable GameModeAddon> worldNames;
-    private @NonNull Map<Addon, List<Listener>> listeners;
+    private @NonNull Map<@NonNull Addon, @NonNull List<Listener>> listeners;
 
     public AddonsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
@@ -401,7 +402,7 @@ public class AddonsManager {
      * @param addon - the addon registering
      * @param listener - listener
      */
-    public void registerListener(Addon addon, Listener listener) {
+    public void registerListener(@NonNull Addon addon, @NonNull Listener listener) {
         Bukkit.getPluginManager().registerEvents(listener, BentoBox.getInstance());
         listeners.computeIfAbsent(addon, k -> new ArrayList<>()).add(listener);
     }
@@ -410,12 +411,14 @@ public class AddonsManager {
      * Disables an addon
      * @param addon - addon
      */
-    private void disable(Addon addon) {
+    private void disable(@NonNull Addon addon) {
         // Clear listeners
         if (listeners.containsKey(addon)) {
             listeners.get(addon).forEach(HandlerList::unregisterAll);
             listeners.remove(addon);
         }
+        // Unregister flags
+        plugin.getFlagsManager().unregister(addon);
         // Disable
         if (addon.isEnabled()) {
             addon.onDisable();
@@ -446,4 +449,5 @@ public class AddonsManager {
                 .filter(c -> !ConfigObject.class.isAssignableFrom(c))
                 .collect(Collectors.toList());
     }
+
 }

@@ -7,10 +7,13 @@ import java.util.Map;
 import java.util.Optional;
 
 import org.bukkit.Bukkit;
+import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
 
@@ -21,7 +24,7 @@ import world.bentobox.bentobox.lists.Flags;
 public class FlagsManager {
 
     private @NonNull BentoBox plugin;
-    private List<@NonNull Flag> flags = new ArrayList<>();
+    private Map<@NonNull Flag, @Nullable Addon> flags = new HashMap<>();
 
     /**
      * Stores the flag listeners that have already been registered into Bukkit's API to avoid duplicates.
@@ -35,27 +38,39 @@ public class FlagsManager {
         this.plugin = plugin;
 
         // Register default flags
-        Flags.values().forEach(this::registerFlag);
+        Flags.values().forEach(f -> registerFlag(null, f));
     }
 
     /**
-     * Register a new flag
+     * Register a new flag.
      * @param flag flag to be registered
      * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
+     * @see Consider using {@link #registerFlag(Addon, Flag)} instead if your flag declares a listener
      */
     public boolean registerFlag(@NonNull Flag flag) {
+    	return registerFlag(null, flag);
+    }
+    
+    /**
+     * Register a new flag.
+     * @param addon - addon that is registering this flag
+     * @param flag flag to be registered
+     * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
+     * @since 1.5.0
+     */
+    public boolean registerFlag(@Nullable Addon addon, @NonNull Flag flag) {
         // Check in case the flag id or icon already exists
-        for (Flag fl : flags) {
+        for (Flag fl : flags.keySet()) {
             if (fl.getID().equals(flag.getID())) {
                 return false;
             }
         }
-        flags.add(flag);
+        flags.put(flag, addon);
         // If there is a listener which is not already registered, register it into Bukkit if the plugin is fully loaded
         flag.getListener().ifPresent(this::registerListener);
         return true;
     }
-
+    
     /**
      * Register any unregistered listeners.
      * This helps to make sure each flag listener is correctly loaded.
@@ -81,7 +96,7 @@ public class FlagsManager {
      */
     @NonNull
     public List<Flag> getFlags() {
-        return flags;
+        return new ArrayList<>(flags.keySet());
     }
 
     /**
@@ -92,6 +107,20 @@ public class FlagsManager {
      */
     @NonNull
     public Optional<Flag> getFlag(@NonNull String id) {
-        return flags.stream().filter(flag -> flag.getID().equals(id)).findFirst();
+        return flags.keySet().stream().filter(flag -> flag.getID().equals(id)).findFirst();
     }
+
+	/**
+	 * Unregister flags for addon
+	 * @param addon - addon
+	 * @since 1.5.0
+	 */
+	public void unregister(@NonNull Addon addon) {
+		// Unregister listeners
+		flags.entrySet().stream().filter(e -> addon.equals(e.getValue())).map(Map.Entry::getKey)
+		.forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
+		// Remove flags
+		flags.values().removeIf(addon::equals);
+	}
+	
 }

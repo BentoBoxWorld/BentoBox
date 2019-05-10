@@ -363,11 +363,7 @@ public class FlagTest {
      */
     @Test
     public void testToString() {
-        assertTrue(f.toString().startsWith("Flag [id=flagID, icon=ACACIA_PLANKS, listener=listener, type=PROTECTION, "
-                + "defaultSetting=false, defaultRank=500, "
-                + "clickHandler="));
-        // Handler changes so check start and end
-        assertTrue(f.toString().endsWith(", subPanel=false]"));
+        assertEquals("Flag [id=flagID]", f.toString());
     }
 
     /**
