@@ -17,6 +17,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -104,7 +105,8 @@ public class UserTest {
         // Placeholders
         PlaceholdersManager placeholdersManager = mock(PlaceholdersManager.class);
         when(plugin.getPlaceholdersManager()).thenReturn(placeholdersManager);
-        when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn(TEST_TRANSLATION);
+        // This will just return the value of the second argument of replacePlaceholders. i.e., it won't change anything
+        when(placeholdersManager.replacePlaceholders(any(), any())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(1, String.class));
 
     }
 
@@ -245,10 +247,16 @@ public class UserTest {
 
     @Test
     public void testGetTranslation() {
-        // Locales - final
         assertEquals("mock translation [test]", user.getTranslation("a.reference"));
-        assertEquals("mock translation variable", user.getTranslation("a.reference", "[test]", "variable"));
+    }
 
+    @Test
+    public void testGetTranslationWithVariable() {
+        assertEquals("mock translation variable", user.getTranslation("a.reference", "[test]", "variable"));
+    }
+
+    @Test
+    public void testGetTranslationNoTranslationFound() {
         // Test no translation found
         when(lm.get(any(), any())).thenReturn(null);
         assertEquals("a.reference", user.getTranslation("a.reference"));
