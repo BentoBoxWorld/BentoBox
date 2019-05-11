@@ -44,16 +44,17 @@ public class BukkitObjectTypeAdapter extends TypeAdapter<ConfigurationSerializab
         if (map == null) {
             return null;
         }
-        // Iteratively expand maps until the Bukkit ConfigurationSerialization can deserialize the base object
+        // Iterate through map and convert serialized sub-maps into objects via Bukkit ConfigurationSerialization deserialization
         map.forEach((k,v) -> {
+            // Serialized objects are maps too
             if (v instanceof Map) {
                 Map<String, Object> nestedMap = (Map<String, Object>)v;
+                // If the map is a serialized object then deserialize and replace the map entry with the object
                 if (nestedMap.containsKey(SERIALIZED_TYPE_KEY)) {
                     map.put(k, deserializeObject(nestedMap));
                 }
             }
         });
-
         return ConfigurationSerialization.deserializeObject(map);
     }
 
