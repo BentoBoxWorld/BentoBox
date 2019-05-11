@@ -77,7 +77,7 @@ public class Flag implements Comparable<Flag> {
     private Set<GameModeAddon> gameModes = new HashSet<>();
     private final Addon addon;
 
-   private Flag(Builder builder) {
+    private Flag(Builder builder) {
         this.id = builder.id;
         this.icon = builder.icon;
         this.listener = builder.listener;
@@ -171,14 +171,14 @@ public class Flag implements Comparable<Flag> {
     public boolean hasSubPanel() {
         return subPanel;
     }
-    
+
     /**
      * Get the addon that made this flag
      * @return the addon
      * @since 1.5.0
      */
     public Addon getAddon() {
-    	return addon;
+        return addon;
     }
 
     /* (non-Javadoc)
@@ -296,14 +296,14 @@ public class Flag implements Comparable<Flag> {
         }
         Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         switch(getType()) {
-        case PROTECTION:
-            return createProtectionFlag(plugin, user, island, pib).build();
-        case SETTING:
-            return createSettingFlag(user, island, pib).build();
-        case WORLD_SETTING:
-            return createWorldSettingFlag(user, pib).build();
-        default:
-            return pib.build();
+            case PROTECTION:
+                return createProtectionFlag(plugin, user, island, pib).build();
+            case SETTING:
+                return createSettingFlag(user, island, pib).build();
+            case WORLD_SETTING:
+                return createWorldSettingFlag(user, pib).build();
+            default:
+                return pib.build();
         }
     }
 
@@ -345,11 +345,11 @@ public class Flag implements Comparable<Flag> {
 
 
     @Override
-	public String toString() {
-		return "Flag [id=" + id + "]";
-	}
+    public String toString() {
+        return "Flag [id=" + id + "]";
+    }
 
-	@Override
+    @Override
     public int compareTo(Flag o) {
         return getID().compareTo(o.getID());
     }
@@ -381,7 +381,7 @@ public class Flag implements Comparable<Flag> {
 
         // GameModeAddon
         private GameModeAddon gameModeAddon;
-		private Addon addon;
+        private Addon addon;
 
         /**
          * Builder for making flags
@@ -463,7 +463,7 @@ public class Flag implements Comparable<Flag> {
             this.gameModeAddon = gameModeAddon;
             return this;
         }
-        
+
         /**
          * The addon registering this flag. Ensure this is set to enable the addon to be reloaded.
          * @param addon
@@ -471,8 +471,8 @@ public class Flag implements Comparable<Flag> {
          * @since 1.5.0
          */
         public Builder addon(Addon addon) {
-        	this.addon = addon;
-        	return this;
+            this.addon = addon;
+            return this;
         }
 
         /**
@@ -483,18 +483,18 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type){
-                case PROTECTION:
-                    clickHandler = new CycleClick(id);
-                    break;
-                case SETTING:
-                    clickHandler = new IslandToggleClick(id);
-                    break;
-                case WORLD_SETTING:
-                    clickHandler = new WorldToggleClick(id);
-                    break;
-                default:
-                    clickHandler = new CycleClick(id);
-                    break;
+                    case PROTECTION:
+                        clickHandler = new CycleClick(id);
+                        break;
+                    case SETTING:
+                        clickHandler = new IslandToggleClick(id);
+                        break;
+                    case WORLD_SETTING:
+                        clickHandler = new WorldToggleClick(id);
+                        break;
+                    default:
+                        clickHandler = new CycleClick(id);
+                        break;
                 }
             }
 

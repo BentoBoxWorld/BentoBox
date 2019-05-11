@@ -1,21 +1,20 @@
 package world.bentobox.bentobox.managers;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-
 import org.bukkit.Bukkit;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.lists.Flags;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Poslovitch
@@ -42,17 +41,18 @@ public class FlagsManager {
     }
 
     /**
-     * Register a new flag.
+     * Registers a new flag.
+     * Consider using {@link #registerFlag(Addon, Flag)} instead if your flag declares a listener.
      * @param flag flag to be registered
      * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
-     * @see Consider using {@link #registerFlag(Addon, Flag)} instead if your flag declares a listener
+     * @see #registerFlag(Addon, Flag)
      */
     public boolean registerFlag(@NonNull Flag flag) {
-    	return registerFlag(null, flag);
+        return registerFlag(null, flag);
     }
-    
+
     /**
-     * Register a new flag.
+     * Registers a new flag.
      * @param addon - addon that is registering this flag
      * @param flag flag to be registered
      * @return true if successfully registered, false if not, e.g., because one with the same ID already exists
@@ -70,7 +70,7 @@ public class FlagsManager {
         flag.getListener().ifPresent(this::registerListener);
         return true;
     }
-    
+
     /**
      * Register any unregistered listeners.
      * This helps to make sure each flag listener is correctly loaded.
@@ -110,17 +110,17 @@ public class FlagsManager {
         return flags.keySet().stream().filter(flag -> flag.getID().equals(id)).findFirst();
     }
 
-	/**
-	 * Unregister flags for addon
-	 * @param addon - addon
-	 * @since 1.5.0
-	 */
-	public void unregister(@NonNull Addon addon) {
-		// Unregister listeners
-		flags.entrySet().stream().filter(e -> addon.equals(e.getValue())).map(Map.Entry::getKey)
-		.forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
-		// Remove flags
-		flags.values().removeIf(addon::equals);
-	}
-	
+    /**
+     * Unregister flags for addon
+     * @param addon - addon
+     * @since 1.5.0
+     */
+    public void unregister(@NonNull Addon addon) {
+        // Unregister listeners
+        flags.entrySet().stream().filter(e -> addon.equals(e.getValue())).map(Map.Entry::getKey)
+                .forEach(f -> f.getListener().ifPresent(HandlerList::unregisterAll));
+        // Remove flags
+        flags.values().removeIf(addon::equals);
+    }
+
 }
