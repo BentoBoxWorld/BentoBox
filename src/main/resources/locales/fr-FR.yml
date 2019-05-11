@@ -243,7 +243,11 @@ protection:
 
 language:
   panel-title: "Choisissez votre langue"
-  selected: "&aActuellement sélectionné."
+  description:
+    selected: "&aActuellement sélectionné."
+    click-to-select: "&eCliquez &apour sélectionner."
+    authors: "&aAuteurs :"
+    author: "&3- &b[name]"
   edited: "&aLangue modifiée en &e[lang]&a."
 
 management:

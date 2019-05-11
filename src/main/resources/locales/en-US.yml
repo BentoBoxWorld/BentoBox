@@ -984,7 +984,11 @@ protection:
 
 language:
   panel-title: "Select your language"
-  selected: "&aCurrently selected."
+  description:
+    selected: "&aCurrently selected."
+    click-to-select: "&eClick &ato select."
+    authors: "&aAuthors:"
+    author: "&3- &b[name]"
   edited: "&aChanged your language to &e[lang]&a."
 
 management:
