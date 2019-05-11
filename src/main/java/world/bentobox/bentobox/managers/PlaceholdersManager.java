@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers;
 
+import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
@@ -120,5 +121,20 @@ public class PlaceholdersManager {
      */
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
     	return getPlaceholderAPIHook().map(h -> h.isPlaceholder(addon, placeholder)).orElse(false);
+    }
+
+    /**
+     * Replaces the placeholders in this String and returns it.
+     * @param player the Player to get the placeholders for.
+     * @param string the String to replace the placeholders in.
+     * @return the String with placeholders replaced, or the identical String if no placeholders were available.
+     * @since 1.5.0
+     */
+    public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
+        if (getPlaceholderAPIHook().isPresent()) {
+            string = getPlaceholderAPIHook().get().replacePlaceholders(player, string);
+        }
+
+        return string;
     }
 }
