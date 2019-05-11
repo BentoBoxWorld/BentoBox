@@ -1,80 +1,108 @@
+/**
+ *
+ */
 package world.bentobox.bentobox.api.blueprints;
 
-import com.google.gson.Gson;
-import com.google.gson.stream.JsonReader;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.eclipse.jdt.annotation.NonNull;
 
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.List;
-import java.util.zip.ZipFile;
+import com.google.gson.annotations.Expose;
 
 /**
- * @since 1.5.0
- * @author Poslovitch
+ * Stores all details of a blueprint
+ * @author tastybento
+ *
  */
 public class Blueprint {
 
-    public static final @NonNull String FILE_EXTENSION = "blueprint";
-
-    private @NonNull String name;
-    private String displayName;
+    @Expose
+    private @NonNull String name = "";
+    @Expose
+    private String displayName = "";
+    @Expose
     private @NonNull Material icon = Material.PAPER;
-    private List<String> description; //TODO
-    private World.Environment environment;
-
-    public Blueprint(@NonNull String name, @NonNull ZipFile zip) throws IOException {
-        this.name = name;
-        try (JsonReader reader = new Gson().newJsonReader(new InputStreamReader(zip.getInputStream(zip.getEntry("properties.json"))))) {
-            readProperties(reader);
-        }
-
-        //System.out.println(new Gson().toJson(this));
-    }
-
-    private void readProperties(@NonNull JsonReader reader) throws IOException {
-        reader.beginObject();
-        while (reader.hasNext()) {
-            String field = reader.nextName();
-            switch (field) {
-                case "displayName":
-                    displayName = reader.nextString();
-                    break;
-                case "icon":
-                    icon = Material.valueOf(reader.nextString());
-                    break;
-                case "environment":
-                    environment = World.Environment.valueOf(reader.nextString());
-                    break;
-                default:
-                    reader.skipValue();
-                    break;
-            }
-        }
-        reader.endObject();
-    }
-
-    @NonNull
+    @Expose
+    private List<String> description = new ArrayList<>();
+    @Expose
+    private World.Environment environment = World.Environment.NORMAL;
+    @Expose
+    private String fileName = "";
+    /**
+     * @return the name
+     */
     public String getName() {
         return name;
     }
-
+    /**
+     * @param name the name to set
+     */
+    public void setName(String name) {
+        this.name = name;
+    }
+    /**
+     * @return the displayName
+     */
     public String getDisplayName() {
         return displayName;
     }
-
-    @NonNull
+    /**
+     * @param displayName the displayName to set
+     */
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+    /**
+     * @return the icon
+     */
     public Material getIcon() {
         return icon;
     }
-
+    /**
+     * @param icon the icon to set
+     */
+    public void setIcon(Material icon) {
+        this.icon = icon;
+    }
+    /**
+     * @return the description
+     */
     public List<String> getDescription() {
         return description;
     }
-
+    /**
+     * @param description the description to set
+     */
+    public void setDescription(List<String> description) {
+        this.description = description;
+    }
+    /**
+     * @return the environment
+     */
     public World.Environment getEnvironment() {
         return environment;
     }
+    /**
+     * @param environment the environment to set
+     */
+    public void setEnvironment(World.Environment environment) {
+        this.environment = environment;
+    }
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }
+    /**
+     * @param fileName the fileName to set
+     */
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
+    }
+
+
 }

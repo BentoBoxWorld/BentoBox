@@ -165,7 +165,7 @@ public class AddonsManager {
                 plugin.getSchemsManager().loadIslands(gameMode);
 
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
-                plugin.getBlueprintsManager().loadBlueprints(gameMode);
+                plugin.getBlueprintsManager().loadBlueprintBundles(gameMode);
             }
             addon.onEnable();
             if (addon instanceof GameModeAddon) {

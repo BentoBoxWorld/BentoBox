@@ -32,7 +32,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
      *                          values from the database or inserted into the database
      * @param databaseConnector Contains the settings to create a connection to the database
      */
-    JSONDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
+    public JSONDatabaseHandler(BentoBox plugin, Class<T> type, DatabaseConnector databaseConnector) {
         super(plugin, type, databaseConnector);
     }
 
