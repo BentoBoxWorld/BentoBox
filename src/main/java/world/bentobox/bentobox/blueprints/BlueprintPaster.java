@@ -1,11 +1,5 @@
 package world.bentobox.bentobox.blueprints;
 
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -28,22 +22,27 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.blueprints.BP_Block;
-import world.bentobox.bentobox.api.blueprints.BP_CreatureSpawner;
-import world.bentobox.bentobox.api.blueprints.BP_Entity;
+import world.bentobox.bentobox.api.blueprints.BlueprintBlock;
+import world.bentobox.bentobox.api.blueprints.BlueprintCreatureSpawner;
+import world.bentobox.bentobox.api.blueprints.BlueprintEntity;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
+
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * This class pastes the clipboard it is given
  * @author tastybento
  *
  */
-public class BPPaster {
+public class BlueprintPaster {
 
     enum PasteState {
         BLOCKS,
@@ -69,7 +68,7 @@ public class BPPaster {
      * @param clipboard - clipboard to paste
      * @param location - location to paste to
      */
-    public BPPaster(@NonNull BentoBox plugin, @NonNull BPClipboard clipboard, @NonNull Location location) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location) {
         this.plugin = plugin;
         paste(location.getWorld(), null, location, clipboard, null);
     }
@@ -81,7 +80,7 @@ public class BPPaster {
      * @param location - location to paste to
      * @param task - task to run after pasting
      */
-    public BPPaster(@NonNull BentoBox plugin, @NonNull BPClipboard clipboard, @NonNull Location location, @Nullable Runnable task) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location, @Nullable Runnable task) {
         this.plugin = plugin;
         paste(location.getWorld(), null, location, clipboard, task);
     }
@@ -94,7 +93,7 @@ public class BPPaster {
      * @param island - island related to this paste
      * @param task - task to run after pasting
      */
-    public BPPaster(@NonNull BentoBox plugin, @NonNull BPClipboard clipboard, @NonNull World world, @NonNull Island island, @Nullable Runnable task) {
+    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull World world, @NonNull Island island, @Nullable Runnable task) {
         this.plugin = plugin;
         // Offset due to bedrock
         Vector off = clipboard.getBp().getBedrock() != null ? clipboard.getBp().getBedrock() : new Vector(0,0,0);
@@ -104,14 +103,14 @@ public class BPPaster {
         paste(world, island, loc, clipboard, task);
     }
 
-    private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull BPClipboard clipboard, @Nullable Runnable task) {
+    private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull BlueprintClipboard clipboard, @Nullable Runnable task) {
         // Iterators for the various maps to paste
-        Map<Vector, BP_Block> blocks = clipboard.getBp().getBlocks() == null ? new HashMap<>() : clipboard.getBp().getBlocks();
-        Map<Vector, BP_Block> attached = clipboard.getBp().getAttached() == null ? new HashMap<>() : clipboard.getBp().getAttached();
-        Map<Vector, List<BP_Entity>> entities = clipboard.getBp().getEntities() == null ? new HashMap<>() : clipboard.getBp().getEntities();
-        Iterator<Entry<Vector, BP_Block>> it = blocks.entrySet().iterator();
-        Iterator<Entry<Vector, BP_Block>> it2 = attached.entrySet().iterator();
-        Iterator<Entry<Vector, List<BP_Entity>>> it3 = entities.entrySet().iterator();
+        Map<Vector, BlueprintBlock> blocks = clipboard.getBp().getBlocks() == null ? new HashMap<>() : clipboard.getBp().getBlocks();
+        Map<Vector, BlueprintBlock> attached = clipboard.getBp().getAttached() == null ? new HashMap<>() : clipboard.getBp().getAttached();
+        Map<Vector, List<BlueprintEntity>> entities = clipboard.getBp().getEntities() == null ? new HashMap<>() : clipboard.getBp().getEntities();
+        Iterator<Entry<Vector, BlueprintBlock>> it = blocks.entrySet().iterator();
+        Iterator<Entry<Vector, BlueprintBlock>> it2 = attached.entrySet().iterator();
+        Iterator<Entry<Vector, List<BlueprintEntity>>> it3 = entities.entrySet().iterator();
 
         // Initial state & speed
         pasteState = PasteState.BLOCKS;
@@ -169,9 +168,9 @@ public class BPPaster {
 
     }
 
-    private void pasteBlock(World world, Island island, Location location, Entry<Vector, BP_Block> entry) {
+    private void pasteBlock(World world, Island island, Location location, Entry<Vector, BlueprintBlock> entry) {
         Location pasteTo = location.clone().add(entry.getKey());
-        BP_Block bpBlock = entry.getValue();
+        BlueprintBlock bpBlock = entry.getValue();
         Block block = pasteTo.getBlock();
         // Set the block data
         block.setBlockData(Bukkit.createBlockData(bpBlock.getBlockData()));
@@ -180,7 +179,7 @@ public class BPPaster {
         updatePos(world, entry.getKey());
     }
 
-    private void pasteEntity(World world, Location location, Entry<Vector, List<BP_Entity>> entry) {
+    private void pasteEntity(World world, Location location, Entry<Vector, List<BlueprintEntity>> entry) {
         int x = location.getBlockX() + entry.getKey().getBlockX();
         int y = location.getBlockY() + entry.getKey().getBlockY();
         int z = location.getBlockZ() + entry.getKey().getBlockZ();
@@ -193,7 +192,7 @@ public class BPPaster {
      * @param block - block
      * @param bpBlock - config
      */
-    private void setBlockState(Island island, Block block, BP_Block bpBlock) {
+    private void setBlockState(Island island, Block block, BlueprintBlock bpBlock) {
         // Get the block state
         BlockState bs = block.getState();
         // Signs
@@ -210,7 +209,7 @@ public class BPPaster {
         // Mob spawners
         if (bs instanceof CreatureSpawner) {
             CreatureSpawner spawner = ((CreatureSpawner) bs);
-            BP_CreatureSpawner s = bpBlock.getCreatureSpawner();
+            BlueprintCreatureSpawner s = bpBlock.getCreatureSpawner();
             spawner.setSpawnedType(s.getSpawnedType());
             spawner.setMaxNearbyEntities(s.getMaxNearbyEntities());
             spawner.setMaxSpawnDelay(s.getMaxSpawnDelay());
@@ -227,7 +226,7 @@ public class BPPaster {
      * @param location - location
      * @param list - list of entities to paste
      */
-    private void setEntity(Location location, List<BP_Entity> list) {
+    private void setEntity(Location location, List<BlueprintEntity> list) {
         list.forEach(k -> {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));

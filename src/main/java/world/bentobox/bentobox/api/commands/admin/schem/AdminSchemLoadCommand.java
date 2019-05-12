@@ -1,13 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.BlueprintClipboardManager;
+import world.bentobox.bentobox.util.Util;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
-import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.BPClipboardManager;
-import world.bentobox.bentobox.util.Util;
 
 public class AdminSchemLoadCommand extends CompositeCommand {
 
@@ -30,7 +30,7 @@ public class AdminSchemLoadCommand extends CompositeCommand {
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
 
-        BPClipboardManager bp = new BPClipboardManager(getPlugin(), parent.getBlueprintsFolder());
+        BlueprintClipboardManager bp = new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder());
         if (bp.load(user, args.get(0))) {
             parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
             return true;

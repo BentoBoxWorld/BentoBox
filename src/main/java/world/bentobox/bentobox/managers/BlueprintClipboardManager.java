@@ -1,5 +1,18 @@
 package world.bentobox.bentobox.managers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.configuration.InvalidConfigurationException;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.blueprints.Blueprint;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
+import world.bentobox.bentobox.database.objects.Island;
+
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -14,41 +27,27 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.InvalidConfigurationException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.blueprints.Blueprint;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.blueprints.BPPaster;
-import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
-import world.bentobox.bentobox.database.objects.Island;
-
 /**
  * @author tastybento
+ * @since 1.5.0
  */
-public class BPClipboardManager {
+public class BlueprintClipboardManager {
 
     private static final String LOAD_ERROR = "Could not load blueprint file - does not exist : ";
 
     private File blueprintFolder;
 
-    private BPClipboard clipboard;
+    private BlueprintClipboard clipboard;
 
     private Gson gson;
 
     private BentoBox plugin;
 
-    public BPClipboardManager(BentoBox plugin, File blueprintFolder) {
+    public BlueprintClipboardManager(BentoBox plugin, File blueprintFolder) {
         this(plugin, blueprintFolder, null);
     }
 
-    public BPClipboardManager(BentoBox plugin, File blueprintFolder, BPClipboard clipboard) {
+    public BlueprintClipboardManager(BentoBox plugin, File blueprintFolder, BlueprintClipboard clipboard) {
         super();
         this.plugin = plugin;
         if (!blueprintFolder.exists()) {
@@ -62,7 +61,7 @@ public class BPClipboardManager {
     /**
      * @return the clipboard
      */
-    public BPClipboard getClipboard() {
+    public BlueprintClipboard getClipboard() {
         return clipboard;
     }
 
@@ -82,7 +81,7 @@ public class BPClipboardManager {
      * @throws InvalidConfigurationException - the YAML of the schem is at fault
      */
     public void load(String fileName) throws IOException {
-        clipboard = new BPClipboard(loadBlueprint(fileName));
+        clipboard = new BlueprintClipboard(loadBlueprint(fileName));
 
     }
 
@@ -133,7 +132,7 @@ public class BPClipboardManager {
      */
     public void pasteClipboard(Location location) {
         if (clipboard != null) {
-            new BPPaster(plugin, clipboard, location);
+            new BlueprintPaster(plugin, clipboard, location);
         } else {
             plugin.logError("Clipboard has no block data in it to paste!");
         }
@@ -147,7 +146,7 @@ public class BPClipboardManager {
      * @param task - task to run after pasting
      */
     public void pasteIsland(World world, Island island, Runnable task) {
-        new BPPaster(plugin, clipboard, world, island, task);
+        new BlueprintPaster(plugin, clipboard, world, island, task);
     }
 
     /**

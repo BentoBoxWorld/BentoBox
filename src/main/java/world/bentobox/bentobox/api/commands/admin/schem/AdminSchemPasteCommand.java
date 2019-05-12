@@ -1,11 +1,11 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
-import java.util.List;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.blueprints.BPPaster;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.blueprints.BlueprintPaster;
+
+import java.util.List;
 
 public class AdminSchemPasteCommand extends CompositeCommand {
 
@@ -22,9 +22,9 @@ public class AdminSchemPasteCommand extends CompositeCommand {
     @Override
     public boolean execute(User user, String label, List<String> args) {
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
-        BPClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BPClipboard());
+        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         if (clipboard.isFull()) {
-            new BPPaster(getPlugin(), clipboard, user.getLocation(), () -> user.sendMessage("general.success"));
+            new BlueprintPaster(getPlugin(), clipboard, user.getLocation(), () -> user.sendMessage("general.success"));
             user.sendMessage("commands.admin.schem.paste.pasting");
             return true;
         }

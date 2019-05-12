@@ -1,16 +1,15 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.BlueprintsManager;
+
 import java.io.File;
 import java.io.FilenameFilter;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
-
-import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.BPClipboardManager;
-import world.bentobox.bentobox.managers.BlueprintsManager;
 
 public class AdminSchemListCommand extends CompositeCommand {
 

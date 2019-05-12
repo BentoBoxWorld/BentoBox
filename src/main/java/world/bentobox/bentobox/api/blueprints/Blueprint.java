@@ -3,14 +3,13 @@
  */
 package world.bentobox.bentobox.api.blueprints;
 
-import java.util.List;
-import java.util.Map;
-
+import com.google.gson.annotations.Expose;
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
-import com.google.gson.annotations.Expose;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Stores all details of a blueprint
@@ -31,11 +30,11 @@ public class Blueprint {
     @Expose
     private List<String> description;
     @Expose
-    private Map<Vector, BP_Block> attached;
+    private Map<Vector, BlueprintBlock> attached;
     @Expose
-    private Map<Vector, List<BP_Entity>> entities;
+    private Map<Vector, List<BlueprintEntity>> entities;
     @Expose
-    private Map<Vector, BP_Block> blocks;
+    private Map<Vector, BlueprintBlock> blocks;
     @Expose
     private int xSize;
     @Expose
@@ -95,37 +94,37 @@ public class Blueprint {
     /**
      * @return the attached
      */
-    public Map<Vector, BP_Block> getAttached() {
+    public Map<Vector, BlueprintBlock> getAttached() {
         return attached;
     }
     /**
      * @param attached the attached to set
      */
-    public void setAttached(Map<Vector, BP_Block> attached) {
+    public void setAttached(Map<Vector, BlueprintBlock> attached) {
         this.attached = attached;
     }
     /**
      * @return the entities
      */
-    public Map<Vector, List<BP_Entity>> getEntities() {
+    public Map<Vector, List<BlueprintEntity>> getEntities() {
         return entities;
     }
     /**
      * @param entities the entities to set
      */
-    public void setEntities(Map<Vector, List<BP_Entity>> entities) {
+    public void setEntities(Map<Vector, List<BlueprintEntity>> entities) {
         this.entities = entities;
     }
     /**
      * @return the blocks
      */
-    public Map<Vector, BP_Block> getBlocks() {
+    public Map<Vector, BlueprintBlock> getBlocks() {
         return blocks;
     }
     /**
      * @param blocks the blocks to set
      */
-    public void setBlocks(Map<Vector, BP_Block> blocks) {
+    public void setBlocks(Map<Vector, BlueprintBlock> blocks) {
         this.blocks = blocks;
     }
     /**

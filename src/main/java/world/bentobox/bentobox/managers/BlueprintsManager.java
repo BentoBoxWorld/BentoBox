@@ -1,5 +1,24 @@
 package world.bentobox.bentobox.managers;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
+import net.md_5.bungee.api.ChatColor;
+import org.bukkit.World;
+import org.bukkit.util.Vector;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.blueprints.Blueprint;
+import world.bentobox.bentobox.api.blueprints.BlueprintBlock;
+import world.bentobox.bentobox.api.blueprints.BlueprintBundle;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
+import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.util.Util;
+
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -13,27 +32,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarFile;
-
-import org.bukkit.World;
-import org.bukkit.util.Vector;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
-
-import net.md_5.bungee.api.ChatColor;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.blueprints.BP_Block;
-import world.bentobox.bentobox.api.blueprints.Blueprint;
-import world.bentobox.bentobox.api.blueprints.BlueprintBundle;
-import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.blueprints.BPPaster;
-import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
-import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.util.Util;
 
 /**
  * Handles Blueprints
@@ -174,12 +172,12 @@ public class BlueprintsManager {
         defaultBp.setName("bedrock");
         defaultBp.setDescription(Collections.singletonList(ChatColor.AQUA + "A bedrock block"));
         defaultBp.setBedrock(new Vector(0,0,0));
-        Map<Vector, BP_Block> map = new HashMap<>();
-        map.put(new Vector(0,0,0), new BP_Block("minecraft:bedrock"));
+        Map<Vector, BlueprintBlock> map = new HashMap<>();
+        map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
         defaultBp.setBlocks(map);
         // Save a default "bedrock" blueprint
         File bpFile = new File(this.getBlueprintsFolder(addon), "bedrock");
-        new BPClipboardManager(plugin, getBlueprintsFolder(addon)).saveBlueprint(bpFile, defaultBp);
+        new BlueprintClipboardManager(plugin, getBlueprintsFolder(addon)).saveBlueprint(bpFile, defaultBp);
         // This blueprint is used for all environments
         bb.setBlueprint(World.Environment.NORMAL, defaultBp);
         bb.setBlueprint(World.Environment.NETHER, defaultBp);
@@ -198,7 +196,7 @@ public class BlueprintsManager {
         for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_SUFFIX)))) {
             String fileName = file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length());
             try {
-                Blueprint bp = new BPClipboardManager(plugin, bpf).loadBlueprint(fileName);
+                Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
                 blueprints.get(addon).put(bp.getName(), bp);
                 plugin.log("Loaded blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
             } catch (Exception e) {
@@ -279,14 +277,14 @@ public class BlueprintsManager {
         }
         Blueprint bp = blueprints.get(addon).get(bb.getBlueprint(World.Environment.NORMAL));
         // Paste overworld
-        new BPPaster(plugin, new BPClipboard().setBp(bp), addon.getOverWorld(), island, task);
+        new BlueprintPaster(plugin, new BlueprintClipboard().setBp(bp), addon.getOverWorld(), island, task);
         // Make nether island
         if (bb.getBlueprint(World.Environment.NETHER) != null
                 && addon.getWorldSettings().isNetherGenerate()
                 && addon.getWorldSettings().isNetherIslands()
                 && addon.getNetherWorld() != null) {
             bp = blueprints.get(addon).get(bb.getBlueprint(World.Environment.NETHER));
-            new BPPaster(plugin, new BPClipboard().setBp(bp), addon.getNetherWorld(), island, null);
+            new BlueprintPaster(plugin, new BlueprintClipboard().setBp(bp), addon.getNetherWorld(), island, null);
         }
         // Make end island
         if (bb.getBlueprint(World.Environment.THE_END) != null
@@ -294,7 +292,7 @@ public class BlueprintsManager {
                 && addon.getWorldSettings().isEndIslands()
                 && addon.getEndWorld() != null) {
             bp = blueprints.get(addon).get(bb.getBlueprint(World.Environment.THE_END));
-            new BPPaster(plugin, new BPClipboard().setBp(bp), addon.getNetherWorld(), island, null);
+            new BlueprintPaster(plugin, new BlueprintClipboard().setBp(bp), addon.getNetherWorld(), island, null);
         }
         return true;
 

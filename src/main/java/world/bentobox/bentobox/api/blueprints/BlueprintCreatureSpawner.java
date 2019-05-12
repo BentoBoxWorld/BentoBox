@@ -1,10 +1,14 @@
 package world.bentobox.bentobox.api.blueprints;
 
+import com.google.gson.annotations.Expose;
 import org.bukkit.entity.EntityType;
 
-import com.google.gson.annotations.Expose;
+/**
+ * @author tastybento
+ * @since 1.5.0
+ */
+public class BlueprintCreatureSpawner {
 
-public class BP_CreatureSpawner {
     @Expose
     private EntityType spawnedType;
     @Expose
@@ -103,5 +107,4 @@ public class BP_CreatureSpawner {
     public void setSpawnRange(int spawnRange) {
         this.spawnRange = spawnRange;
     }
-
 }

@@ -1,15 +1,19 @@
 package world.bentobox.bentobox.api.blueprints;
 
-import java.util.Map;
-
+import com.google.gson.annotations.Expose;
 import org.bukkit.DyeColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.inventory.ItemStack;
 
-import com.google.gson.annotations.Expose;
+import java.util.Map;
 
-public class BP_Entity {
+/**
+ * @author tastybento
+ * @since 1.5.0
+ */
+public class BlueprintEntity {
+
     @Expose
     private DyeColor color;
     @Expose
@@ -25,9 +29,10 @@ public class BP_Entity {
     @Expose
     private Integer domestication;
     @Expose
-    Map<Integer, ItemStack> inventory;
+    private Map<Integer, ItemStack> inventory;
     @Expose
     private Style style;
+
     /**
      * @return the color
      */
@@ -136,6 +141,4 @@ public class BP_Entity {
     public void setStyle(Style style) {
         this.style = style;
     }
-
-
 }

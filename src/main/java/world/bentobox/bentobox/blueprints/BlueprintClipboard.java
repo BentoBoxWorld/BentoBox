@@ -1,14 +1,5 @@
 package world.bentobox.bentobox.blueprints;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -33,20 +24,28 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.blueprints.BP_Block;
-import world.bentobox.bentobox.api.blueprints.BP_CreatureSpawner;
-import world.bentobox.bentobox.api.blueprints.BP_Entity;
 import world.bentobox.bentobox.api.blueprints.Blueprint;
+import world.bentobox.bentobox.api.blueprints.BlueprintBlock;
+import world.bentobox.bentobox.api.blueprints.BlueprintCreatureSpawner;
+import world.bentobox.bentobox.api.blueprints.BlueprintEntity;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * @author tastybento
  * @since 1.5.0
  */
-public class BPClipboard {
+public class BlueprintClipboard {
 
     private @Nullable Blueprint bp;
     private @Nullable Location pos1;
@@ -57,17 +56,15 @@ public class BPClipboard {
     private boolean copying;
     private int index;
     private int lastPercentage;
-    private Map<Vector, List<BP_Entity>> bpEntities = new HashMap<>();
-    private Map<Vector, BP_Block> bpAttachable = new HashMap<>();
-    private Map<Vector, BP_Block> bpBlocks = new HashMap<>();
+    private Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
+    private Map<Vector, BlueprintBlock> bpAttachable = new HashMap<>();
+    private Map<Vector, BlueprintBlock> bpBlocks = new HashMap<>();
 
-    public BPClipboard(@NonNull Blueprint bp) {
+    public BlueprintClipboard(@NonNull Blueprint bp) {
         this.bp = bp;
     }
 
-    public BPClipboard() {
-        super();
-    }
+    public BlueprintClipboard() { }
 
     /**
      * Copy the blocks between pos1 and pos2 into the clipboard for a user.
@@ -174,9 +171,9 @@ public class BPClipboard {
         Vector pos = new Vector(x, y, z);
 
         // Set entities
-        List<BP_Entity> bpEnts = new ArrayList<>();
+        List<BlueprintEntity> bpEnts = new ArrayList<>();
         for (LivingEntity entity: entities) {
-            BP_Entity bpe = new BP_Entity();
+            BlueprintEntity bpe = new BlueprintEntity();
             bpe.setType(entity.getType());
             bpe.setCustomName(entity.getCustomName());
             if (entity instanceof Colorable) {
@@ -225,7 +222,7 @@ public class BPClipboard {
 
         // Block state
         BlockState blockState = block.getState();
-        BP_Block b = new BP_Block(block.getBlockData().getAsString());
+        BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
         // Signs
         if (blockState instanceof Sign) {
             Sign sign = (Sign)blockState;
@@ -234,7 +231,7 @@ public class BPClipboard {
         // Set block data
         if (blockState.getData() instanceof Attachable) {
             // Placeholder for attachment
-            bpBlocks.put(pos, new BP_Block("minecraft:air"));
+            bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
             bpAttachable.put(pos, b);
             return true;
         }
@@ -257,7 +254,7 @@ public class BPClipboard {
 
         if (blockState instanceof CreatureSpawner) {
             CreatureSpawner spawner = (CreatureSpawner)blockState;
-            BP_CreatureSpawner cs = new BP_CreatureSpawner();
+            BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
             cs.setSpawnedType(spawner.getSpawnedType());
             cs.setDelay(spawner.getDelay());
             cs.setMaxNearbyEntities(spawner.getMaxNearbyEntities());
@@ -342,9 +339,8 @@ public class BPClipboard {
     /**
      * @param bp the bp to set
      */
-    public BPClipboard setBp(Blueprint bp) {
+    public BlueprintClipboard setBp(Blueprint bp) {
         this.bp = bp;
         return this;
     }
-
 }

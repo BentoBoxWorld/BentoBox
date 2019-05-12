@@ -1,14 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BPClipboard;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+
+import java.util.List;
 
 public class AdminSchemOriginCommand extends CompositeCommand {
 
@@ -26,7 +25,7 @@ public class AdminSchemOriginCommand extends CompositeCommand {
     public boolean execute(User user, String label, List<String> args) {
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
 
-        BPClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BPClipboard());
+        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         if (clipboard.getPos1() == null || clipboard.getPos2() == null) {
             user.sendMessage("commands.admin.schem.need-pos1-pos2");
             return false;

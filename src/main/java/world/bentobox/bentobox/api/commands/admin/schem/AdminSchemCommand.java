@@ -1,24 +1,23 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Particle;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.managers.BlueprintsManager;
+
 import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Particle;
-
-import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.managers.BlueprintsManager;
-
 public class AdminSchemCommand extends ConfirmableCommand {
     // Clipboards
-    private Map<UUID, BPClipboard> clipboards;
+    private Map<UUID, BlueprintClipboard> clipboards;
 
     // Map containing selection cuboid display tasks
     private Map<User, Integer> displayClipboards;
@@ -55,7 +54,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         return true;
     }
 
-    protected Map<UUID, BPClipboard> getClipboards() {
+    protected Map<UUID, BlueprintClipboard> getClipboards() {
         return clipboards;
     }
 
@@ -66,7 +65,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
             }
 
             if (clipboards.containsKey(user.getUniqueId())) {
-                BPClipboard clipboard = clipboards.get(user.getUniqueId());
+                BlueprintClipboard clipboard = clipboards.get(user.getUniqueId());
                 if (clipboard.getPos1() != null && clipboard.getPos2() != null) {
                     paintAxis(user, clipboard);
                 }
@@ -75,7 +74,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         }, 20, 20));
     }
 
-    private void paintAxis(User user, BPClipboard clipboard) {
+    private void paintAxis(User user, BlueprintClipboard clipboard) {
         int minX = Math.min(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
         int minY = Math.min(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
         int minZ = Math.min(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());

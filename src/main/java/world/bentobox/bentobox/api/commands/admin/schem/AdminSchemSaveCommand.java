@@ -1,13 +1,13 @@
 package world.bentobox.bentobox.api.commands.admin.schem;
 
-import java.io.File;
-import java.util.List;
-
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.managers.BPClipboardManager;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.managers.BlueprintClipboardManager;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+
+import java.io.File;
+import java.util.List;
 
 public class AdminSchemSaveCommand extends ConfirmableCommand {
 
@@ -29,7 +29,7 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
         }
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
-        BPClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BPClipboard());
+        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
 
         if (clipboard.isFull()) {
             // Check if file exists
@@ -37,12 +37,12 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
                     parent.hideClipboard(user);
-                    new BPClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
+                    new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
                 });
                 return false;
             } else {
                 parent.hideClipboard(user);
-                return new BPClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
+                return new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
             }
         } else {
             user.sendMessage("commands.admin.schem.copy-first");
