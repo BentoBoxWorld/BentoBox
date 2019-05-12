@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.managers;
+package world.bentobox.bentobox.schems;
 
 import java.io.File;
 import java.io.FilenameFilter;
@@ -19,9 +19,8 @@ import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.blueprints.Clipboard;
-import world.bentobox.bentobox.blueprints.Paster;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.ClipboardManager;
 import world.bentobox.bentobox.util.Util;
 
 public class SchemsManager {

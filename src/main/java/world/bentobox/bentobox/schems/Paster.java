@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.schems;
 
 import java.util.Iterator;
 import java.util.List;

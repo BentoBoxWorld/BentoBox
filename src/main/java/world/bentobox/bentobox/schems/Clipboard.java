@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.schems;
 
 import java.util.ArrayList;
 import java.util.Arrays;

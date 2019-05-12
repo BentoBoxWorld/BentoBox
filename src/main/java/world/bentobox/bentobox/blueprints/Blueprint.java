@@ -12,6 +12,9 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
 
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+
 /**
  * Stores all details of a blueprint
  * @author tastybento

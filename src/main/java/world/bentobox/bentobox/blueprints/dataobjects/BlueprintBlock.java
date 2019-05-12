@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.blueprints.dataobjects;
 
 import java.util.List;
 import java.util.Map;

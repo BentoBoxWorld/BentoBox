@@ -19,9 +19,9 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.Clipboard;
-import world.bentobox.bentobox.blueprints.Paster;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.schems.Clipboard;
+import world.bentobox.bentobox.schems.Paster;
 
 /**
  * @author tastybento

@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.blueprints.dataobjects;
 
 import org.bukkit.entity.EntityType;
 

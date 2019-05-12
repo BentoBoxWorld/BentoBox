@@ -50,7 +50,6 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.Clipboard;
 
 @SuppressWarnings("deprecation")
 @RunWith(PowerMockRunner.class)
