@@ -906,9 +906,19 @@ protection:
       description: "Toggle use"
       name: "Spawn eggs"
       hint: "No throwing spawn eggs"
-    TNT:
-      description: "Toggle TNT damage"
+    TNT_DAMAGE:
+      description: |-
+        &aAllow TNT and TNT minecarts
+        &ato break blocks and damage
+        &aentities.
       name: "TNT damage"
+    TNT_PRIMING:
+      description: |-
+        &aPrevents priming TNT.
+        &aIt does not override the
+        &aFlint and steel protection.
+      name: "TNT priming"
+      hint: "No TNT priming"
     TRADING: 
       description: "Toggle trading"
       name: "Villager trading"
