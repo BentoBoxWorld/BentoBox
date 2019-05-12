@@ -1,12 +1,7 @@
 package world.bentobox.bentobox.lists;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
@@ -56,6 +51,10 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.managers.RanksManager;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
@@ -189,6 +188,15 @@ public final class Flags {
      * @see FireListener
      */
     public static final Flag FLINT_AND_STEEL = new Flag.Builder("FLINT_AND_STEEL", Material.FLINT_AND_STEEL).listener(new FireListener()).build();
+
+    /**
+     * Prevents players from priming TNT.
+     * @since 1.5.0
+     *
+     * @see TNTListener
+     */
+    public static final Flag TNT_PRIMING = new Flag.Builder("TNT_PRIMING", Material.TNT).listener(new TNTListener()).build();
+
     /**
      * Prevents players from extinguishing fires.
      * @see FireListener
@@ -229,6 +237,10 @@ public final class Flags {
     public static final Flag EXPERIENCE_PICKUP = new Flag.Builder("EXPERIENCE_PICKUP", Material.EXPERIENCE_BOTTLE).listener(new ExperiencePickupListener()).build();
 
     // TNT
+    /**
+     * @deprecated As of 1.5.0, for removal.
+     */
+    @Deprecated
     public static final Flag TNT = new Flag.Builder("TNT", Material.TNT).listener(new TNTListener()).build();
 
     // Island lock
@@ -279,10 +291,16 @@ public final class Flags {
      */
     public static final Flag LEAF_DECAY = new Flag.Builder("LEAF_DECAY", Material.OAK_LEAVES).type(Type.SETTING).listener(new DecayListener()).defaultSetting(true).build();
 
+    /**
+     * If {@code false}, prevents TNT from breaking blocks and damaging nearby entities.
+     * @since 1.5.0
+     * @see TNTListener
+     */
+    public static final Flag TNT_DAMAGE = new Flag.Builder("TNT_DAMAGE", Material.TNT).type(Type.SETTING).build();
+
     /*
      * World Settings - they apply to every island in the game worlds.
      */
-
     public static final Flag ENDER_CHEST = new Flag.Builder("ENDER_CHEST", Material.ENDER_CHEST)
             .type(Type.WORLD_SETTING)
             .listener(new EnderChestListener())
