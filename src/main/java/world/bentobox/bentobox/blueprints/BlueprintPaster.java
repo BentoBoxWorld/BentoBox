@@ -23,6 +23,7 @@ import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.blueprints.Blueprint;
 import world.bentobox.bentobox.api.blueprints.BlueprintBlock;
 import world.bentobox.bentobox.api.blueprints.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.api.blueprints.BlueprintEntity;
@@ -61,6 +62,7 @@ public class BlueprintPaster {
     private int pasteSpeed;
     private PasteState pasteState;
     private BukkitTask pastingTask;
+    private BlueprintClipboard clipboard;
 
     /**
      * Paste a clipboard to a location and run task
@@ -71,25 +73,28 @@ public class BlueprintPaster {
      */
     public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location, @Nullable Runnable task) {
         this.plugin = plugin;
-        paste(location.getWorld(), null, location, clipboard, task);
+        this.clipboard = clipboard;
+        // Calculate location for pasting
+        Location loc = location.toVector().subtract(clipboard.getOrigin().toVector()).toLocation(location.getWorld());
+        paste(location.getWorld(), null, loc, clipboard.getBp(), task);
     }
 
     /**
-     * Pastes a clipboard
+     * Pastes a blueprint
      * @param plugin - BentoBox
-     * @param clipboard - clipboard to paste
+     * @param bp - blueprint to paste
      * @param world - world to paste to
      * @param island - island related to this paste
      * @param task - task to run after pasting
      */
-    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull World world, @NonNull Island island, @Nullable Runnable task) {
+    public BlueprintPaster(@NonNull BentoBox plugin, Blueprint bp, World world, Island island, Runnable task) {
         this.plugin = plugin;
         // Offset due to bedrock
-        Vector off = clipboard.getBp().getBedrock() != null ? clipboard.getBp().getBedrock() : new Vector(0,0,0);
+        Vector off = bp.getBedrock() != null ? bp.getBedrock() : new Vector(0,0,0);
         // Calculate location for pasting
         Location loc = island.getCenter().toVector().subtract(off).toLocation(world);
         // Paste
-        paste(world, island, loc, clipboard, task);
+        paste(world, island, loc, bp, task);
     }
 
     /**
@@ -97,14 +102,14 @@ public class BlueprintPaster {
      * @param world - world to paste to
      * @param island - the island related to this pasting - may be null
      * @param loc - the location to paste to
-     * @param clipboard - the clipboard to paste
+     * @param blueprint - the blueprint to paste
      * @param task - task to run after pasting
      */
-    private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull BlueprintClipboard clipboard, @Nullable Runnable task) {
+    private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull Blueprint blueprint, @Nullable Runnable task) {
         // Iterators for the various maps to paste
-        Map<Vector, BlueprintBlock> blocks = clipboard.getBp().getBlocks() == null ? new HashMap<>() : clipboard.getBp().getBlocks();
-        Map<Vector, BlueprintBlock> attached = clipboard.getBp().getAttached() == null ? new HashMap<>() : clipboard.getBp().getAttached();
-        Map<Vector, List<BlueprintEntity>> entities = clipboard.getBp().getEntities() == null ? new HashMap<>() : clipboard.getBp().getEntities();
+        Map<Vector, BlueprintBlock> blocks = blueprint.getBlocks() == null ? new HashMap<>() : blueprint.getBlocks();
+        Map<Vector, BlueprintBlock> attached = blueprint.getAttached() == null ? new HashMap<>() : blueprint.getAttached();
+        Map<Vector, List<BlueprintEntity>> entities = blueprint.getEntities() == null ? new HashMap<>() : blueprint.getEntities();
         Iterator<Entry<Vector, BlueprintBlock>> it = blocks.entrySet().iterator();
         Iterator<Entry<Vector, BlueprintBlock>> it2 = attached.entrySet().iterator();
         Iterator<Entry<Vector, List<BlueprintEntity>>> it3 = entities.entrySet().iterator();
@@ -148,7 +153,7 @@ public class BlueprintPaster {
             if (pasteState.equals(PasteState.DONE)) {
                 // All done. Cancel task
                 // Set pos1 and 2 if this was a clipboard paste
-                if (island == null && (clipboard.getPos1() == null || clipboard.getPos2() == null)) {
+                if (island == null && clipboard != null &&(clipboard.getPos1() == null || clipboard.getPos2() == null)) {
                     clipboard.setPos1(pos1);
                     clipboard.setPos2(pos2);
                 }

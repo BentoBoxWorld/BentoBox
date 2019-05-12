@@ -1,12 +1,13 @@
 package world.bentobox.bentobox.api.blueprints;
 
-import com.google.gson.annotations.Expose;
+import java.util.Map;
+
 import org.bukkit.DyeColor;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Horse.Style;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.Map;
+import com.google.gson.annotations.Expose;
 
 /**
  * @author tastybento

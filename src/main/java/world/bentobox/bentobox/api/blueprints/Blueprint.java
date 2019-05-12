@@ -3,13 +3,14 @@
  */
 package world.bentobox.bentobox.api.blueprints;
 
-import com.google.gson.annotations.Expose;
+import java.util.List;
+import java.util.Map;
+
 import org.bukkit.Material;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
-import java.util.List;
-import java.util.Map;
+import com.google.gson.annotations.Expose;
 
 /**
  * Stores all details of a blueprint

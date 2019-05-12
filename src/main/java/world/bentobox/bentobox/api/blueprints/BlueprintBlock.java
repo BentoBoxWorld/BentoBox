@@ -1,10 +1,11 @@
 package world.bentobox.bentobox.api.blueprints;
 
-import com.google.gson.annotations.Expose;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.inventory.ItemStack;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * @author tastybento

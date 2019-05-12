@@ -1,7 +1,8 @@
 package world.bentobox.bentobox.api.blueprints;
 
-import com.google.gson.annotations.Expose;
 import org.bukkit.entity.EntityType;
+
+import com.google.gson.annotations.Expose;
 
 /**
  * @author tastybento

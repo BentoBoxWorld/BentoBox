@@ -1,15 +1,15 @@
 package world.bentobox.bentobox.api.blueprints;
 
+import java.util.ArrayList;
+import java.util.EnumMap;
+import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.World;
 
 import com.google.gson.annotations.Expose;
 
 import world.bentobox.bentobox.database.objects.DataObject;
-
-import java.util.ArrayList;
-import java.util.EnumMap;
-import java.util.List;
 
 /**
  * Represents a bundle of three {@link Blueprint}s.
