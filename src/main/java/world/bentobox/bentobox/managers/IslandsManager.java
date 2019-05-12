@@ -246,7 +246,7 @@ public class IslandsManager {
     }
 
     /**
-     * Create an island with owner. Note this does not create the schematic. It just creates the island data object.
+     * Create an island with owner. Note this does not paste blocks. It just creates the island data object.
      * @param location the location, not null
      * @param owner the island owner UUID, may be null
      * @return Island or null if the island could not be created for some reason

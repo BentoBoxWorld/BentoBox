@@ -12,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -46,8 +45,6 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
-import world.bentobox.bentobox.schems.Clipboard;
-import world.bentobox.bentobox.schems.SchemsManager;
 
 /**
  * @author tastybento
@@ -263,7 +260,7 @@ public class IslandCreateCommandTest {
     @Test
     public void testExecuteUserStringListOfStringUnknownBundle() {
         assertFalse(cc.execute(user, "", Collections.singletonList("custom")));
-        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.create.unknown-schem"));
+        Mockito.verify(user).sendMessage(Mockito.eq("commands.island.create.unknown-blueprint"));
         Mockito.verify(user, Mockito.never()).sendMessage("commands.island.create.creating-island");
     }
 

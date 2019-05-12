@@ -143,7 +143,7 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "island.name.max-length")
     private int nameMaxLength = 20;
 
-    @ConfigComment("Number of blocks to paste per tick when pasting a schem")
+    @ConfigComment("Number of blocks to paste per tick when pasting blueprints")
     @ConfigComment("Smaller values will help reduce noticeable lag but will make pasting take longer")
     @ConfigEntry(path = "island.paste-speed")
     private int pasteSpeed = 1000;

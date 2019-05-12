@@ -84,7 +84,7 @@ public class SchemsManager {
      * Load schems for addon. Will try and load nether and end schems too if settings are set.
      * @param addon - GameModeAddon
      */
-    public void loadIslands(GameModeAddon addon) {
+    public void convertSchems(GameModeAddon addon) {
         File schems = new File(addon.getDataFolder(), FOLDER_NAME);
         // Copy any schems fould in the jar
         copySchems(addon, schems);

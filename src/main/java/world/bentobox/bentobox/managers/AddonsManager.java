@@ -154,14 +154,14 @@ public class AddonsManager {
      */
     private void enableAddon(Addon addon) {
         try {
-            // If this is a GameModeAddon create the worlds, register it and load the schems
+            // If this is a GameModeAddon create the worlds, register it and load the blueprints
             if (addon instanceof GameModeAddon) {
                 GameModeAddon gameMode = (GameModeAddon) addon;
                 // Create the gameWorlds
                 gameMode.createWorlds();
                 plugin.getIWM().addGameMode(gameMode);
-                // Register the schems
-                plugin.getSchemsManager().loadIslands(gameMode);
+                // Convert any schems to blueprints
+                plugin.getSchemsManager().convertSchems(gameMode);
 
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
                 plugin.getBlueprintsManager().loadBlueprintBundles(gameMode);

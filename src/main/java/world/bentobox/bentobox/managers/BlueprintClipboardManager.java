@@ -74,9 +74,8 @@ public class BlueprintClipboardManager {
 
     /**
      * Load a file to clipboard
-     * @param fileName - filename in schems folder
+     * @param fileName - filename in blueprints folder
      * @throws IOException - if there's a load error with unziping or name
-     * @throws InvalidConfigurationException - the YAML of the schem is at fault
      */
     public void load(String fileName) throws IOException {
         clipboard = new BlueprintClipboard(loadBlueprint(fileName));
@@ -117,7 +116,7 @@ public class BlueprintClipboardManager {
             load(fileName);
         } catch (IOException e1) {
             user.sendMessage("commands.admin.blueprint.could-not-load");
-            plugin.logError("Could not load schems file: " + fileName + " " + e1.getMessage());
+            plugin.logError("Could not load blueprint file: " + fileName + " " + e1.getMessage());
             return false;
         }
         user.sendMessage("general.success");

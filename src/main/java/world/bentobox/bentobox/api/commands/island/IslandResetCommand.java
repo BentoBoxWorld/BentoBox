@@ -69,8 +69,8 @@ public class IslandResetCommand extends ConfirmableCommand {
 
         String name = getBundleName(args);
         if (name == null) {
-            // The schem name is not valid.
-            user.sendMessage("commands.island.create.unknown-schem");
+            // The blueprint name is not valid.
+            user.sendMessage("commands.island.create.unknown-blueprint");
             return false;
         }
 

@@ -1,7 +1,7 @@
 /**
  *
  */
-package world.bentobox.bentobox.api.commands.admin.schem;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -44,7 +44,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class, User.class })
-public class AdminSchemListCommandTest {
+public class AdminBlueprintsListCommandTest {
 
     @Mock
     private AdminBlueprintCommand ac;
@@ -78,7 +78,7 @@ public class AdminSchemListCommandTest {
 
         // Parent command has no aliases
         when(ac.getAddon()).thenReturn(addon);
-        when(ac.getLabel()).thenReturn("schem");
+        when(ac.getLabel()).thenReturn("blueprint");
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ac.getTopLabel()).thenReturn("admin");
 
@@ -111,10 +111,10 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#AdminSchemListCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#AdminBlueprintListCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
-    public void testAdminSchemListCommand() {
+    public void testAdminBlueprintListCommand() {
 
         assertEquals("list", list.getLabel());
     }
@@ -124,7 +124,7 @@ public class AdminSchemListCommandTest {
      */
     @Test
     public void testSetup() {
-        assertEquals("commands.admin.schem.list.description", list.getDescription());
+        assertEquals("commands.admin.blueprint.list.description", list.getDescription());
     }
 
     /**
@@ -140,33 +140,20 @@ public class AdminSchemListCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoSchemsFolder() {
+    public void testExecuteUserStringListOfStringNoBlueprintsFolder() {
         assertFalse(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.schem.list.no-schems");
+        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
     }
 
     /**
      * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoSchemsFilesEmptyFolder() {
-        File schemFolder = new File(dataFolder, "schems");
-        schemFolder.mkdirs();
+    public void testExecuteUserStringListOfStringNoBlueprintsFilesEmptyFolder() {
+        File blueprintFolder = new File(dataFolder, "blueprints");
+        blueprintFolder.mkdirs();
         assertFalse(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.schem.list.no-schems");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     * @throws IOException
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoSchemsFiles() throws IOException {
-        File schemFolder = new File(dataFolder, "schems");
-        schemFolder.mkdirs();
-        new File(schemFolder, "random.txt").createNewFile();
-        assertFalse(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.schem.list.no-schems");
+        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
     }
 
     /**
@@ -174,16 +161,29 @@ public class AdminSchemListCommandTest {
      * @throws IOException
      */
     @Test
-    public void testExecuteUserStringListOfStringWithSchemsFiles() throws IOException {
-        File schemFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
-        schemFolder.mkdirs();
-        new File(schemFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
-        new File(schemFolder, "nether-island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
-        new File(schemFolder, "end-island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
-        new File(schemFolder, "random.txt").createNewFile();
+    public void testExecuteUserStringListOfStringNoBlueprintsFiles() throws IOException {
+        File blueprintFolder = new File(dataFolder, "blueprints");
+        blueprintFolder.mkdirs();
+        new File(blueprintFolder, "random.txt").createNewFile();
+        assertFalse(list.execute(user, "", Collections.emptyList()));
+        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.no-blueprints");
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * @throws IOException
+     */
+    @Test
+    public void testExecuteUserStringListOfStringWithBlueprintsFiles() throws IOException {
+        File blueprintFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
+        blueprintFolder.mkdirs();
+        new File(blueprintFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
+        new File(blueprintFolder, "nether-island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
+        new File(blueprintFolder, "end-island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
+        new File(blueprintFolder, "random.txt").createNewFile();
 
         assertTrue(list.execute(user, "", Collections.emptyList()));
-        Mockito.verify(user).sendMessage("commands.admin.schem.list.available-schems");
+        Mockito.verify(user).sendMessage("commands.admin.blueprint.list.available-blueprints");
         Mockito.verify(user).sendRawMessage("island");
         Mockito.verify(user).sendRawMessage("nether-island");
         Mockito.verify(user).sendRawMessage("end-island");

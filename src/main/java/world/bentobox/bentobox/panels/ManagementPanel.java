@@ -50,74 +50,74 @@ public class ManagementPanel {
         int i = 0;
         List<? extends Addon> addons;
         switch (view) {
-            case GAMEMODES:
-                addons = plugin.getAddonsManager().getGameModeAddons();
-                if (addons.isEmpty()) {
-                    looksEmpty(builder, user);
-                    break;
-                }
-                for (Addon addon : addons) {
-                    GameModeAddon gameModeAddon = (GameModeAddon) addon;
-                    PanelItem addonItem = new PanelItemBuilder()
-                            .icon(addon.getDescription().getIcon())
-                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.name", TextVariables.NAME, addon.getDescription().getName()))
-                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.description",
-                                    "[islands]", String.valueOf(addon.getIslands().getIslandCount(gameModeAddon.getOverWorld()))))
-                            .build();
-
-                    builder.item(startSlot + i, addonItem);
-
-                    PanelItem schems = new PanelItemBuilder()
-                            .icon(Material.STRUCTURE_BLOCK)
-                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
-                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
-                            .clickHandler((panel, user1, clickType, slot) -> {
-                                user1.sendRawMessage("opening the admin schems menu (not implemented yet)");
-                                return true;
-                            })
-                            .build();
-
-                    builder.item(startSlot + i + 9, schems);
-                    i++;
-                }
+        case GAMEMODES:
+            addons = plugin.getAddonsManager().getGameModeAddons();
+            if (addons.isEmpty()) {
+                looksEmpty(builder, user);
                 break;
-            case ADDONS:
-                addons = plugin.getAddonsManager().getEnabledAddons().stream().filter(addon -> !(addon instanceof GameModeAddon)).collect(Collectors.toList());
-                if (addons.isEmpty()) {
-                    looksEmpty(builder, user);
-                    break;
-                }
-                for (Addon addon : addons) {
-                    PanelItem addonItem = new PanelItemBuilder()
-                            .icon(addon.getDescription().getIcon())
-                            .name(ChatColor.WHITE + addon.getDescription().getName())
-                            .build();
+            }
+            for (Addon addon : addons) {
+                GameModeAddon gameModeAddon = (GameModeAddon) addon;
+                PanelItem addonItem = new PanelItemBuilder()
+                        .icon(addon.getDescription().getIcon())
+                        .name(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.name", TextVariables.NAME, addon.getDescription().getName()))
+                        .description(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.description",
+                                "[islands]", String.valueOf(addon.getIslands().getIslandCount(gameModeAddon.getOverWorld()))))
+                        .build();
 
-                    builder.item(startSlot + i, addonItem);
-                    i++;
-                    if (builder.slotOccupied(startSlot + i)) {
-                        i = i+2;
-                    }
-                }
-                break;
-            case HOOKS:
-                if (plugin.getHooks().getHooks().isEmpty()) {
-                    looksEmpty(builder, user);
-                    break;
-                }
-                for (Hook hook : plugin.getHooks().getHooks()) {
-                    PanelItem hookItem = new PanelItemBuilder()
-                            .icon(hook.getIcon())
-                            .name(ChatColor.WHITE + hook.getPluginName())
-                            .build();
+                builder.item(startSlot + i, addonItem);
 
-                    builder.item(startSlot + i, hookItem);
-                    i++;
-                    if (builder.slotOccupied(startSlot + i)) {
-                        i = i+2;
-                    }
-                }
+                PanelItem blueprints = new PanelItemBuilder()
+                        .icon(Material.STRUCTURE_BLOCK)
+                        .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
+                        .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
+                        .clickHandler((panel, user1, clickType, slot) -> {
+                            user1.sendRawMessage("Opening the admin blueprints menu (not implemented yet)");
+                            return true;
+                        })
+                        .build();
+
+                builder.item(startSlot + i + 9, blueprints);
+                i++;
+            }
+            break;
+        case ADDONS:
+            addons = plugin.getAddonsManager().getEnabledAddons().stream().filter(addon -> !(addon instanceof GameModeAddon)).collect(Collectors.toList());
+            if (addons.isEmpty()) {
+                looksEmpty(builder, user);
                 break;
+            }
+            for (Addon addon : addons) {
+                PanelItem addonItem = new PanelItemBuilder()
+                        .icon(addon.getDescription().getIcon())
+                        .name(ChatColor.WHITE + addon.getDescription().getName())
+                        .build();
+
+                builder.item(startSlot + i, addonItem);
+                i++;
+                if (builder.slotOccupied(startSlot + i)) {
+                    i = i+2;
+                }
+            }
+            break;
+        case HOOKS:
+            if (plugin.getHooks().getHooks().isEmpty()) {
+                looksEmpty(builder, user);
+                break;
+            }
+            for (Hook hook : plugin.getHooks().getHooks()) {
+                PanelItem hookItem = new PanelItemBuilder()
+                        .icon(hook.getIcon())
+                        .name(ChatColor.WHITE + hook.getPluginName())
+                        .build();
+
+                builder.item(startSlot + i, hookItem);
+                i++;
+                if (builder.slotOccupied(startSlot + i)) {
+                    i = i+2;
+                }
+            }
+            break;
         }
 
         // Setup a few more buttons
@@ -168,15 +168,15 @@ public class ManagementPanel {
                 });
 
         switch (view) {
-            case GAMEMODES:
-                gamemodesIconBuilder.glow(true);
-                break;
-            case ADDONS:
-                addonsIconBuilder.glow(true);
-                break;
-            case HOOKS:
-                hooksIconBuilder.glow(true);
-                break;
+        case GAMEMODES:
+            gamemodesIconBuilder.glow(true);
+            break;
+        case ADDONS:
+            addonsIconBuilder.glow(true);
+            break;
+        case HOOKS:
+            hooksIconBuilder.glow(true);
+            break;
         }
 
         builder.item(1, gamemodesIconBuilder.build());
@@ -216,19 +216,19 @@ public class ManagementPanel {
                 .name(user.getTranslation(LOCALE_REF + "information.state.name"))
                 .description(user.getTranslation(LOCALE_REF + "information.state.description." + compatibility,
                         TextVariables.NAME, serverSoftware != null ? serverSoftware.toString() : user.getTranslation("general.invalid"),
-                        TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid")));
+                                TextVariables.VERSION, serverVersion != null ? serverVersion.toString() : user.getTranslation("general.invalid")));
 
         switch (compatibility) {
-            case COMPATIBLE:
-            case SUPPORTED:
-                compatibilityItemBuilder.icon(Material.GREEN_CONCRETE);
-                break;
-            case NOT_SUPPORTED:
-                compatibilityItemBuilder.icon(Material.ORANGE_CONCRETE);
-                break;
-            case INCOMPATIBLE:
-                compatibilityItemBuilder.icon(Material.RED_CONCRETE);
-                break;
+        case COMPATIBLE:
+        case SUPPORTED:
+            compatibilityItemBuilder.icon(Material.GREEN_CONCRETE);
+            break;
+        case NOT_SUPPORTED:
+            compatibilityItemBuilder.icon(Material.ORANGE_CONCRETE);
+            break;
+        case INCOMPATIBLE:
+            compatibilityItemBuilder.icon(Material.RED_CONCRETE);
+            break;
         }
 
         builder.item(7, compatibilityItemBuilder.build());

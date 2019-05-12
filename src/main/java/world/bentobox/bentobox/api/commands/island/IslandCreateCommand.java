@@ -62,10 +62,10 @@ public class IslandCreateCommand extends CompositeCommand {
                 user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
                 return false;
             }
-            // Check the schem name exists
+            // Check the blueprint name exists
             name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), name);
             if (name == null) {
-                user.sendMessage("commands.island.create.unknown-schem");
+                user.sendMessage("commands.island.create.unknown-blueprint");
                 return false;
             }
         }

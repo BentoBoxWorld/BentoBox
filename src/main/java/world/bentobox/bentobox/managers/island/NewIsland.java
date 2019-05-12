@@ -123,7 +123,7 @@ public class NewIsland {
         }
 
         /**
-         * No schematics will be pasted
+         * No blocks will be pasted
          */
         public Builder noPaste() {
             this.noPaste2 = true;
@@ -147,7 +147,7 @@ public class NewIsland {
                 NewIsland newIsland = new NewIsland(this);
                 return newIsland.getIsland();
             }
-            throw new IOException("Insufficient parameters. Must have a schematic and a player");
+            throw new IOException("Insufficient parameters. Must have a user!");
         }
     }
 

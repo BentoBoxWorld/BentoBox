@@ -35,19 +35,19 @@ public class AdminBlueprintListCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        File schems = new File(getAddon().getDataFolder(), BlueprintsManager.FOLDER_NAME);
-        if (!schems.exists()) {
-            user.sendMessage("commands.admin.blueprint.list.no-schems");
+        File blueprints = new File(getAddon().getDataFolder(), BlueprintsManager.FOLDER_NAME);
+        if (!blueprints.exists()) {
+            user.sendMessage("commands.admin.blueprint.list.no-blueprints");
             return false;
         }
-        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
-        List<String> schemList = Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length())).collect(Collectors.toList());
-        if (schemList.isEmpty()) {
-            user.sendMessage("commands.admin.blueprint.list.no-schems");
+        FilenameFilter blueprintFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
+        List<String> blueprintList = Arrays.stream(Objects.requireNonNull(blueprints.list(blueprintFilter))).map(name -> name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length())).collect(Collectors.toList());
+        if (blueprintList.isEmpty()) {
+            user.sendMessage("commands.admin.blueprint.list.no-blueprints");
             return false;
         }
-        user.sendMessage("commands.admin.blueprint.list.available-schems");
-        schemList.forEach(user::sendRawMessage);
+        user.sendMessage("commands.admin.blueprint.list.available-blueprints");
+        blueprintList.forEach(user::sendRawMessage);
         return true;
     }
 

@@ -111,7 +111,7 @@ public class BlueprintsManager {
             Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_SUFFIX).forEach(name -> addon.saveResource(name, false));
             Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
-            plugin.logError("Could not load schem files from addon jar " + e.getMessage());
+            plugin.logError("Could not load blueprint files from addon jar " + e.getMessage());
         }
     }
 
