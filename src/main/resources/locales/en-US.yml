@@ -1001,6 +1001,10 @@ management:
         schems:
           name: "&6Schems"
           description: "&aOpens the Admin Schem menu."
+        gamemode:
+          name: "&f[name]"
+          description: |+
+            &aIslands: &b[islands]
       addons:
         name: "&6Addons"
         description: "&eClick &ato display currently loaded Addons"
