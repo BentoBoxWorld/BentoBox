@@ -32,6 +32,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
 
@@ -172,11 +173,11 @@ public class AdminSchemListCommandTest {
      */
     @Test
     public void testExecuteUserStringListOfStringWithSchemsFiles() throws IOException {
-        File schemFolder = new File(dataFolder, "schems");
+        File schemFolder = new File(dataFolder, BlueprintsManager.FOLDER_NAME);
         schemFolder.mkdirs();
-        new File(schemFolder, "island.schem").createNewFile();
-        new File(schemFolder, "nether-island.schem").createNewFile();
-        new File(schemFolder, "end-island.schem").createNewFile();
+        new File(schemFolder, "island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
+        new File(schemFolder, "nether-island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
+        new File(schemFolder, "end-island" + BlueprintsManager.BLUEPRINT_SUFFIX).createNewFile();
         new File(schemFolder, "random.txt").createNewFile();
 
         assertTrue(list.execute(user, "", Collections.emptyList()));
