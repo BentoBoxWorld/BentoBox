@@ -258,7 +258,8 @@ commands:
       locales-reloaded: "&2Languages reloaded."
       addons-reloaded: "&2Addons reloaded."
       settings-reloaded: "&2Settings reloaded."
-      addon: "&6Reloading [description]"
+      addon: "&6Reloading &b[name]&2."
+      addon-reloaded: "&b[name] &2reloaded."
       unknown-addon: "&2Unknown addon!"
     version:
       plugin-version: "&2BentoBox version: &3[version]"
@@ -984,7 +985,11 @@ protection:
 
 language:
   panel-title: "Select your language"
-  selected: "&aCurrently selected."
+  description:
+    selected: "&aCurrently selected."
+    click-to-select: "&eClick &ato select."
+    authors: "&aAuthors:"
+    author: "&3- &b[name]"
   edited: "&aChanged your language to &e[lang]&a."
 
 management:
@@ -997,6 +1002,10 @@ management:
         schems:
           name: "&6Schems"
           description: "&aOpens the Admin Schem menu."
+        gamemode:
+          name: "&f[name]"
+          description: |+
+            &aIslands: &b[islands]
       addons:
         name: "&6Addons"
         description: "&eClick &ato display currently loaded Addons"

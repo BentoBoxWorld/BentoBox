@@ -97,7 +97,7 @@ public class BentoBox extends JavaPlugin {
         // Not loaded
         isLoaded = false;
         // Store the current millis time so we can tell how many ms it took for BSB to fully load.
-        final long startMillis = System.currentTimeMillis();
+        final long loadStart = System.currentTimeMillis();
 
         // Save the default config from config.yml
         saveDefaultConfig();
@@ -150,7 +150,10 @@ public class BentoBox extends JavaPlugin {
         addonsManager = new AddonsManager(this);
         addonsManager.loadAddons();
 
+        final long loadTime = System.currentTimeMillis() - loadStart;
+
         getServer().getScheduler().runTask(instance, () -> {
+            final long enableStart = System.currentTimeMillis();
             hooksManager.registerHook(new PlaceholderAPIHook());
             // Setup the Placeholders manager
             placeholdersManager = new PlaceholdersManager(this);
@@ -192,10 +195,12 @@ public class BentoBox extends JavaPlugin {
 
             webManager = new WebManager(this);
 
+            final long enableTime = System.currentTimeMillis() - enableStart;
+
             // Show banner
             User.getInstance(Bukkit.getConsoleSender()).sendMessage("successfully-loaded",
                     TextVariables.VERSION, instance.getDescription().getVersion(),
-                    "[time]", String.valueOf(System.currentTimeMillis() - startMillis));
+                    "[time]", String.valueOf(loadTime + enableTime));
 
             // Fire plugin ready event - this should go last after everything else
             isLoaded = true;

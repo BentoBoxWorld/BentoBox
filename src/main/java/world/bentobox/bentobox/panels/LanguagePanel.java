@@ -1,15 +1,17 @@
 package world.bentobox.bentobox.panels;
 
-import java.util.Locale;
-
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
-
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.localization.BentoBoxLocale;
+import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.LocalesManager;
+
+import java.util.Locale;
 
 /**
  * @author Poslovitch
@@ -26,10 +28,14 @@ public class LanguagePanel {
         PanelBuilder panelBuilder = new PanelBuilder()
                 .name(user.getTranslation("language.panel-title"));
 
-        for (Locale locale : BentoBox.getInstance().getLocalesManager().getAvailableLocales(true)) {
+        LocalesManager localesManager = BentoBox.getInstance().getLocalesManager();
+
+        for (Locale locale : localesManager.getAvailableLocales(true)) {
             PanelItemBuilder localeIcon = new PanelItemBuilder();
 
-            ItemStack localeBanner = BentoBox.getInstance().getLocalesManager().getLanguages().get(locale).getBanner();
+            BentoBoxLocale language = localesManager.getLanguages().get(locale);
+
+            ItemStack localeBanner = language.getBanner();
             if (localeBanner != null) {
                 localeIcon.icon(localeBanner);
             } else {
@@ -45,7 +51,14 @@ public class LanguagePanel {
                     });
 
             if (user.getLocale().toLanguageTag().equals(locale.toLanguageTag())) {
-                localeIcon.description(user.getTranslation("language.selected"));
+                localeIcon.description(user.getTranslation("language.description.selected"), "");
+            } else {
+                localeIcon.description(user.getTranslation("language.description.click-to-select"), "");
+            }
+
+            localeIcon.description(user.getTranslation("language.description.authors"));
+            for (String author : language.getAuthors()) {
+                localeIcon.description(user.getTranslation("language.description.author", TextVariables.NAME, author));
             }
 
             panelBuilder.item(localeIcon.build());

@@ -8,7 +8,7 @@
 meta:
   authors:
   - BONNe1704
-  banner: "RED_BANNER:1:STRIPE_MIDDLE:WHITE"
+  banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:STRIPE_LEFT:RED:STRIPE_RIGHT:RED"
 
 general:
   success: "&aDarīts!"
@@ -477,10 +477,6 @@ ranks:
   banned: "Aizliegtais"
   admin: "Administrators"
   mod: "Moderators"
-  
-protection:
-  flags:
-
   
 protection:
   command-is-banned: "Komanda nav atļauta apmeklētājiem"

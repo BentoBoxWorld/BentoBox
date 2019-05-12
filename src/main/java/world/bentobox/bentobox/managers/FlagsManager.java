@@ -122,5 +122,4 @@ public class FlagsManager {
         // Remove flags
         flags.values().removeIf(addon::equals);
     }
-
 }

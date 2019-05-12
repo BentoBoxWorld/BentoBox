@@ -57,9 +57,12 @@ public class ManagementPanel {
                     break;
                 }
                 for (Addon addon : addons) {
+                    GameModeAddon gameModeAddon = (GameModeAddon) addon;
                     PanelItem addonItem = new PanelItemBuilder()
                             .icon(addon.getDescription().getIcon())
-                            .name(ChatColor.WHITE + addon.getDescription().getName())
+                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.name", TextVariables.NAME, addon.getDescription().getName()))
+                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.gamemode.description",
+                                    "[islands]", String.valueOf(addon.getIslands().getIslandCount(gameModeAddon.getOverWorld()))))
                             .build();
 
                     builder.item(startSlot + i, addonItem);
