@@ -57,7 +57,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
             }
 
             this.askConfirmation(user, () -> {
-                user.sendMessage("commands.bentobox.reload.addon", TextVariables.DESCRIPTION, addon.get().getDescription().getName());
+                user.sendMessage("commands.bentobox.reload.addon", TextVariables.NAME, addon.get().getDescription().getName());
                 addon.ifPresent(getPlugin().getAddonsManager()::reloadAddon);
                 user.sendMessage("commands.bentobox.reload.addon-reloaded", TextVariables.NAME, addon.get().getDescription().getName());
             });
