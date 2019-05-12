@@ -4,10 +4,13 @@
 package world.bentobox.bentobox.api.blueprints;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.annotations.Expose;
@@ -20,17 +23,31 @@ import com.google.gson.annotations.Expose;
 public class Blueprint {
 
     @Expose
-    private @NonNull String name = "";
+    private @NonNull String name;
     @Expose
-    private String displayName = "";
+    private String displayName;
     @Expose
-    private @NonNull Material icon = Material.PAPER;
+    private @NonNull Material icon;
     @Expose
-    private List<String> description = new ArrayList<>();
+    private List<String> description;
     @Expose
-    private World.Environment environment = World.Environment.NORMAL;
+    private World.Environment environment;
     @Expose
-    private String fileName = "";
+    private String fileName;
+    @Expose
+    private Map<Vector, BP_Block> attached;
+    @Expose
+    private Map<Vector, List<BP_Entity>> entities;
+    @Expose
+    private Map<Vector, BP_Block> blocks;
+    @Expose
+    private int xSize;
+    @Expose
+    private int ySize;
+    @Expose
+    private int zSize;
+    @Expose
+    private Vector bedrock;
     /**
      * @return the name
      */
@@ -103,6 +120,89 @@ public class Blueprint {
     public void setFileName(String fileName) {
         this.fileName = fileName;
     }
-
+    /**
+     * @return the attached
+     */
+    public Map<Vector, BP_Block> getAttached() {
+        return attached;
+    }
+    /**
+     * @param attached the attached to set
+     */
+    public void setAttached(Map<Vector, BP_Block> attached) {
+        this.attached = attached;
+    }
+    /**
+     * @return the entities
+     */
+    public Map<Vector, List<BP_Entity>> getEntities() {
+        return entities;
+    }
+    /**
+     * @param entities the entities to set
+     */
+    public void setEntities(Map<Vector, List<BP_Entity>> entities) {
+        this.entities = entities;
+    }
+    /**
+     * @return the blocks
+     */
+    public Map<Vector, BP_Block> getBlocks() {
+        return blocks;
+    }
+    /**
+     * @param blocks the blocks to set
+     */
+    public void setBlocks(Map<Vector, BP_Block> blocks) {
+        this.blocks = blocks;
+    }
+    /**
+     * @return the xSize
+     */
+    public int getxSize() {
+        return xSize;
+    }
+    /**
+     * @param xSize the xSize to set
+     */
+    public void setxSize(int xSize) {
+        this.xSize = xSize;
+    }
+    /**
+     * @return the ySize
+     */
+    public int getySize() {
+        return ySize;
+    }
+    /**
+     * @param ySize the ySize to set
+     */
+    public void setySize(int ySize) {
+        this.ySize = ySize;
+    }
+    /**
+     * @return the zSize
+     */
+    public int getzSize() {
+        return zSize;
+    }
+    /**
+     * @param zSize the zSize to set
+     */
+    public void setzSize(int zSize) {
+        this.zSize = zSize;
+    }
+    /**
+     * @return the bedrock
+     */
+    public Vector getBedrock() {
+        return bedrock;
+    }
+    /**
+     * @param bedrock the bedrock to set
+     */
+    public void setBedrock(Vector bedrock) {
+        this.bedrock = bedrock;
+    }
 
 }

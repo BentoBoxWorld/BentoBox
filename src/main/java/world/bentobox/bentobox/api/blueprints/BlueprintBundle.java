@@ -27,8 +27,11 @@ public class BlueprintBundle implements DataObject {
     private String displayName = "";
     @Expose
     private List<String> description = new ArrayList<>();
+    /**
+     * Reference to the blueprint
+     */
     @Expose
-    private EnumMap<World.Environment, Blueprint> blueprints = new EnumMap<>(World.Environment.class);
+    private EnumMap<World.Environment, String> blueprints = new EnumMap<>(World.Environment.class);
     /**
      * @return the uniqueId
      */
@@ -82,13 +85,13 @@ public class BlueprintBundle implements DataObject {
     /**
      * @return the blueprints
      */
-    public EnumMap<World.Environment, Blueprint> getBlueprints() {
+    public EnumMap<World.Environment, String> getBlueprints() {
         return blueprints;
     }
     /**
      * @param blueprints the blueprints to set
      */
-    public void setBlueprints(EnumMap<World.Environment, Blueprint> blueprints) {
+    public void setBlueprints(EnumMap<World.Environment, String> blueprints) {
         this.blueprints = blueprints;
     }
 
@@ -97,7 +100,7 @@ public class BlueprintBundle implements DataObject {
      * @param bp - blueprint
      */
     public void addBlueprint(Blueprint bp) {
-        this.blueprints.put(bp.getEnvironment(), bp);
+        this.blueprints.put(bp.getEnvironment(), bp.getName());
     }
 
     /**
@@ -105,7 +108,7 @@ public class BlueprintBundle implements DataObject {
      * @param env - {@link World.Environment} type
      * @return Blueprint or null if one does not exist
      */
-    public Blueprint getBlueprint(World.Environment env) {
+    public String getBlueprint(World.Environment env) {
         return this.blueprints.get(env);
     }
 

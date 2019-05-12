@@ -5,8 +5,8 @@ import java.util.List;
 
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.Clipboard;
-import world.bentobox.bentobox.managers.ClipboardManager;
+import world.bentobox.bentobox.blueprints.BPClipboard;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 
 public class AdminSchemSaveCommand extends ConfirmableCommand {
 
@@ -28,20 +28,22 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
         }
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
-        Clipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new Clipboard());
+        BPClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BPClipboard());
 
         if (clipboard.isFull()) {
             // Check if file exists
-            File newFile = new File(parent.getSchemsFolder(), args.get(0) + ".schem");
+            File newFile = new File(parent.getSchemsFolder(), args.get(0) + ".json");
+            clipboard.getBp().setName(args.get(0));
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
                     parent.hideClipboard(user);
-                    new ClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
+                    new BlueprintsManager(getPlugin()).saveBlueprint(parent.getSchemsFolder(), clipboard.getBp());
                 });
                 return false;
             } else {
                 parent.hideClipboard(user);
-                return new ClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
+                new BlueprintsManager(getPlugin()).saveBlueprint(parent.getSchemsFolder(), clipboard.getBp());
+                return true;
             }
         } else {
             user.sendMessage("commands.admin.schem.copy-first");

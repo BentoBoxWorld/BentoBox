@@ -32,7 +32,7 @@ public class AdminSchemLoadCommand extends CompositeCommand {
 
         ClipboardManager bp = new ClipboardManager(getPlugin(), parent.getSchemsFolder());
         if (bp.load(user, args.get(0))) {
-            parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
+            //parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
             return true;
         }
 

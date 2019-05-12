@@ -13,12 +13,13 @@ import org.bukkit.Particle;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BPClipboard;
 import world.bentobox.bentobox.blueprints.Clipboard;
 import world.bentobox.bentobox.managers.SchemsManager;
 
 public class AdminSchemCommand extends ConfirmableCommand {
     // Clipboards
-    private Map<UUID, Clipboard> clipboards;
+    private Map<UUID, BPClipboard> clipboards;
 
     // Map containing selection cuboid display tasks
     private Map<User, Integer> displayClipboards;
@@ -55,7 +56,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         return true;
     }
 
-    protected Map<UUID, Clipboard> getClipboards() {
+    protected Map<UUID, BPClipboard> getClipboards() {
         return clipboards;
     }
 
@@ -66,9 +67,9 @@ public class AdminSchemCommand extends ConfirmableCommand {
             }
 
             if (clipboards.containsKey(user.getUniqueId())) {
-                Clipboard clipboard = clipboards.get(user.getUniqueId());
+                BPClipboard clipboard = clipboards.get(user.getUniqueId());
                 if (clipboard.getPos1() != null && clipboard.getPos2() != null) {
-                    paintAxis(user, clipboard);
+                    //paintAxis(user, clipboard);
                 }
             }
 

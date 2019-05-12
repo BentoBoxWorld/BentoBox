@@ -10,6 +10,7 @@ import org.bukkit.World;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.potion.PotionEffectType;
+import org.bukkit.util.Vector;
 
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
@@ -23,6 +24,7 @@ import world.bentobox.bentobox.database.json.adapters.FlagTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.ItemStackTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.LocationTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.PotionEffectTypeAdapter;
+import world.bentobox.bentobox.database.json.adapters.VectorTypeAdapter;
 import world.bentobox.bentobox.database.json.adapters.WorldTypeAdapter;
 
 /**
@@ -61,6 +63,8 @@ public class BentoboxTypeAdapterFactory implements TypeAdapterFactory {
             return (TypeAdapter<T>) new PotionEffectTypeAdapter();
         } else if (World.class.isAssignableFrom(rawType)) {
             return (TypeAdapter<T>) new WorldTypeAdapter();
+        } else if (Vector.class.isAssignableFrom(rawType)) {
+            return (TypeAdapter<T>) new VectorTypeAdapter();
         } else if (ConfigurationSerializable.class.isAssignableFrom(rawType)) {
             // This covers a lot of Bukkit objects
             return (TypeAdapter<T>) new BukkitObjectTypeAdapter(gson.getAdapter(Map.class));
