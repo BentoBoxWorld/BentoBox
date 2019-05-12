@@ -83,6 +83,17 @@ public class BPClipboardManager {
      * @throws InvalidConfigurationException - the YAML of the schem is at fault
      */
     public void load(String fileName) throws IOException {
+        clipboard = new BPClipboard(loadBlueprint(fileName));
+
+    }
+
+    /**
+     * Loads a blueprint
+     * @param fileName - the filename without the suffix
+     * @return the blueprint
+     * @throws IOException
+     */
+    public Blueprint loadBlueprint(String fileName) throws IOException {
         File zipFile = new File(blueprintFolder, fileName + BLUEPRINT_SUFFIX);
         if (!zipFile.exists()) {
             plugin.logError(LOAD_ERROR + zipFile.getName());
@@ -94,14 +105,12 @@ public class BPClipboardManager {
             plugin.logError(LOAD_ERROR + file.getName());
             throw new IOException(LOAD_ERROR + file.getName());
         }
-        clipboard = new BPClipboard(gson.fromJson(new FileReader(file), Blueprint.class));
         Files.delete(file.toPath());
+        return gson.fromJson(new FileReader(file), Blueprint.class);
     }
 
-    /*
-      Load a file to clipboard
-     */
     /**
+     * Load a blueprint to the clipboard for a user
      * @param user - user trying to load
      * @param fileName - filename
      * @return - <tt>true</tt> if load is successful, <tt>false</tt> if not
@@ -149,22 +158,34 @@ public class BPClipboardManager {
      */
     public boolean save(User user, String newFile) {
         File file = new File(blueprintFolder, newFile);
-        String toStore = gson.toJson(clipboard.getBp(), Blueprint.class);
+        if (saveBlueprint(file, clipboard.getBp())) {
+            user.sendMessage("general.success");
+            return true;
+        }
+        user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not save temp blueprint file.");
+        return false;
+    }
+
+    /**
+     * Save a blueprint
+     * @param file - file to save to
+     * @param blueprint - blueprint
+     * @return true if successful, false if not
+     */
+    public boolean saveBlueprint(File file, Blueprint blueprint) {
+        String toStore = gson.toJson(blueprint, Blueprint.class);
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(toStore);
         } catch (IOException e) {
-            user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not save temp blueprint file.");
             plugin.logError("Could not save temporary blueprint file: " + file.getName());
             return false;
         }
         try {
             zip(file);
         } catch (IOException e) {
-            user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not zip temp blueprint file.");
             plugin.logError("Could not zip temporary blueprint file: " + file.getName());
             return false;
         }
-        user.sendMessage("general.success");
         return true;
     }
 

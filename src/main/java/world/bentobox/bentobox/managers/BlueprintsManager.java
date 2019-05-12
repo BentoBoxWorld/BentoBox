@@ -1,7 +1,6 @@
 package world.bentobox.bentobox.managers;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -17,8 +16,6 @@ import org.eclipse.jdt.annotation.NonNull;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -34,26 +31,32 @@ import world.bentobox.bentobox.util.Util;
  */
 public class BlueprintsManager {
 
+    private static final String BLUEPRINT_BUNDLE_SUFFIX = ".json";
+
     public static final @NonNull String FOLDER_NAME = "blueprints";
 
-    private static final String BLUEPRINT_BUNDLE_FILE_EXTENSION = ".json";
-    private static final String BLUEPRINT_FILE_EXTENSION = ".bp";
-
-    private @NonNull BentoBox plugin;
-
+    /**
+     * Map of blueprint bundles to game mode addon.
+     */
     private @NonNull Map<GameModeAddon, List<BlueprintBundle>> blueprintBundles;
+
+    /**
+     * Map of blueprints. There can be many blueprints per game mode addon
+     */
     private @NonNull Map<GameModeAddon, List<Blueprint>> blueprints;
 
-    private Gson gson;
+    /**
+     * Gson used for serializing/deserializing the bundle class
+     */
+    private final Gson gson;
+
+    private @NonNull BentoBox plugin;
 
 
     public BlueprintsManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
         this.blueprintBundles = new HashMap<>();
-        getGson();
-    }
-
-    private void getGson() {
+        this.blueprints = new HashMap<>();
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization();
         // Disable <>'s escaping etc.
         builder.disableHtmlEscaping();
@@ -82,11 +85,29 @@ public class BlueprintsManager {
 
         // Get any blueprints or bundles from the jar and save them.
         try (JarFile jar = new JarFile(addon.getFile())) {
-            Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_FILE_EXTENSION).forEach(name -> addon.saveResource(name, false));
-            Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_FILE_EXTENSION).forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_SUFFIX).forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, FOLDER_NAME, BPClipboardManager.BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load schem files from addon jar " + e.getMessage());
         }
+    }
+
+    /**
+     * Get the blueprint bundles of this addon.
+     * @param addon the {@link GameModeAddon} to get the blueprint bundles.
+     */
+    public List<BlueprintBundle> getBlueprintBundles(@NonNull GameModeAddon addon) {
+        return blueprintBundles.getOrDefault(addon, new ArrayList<>());
+    }
+
+    /**
+     * Returns a {@link File} instance of the blueprints folder of this {@link GameModeAddon}.
+     * @param addon the {@link GameModeAddon}
+     * @return a {@link File} instance of the blueprints folder of this GameModeAddon.
+     */
+    @NonNull
+    private File getBlueprintsFolder(@NonNull GameModeAddon addon) {
+        return new File(addon.getDataFolder(), FOLDER_NAME);
     }
 
     /**
@@ -96,7 +117,7 @@ public class BlueprintsManager {
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
         blueprintBundles.putIfAbsent(addon, new ArrayList<>());
         File bpf = getBlueprintsFolder(addon);
-        for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_FILE_EXTENSION)))) {
+        for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX)))) {
             try {
                 blueprintBundles.get(addon).add(gson.fromJson(new FileReader(file), BlueprintBundle.class));
             } catch (Exception e) {
@@ -111,9 +132,10 @@ public class BlueprintsManager {
      */
     public void loadBlueprints(@NonNull GameModeAddon addon) {
         File bpf = getBlueprintsFolder(addon);
-        for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_FILE_EXTENSION)))) {
+        for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BPClipboardManager.BLUEPRINT_SUFFIX)))) {
             try {
-                blueprints.computeIfAbsent(addon, k -> new ArrayList<>()).add(gson.fromJson(new FileReader(file), Blueprint.class));
+                Blueprint bp = new BPClipboardManager(plugin, bpf).loadBlueprint(file.getName().replace("", BPClipboardManager.BLUEPRINT_SUFFIX));
+                blueprints.computeIfAbsent(addon, k -> new ArrayList<>()).add(bp);
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint " + file.getName() + " " + e.getMessage());
             }
@@ -121,18 +143,20 @@ public class BlueprintsManager {
     }
 
     /**
-     * Load a blueprint by filename
-     * @param addon - game mode addon
-     * @param fileName - filename
-     * @throws JsonSyntaxException
-     * @throws JsonIOException
-     * @throws FileNotFoundException
+     * Save blueprint bundles for game mode
+     * @param addon - gamemode addon
+     * @param bundleList - list of bundles
      */
-    public void loadBlueprint(@NonNull GameModeAddon addon, String fileName) {
-        try {
-            blueprints.computeIfAbsent(addon, k -> new ArrayList<>()).add(gson.fromJson(new FileReader(new File(getBlueprintsFolder(addon), fileName)), Blueprint.class));
-        } catch (JsonSyntaxException | JsonIOException | FileNotFoundException e) {
-            plugin.logError("Could not load blueprint " + fileName + " " + e.getMessage());
+    public void saveBlueprintBundle(GameModeAddon addon, List<BlueprintBundle> bundleList) {
+        File bpf = getBlueprintsFolder(addon);
+        for (BlueprintBundle bb : bundleList) {
+            File fileName = new File(bpf, bb.getUniqueId() + "." + BLUEPRINT_BUNDLE_SUFFIX);
+            String toStore = gson.toJson(bb, BlueprintBundle.class);
+            try (FileWriter fileWriter = new FileWriter(fileName)) {
+                fileWriter.write(toStore);
+            } catch (IOException e) {
+                plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
+            }
         }
     }
 
@@ -144,47 +168,6 @@ public class BlueprintsManager {
     }
 
     /**
-     * Save blueprint bundles for game mode
-     * @param addon - gamemode addon
-     * @param bundleList - list of bundles
-     */
-    public void saveBlueprintBundle(GameModeAddon addon, List<BlueprintBundle> bundleList) {
-        File bpf = getBlueprintsFolder(addon);
-        for (BlueprintBundle bb : bundleList) {
-            File fileName = new File(bpf, bb.getUniqueId() + "." + BLUEPRINT_BUNDLE_FILE_EXTENSION);
-            String toStore = gson.toJson(bb, BlueprintBundle.class);
-            try (FileWriter fileWriter = new FileWriter(fileName)) {
-                fileWriter.write(toStore);
-            } catch (IOException e) {
-                plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
-            }
-        }
-    }
-
-    /**
-     * Save blueprint for game mode
-     * @param addon - gamemode addon
-     * @param blueprint - blueprint
-     */
-    public void saveBlueprint(File bpf, Blueprint blueprint) {
-        File fileName = new File(bpf, blueprint.getName() + "." + BLUEPRINT_BUNDLE_FILE_EXTENSION);
-        String toStore = gson.toJson(blueprint, Blueprint.class);
-        try (FileWriter fileWriter = new FileWriter(fileName)) {
-            fileWriter.write(toStore);
-        } catch (IOException e) {
-            plugin.logError("Could not save blueprint file: " + e.getMessage());
-        }
-    }
-
-    /**
-     * Gets the blueprint bundles of this addon.
-     * @param addon the {@link GameModeAddon} to get the blueprint bundles.
-     */
-    public List<BlueprintBundle> getBlueprintBundles(@NonNull GameModeAddon addon) {
-        return blueprintBundles.getOrDefault(addon, new ArrayList<>());
-    }
-
-    /**
      * Set the bundles for this addon
      * @param addon - {@link GameModeAddon}
      * @param list - list of bundles
@@ -193,16 +176,11 @@ public class BlueprintsManager {
         blueprintBundles.put(addon, list);
     }
 
-
     /**
-     * Returns a {@link File} instance of the blueprints folder of this {@link GameModeAddon}.
-     * @param addon the {@link GameModeAddon}
-     * @return a {@link File} instance of the blueprints folder of this GameModeAddon.
+     * @return the blueprints
      */
-    @NonNull
-    private File getBlueprintsFolder(@NonNull GameModeAddon addon) {
-        return new File(addon.getDataFolder(), FOLDER_NAME);
+    public Map<GameModeAddon, List<Blueprint>> getBlueprints() {
+        return blueprints;
     }
-
 
 }

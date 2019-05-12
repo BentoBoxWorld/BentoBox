@@ -212,7 +212,6 @@ public class BPClipboard {
                 bpe.setStyle(horse.getStyle());
             }
             bpEnts.add(bpe);
-            Bukkit.getLogger().info("Adding " + bpe.toString());
         }
         // Store
         if (!bpEnts.isEmpty()) {
