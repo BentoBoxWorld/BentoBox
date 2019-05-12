@@ -1,5 +1,22 @@
 package world.bentobox.bentobox.managers;
 
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.AddonClassLoader;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.configuration.ConfigObject;
+import world.bentobox.bentobox.api.events.addon.AddonEvent;
+import world.bentobox.bentobox.database.objects.DataObject;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -17,24 +34,6 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
-
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.addons.AddonClassLoader;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
-import world.bentobox.bentobox.api.configuration.ConfigObject;
-import world.bentobox.bentobox.api.events.addon.AddonEvent;
-import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  * @author tastybento, ComminQ
@@ -433,6 +432,9 @@ public class AddonsManager {
                 // Nothing
             }
         }
+
+        // Remove it from the addons list
+        addons.remove(addon);
     }
 
     /*
