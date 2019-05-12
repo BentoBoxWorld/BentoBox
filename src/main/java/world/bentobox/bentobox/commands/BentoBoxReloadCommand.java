@@ -1,14 +1,14 @@
 package world.bentobox.bentobox.commands;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * Reloads settings, addons and localization.
@@ -57,8 +57,9 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
             }
 
             this.askConfirmation(user, () -> {
-                user.sendMessage("commands.bentobox.reload.addon", TextVariables.DESCRIPTION, args.get(0));
+                user.sendMessage("commands.bentobox.reload.addon", TextVariables.DESCRIPTION, addon.get().getDescription().getName());
                 addon.ifPresent(getPlugin().getAddonsManager()::reloadAddon);
+                user.sendMessage("commands.bentobox.reload.addon-reloaded", TextVariables.NAME, addon.get().getDescription().getName());
             });
         } else {
             showHelp(this, user);
