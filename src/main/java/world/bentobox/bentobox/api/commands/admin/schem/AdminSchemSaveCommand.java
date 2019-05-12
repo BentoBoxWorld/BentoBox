@@ -33,16 +33,16 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
 
         if (clipboard.isFull()) {
             // Check if file exists
-            File newFile = new File(parent.getSchemsFolder(), args.get(0) + BlueprintsManager.BLUEPRINT_SUFFIX);
+            File newFile = new File(parent.getBlueprintsFolder(), args.get(0) + BlueprintsManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
                     parent.hideClipboard(user);
-                    new BPClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
+                    new BPClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
                 });
                 return false;
             } else {
                 parent.hideClipboard(user);
-                return new BPClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
+                return new BPClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
             }
         } else {
             user.sendMessage("commands.admin.schem.copy-first");

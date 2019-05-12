@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.blueprints;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Map.Entry;
 
 import org.bukkit.Bukkit;
@@ -104,9 +106,12 @@ public class BPPaster {
 
     private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull BPClipboard clipboard, @Nullable Runnable task) {
         // Iterators for the various maps to paste
-        Iterator<Entry<Vector, BP_Block>> it = clipboard.getBp().getBlocks().entrySet().iterator();
-        Iterator<Entry<Vector, BP_Block>> it2 = clipboard.getBp().getAttached().entrySet().iterator();
-        Iterator<Entry<Vector, List<BP_Entity>>> it3 = clipboard.getBp().getEntities().entrySet().iterator();
+        Map<Vector, BP_Block> blocks = clipboard.getBp().getBlocks() == null ? new HashMap<>() : clipboard.getBp().getBlocks();
+        Map<Vector, BP_Block> attached = clipboard.getBp().getAttached() == null ? new HashMap<>() : clipboard.getBp().getAttached();
+        Map<Vector, List<BP_Entity>> entities = clipboard.getBp().getEntities() == null ? new HashMap<>() : clipboard.getBp().getEntities();
+        Iterator<Entry<Vector, BP_Block>> it = blocks.entrySet().iterator();
+        Iterator<Entry<Vector, BP_Block>> it2 = attached.entrySet().iterator();
+        Iterator<Entry<Vector, List<BP_Entity>>> it3 = entities.entrySet().iterator();
 
         // Initial state & speed
         pasteState = PasteState.BLOCKS;
@@ -262,9 +267,7 @@ public class BPPaster {
     /**
      * Tracks the minimum and maximum block positions
      * @param world - world
-     * @param x - x
-     * @param y - y
-     * @param z - z
+     * @param v - vector
      */
     private void updatePos(World world, Vector v) {
         if (pos1 == null) {

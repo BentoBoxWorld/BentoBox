@@ -44,17 +44,17 @@ public class BPClipboardManager {
 
     private BentoBox plugin;
 
-    public BPClipboardManager(BentoBox plugin, File schemFolder) {
-        this(plugin, schemFolder, null);
+    public BPClipboardManager(BentoBox plugin, File blueprintFolder) {
+        this(plugin, blueprintFolder, null);
     }
 
-    public BPClipboardManager(BentoBox plugin, File schemFolder, BPClipboard clipboard) {
+    public BPClipboardManager(BentoBox plugin, File blueprintFolder, BPClipboard clipboard) {
         super();
         this.plugin = plugin;
-        if (!schemFolder.exists()) {
-            schemFolder.mkdirs();
+        if (!blueprintFolder.exists()) {
+            blueprintFolder.mkdirs();
         }
-        this.blueprintFolder = schemFolder;
+        this.blueprintFolder = blueprintFolder;
         this.clipboard = clipboard;
         getGson();
     }
@@ -102,10 +102,11 @@ public class BPClipboardManager {
         File file = new File(blueprintFolder, fileName);
         if (!file.exists()) {
             plugin.logError(LOAD_ERROR + file.getName());
-            throw new IOException(LOAD_ERROR + file.getName());
+            throw new IOException(LOAD_ERROR + file.getName() + " temp file");
         }
+        Blueprint bp = gson.fromJson(new FileReader(file), Blueprint.class);
         Files.delete(file.toPath());
-        return gson.fromJson(new FileReader(file), Blueprint.class);
+        return bp;
     }
 
     /**
@@ -152,11 +153,12 @@ public class BPClipboardManager {
     /**
      * Save the clipboard to a file
      * @param user - user who is copying
-     * @param newFile - filename
+     * @param newName - new name of this blueprint
      * @return - true if successful, false if error
      */
-    public boolean save(User user, String newFile) {
-        File file = new File(blueprintFolder, newFile);
+    public boolean save(User user, String newName) {
+        clipboard.getBp().setName(newName);
+        File file = new File(blueprintFolder, newName);
         if (saveBlueprint(file, clipboard.getBp())) {
             user.sendMessage("general.success");
             return true;

@@ -30,7 +30,7 @@ public class AdminSchemLoadCommand extends CompositeCommand {
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
 
-        BPClipboardManager bp = new BPClipboardManager(getPlugin(), parent.getSchemsFolder());
+        BPClipboardManager bp = new BPClipboardManager(getPlugin(), parent.getBlueprintsFolder());
         if (bp.load(user, args.get(0))) {
             parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
             return true;

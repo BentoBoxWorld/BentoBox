@@ -121,7 +121,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         }
     }
 
-    protected File getSchemsFolder() {
+    protected File getBlueprintsFolder() {
         return new File(getIWM().getDataFolder(getWorld()), BlueprintsManager.FOLDER_NAME);
     }
 }

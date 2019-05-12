@@ -3,13 +3,10 @@
  */
 package world.bentobox.bentobox.api.blueprints;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -22,6 +19,9 @@ import com.google.gson.annotations.Expose;
  */
 public class Blueprint {
 
+    /**
+     * Unique name for this blueprint. The filename will be this plus the blueprint suffix
+     */
     @Expose
     private @NonNull String name;
     @Expose
@@ -30,10 +30,6 @@ public class Blueprint {
     private @NonNull Material icon;
     @Expose
     private List<String> description;
-    @Expose
-    private World.Environment environment;
-    @Expose
-    private String fileName;
     @Expose
     private Map<Vector, BP_Block> attached;
     @Expose
@@ -95,30 +91,6 @@ public class Blueprint {
      */
     public void setDescription(List<String> description) {
         this.description = description;
-    }
-    /**
-     * @return the environment
-     */
-    public World.Environment getEnvironment() {
-        return environment;
-    }
-    /**
-     * @param environment the environment to set
-     */
-    public void setEnvironment(World.Environment environment) {
-        this.environment = environment;
-    }
-    /**
-     * @return the fileName
-     */
-    public String getFileName() {
-        return fileName;
-    }
-    /**
-     * @param fileName the fileName to set
-     */
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
     }
     /**
      * @return the attached

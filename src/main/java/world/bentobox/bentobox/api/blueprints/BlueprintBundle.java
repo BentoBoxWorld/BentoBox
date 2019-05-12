@@ -97,15 +97,16 @@ public class BlueprintBundle implements DataObject {
 
     /**
      * Adds a blueprint to the blueprint bundle. It will replace any blueprint that already exists of the same {@link World.Environment} type.
+     * @param env - the {@link World#Environment}
      * @param bp - blueprint
      */
-    public void addBlueprint(Blueprint bp) {
-        this.blueprints.put(bp.getEnvironment(), bp.getName());
+    public void setBlueprint(World.Environment env, Blueprint bp) {
+        this.blueprints.put(env, bp.getName());
     }
 
     /**
      * Get the blueprint for the environment type
-     * @param env - {@link World.Environment} type
+     * @param env - {@link World#Environment} type
      * @return Blueprint or null if one does not exist
      */
     public String getBlueprint(World.Environment env) {

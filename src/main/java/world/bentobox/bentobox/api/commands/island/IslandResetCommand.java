@@ -1,19 +1,21 @@
 package world.bentobox.bentobox.api.commands.island;
 
+import java.io.IOException;
+import java.util.List;
+
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.SchemsManager;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
-
-import java.io.IOException;
-import java.util.List;
 
 /**
  * @author tastybento
@@ -65,8 +67,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             }
         }
 
-        // Default schem is 'island'
-        String name = getSchemName(args);
+        String name = getBundleName(args);
         if (name == null) {
             // The schem name is not valid.
             user.sendMessage("commands.island.create.unknown-schem");
@@ -75,7 +76,7 @@ public class IslandResetCommand extends ConfirmableCommand {
 
         // Permission check if the name is not the default one
         String permission = getPermissionPrefix() + "island.create." + name;
-        if (!name.equals(SchemsManager.DEFAULT_SCHEM_NAME) && !user.hasPermission(permission)) {
+        if (!name.equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission)) {
             user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
             return false;
         }
@@ -90,19 +91,19 @@ public class IslandResetCommand extends ConfirmableCommand {
     }
 
     /**
-     * Returns the schem name from the args.
-     * {@link SchemsManager#DEFAULT_SCHEM_NAME} is the default.
-     * May be null if the schem does not exist.
+     * Returns the bundle name from the args.
+     * {@link BlueprintsManager#DEFAULT_BUNDLE_NAME} is the default.
+     * May be null if the bundle does not exist.
      * @param args args of the command
-     * @return schem name or null
-     * @since 1.1
+     * @return bundle name or null
+     * @since 1.5.0
      */
     @Nullable
-    private String getSchemName(List<String> args) {
+    private String getBundleName(List<String> args) {
         if (args.isEmpty()) {
-            return SchemsManager.DEFAULT_SCHEM_NAME;
+            return BlueprintsManager.DEFAULT_BUNDLE_NAME;
         }
-        return getPlugin().getSchemsManager().validate(getWorld(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
+        return getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
     }
 
     private boolean resetIsland(User user, String name) {
@@ -131,6 +132,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             NewIsland.builder()
             .player(user)
             .reason(Reason.RESET)
+            .addon((GameModeAddon)getAddon())
             .oldIsland(oldIsland)
             .name(name)
             .build();

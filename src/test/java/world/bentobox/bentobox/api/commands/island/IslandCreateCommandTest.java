@@ -33,12 +33,14 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Clipboard;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -65,13 +67,13 @@ public class IslandCreateCommandTest {
     @Mock
     private Builder builder;
     @Mock
-    private SchemsManager sm;
-    @Mock
     private BentoBox plugin;
     @Mock
     private Settings settings;
     @Mock
     private CompositeCommand ic;
+    @Mock
+    private BlueprintsManager bpm;
 
     /**
      * @throws java.lang.Exception
@@ -101,6 +103,10 @@ public class IslandCreateCommandTest {
         // Set up user already
         User.getInstance(player);
 
+        // Addon
+        GameModeAddon addon = mock(GameModeAddon.class);
+
+
         // Parent command has no aliases
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
         when(ic.getParameters()).thenReturn("parameters");
@@ -108,6 +114,7 @@ public class IslandCreateCommandTest {
         when(ic.getPermissionPrefix()).thenReturn("permission.");
         when(ic.getUsage()).thenReturn("");
         when(ic.getSubCommand(Mockito.anyString())).thenReturn(Optional.empty());
+        when(ic.getAddon()).thenReturn(addon);
 
 
         // No island for player to begin with (set it later in the tests)
@@ -136,14 +143,12 @@ public class IslandCreateCommandTest {
         when(builder.player(Mockito.any())).thenReturn(builder);
         when(builder.name(Mockito.anyString())).thenReturn(builder);
         when(builder.world(Mockito.any())).thenReturn(builder);
+        when(builder.addon(addon)).thenReturn(builder);
         when(builder.reason(Mockito.any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
 
-
-        // Schems manager
-        Map<String, Clipboard> map = new HashMap<>();
-        when(sm.get(Mockito.any())).thenReturn(map);
-        when(plugin.getSchemsManager()).thenReturn(sm);
+        // Bundles manager
+        when(plugin.getBlueprintsManager()).thenReturn(bpm);
 
         // Command
         cc = new IslandCreateCommand(ic);
@@ -221,9 +226,9 @@ public class IslandCreateCommandTest {
     public void testExecuteUserStringListOfStringSuccess() throws IOException {
         assertTrue(cc.execute(user, "", Collections.emptyList()));
         Mockito.verify(builder).player(Mockito.eq(user));
-        Mockito.verify(builder).world(Mockito.any());
+        Mockito.verify(builder).addon(Mockito.any());
         Mockito.verify(builder).reason(Mockito.eq(Reason.CREATE));
-        Mockito.verify(builder).name(Mockito.eq("island"));
+        Mockito.verify(builder).name(Mockito.eq("default"));
         Mockito.verify(builder).build();
         Mockito.verify(user).sendMessage("commands.island.create.creating-island");
     }
@@ -245,7 +250,7 @@ public class IslandCreateCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringSchemNoPermission() {
+    public void testExecuteUserStringListOfStringBundleNoPermission() {
         when(user.hasPermission(Mockito.anyString())).thenReturn(false);
         assertFalse(cc.execute(user, "", Collections.singletonList("custom")));
         Mockito.verify(user).sendMessage(Mockito.eq("general.errors.no-permission"), Mockito.eq(TextVariables.PERMISSION), Mockito.eq("permission.island.create.custom"));
@@ -256,7 +261,7 @@ public class IslandCreateCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringUnknownSchem() {
+    public void testExecuteUserStringListOfStringUnknownBundle() {
         assertFalse(cc.execute(user, "", Collections.singletonList("custom")));
         Mockito.verify(user).sendMessage(Mockito.eq("commands.island.create.unknown-schem"));
         Mockito.verify(user, Mockito.never()).sendMessage("commands.island.create.creating-island");
@@ -267,11 +272,11 @@ public class IslandCreateCommandTest {
      * @throws IOException
      */
     @Test
-    public void testExecuteUserStringListOfStringKnownSchem() throws IOException {
-        when(sm.validate(Mockito.any(), Mockito.any())).thenReturn("custom");
+    public void testExecuteUserStringListOfStringKnownBundle() throws IOException {
+        when(bpm.validate(Mockito.any(), Mockito.any())).thenReturn("custom");
         assertTrue(cc.execute(user, "", Collections.singletonList("custom")));
         Mockito.verify(builder).player(Mockito.eq(user));
-        Mockito.verify(builder).world(Mockito.any());
+        Mockito.verify(builder).addon(Mockito.any());
         Mockito.verify(builder).reason(Mockito.eq(Reason.CREATE));
         Mockito.verify(builder).name(Mockito.eq("custom"));
         Mockito.verify(builder).build();

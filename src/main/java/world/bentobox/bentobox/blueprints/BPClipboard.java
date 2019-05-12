@@ -342,8 +342,9 @@ public class BPClipboard {
     /**
      * @param bp the bp to set
      */
-    public void setBp(Blueprint bp) {
+    public BPClipboard setBp(Blueprint bp) {
         this.bp = bp;
+        return this;
     }
 
 }

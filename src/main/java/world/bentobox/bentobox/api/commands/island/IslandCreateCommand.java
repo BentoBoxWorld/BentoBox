@@ -3,10 +3,12 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
 /**
@@ -50,8 +52,8 @@ public class IslandCreateCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Default schem is 'island'
-        String name = "island";
+        // Default is 'island'
+        String name = BlueprintsManager.DEFAULT_BUNDLE_NAME;
         if (!args.isEmpty()) {
             name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
             // Permission check
@@ -61,7 +63,7 @@ public class IslandCreateCommand extends CompositeCommand {
                 return false;
             }
             // Check the schem name exists
-            name = getPlugin().getSchemsManager().validate(getWorld(), name);
+            name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), name);
             if (name == null) {
                 user.sendMessage("commands.island.create.unknown-schem");
                 return false;
@@ -71,7 +73,7 @@ public class IslandCreateCommand extends CompositeCommand {
         try {
             NewIsland.builder()
             .player(user)
-            .world(getWorld())
+            .addon((GameModeAddon)getAddon())
             .reason(Reason.CREATE)
             .name(name)
             .build();
