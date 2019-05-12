@@ -34,7 +34,6 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class BPClipboardManager {
 
-    public static final String BLUEPRINT_SUFFIX = ".blueprint";
     private static final String LOAD_ERROR = "Could not load blueprint file - does not exist : ";
 
     private File blueprintFolder;
@@ -94,7 +93,7 @@ public class BPClipboardManager {
      * @throws IOException
      */
     public Blueprint loadBlueprint(String fileName) throws IOException {
-        File zipFile = new File(blueprintFolder, fileName + BLUEPRINT_SUFFIX);
+        File zipFile = new File(blueprintFolder, fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
         if (!zipFile.exists()) {
             plugin.logError(LOAD_ERROR + zipFile.getName());
             throw new IOException(LOAD_ERROR + zipFile.getName());
@@ -221,7 +220,7 @@ public class BPClipboardManager {
     }
 
     private void zip(File targetFile) throws IOException {
-        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BLUEPRINT_SUFFIX))) {
+        try (ZipOutputStream zipOutputStream = new ZipOutputStream(new FileOutputStream(targetFile.getAbsolutePath() + BlueprintsManager.BLUEPRINT_SUFFIX))) {
             zipOutputStream.putNextEntry(new ZipEntry(targetFile.getName()));
             try (FileInputStream inputStream = new FileInputStream(targetFile)) {
                 final byte[] buffer = new byte[1024];

@@ -7,6 +7,7 @@ import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BPClipboard;
 import world.bentobox.bentobox.managers.BPClipboardManager;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 
 public class AdminSchemSaveCommand extends ConfirmableCommand {
 
@@ -32,7 +33,7 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
 
         if (clipboard.isFull()) {
             // Check if file exists
-            File newFile = new File(parent.getSchemsFolder(), args.get(0) + BPClipboardManager.BLUEPRINT_SUFFIX);
+            File newFile = new File(parent.getSchemsFolder(), args.get(0) + BlueprintsManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
                     parent.hideClipboard(user);

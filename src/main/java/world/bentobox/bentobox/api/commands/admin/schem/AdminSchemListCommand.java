@@ -41,8 +41,8 @@ public class AdminSchemListCommand extends CompositeCommand {
             user.sendMessage("commands.admin.schem.list.no-schems");
             return false;
         }
-        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(BPClipboardManager.BLUEPRINT_SUFFIX);
-        List<String> schemList = Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).collect(Collectors.toList());
+        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(BlueprintsManager.BLUEPRINT_SUFFIX);
+        List<String> schemList = Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - BlueprintsManager.BLUEPRINT_SUFFIX.length())).collect(Collectors.toList());
         if (schemList.isEmpty()) {
             user.sendMessage("commands.admin.schem.list.no-schems");
             return false;

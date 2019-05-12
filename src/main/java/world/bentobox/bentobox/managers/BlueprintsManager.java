@@ -32,6 +32,7 @@ import world.bentobox.bentobox.util.Util;
 public class BlueprintsManager {
 
     private static final String BLUEPRINT_BUNDLE_SUFFIX = ".json";
+    public static final String BLUEPRINT_SUFFIX = ".blu";
 
     public static final @NonNull String FOLDER_NAME = "blueprints";
 
@@ -86,7 +87,7 @@ public class BlueprintsManager {
         // Get any blueprints or bundles from the jar and save them.
         try (JarFile jar = new JarFile(addon.getFile())) {
             Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_BUNDLE_SUFFIX).forEach(name -> addon.saveResource(name, false));
-            Util.listJarFiles(jar, FOLDER_NAME, BPClipboardManager.BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
+            Util.listJarFiles(jar, FOLDER_NAME, BLUEPRINT_SUFFIX).forEach(name -> addon.saveResource(name, false));
         } catch (IOException e) {
             plugin.logError("Could not load schem files from addon jar " + e.getMessage());
         }
@@ -132,9 +133,9 @@ public class BlueprintsManager {
      */
     public void loadBlueprints(@NonNull GameModeAddon addon) {
         File bpf = getBlueprintsFolder(addon);
-        for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BPClipboardManager.BLUEPRINT_SUFFIX)))) {
+        for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_SUFFIX)))) {
             try {
-                Blueprint bp = new BPClipboardManager(plugin, bpf).loadBlueprint(file.getName().replace("", BPClipboardManager.BLUEPRINT_SUFFIX));
+                Blueprint bp = new BPClipboardManager(plugin, bpf).loadBlueprint(file.getName().replace("", BLUEPRINT_SUFFIX));
                 blueprints.computeIfAbsent(addon, k -> new ArrayList<>()).add(bp);
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint " + file.getName() + " " + e.getMessage());
