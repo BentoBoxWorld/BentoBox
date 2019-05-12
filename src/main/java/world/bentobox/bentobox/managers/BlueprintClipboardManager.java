@@ -1,18 +1,5 @@
 package world.bentobox.bentobox.managers;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.configuration.InvalidConfigurationException;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.blueprints.Blueprint;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.BlueprintClipboard;
-import world.bentobox.bentobox.blueprints.BlueprintPaster;
-import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
-import world.bentobox.bentobox.database.objects.Island;
-
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -26,6 +13,17 @@ import java.nio.file.Paths;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
+
+import org.bukkit.configuration.InvalidConfigurationException;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.blueprints.Blueprint;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 
 /**
  * @author tastybento
@@ -124,29 +122,6 @@ public class BlueprintClipboardManager {
         }
         user.sendMessage("general.success");
         return true;
-    }
-
-    /**
-     * Paste clipboard to this location
-     * @param location - location
-     */
-    public void pasteClipboard(Location location) {
-        if (clipboard != null) {
-            new BlueprintPaster(plugin, clipboard, location);
-        } else {
-            plugin.logError("Clipboard has no block data in it to paste!");
-        }
-    }
-
-    /**
-     * Pastes the clipboard to island location.
-     * If pos1 and pos2 are not set already, they are automatically set to the pasted coordinates
-     * @param world - world in which to paste
-     * @param island - location to paste
-     * @param task - task to run after pasting
-     */
-    public void pasteIsland(World world, Island island, Runnable task) {
-        new BlueprintPaster(plugin, clipboard, world, island, task);
     }
 
     /**

@@ -42,6 +42,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 /**
+ * The clipboard provides the holding spot for an active blueprint that is being
+ * manipulated by a user. It supports copying from the world and setting of coordinates
+ * such as the bounding box around the cuboid copy area.
+ * Pasting is done by the {@link BlueprintPaster} class.
  * @author tastybento
  * @since 1.5.0
  */

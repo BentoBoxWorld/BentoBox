@@ -63,22 +63,11 @@ public class BlueprintPaster {
     private BukkitTask pastingTask;
 
     /**
-     * Paste a clipboard
+     * Paste a clipboard to a location and run task
      * @param plugin - BentoBox
      * @param clipboard - clipboard to paste
      * @param location - location to paste to
-     */
-    public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location) {
-        this.plugin = plugin;
-        paste(location.getWorld(), null, location, clipboard, null);
-    }
-
-    /**
-     * Paste a clipboard
-     * @param plugin - BentoBox
-     * @param clipboard - clipboard to paste
-     * @param location - location to paste to
-     * @param task - task to run after pasting
+     * @param task - task to run after pasting, null if none
      */
     public BlueprintPaster(@NonNull BentoBox plugin, @NonNull BlueprintClipboard clipboard, @NonNull Location location, @Nullable Runnable task) {
         this.plugin = plugin;
@@ -103,6 +92,14 @@ public class BlueprintPaster {
         paste(world, island, loc, clipboard, task);
     }
 
+    /**
+     * The main pasting method
+     * @param world - world to paste to
+     * @param island - the island related to this pasting - may be null
+     * @param loc - the location to paste to
+     * @param clipboard - the clipboard to paste
+     * @param task - task to run after pasting
+     */
     private void paste(@NonNull World world, @Nullable Island island, @NonNull Location loc, @NonNull BlueprintClipboard clipboard, @Nullable Runnable task) {
         // Iterators for the various maps to paste
         Map<Vector, BlueprintBlock> blocks = clipboard.getBp().getBlocks() == null ? new HashMap<>() : clipboard.getBp().getBlocks();
