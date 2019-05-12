@@ -20,8 +20,8 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.blueprints.Blueprint;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 

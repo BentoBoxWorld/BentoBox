@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.blueprints;
+package world.bentobox.bentobox.blueprints;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
