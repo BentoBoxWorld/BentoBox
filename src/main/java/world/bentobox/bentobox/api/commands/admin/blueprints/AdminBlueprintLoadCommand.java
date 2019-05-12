@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.admin.schem;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -9,16 +9,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-public class AdminSchemLoadCommand extends CompositeCommand {
+public class AdminBlueprintLoadCommand extends CompositeCommand {
 
-    public AdminSchemLoadCommand(AdminSchemCommand parent) {
+    public AdminBlueprintLoadCommand(AdminBlueprintCommand parent) {
         super(parent, "load");
     }
 
     @Override
     public void setup() {
-        setParametersHelp("commands.admin.schem.load.parameters");
-        setDescription("commands.admin.schem.load.description");
+        setParametersHelp("commands.admin.blueprint.load.parameters");
+        setDescription("commands.admin.blueprint.load.description");
     }
 
     @Override
@@ -28,7 +28,7 @@ public class AdminSchemLoadCommand extends CompositeCommand {
             return false;
         }
 
-        AdminSchemCommand parent = (AdminSchemCommand) getParent();
+        AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
         BlueprintClipboardManager bp = new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder());
         if (bp.load(user, args.get(0))) {

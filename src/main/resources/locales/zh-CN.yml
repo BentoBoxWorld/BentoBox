@@ -147,7 +147,7 @@ commands:
       description: "设置玩家在他们岛屿上的头衔"
       unknown-rank: "&c未知头衔！"
       rank-set: "&a头衔由 [from] 设置为 [to]。"
-    schem:
+    blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "调整规划方案"
       copy-first: "&c请先复制一份规划方案！"
@@ -165,7 +165,7 @@ commands:
         parameters: "[air]"
         description: "复制 pos1 和 pos2 之间设置的方块（或使用空气方块）到剪切板"
       load:
-        parameters: "<schem name>"
+        parameters: "<blueprint name>"
         description: "加载规划文件到剪切板"
       origin:
         parameters: ""
@@ -180,7 +180,7 @@ commands:
         parameters: ""
         description: "设置立方体剪切板的第二个顶点"
       save:
-        parameters: "<schem name>"
+        parameters: "<blueprint name>"
         description: "保存已复制的剪切板"      
     world:
       description: "管理世界设置"

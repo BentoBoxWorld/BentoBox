@@ -184,7 +184,7 @@ commands:
       already-spawn: "&cŠī sala jau ir uzstādīta kā sākuma sala!"
       no-island-here: "&cŠeit nav neveinas salas."
       confirmation: "&cVai tiešām vēlies uzstādīt šo salu kā sākuma salu?"
-    schem:
+    blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulē ar shēmām"
       copy-first: "&cKopē shēmu sākumā!"
@@ -206,8 +206,8 @@ commands:
         description: "ielādē shēmu starpliktuvē"
       list:
         description: "attaino visas pieejamās shēmas"
-        no-schems: "&cNav shēmas iekš schems mapītes!"
-        available-schems: "&aŠīs shēmas ir pieejamas ielādei:"
+        no-blueprints: "&cNav shēmas iekš blueprints mapītes!"
+        available-blueprints: "&aŠīs shēmas ir pieejamas ielādei:"
       origin:
         description: "uzstāda shēmas sākuma punktu tavā pozīcijā"
       paste:
@@ -310,7 +310,7 @@ commands:
       unable-create-island: "&cNeizdevās izveidot tavu salu, ziņo par kļūdu administratoram."
       creating-island: "&aTiek veidota tava sala. Uzgaidi mirklīti..."
       pick-world: "&cIzvēkies pasauli no [worlds]."
-      unknown-schem: "&cŠī shēma nav ielādēta vai tā neeksistē."
+      unknown-blueprint: "&cŠī shēma nav ielādēta vai tā neeksistē."
     info:
       description: "parāda informāciju par tavu vai spēlētāja salu"
       parameters: "<spēlētājs>"
@@ -1022,9 +1022,9 @@ management:
       gamemodes:
         name: "&6Spēles režīmi"
         description: "&eUzspied&a, lai redzētu uzstādītos spēles režīmus."
-        schems:
-          name: "&6Shēmas"
-          description: "&aAtver admina shēmu izvēlni."
+        blueprints:
+          name: "&6Blueprints"
+          description: "&aAtver admina blueprint izvēlni."
       addons:
         name: "&6Papildinājumi"
         description: "&eUzspied&a, lai redzētu uzstādītos spēles papildinājumus."

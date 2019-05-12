@@ -257,9 +257,9 @@ management:
       gamemodes:
         name: "&6Modes de jeu"
         description: "&eCliquez &apour afficher les modes de jeu chargés."
-        schems:
-          name: "&6Schems"
-          description: "&aAffiche le menu de gestion des Schems."
+        blueprints:
+          name: "&6Blueprints"
+          description: "&aAffiche le menu de gestion des Bleuprints."
       addons:
         name: "&6Addons"
         description: "&eCliquez &apour afficher les addons chargés."

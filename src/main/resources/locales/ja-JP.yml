@@ -148,10 +148,10 @@ commands:
       description: "プレイヤーのランクを設定する"
       unknown-rank: "&c不明ランク!"
       rank-set: "&2[from] から [to] に設定されたランク。"
-    schem:
+    blueprint:
       parameters: "<load><copy><paste><pos1><pos2><save>"
-      description: "schems の操作"
-      copy-first: "&c最初に schem をコピー!"
+      description: "blueprints の操作"
+      copy-first: "&c最初に blueprint をコピー!"
       file-exists: "&cファイルは既に存在し、上書きしますか?"
       no-such-file: "&cそのようなファイルはありません!"
       could-not-load: "&cそのファイルを読み込めませんでした!"

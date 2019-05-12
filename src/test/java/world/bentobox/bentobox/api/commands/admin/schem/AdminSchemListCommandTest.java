@@ -31,6 +31,8 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand;
+import world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -45,12 +47,12 @@ import world.bentobox.bentobox.managers.LocalesManager;
 public class AdminSchemListCommandTest {
 
     @Mock
-    private AdminSchemCommand ac;
+    private AdminBlueprintCommand ac;
     @Mock
     private Addon addon;
     @Mock
     private User user;
-    private AdminSchemListCommand list;
+    private AdminBlueprintListCommand list;
     private File dataFolder;
 
     /**
@@ -91,7 +93,7 @@ public class AdminSchemListCommandTest {
 
         when(addon.getDataFolder()).thenReturn(dataFolder);
         // Class
-        list = new AdminSchemListCommand(ac);
+        list = new AdminBlueprintListCommand(ac);
 
 
     }
@@ -109,7 +111,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#AdminSchemListCommand(world.bentobox.bentobox.api.commands.admin.schem.AdminSchemCommand)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#AdminSchemListCommand(world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand)}.
      */
     @Test
     public void testAdminSchemListCommand() {
@@ -118,7 +120,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#setup()}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#setup()}.
      */
     @Test
     public void testSetup() {
@@ -126,7 +128,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#canExecute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testCanExecute() {
@@ -135,7 +137,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoSchemsFolder() {
@@ -144,7 +146,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
     public void testExecuteUserStringListOfStringNoSchemsFilesEmptyFolder() {
@@ -155,7 +157,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      * @throws IOException
      */
     @Test
@@ -168,7 +170,7 @@ public class AdminSchemListCommandTest {
     }
 
     /**
-     * Test method for {@link world.bentobox.bentobox.api.commands.admin.schem.AdminSchemListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     * Test method for {@link world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      * @throws IOException
      */
     @Test

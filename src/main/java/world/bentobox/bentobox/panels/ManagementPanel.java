@@ -69,8 +69,8 @@ public class ManagementPanel {
 
                     PanelItem schems = new PanelItemBuilder()
                             .icon(Material.STRUCTURE_BLOCK)
-                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.schems.name"))
-                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.schems.description"))
+                            .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
+                            .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
                             .clickHandler((panel, user1, clickType, slot) -> {
                                 user1.sendRawMessage("opening the admin schems menu (not implemented yet)");
                                 return true;

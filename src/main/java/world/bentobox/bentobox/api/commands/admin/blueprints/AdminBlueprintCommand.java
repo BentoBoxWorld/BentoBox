@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.admin.schem;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class AdminSchemCommand extends ConfirmableCommand {
+public class AdminBlueprintCommand extends ConfirmableCommand {
     // Clipboards
     private Map<UUID, BlueprintClipboard> clipboards;
 
@@ -24,28 +24,28 @@ public class AdminSchemCommand extends ConfirmableCommand {
     private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
-    public AdminSchemCommand(CompositeCommand parent) {
-        super(parent, "bp", "blueprint", "schem");
+    public AdminBlueprintCommand(CompositeCommand parent) {
+        super(parent, "bp", "blueprint");
     }
 
     @Override
     public void setup() {
-        setPermission("admin.schem");
-        setParametersHelp("commands.admin.schem.parameters");
-        setDescription("commands.admin.schem.description");
+        setPermission("admin.blueprint");
+        setParametersHelp("commands.admin.blueprint.parameters");
+        setDescription("commands.admin.blueprint.description");
         setOnlyPlayer(true);
 
         clipboards = new HashMap<>();
         displayClipboards = new HashMap<>();
 
-        new AdminSchemLoadCommand(this);
-        new AdminSchemPasteCommand(this);
-        new AdminSchemOriginCommand(this);
-        new AdminSchemCopyCommand(this);
-        new AdminSchemSaveCommand(this);
-        new AdminSchemPos1Command(this);
-        new AdminSchemPos2Command(this);
-        new AdminSchemListCommand(this);
+        new AdminBlueprintLoadCommand(this);
+        new AdminBlueprintPasteCommand(this);
+        new AdminBlueprintOriginCommand(this);
+        new AdminBlueprintCopyCommand(this);
+        new AdminBlueprintSaveCommand(this);
+        new AdminBlueprintPos1Command(this);
+        new AdminBlueprintPos2Command(this);
+        new AdminBlueprintListCommand(this);
     }
 
     @Override

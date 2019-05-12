@@ -185,10 +185,10 @@ commands:
       already-spawn: "&cThis island is already a spawn!"
       no-island-here: "&cThere is no island here."
       confirmation: "&cAre you sure you want to set this Island as the spawn for this world?"
-    schem:
+    blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
-      description: "manipulate schems"
-      copy-first: "&cCopy a schem first!"
+      description: "manipulate blueprints"
+      copy-first: "&cCopy first!"
       file-exists: "&cFile already exists, overwrite?"
       no-such-file: "&cNo such file!"
       could-not-load: "&cCould not load that file!"
@@ -206,14 +206,14 @@ commands:
         parameters: "[air]"
         description: "copy the clipboard set by pos1 and pos2 and optionally the air blocks"
       load:
-        parameters: "<schem name>"
-        description: "load schem into the clipboard"
+        parameters: "<name>"
+        description: "load blueprint into the clipboard"
       list:
-        description: "list available schems"
-        no-schems: "&cNo schems in schems folder!"
-        available-schems: "&aThese schems are available for loading:"
+        description: "list available blueprints"
+        no-blueprints: "&cNo blueprints in blueprints folder!"
+        available-blueprints: "&aThese blueprints are available for loading:"
       origin:
-        description: "set the schem's origin to your position"
+        description: "set the blueprint's origin to your position"
       paste:
         description: "paste the clipboard to your location"
         pasting: "&aPasting..."
@@ -222,7 +222,7 @@ commands:
       pos2:
         description: "set 2nd corner of cuboid clipboard"
       save:
-        parameters: "<schem name>"
+        parameters: "<blueprint name>"
         description: "save the copied clipboard"      
     resetflags:
       description: "Reset all islands to default flag settings in config.yml"
@@ -307,13 +307,13 @@ commands:
       teleporting: "&aTeleporting you to the spawn."
       no-spawn: "&cThere is no spawn in this world."
     create:
-      description: "create an island, using optional schem (requires permission)"
-      parameters: "<schem>"
+      description: "create an island, using optional blueprint (requires permission)"
+      parameters: "<blueprint>"
       too-many-islands: "&cThere are too many islands in this world: there isn't enough room for yours to be created."
       unable-create-island: "&cYour island could not be generated, please contact an administrator."
       creating-island: "&aCreating your island, please wait a moment..."
       pick-world: "&cPick a world from [worlds]."
-      unknown-schem: "&cThat schem has not been loaded yet."
+      unknown-blueprint: "&cThat blueprint has not been loaded yet."
     info:
       description: "display info about your island or the player's island"
       parameters: "<player>"
@@ -329,7 +329,7 @@ commands:
       no-neighbors: "&cYou have no immediate neighboring islands!"
     reset:
       description: "restart your island and remove the old one"
-      parameters: "<schem>"
+      parameters: "<blueprint>"
       must-remove-members: "&cYou must remove all members from your island before you can restart it (/island team kick <player>)."
       none-left: "&cYou have no more resets left!"
       resets-left: "&cYou have [number] resets left"
@@ -999,9 +999,9 @@ management:
       gamemodes:
         name: "&6Gamemodes"
         description: "&eClick &ato display currently loaded Gamemodes"
-        schems:
-          name: "&6Schems"
-          description: "&aOpens the Admin Schem menu."
+        blueprints:
+          name: "&6Blueprints"
+          description: "&aOpens the Admin Blueprint menu."
         gamemode:
           name: "&f[name]"
           description: |+

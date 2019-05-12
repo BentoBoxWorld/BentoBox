@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.admin.schem;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -7,29 +7,29 @@ import world.bentobox.bentobox.blueprints.BlueprintPaster;
 
 import java.util.List;
 
-public class AdminSchemPasteCommand extends CompositeCommand {
+public class AdminBlueprintPasteCommand extends CompositeCommand {
 
-    public AdminSchemPasteCommand(AdminSchemCommand parent) {
+    public AdminBlueprintPasteCommand(AdminBlueprintCommand parent) {
         super(parent, "paste");
     }
 
     @Override
     public void setup() {
-        setParametersHelp("commands.admin.schem.paste.parameters");
-        setDescription("commands.admin.schem.paste.description");
+        setParametersHelp("commands.admin.blueprint.paste.parameters");
+        setDescription("commands.admin.blueprint.paste.description");
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        AdminSchemCommand parent = (AdminSchemCommand) getParent();
+        AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
         BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         if (clipboard.isFull()) {
             new BlueprintPaster(getPlugin(), clipboard, user.getLocation(), () -> user.sendMessage("general.success"));
-            user.sendMessage("commands.admin.schem.paste.pasting");
+            user.sendMessage("commands.admin.blueprint.paste.pasting");
             return true;
         }
 
-        user.sendMessage("commands.admin.schem.copy-first");
+        user.sendMessage("commands.admin.blueprint.copy-first");
         return false;
     }
 }

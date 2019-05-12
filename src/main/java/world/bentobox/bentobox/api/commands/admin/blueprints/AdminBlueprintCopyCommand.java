@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.api.commands.admin.schem;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
@@ -6,16 +6,16 @@ import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 
 import java.util.List;
 
-public class AdminSchemCopyCommand extends CompositeCommand {
+public class AdminBlueprintCopyCommand extends CompositeCommand {
 
-    public AdminSchemCopyCommand(AdminSchemCommand parent) {
+    public AdminBlueprintCopyCommand(AdminBlueprintCommand parent) {
         super(parent, "copy");
     }
 
     @Override
     public void setup() {
-        setParametersHelp("commands.admin.schem.copy.parameters");
-        setDescription("commands.admin.schem.copy.description");
+        setParametersHelp("commands.admin.blueprint.copy.parameters");
+        setDescription("commands.admin.blueprint.copy.description");
     }
 
     @Override
@@ -25,7 +25,7 @@ public class AdminSchemCopyCommand extends CompositeCommand {
             return false;
         }
 
-        AdminSchemCommand parent = (AdminSchemCommand) getParent();
+        AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
         BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         boolean copyAir = (args.size() == 1 && args.get(0).equalsIgnoreCase("air"));

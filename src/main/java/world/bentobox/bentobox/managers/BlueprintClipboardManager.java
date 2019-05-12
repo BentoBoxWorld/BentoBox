@@ -116,7 +116,7 @@ public class BlueprintClipboardManager {
         try {
             load(fileName);
         } catch (IOException e1) {
-            user.sendMessage("commands.admin.schem.could-not-load");
+            user.sendMessage("commands.admin.blueprint.could-not-load");
             plugin.logError("Could not load schems file: " + fileName + " " + e1.getMessage());
             return false;
         }
@@ -137,7 +137,7 @@ public class BlueprintClipboardManager {
             user.sendMessage("general.success");
             return true;
         }
-        user.sendMessage("commands.admin.schem.could-not-save", "[message]", "Could not save temp blueprint file.");
+        user.sendMessage("commands.admin.blueprint.could-not-save", "[message]", "Could not save temp blueprint file.");
         return false;
     }
 

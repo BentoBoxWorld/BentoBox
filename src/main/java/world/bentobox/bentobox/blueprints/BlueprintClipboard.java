@@ -78,16 +78,16 @@ public class BlueprintClipboard {
      */
     public boolean copy(User user, boolean copyAir) {
         if (copying) {
-            user.sendMessage("commands.admin.schem.mid-copy");
+            user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
         }
         origin = origin == null ? user.getLocation() : origin;
         if (pos1 == null || pos2 == null) {
-            user.sendMessage("commands.admin.schem.need-pos1-pos2");
+            user.sendMessage("commands.admin.blueprint.need-pos1-pos2");
             return false;
         }
 
-        user.sendMessage("commands.admin.schem.copying");
+        user.sendMessage("commands.admin.blueprint.copying");
 
         // World
         World world = pos1.getWorld();
@@ -128,7 +128,7 @@ public class BlueprintClipboard {
                 index += speed;
                 int percent = (int)(index * 100 / (double)vectorsToCopy.size());
                 if (percent != lastPercentage && percent % 10 == 0) {
-                    user.sendMessage("commands.admin.schem.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
+                    user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
                     lastPercentage = percent;
                 }
                 if (index > vectorsToCopy.size()) {
@@ -137,7 +137,7 @@ public class BlueprintClipboard {
                     bp.setBlocks(bpBlocks);
                     bp.setEntities(bpEntities);
                     user.sendMessage("general.success");
-                    user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+                    user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
                 }
                 copying = false;
             }, 0L, 1L);
