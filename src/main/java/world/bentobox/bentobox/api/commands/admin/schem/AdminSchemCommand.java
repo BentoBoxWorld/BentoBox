@@ -14,8 +14,7 @@ import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.blueprints.Clipboard;
-import world.bentobox.bentobox.managers.SchemsManager;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 
 public class AdminSchemCommand extends ConfirmableCommand {
     // Clipboards
@@ -27,7 +26,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
     public AdminSchemCommand(CompositeCommand parent) {
-        super(parent, "schem");
+        super(parent, "bp", "blueprint", "schem");
     }
 
     @Override
@@ -69,14 +68,14 @@ public class AdminSchemCommand extends ConfirmableCommand {
             if (clipboards.containsKey(user.getUniqueId())) {
                 BPClipboard clipboard = clipboards.get(user.getUniqueId());
                 if (clipboard.getPos1() != null && clipboard.getPos2() != null) {
-                    //paintAxis(user, clipboard);
+                    paintAxis(user, clipboard);
                 }
             }
 
         }, 20, 20));
     }
 
-    private void paintAxis(User user, Clipboard clipboard) {
+    private void paintAxis(User user, BPClipboard clipboard) {
         int minX = Math.min(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
         int minY = Math.min(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
         int minZ = Math.min(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
@@ -123,6 +122,6 @@ public class AdminSchemCommand extends ConfirmableCommand {
     }
 
     protected File getSchemsFolder() {
-        return new File(getIWM().getDataFolder(getWorld()), SchemsManager.FOLDER_NAME);
+        return new File(getIWM().getDataFolder(getWorld()), BlueprintsManager.FOLDER_NAME);
     }
 }

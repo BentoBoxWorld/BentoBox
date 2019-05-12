@@ -103,7 +103,7 @@ public class BP_Entity {
     /**
      * @return the domestication
      */
-    public int getDomestication() {
+    public Integer getDomestication() {
         return domestication;
     }
     /**

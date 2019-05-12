@@ -295,7 +295,7 @@ public class BPClipboard {
     }
 
     public boolean isFull() {
-        return !this.bpBlocks.isEmpty();
+        return bp != null;
     }
 
     /**

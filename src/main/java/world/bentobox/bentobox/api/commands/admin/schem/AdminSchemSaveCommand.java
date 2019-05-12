@@ -6,7 +6,7 @@ import java.util.List;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BPClipboard;
-import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.managers.BPClipboardManager;
 
 public class AdminSchemSaveCommand extends ConfirmableCommand {
 
@@ -32,18 +32,16 @@ public class AdminSchemSaveCommand extends ConfirmableCommand {
 
         if (clipboard.isFull()) {
             // Check if file exists
-            File newFile = new File(parent.getSchemsFolder(), args.get(0) + ".json");
-            clipboard.getBp().setName(args.get(0));
+            File newFile = new File(parent.getSchemsFolder(), args.get(0) + BPClipboardManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.schem.file-exists"), () -> {
                     parent.hideClipboard(user);
-                    new BlueprintsManager(getPlugin()).saveBlueprint(parent.getSchemsFolder(), clipboard.getBp());
+                    new BPClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
                 });
                 return false;
             } else {
                 parent.hideClipboard(user);
-                new BlueprintsManager(getPlugin()).saveBlueprint(parent.getSchemsFolder(), clipboard.getBp());
-                return true;
+                return new BPClipboardManager(getPlugin(), parent.getSchemsFolder(), clipboard).save(user, args.get(0));
             }
         } else {
             user.sendMessage("commands.admin.schem.copy-first");

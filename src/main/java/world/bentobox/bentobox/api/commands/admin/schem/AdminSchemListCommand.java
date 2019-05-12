@@ -9,6 +9,8 @@ import java.util.stream.Collectors;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.BPClipboardManager;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 
 public class AdminSchemListCommand extends CompositeCommand {
 
@@ -34,12 +36,12 @@ public class AdminSchemListCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        File schems = new File(getAddon().getDataFolder(), "schems");
+        File schems = new File(getAddon().getDataFolder(), BlueprintsManager.FOLDER_NAME);
         if (!schems.exists()) {
             user.sendMessage("commands.admin.schem.list.no-schems");
             return false;
         }
-        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(".schem");
+        FilenameFilter schemFilter = (File dir, String name) -> name.toLowerCase(java.util.Locale.ENGLISH).endsWith(BPClipboardManager.BLUEPRINT_SUFFIX);
         List<String> schemList = Arrays.stream(Objects.requireNonNull(schems.list(schemFilter))).map(name -> name.substring(0, name.length() - 6)).collect(Collectors.toList());
         if (schemList.isEmpty()) {
             user.sendMessage("commands.admin.schem.list.no-schems");

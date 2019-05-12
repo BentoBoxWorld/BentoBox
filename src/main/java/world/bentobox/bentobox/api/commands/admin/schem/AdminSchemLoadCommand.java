@@ -6,7 +6,7 @@ import java.util.Optional;
 
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.ClipboardManager;
+import world.bentobox.bentobox.managers.BPClipboardManager;
 import world.bentobox.bentobox.util.Util;
 
 public class AdminSchemLoadCommand extends CompositeCommand {
@@ -30,9 +30,9 @@ public class AdminSchemLoadCommand extends CompositeCommand {
 
         AdminSchemCommand parent = (AdminSchemCommand) getParent();
 
-        ClipboardManager bp = new ClipboardManager(getPlugin(), parent.getSchemsFolder());
+        BPClipboardManager bp = new BPClipboardManager(getPlugin(), parent.getSchemsFolder());
         if (bp.load(user, args.get(0))) {
-            //parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
+            parent.getClipboards().put(user.getUniqueId(), bp.getClipboard());
             return true;
         }
 
