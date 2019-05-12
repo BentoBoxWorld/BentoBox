@@ -8,7 +8,7 @@
 meta:
   authors:
   - BONNe1704
-  banner: "WHITE_BANNER:1:STRIPE_LEFT:RED:STRIPE_RIGHT:RED"
+  banner: "WHITE_BANNER:1:STRIPE_SMALL:RED:STRIPE_LEFT:RED:STRIPE_RIGHT:RED"
 
 general:
   success: "&aDarīts!"
