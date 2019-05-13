@@ -114,4 +114,16 @@ public class BlueprintBundle implements DataObject {
         return this.blueprints.get(env);
     }
 
+    /**
+     * Adds a line to the description
+     * 
+     * @param string
+     */
+    public void setDescription(String string) {
+        if (description == null)
+            description = new ArrayList<>();
+        this.description.add(string);
+
+    }
+
 }

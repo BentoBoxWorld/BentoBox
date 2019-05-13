@@ -6,7 +6,6 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.Objects;
 
 import org.bukkit.ChatColor;
@@ -72,28 +71,34 @@ public class SchemToBlueprint {
     private void importSchemSet(GameModeAddon addon, File schems, String name) {
         // Make a new blueprint bundle
         BlueprintBundle bb = new BlueprintBundle();
-        // This is just placeholder text
-        bb.setDisplayName(name + " bundle");
-        bb.setIcon(Material.PAPER);
+        // TODO: This is just placeholder text
         if (name.equalsIgnoreCase("island")) {
             bb.setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
-            bb.setDisplayName("Default bundle");
-            bb.setDescription(Collections.singletonList(ChatColor.AQUA + "Default bundle of blueprints"));
+            bb.setDisplayName(ChatColor.YELLOW + "The Original");
+            bb.setDescription(ChatColor.AQUA + "Standard set of islands");
+            bb.setIcon(Material.GRASS);
+        } else {
+            bb.setUniqueId(name);
+            bb.setDisplayName(name + " island");
+            bb.setIcon(Material.GRASS_PATH);
         }
         Blueprint bp = loadSchemSaveBlueprint(addon, schems, name);
         if (bp != null) {
             bb.setBlueprint(World.Environment.NORMAL, bp);
             plugin.getBlueprintsManager().saveBlueprint(addon, bp);
+            bb.setDescription(ChatColor.GREEN + "Includes an Overworld island");
         }
         bp = loadSchemSaveBlueprint(addon, schems, "nether-" + name);
         if (bp != null) {
             bb.setBlueprint(World.Environment.NETHER, bp);
             plugin.getBlueprintsManager().saveBlueprint(addon, bp);
+            bb.setDescription(ChatColor.RED + "Includes a Nether island");
         }
         bp = loadSchemSaveBlueprint(addon, schems, "end-" + name);
         if (bp != null) {
             bb.setBlueprint(World.Environment.THE_END, bp);
             plugin.getBlueprintsManager().saveBlueprint(addon, bp);
+            bb.setDescription(ChatColor.GOLD + "Includes an End island");
         }
         // Add it to the blueprint manager
         plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);

@@ -1,14 +1,21 @@
 package world.bentobox.bentobox.api.commands.island;
 
 import java.io.IOException;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+
+import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
+import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
 /**
@@ -52,22 +59,41 @@ public class IslandCreateCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Default is 'island'
-        String name = BlueprintsManager.DEFAULT_BUNDLE_NAME;
         if (!args.isEmpty()) {
-            name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
-            // Permission check
-            String permission = this.getPermissionPrefix() + "island.create." + name;
-            if (!user.hasPermission(permission)) {
-                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
-                return false;
+            // Make island
+            return makeIsland(user, args);
+        } else {
+            // Show panel
+            PanelBuilder pb = new PanelBuilder().name("Pick your island").user(user);
+            Collection<BlueprintBundle> bbs = getPlugin().getBlueprintsManager()
+                    .getBlueprintBundles((@NonNull GameModeAddon) getAddon()).values();
+            for (BlueprintBundle bb : bbs) {
+                PanelItem pi = new PanelItemBuilder().name(bb.getDisplayName()).description(bb.getDescription())
+                        .icon(bb.getIcon()).name(bb.getUniqueId()).clickHandler((panel, user1, clickType, slot1) -> {
+                            user1.closeInventory();
+                            execute(user1, label, Collections.singletonList(bb.getUniqueId()));
+                            return true;
+                        }).build();
+                pb.item(pi);
             }
-            // Check the blueprint name exists
-            name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), name);
-            if (name == null) {
-                user.sendMessage("commands.island.create.unknown-blueprint");
-                return false;
-            }
+            pb.build();
+            return true;
+        }
+    }
+
+    private boolean makeIsland(User user, List<String> args) {
+        String name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
+        // Permission check
+        String permission = this.getPermissionPrefix() + "island.create." + name;
+        if (!user.hasPermission(permission)) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
+            return false;
+        }
+        // Check the blueprint name exists
+        name = getPlugin().getBlueprintsManager().validate((GameModeAddon) getAddon(), name);
+        if (name == null) {
+            user.sendMessage("commands.island.create.unknown-blueprint");
+            return false;
         }
         user.sendMessage("commands.island.create.creating-island");
         try {
