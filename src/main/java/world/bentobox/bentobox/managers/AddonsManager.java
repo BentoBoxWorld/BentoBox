@@ -130,7 +130,8 @@ public class AddonsManager {
             addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
-            handleAddonIncompatibility(addon);
+            //handleAddonIncompatibility(addon);
+            e.printStackTrace();
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
@@ -160,9 +161,7 @@ public class AddonsManager {
                 // Create the gameWorlds
                 gameMode.createWorlds();
                 plugin.getIWM().addGameMode(gameMode);
-                // Convert any schems to blueprints
-                plugin.getSchemsManager().convertSchems(gameMode);
-
+                // Save and load blueprints
                 plugin.getBlueprintsManager().extractDefaultBlueprints(gameMode);
                 plugin.getBlueprintsManager().loadBlueprintBundles(gameMode);
             }

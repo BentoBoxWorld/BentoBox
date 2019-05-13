@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -27,11 +28,12 @@ import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.blueprints.Blueprint;
-import world.bentobox.bentobox.blueprints.BlueprintBundle;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.schems.SchemToBlueprint;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -49,11 +51,14 @@ public class BlueprintsManager {
 
     /**
      * Map of blueprint bundles to game mode addon.
+     * Inner map's key is the uniqueId of the blueprint bundle so it's
+     * easy to get from a UI
      */
     private @NonNull Map<GameModeAddon, Map<String, BlueprintBundle>> blueprintBundles;
 
     /**
      * Map of blueprints. There can be many blueprints per game mode addon
+     * Inner map's key is the blueprint's name so it's easy to get from a UI
      */
     private @NonNull Map<GameModeAddon, Map<String, Blueprint>> blueprints;
 
@@ -69,18 +74,20 @@ public class BlueprintsManager {
         this.plugin = plugin;
         this.blueprintBundles = new HashMap<>();
         this.blueprints = new HashMap<>();
+        @SuppressWarnings("rawtypes")
         GsonBuilder builder = new GsonBuilder()
-                .excludeFieldsWithoutExposeAnnotation()
-                .enableComplexMapKeySerialization()
-                .setPrettyPrinting()
-                // This enables gson to deserialize enum maps
-                .registerTypeAdapter(EnumMap.class, new InstanceCreator<EnumMap>() {
-                    @Override
-                    public EnumMap createInstance(Type type) {
-                        Type[] types = (((ParameterizedType) type).getActualTypeArguments());
-                        return new EnumMap((Class<?>) types[0]);
-                    }
-                });
+        .excludeFieldsWithoutExposeAnnotation()
+        .enableComplexMapKeySerialization()
+        .setPrettyPrinting()
+        // This enables gson to deserialize enum maps
+        .registerTypeAdapter(EnumMap.class, new InstanceCreator<EnumMap>() {
+            @SuppressWarnings("unchecked")
+            @Override
+            public EnumMap createInstance(Type type) {
+                Type[] types = (((ParameterizedType) type).getActualTypeArguments());
+                return new EnumMap((Class<?>) types[0]);
+            }
+        });
         // Disable <>'s escaping etc.
         builder.disableHtmlEscaping();
         // Register adapter factory
@@ -139,23 +146,33 @@ public class BlueprintsManager {
      */
     public void loadBlueprintBundles(@NonNull GameModeAddon addon) {
         blueprintBundles.put(addon, new HashMap<>());
+
+        // See if there are any schems that need converting
+        new SchemToBlueprint(plugin).convertSchems(addon);
+
+        if (!loadBundles(addon)) {
+            makeDefaults(addon);
+            loadBundles(addon);
+        }
+        // Load blueprints
+        loadBlueprints(addon);
+    }
+
+    private boolean loadBundles(@NonNull GameModeAddon addon) {
         File bpf = getBlueprintsFolder(addon);
+        boolean loaded = false;
         for (File file: Objects.requireNonNull(bpf.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(BLUEPRINT_BUNDLE_SUFFIX)))) {
             try {
                 BlueprintBundle bb = gson.fromJson(new FileReader(file), BlueprintBundle.class);
                 blueprintBundles.get(addon).put(bb.getUniqueId(), bb);
                 plugin.log("Loaded Blueprint Bundle '" + bb.getUniqueId() + "' for " + addon.getDescription().getName());
+                loaded = true;
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint bundle " + file.getName() + " " + e.getMessage());
                 e.printStackTrace();
             }
         }
-        if (blueprintBundles.get(addon).isEmpty()) {
-            makeDefaults(addon);
-            loadBlueprintBundles(addon);
-        }
-        // Load blueprints
-        loadBlueprints(addon);
+        return loaded;
     }
 
     /**
@@ -165,6 +182,7 @@ public class BlueprintsManager {
     private void makeDefaults(@NonNull GameModeAddon addon) {
         plugin.logError("No blueprint bundles found! Creating a default one.");
         BlueprintBundle bb = new BlueprintBundle();
+        bb.setIcon(Material.PAPER);
         bb.setUniqueId(DEFAULT_BUNDLE_NAME);
         bb.setDisplayName("Default bundle");
         bb.setDescription(Collections.singletonList(ChatColor.AQUA + "Default bundle of blueprints"));
@@ -177,8 +195,7 @@ public class BlueprintsManager {
         map.put(new Vector(0,0,0), new BlueprintBlock("minecraft:bedrock"));
         defaultBp.setBlocks(map);
         // Save a default "bedrock" blueprint
-        File bpFile = new File(this.getBlueprintsFolder(addon), "bedrock");
-        new BlueprintClipboardManager(plugin, getBlueprintsFolder(addon)).saveBlueprint(bpFile, defaultBp);
+        new BlueprintClipboardManager(plugin, getBlueprintsFolder(addon)).saveBlueprint(defaultBp);
         // This blueprint is used for all environments
         bb.setBlueprint(World.Environment.NORMAL, defaultBp);
         bb.setBlueprint(World.Environment.NETHER, defaultBp);
@@ -208,20 +225,38 @@ public class BlueprintsManager {
     }
 
     /**
+     * Adds a blueprint to addon's list of blueprints
+     * @param addon - the {@link GameModeAddon}
+     * @param bp - blueprint
+     */
+    public void addBlueprint(@NonNull GameModeAddon addon, @NonNull Blueprint bp) {
+        blueprints.putIfAbsent(addon, new HashMap<>());
+        blueprints.get(addon).put(bp.getName(), bp);
+        plugin.log("Added blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
+    }
+
+    /**
+     * Saves a blueprint into addon's blueprint folder
+     * @param addon - the {@link GameModeAddon}
+     * @param bp - blueprint to save
+     */
+    public boolean saveBlueprint(@NonNull GameModeAddon addon, @NonNull Blueprint bp) {
+        return new BlueprintClipboardManager(plugin, getBlueprintsFolder(addon)).saveBlueprint(bp);
+    }
+
+    /**
      * Save blueprint bundles for game mode
      * @param addon - gamemode addon
      * @param bundleList - list of bundles
      */
-    public void saveBlueprintBundle(GameModeAddon addon, Map<String, BlueprintBundle> bundleList) {
+    public void saveBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
         File bpf = getBlueprintsFolder(addon);
-        for (BlueprintBundle bb : bundleList.values()) {
-            File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
-            String toStore = gson.toJson(bb, BlueprintBundle.class);
-            try (FileWriter fileWriter = new FileWriter(fileName)) {
-                fileWriter.write(toStore);
-            } catch (IOException e) {
-                plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
-            }
+        File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
+        String toStore = gson.toJson(bb, BlueprintBundle.class);
+        try (FileWriter fileWriter = new FileWriter(fileName)) {
+            fileWriter.write(toStore);
+        } catch (IOException e) {
+            plugin.logError("Could not save blueprint bundle file: " + e.getMessage());
         }
     }
 
@@ -229,7 +264,7 @@ public class BlueprintsManager {
      * Saves all the blueprint bundles
      */
     public void saveBlueprintBundles() {
-        blueprintBundles.forEach(this::saveBlueprintBundle);
+        blueprintBundles.forEach((k,v) -> v.values().forEach(m -> saveBlueprintBundle(k, m)));
     }
 
     /**
@@ -293,7 +328,7 @@ public class BlueprintsManager {
                 && addon.getWorldSettings().isEndIslands()
                 && addon.getEndWorld() != null) {
             bp = blueprints.get(addon).get(bb.getBlueprint(World.Environment.THE_END));
-            new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island, null);
+            new BlueprintPaster(plugin, bp, addon.getEndWorld(), island, null);
         }
         return true;
 
@@ -310,6 +345,16 @@ public class BlueprintsManager {
             return name;
         }
         return null;
+    }
+
+    /**
+     * Adds a blueprint bundle
+     * @param addon - the game mode addon
+     * @param bb - the blueprint bundle
+     */
+    public void addBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
+        blueprintBundles.computeIfAbsent(addon, k -> new HashMap<>()).put(bb.getUniqueId(), bb);
+
     }
 
 }

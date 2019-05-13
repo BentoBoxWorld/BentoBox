@@ -79,7 +79,7 @@ public class BlueprintPaster {
     }
 
     /**
-     * Pastes a blueprint
+     * Pastes a blueprint to an island
      * @param plugin - BentoBox
      * @param bp - blueprint to paste
      * @param world - world to paste to
@@ -244,9 +244,10 @@ public class BlueprintPaster {
             if (e instanceof ChestedHorse && k.getChest() != null) {
                 ((ChestedHorse)e).setCarryingChest(k.getChest());
             }
-            ((Ageable)e).setAdult();
             if (e instanceof Ageable && k.getAdult() != null) {
-                if (!k.getAdult()) {
+                if (k.getAdult()) {
+                    ((Ageable)e).setAdult();
+                } else {
                     ((Ageable)e).setBaby();
                 }
             }

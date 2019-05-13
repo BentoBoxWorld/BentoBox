@@ -14,8 +14,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 import java.util.zip.ZipOutputStream;
 
-import org.bukkit.configuration.InvalidConfigurationException;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
@@ -131,8 +129,7 @@ public class BlueprintClipboardManager {
      */
     public boolean save(User user, String newName) {
         clipboard.getBp().setName(newName);
-        File file = new File(blueprintFolder, newName);
-        if (saveBlueprint(file, clipboard.getBp())) {
+        if (saveBlueprint(clipboard.getBp())) {
             user.sendMessage("general.success");
             return true;
         }
@@ -142,11 +139,15 @@ public class BlueprintClipboardManager {
 
     /**
      * Save a blueprint
-     * @param file - file to save to
      * @param blueprint - blueprint
      * @return true if successful, false if not
      */
-    public boolean saveBlueprint(File file, Blueprint blueprint) {
+    public boolean saveBlueprint(Blueprint blueprint) {
+        if (blueprint.getName().isEmpty()) {
+            plugin.logError("Blueprint name was empty - could not save it");
+            return false;
+        }
+        File file = new File(blueprintFolder, blueprint.getName());
         String toStore = gson.toJson(blueprint, Blueprint.class);
         try (FileWriter fileWriter = new FileWriter(file)) {
             fileWriter.write(toStore);

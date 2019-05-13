@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.blueprints;
+package world.bentobox.bentobox.blueprints.dataobjects;
 
 import java.util.ArrayList;
 import java.util.EnumMap;
@@ -9,6 +9,7 @@ import org.bukkit.World;
 
 import com.google.gson.annotations.Expose;
 
+import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
