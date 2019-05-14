@@ -276,7 +276,8 @@ public class SafeSpotTeleport {
             Material space1 = chunk.getBlockType(x, Math.min(y + 1, worldHeight), z);
             Material space2 = chunk.getBlockType(x, Math.min(y + 2, worldHeight), z);
             if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL))
-                    && (!type.toString().contains("FENCE") && !type.toString().contains("DOOR") && !type.toString().contains("GATE") && !type.toString().contains("PLATE"))) {
+                    && (!type.toString().contains("FENCE") && !type.toString().contains("DOOR") && !type.toString().contains("GATE") && !type.toString().contains("PLATE")
+                    && !type.toString().contains("SIGN"))) {
                 switch (type) {
                 // Unsafe
                 case ANVIL:
@@ -291,7 +292,6 @@ public class SafeSpotTeleport {
                 case TALL_GRASS:
                 case PISTON_HEAD:
                 case MOVING_PISTON:
-                case SIGN:
                 case STONE_BUTTON:
                 case TORCH:
                 case TRIPWIRE:

@@ -8,15 +8,17 @@ import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.InventoryHolder;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.util.heads.HeadRequester;
 
-public class Panel implements HeadRequester {
+public class Panel implements HeadRequester, InventoryHolder {
 
     private Inventory inventory;
     private Map<Integer, PanelItem> items;
@@ -62,6 +64,8 @@ public class Panel implements HeadRequester {
         if (user != null) this.open(user);
     }
 
+    @NonNull
+    @Override
     public Inventory getInventory() {
         return inventory;
     }
