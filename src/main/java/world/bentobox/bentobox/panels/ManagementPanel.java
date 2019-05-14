@@ -72,7 +72,7 @@ public class ManagementPanel {
                         .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
                         .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
                         .clickHandler((panel, user1, clickType, slot) -> {
-                            user1.sendRawMessage("Opening the admin blueprints menu (not implemented yet)");
+                            BlueprintManagementPanel.openPanel(user, gameModeAddon);
                             return true;
                         })
                         .build();
