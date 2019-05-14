@@ -128,8 +128,8 @@ public class BlueprintClipboardManager {
      * @return - true if successful, false if error
      */
     public boolean save(User user, String newName) {
-        clipboard.getBp().setName(newName);
-        if (saveBlueprint(clipboard.getBp())) {
+        clipboard.getBlueprint().setName(newName);
+        if (saveBlueprint(clipboard.getBlueprint())) {
             user.sendMessage("general.success");
             return true;
         }

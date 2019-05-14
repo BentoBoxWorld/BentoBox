@@ -50,7 +50,7 @@ import java.util.stream.Collectors;
  */
 public class BlueprintClipboard {
 
-    private @Nullable Blueprint bp;
+    private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
     private @Nullable Location origin;
@@ -63,8 +63,12 @@ public class BlueprintClipboard {
     private Map<Vector, BlueprintBlock> bpAttachable = new HashMap<>();
     private Map<Vector, BlueprintBlock> bpBlocks = new HashMap<>();
 
-    public BlueprintClipboard(@NonNull Blueprint bp) {
-        this.bp = bp;
+    /**
+     * Create a clipboard for blueprint
+     * @param blueprint - the blueprint to load into the clipboard
+     */
+    public BlueprintClipboard(@NonNull Blueprint blueprint) {
+        this.blueprint = blueprint;
     }
 
     public BlueprintClipboard() { }
@@ -92,15 +96,15 @@ public class BlueprintClipboard {
         // World
         World world = pos1.getWorld();
         // Clear the clipboard
-        bp = new Blueprint();
+        blueprint = new Blueprint();
 
         count = 0;
         index = 0;
         lastPercentage = 0;
         BoundingBox toCopy = BoundingBox.of(pos1, pos2);
-        bp.setxSize((int)toCopy.getWidthX());
-        bp.setySize((int)toCopy.getHeight());
-        bp.setzSize((int)toCopy.getWidthZ());
+        blueprint.setxSize((int)toCopy.getWidthX());
+        blueprint.setySize((int)toCopy.getHeight());
+        blueprint.setzSize((int)toCopy.getWidthZ());
 
         BentoBox plugin = BentoBox.getInstance();
 
@@ -133,9 +137,9 @@ public class BlueprintClipboard {
                 }
                 if (index > vectorsToCopy.size()) {
                     copyTask.cancel();
-                    bp.setAttached(bpAttachable);
-                    bp.setBlocks(bpBlocks);
-                    bp.setEntities(bpEntities);
+                    blueprint.setAttached(bpAttachable);
+                    blueprint.setBlocks(bpBlocks);
+                    blueprint.setEntities(bpEntities);
                     user.sendMessage("general.success");
                     user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
                 }
@@ -240,7 +244,7 @@ public class BlueprintClipboard {
         }
 
         if (block.getType().equals(Material.BEDROCK)) {
-            bp.setBedrock(pos);
+            blueprint.setBedrock(pos);
         }
 
         // Chests
@@ -294,7 +298,7 @@ public class BlueprintClipboard {
     }
 
     public boolean isFull() {
-        return bp != null;
+        return blueprint != null;
     }
 
     /**
@@ -333,17 +337,17 @@ public class BlueprintClipboard {
     }
 
     /**
-     * @return the bp
+     * @return the blueprint
      */
-    public Blueprint getBp() {
-        return bp;
+    public Blueprint getBlueprint() {
+        return blueprint;
     }
 
     /**
-     * @param bp the bp to set
+     * @param blueprint the blueprint to set
      */
-    public BlueprintClipboard setBp(Blueprint bp) {
-        this.bp = bp;
+    public BlueprintClipboard setBlueprint(Blueprint blueprint) {
+        this.blueprint = blueprint;
         return this;
     }
 }

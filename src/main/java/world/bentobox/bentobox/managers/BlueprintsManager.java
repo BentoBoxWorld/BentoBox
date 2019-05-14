@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -14,6 +15,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.jar.JarFile;
 
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -24,9 +26,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.InstanceCreator;
 
-import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.panels.PanelItem;
+import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
+import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
@@ -341,6 +349,9 @@ public class BlueprintsManager {
      * @return bundle name or null if it's invalid
      */
     public @Nullable String validate(GameModeAddon addon, String name) {
+        if (name == null) {
+            return null;
+        }
         if (blueprintBundles.containsKey(addon) && blueprintBundles.get(addon).containsKey(name.toLowerCase(Locale.ENGLISH))) {
             return name;
         }
@@ -355,6 +366,56 @@ public class BlueprintsManager {
     public void addBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
         blueprintBundles.computeIfAbsent(addon, k -> new HashMap<>()).put(bb.getUniqueId(), bb);
 
+    }
+
+    /**
+     * Shows a player a panel of selectable blueprint bundles. Checks user's permission
+     * @param command - the command requesting the panel, e.g., create or reset
+     * @param user - the user
+     * @param label - label
+     */
+    public void showPanel(CompositeCommand command, User user, String label) {
+        // Create the panel
+        PanelBuilder pb = new PanelBuilder().name(user.getTranslation("commands.island.create.pick")).user(user);
+        // Get the bundles
+        Collection<BlueprintBundle> bbs = getBlueprintBundles((@NonNull GameModeAddon) command.getAddon()).values();
+        // Loop through them and create items in the panel
+        for (BlueprintBundle bb : bbs) {
+            String perm = command.getPermissionPrefix() + "island.create." + bb.getUniqueId();
+            if (!bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)
+                    && bb.isRequirePermission()
+                    && !user.hasPermission(perm)) {
+                // Skip bundles that the user has no permission for
+                continue;
+            }
+            PanelItem pi = new PanelItemBuilder().name(bb.getDisplayName()).description(bb.getDescription())
+                    .icon(bb.getIcon()).name(bb.getUniqueId()).clickHandler((panel, user1, clickType, slot1) -> {
+                        user1.closeInventory();
+                        command.execute(user1, label, Collections.singletonList(bb.getUniqueId()));
+                        return true;
+                    }).build();
+            pb.item(pi);
+        }
+        pb.build();
+    }
+
+    /**
+     * Checks if a player has permission to see or use this blueprint bundle.
+     * @param addon - addon making the request
+     * @param user - user making the request
+     * @param name - name of the blueprint bundle
+     * @return <tt>true</tt> if allowed
+     */
+    public boolean checkPerm(Addon addon, User user, String name) {
+        // Permission
+        String permission = addon.getPermissionPrefix() + "island.create." + name;
+        // Get Blueprint bundle
+        BlueprintBundle bb = getBlueprintBundles((GameModeAddon)addon).get(name.toLowerCase(Locale.ENGLISH));
+        if (bb == null || (bb.isRequirePermission() && !name.equals(DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission))) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
+            return false;
+        }
+        return true;
     }
 
 }

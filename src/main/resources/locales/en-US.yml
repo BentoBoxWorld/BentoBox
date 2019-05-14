@@ -312,7 +312,7 @@ commands:
       too-many-islands: "&cThere are too many islands in this world: there isn't enough room for yours to be created."
       unable-create-island: "&cYour island could not be generated, please contact an administrator."
       creating-island: "&aCreating your island, please wait a moment..."
-      pick-world: "&cPick a world from [worlds]."
+      pick: "&aPick an island"
       unknown-blueprint: "&cThat blueprint has not been loaded yet."
     info:
       description: "display info about your island or the player's island"

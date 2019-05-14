@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
-import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
@@ -14,7 +13,6 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
-import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 
 /**
@@ -35,7 +33,7 @@ public class IslandResetCommand extends ConfirmableCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         // Check cooldown
         if (getSettings().getResetCooldown() > 0 && checkCooldown(user, null)) {
             return false;
@@ -67,44 +65,34 @@ public class IslandResetCommand extends ConfirmableCommand {
             }
         }
 
-        String name = getBundleName(args);
-        if (name == null) {
-            // The blueprint name is not valid.
-            user.sendMessage("commands.island.create.unknown-blueprint");
-            return false;
-        }
+        return true;
+    }
 
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         // Permission check if the name is not the default one
-        String permission = getPermissionPrefix() + "island.create." + name;
-        if (!name.equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) && !user.hasPermission(permission)) {
-            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
-            return false;
-        }
-
-        // Request confirmation
-        if (getSettings().isResetConfirmation()) {
-            this.askConfirmation(user, () -> resetIsland(user, name));
-            return true;
-        } else {
+        if (!args.isEmpty()) {
+            String name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
+            if (name == null || name.isEmpty()) {
+                // The blueprint name is not valid.
+                user.sendMessage("commands.island.create.unknown-blueprint");
+                return false;
+            }
+            if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, args.get(0))) {
+                return false;
+            }
             return resetIsland(user, name);
+        } else {
+            // Show panel after confirmation
+            if (getPlugin().getSettings().isResetConfirmation()) {
+                this.askConfirmation(user, () ->  getPlugin().getBlueprintsManager().showPanel(this, user, label));
+            } else {
+                getPlugin().getBlueprintsManager().showPanel(this, user, label);
+            }
+            return true;
         }
     }
 
-    /**
-     * Returns the bundle name from the args.
-     * {@link BlueprintsManager#DEFAULT_BUNDLE_NAME} is the default.
-     * May be null if the bundle does not exist.
-     * @param args args of the command
-     * @return bundle name or null
-     * @since 1.5.0
-     */
-    @Nullable
-    private String getBundleName(List<String> args) {
-        if (args.isEmpty()) {
-            return BlueprintsManager.DEFAULT_BUNDLE_NAME;
-        }
-        return getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
-    }
 
     private boolean resetIsland(User user, String name) {
         // Reset the island

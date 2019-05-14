@@ -2,11 +2,13 @@ package world.bentobox.bentobox.api.commands.island;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.UUID;
@@ -20,7 +22,6 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -94,20 +95,20 @@ public class IslandResetCommandTest {
 
         // No island for player to begin with (set it later in the tests)
         im = mock(IslandsManager.class);
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(false);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(false);
         when(plugin.getIslands()).thenReturn(im);
 
 
         // Has team
         pm = mock(PlayersManager.class);
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(true);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Server & Scheduler
         BukkitScheduler sch = mock(BukkitScheduler.class);
         BukkitTask task = mock(BukkitTask.class);
-        when(sch.runTaskLater(Mockito.any(), Mockito.any(Runnable.class), Mockito.any(Long.class))).thenReturn(task);
+        when(sch.runTaskLater(any(), any(Runnable.class), any(Long.class))).thenReturn(task);
 
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
@@ -115,12 +116,12 @@ public class IslandResetCommandTest {
 
         // IWM friendly name
         iwm = mock(IslandWorldManager.class);
-        when(iwm.getFriendlyName(Mockito.any())).thenReturn("BSkyBlock");
+        when(iwm.getFriendlyName(any())).thenReturn("BSkyBlock");
         when(plugin.getIWM()).thenReturn(iwm);
 
         // Bundles manager
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
-        when(bpm.validate(Mockito.any(), Mockito.any())).thenReturn("custom");
+        when(bpm.validate(any(), any())).thenReturn("custom");
     }
 
     /**
@@ -131,145 +132,138 @@ public class IslandResetCommandTest {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Test the reset command
         // Does not have island
-        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage("general.errors.no-island");
+        assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.no-island");
     }
 
     @Test
     public void testNotOwner() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage("general.errors.not-owner");
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
+        assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("general.errors.not-owner");
     }
 
     @Test
     public void testHasTeam() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage("commands.island.reset.must-remove-members");
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
+        assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("commands.island.reset.must-remove-members");
     }
 
     @Test
     public void testNoResetsLeft() {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
 
         // Block based on no resets left
-        when(pm.getResets(Mockito.eq(world),Mockito.eq(uuid))).thenReturn(3);
+        when(pm.getResets(eq(world),eq(uuid))).thenReturn(3);
 
-        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage("commands.island.reset.none-left");
+        assertFalse(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
+        verify(user).sendMessage("commands.island.reset.none-left");
     }
 
     @Test
     public void testNoConfirmationRequired() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(2);
+        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(2);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
 
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(Mockito.any())).thenReturn(builder);
-        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
-        when(builder.reason(Mockito.any())).thenReturn(builder);
-        when(builder.name(Mockito.any())).thenReturn(builder);
-        when(builder.addon(Mockito.any())).thenReturn(builder);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
 
         // Reset command, no confirmation required
-        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        // Verify that build new island was called and the number of resets left shown
-        Mockito.verify(builder).build();
-        Mockito.verify(user).sendMessage("commands.island.reset.resets-left", "[number]", "2");
+        assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
+        // Verify that panel was shown
+        verify(bpm).showPanel(any(), eq(user), eq(irc.getLabel()));
     }
 
     @Test
     public void testUnlimitedResets() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
 
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(Mockito.any())).thenReturn(builder);
-        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
-        when(builder.reason(Mockito.any())).thenReturn(builder);
-        when(builder.name(Mockito.any())).thenReturn(builder);
-        when(builder.addon(Mockito.any())).thenReturn(builder);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
         // Test with unlimited resets
-        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(-1);
+        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(-1);
 
         // Reset
-        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        // Verify that build new island was called and the number of resets left shown
-        Mockito.verify(builder).build();
-        // This should not be shown
-        Mockito.verify(user, Mockito.never()).sendMessage("commands.island.reset.resets-left", "[number]", "1");
+        assertTrue(irc.canExecute(user, irc.getLabel(), Collections.emptyList()));
     }
 
     @Test
     public void testConfirmationRequired() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
-        // Set so no confirmation required
-        when(s.isResetConfirmation()).thenReturn(false);
+        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(1);
 
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
 
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(Mockito.any())).thenReturn(builder);
-        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
-        when(builder.reason(Mockito.any())).thenReturn(builder);
-        when(builder.name(Mockito.any())).thenReturn(builder);
-        when(builder.addon(Mockito.any())).thenReturn(builder);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
@@ -279,121 +273,72 @@ public class IslandResetCommandTest {
         when(s.getConfirmationTime()).thenReturn(20);
 
         // Reset
-        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
+        assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
         // Check for message
-        Mockito.verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(s.getConfirmationTime()));
+        verify(user).sendMessage("commands.confirmation.confirm", "[seconds]", String.valueOf(s.getConfirmationTime()));
 
         // Send command again to confirm
-        assertTrue(irc.execute(user, irc.getLabel(), new ArrayList<>()));
+        assertTrue(irc.execute(user, irc.getLabel(), Collections.emptyList()));
     }
 
     @Test
-    public void testNewIslandError() throws IOException {
+    public void testNoConfirmationRequiredUnknownBlueprint() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
-        // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        // Give the user some resets
-        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
-        // Set so no confirmation required
-        when(s.isResetConfirmation()).thenReturn(false);
-
-        // Old island mock
-        Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
-
-        // Mock up NewIsland builder
-        NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(Mockito.any())).thenReturn(builder);
-        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
-        when(builder.reason(Mockito.any())).thenReturn(builder);
-        when(builder.name(Mockito.any())).thenReturn(builder);
-        when(builder.addon(Mockito.any())).thenReturn(builder);
-        when(builder.build()).thenThrow(new IOException());
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
-
-        // Require no confirmation
-        when(s.isResetConfirmation()).thenReturn(false);
-
-        // Reset
-        assertFalse(irc.execute(user, irc.getLabel(), new ArrayList<>()));
-        Mockito.verify(user).sendMessage("commands.island.create.unable-create-island");
-    }
-
-    @Test
-    public void testNoConfirmationRequiredCustomSchemNoPermission() throws IOException {
-        IslandResetCommand irc = new IslandResetCommand(ic);
-        // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
-        // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
-        // Give the user some resets
-        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
-        // Set so no confirmation required
-        when(s.isResetConfirmation()).thenReturn(false);
-
-        // Old island mock
-        Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
-
-        // Mock up NewIsland builder
-        NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(Mockito.any())).thenReturn(builder);
-        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
-        when(builder.reason(Mockito.any())).thenReturn(builder);
-        when(builder.name(Mockito.any())).thenReturn(builder);
-        when(builder.addon(Mockito.any())).thenReturn(builder);
-        when(builder.build()).thenReturn(mock(Island.class));
-        PowerMockito.mockStatic(NewIsland.class);
-        when(NewIsland.builder()).thenReturn(builder);
-
-
+        // No such bundle
+        when(bpm.validate(any(), any())).thenReturn(null);
         // Reset command, no confirmation required
         assertFalse(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
-        Mockito.verify(user).sendMessage("general.errors.no-permission","[permission]","nullisland.create.custom");
+        verify(user).sendMessage(
+                "commands.island.create.unknown-blueprint"
+                );
+    }
+
+    @Test
+    public void testNoConfirmationRequiredBlueprintNoPerm() throws IOException {
+        IslandResetCommand irc = new IslandResetCommand(ic);
+        // Bundle exists
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        // No permission
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(false);
+        // Reset command, no confirmation required
+        assertFalse(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
     }
 
     @Test
     public void testNoConfirmationRequiredCustomSchemHasPermission() throws IOException {
         IslandResetCommand irc = new IslandResetCommand(ic);
         // Now has island, but is not the owner
-        when(im.hasIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.hasIsland(any(), eq(uuid))).thenReturn(true);
         // Now is owner, but still has team
-        when(im.isOwner(Mockito.any(), Mockito.eq(uuid))).thenReturn(true);
+        when(im.isOwner(any(), eq(uuid))).thenReturn(true);
         // Now has no team
-        when(im.inTeam(Mockito.any(), Mockito.eq(uuid))).thenReturn(false);
+        when(im.inTeam(any(), eq(uuid))).thenReturn(false);
         // Give the user some resets
-        when(pm.getResetsLeft(Mockito.eq(world), Mockito.eq(uuid))).thenReturn(1);
+        when(pm.getResetsLeft(eq(world), eq(uuid))).thenReturn(1);
         // Set so no confirmation required
         when(s.isResetConfirmation()).thenReturn(false);
 
         // Old island mock
         Island oldIsland = mock(Island.class);
-        when(im.getIsland(Mockito.any(), Mockito.eq(uuid))).thenReturn(oldIsland);
+        when(im.getIsland(any(), eq(uuid))).thenReturn(oldIsland);
 
         // Mock up NewIsland builder
         NewIsland.Builder builder = mock(NewIsland.Builder.class);
-        when(builder.player(Mockito.any())).thenReturn(builder);
-        when(builder.oldIsland(Mockito.any())).thenReturn(builder);
-        when(builder.reason(Mockito.any())).thenReturn(builder);
-        when(builder.name(Mockito.any())).thenReturn(builder);
-        when(builder.addon(Mockito.any())).thenReturn(builder);
+        when(builder.player(any())).thenReturn(builder);
+        when(builder.oldIsland(any())).thenReturn(builder);
+        when(builder.reason(any())).thenReturn(builder);
+        when(builder.name(any())).thenReturn(builder);
+        when(builder.addon(any())).thenReturn(builder);
         when(builder.build()).thenReturn(mock(Island.class));
         PowerMockito.mockStatic(NewIsland.class);
         when(NewIsland.builder()).thenReturn(builder);
 
-        // Permission
-        when(user.hasPermission(Mockito.anyString())).thenReturn(true);
+        // Bundle exists
+        when(bpm.validate(any(), any())).thenReturn("custom");
+        // Has permission
+        when(bpm.checkPerm(any(), any(), any())).thenReturn(true);
         // Reset command, no confirmation required
         assertTrue(irc.execute(user, irc.getLabel(), Collections.singletonList("custom")));
-        // Verify that build new island was called and the number of resets left shown
-        Mockito.verify(builder).build();
-        Mockito.verify(user).sendMessage("commands.island.reset.resets-left", "[number]", "1");
+        verify(user).sendMessage("commands.island.create.creating-island");
     }
 }

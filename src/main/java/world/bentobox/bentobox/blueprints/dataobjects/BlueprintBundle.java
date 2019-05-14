@@ -16,18 +16,38 @@ import world.bentobox.bentobox.database.objects.DataObject;
  * Represents a bundle of three {@link Blueprint}s.
  * This is what the player will choose when creating his island.
  * @since 1.5.0
- * @author Poslovitch
+ * @author Poslovitch, tastybento
  */
 public class BlueprintBundle implements DataObject {
 
+    /**
+     * The unique id of this bundle
+     */
     @Expose
     private String uniqueId;
+    /**
+     * Icon of the bundle
+     */
     @Expose
     private Material icon = Material.PAPER;
+    /**
+     * Name on the icon
+     */
     @Expose
     private String displayName = "";
+    /**
+     * Description to show players
+     */
     @Expose
     private List<String> description = new ArrayList<>();
+    /**
+     * If true, then the player needs to have a permission to view or use this bundle
+     * The permission is GameModeAddon.island.create.uniqueId of blueprint bundle.
+     * e.g. bskyblock.island.create.vip
+     */
+    @Expose
+    private boolean requirePermission;
+
     /**
      * Reference to the blueprint
      */
@@ -116,7 +136,7 @@ public class BlueprintBundle implements DataObject {
 
     /**
      * Adds a line to the description
-     * 
+     *
      * @param string
      */
     public void setDescription(String string) {
@@ -124,6 +144,18 @@ public class BlueprintBundle implements DataObject {
             description = new ArrayList<>();
         this.description.add(string);
 
+    }
+    /**
+     * @return the requirePermission
+     */
+    public boolean isRequirePermission() {
+        return requirePermission;
+    }
+    /**
+     * @param requirePermission the requirePermission to set
+     */
+    public void setRequirePermission(boolean requirePermission) {
+        this.requirePermission = requirePermission;
     }
 
 }

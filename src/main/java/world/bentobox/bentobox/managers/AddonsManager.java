@@ -130,8 +130,7 @@ public class AddonsManager {
             addon.setState(Addon.State.LOADED);
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
-            //handleAddonIncompatibility(addon);
-            e.printStackTrace();
+            handleAddonIncompatibility(addon);
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);

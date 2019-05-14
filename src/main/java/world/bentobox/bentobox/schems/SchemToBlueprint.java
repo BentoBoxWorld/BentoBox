@@ -41,7 +41,6 @@ public class SchemToBlueprint {
     public void convertSchems(GameModeAddon addon) {
         File schems = new File(addon.getDataFolder(), FOLDER_NAME);
         if (!schems.exists()) {
-            plugin.logDebug("No schems folder");
             return;
         }
         // Convert all schems in folder
