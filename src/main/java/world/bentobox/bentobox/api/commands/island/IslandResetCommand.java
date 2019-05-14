@@ -14,6 +14,7 @@ import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.island.NewIsland;
+import world.bentobox.bentobox.panels.IslandCreationPanel;
 
 /**
  * @author tastybento
@@ -85,9 +86,10 @@ public class IslandResetCommand extends ConfirmableCommand {
         } else {
             // Show panel after confirmation
             if (getPlugin().getSettings().isResetConfirmation()) {
-                this.askConfirmation(user, () ->  getPlugin().getBlueprintsManager().showPanel(this, user, label));
+                this.askConfirmation(user, () -> getPlugin().getBlueprintsManager().showPanel(this, user, label));
             } else {
-                getPlugin().getBlueprintsManager().showPanel(this, user, label);
+                //getPlugin().getBlueprintsManager().showPanel(this, user, label);
+                IslandCreationPanel.openPanel(user, (GameModeAddon) getAddon());
             }
             return true;
         }
