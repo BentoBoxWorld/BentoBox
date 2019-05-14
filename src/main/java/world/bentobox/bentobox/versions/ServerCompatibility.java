@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
+import java.util.Arrays;
+
 /**
  * Checks and ensures the current server software is compatible with BentoBox.
  * @author Poslovitch
@@ -95,7 +97,11 @@ public class ServerCompatibility {
         /**
          * @since 1.5.0
          */
-        V1_14(Compatibility.INCOMPATIBLE);
+        V1_14(Compatibility.NOT_SUPPORTED),
+        /**
+         * @since 1.5.0
+         */
+        V1_14_1(Compatibility.NOT_SUPPORTED);
 
         private Compatibility compatibility;
 
@@ -188,22 +194,22 @@ public class ServerCompatibility {
     }
 
     /**
-     * Returns whether the server runs on the specified version.
-     * @param version the {@link ServerVersion} to check.
-     * @return {@code true} if the server runs on this version, {@code false} otherwise.
+     * Returns whether the server runs on the specified versions.
+     * @param versions the {@link ServerVersion}s to check.
+     * @return {@code true} if the server runs on one of the specified versions, {@code false} otherwise.
      * @since 1.5.0
      */
-    public boolean isVersion(@NonNull ServerVersion version) {
-        return version.equals(getServerVersion());
+    public boolean isVersion(@NonNull ServerVersion... versions) {
+        return Arrays.asList(versions).contains(getServerVersion());
     }
 
     /**
-     * Returns whether the server runs on the specified software.
-     * @param software the {@link ServerSoftware} to check.
-     * @return {@code true} if the server runs on this software, {@code false} otherwise.
+     * Returns whether the server runs on the specified softwares.
+     * @param softwares the {@link ServerSoftware}s to check.
+     * @return {@code true} if the server runs on on of these softwares, {@code false} otherwise.
      * @since 1.5.0
      */
-    public boolean isSoftware(@NonNull ServerSoftware software) {
-        return software.equals(getServerSoftware());
+    public boolean isSoftware(@NonNull ServerSoftware... softwares) {
+        return Arrays.asList(softwares).contains(getServerSoftware());
     }
 }

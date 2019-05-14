@@ -226,13 +226,13 @@ public class IslandsManager {
         }
 
         if (ground.getType().equals(Material.CACTUS) || ground.getType().toString().contains("BOAT") || ground.getType().toString().contains("FENCE")
-                || ground.getType().equals(Material.SIGN) || ground.getType().equals(Material.WALL_SIGN)) {
+                || ground.getType().toString().contains("SIGN")) {
             return false;
         }
         // Check that the space is not solid
         // The isSolid function is not fully accurate (yet) so we have to check a few other items
         // isSolid thinks that PLATEs and SIGNS are solid, but they are not
-        return (!space1.getType().isSolid() || space1.getType().equals(Material.SIGN) || space1.getType().equals(Material.WALL_SIGN)) && (!space2.getType().isSolid() || space2.getType().equals(Material.SIGN) || space2.getType().equals(Material.WALL_SIGN));
+        return (!space1.getType().isSolid() || space1.getType().toString().contains("SIGN")) && (!space2.getType().isSolid() || space2.getType().equals(Material.SIGN) || space2.getType().equals(Material.WALL_SIGN));
     }
 
     /**

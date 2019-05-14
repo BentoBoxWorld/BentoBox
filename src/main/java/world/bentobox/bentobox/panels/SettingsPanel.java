@@ -53,14 +53,14 @@ public class SettingsPanel {
         // Add forward and backward icons
         if (page > 0) {
             // Previous page icon
-            panelBuilder.item(new PanelItemBuilder().icon(Material.SIGN).name(user.getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
+            panelBuilder.item(new PanelItemBuilder().icon(Material.ARROW).name(user.getTranslation(PROTECTION_PANEL + "previous")).clickHandler((panel, user1, clickType, slot1) -> {
                 openPanel(BentoBox.getInstance(), user, flagType, world, page - 1);
                 return true;
             }).build());
         }
         if ((page + 1) * 44 < flags.size()) {
             // Next page icon
-            panelBuilder.item(new PanelItemBuilder().icon(Material.SIGN).name(user.getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
+            panelBuilder.item(new PanelItemBuilder().icon(Material.ARROW).name(user.getTranslation(PROTECTION_PANEL + "next")).clickHandler((panel, user1, clickType, slot1) -> {
                 openPanel(BentoBox.getInstance(), user, flagType, world, page + 1);
                 return true;
             }).build());

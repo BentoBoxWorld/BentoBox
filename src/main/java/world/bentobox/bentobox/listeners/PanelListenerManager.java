@@ -13,6 +13,7 @@ import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 
+import org.bukkit.inventory.InventoryView;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
@@ -25,11 +26,11 @@ public class PanelListenerManager implements Listener {
     @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
-        Inventory inventory = event.getInventory(); // The inventory that was clicked on
+        InventoryView view = event.getView();
         // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(user.getUniqueId())) {
             // Check the name of the panel
-            if (inventory.getName().equals(openPanels.get(user.getUniqueId()).getInventory().getName())) {
+            if (view.getTitle().equals(openPanels.get(user.getUniqueId()).getName())) {
                 // Close inventory if clicked outside and if setting is true
                 if (BentoBox.getInstance().getSettings().isClosePanelOnClickOutside() && event.getSlotType().equals(SlotType.OUTSIDE)) {
                     event.getWhoClicked().closeInventory();
