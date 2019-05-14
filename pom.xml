@@ -54,7 +54,9 @@
         <placeholderapi.version>2.10.1</placeholderapi.version>
         <githubapi.version>1.0</githubapi.version>
         <!-- Revision variable removes warning about dynamic version -->
-        <revision>${build.version}</revision>
+        <revision>${build.version}-SNAPSHOT</revision>
+        <!-- Do not change unless you want different name for local builds. -->
+        <build.number>-LOCAL</build.number>
         <!-- This allows to change between versions. -->
         <build.version>1.5.0</build.version>
     </properties>
@@ -62,19 +64,23 @@
     <!-- Profiles will allow to automatically change build version. -->
     <profiles>
         <profile>
-            <!-- Local profile is activated by default. It adds '-SNAPSHOT' at the end of ${build.version} -->
-            <!-- This profile will be used only if develop and master fails. -->
-            <id>local</id>
+            <!-- ci profile is activated if exist environment variable BUILD_NUMBER.  -->
+            <!-- It replaces ${build.number} that is currently '-LOCAL' with correct build number from JENKINS machine.  -->
+            <id>ci</id>
             <activation>
-                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>env.BUILD_NUMBER</name>
+                </property>
             </activation>
             <properties>
-                <revision>${build.version}-SNAPSHOT</revision>
+                <!-- Override only if necessary -->
+                <build.number>-#${env.BUILD_NUMBER}</build.number>
             </properties>
         </profile>
         <profile>
-            <!-- Master profile is activated if exist environment variable GIT_BRANCH and its value is
-                origin/master. It will not add anything at the end of '${build.version}'. -->
+            <!-- Master profile is activated if exist environment variable GIT_BRANCH and its value is origin/master. -->
+            <!-- It will replace 'revision' with '${build.version}' so it removes '-SNAPSHOT' string at the end. -->
+            <!-- Also, as this is release build, build number can be set to empty string. -->
             <!-- This profile will be used only if exist environment variable GIT_BRANCH with value origin/master. -->
             <id>master</id>
             <activation>
@@ -84,8 +90,10 @@
                 </property>
             </activation>
             <properties>
-                <!-- If current branch is Master, the we do not want to add anything extra. -->
+                <!-- Override only if necessary -->
                 <revision>${build.version}</revision>
+                <!-- Empties build number variable.-->
+                <build.number></build.number>
             </properties>
         </profile>
         <profile>
