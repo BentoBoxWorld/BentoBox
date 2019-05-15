@@ -121,10 +121,10 @@ commands:
       description: "ustawia role gracza na swojej wyspie"
       unknown-rank: "&cNieznana rola!"
       rank-set: "&aRola ustawiona z [from] na [to]."
-    schem:
+    blueprint:
       parameters: "<load><copy><paste><pos1><pos2><save>"
-      description: "manipuluj schematem"
-      copy-first: "&cNajpierw skopiuj schemat!"
+      description: "manipuluj blueprint"
+      copy-first: "&cNajpierw skopiuj blueprint!"
       file-exists: "&cPlik już istnieje, nadpisać?"
       no-such-file: "&cNie ma takiego pliku!"
       could-not-load: "&cNie można załadować tego pliku!"

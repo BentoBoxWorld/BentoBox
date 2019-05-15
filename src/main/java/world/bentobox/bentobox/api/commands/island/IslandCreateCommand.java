@@ -3,11 +3,12 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
-import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.island.NewIsland;
+import world.bentobox.bentobox.panels.IslandCreationPanel;
 
 /**
  * /island create - Create an island.
@@ -50,28 +51,33 @@ public class IslandCreateCommand extends CompositeCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        // Default schem is 'island'
-        String name = "island";
+        // Permission check if the name is not the default one
         if (!args.isEmpty()) {
-            name = args.get(0).toLowerCase(java.util.Locale.ENGLISH);
-            // Permission check
-            String permission = this.getPermissionPrefix() + "island.create." + name;
-            if (!user.hasPermission(permission)) {
-                user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, permission);
-                return false;
-            }
-            // Check the schem name exists
-            name = getPlugin().getSchemsManager().validate(getWorld(), name);
+            String name = getPlugin().getBlueprintsManager().validate((GameModeAddon)getAddon(), args.get(0).toLowerCase(java.util.Locale.ENGLISH));
             if (name == null) {
-                user.sendMessage("commands.island.create.unknown-schem");
+                // The blueprint name is not valid.
+                user.sendMessage("commands.island.create.unknown-blueprint");
                 return false;
             }
+            if (!getPlugin().getBlueprintsManager().checkPerm(getAddon(), user, args.get(0))) {
+                return false;
+            }
+            // Make island
+            return makeIsland(user, name);
+        } else {
+            // Show panel
+            //getPlugin().getBlueprintsManager().showPanel(this, user, label);
+            IslandCreationPanel.openPanel(user, (GameModeAddon) getAddon());
+            return true;
         }
+    }
+
+    private boolean makeIsland(User user, String name) {
         user.sendMessage("commands.island.create.creating-island");
         try {
             NewIsland.builder()
             .player(user)
-            .world(getWorld())
+            .addon((GameModeAddon)getAddon())
             .reason(Reason.CREATE)
             .name(name)
             .build();

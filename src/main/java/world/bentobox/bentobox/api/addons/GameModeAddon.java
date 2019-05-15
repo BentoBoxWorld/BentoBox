@@ -14,7 +14,7 @@ import world.bentobox.bentobox.util.Util;
 
 /**
  * Defines the addon as a game mode.
- * A game mode creates worlds, registers world settings and has schems in a jar folder.
+ * A game mode creates worlds, registers world settings and has blueprints in a jar folder.
  * @author tastybento, Poslovitch
  */
 public abstract class GameModeAddon extends Addon {

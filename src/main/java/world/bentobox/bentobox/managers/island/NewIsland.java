@@ -14,11 +14,13 @@ import org.eclipse.jdt.annotation.Nullable;
 
 import world.bentobox.bentobox.BStats;
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.events.IslandBaseEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.util.Util;
 
 /**
@@ -35,6 +37,7 @@ public class NewIsland {
     private final World world;
     private final String name;
     private final boolean noPaste;
+    private GameModeAddon addon;
 
     private enum Result {
         ISLAND_FOUND,
@@ -43,15 +46,15 @@ public class NewIsland {
         FREE
     }
 
-    private NewIsland(Island oldIsland, User user, Reason reason, World world, String name, boolean noPaste) {
-        super();
+    public NewIsland(Builder builder) {
         plugin = BentoBox.getInstance();
-        this.user = user;
-        this.reason = reason;
-        this.world = world;
-        this.name = name;
-        this.noPaste = noPaste;
-        newIsland(oldIsland);
+        this.user = builder.user2;
+        this.reason = builder.reason2;
+        this.world = builder.world2;
+        this.name = builder.name2;
+        this.noPaste = builder.noPaste2;
+        this.addon = builder.addon2;
+        newIsland(builder.oldIsland2);
     }
 
     /**
@@ -78,8 +81,9 @@ public class NewIsland {
         private User user2;
         private Reason reason2;
         private World world2;
-        private String name2 = "island";
+        private String name2 = BlueprintsManager.DEFAULT_BUNDLE_NAME;
         private boolean noPaste2;
+        private GameModeAddon addon2;
 
         public Builder oldIsland(Island oldIsland) {
             this.oldIsland2 = oldIsland;
@@ -98,13 +102,28 @@ public class NewIsland {
             return this;
         }
 
+        /**
+         * @param world
+         * @deprecated use {@link #addon} instead
+         */
+        @Deprecated
         public Builder world(World world) {
             this.world2 = world;
             return this;
         }
 
         /**
-         * No schematics will be pasted
+         * Set the addon
+         * @param addon a game mode addon
+         */
+        public Builder addon(GameModeAddon addon) {
+            this.addon2 = addon;
+            this.world2 = addon.getOverWorld();
+            return this;
+        }
+
+        /**
+         * No blocks will be pasted
          */
         public Builder noPaste() {
             this.noPaste2 = true;
@@ -112,7 +131,7 @@ public class NewIsland {
         }
 
         /**
-         * @param name - filename of schematic
+         * @param name - name of Blueprint bundle
          */
         public Builder name(String name) {
             this.name2 = name;
@@ -125,10 +144,10 @@ public class NewIsland {
          */
         public Island build() throws IOException {
             if (user2 != null) {
-                NewIsland newIsland = new NewIsland(oldIsland2, user2, reason2, world2, name2, noPaste2);
+                NewIsland newIsland = new NewIsland(this);
                 return newIsland.getIsland();
             }
-            throw new IOException("Insufficient parameters. Must have a schematic and a player");
+            throw new IOException("Insufficient parameters. Must have a user!");
         }
     }
 
@@ -213,17 +232,8 @@ public class NewIsland {
         if (noPaste) {
             Bukkit.getScheduler().runTask(plugin, task);
         } else {
-            // Create island
-            plugin.getSchemsManager().paste(world, island, name, task);
-            // Make nether island
-            if (plugin.getIWM().isNetherGenerate(world) && plugin.getIWM().isNetherIslands(world) && plugin.getIWM().getNetherWorld(world) != null) {
-                plugin.getSchemsManager().paste(plugin.getIWM().getNetherWorld(world), island, "nether-" + name);
-            }
-
-            // Make end island
-            if (plugin.getIWM().isEndGenerate(world) && plugin.getIWM().isEndIslands(world) && plugin.getIWM().getEndWorld(world) != null) {
-                plugin.getSchemsManager().paste(plugin.getIWM().getEndWorld(world), island, "end-" + name);
-            }
+            // Create islands
+            plugin.getBlueprintsManager().paste(addon, island, name, task);
         }
         // Set default settings
         island.setFlagsDefaults();

@@ -1,12 +1,5 @@
 package world.bentobox.bentobox.blueprints;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -15,9 +8,6 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
-import org.bukkit.configuration.ConfigurationSection;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -34,26 +24,33 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBlock;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
+ * The clipboard provides the holding spot for an active blueprint that is being
+ * manipulated by a user. It supports copying from the world and setting of coordinates
+ * such as the bounding box around the cuboid copy area.
+ * Pasting is done by the {@link BlueprintPaster} class.
  * @author tastybento
  * @since 1.5.0
  */
-public class Clipboard {
+public class BlueprintClipboard {
 
-    // Commonly used texts along this class.
-    private static final String ATTACHED_YAML_PREFIX = "attached.";
-    private static final String ENTITIES_YAML_PREFIX = "entities.";
-    private static final String BLOCKS_YAML_PREFIX = "blocks.";
-    private static final String BEDROCK = "bedrock";
-    private static final String COLOR = "color";
-    private static final String LINES = "lines";
-
-    private @Nullable YamlConfiguration blockConfig;
+    private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
     private @Nullable Location origin;
@@ -62,18 +59,19 @@ public class Clipboard {
     private boolean copying;
     private int index;
     private int lastPercentage;
+    private Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
+    private Map<Vector, BlueprintBlock> bpAttachable = new HashMap<>();
+    private Map<Vector, BlueprintBlock> bpBlocks = new HashMap<>();
 
-    public Clipboard(String contents) throws InvalidConfigurationException {
-        set(contents);
+    /**
+     * Create a clipboard for blueprint
+     * @param blueprint - the blueprint to load into the clipboard
+     */
+    public BlueprintClipboard(@NonNull Blueprint blueprint) {
+        this.blueprint = blueprint;
     }
 
-    public Clipboard(@NonNull YamlConfiguration config) {
-        this.blockConfig = config;
-    }
-
-    public Clipboard() {
-        super();
-    }
+    public BlueprintClipboard() { }
 
     /**
      * Copy the blocks between pos1 and pos2 into the clipboard for a user.
@@ -84,29 +82,29 @@ public class Clipboard {
      */
     public boolean copy(User user, boolean copyAir) {
         if (copying) {
-            user.sendMessage("commands.admin.schem.mid-copy");
+            user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
         }
         origin = origin == null ? user.getLocation() : origin;
         if (pos1 == null || pos2 == null) {
-            user.sendMessage("commands.admin.schem.need-pos1-pos2");
+            user.sendMessage("commands.admin.blueprint.need-pos1-pos2");
             return false;
         }
 
-        user.sendMessage("commands.admin.schem.copying");
+        user.sendMessage("commands.admin.blueprint.copying");
 
         // World
         World world = pos1.getWorld();
         // Clear the clipboard
-        blockConfig = new YamlConfiguration();
+        blueprint = new Blueprint();
 
         count = 0;
         index = 0;
         lastPercentage = 0;
         BoundingBox toCopy = BoundingBox.of(pos1, pos2);
-        blockConfig.set("size.xsize", toCopy.getWidthX());
-        blockConfig.set("size.ysize", toCopy.getHeight());
-        blockConfig.set("size.zsize", toCopy.getWidthZ());
+        blueprint.setxSize((int)toCopy.getWidthX());
+        blueprint.setySize((int)toCopy.getHeight());
+        blueprint.setzSize((int)toCopy.getWidthZ());
 
         BentoBox plugin = BentoBox.getInstance();
 
@@ -120,26 +118,30 @@ public class Clipboard {
                 }
                 copying = true;
                 vectorsToCopy.stream().skip(index).limit(speed).forEach(v -> {
-                    if (copyBlock(v.toLocation(world),
-                            origin,
-                            copyAir,
-                            world.getLivingEntities().stream()
+                    List<LivingEntity> ents = world.getLivingEntities().stream()
                             .filter(Objects::nonNull)
-                            .filter(e -> !(e instanceof Player) && e.getLocation().equals(v.toLocation(world)))
-                            .collect(Collectors.toList()))) {
+                            .filter(e -> !(e instanceof Player))
+                            .filter(e -> new Vector(e.getLocation().getBlockX(),
+                                    e.getLocation().getBlockY(),
+                                    e.getLocation().getBlockZ()).equals(v))
+                            .collect(Collectors.toList());
+                    if (copyBlock(v.toLocation(world), origin, copyAir, ents)) {
                         count++;
                     }
                 });
                 index += speed;
                 int percent = (int)(index * 100 / (double)vectorsToCopy.size());
                 if (percent != lastPercentage && percent % 10 == 0) {
-                    user.sendMessage("commands.admin.schem.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
+                    user.sendMessage("commands.admin.blueprint.copied-percent", TextVariables.NUMBER, String.valueOf(percent));
                     lastPercentage = percent;
                 }
                 if (index > vectorsToCopy.size()) {
                     copyTask.cancel();
+                    blueprint.setAttached(bpAttachable);
+                    blueprint.setBlocks(bpBlocks);
+                    blueprint.setEntities(bpEntities);
                     user.sendMessage("general.success");
-                    user.sendMessage("commands.admin.schem.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
+                    user.sendMessage("commands.admin.blueprint.copied-blocks", TextVariables.NUMBER, String.valueOf(count));
                 }
                 copying = false;
             }, 0L, 1L);
@@ -173,46 +175,51 @@ public class Clipboard {
         int x = l.getBlockX() - copyOrigin.getBlockX();
         int y = l.getBlockY() - copyOrigin.getBlockY();
         int z = l.getBlockZ() - copyOrigin.getBlockZ();
-        String pos = x + "," + y + "," + z;
-
-        // Position defines the section
-        ConfigurationSection blocksSection = blockConfig.createSection(BLOCKS_YAML_PREFIX + "." + pos);
+        Vector pos = new Vector(x, y, z);
 
         // Set entities
+        List<BlueprintEntity> bpEnts = new ArrayList<>();
         for (LivingEntity entity: entities) {
-            ConfigurationSection entitySection = blockConfig.createSection(ENTITIES_YAML_PREFIX + pos + "." + entity.getUniqueId());
-            entitySection.set("type", entity.getType().name());
-            entitySection.set("name", entity.getCustomName());
+            BlueprintEntity bpe = new BlueprintEntity();
+            bpe.setType(entity.getType());
+            bpe.setCustomName(entity.getCustomName());
             if (entity instanceof Colorable) {
                 Colorable c = (Colorable)entity;
                 if (c.getColor() != null) {
-                    entitySection.set(COLOR, c.getColor().name());
+                    bpe.setColor(c.getColor());
                 }
             }
-            if (entity instanceof Tameable && ((Tameable)entity).isTamed()) {
-                entitySection.set("tamed", true);
+            if (entity instanceof Tameable) {
+                bpe.setTamed(((Tameable)entity).isTamed());
             }
-            if (entity instanceof ChestedHorse && ((ChestedHorse)entity).isCarryingChest()) {
-                entitySection.set("chest", true);
+            if (entity instanceof ChestedHorse) {
+                bpe.setChest(((ChestedHorse)entity).isCarryingChest());
             }
             if (entity instanceof Ageable) {
-                entitySection.set("adult", ((Ageable)entity).isAdult());
+                // Only set if child. Most animals are adults
+                if (!((Ageable)entity).isAdult()) bpe.setAdult(false);
             }
             if (entity instanceof AbstractHorse) {
                 AbstractHorse horse = (AbstractHorse)entity;
-                entitySection.set("domestication", horse.getDomestication());
+                bpe.setDomestication(horse.getDomestication());
+                bpe.setInventory(new HashMap<>());
                 for (int index = 0; index < horse.getInventory().getSize(); index++) {
                     ItemStack i = horse.getInventory().getItem(index);
                     if (i != null) {
-                        entitySection.set("inventory." + index, i);
+                        bpe.getInventory().put(index, i);
                     }
                 }
             }
 
             if (entity instanceof Horse) {
                 Horse horse = (Horse)entity;
-                entitySection.set("style", horse.getStyle().name());
+                bpe.setStyle(horse.getStyle());
             }
+            bpEnts.add(bpe);
+        }
+        // Store
+        if (!bpEnts.isEmpty()) {
+            bpEntities.put(pos, bpEnts);
         }
 
         // Return if this is just air block
@@ -222,62 +229,50 @@ public class Clipboard {
 
         // Block state
         BlockState blockState = block.getState();
-
+        BlueprintBlock b = new BlueprintBlock(block.getBlockData().getAsString());
+        // Signs
+        if (blockState instanceof Sign) {
+            Sign sign = (Sign)blockState;
+            b.setSignLines(Arrays.asList(sign.getLines()));
+        }
         // Set block data
         if (blockState.getData() instanceof Attachable) {
-            ConfigurationSection attachedSection = blockConfig.createSection(ATTACHED_YAML_PREFIX + pos);
-            attachedSection.set("bd", block.getBlockData().getAsString());
             // Placeholder for attachment
-            blocksSection.set("bd", "minecraft:air");
-            // Signs
-            if (blockState instanceof Sign) {
-                Sign sign = (Sign)blockState;
-                attachedSection.set(LINES, Arrays.asList(sign.getLines()));
-            }
+            bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
+            bpAttachable.put(pos, b);
             return true;
-        } else {
-            blocksSection.set("bd", block.getBlockData().getAsString());
-            // Signs
-            if (blockState instanceof Sign) {
-                Sign sign = (Sign)blockState;
-                blocksSection.set(LINES, Arrays.asList(sign.getLines()));
-            }
         }
 
         if (block.getType().equals(Material.BEDROCK)) {
-            blockConfig.set(BEDROCK, x + "," + y + "," + z);
+            blueprint.setBedrock(pos);
         }
 
         // Chests
         if (blockState instanceof InventoryHolder) {
+            b.setInventory(new HashMap<>());
             InventoryHolder ih = (InventoryHolder)blockState;
             for (int index = 0; index < ih.getInventory().getSize(); index++) {
                 ItemStack i = ih.getInventory().getItem(index);
                 if (i != null) {
-                    blocksSection.set("inventory." + index, i);
+                    b.getInventory().put(index, i);
                 }
             }
         }
 
         if (blockState instanceof CreatureSpawner) {
             CreatureSpawner spawner = (CreatureSpawner)blockState;
-            blocksSection.set("spawnedType",spawner.getSpawnedType().name());
-            blocksSection.set("delay", spawner.getDelay());
-            blocksSection.set("maxNearbyEntities", spawner.getMaxNearbyEntities());
-            blocksSection.set("maxSpawnDelay", spawner.getMaxSpawnDelay());
-            blocksSection.set("minSpawnDelay", spawner.getMinSpawnDelay());
-            blocksSection.set("requiredPlayerRange", spawner.getRequiredPlayerRange());
-            blocksSection.set("spawnRange", spawner.getSpawnRange());
+            BlueprintCreatureSpawner cs = new BlueprintCreatureSpawner();
+            cs.setSpawnedType(spawner.getSpawnedType());
+            cs.setDelay(spawner.getDelay());
+            cs.setMaxNearbyEntities(spawner.getMaxNearbyEntities());
+            cs.setMaxSpawnDelay(spawner.getMaxSpawnDelay());
+            cs.setMinSpawnDelay(spawner.getMinSpawnDelay());
+            cs.setRequiredPlayerRange(spawner.getRequiredPlayerRange());
+            cs.setSpawnRange(spawner.getSpawnRange());
+            b.setCreatureSpawner(cs);
         }
+        this.bpBlocks.put(pos, b);
         return true;
-    }
-
-    /**
-     * @return the blockConfig
-     */
-    @Nullable
-    public YamlConfiguration getBlockConfig() {
-        return blockConfig;
     }
 
     /**
@@ -303,31 +298,7 @@ public class Clipboard {
     }
 
     public boolean isFull() {
-        return blockConfig != null;
-    }
-
-    /**
-     * Set the clipboard from a YAML string
-     * @param contents - YAML config as a string
-     * @return clipboard
-     * @throws InvalidConfigurationException - if YAML config is bad
-     */
-    public Clipboard set(String contents) throws InvalidConfigurationException {
-        this.blockConfig.loadFromString(contents);
-        setPos1(null);
-        setPos2(null);
-        return this;
-    }
-
-    /**
-     * Set the clipboard contents from a YAML configuration
-     * @param blockConfig the blockConfig
-     */
-    public Clipboard set(@NonNull YamlConfiguration blockConfig) {
-        this.blockConfig = blockConfig;
-        setPos1(null);
-        setPos2(null);
-        return this;
+        return blueprint != null;
     }
 
     /**
@@ -366,11 +337,17 @@ public class Clipboard {
     }
 
     /**
-     * Returns the clipboard as a String using {@link YamlConfiguration#saveToString()}.
-     * @return the clipboard as a String.
+     * @return the blueprint
      */
-    @Override
-    public String toString() {
-        return blockConfig.saveToString();
+    public Blueprint getBlueprint() {
+        return blueprint;
+    }
+
+    /**
+     * @param blueprint the blueprint to set
+     */
+    public BlueprintClipboard setBlueprint(Blueprint blueprint) {
+        this.blueprint = blueprint;
+        return this;
     }
 }

@@ -159,7 +159,7 @@ commands:
       already-spawn: "&c這個島嶼早就設定了重生點!"
       no-island-here: "&c沒有在您的位置找到任何島嶼。"
       confirmation: "&c您確定要在這個世界中把現在的位置設置為島嶼的重生點?"
-    schem:
+    blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "調整規劃方案"
       copy-first: "&c請先複製一份規劃方案!"
@@ -177,7 +177,7 @@ commands:
         parameters: "[air]"
         description: "複製 pos1 和 pos2 之間設置的方塊(或使用空氣方塊)到剪切板"
       load:
-        parameters: "<schem name>"
+        parameters: "<blueprint name>"
         description: "加載規劃文件到剪切板"
       origin:
         parameters: ""
@@ -192,7 +192,7 @@ commands:
         parameters: ""
         description: "設置立方體剪切板的第二個頂點"
       save:
-        parameters: "<schem name>"
+        parameters: "<blueprint name>"
         description: "保存已復制的剪切板"
     world:
       description: "管理世界設置"
@@ -250,19 +250,19 @@ commands:
       teleporting: "&a正在把您傳送到重生點。"
       no-spawn: "&c這個世界並沒有重生點。"
     create:
-      description: "創建島嶼, 可以使用指定的Schem (需要權限)"
-      parameters: "<schem>"
+      description: "創建島嶼, 可以使用指定的blueprint (需要權限)"
+      parameters: "<blueprint>"
       too-many-islands: "&c這個世界已經有太多島嶼了: 所以這裏沒有足夠的空間去創建您的島嶼。"
       unable-create-island: "&c您的島嶼無法被生成, 請聯繫管理員。"
       creating-island: "&a正在創建島嶼, 請耐心等候......"
       pick-world: "&c請從 [worlds] 中選擇世界。"
-      unknown-schem: "&c這一個Schem還未被加載。"
+      unknown-blueprint: "&c這一個blueprint還未被加載。"
     info:
       description: "顯示關於您或某一個玩家島嶼的信息"
       parameters: "<player>"
     reset:
       description: "重置您的島嶼, 並且刪除舊的島嶼"
-      parameters: "<schem>"
+      parameters: "<blueprint>"
       must-remove-members: "&c在您可以重製您的島嶼之前, 您必須移除掉所有的島上成員(/island team kick <player>)。"
       none-left: "&c您沒有重置次數了!"
       resets-left: "&c您還有 [number] 次重置機會"

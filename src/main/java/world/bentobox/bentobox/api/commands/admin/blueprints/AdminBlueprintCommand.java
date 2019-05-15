@@ -1,4 +1,13 @@
-package world.bentobox.bentobox.api.commands.admin.schem;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Color;
+import org.bukkit.Particle;
+import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.commands.ConfirmableCommand;
+import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 
 import java.io.File;
 import java.util.HashMap;
@@ -6,47 +15,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import org.bukkit.Bukkit;
-import org.bukkit.Color;
-import org.bukkit.Particle;
-
-import world.bentobox.bentobox.api.commands.CompositeCommand;
-import world.bentobox.bentobox.api.commands.ConfirmableCommand;
-import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.Clipboard;
-import world.bentobox.bentobox.managers.SchemsManager;
-
-public class AdminSchemCommand extends ConfirmableCommand {
+public class AdminBlueprintCommand extends ConfirmableCommand {
     // Clipboards
-    private Map<UUID, Clipboard> clipboards;
+    private Map<UUID, BlueprintClipboard> clipboards;
 
     // Map containing selection cuboid display tasks
     private Map<User, Integer> displayClipboards;
     private static final Particle PARTICLE = Particle.REDSTONE;
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
-    public AdminSchemCommand(CompositeCommand parent) {
-        super(parent, "schem");
+    public AdminBlueprintCommand(CompositeCommand parent) {
+        super(parent, "bp", "blueprint");
     }
 
     @Override
     public void setup() {
-        setPermission("admin.schem");
-        setParametersHelp("commands.admin.schem.parameters");
-        setDescription("commands.admin.schem.description");
+        setPermission("admin.blueprint");
+        setParametersHelp("commands.admin.blueprint.parameters");
+        setDescription("commands.admin.blueprint.description");
         setOnlyPlayer(true);
 
         clipboards = new HashMap<>();
         displayClipboards = new HashMap<>();
 
-        new AdminSchemLoadCommand(this);
-        new AdminSchemPasteCommand(this);
-        new AdminSchemOriginCommand(this);
-        new AdminSchemCopyCommand(this);
-        new AdminSchemSaveCommand(this);
-        new AdminSchemPos1Command(this);
-        new AdminSchemPos2Command(this);
-        new AdminSchemListCommand(this);
+        new AdminBlueprintLoadCommand(this);
+        new AdminBlueprintPasteCommand(this);
+        new AdminBlueprintOriginCommand(this);
+        new AdminBlueprintCopyCommand(this);
+        new AdminBlueprintSaveCommand(this);
+        new AdminBlueprintPos1Command(this);
+        new AdminBlueprintPos2Command(this);
+        new AdminBlueprintListCommand(this);
     }
 
     @Override
@@ -55,7 +54,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         return true;
     }
 
-    protected Map<UUID, Clipboard> getClipboards() {
+    protected Map<UUID, BlueprintClipboard> getClipboards() {
         return clipboards;
     }
 
@@ -66,7 +65,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
             }
 
             if (clipboards.containsKey(user.getUniqueId())) {
-                Clipboard clipboard = clipboards.get(user.getUniqueId());
+                BlueprintClipboard clipboard = clipboards.get(user.getUniqueId());
                 if (clipboard.getPos1() != null && clipboard.getPos2() != null) {
                     paintAxis(user, clipboard);
                 }
@@ -75,7 +74,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         }, 20, 20));
     }
 
-    private void paintAxis(User user, Clipboard clipboard) {
+    private void paintAxis(User user, BlueprintClipboard clipboard) {
         int minX = Math.min(clipboard.getPos1().getBlockX(), clipboard.getPos2().getBlockX());
         int minY = Math.min(clipboard.getPos1().getBlockY(), clipboard.getPos2().getBlockY());
         int minZ = Math.min(clipboard.getPos1().getBlockZ(), clipboard.getPos2().getBlockZ());
@@ -121,7 +120,7 @@ public class AdminSchemCommand extends ConfirmableCommand {
         }
     }
 
-    protected File getSchemsFolder() {
-        return new File(getIWM().getDataFolder(getWorld()), SchemsManager.FOLDER_NAME);
+    protected File getBlueprintsFolder() {
+        return new File(getIWM().getDataFolder(getWorld()), BlueprintsManager.FOLDER_NAME);
     }
 }

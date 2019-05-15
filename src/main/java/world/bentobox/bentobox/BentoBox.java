@@ -1,5 +1,7 @@
 package world.bentobox.bentobox;
 
+import java.util.Optional;
+
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.generator.ChunkGenerator;
@@ -7,6 +9,7 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.configuration.Config;
 import world.bentobox.bentobox.api.events.BentoBoxReadyEvent;
 import world.bentobox.bentobox.api.localization.TextVariables;
@@ -37,12 +40,9 @@ import world.bentobox.bentobox.managers.LocalesManager;
 import world.bentobox.bentobox.managers.PlaceholdersManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.RanksManager;
-import world.bentobox.bentobox.managers.SchemsManager;
 import world.bentobox.bentobox.managers.WebManager;
 import world.bentobox.bentobox.util.heads.HeadGetter;
 import world.bentobox.bentobox.versions.ServerCompatibility;
-
-import java.util.Optional;
 
 /**
  * Main BentoBox class
@@ -62,7 +62,6 @@ public class BentoBox extends JavaPlugin {
     private FlagsManager flagsManager;
     private IslandWorldManager islandWorldManager;
     private RanksManager ranksManager;
-    private SchemsManager schemsManager;
     private BlueprintsManager blueprintsManager;
     private HooksManager hooksManager;
     private PlaceholdersManager placeholdersManager;
@@ -135,8 +134,8 @@ public class BentoBox extends JavaPlugin {
 
         // Start Island Worlds Manager
         islandWorldManager = new IslandWorldManager(this);
-        // Load schems manager
-        schemsManager = new SchemsManager(this);
+
+        // Load blueprints manager
         blueprintsManager = new BlueprintsManager(this);
 
         // Locales manager must be loaded before addons
@@ -383,13 +382,6 @@ public class BentoBox extends JavaPlugin {
 
     public void logWarning(String warning) {
         getLogger().warning(() -> warning);
-    }
-
-    /**
-     * @return the schemsManager
-     */
-    public SchemsManager getSchemsManager() {
-        return schemsManager;
     }
 
     /**

@@ -1,34 +1,33 @@
-package world.bentobox.bentobox.api.commands.admin.schem;
-
-import java.util.List;
+package world.bentobox.bentobox.api.commands.admin.blueprints;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
-import world.bentobox.bentobox.blueprints.Clipboard;
+import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 
-public class AdminSchemOriginCommand extends CompositeCommand {
+import java.util.List;
 
-    public AdminSchemOriginCommand(AdminSchemCommand parent) {
+public class AdminBlueprintOriginCommand extends CompositeCommand {
+
+    public AdminBlueprintOriginCommand(AdminBlueprintCommand parent) {
         super(parent, "origin");
     }
 
     @Override
     public void setup() {
-        setParametersHelp("commands.admin.schem.origin.parameters");
-        setDescription("commands.admin.schem.origin.description");
+        setParametersHelp("commands.admin.blueprint.origin.parameters");
+        setDescription("commands.admin.blueprint.origin.description");
     }
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        AdminSchemCommand parent = (AdminSchemCommand) getParent();
+        AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
 
-        Clipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new Clipboard());
+        BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
         if (clipboard.getPos1() == null || clipboard.getPos2() == null) {
-            user.sendMessage("commands.admin.schem.need-pos1-pos2");
+            user.sendMessage("commands.admin.blueprint.need-pos1-pos2");
             return false;
         }
 
@@ -44,7 +43,7 @@ public class AdminSchemOriginCommand extends CompositeCommand {
             return true;
         }
 
-        user.sendMessage("commands.admin.schem.look-at-a-block");
+        user.sendMessage("commands.admin.blueprint.look-at-a-block");
         return false;
     }
 }

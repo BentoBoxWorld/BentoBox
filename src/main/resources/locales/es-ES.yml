@@ -184,7 +184,7 @@ commands:
       already-spawn: "&cEsta isla ya es un spawn!"
       no-island-here: "&cNo hay isla aqui."
       confirmation: "&cEstás seguro de que quieres establecer esta isla como el spawn de este mundo?"
-    schem:
+    blueprint:
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipular esquemas"
       copy-first: "&cCopia un esquema primero!"
@@ -202,12 +202,12 @@ commands:
         parameters: "[air]"
         description: "Copie el conjunto de portapapeles por Posición 1 y Posición 2 y, opcionalmente, los bloques de aire."
       load:
-        parameters: "<schem name>"
+        parameters: "<blueprints name>"
         description: "Cargar esquema en el portapapeles"
       list:
         description: "listar esquemas disponibles"
-        no-schems: "&cNo hay esquemas en la carpeta de esquemas!"
-        available-schems: "&aEstos esquemas están disponibles para cargar:"
+        no-blueprints: "&cNo hay esquemas en la carpeta de esquemas!"
+        available-blueprints: "&aEstos esquemas están disponibles para cargar:"
       origin:
         description: "Establece el origen del esquema a tu posición"
       paste:
@@ -218,7 +218,7 @@ commands:
       pos2:
         description: "establecer la 2da esquina del portapapeles cuboide"
       save:
-        parameters: "<schem name>"
+        parameters: "<blueprint name>"
         description: "Guardar el portapapeles copiado"
     resetflags:
       description: "Restablecer todas las islas a la configuración de las banderas predeterminadas en config.yml"
@@ -287,18 +287,18 @@ commands:
       no-spawn: "&cNo hay un spawn en este mundo."
     create:
       description: "crear una isla, usando un esquema opcional (requiere permiso)"
-      parameters: "<schem>"
+      parameters: "<blueprint>"
       too-many-islands: "&cHay demasiadas islas en este mundo: no hay suficiente espacio para que las tuyas sean creadas."
       unable-create-island: "&cSu isla no se pudo generar, póngase en contacto con un administrador."
       creating-island: "&aCreando tu isla, espera un momento..."
       pick-world: "&cElige un mundo: [worlds]."
-      unknown-schem: "&cEse esquema no se ha cargado todavía."
+      unknown-blueprint: "&cEse esquema no se ha cargado todavía."
     info:
       description: "Muestra información sobre tu isla o la isla del jugador."
       parameters: "<player>"
     reset:
       description: "reinicia tu isla y elimina la antigua"
-      parameters: "<schem>"
+      parameters: "<blueprint>"
       must-remove-members: "&cDebes eliminar todos los miembros de tu isla antes de poder reiniciarla (/island team kick <player>)."
       none-left: "&cNo te quedan más reinicios.!"
       resets-left: "&cTienes [number] reinicios mas"
@@ -959,9 +959,9 @@ management:
       gamemodes:
         name: "&6Modos de juegos"
         description: "&eClick &apara mostrar los modos de juegos cargados actualmente"
-        schems:
-          name: "&6Schems"
-          description: "&aAbre el menú Admin de Schem."
+        blueprints:
+          name: "&6Blueprints"
+          description: "&aAbre el menú Admin de Blueprint."
       addons:
         name: "&6Addons"
         description: "&eClick &apara mostrar los Addons cargados actualmente"
