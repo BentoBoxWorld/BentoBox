@@ -12,17 +12,19 @@ import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.ClickType;
 import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
+import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -45,14 +47,12 @@ import world.bentobox.bentobox.util.Util;
  * @author tastybento
  *
  */
-@Ignore("NPEs on setup")
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
 public class PanelListenerManagerTest {
 
     @Mock
     private Player player;
-    @Mock
     private InventoryView view;
     @Mock
     private PanelListenerManager plm;
@@ -89,11 +89,8 @@ public class PanelListenerManagerTest {
         User.getInstance(player);
 
         // Inventory view
-        when(view.getPlayer()).thenReturn(player);
-        when(view.getTitle()).thenReturn("name");
-        Inventory top = mock(Inventory.class);
-        when(top.getSize()).thenReturn(9);
-        when(view.getTopInventory()).thenReturn(top);
+        view = new MyView("name");
+
         type = SlotType.CONTAINER;
         click = ClickType.LEFT;
         inv = InventoryAction.UNKNOWN;
@@ -104,7 +101,7 @@ public class PanelListenerManagerTest {
         // Panel
         Optional<PanelListener> opl = Optional.of(pl);
         when(panel.getListener()).thenReturn(opl);
-        when(panel.getInventory()).thenReturn(top);
+        when(panel.getInventory()).thenReturn(mock(Inventory.class));
         when(panel.getName()).thenReturn("name");
         Map<Integer, PanelItem> map = new HashMap<>();
         PanelItem panelItem = mock(PanelItem.class);
@@ -115,13 +112,53 @@ public class PanelListenerManagerTest {
         map.put(0, panelItem);
         when(panel.getItems()).thenReturn(map);
 
-        when(top.getHolder()).thenReturn(panel);
-
         Panel wrongPanel = mock(Panel.class);
         when(wrongPanel.getName()).thenReturn("another_name");
         when(wrongPanel.getInventory()).thenReturn(anotherInv);
 
         // Clear the static panels
+        PanelListenerManager.getOpenPanels().clear();
+    }
+
+    class MyView extends InventoryView {
+
+        private Inventory top;
+
+        /**
+         * @param name
+         */
+        @SuppressWarnings("deprecation")
+        public MyView(String name) {
+            top = mock(Inventory.class);
+            when(top.getSize()).thenReturn(9);
+            when(top.getHolder()).thenReturn(panel);
+            when(top.getTitle()).thenReturn(name);
+        }
+
+        @Override
+        public Inventory getTopInventory() {
+            return top;
+        }
+
+        @Override
+        public Inventory getBottomInventory() {
+            return null;
+        }
+
+        @Override
+        public HumanEntity getPlayer() {
+            return player;
+        }
+
+        @Override
+        public InventoryType getType() {
+            return InventoryType.PLAYER;
+        }
+
+    }
+
+    @After
+    public void cleanUp() {
         PanelListenerManager.getOpenPanels().clear();
     }
 
@@ -166,9 +203,7 @@ public class PanelListenerManagerTest {
     @Test
     public void testOnInventoryClickOpenPanelsWrongPanel() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
-        when(view.getTopInventory()).thenReturn(anotherInv);
-        when(view.getTitle()).thenReturn("another title");
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
+        InventoryClickEvent e = new InventoryClickEvent(new MyView("another"), type, 0, click, inv);
         plm.onInventoryClick(e);
         // Panel should be removed
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
