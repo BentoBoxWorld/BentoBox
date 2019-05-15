@@ -1,5 +1,11 @@
 package world.bentobox.bentobox.blueprints;
 
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -9,6 +15,7 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
 import org.bukkit.block.Sign;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -22,6 +29,9 @@ import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
+import com.google.common.collect.ImmutableMap;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -30,12 +40,6 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintCreatureSpawner;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.util.Util;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 
 /**
  * This class pastes the clipboard it is given
@@ -51,6 +55,8 @@ public class BlueprintPaster {
         DONE,
         CANCEL
     }
+
+    private Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
 
     private BentoBox plugin;
     // The minimum block position (x,y,z)
@@ -173,8 +179,25 @@ public class BlueprintPaster {
         Location pasteTo = location.clone().add(entry.getKey());
         BlueprintBlock bpBlock = entry.getValue();
         Block block = pasteTo.getBlock();
-        // Set the block data
-        block.setBlockData(Bukkit.createBlockData(bpBlock.getBlockData()));
+        // Set the block data - default is AIR
+        BlockData bd = Bukkit.createBlockData(Material.AIR);
+        try {
+            bd = Bukkit.createBlockData(bpBlock.getBlockData());
+        } catch (Exception e) {
+            // This may happen if the block type is no longer supported by the server
+            plugin.logWarning("Blueprint references materials not supported on this server version.");
+            plugin.logWarning("Load blueprint manually, check and save to fix for this server version.");
+            plugin.logWarning("World: " + world.getName() + " Failed block data: " + bpBlock.getBlockData());
+            // Try to fix
+            for (Entry<String, String> en : BLOCK_CONVERSION.entrySet()) {
+                if (bpBlock.getBlockData().startsWith("minecraft:" + en.getKey())) {
+                    bd = Bukkit.createBlockData(
+                            bpBlock.getBlockData().replace("minecraft:" + en.getKey(), "minecraft:" + en.getValue()));
+                    break;
+                }
+            }
+        }
+        block.setBlockData(bd);
         setBlockState(island, block, bpBlock);
         // pos1 and pos2 update
         updatePos(world, entry.getKey());
