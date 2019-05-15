@@ -257,9 +257,9 @@ management:
       gamemodes:
         name: "&6Modes de jeu"
         description: "&eCliquez &apour afficher les modes de jeu chargés."
-        schems:
-          name: "&6Schems"
-          description: "&aAffiche le menu de gestion des Schems."
+        blueprints:
+          name: "&6Blueprints"
+          description: "&aAffiche le menu de gestion des Blueprints."
       addons:
         name: "&6Addons"
         description: "&eCliquez &apour afficher les addons chargés."
@@ -275,8 +275,8 @@ management:
         description: "&eCliquez &c&ldeux fois &r&apour reload BentoBox."
     buttons:
       catalog:
-        name: "&6Catalogue d'addons"
-        description: "&aOuvre le Catalogue d'addons."
+        name: "&6Catalogue"
+        description: "&aOuvre le catalogue."
       empty-here:
         name: "&bC'est vide ici..."
         description: "&aEt si vous jetiez un œil à notre catalogue ?"
