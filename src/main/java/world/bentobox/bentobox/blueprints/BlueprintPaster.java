@@ -80,7 +80,8 @@ public class BlueprintPaster {
         this.plugin = plugin;
         this.clipboard = clipboard;
         // Calculate location for pasting
-        Location loc = location.toVector().subtract(clipboard.getOrigin().toVector()).toLocation(location.getWorld());
+        Vector offset = clipboard.getOrigin() != null ? clipboard.getOrigin().toVector() : new Vector(0, 0, 0);
+        Location loc = location.toVector().subtract(offset).toLocation(location.getWorld());
         paste(location.getWorld(), null, loc, clipboard.getBlueprint(), task);
     }
 
