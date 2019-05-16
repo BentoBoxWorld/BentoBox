@@ -252,7 +252,7 @@ public class BlueprintPaster {
      * @param list - list of entities to paste
      */
     private void setEntity(Location location, List<BlueprintEntity> list) {
-        list.forEach(k -> {
+        list.stream().filter(k -> k.getType() != null).forEach(k -> {
             // Center, and just a bit high
             Location center = location.add(new Vector(0.5, 0.5, 0.5));
             LivingEntity e = (LivingEntity)location.getWorld().spawnEntity(center, k.getType());

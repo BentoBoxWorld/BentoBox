@@ -117,7 +117,11 @@ public class Blueprint {
      * @param entities the entities to set
      */
     public void setEntities(Map<Vector, List<BlueprintEntity>> entities) {
-        this.entities = entities;
+        if (this.entities == null) {
+            this.entities = entities;
+        } else {
+            this.entities.putAll(entities);
+        }
     }
     /**
      * @return the blocks

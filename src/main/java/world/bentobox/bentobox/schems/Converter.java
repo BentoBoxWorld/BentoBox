@@ -54,6 +54,19 @@ public class Converter {
                     .map(this::convertBlock)
                     // Collect into a map
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
+            // Legacy entities
+            Map<Vector, List<BlueprintEntity>> le = bc.getConfigurationSection(BLOCKS_YAML_PREFIX).getKeys(false).stream()
+                    // make configuration section from key
+                    .map(k -> bc.getConfigurationSection(BLOCKS_YAML_PREFIX + k))
+                    // Check the config section contains block data key "entities"
+                    .filter(cs -> cs.contains("entity"))
+                    // Convert it
+                    .map(this::convertLegacyEntity)
+                    // Collect into a map
+                    .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
+            if (le != null) {
+                bp.setEntities(le);
+            }
         }
         // Attached blocks
         if (bc.isConfigurationSection(ATTACHED_YAML_PREFIX)) {
@@ -77,6 +90,20 @@ public class Converter {
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue)));
         }
         return bp;
+
+    }
+
+    private Entry<Vector, List<BlueprintEntity>> convertLegacyEntity(ConfigurationSection config) {
+        ConfigurationSection en = config.getConfigurationSection("entity");
+        // Vector
+        Vector vector = getVector(config.getName());
+        // Create a list of entities at this position
+        List<BlueprintEntity> list = en.getKeys(false).stream()
+                .map(en::getConfigurationSection)
+                .map(this::createEntity)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+        return new AbstractMap.SimpleEntry<>(vector, list);
 
     }
 
@@ -108,8 +135,10 @@ public class Converter {
             spawner.setSpawnRange(config.getInt("spawnRange", 4));
             block.setCreatureSpawner(spawner);
         }
+
         // Vector
         Vector vector = getVector(config.getName());
+
         // Return entry
         return new AbstractMap.SimpleEntry<>(vector, block);
 
