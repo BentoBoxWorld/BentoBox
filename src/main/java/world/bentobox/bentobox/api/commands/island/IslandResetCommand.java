@@ -88,8 +88,8 @@ public class IslandResetCommand extends ConfirmableCommand {
             if (getPlugin().getSettings().isResetConfirmation()) {
                 this.askConfirmation(user, () -> getPlugin().getBlueprintsManager().showPanel(this, user, label));
             } else {
-                //getPlugin().getBlueprintsManager().showPanel(this, user, label);
-                IslandCreationPanel.openPanel(user, (GameModeAddon) getAddon());
+                getPlugin().getBlueprintsManager().showPanel(this, user, label);
+                //IslandCreationPanel.openPanel(user, (GameModeAddon) getAddon());
             }
             return true;
         }
