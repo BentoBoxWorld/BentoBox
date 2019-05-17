@@ -165,7 +165,7 @@ public class BentoBox extends JavaPlugin {
             islandsManager.load();
 
             // Save islands & players data every X minutes
-            instance.getServer().getScheduler().runTaskTimer(instance, () -> {
+            instance.getServer().getScheduler().runTaskTimerAsynchronously(instance, () -> {
                 playersManager.saveAll();
                 islandsManager.saveAll();
             }, getSettings().getDatabaseBackupPeriod() * 20 * 60L, getSettings().getDatabaseBackupPeriod() * 20 * 60L);
