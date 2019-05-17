@@ -27,14 +27,19 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEnd(ChunkLoadEvent e) {
-        if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getWorld())
-                || !e.getWorld().getEnvironment().equals(Environment.THE_END)
-                || !plugin.getIWM().inWorld(e.getWorld())
+        if (!e.getWorld().getEnvironment().equals(Environment.THE_END)
+                || e.getChunk().getX() != 0
+				|| e.getChunk().getZ() != 0
+				|| !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getWorld())
+				|| !plugin.getIWM().inWorld(e.getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getWorld())
                 || !plugin.getIWM().isEndIslands(e.getWorld())
-                || !(e.getChunk().getX() == 0 && e.getChunk().getZ() == 0)) {
+                || e.getChunk().getBlock(0, 255, 0).getType().equals(Material.END_PORTAL))
+        {
+            // No need to process.
             return;
         }
+
         // Setting a End Portal at the top will trick dragon legacy check.
         e.getChunk().getBlock(0, 255, 0).setType(Material.END_PORTAL);
     }
@@ -46,12 +51,12 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockPlace(BlockPlaceEvent e) {
-        if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
-                || e.getBlock().getY() != 255
+        if (e.getBlock().getY() != 255
                 || e.getBlock().getX() != 0
                 || e.getBlock().getZ() != 0
                 || !e.getBlock().getType().equals(Material.END_PORTAL)
                 || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
+                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().inWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())) {
@@ -67,12 +72,12 @@ public class BlockEndDragon implements Listener {
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onEndBlockBreak(BlockBreakEvent e) {
-        if (!Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
-                || e.getBlock().getY() != 255
+        if (e.getBlock().getY() != 255
                 || e.getBlock().getX() != 0
                 || e.getBlock().getZ() != 0
                 || !e.getBlock().getType().equals(Material.END_PORTAL)
                 || !e.getBlock().getWorld().getEnvironment().equals(Environment.THE_END)
+                || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().inWorld(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndGenerate(e.getBlock().getWorld())
                 || !plugin.getIWM().isEndIslands(e.getBlock().getWorld())) {
