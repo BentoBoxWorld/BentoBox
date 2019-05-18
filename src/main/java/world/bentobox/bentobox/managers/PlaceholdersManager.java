@@ -63,8 +63,8 @@ public class PlaceholdersManager {
      */
     public void registerDefaultPlaceholders(@NonNull GameModeAddon addon) {
         Arrays.stream(GameModePlaceholder.values())
-                .filter(placeholder -> !isPlaceholder(addon, placeholder.getPlaceholder()))
-                .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
+        .filter(placeholder -> !isPlaceholder(addon, placeholder.getPlaceholder()))
+        .forEach(placeholder -> registerPlaceholder(addon, placeholder.getPlaceholder(), new DefaultPlaceholder(addon, placeholder)));
 
         // TODO legacy placeholders, do not forget to remove at some point
         String prefix = addon.getDescription().getName().toLowerCase();
@@ -73,7 +73,7 @@ public class PlaceholdersManager {
 
         // Register placeholders only if they have not already been registered by the addon itself
         placeholders.entrySet().stream().filter(en -> !isPlaceholder(addon, en.getValue()))
-                .forEach(en -> registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
+        .forEach(en -> registerPlaceholder(en.getValue(), new DefaultPlaceholder(addon, en.getKey())));
     }
 
     /**
@@ -111,7 +111,7 @@ public class PlaceholdersManager {
     private Optional<PlaceholderAPIHook> getPlaceholderAPIHook() {
         return plugin.getHooks().getHook("PlaceholderAPI").map(hook -> (PlaceholderAPIHook) hook);
     }
-    
+
     /**
      * Checks if a placeholder with this name is already registered
      * @param addon the addon, not null
@@ -120,7 +120,7 @@ public class PlaceholdersManager {
      * @since 1.4.0
      */
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
-    	return getPlaceholderAPIHook().map(h -> h.isPlaceholder(addon, placeholder)).orElse(false);
+        return getPlaceholderAPIHook().map(h -> h.isPlaceholder(addon, placeholder)).orElse(false);
     }
 
     /**
@@ -131,10 +131,6 @@ public class PlaceholdersManager {
      * @since 1.5.0
      */
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
-        if (getPlaceholderAPIHook().isPresent()) {
-            string = getPlaceholderAPIHook().get().replacePlaceholders(player, string);
-        }
-
-        return string;
+        return getPlaceholderAPIHook().map(h -> h.replacePlaceholders(player, string)).orElse(string);
     }
 }
