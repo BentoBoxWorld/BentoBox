@@ -98,7 +98,10 @@ public class BlueprintClipboardManager {
             plugin.logError(LOAD_ERROR + file.getName());
             throw new IOException(LOAD_ERROR + file.getName() + " temp file");
         }
-        Blueprint bp = gson.fromJson(new FileReader(file), Blueprint.class);
+        Blueprint bp;
+        try (FileReader fr = new FileReader(file)) {
+            bp = gson.fromJson(fr, Blueprint.class);
+        }
         Files.delete(file.toPath());
         return bp;
     }
@@ -204,11 +207,11 @@ public class BlueprintClipboardManager {
                 while((length = inputStream.read(buffer)) >= 0) {
                     zipOutputStream.write(buffer, 0, length);
                 }
-                try {
-                    Files.delete(targetFile.toPath());
-                } catch (Exception e) {
-                    plugin.logError(e.getMessage());
-                }
+            }
+            try {
+                Files.delete(targetFile.toPath());
+            } catch (Exception e) {
+                plugin.logError(e.getMessage());
             }
         }
     }
