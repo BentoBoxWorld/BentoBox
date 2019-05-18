@@ -314,11 +314,13 @@ public class BlueprintClipboard {
      */
     public void setPos1(@Nullable Location pos1) {
         origin = null;
-        if (pos1.getBlockY() < 0) {
-            pos1.setY(0);
-        }
-        if (pos1.getBlockY() > 255) {
-            pos1.setY(255);
+        if (pos1 != null) {
+            if (pos1.getBlockY() < 0) {
+                pos1.setY(0);
+            }
+            if (pos1.getBlockY() > 255) {
+                pos1.setY(255);
+            }
         }
         this.pos1 = pos1;
     }
@@ -328,11 +330,13 @@ public class BlueprintClipboard {
      */
     public void setPos2(@Nullable Location pos2) {
         origin = null;
-        if (pos2.getBlockY() < 0) {
-            pos2.setY(0);
-        }
-        if (pos2.getBlockY() > 255) {
-            pos2.setY(255);
+        if (pos2 != null) {
+            if (pos2.getBlockY() < 0) {
+                pos2.setY(0);
+            }
+            if (pos2.getBlockY() > 255) {
+                pos2.setY(255);
+            }
         }
         this.pos2 = pos2;
     }
