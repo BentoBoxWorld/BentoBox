@@ -120,8 +120,7 @@ public class SchemToBlueprint {
         } catch (FileNotFoundException ignore) {
             // Ignore
         } catch (Exception e) {
-            plugin.logError("Could not convert " + name + " schem, skipping!");
-            e.printStackTrace();
+            plugin.logError("Could not convert " + name + " schem, skipping! " + e.getLocalizedMessage());
         }
         return null;
     }
