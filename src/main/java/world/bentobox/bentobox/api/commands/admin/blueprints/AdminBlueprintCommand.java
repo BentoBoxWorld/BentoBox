@@ -25,7 +25,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
     private static final Particle.DustOptions PARTICLE_DUST_OPTIONS = new Particle.DustOptions(Color.RED, 1.0F);
 
     public AdminBlueprintCommand(CompositeCommand parent) {
-        super(parent, "blueprint", "bp");
+        super(parent, "blueprint", "bp", "blu");
     }
 
     @Override
