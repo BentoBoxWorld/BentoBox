@@ -34,7 +34,7 @@ public class AdminBlueprintOriginCommand extends CompositeCommand {
         // Get the block player is looking at
         Block b = user.getPlayer().getLineOfSight(null, 20).stream().filter(x -> !x.getType().equals(Material.AIR)).findFirst().orElse(null);
         if (b != null) {
-            clipboard.setOrigin(b.getLocation());
+            clipboard.setOrigin(b.getLocation().toVector());
             user.getPlayer().sendBlockChange(b.getLocation(), Material.REDSTONE_BLOCK.createBlockData());
             Bukkit.getScheduler().runTaskLater(getPlugin(),
                     () -> user.getPlayer().sendBlockChange(b.getLocation(), b.getBlockData()), 20L);

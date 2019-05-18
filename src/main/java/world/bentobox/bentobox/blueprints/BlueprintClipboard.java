@@ -53,7 +53,7 @@ public class BlueprintClipboard {
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
-    private @Nullable Location origin;
+    private @Nullable Vector origin;
     private BukkitTask copyTask;
     private int count;
     private boolean copying;
@@ -85,12 +85,13 @@ public class BlueprintClipboard {
             user.sendMessage("commands.admin.blueprint.mid-copy");
             return false;
         }
-        origin = origin == null ? user.getLocation() : origin;
         if (pos1 == null || pos2 == null) {
             user.sendMessage("commands.admin.blueprint.need-pos1-pos2");
             return false;
         }
-
+        if (origin == null) {
+            setOrigin(user.getLocation().toVector());
+        }
         user.sendMessage("commands.admin.blueprint.copying");
 
         // World
@@ -166,15 +167,15 @@ public class BlueprintClipboard {
         return r;
     }
 
-    private boolean copyBlock(Location l, Location copyOrigin, boolean copyAir, Collection<LivingEntity> entities) {
+    private boolean copyBlock(Location l, @Nullable Vector origin2, boolean copyAir, Collection<LivingEntity> entities) {
         Block block = l.getBlock();
         if (!copyAir && block.getType().equals(Material.AIR) && entities.isEmpty()) {
             return false;
         }
         // Create position
-        int x = l.getBlockX() - copyOrigin.getBlockX();
-        int y = l.getBlockY() - copyOrigin.getBlockY();
-        int z = l.getBlockZ() - copyOrigin.getBlockZ();
+        int x = l.getBlockX() - origin2.getBlockX();
+        int y = l.getBlockY() - origin2.getBlockY();
+        int z = l.getBlockZ() - origin2.getBlockZ();
         Vector pos = new Vector(x, y, z);
 
         // Set entities
@@ -279,7 +280,7 @@ public class BlueprintClipboard {
      * @return the origin
      */
     @Nullable
-    public Location getOrigin() {
+    public Vector getOrigin() {
         return origin;
     }
     /**
@@ -304,7 +305,7 @@ public class BlueprintClipboard {
     /**
      * @param origin the origin to set
      */
-    public void setOrigin(@Nullable Location origin) {
+    public void setOrigin(@Nullable Vector origin) {
         this.origin = origin;
     }
 
