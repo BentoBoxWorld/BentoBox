@@ -1,32 +1,14 @@
 package world.bentobox.bentobox.managers;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
-import java.lang.reflect.Type;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.EnumMap;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.TreeMap;
-import java.util.jar.JarFile;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.InstanceCreator;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.InstanceCreator;
-
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -44,6 +26,22 @@ import world.bentobox.bentobox.database.json.BentoboxTypeAdapterFactory;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.schems.SchemToBlueprint;
 import world.bentobox.bentobox.util.Util;
+
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumMap;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.TreeMap;
+import java.util.jar.JarFile;
 
 /**
  * Handles Blueprints
@@ -178,7 +176,7 @@ public class BlueprintsManager {
                 loaded = true;
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint bundle " + file.getName() + " " + e.getMessage());
-                e.printStackTrace();
+                plugin.logStacktrace(e);
             }
         }
         return loaded;
@@ -228,7 +226,7 @@ public class BlueprintsManager {
                 plugin.log("Loaded blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
             } catch (Exception e) {
                 plugin.logError("Could not load blueprint " + fileName + " " + e.getMessage());
-                e.printStackTrace();
+                plugin.logStacktrace(e);
             }
         }
     }
@@ -254,9 +252,9 @@ public class BlueprintsManager {
     }
 
     /**
-     * Save blueprint bundles for game mode
+     * Save blueprint bundle for game mode
      * @param addon - gamemode addon
-     * @param bundleList - list of bundles
+     * @param bb blueprint bundle to save
      */
     public void saveBlueprintBundle(GameModeAddon addon, BlueprintBundle bb) {
         File bpf = getBlueprintsFolder(addon);
