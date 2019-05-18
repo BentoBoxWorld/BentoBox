@@ -56,6 +56,8 @@ public class BlueprintPaster {
         CANCEL
     }
 
+    private static final String MINECRAFT = "minecraft:";
+
     private Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
 
     private BentoBox plugin;
@@ -189,9 +191,9 @@ public class BlueprintPaster {
             plugin.logWarning("World: " + world.getName() + " Failed block data: " + bpBlock.getBlockData());
             // Try to fix
             for (Entry<String, String> en : BLOCK_CONVERSION.entrySet()) {
-                if (bpBlock.getBlockData().startsWith("minecraft:" + en.getKey())) {
+                if (bpBlock.getBlockData().startsWith(MINECRAFT + en.getKey())) {
                     bd = Bukkit.createBlockData(
-                            bpBlock.getBlockData().replace("minecraft:" + en.getKey(), "minecraft:" + en.getValue()));
+                            bpBlock.getBlockData().replace(MINECRAFT + en.getKey(), MINECRAFT + en.getValue()));
                     break;
                 }
             }

@@ -18,6 +18,8 @@ import world.bentobox.bentobox.database.objects.Players;
  */
 public class BentoBoxMigrateCommand extends ConfirmableCommand {
 
+    private static final String MIGRATED = "commands.bentobox.migrate.migrated";
+
     /**
      * Reloads settings, addons and localization command
      * @param parent command parent
@@ -38,16 +40,16 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
             // Migrate BentoBox data
             user.sendMessage("commands.bentobox.migrate.players");
             new Database<>(getPlugin(), Players.class).loadObjects();
-            user.sendMessage("commands.bentobox.migrate.migrated");
+            user.sendMessage(MIGRATED);
             user.sendMessage("commands.bentobox.migrate.names");
             new Database<>(getPlugin(), Names.class).loadObjects();
-            user.sendMessage("commands.bentobox.migrate.migrated");
+            user.sendMessage(MIGRATED);
             // Migrate addons data
             user.sendMessage("commands.bentobox.migrate.addons");
             getPlugin().getAddonsManager().getDataObjects().forEach(t -> {
                 user.sendMessage("commands.bentobox.migrate.class", TextVariables.DESCRIPTION, t.getCanonicalName());
                 new Database<>(getPlugin(), t).loadObjects();
-                user.sendMessage("commands.bentobox.migrate.migrated");
+                user.sendMessage(MIGRATED);
             });
         });
         return true;

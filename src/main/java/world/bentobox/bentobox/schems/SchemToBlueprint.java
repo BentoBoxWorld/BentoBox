@@ -71,7 +71,7 @@ public class SchemToBlueprint {
         // Make a new blueprint bundle
         BlueprintBundle bb = new BlueprintBundle();
         // TODO: This is just placeholder text
-        if (name.equalsIgnoreCase("island")) {
+        if (name.equalsIgnoreCase(DEFAULT_SCHEM_NAME)) {
             bb.setUniqueId(BlueprintsManager.DEFAULT_BUNDLE_NAME);
             bb.setDisplayName(ChatColor.YELLOW + "The Original");
             bb.setDescription(ChatColor.AQUA + "Standard set of islands");
@@ -109,9 +109,9 @@ public class SchemToBlueprint {
         try {
             SchemLoader loader = new SchemLoader(plugin, schems);
             loader.load(name);
-            plugin.log("Loaded " + name + ".schem");
+            plugin.log("Loaded " + name + FILE_EXTENSION);
             // Convert blueprint
-            plugin.log("Converting " + name + ".schem to a blueprint");
+            plugin.log("Converting " + name + FILE_EXTENSION + " to a blueprint");
             Blueprint bp = new Converter().convert(loader.getBlockConfig());
             bp.setName(name);
             plugin.log("Saving blueprint");
