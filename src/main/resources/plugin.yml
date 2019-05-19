@@ -1,18 +1,19 @@
 name: BentoBox
 main: world.bentobox.bentobox.BentoBox
 version: ${project.version}${build.number}
-api-version: 1.13
+api-version: "1.13"
 
 authors: [tastybento, Poslovitch]
 website: https://bentobox.world
+description: ${project.description}
 
 load: STARTUP
 
 loadbefore: [Multiverse-Core, Residence]
 
-softdepend: [Vault, PlaceholderAPI, MVdWPlaceholderAPI]
+softdepend: [Vault, PlaceholderAPI, dynmap]
 
-permissions:    
+permissions:
   bentobox.admin:
    description: Allow bentobox command usage
    default: op
