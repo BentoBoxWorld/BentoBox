@@ -43,7 +43,7 @@ public class IslandCreationPanel {
                     || user.hasPermission(perm)) {
                 // Add an item
                 pb.item(new PanelItemBuilder().name(bb.getDisplayName()).description(bb.getDescription())
-                        .icon(bb.getIcon()).name(bb.getUniqueId()).clickHandler((panel, user1, clickType, slot1) -> {
+                        .icon(bb.getIcon()).clickHandler((panel, user1, clickType, slot1) -> {
                             user1.closeInventory();
                             command.execute(user1, label, Collections.singletonList(bb.getUniqueId()));
                             return true;

@@ -72,7 +72,7 @@ public class ManagementPanel {
                         .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
                         .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
                         .clickHandler((panel, user1, clickType, slot) -> {
-                            BlueprintManagementPanel.openPanel(user, gameModeAddon);
+                            new BlueprintManagementPanel(plugin).openPanel(user, gameModeAddon);
                             return true;
                         })
                         .build();

@@ -3,11 +3,14 @@ package world.bentobox.bentobox.api.commands.admin.blueprints;
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
+
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
+import world.bentobox.bentobox.panels.BlueprintManagementPanel;
 
 import java.io.File;
 import java.util.HashMap;
@@ -50,7 +53,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        showHelp(this, user);
+        new BlueprintManagementPanel(getPlugin()).openPanel(user, (GameModeAddon)getAddon());
         return true;
     }
 
