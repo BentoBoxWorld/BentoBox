@@ -9,7 +9,7 @@
     <version>${revision}</version>
 
     <name>BentoBox</name>
-    <description>Expandable Minecraft Spigot plugin for island-type games like SkyBlock or AcidIsland.</description>
+    <description>Highly scalable and customizable Minecraft Spigot plugin that enables you to run island-type gamemodes.</description>
     <url>https://github.com/BentoBoxWorld/BentoBox</url>
     <inceptionYear>2017</inceptionYear>
 
