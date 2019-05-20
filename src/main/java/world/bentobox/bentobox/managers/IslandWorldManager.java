@@ -91,9 +91,8 @@ public class IslandWorldManager {
      * @return true if in a world or false if not
      */
     public boolean inWorld(@Nullable World world) {
-        return world != null && ((world.getEnvironment().equals(Environment.NETHER) && isIslandNether(world))
-                || (world.getEnvironment().equals(Environment.THE_END) && isIslandEnd(world))
-                || (world.getEnvironment().equals(Environment.NORMAL)) && gameModes.containsKey(world));
+        return world != null && gameModes.containsKey(world) &&
+            (world.getEnvironment().equals(Environment.NORMAL) || isIslandNether(world) || isIslandEnd(world));
     }
 
     /**

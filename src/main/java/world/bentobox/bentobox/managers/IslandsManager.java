@@ -342,19 +342,11 @@ public class IslandsManager {
      */
     public Optional<Island> getIslandAt(Location location) {
         // If this is not an Island World or a standard Nether or End, skip
-        if (!plugin.getIWM().inWorld(location)
-                || (plugin.getIWM().isNether(location.getWorld()) && !plugin.getIWM().isNetherIslands(location.getWorld()))
-                || (plugin.getIWM().isEnd(location.getWorld()) && !plugin.getIWM().isEndIslands(location.getWorld()))
-                ) {
+        if (!plugin.getIWM().inWorld(location))
+        {
             return Optional.empty();
         }
-        // Do not return an island if there is no nether or end or islands in them
-        if ((location.getWorld().getEnvironment().equals(World.Environment.NETHER) &&
-                (!plugin.getIWM().isNetherGenerate(location.getWorld()) || !plugin.getIWM().isNetherIslands(location.getWorld())))
-                || (location.getWorld().getEnvironment().equals(World.Environment.THE_END) &&
-                        (!plugin.getIWM().isEndGenerate(location.getWorld()) || !plugin.getIWM().isEndIslands(location.getWorld())))) {
-            return Optional.empty();
-        }
+
         return Optional.ofNullable(islandCache.getIslandAt(location));
     }
 
