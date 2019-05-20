@@ -4,6 +4,7 @@ import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
+import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 
 public class NamePrompt extends StringPrompt {
@@ -21,12 +22,14 @@ public class NamePrompt extends StringPrompt {
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.length() > 32) {
+        // Convert color codes
+        input = ChatColor.translateAlternateColorCodes('&', input);
+        if (ChatColor.stripColor(input).length() > 32) {
             context.getForWhom().sendRawMessage("Too long");
             return this;
         }
         // Make a uniqueid
-        StringBuilder uniqueId = new StringBuilder(input.toLowerCase().replace(" ", "_"));
+        StringBuilder uniqueId = new StringBuilder(ChatColor.stripColor(input).toLowerCase().replace(" ", "_"));
         // Check if this name is unique
         int max = 0;
         while (max++ < 32 && addon.getPlugin().getBlueprintsManager().getBlueprintBundles(addon).containsKey(uniqueId.toString())) {

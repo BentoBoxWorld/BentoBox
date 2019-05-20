@@ -28,6 +28,7 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.blueprints.conversation.DescriptionPrompt;
 import world.bentobox.bentobox.blueprints.conversation.NameConversationPrefix;
 import world.bentobox.bentobox.blueprints.conversation.NamePrompt;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
@@ -80,7 +81,7 @@ public class BlueprintManagementPanel {
         pb.build();
     }
 
-    private void openBB(User user, @NonNull GameModeAddon addon, BlueprintBundle bb) {
+    public void openBB(User user, @NonNull GameModeAddon addon, BlueprintBundle bb) {
         int index = 18;
         for (Blueprint bp : plugin.getBlueprintsManager().getBlueprints(addon).values()) {
             blueprints.put(index++, bp);
@@ -93,7 +94,9 @@ public class BlueprintManagementPanel {
                 .description(bb.getDescription())
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
+                    u.closeInventory();
                     // Description conversation
+                    askForDescription(u.getPlayer(), addon, bb);
                     return true;
                 })
                 .build());
@@ -106,7 +109,6 @@ public class BlueprintManagementPanel {
         for (int i = 9; i < 18; i++) {
             pb.item(i, new PanelItemBuilder().icon(Material.BLACK_STAINED_GLASS_PANE).name("-").build());
         }
-        plugin.logDebug("There are " + blueprints.size() + " blueprints");
         blueprints.entrySet().stream().limit(18).forEach(b -> pb.item(getBlueprintItem(addon, b.getKey(), bb, b.getValue())));
         // Buttons for non-default bundle
         if (!bb.getUniqueId().equals("default")) {
@@ -257,6 +259,16 @@ public class BlueprintManagementPanel {
         .withFirstPrompt(new NamePrompt(addon))
         .withEscapeSequence("exit")
         .withEscapeSequence("quit")
+        .buildConversation(whom).begin();
+    }
+
+    public void askForDescription(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
+        new ConversationFactory(BentoBox.getInstance())
+        .withModality(true)
+        .withLocalEcho(false)
+        .withPrefix(new NameConversationPrefix())
+        .withTimeout(90)
+        .withFirstPrompt(new DescriptionPrompt(addon, bb))
         .buildConversation(whom).begin();
     }
 

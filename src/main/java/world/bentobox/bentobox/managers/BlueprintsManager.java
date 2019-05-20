@@ -227,7 +227,6 @@ public class BlueprintsManager {
                 plugin.logStacktrace(e);
             }
         }
-        plugin.logDebug("There are bp " + blueprints.get(addon).size());
     }
 
     /**
