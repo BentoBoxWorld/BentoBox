@@ -5,16 +5,13 @@ import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 
 public class NamePrompt extends StringPrompt {
 
     private GameModeAddon addon;
-    private BlueprintBundle bb;
 
-    public NamePrompt(GameModeAddon addon, BlueprintBundle bb) {
+    public NamePrompt(GameModeAddon addon) {
         this.addon = addon;
-        this.bb = bb;
     }
 
     @Override
@@ -28,8 +25,20 @@ public class NamePrompt extends StringPrompt {
             context.getForWhom().sendRawMessage("Too long");
             return this;
         }
+        // Make a uniqueid
+        StringBuilder uniqueId = new StringBuilder(input.toLowerCase().replace(" ", "_"));
+        // Check if this name is unique
+        int max = 0;
+        while (max++ < 32 && addon.getPlugin().getBlueprintsManager().getBlueprintBundles(addon).containsKey(uniqueId.toString())) {
+            uniqueId.append("x");
+        }
+        if (max == 32) {
+            context.getForWhom().sendRawMessage("Please pick a more unique name");
+            return this;
+        }
+        context.setSessionData("uniqueId", uniqueId.toString());
         context.setSessionData("name", input);
-        return new NameSuccessPrompt(addon, bb);
+        return new NameSuccessPrompt(addon);
     }
 
 }

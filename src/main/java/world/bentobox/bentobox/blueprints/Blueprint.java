@@ -21,7 +21,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  * @author tastybento
  *
  */
-public class Blueprint {
+public class Blueprint implements Comparable<Blueprint> {
 
     /**
      * Unique name for this blueprint. The filename will be this plus the blueprint suffix
@@ -196,6 +196,10 @@ public class Blueprint {
      */
     public void setBedrock(Vector bedrock) {
         this.bedrock = bedrock;
+    }
+    @Override
+    public int compareTo(Blueprint o) {
+        return this.name.compareToIgnoreCase(o.name);
     }
 
 }
