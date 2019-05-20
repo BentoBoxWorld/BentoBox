@@ -126,6 +126,14 @@ public class BlueprintBundle implements DataObject {
     }
 
     /**
+     * Removes a blueprint from this environment slot
+     * @param env - the world environment
+     */
+    public void clearBlueprint(World.Environment env) {
+        this.blueprints.remove(env);
+    }
+
+    /**
      * Get the blueprint for the environment type
      * @param env - {@link World#Environment} type
      * @return Blueprint or null if one does not exist

@@ -3,6 +3,7 @@
  */
 package world.bentobox.bentobox.blueprints;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintEntity;
  * @author tastybento
  *
  */
-public class Blueprint {
+public class Blueprint implements Comparable<Blueprint> {
 
     /**
      * Unique name for this blueprint. The filename will be this plus the blueprint suffix
@@ -56,8 +57,9 @@ public class Blueprint {
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public Blueprint setName(String name) {
         this.name = name;
+        return this;
     }
     /**
      * @return the displayName
@@ -68,8 +70,9 @@ public class Blueprint {
     /**
      * @param displayName the displayName to set
      */
-    public void setDisplayName(String displayName) {
+    public Blueprint setDisplayName(String displayName) {
         this.displayName = displayName;
+        return this;
     }
     /**
      * @return the icon
@@ -79,9 +82,11 @@ public class Blueprint {
     }
     /**
      * @param icon the icon to set
+     * @return
      */
-    public void setIcon(Material icon) {
+    public Blueprint setIcon(Material icon) {
         this.icon = icon;
+        return this;
     }
     /**
      * @return the description
@@ -92,8 +97,17 @@ public class Blueprint {
     /**
      * @param description the description to set
      */
-    public void setDescription(List<String> description) {
+    public Blueprint setDescription(List<String> description) {
         this.description = description;
+        return this;
+    }
+    /**
+     * @param description the description to set
+     */
+    public Blueprint setDescription(String description) {
+        if (this.description == null) this.description = new ArrayList<>();
+        this.description.add(description);
+        return this;
     }
     /**
      * @return the attached
@@ -182,6 +196,10 @@ public class Blueprint {
      */
     public void setBedrock(Vector bedrock) {
         this.bedrock = bedrock;
+    }
+    @Override
+    public int compareTo(Blueprint o) {
+        return this.name.compareToIgnoreCase(o.name);
     }
 
 }

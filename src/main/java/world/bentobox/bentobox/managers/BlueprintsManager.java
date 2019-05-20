@@ -6,6 +6,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.HashMap;
@@ -288,6 +289,15 @@ public class BlueprintsManager {
     }
 
     /**
+     * Get blueprints for this game mode
+     * @param addon - game mdoe addon
+     * @return Map of name and blueprint or empty map
+     */
+    public Map<String, Blueprint> getBlueprints(GameModeAddon addon) {
+        return blueprints.getOrDefault(addon, new HashMap<>());
+    }
+
+    /**
      * Paste the islands to world
      * @param addon - GameModeAddon
      * @param island - island
@@ -316,8 +326,18 @@ public class BlueprintsManager {
             return false;
         }
         Blueprint bp = blueprints.get(addon).get(bb.getBlueprint(World.Environment.NORMAL));
+        if (bp == null) {
+            // Oops, no overworld
+            bp = blueprints.get(addon).get("island");
+            plugin.logError("Blueprint bundle has no normal world blueprint, using default");
+            if (bp == null) {
+                plugin.logError("NO DEFAULT BLUEPRINT FOUND! Make sure 'island.blu' exists!");
+            }
+        }
         // Paste overworld
-        new BlueprintPaster(plugin, bp, addon.getOverWorld(), island, task);
+        if (bp != null) {
+            new BlueprintPaster(plugin, bp, addon.getOverWorld(), island, task);
+        }
         // Make nether island
         if (bb.getBlueprint(World.Environment.NETHER) != null
                 && addon.getWorldSettings().isNetherGenerate()
@@ -381,6 +401,24 @@ public class BlueprintsManager {
             return false;
         }
         return true;
+    }
+
+    /**
+     * Removes a blueprint bundle
+     * @param addon - Game Mode Addon
+     * @param bb - Blueprint Bundle to delete
+     */
+    public void deleteBlueprintBundle(@NonNull GameModeAddon addon, BlueprintBundle bb) {
+        if (blueprintBundles.containsKey(addon)) {
+            blueprintBundles.get(addon).keySet().removeIf(k -> k.equals(bb.getUniqueId()));
+        }
+        File bpf = getBlueprintsFolder(addon);
+        File fileName = new File(bpf, bb.getUniqueId() + BLUEPRINT_BUNDLE_SUFFIX);
+        try {
+            Files.deleteIfExists(fileName.toPath());
+        } catch (IOException e) {
+            plugin.logError("Could not delete Blueprint Bundle " + e.getLocalizedMessage());
+        }
     }
 
 }
