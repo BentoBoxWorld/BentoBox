@@ -49,7 +49,7 @@
         <mongodb.version>3.8.0</mongodb.version>
         <!-- More visible way how to change dependency versions -->
         <spigot.version>1.13.2-R0.1-SNAPSHOT</spigot.version>
-        <bstats.version>1.4</bstats.version>
+        <bstats.version>1.5</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholderapi.version>2.10.1</placeholderapi.version>
         <githubapi.version>1.0</githubapi.version>
