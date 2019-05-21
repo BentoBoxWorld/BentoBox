@@ -1,6 +1,9 @@
 package world.bentobox.bentobox.database.json.adapters;
 
 import java.io.IOException;
+import java.util.UUID;
+
+import org.bukkit.Material;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -34,6 +37,13 @@ public class FlagTypeAdapter extends TypeAdapter<Flag> {
             reader.nextNull();
             return null;
         }
-        return plugin.getFlagsManager().getFlag(reader.nextString()).orElse(null);
+        String id = reader.nextString();
+        Flag f = plugin.getFlagsManager().getFlag(id).orElse(null);
+        // Flags can end up null if an addon that created one is removed or if a flag name was changed
+        if (f == null) {
+            // Create a temporary flag with a unique key. It will be immediately deleted after loading
+            f = new Flag.Builder("NULL_FLAG_"+ UUID.randomUUID().toString(), Material.STONE).build();
+        }
+        return f;
     }
 }

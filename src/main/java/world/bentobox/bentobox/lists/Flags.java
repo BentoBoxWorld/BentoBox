@@ -412,26 +412,25 @@ public final class Flags {
 
     /**
      * Protects against visitors dying stuff, like sheep or signs
-     * 
+     *
      * @since 1.5.0
      * @see DyeListener
      */
     public static final Flag DYE = new Flag.Builder("DYE", Material.LIGHT_BLUE_DYE).type(Type.PROTECTION).listener(new DyeListener()).build();
-    
+
     /**
      * Provides a list of all the Flag instances contained in this class using reflection.
      * @return List of all the flags in this class
      */
     public static List<Flag> values() {
         return Arrays.stream(Flags.class.getFields())
-                .filter(field -> field.getAnnotation(Deprecated.class) == null) // Ensures it is not deprecated
                 .map(field -> {
-            try {
-                return (Flag)field.get(null);
-            } catch (IllegalArgumentException | IllegalAccessException e) {
-                Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
-            }
-            return null;
-        }).collect(Collectors.toList());
+                    try {
+                        return (Flag)field.get(null);
+                    } catch (IllegalArgumentException | IllegalAccessException e) {
+                        Bukkit.getLogger().severe("Could not get Flag values " + e.getMessage());
+                    }
+                    return null;
+                }).collect(Collectors.toList());
     }
 }

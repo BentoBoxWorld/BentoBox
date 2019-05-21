@@ -774,6 +774,10 @@ public class IslandsManager {
                 } else if (island.isSpawn()) {
                     // Success, set spawn if this is the spawn island.
                     this.setSpawn(island);
+                } else {
+                    // Successful load
+                    // Clean any null flags out of the island - these can occur for various reasons
+                    island.getFlags().keySet().removeIf(f -> f.getID().startsWith("NULL_FLAG"));
                 }
             }
 
