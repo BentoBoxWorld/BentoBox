@@ -30,10 +30,11 @@ public class NameSuccessPrompt extends MessagePrompt {
         bb.setDisplayName(name);
         BentoBox.getInstance().getBlueprintsManager().addBlueprintBundle(addon, bb);
         BentoBox.getInstance().getBlueprintsManager().saveBlueprintBundle(addon, bb);
-        new BlueprintManagementPanel(BentoBox.getInstance()).openPanel(User.getInstance((Player)context.getForWhom()), addon);
+        User user = User.getInstance((Player)context.getForWhom());
+        new BlueprintManagementPanel(BentoBox.getInstance(), user, addon).openPanel();
         // Set the name
         // if successfully
-        return "Success!";
+        return user.getTranslation("commands.admin.blueprint.management.description.success");
         // Else return failure
     }
 
