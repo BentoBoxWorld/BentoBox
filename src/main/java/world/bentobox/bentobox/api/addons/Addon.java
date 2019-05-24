@@ -411,6 +411,6 @@ public abstract class Addon {
 	 * @since 1.5.0
 	 */
 	public boolean registerFlag(Flag flag) {
-		return BentoBox.getInstance().getFlagsManager().registerFlag(this, flag);
+		return getPlugin().getFlagsManager().registerFlag(this, flag);
 	}
 }
