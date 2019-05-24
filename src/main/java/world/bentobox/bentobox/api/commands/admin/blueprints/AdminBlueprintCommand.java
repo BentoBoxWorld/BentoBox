@@ -1,5 +1,11 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.Particle;
@@ -11,12 +17,6 @@ import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.panels.BlueprintManagementPanel;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
 
 public class AdminBlueprintCommand extends ConfirmableCommand {
     // Clipboards
@@ -53,7 +53,7 @@ public class AdminBlueprintCommand extends ConfirmableCommand {
 
     @Override
     public boolean execute(User user, String label, List<String> args) {
-        new BlueprintManagementPanel(getPlugin()).openPanel(user, (GameModeAddon)getAddon());
+        new BlueprintManagementPanel(getPlugin(), user, (GameModeAddon)getAddon()).openPanel();
         return true;
     }
 

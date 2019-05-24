@@ -7,8 +7,11 @@ import org.bukkit.ChatColor;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.localization.TextVariables;
+import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 
 /**
@@ -29,23 +32,24 @@ public class DescriptionPrompt extends StringPrompt {
     @SuppressWarnings("unchecked")
     @Override
     public String getPromptText(ConversationContext context) {
+        User user = User.getInstance((Player)context.getForWhom());
         if (context.getSessionData("description") != null) {
             StringBuilder sb = new StringBuilder();
             for (String line : ((List<String>) context.getSessionData("description"))) {
-                sb.append(ChatColor.DARK_PURPLE);
+                sb.append(user.getTranslation("commands.admin.blueprint.management.description.default-color"));
                 sb.append(line);
                 sb.append(System.getProperty("line.separator"));
             }
             return sb.toString();
         }
-        return "Enter a multi line description for " + bb.getDisplayName() + System.getProperty("line.separator")
-        + ChatColor.GOLD + " and 'quit' on a line by itself to finish.";
+        return user.getTranslation("commands.admin.blueprint.management.description.instructions", TextVariables.NAME, bb.getDisplayName());
     }
 
     @SuppressWarnings("unchecked")
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
-        if (input.equals("quit")) {
+        User user = User.getInstance((Player)context.getForWhom());
+        if (input.equals(user.getTranslation("commands.admin.blueprint.management.description.quit"))) {
             return new DescriptionSuccessPrompt(addon, bb);
         }
         List<String> desc = new ArrayList<>();

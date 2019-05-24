@@ -37,8 +37,6 @@ public abstract class AbstractJSONDatabaseHandler<T> extends AbstractDatabaseHan
         GsonBuilder builder = new GsonBuilder().excludeFieldsWithoutExposeAnnotation().enableComplexMapKeySerialization().setPrettyPrinting();
         // Register adapter factory
         builder.registerTypeAdapterFactory(new BentoboxTypeAdapterFactory(plugin));
-        // Keep null in the database
-        builder.serializeNulls();
         // Allow characters like < or > without escaping them
         builder.disableHtmlEscaping();
 

@@ -223,7 +223,45 @@ commands:
         description: "set 2nd corner of cuboid clipboard"
       save:
         parameters: "<blueprint name>"
-        description: "save the copied clipboard"      
+        description: "save the copied clipboard"
+      management:
+        instruction: "Click on blueprint then click here"
+        normal: "Normal"
+        nether: "Nether"
+        end: "The End"
+        title: "Blueprint Bundle Manager"
+        edit: "Click to edit"
+        edit-description: "Click to edit description"
+        world-name-syntax: "[name] world"
+        world-instructions: |
+          Place blueprint
+          to right to set
+        trash: "Trash"
+        trash-instructions: "Right click here to delete"
+        permission: "Permission"
+        perm-required: "Required"
+        perm-not-required: "Not Required"
+        perm-format: "&e"
+        remove: "Right click to remove"
+        blueprint-instruction: "Click to select, then add to bundle"
+        select-first: "Select Blueprint first"
+        new-bundle: "New Bundle"
+        new-bundle-instructions: "Click to make a new bundle"
+        name:
+          quit: "quit"
+          prompt: "Enter a name, or 'quit' to quit"
+          too-long: "&cToo long"
+          pick-a-unique-name: "Please pick a more unique name"
+          success: "Success!"
+          conversation-prefix: ">"
+        description:
+          quit: "quit"
+          instructions: |
+            Enter a multi line description for [name]
+            and 'quit' on a line by itself to finish.
+          default-color: ""
+          success: "Success!"
+          cancelling: "Cancelling"
     resetflags:
       description: "Reset all islands to default flag settings in config.yml"
     world:
