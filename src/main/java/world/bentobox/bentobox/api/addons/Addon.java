@@ -406,7 +406,7 @@ public abstract class Addon {
 
 	/**
 	 * Register a flag for this addon.
-	 * @param flag - flag that should be registered.
+	 * @param flag the flag to register.
 	 * @return <code>true</code> if addon was registered successfully, otherwise <code>false</code>
 	 */
 	public boolean registerFlag(Flag flag) {
