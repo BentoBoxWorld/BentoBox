@@ -407,7 +407,8 @@ public abstract class Addon {
 	/**
 	 * Register a flag for this addon.
 	 * @param flag the flag to register.
-	 * @return <code>true</code> if addon was registered successfully, otherwise <code>false</code>
+	 * @return {@code true} if the flag was registered successfully, {@code false} otherwise.
+	 * @since 1.5.0
 	 */
 	public boolean registerFlag(Flag flag) {
 		return BentoBox.getInstance().getFlagsManager().registerFlag(this, flag);
