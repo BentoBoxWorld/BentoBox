@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.event.Listener;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.request.AddonRequestHandler;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 
@@ -401,4 +402,15 @@ public abstract class Addon {
             return null;
         }
     }
+
+
+	/**
+	 * Register a flag for this addon.
+	 * @param flag the flag to register.
+	 * @return {@code true} if the flag was registered successfully, {@code false} otherwise.
+	 * @since 1.5.0
+	 */
+	public boolean registerFlag(Flag flag) {
+		return getPlugin().getFlagsManager().registerFlag(this, flag);
+	}
 }
