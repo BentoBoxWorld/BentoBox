@@ -341,13 +341,7 @@ public class IslandsManager {
      * @return Optional Island object
      */
     public Optional<Island> getIslandAt(Location location) {
-        // If this is not an Island World or a standard Nether or End, skip
-        if (!plugin.getIWM().inWorld(location))
-        {
-            return Optional.empty();
-        }
-
-        return Optional.ofNullable(islandCache.getIslandAt(location));
+        return plugin.getIWM().inWorld(location) ? Optional.ofNullable(islandCache.getIslandAt(location)) : Optional.empty();
     }
 
     /**

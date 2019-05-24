@@ -27,6 +27,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -67,21 +68,34 @@ import static org.mockito.Mockito.when;
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class, Location.class })
 public class IslandsManagerTest {
 
+    @Mock
     private BentoBox plugin;
     private UUID uuid;
+    @Mock
     private User user;
+    @Mock
     private PlayersManager pm;
+    @Mock
     private Player player;
-    private static World world;
+    @Mock
+    private World world;
     private IslandsManager manager;
+    @Mock
     private Block space1;
+    @Mock
     private Block ground;
+    @Mock
     private Block space2;
+    @Mock
     private Location location;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
     private IslandCache islandCache;
     private Optional<Island> optionalIsland;
+    @Mock
     private Island is;
+    @Mock
     private PluginManager pim;
 
     /**
@@ -90,10 +104,8 @@ public class IslandsManagerTest {
     @Before
     public void setUp() throws Exception {
         // World
-        world = mock(World.class);
         when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         // Command manager
@@ -106,9 +118,6 @@ public class IslandsManagerTest {
         when(s.getDatabaseType()).thenReturn(DatabaseType.JSON);
 
         // Player
-        player = mock(Player.class);
-        // Sometimes use: Mockito.withSettings().verboseLogging()
-        user = mock(User.class);
         when(user.isOp()).thenReturn(false);
         uuid = UUID.randomUUID();
         when(user.getUniqueId()).thenReturn(uuid);
@@ -128,7 +137,6 @@ public class IslandsManagerTest {
         when(placeholdersManager.replacePlaceholders(any(), any())).thenReturn("mock translation");
 
         // Has team
-        pm = mock(PlayersManager.class);
         when(plugin.getPlayers()).thenReturn(pm);
 
         // Scheduler
@@ -138,11 +146,7 @@ public class IslandsManagerTest {
 
         // Standard location
         manager = new IslandsManager(plugin);
-        location = mock(Location.class);
         when(location.getWorld()).thenReturn(world);
-        space1 = mock(Block.class);
-        ground = mock(Block.class);
-        space2 = mock(Block.class);
         when(location.getBlock()).thenReturn(space1);
         when(location.getWorld()).thenReturn(world);
         when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
@@ -162,20 +166,16 @@ public class IslandsManagerTest {
         when(Bukkit.getOnlinePlayers()).then((Answer<Set<Player>>) invocation -> new HashSet<>());
 
         // Worlds
-        iwm = mock(IslandWorldManager.class);
         when(plugin.getIWM()).thenReturn(iwm);
+        // Default is player is in the world
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
 
+        // Worlds translate to world
         PowerMockito.mockStatic(Util.class);
         when(Util.getWorld(Mockito.any())).thenReturn(world);
 
-        // Scheduler
-        when(Bukkit.getScheduler()).thenReturn(mock(BukkitScheduler.class));
-
         // Mock island cache
-        islandCache = mock(IslandCache.class);
-        is = mock(Island.class);
         when(islandCache.getIslandAt(Mockito.any(Location.class))).thenReturn(is);
         optionalIsland = Optional.ofNullable(is);
 
@@ -185,7 +185,6 @@ public class IslandsManagerTest {
         // Server for events
         Server server = mock(Server.class);
         when(Bukkit.getServer()).thenReturn(server);
-        pim = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pim);
 
         // Addon
@@ -491,102 +490,6 @@ public class IslandsManagerTest {
         assertEquals(Optional.empty(), im.getIslandAt(new Location(world, 100000, 120, -100000)));
         assertEquals(Optional.empty(), im.getIslandAt(location));
     }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     */
-    @Test
-    public void testGetIslandAtLocationNether() {
-        when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
-        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
-        when(iwm.isNetherIslands(Mockito.any())).thenReturn(true);
-
-        IslandsManager im = new IslandsManager(plugin);
-        im.setIslandCache(islandCache);
-
-        // In nether world, so answer should be empty
-        assertEquals(optionalIsland, im.getIslandAt(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     */
-    @Test
-    public void testGetIslandAtLocationNetherNoNether() {
-        when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
-        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(false);
-
-        IslandsManager im = new IslandsManager(plugin);
-        im.setIslandCache(islandCache);
-
-        // In nether world, so answer should be empty
-        assertEquals(Optional.empty(), im.getIslandAt(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     */
-    @Test
-    public void testGetIslandAtLocationNetherNoNetherIslands() {
-        when(world.getEnvironment()).thenReturn(World.Environment.NETHER);
-        when(iwm.isNetherGenerate(Mockito.any())).thenReturn(true);
-        when(iwm.isNetherIslands(Mockito.any())).thenReturn(false);
-
-        IslandsManager im = new IslandsManager(plugin);
-        im.setIslandCache(islandCache);
-
-        // In nether world, so answer should be empty
-        assertEquals(Optional.empty(), im.getIslandAt(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     * @throws Exception
-     */
-    @Test
-    public void testGetIslandAtLocationEnd() throws Exception {
-        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
-        when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
-        when(iwm.isEndIslands(Mockito.any())).thenReturn(true);
-
-        IslandsManager im = new IslandsManager(plugin);
-        im.setIslandCache(islandCache);
-
-        // In nether world, so answer should be empty
-        assertEquals(optionalIsland, im.getIslandAt(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     */
-    @Test
-    public void testGetIslandAtLocationEndNoEnd() {
-        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
-        when(iwm.isEndGenerate(Mockito.any())).thenReturn(false);
-
-        IslandsManager im = new IslandsManager(plugin);
-        im.setIslandCache(islandCache);
-
-        // In nether world, so answer should be empty
-        assertEquals(Optional.empty(), im.getIslandAt(location));
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandAt(org.bukkit.Location)}.
-     */
-    @Test
-    public void testGetIslandAtLocationEndNoEndIslands() {
-        when(world.getEnvironment()).thenReturn(World.Environment.THE_END);
-        when(iwm.isEndGenerate(Mockito.any())).thenReturn(true);
-        when(iwm.isEndIslands(Mockito.any())).thenReturn(false);
-
-        IslandsManager im = new IslandsManager(plugin);
-        im.setIslandCache(islandCache);
-
-        // In nether world, so answer should be empty
-        assertEquals(Optional.empty(), im.getIslandAt(location));
-    }
-
 
     /**
      * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#getIslandLocation(World, UUID)}.
