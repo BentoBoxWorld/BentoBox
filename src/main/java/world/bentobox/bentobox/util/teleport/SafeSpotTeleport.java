@@ -225,7 +225,7 @@ public class SafeSpotTeleport {
             for (int z = 0; z < 16; z++) {
                 // Work down from the entry point up
                 for (int y = Math.min(chunk.getHighestBlockYAt(x, z), MAX_HEIGHT); y >= 0; y--) {
-                    if (checkBlock(chunk, x,y,z, MAX_HEIGHT)) {
+                    if (checkBlock(chunk, x,y,z)) {
                         return true;
                     }
                 } // end y
@@ -266,15 +266,14 @@ public class SafeSpotTeleport {
      * @param x - x coordinate
      * @param y - y coordinate
      * @param z - z coordinate
-     * @param worldHeight - height of world
      * @return true if this is a safe spot, false if this is a portal scan
      */
-    private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z, int worldHeight) {
+    private boolean checkBlock(ChunkSnapshot chunk, int x, int y, int z) {
         World world = location.getWorld();
         Material type = chunk.getBlockType(x, y, z);
         if (!type.equals(Material.AIR)) { // AIR
-            Material space1 = chunk.getBlockType(x, Math.min(y + 1, worldHeight), z);
-            Material space2 = chunk.getBlockType(x, Math.min(y + 2, worldHeight), z);
+            Material space1 = chunk.getBlockType(x, Math.min(y + 1, SafeSpotTeleport.MAX_HEIGHT), z);
+            Material space2 = chunk.getBlockType(x, Math.min(y + 2, SafeSpotTeleport.MAX_HEIGHT), z);
             if ((space1.equals(Material.AIR) && space2.equals(Material.AIR)) || (space1.equals(Material.NETHER_PORTAL) && space2.equals(Material.NETHER_PORTAL))
                     && (!type.toString().contains("FENCE") && !type.toString().contains("DOOR") && !type.toString().contains("GATE") && !type.toString().contains("PLATE")
                     && !type.toString().contains("SIGN"))) {

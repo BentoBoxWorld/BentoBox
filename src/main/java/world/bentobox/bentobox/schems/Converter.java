@@ -120,7 +120,7 @@ public class Converter {
             ConfigurationSection inv = config.getConfigurationSection(INVENTORY);
             block.setInventory(
                     inv.getKeys(false).stream()
-                    .collect(Collectors.toMap(i -> Integer.valueOf(i), i -> (ItemStack)inv.get(i)))
+                    .collect(Collectors.toMap(Integer::valueOf, i -> (ItemStack)inv.get(i)))
                     );
         }
         // Mob spawners
@@ -194,7 +194,7 @@ public class Converter {
             if (cs.isConfigurationSection(INVENTORY)) {
                 ConfigurationSection inv = cs.getConfigurationSection(INVENTORY);
                 be.setInventory(inv.getKeys(false).stream()
-                        .collect(Collectors.toMap(i -> Integer.valueOf(i), i ->  (ItemStack)inv.get(i))));
+                        .collect(Collectors.toMap(Integer::valueOf, i ->  (ItemStack)inv.get(i))));
             }
             return be;
         } catch (Exception e) {

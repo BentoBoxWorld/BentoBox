@@ -45,6 +45,9 @@ public class AddonClassLoader extends URLClassLoader {
         Class<?> javaClass;
         try {
             String mainClass = data.getString("main");
+            if (mainClass == null) {
+                throw new InvalidAddonFormatException("addon.yml does not define a main class!");
+            }
             javaClass = Class.forName(mainClass, true, this);
             if(mainClass.startsWith("world.bentobox.bentobox")){
                 throw new InvalidAddonFormatException("Package declaration cannot start with 'world.bentobox.bentobox'");
@@ -90,15 +93,15 @@ public class AddonClassLoader extends URLClassLoader {
                 .metrics(data.getBoolean("metrics", true))
                 .repository(data.getString("repository", ""));
 
-        if (data.getString("depend") != null) {
-            builder.dependencies(Arrays.asList(data.getString("depend").split("\\s*,\\s*")));
+        String depend = data.getString("depend");
+        if (depend != null) {
+            builder.dependencies(Arrays.asList(depend.split("\\s*,\\s*")));
         }
-        if (data.getString("softdepend") != null) {
-            builder.softDependencies(Arrays.asList(data.getString("softdepend").split("\\s*,\\s*")));
+        String softDepend = data.getString("softdepend");
+        if (softDepend != null) {
+            builder.softDependencies(Arrays.asList(softDepend.split("\\s*,\\s*")));
         }
-        if (data.getString("icon") != null) {
-            builder.icon(Material.getMaterial(data.getString("icon", "PAPER")));
-        }
+        builder.icon(Material.getMaterial(data.getString("icon", "PAPER")));
 
         return builder.build();
     }

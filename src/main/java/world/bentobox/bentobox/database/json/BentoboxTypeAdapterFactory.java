@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.json;
 
 import java.util.Map;

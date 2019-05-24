@@ -1,9 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.resets;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -58,6 +55,6 @@ public class AdminResetsResetCommand extends ConfirmableCommand {
 
     @Override
     public Optional<List<String>> tabComplete(User user, String alias, List<String> args) {
-        return Optional.of(Arrays.asList("@a"));
+        return Optional.of(Collections.singletonList("@a"));
     }
 }

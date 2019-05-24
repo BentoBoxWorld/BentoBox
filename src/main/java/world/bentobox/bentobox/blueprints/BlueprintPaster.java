@@ -58,7 +58,7 @@ public class BlueprintPaster {
 
     private static final String MINECRAFT = "minecraft:";
 
-    private Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
+    private static final Map<String, String> BLOCK_CONVERSION = ImmutableMap.of("sign", "oak_sign", "wall_sign", "oak_wall_sign");
 
     private BentoBox plugin;
     // The minimum block position (x,y,z)

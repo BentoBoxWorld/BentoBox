@@ -18,7 +18,7 @@ import world.bentobox.bentobox.database.objects.Island;
  */
 public class IslandNearCommand extends CompositeCommand {
 
-    private final static List<BlockFace> COMPASS_POINTS = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+    private static final List<BlockFace> COMPASS_POINTS = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
     public IslandNearCommand(CompositeCommand islandCommand) {
         super(islandCommand, "near");

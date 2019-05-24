@@ -22,7 +22,6 @@ import com.google.common.collect.ImmutableMap;
 import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
@@ -244,10 +243,6 @@ public class BlueprintManagementPanel {
                     return true;
                 })
                 .build();
-    }
-
-    public boolean trashBundle(Panel panel, User user, ClickType clickType, int slot ) {
-        return true;
     }
 
     public void askForName(Conversable whom, GameModeAddon addon) {

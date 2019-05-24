@@ -103,7 +103,7 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         // Obtain the value of uniqueId within the instance (which must be a DataObject)
         PropertyDescriptor propertyDescriptor = new PropertyDescriptor("uniqueId", dataObject);
         Method method = propertyDescriptor.getReadMethod();
-        String fileName = (String) method.invoke(instance) + JSON;
+        String fileName = method.invoke(instance) + JSON;
 
         File tableFolder = new File(plugin.getDataFolder(), path);
         File file = new File(tableFolder, fileName);
