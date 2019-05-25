@@ -245,7 +245,14 @@ public class BlueprintClipboard {
         }
 
         if (block.getType().equals(Material.BEDROCK)) {
-            blueprint.setBedrock(pos);
+            // Find highest bedrock
+            if(blueprint.getBedrock() == null) {
+                blueprint.setBedrock(pos);
+            } else {
+                if (pos.getBlockY() > blueprint.getBedrock().getBlockY()) {
+                    blueprint.setBedrock(pos);
+                }
+            }
         }
 
         // Chests

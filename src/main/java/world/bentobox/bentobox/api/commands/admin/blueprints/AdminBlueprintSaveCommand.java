@@ -37,18 +37,20 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
             File newFile = new File(parent.getBlueprintsFolder(), args.get(0) + BlueprintsManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.blueprint.file-exists"), () -> {
-                    parent.hideClipboard(user);
-                    new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
-                    getPlugin().getBlueprintsManager().addBlueprint((GameModeAddon)getAddon(), clipboard.getBlueprint());
+                    hideAndSave(user, parent, clipboard, args.get(0));
                 });
                 return false;
-            } else {
-                parent.hideClipboard(user);
-                return new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
             }
+            return hideAndSave(user, parent, clipboard, args.get(0));
         } else {
             user.sendMessage("commands.admin.blueprint.copy-first");
             return false;
         }
+    }
+
+    private boolean hideAndSave(User user, AdminBlueprintCommand parent, BlueprintClipboard clipboard, String string) {
+        parent.hideClipboard(user);
+        getPlugin().getBlueprintsManager().addBlueprint((GameModeAddon)getAddon(), clipboard.getBlueprint());
+        return new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, string);
     }
 }

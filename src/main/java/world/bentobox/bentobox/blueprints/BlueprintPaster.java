@@ -337,13 +337,12 @@ public class BlueprintPaster {
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
-            plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon -> {
-                lines.clear();
-                for (int i = 0; i < 4; i++) {
-                    lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
-                            addon.getDescription().getName().toLowerCase() + ".sign.line" + i,"")));
-                }
-            });
+            String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase()).orElse("");
+            lines.clear();
+            for (int i = 0; i < 4; i++) {
+                lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
+                        addonName + ".sign.line" + i,"")));
+            }
         }
         // Get the name of the player
         String name = TextVariables.NAME;
