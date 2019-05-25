@@ -1,16 +1,15 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
+import com.google.gson.annotations.Expose;
+import org.bukkit.Material;
+import org.bukkit.World;
+import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.database.objects.DataObject;
+
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
-
-import org.bukkit.Material;
-import org.bukkit.World;
-
-import com.google.gson.annotations.Expose;
-
-import world.bentobox.bentobox.blueprints.Blueprint;
-import world.bentobox.bentobox.database.objects.DataObject;
+import java.util.Map;
 
 /**
  * Represents a bundle of three {@link Blueprint}s.
@@ -52,7 +51,7 @@ public class BlueprintBundle implements DataObject {
      * Reference to the blueprint
      */
     @Expose
-    private EnumMap<World.Environment, String> blueprints = new EnumMap<>(World.Environment.class);
+    private Map<World.Environment, String> blueprints = new EnumMap<>(World.Environment.class);
     /**
      * @return the uniqueId
      */
@@ -106,13 +105,13 @@ public class BlueprintBundle implements DataObject {
     /**
      * @return the blueprints
      */
-    public EnumMap<World.Environment, String> getBlueprints() {
+    public Map<World.Environment, String> getBlueprints() {
         return blueprints;
     }
     /**
      * @param blueprints the blueprints to set
      */
-    public void setBlueprints(EnumMap<World.Environment, String> blueprints) {
+    public void setBlueprints(Map<World.Environment, String> blueprints) {
         this.blueprints = blueprints;
     }
 
