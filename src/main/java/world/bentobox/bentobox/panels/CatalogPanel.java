@@ -1,6 +1,5 @@
 package world.bentobox.bentobox.panels;
 
-import com.google.gson.JsonObject;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -10,6 +9,7 @@ import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.web.catalog.CatalogEntry;
 
 import java.util.List;
 
@@ -46,7 +46,7 @@ public class CatalogPanel {
                 .name(user.getTranslation(LOCALE_REF + "views.addons.name"))
                 .description(user.getTranslation(LOCALE_REF + "views.addons.description"));
 
-        List<JsonObject> catalog;
+        List<CatalogEntry> catalog;
         if (view == View.GAMEMODES) {
             catalog = plugin.getWebManager().getGamemodesCatalog();
             // Make the gamemodes button glow
@@ -74,21 +74,14 @@ public class CatalogPanel {
         if (catalog.isEmpty()) {
             looksEmpty(builder, user);
         } else {
-            for (JsonObject addon : catalog) {
+            for (CatalogEntry addon : catalog) {
                 PanelItemBuilder itemBuilder = new PanelItemBuilder();
 
-                Material icon = Material.getMaterial(addon.get("icon").getAsString());
-                if (icon == null) {
-                    icon = Material.PAPER;
-                }
-
-                String name = addon.get("name").getAsString();
-                itemBuilder.icon(icon)
-                        .name(ChatColor.WHITE + name);
+                itemBuilder.icon(addon.getIcon()).name(ChatColor.WHITE + addon.getName());
 
                 // If the addon is already installed, then tell the user it's already installed
                 String install;
-                if (plugin.getAddonsManager().getAddonByName(name).isPresent()) {
+                if (plugin.getAddonsManager().getAddonByName(addon.getName()).isPresent()) {
                     itemBuilder.glow(true);
                     install = user.getTranslation(LOCALE_REF + "icon.already-installed");
                 } else {
@@ -96,18 +89,17 @@ public class CatalogPanel {
                 }
 
                 itemBuilder.description(user.getTranslation(LOCALE_REF + "icon.description-template",
-                        "[topic]", StringUtils.capitalize(addon.get("topic").getAsString()),
+                        "[topic]", StringUtils.capitalize(addon.getTopic()),
                         "[install]", install,
-                        "[description]", addon.get("description").getAsString()));
+                        "[description]", "WIP"));
 
                 // Set the link to the latest release
-                String repository = addon.get("repository").getAsString();
                 itemBuilder.clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + repository + "/releases/latest");
+                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + addon.getRepository() + "/releases/latest");
                     return true;
                 });
 
-                builder.item(addon.get("slot").getAsInt(), itemBuilder.build());
+                builder.item(addon.getSlot(), itemBuilder.build());
             }
         }
 

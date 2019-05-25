@@ -6,6 +6,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
+import world.bentobox.bentobox.web.catalog.CatalogEntry;
 import world.bentobox.githubapi4java.GitHub;
 import world.bentobox.githubapi4java.objects.GitHubGist;
 
@@ -23,8 +24,8 @@ public class WebManager {
 
     private @NonNull BentoBox plugin;
     private @Nullable GitHub gitHub;
-    private @NonNull List<JsonObject> addonsCatalog;
-    private @NonNull List<JsonObject> gamemodesCatalog;
+    private @NonNull List<CatalogEntry> addonsCatalog;
+    private @NonNull List<CatalogEntry> gamemodesCatalog;
 
     public WebManager(@NonNull BentoBox plugin) {
         this.plugin = plugin;
@@ -62,8 +63,8 @@ public class WebManager {
                         .replace("\n", "").replace("\\", "");
 
                 JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
-                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(gamemode.getAsJsonObject()));
-                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(addon.getAsJsonObject()));
+                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
+                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
             } catch (Exception e) {
                 plugin.logError("An error occurred when downloading or parsing data from GitHub...");
                 plugin.logStacktrace(e);
@@ -77,7 +78,7 @@ public class WebManager {
      * @since 1.5.0
      */
     @NonNull
-    public List<JsonObject> getAddonsCatalog() {
+    public List<CatalogEntry> getAddonsCatalog() {
         return addonsCatalog;
     }
 
@@ -87,7 +88,7 @@ public class WebManager {
      * @since 1.5.0
      */
     @NonNull
-    public List<JsonObject> getGamemodesCatalog() {
+    public List<CatalogEntry> getGamemodesCatalog() {
         return gamemodesCatalog;
     }
 
