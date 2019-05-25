@@ -306,7 +306,7 @@ commands:
       loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version]" 
-      game-worlds: "&2[name] &3([addon])"
+      game-world: "&2[name] &7(&3[addon]&7)"
       server: "&2Running &3[name] [version]&2."
     manage:
       description: "display the management panel"

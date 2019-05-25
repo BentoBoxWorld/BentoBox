@@ -207,7 +207,7 @@ commands:
       loaded-addons: "已加载组件"
       loaded-game-worlds: "已加载游戏世界："
       addon-syntax: "&2[name] &3[version]" 
-      game-worlds: "&2[name] &3([addon])"
+      game-worlds: "&2[name] &7(&3[addon]&7)"
   confirmation:
     confirm: "&c于 &b[seconds] &c秒内再次输入命令来确认"
     previous-request-cancelled: "&6上一个确认请求已取消"

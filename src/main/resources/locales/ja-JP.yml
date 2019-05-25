@@ -181,7 +181,7 @@ commands:
       loaded-addons: "読み込まれたアドオン"
       loaded-game-worlds: "ロードされたゲームの世界"
       addon-syntax: "&2[name] &3[version]" 
-      game-worlds: "&2[name]"
+      game-world: "&2[name] &7(&3[addon]&7)"
   confirmation:
     confirm: "&c[seconds]秒でコマンドをもう一度入力して確認します。"
     previous-request-cancelled: "&c前の確認要求が取り消されました"
