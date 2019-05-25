@@ -157,8 +157,8 @@ public class BlueprintClipboard {
      */
     private List<Vector> getVectors(BoundingBox b) {
         List<Vector> r = new ArrayList<>();
-        for (int x = (int)b.getMinX(); x <= b.getMaxX(); x++) {
-            for (int y = (int)b.getMinY(); y <= b.getMaxY(); y++) {
+        for (int y = (int)b.getMinY(); y <= b.getMaxY(); y++) {
+            for (int x = (int)b.getMinX(); x <= b.getMaxX(); x++) {
                 for (int z = (int)b.getMinZ(); z <= b.getMaxZ(); z++) {
                     r.add(new Vector(x,y,z));
                 }
