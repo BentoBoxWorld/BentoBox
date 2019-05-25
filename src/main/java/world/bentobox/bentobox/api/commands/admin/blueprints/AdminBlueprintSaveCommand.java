@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.api.commands.admin.blueprints;
 
+import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.blueprints.BlueprintClipboard;
@@ -38,6 +39,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
                 this.askConfirmation(user, user.getTranslation("commands.admin.blueprint.file-exists"), () -> {
                     parent.hideClipboard(user);
                     new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, args.get(0));
+                    getPlugin().getBlueprintsManager().addBlueprint((GameModeAddon)getAddon(), clipboard.getBlueprint());
                 });
                 return false;
             } else {

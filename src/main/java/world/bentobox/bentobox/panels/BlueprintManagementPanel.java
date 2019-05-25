@@ -65,14 +65,14 @@ public class BlueprintManagementPanel {
         SLOT_TO_ENV = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
         ENV_TO_BP = ImmutableMap.of(World.Environment.NORMAL, NORMAL_BP, World.Environment.NETHER, NETHER_BP, World.Environment.THE_END, END_BP);
     }
-    
+
     private String t(String t) {
-       return user.getTranslation("commands.admin.blueprint.management." + t); 
+        return user.getTranslation("commands.admin.blueprint.management." + t);
     }
-    
+
     private String t(String t, String... vars) {
-        return user.getTranslation("commands.admin.blueprint.management." + t, vars); 
-     }
+        return user.getTranslation("commands.admin.blueprint.management." + t, vars);
+    }
 
     public void openPanel() {
         // Show panel of blueprint bundles
@@ -147,7 +147,7 @@ public class BlueprintManagementPanel {
     private PanelItem getWorldInstrTile(Environment env) {
         return new PanelItemBuilder()
                 .name(t("world-name-syntax", TextVariables.NAME, Util.prettifyText(env.name())))
-                .description(t("world-instuctions"))
+                .description(t("world-instructions"))
                 .icon(Material.GRAY_STAINED_GLASS_PANE)
                 .build();
     }

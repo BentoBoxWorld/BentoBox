@@ -225,6 +225,7 @@ commands:
         parameters: "<blueprint name>"
         description: "save the copied clipboard"
       management:
+        back: "Back"
         instruction: "Click on blueprint then click here"
         normal: "Normal"
         nether: "Nether"
