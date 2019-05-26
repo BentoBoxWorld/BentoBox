@@ -142,6 +142,10 @@ commands:
       banned-players: "Banned players:"
       banned-format: "&c[name]"
       unowned: "&cUnowned"
+    switch:
+      op: "&cOps can always bypass protection. Deop to use command."
+      removing: "Removing protection bypass..."
+      adding: "Adding protection bypass..."
     switchto:
       parameters: "<player> <number>"
       description: "switch player's island to the numbered one in trash"
