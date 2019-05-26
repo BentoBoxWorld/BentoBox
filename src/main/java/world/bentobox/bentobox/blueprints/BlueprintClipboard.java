@@ -50,6 +50,11 @@ import java.util.stream.Collectors;
  */
 public class BlueprintClipboard {
 
+    /**
+     * These are materials that should be treated as attachables even though they officially are not
+     */
+    private static final List<Material> ATTACHABLES = Arrays.asList(Material.WATER, Material.LAVA,
+            Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS, Material.SUGAR_CANE);
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
@@ -125,9 +130,9 @@ public class BlueprintClipboard {
                     List<LivingEntity> ents = world.getLivingEntities().stream()
                             .filter(Objects::nonNull)
                             .filter(e -> !(e instanceof Player))
-                            .filter(e -> new Vector(e.getLocation().getBlockX(),
-                                    e.getLocation().getBlockY(),
-                                    e.getLocation().getBlockZ()).equals(v))
+                            .filter(e -> new Vector(Math.rint(e.getLocation().getX()),
+                                    Math.rint(e.getLocation().getY()),
+                                    Math.rint(e.getLocation().getZ())).equals(v))
                             .collect(Collectors.toList());
                     if (copyBlock(v.toLocation(world), origin, copyAir, ents)) {
                         count++;
@@ -240,7 +245,8 @@ public class BlueprintClipboard {
             b.setSignLines(Arrays.asList(sign.getLines()));
         }
         // Set block data
-        if (blockState.getData() instanceof Attachable) {
+        if (blockState.getData() instanceof Attachable
+                || ATTACHABLES.contains(blockState.getType())) {
             // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
             bpAttachable.put(pos, b);

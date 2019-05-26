@@ -79,7 +79,7 @@ public class BlueprintsManager {
         this.plugin = plugin;
         this.blueprintBundles = new HashMap<>();
         this.blueprints = new HashMap<>();
-        @SuppressWarnings("rawtypes")
+        @SuppressWarnings({ "rawtypes", "unchecked" })
         GsonBuilder builder = new GsonBuilder()
         .excludeFieldsWithoutExposeAnnotation()
         .enableComplexMapKeySerialization()

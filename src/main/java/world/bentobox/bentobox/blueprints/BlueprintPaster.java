@@ -198,7 +198,7 @@ public class BlueprintPaster {
                 }
             }
         }
-        block.setBlockData(bd);
+        block.setBlockData(bd, false);
         setBlockState(island, block, bpBlock);
         // pos1 and pos2 update
         updatePos(world, entry.getKey());
