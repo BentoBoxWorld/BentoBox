@@ -143,6 +143,7 @@ commands:
       banned-format: "&c[name]"
       unowned: "&cUnowned"
     switch:
+      description: "switch on/off protection bypass"
       op: "&cOps can always bypass protection. Deop to use command."
       removing: "Removing protection bypass..."
       adding: "Adding protection bypass..."
