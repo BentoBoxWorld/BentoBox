@@ -29,18 +29,19 @@ public class DescriptionSuccessPrompt extends MessagePrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
+        User user = User.getInstance((Player)context.getForWhom());
         @SuppressWarnings("unchecked")
         List<String> description = (List<String>)context.getSessionData("description");
         if (description != null) {
             bb.setDescription(description);
             BentoBox.getInstance().getBlueprintsManager().addBlueprintBundle(addon, bb);
             BentoBox.getInstance().getBlueprintsManager().saveBlueprintBundle(addon, bb);
-            new BlueprintManagementPanel(BentoBox.getInstance()).openBB(User.getInstance((Player)context.getForWhom()), addon, bb);
+            new BlueprintManagementPanel(BentoBox.getInstance(), user, addon).openBB(bb);
             // Set the name
             // if successfully
-            return "Success!";
+            return user.getTranslation("commands.admin.blueprint.management.description.success");
         } else {
-            return "Cancelling";
+            return user.getTranslation("commands.admin.blueprint.management.description.cancelling");
         }
     }
 

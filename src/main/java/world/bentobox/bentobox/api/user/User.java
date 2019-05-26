@@ -11,6 +11,7 @@ import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.permissions.PermissionAttachment;
 import org.bukkit.permissions.PermissionAttachmentInfo;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
@@ -234,6 +235,33 @@ public class User {
      */
     public boolean hasPermission(String permission) {
         return permission.isEmpty() || isOp() || sender.hasPermission(permission);
+    }
+
+    /**
+     * Removes permission from user
+     * @param name - Name of the permission to remove
+     * @return true if successful
+     * @since 1.5.0
+     */
+    public boolean removePerm(String name) {
+        for (PermissionAttachmentInfo p : player.getEffectivePermissions()) {
+            if (p.getPermission().equals(name)) {
+                player.removeAttachment(p.getAttachment());
+                break;
+            }
+        }
+        player.recalculatePermissions();
+        return !player.hasPermission(name);
+    }
+
+    /**
+     * Add a permission to user
+     * @param name - Name of the permission to attach
+     * @return The PermissionAttachment that was just created
+     * @since 1.5.0
+     */
+    public PermissionAttachment addPerm(String name) {
+        return player.addAttachment(plugin, name, true);
     }
 
     public boolean isOnline() {

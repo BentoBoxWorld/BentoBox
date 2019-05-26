@@ -3,9 +3,11 @@ package world.bentobox.bentobox.blueprints.conversation;
 import org.bukkit.conversations.ConversationContext;
 import org.bukkit.conversations.Prompt;
 import org.bukkit.conversations.StringPrompt;
+import org.bukkit.entity.Player;
 
 import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.user.User;
 
 public class NamePrompt extends StringPrompt {
 
@@ -17,11 +19,13 @@ public class NamePrompt extends StringPrompt {
 
     @Override
     public String getPromptText(ConversationContext context) {
-        return "Enter a name, or 'quit' to quit";
+        User user = User.getInstance((Player)context.getForWhom());
+        return user.getTranslation("commands.admin.blueprint.management.name.prompt");
     }
 
     @Override
     public Prompt acceptInput(ConversationContext context, String input) {
+        User user = User.getInstance((Player)context.getForWhom());
         // Convert color codes
         input = ChatColor.translateAlternateColorCodes('&', input);
         if (ChatColor.stripColor(input).length() > 32) {
@@ -36,7 +40,7 @@ public class NamePrompt extends StringPrompt {
             uniqueId.append("x");
         }
         if (max == 32) {
-            context.getForWhom().sendRawMessage("Please pick a more unique name");
+            context.getForWhom().sendRawMessage(user.getTranslation("commands.admin.blueprint.management.name.pick-a-unique-name"));
             return this;
         }
         context.setSessionData("uniqueId", uniqueId.toString());

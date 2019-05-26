@@ -1,8 +1,12 @@
 package world.bentobox.bentobox.panels;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.eclipse.jdt.annotation.NonNull;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -13,9 +17,6 @@ import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.versions.ServerCompatibility;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * @author Poslovitch
@@ -72,7 +73,7 @@ public class ManagementPanel {
                         .name(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.name"))
                         .description(user.getTranslation(LOCALE_REF + "views.gamemodes.blueprints.description"))
                         .clickHandler((panel, user1, clickType, slot) -> {
-                            new BlueprintManagementPanel(plugin).openPanel(user, gameModeAddon);
+                            new BlueprintManagementPanel(plugin, user, gameModeAddon).openPanel();
                             return true;
                         })
                         .build();

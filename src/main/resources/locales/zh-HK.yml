@@ -227,8 +227,8 @@ commands:
       description: "顯示信息"
       loaded-addons: "已加載組件"
       loaded-game-worlds: "已加載遊戲世界："
-      addon-syntax: "&2[name] &3[version]"
-      game-worlds: "&2[name] &3([addon])"
+      addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
+      game-worlds: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
   confirmation:
     confirm: "&c於 &b[seconds] &c秒內再次輸入命令來確認"
     previous-request-cancelled: "&6上一個確認請求已取消"

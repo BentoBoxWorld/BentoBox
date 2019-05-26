@@ -132,17 +132,21 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
                 String json = resultSet.getString("json");
                 if (json != null) {
                     try {
+                        plugin.logDebug("Trying to load " + dataObject.getCanonicalName());
                         T gsonResult = gson.fromJson(json, dataObject);
                         if (gsonResult != null) {
                             list.add(gsonResult);
                         }
                     } catch (JsonSyntaxException ex) {
                         plugin.logError(COULD_NOT_LOAD_OBJECT + ex.getMessage());
+                        ex.printStackTrace();
+                        plugin.logError(json);
                     }
                 }
             }
         } catch (Exception e) {
             plugin.logError(COULD_NOT_LOAD_OBJECTS + e.getMessage());
+            e.printStackTrace();
         }
         return list;
     }

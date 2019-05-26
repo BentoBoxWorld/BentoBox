@@ -142,6 +142,10 @@ commands:
       banned-players: "Banned players:"
       banned-format: "&c[name]"
       unowned: "&cUnowned"
+    switch:
+      op: "&cOps can always bypass protection. Deop to use command."
+      removing: "Removing protection bypass..."
+      adding: "Adding protection bypass..."
     switchto:
       parameters: "<player> <number>"
       description: "switch player's island to the numbered one in trash"
@@ -223,7 +227,46 @@ commands:
         description: "set 2nd corner of cuboid clipboard"
       save:
         parameters: "<blueprint name>"
-        description: "save the copied clipboard"      
+        description: "save the copied clipboard"
+      management:
+        back: "Back"
+        instruction: "Click on blueprint then click here"
+        normal: "Normal"
+        nether: "Nether"
+        end: "The End"
+        title: "Blueprint Bundle Manager"
+        edit: "Click to edit"
+        edit-description: "Click to edit description"
+        world-name-syntax: "[name] world"
+        world-instructions: |
+          Place blueprint
+          to right to set
+        trash: "Trash"
+        trash-instructions: "Right click here to delete"
+        permission: "Permission"
+        perm-required: "Required"
+        perm-not-required: "Not Required"
+        perm-format: "&e"
+        remove: "Right click to remove"
+        blueprint-instruction: "Click to select, then add to bundle"
+        select-first: "Select Blueprint first"
+        new-bundle: "New Bundle"
+        new-bundle-instructions: "Click to make a new bundle"
+        name:
+          quit: "quit"
+          prompt: "Enter a name, or 'quit' to quit"
+          too-long: "&cToo long"
+          pick-a-unique-name: "Please pick a more unique name"
+          success: "Success!"
+          conversation-prefix: ">"
+        description:
+          quit: "quit"
+          instructions: |
+            Enter a multi line description for [name]
+            and 'quit' on a line by itself to finish.
+          default-color: ""
+          success: "Success!"
+          cancelling: "Cancelling"
     resetflags:
       description: "Reset all islands to default flag settings in config.yml"
     world:
@@ -266,8 +309,8 @@ commands:
       description: "display BentoBox and addons versions"
       loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
-      addon-syntax: "&2[name] &3[version]" 
-      game-worlds: "&2[name] &3([addon])"
+      addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
+      game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Running &3[name] [version]&2."
     manage:
       description: "display the management panel"
