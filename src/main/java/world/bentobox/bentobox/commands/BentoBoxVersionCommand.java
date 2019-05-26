@@ -83,7 +83,7 @@ public class BentoBoxVersionCommand extends CompositeCommand {
         user.sendMessage("commands.bentobox.version.loaded-addons");
         getPlugin().getAddonsManager().getAddons().stream().sorted(Comparator.comparing(o -> o.getDescription().getName().toLowerCase()))
         .forEach(a -> user.sendMessage("commands.bentobox.version.addon-syntax", TextVariables.NAME, a.getDescription().getName(),
-                TextVariables.VERSION, a.getDescription().getVersion()));
+                TextVariables.VERSION, a.getDescription().getVersion(), "[state]", a.getState().toString()));
 
         return true;
     }

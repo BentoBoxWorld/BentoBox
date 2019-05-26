@@ -141,7 +141,7 @@ commands:
       description: "affiche la version de BentoBox et des addons"
       loaded-addons: "Addons :"
       loaded-game-worlds: "Mondes de jeu :"
-      addon-syntax: "&2[name] &3[version]"
+      addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Serveur : &3[name] [version]&2."
     manage:

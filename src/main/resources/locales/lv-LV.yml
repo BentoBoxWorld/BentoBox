@@ -261,7 +261,7 @@ commands:
       description: "parādīt BentoBox un papildinājumu versijas"
       loaded-addons: "Ielādētie Papildinājumi:"
       loaded-game-worlds: "Ielādētās spēles pasaules:"
-      addon-syntax: "&2[name] &3[version]" 
+      addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Darbojas uz &3[name] [version]&2."
     manage:

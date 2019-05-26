@@ -180,7 +180,7 @@ commands:
       description: "表示情報"
       loaded-addons: "読み込まれたアドオン"
       loaded-game-worlds: "ロードされたゲームの世界"
-      addon-syntax: "&2[name] &3[version]" 
+      addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
   confirmation:
     confirm: "&c[seconds]秒でコマンドをもう一度入力して確認します。"
