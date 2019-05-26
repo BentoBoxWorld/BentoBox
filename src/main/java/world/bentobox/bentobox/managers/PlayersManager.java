@@ -265,7 +265,8 @@ public class PlayersManager {
      * @param playerUUID - the player's UUID
      * @return String - playerName, empty string if UUID is null
      */
-    public String getName(UUID playerUUID) {
+    @NonNull
+    public String getName(@Nullable UUID playerUUID) {
         if (playerUUID == null) {
             return "";
         }
