@@ -108,9 +108,7 @@ public class AddonsManager {
         Bukkit.getPluginManager().callEvent(new AddonEvent().builder().addon(addon).reason(AddonEvent.Reason.LOAD).build());
 
         // Add it to the list of addons
-        if (addons.contains(addon)) {
-            addons.remove(addon);
-        }
+        addons.remove(addon);
         addons.add(addon);
 
         // Add to the list of loaders

@@ -741,7 +741,7 @@ public class IslandsManager {
         quarantineCache.clear();
         List<Island> toQuarantine = new ArrayList<>();
         // Attempt to load islands
-        handler.loadObjects().stream().forEach(island -> {
+        handler.loadObjects().forEach(island -> {
             if (island.isDeleted()) {
                 // These will be deleted later
                 deletedIslands.add(island.getUniqueId());
@@ -927,7 +927,7 @@ public class IslandsManager {
 
     public void shutdown(){
         // Remove all coop associations
-        islandCache.getIslands().stream().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
+        islandCache.getIslands().forEach(i -> i.getMembers().values().removeIf(p -> p == RanksManager.COOP_RANK));
         saveAll();
         islandCache.clear();
         handler.close();
@@ -1004,7 +1004,7 @@ public class IslandsManager {
      * @param uniqueId - UUID of player
      */
     public void clearRank(int rank, UUID uniqueId) {
-        islandCache.getIslands().stream().forEach(i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
+        islandCache.getIslands().forEach(i -> i.getMembers().entrySet().removeIf(e -> e.getKey().equals(uniqueId) && e.getValue() == rank));
     }
 
     /**

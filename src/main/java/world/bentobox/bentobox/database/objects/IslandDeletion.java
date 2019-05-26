@@ -81,13 +81,8 @@ public class IslandDeletion implements DataObject {
         }
         IslandDeletion other = (IslandDeletion) obj;
         if (uniqueId == null) {
-            if (other.uniqueId != null) {
-                return false;
-            }
-        } else if (!uniqueId.equals(other.uniqueId)) {
-            return false;
-        }
-        return true;
+            return other.uniqueId == null;
+        } else return uniqueId.equals(other.uniqueId);
     }
 
     /**

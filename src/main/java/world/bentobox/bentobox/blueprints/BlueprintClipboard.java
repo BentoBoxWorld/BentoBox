@@ -96,6 +96,9 @@ public class BlueprintClipboard {
 
         // World
         World world = pos1.getWorld();
+        if (world == null) {
+            return false;
+        }
         // Clear the clipboard
         blueprint = new Blueprint();
 
@@ -196,18 +199,18 @@ public class BlueprintClipboard {
             if (entity instanceof ChestedHorse) {
                 bpe.setChest(((ChestedHorse)entity).isCarryingChest());
             }
-            if (entity instanceof Ageable) {
-                // Only set if child. Most animals are adults
-                if (!((Ageable)entity).isAdult()) bpe.setAdult(false);
+            // Only set if child. Most animals are adults
+            if (entity instanceof Ageable && !((Ageable)entity).isAdult()) {
+                bpe.setAdult(false);
             }
             if (entity instanceof AbstractHorse) {
                 AbstractHorse horse = (AbstractHorse)entity;
                 bpe.setDomestication(horse.getDomestication());
                 bpe.setInventory(new HashMap<>());
-                for (int index = 0; index < horse.getInventory().getSize(); index++) {
-                    ItemStack i = horse.getInventory().getItem(index);
-                    if (i != null) {
-                        bpe.getInventory().put(index, i);
+                for (int i = 0; i < horse.getInventory().getSize(); i++) {
+                    ItemStack item = horse.getInventory().getItem(i);
+                    if (item != null) {
+                        bpe.getInventory().put(i, item);
                     }
                 }
             }
@@ -259,10 +262,10 @@ public class BlueprintClipboard {
         if (blockState instanceof InventoryHolder) {
             b.setInventory(new HashMap<>());
             InventoryHolder ih = (InventoryHolder)blockState;
-            for (int index = 0; index < ih.getInventory().getSize(); index++) {
-                ItemStack i = ih.getInventory().getItem(index);
-                if (i != null) {
-                    b.getInventory().put(index, i);
+            for (int i = 0; index < ih.getInventory().getSize(); i++) {
+                ItemStack item = ih.getInventory().getItem(i);
+                if (item != null) {
+                    b.getInventory().put(i, item);
                 }
             }
         }

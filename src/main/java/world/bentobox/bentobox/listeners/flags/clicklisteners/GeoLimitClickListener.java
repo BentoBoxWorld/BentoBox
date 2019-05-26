@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.listeners.flags.clicklisteners;
 
 import java.util.Arrays;

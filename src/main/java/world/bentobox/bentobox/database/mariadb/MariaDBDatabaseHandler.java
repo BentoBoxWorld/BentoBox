@@ -121,12 +121,11 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
 
     private List<T> loadIt(Statement preparedStatement) {
         List<T> list = new ArrayList<>();
-        StringBuilder sb = new StringBuilder();
-        sb.append("SELECT `json` FROM `");
-        sb.append(dataObject.getCanonicalName());
-        sb.append("`");
 
-        try (ResultSet resultSet = preparedStatement.executeQuery(sb.toString())) {
+        String sb = "SELECT `json` FROM `" +
+                dataObject.getCanonicalName() +
+                "`";
+        try (ResultSet resultSet = preparedStatement.executeQuery(sb)) {
             // Load all the results
             Gson gson = getGson();
             while (resultSet.next()) {

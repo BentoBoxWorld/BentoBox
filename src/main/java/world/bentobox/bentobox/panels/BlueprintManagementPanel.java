@@ -263,10 +263,6 @@ public class BlueprintManagementPanel {
                 .build();
     }
 
-    public boolean trashBundle(Panel panel, User user, ClickType clickType, int slot ) {
-        return true;
-    }
-
     public void askForName(Conversable whom, GameModeAddon addon) {
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)

@@ -85,13 +85,9 @@ public class BlueprintsManager {
         .enableComplexMapKeySerialization()
         .setPrettyPrinting()
         // This enables gson to deserialize enum maps
-        .registerTypeAdapter(EnumMap.class, new InstanceCreator<EnumMap>() {
-            @SuppressWarnings("unchecked")
-            @Override
-            public EnumMap createInstance(Type type) {
-                Type[] types = (((ParameterizedType) type).getActualTypeArguments());
-                return new EnumMap((Class<?>) types[0]);
-            }
+        .registerTypeAdapter(EnumMap.class, (InstanceCreator<EnumMap>) type -> {
+            Type[] types = (((ParameterizedType) type).getActualTypeArguments());
+            return new EnumMap((Class<?>) types[0]);
         });
         // Disable <>'s escaping etc.
         builder.disableHtmlEscaping();

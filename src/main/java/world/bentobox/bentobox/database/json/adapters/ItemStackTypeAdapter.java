@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.database.json.adapters;
 
 import java.io.IOException;

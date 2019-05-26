@@ -21,6 +21,7 @@ import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
  */
 public class DescriptionPrompt extends StringPrompt {
 
+    private static final String DESCRIPTION = "description";
     private GameModeAddon addon;
     private BlueprintBundle bb;
 
@@ -33,9 +34,9 @@ public class DescriptionPrompt extends StringPrompt {
     @Override
     public String getPromptText(ConversationContext context) {
         User user = User.getInstance((Player)context.getForWhom());
-        if (context.getSessionData("description") != null) {
+        if (context.getSessionData(DESCRIPTION) != null) {
             StringBuilder sb = new StringBuilder();
-            for (String line : ((List<String>) context.getSessionData("description"))) {
+            for (String line : ((List<String>) context.getSessionData(DESCRIPTION))) {
                 sb.append(user.getTranslation("commands.admin.blueprint.management.description.default-color"));
                 sb.append(line);
                 sb.append(System.getProperty("line.separator"));
@@ -53,11 +54,11 @@ public class DescriptionPrompt extends StringPrompt {
             return new DescriptionSuccessPrompt(addon, bb);
         }
         List<String> desc = new ArrayList<>();
-        if (context.getSessionData("description") != null) {
-            desc = ((List<String>) context.getSessionData("description"));
+        if (context.getSessionData(DESCRIPTION) != null) {
+            desc = ((List<String>) context.getSessionData(DESCRIPTION));
         }
         desc.add(ChatColor.translateAlternateColorCodes('&', input));
-        context.setSessionData("description", desc);
+        context.setSessionData(DESCRIPTION, desc);
         return this;
     }
 }

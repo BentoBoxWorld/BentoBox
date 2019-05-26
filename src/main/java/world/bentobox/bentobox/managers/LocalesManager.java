@@ -36,7 +36,7 @@ public class LocalesManager {
 
     public LocalesManager(BentoBox plugin) {
         this.plugin = plugin;
-        copyLocalesFromPluginJar(BENTOBOX);
+        copyLocalesFromPluginJar();
         loadLocalesFromFile(BENTOBOX); // Default
     }
 
@@ -126,11 +126,10 @@ public class LocalesManager {
     /**
      * Copies all the locale files from the plugin jar to the filesystem.
      * Only done if the locale folder does not already exist.
-     * @param folderName - the name of the destination folder
      */
-    private void copyLocalesFromPluginJar(String folderName) {
+    private void copyLocalesFromPluginJar() {
         // Run through the files and store the locales
-        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + folderName);
+        File localeDir = new File(plugin.getDataFolder(), LOCALE_FOLDER + File.separator + LocalesManager.BENTOBOX);
         // If the folder does not exist, then make it and fill with the locale files from the jar
         // If it does exist, then new files will NOT be written!
         if (!localeDir.exists()) {
@@ -232,7 +231,7 @@ public class LocalesManager {
      */
     public void reloadLanguages() {
         languages.clear();
-        copyLocalesFromPluginJar(BENTOBOX);
+        copyLocalesFromPluginJar();
         loadLocalesFromFile(BENTOBOX);
         plugin.getAddonsManager().getAddons().forEach(addon -> {
             copyLocalesFromAddonJar(addon);
