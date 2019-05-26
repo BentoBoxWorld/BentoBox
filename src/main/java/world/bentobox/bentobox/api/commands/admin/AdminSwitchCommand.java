@@ -1,19 +1,18 @@
 package world.bentobox.bentobox.api.commands.admin;
 
-import java.util.List;
-
-import org.bukkit.entity.Player;
-import org.bukkit.permissions.PermissionAttachment;
-import org.bukkit.permissions.PermissionAttachmentInfo;
-
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
 
+import java.util.List;
+
+/**
+ * @since 1.5.0
+ * @author tastybento
+ */
 public class AdminSwitchCommand extends ConfirmableCommand {
 
     private final String bypassPerm;
-
 
     /**
      * Switches bypass on and off
