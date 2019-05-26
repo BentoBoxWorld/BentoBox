@@ -216,6 +216,9 @@ public class BlueprintsManager {
             String fileName = file.getName().substring(0, file.getName().length() - BLUEPRINT_SUFFIX.length());
             try {
                 Blueprint bp = new BlueprintClipboardManager(plugin, bpf).loadBlueprint(fileName);
+                if (bp.getName() == null) {
+                    bp.setName(fileName);
+                }
                 blueprints.get(addon).put(bp.getName(), bp);
                 plugin.log("Loaded blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
             } catch (Exception e) {

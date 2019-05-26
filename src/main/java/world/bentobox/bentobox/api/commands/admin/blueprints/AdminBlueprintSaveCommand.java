@@ -9,6 +9,7 @@ import world.bentobox.bentobox.managers.BlueprintsManager;
 
 import java.io.File;
 import java.util.List;
+import java.util.Locale;
 
 public class AdminBlueprintSaveCommand extends ConfirmableCommand {
 
@@ -31,26 +32,29 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
 
         AdminBlueprintCommand parent = (AdminBlueprintCommand) getParent();
         BlueprintClipboard clipboard = parent.getClipboards().computeIfAbsent(user.getUniqueId(), v -> new BlueprintClipboard());
-
+        String fileName = args.get(0).toLowerCase(Locale.ENGLISH);
         if (clipboard.isFull()) {
             // Check if file exists
-            File newFile = new File(parent.getBlueprintsFolder(), args.get(0) + BlueprintsManager.BLUEPRINT_SUFFIX);
+            File newFile = new File(parent.getBlueprintsFolder(), fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {
                 this.askConfirmation(user, user.getTranslation("commands.admin.blueprint.file-exists"), () -> {
-                    hideAndSave(user, parent, clipboard, args.get(0));
+                    hideAndSave(user, parent, clipboard, fileName);
                 });
                 return false;
             }
-            return hideAndSave(user, parent, clipboard, args.get(0));
+            return hideAndSave(user, parent, clipboard, fileName);
         } else {
             user.sendMessage("commands.admin.blueprint.copy-first");
             return false;
         }
     }
 
-    private boolean hideAndSave(User user, AdminBlueprintCommand parent, BlueprintClipboard clipboard, String string) {
+    private boolean hideAndSave(User user, AdminBlueprintCommand parent, BlueprintClipboard clipboard, String name) {
         parent.hideClipboard(user);
-        getPlugin().getBlueprintsManager().addBlueprint((GameModeAddon)getAddon(), clipboard.getBlueprint());
-        return new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, string);
+        boolean result = new BlueprintClipboardManager(getPlugin(), parent.getBlueprintsFolder(), clipboard).save(user, name);
+        if (result) {
+            getPlugin().getBlueprintsManager().addBlueprint((GameModeAddon)getAddon(), clipboard.getBlueprint());
+        }
+        return result;
     }
 }
