@@ -50,11 +50,6 @@ import java.util.stream.Collectors;
  */
 public class BlueprintClipboard {
 
-    /**
-     * These are materials that should be treated as attachables even though they officially are not
-     */
-    private static final List<Material> ATTACHABLES = Arrays.asList(Material.WATER, Material.LAVA,
-            Material.WHEAT, Material.POTATOES, Material.CARROTS, Material.BEETROOTS, Material.SUGAR_CANE);
     private @Nullable Blueprint blueprint;
     private @Nullable Location pos1;
     private @Nullable Location pos2;
@@ -245,8 +240,7 @@ public class BlueprintClipboard {
             b.setSignLines(Arrays.asList(sign.getLines()));
         }
         // Set block data
-        if (blockState.getData() instanceof Attachable
-                || ATTACHABLES.contains(blockState.getType())) {
+        if (blockState.getData() instanceof Attachable) {
             // Placeholder for attachment
             bpBlocks.put(pos, new BlueprintBlock("minecraft:air"));
             bpAttachable.put(pos, b);
