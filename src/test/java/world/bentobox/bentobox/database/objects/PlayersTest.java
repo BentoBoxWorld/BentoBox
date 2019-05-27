@@ -67,6 +67,7 @@ public class PlayersTest {
         Location l = mock(Location.class);
         World w = mock(World.class);
         when(w.getName()).thenReturn("world");
+        when(w.getEnvironment()).thenReturn(World.Environment.NORMAL);
         when(l.getWorld()).thenReturn(w);
         p.setHomeLocation(l, 5);
         assertEquals(l, p.getHomeLocation(w, 5));

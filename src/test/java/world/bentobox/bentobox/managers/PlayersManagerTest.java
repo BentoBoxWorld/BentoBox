@@ -80,10 +80,13 @@ public class PlayersManagerTest {
         IslandWorldManager iwm = mock(IslandWorldManager.class);
         world = mock(World.class);
         when(world.getName()).thenReturn("world");
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
         nether = mock(World.class);
         when(nether.getName()).thenReturn("world_nether");
+        when(nether.getEnvironment()).thenReturn(World.Environment.NETHER);
         end = mock(World.class);
         when(end.getName()).thenReturn("world_the_end");
+        when(end.getEnvironment()).thenReturn(World.Environment.THE_END);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(iwm.inWorld(any(Location.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);

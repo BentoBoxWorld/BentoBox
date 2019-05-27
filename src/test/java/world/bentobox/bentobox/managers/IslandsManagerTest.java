@@ -3,6 +3,7 @@ package world.bentobox.bentobox.managers;
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.ImmutableSet.Builder;
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -149,6 +150,8 @@ public class IslandsManagerTest {
         when(location.getWorld()).thenReturn(world);
         when(location.getBlock()).thenReturn(space1);
         when(location.getWorld()).thenReturn(world);
+        Chunk chunk = mock(Chunk.class);
+        when(location.getChunk()).thenReturn(chunk);
         when(space1.getRelative(BlockFace.DOWN)).thenReturn(ground);
         when(space1.getRelative(BlockFace.UP)).thenReturn(space2);
         // A safe spot
