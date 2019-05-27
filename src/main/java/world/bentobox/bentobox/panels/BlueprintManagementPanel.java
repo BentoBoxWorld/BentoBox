@@ -40,7 +40,6 @@ import world.bentobox.bentobox.util.Util;
  */
 public class BlueprintManagementPanel {
 
-    private static final String INFO = "Click on blueprint then click here";
     private final BentoBox plugin;
     private final Blueprint NORMAL_BP;
     private final Blueprint NETHER_BP;
@@ -58,9 +57,9 @@ public class BlueprintManagementPanel {
         this.plugin = plugin;
         this.user = user;
         this.addon = addon;
-        NORMAL_BP = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(INFO);
-        NETHER_BP = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(INFO);
-        END_BP = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(INFO);
+        NORMAL_BP = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t("instruction"));
+        NETHER_BP = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t("instruction"));
+        END_BP = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t("instruction"));
         SLOT_TO_ENV = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
         ENV_TO_BP = ImmutableMap.of(World.Environment.NORMAL, NORMAL_BP, World.Environment.NETHER, NETHER_BP, World.Environment.THE_END, END_BP);
     }
