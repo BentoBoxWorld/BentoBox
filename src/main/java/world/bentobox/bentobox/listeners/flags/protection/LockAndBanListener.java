@@ -26,9 +26,22 @@ import world.bentobox.bentobox.lists.Flags;
  */
 public class LockAndBanListener extends FlagListener {
 
+    /**
+     * Result of checking the island for locked state or player bans
+     *
+     */
     private enum CheckResult {
+        /**
+         * player is banned from island
+         */
         BANNED,
+        /**
+         * Island is locked
+         */
         LOCKED,
+        /**
+         * Island is open for teleporting
+         */
         OPEN
     }
 

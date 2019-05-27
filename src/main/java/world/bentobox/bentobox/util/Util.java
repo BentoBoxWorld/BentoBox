@@ -201,9 +201,18 @@ public class Util {
      * @return true if the same
      */
     public static boolean sameWorld(World world, World world2) {
-        String worldName = world.getName().replaceAll(NETHER, "").replaceAll(THE_END, "");
-        String world2Name = world2.getName().replaceAll(NETHER, "").replaceAll(THE_END, "");
-        return worldName.equalsIgnoreCase(world2Name);
+        return stripName(world).equals(stripName(world2));
+    }
+
+    private static String stripName(World world) {
+        switch (world.getEnvironment()) {
+        case NETHER:
+            return world.getName().substring(0, world.getName().length() - NETHER.length());
+        case THE_END:
+            return world.getName().substring(0, world.getName().length() - THE_END.length());
+        default:
+            return world.getName();
+        }
     }
 
     /**

@@ -4,6 +4,7 @@
 package world.bentobox.bentobox.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
@@ -170,7 +171,34 @@ public class UtilTest {
      */
     @Test
     public void testSameWorld() {
-        //fail("Not yet implemented"); // TODO
+        World world = mock(World.class);
+        World world2 = mock(World.class);
+        World world3 = mock(World.class);
+        World world4 = mock(World.class);
+        when(world.getName()).thenReturn("world");
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
+        when(world2.getName()).thenReturn("world_nether");
+        when(world2.getEnvironment()).thenReturn(World.Environment.NETHER);
+        when(world3.getName()).thenReturn("world_the_end");
+        when(world3.getEnvironment()).thenReturn(World.Environment.THE_END);
+        when(world4.getName()).thenReturn("hfhhfhf_nether");
+        when(world4.getEnvironment()).thenReturn(World.Environment.NETHER);
+
+        assertTrue(Util.sameWorld(world, world));
+        assertTrue(Util.sameWorld(world2, world2));
+        assertTrue(Util.sameWorld(world3, world3));
+        assertTrue(Util.sameWorld(world, world2));
+        assertTrue(Util.sameWorld(world, world3));
+        assertTrue(Util.sameWorld(world2, world));
+        assertTrue(Util.sameWorld(world2, world3));
+        assertTrue(Util.sameWorld(world3, world2));
+        assertTrue(Util.sameWorld(world3, world));
+        assertFalse(Util.sameWorld(world4, world));
+        assertFalse(Util.sameWorld(world4, world2));
+        assertFalse(Util.sameWorld(world4, world3));
+        assertFalse(Util.sameWorld(world, world4));
+        assertFalse(Util.sameWorld(world2, world4));
+        assertFalse(Util.sameWorld(world3, world4));
     }
 
     /**

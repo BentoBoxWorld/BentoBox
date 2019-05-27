@@ -630,6 +630,9 @@ public class IslandsManager {
             .build();
             return;
         }
+        if (!home.getChunk().isLoaded()) {
+            home.getChunk().load();
+        }
         player.teleport(home);
         if (number == 1) {
             user.sendMessage("commands.island.go.teleport");
