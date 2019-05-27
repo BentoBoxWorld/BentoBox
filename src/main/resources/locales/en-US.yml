@@ -250,7 +250,10 @@ commands:
         perm-not-required: "Not Required"
         perm-format: "&e"
         remove: "Right click to remove"
-        blueprint-instruction: "Click to select, then add to bundle"
+        blueprint-instruction: |
+          Click to select,
+          then add to bundle.
+          Right-click to rename.
         select-first: "Select Blueprint first"
         new-bundle: "New Bundle"
         new-bundle-instructions: "Click to make a new bundle"

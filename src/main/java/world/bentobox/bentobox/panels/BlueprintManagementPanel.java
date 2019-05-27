@@ -13,7 +13,6 @@ import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.conversations.Conversable;
 import org.bukkit.conversations.ConversationFactory;
-import org.bukkit.enchantments.Enchantment;
 import org.bukkit.event.inventory.ClickType;
 import org.eclipse.jdt.annotation.NonNull;
 
@@ -72,6 +71,9 @@ public class BlueprintManagementPanel {
         return user.getTranslation("commands.admin.blueprint.management." + t, vars);
     }
 
+    /**
+     * Opens the management panel
+     */
     public void openPanel() {
         // Show panel of blueprint bundles
         // Clicking on a bundle opens up the bundle edit panel
@@ -102,25 +104,19 @@ public class BlueprintManagementPanel {
         pb.build();
     }
 
+    /**
+     * Open the Blueprint Bundle panel
+     * @param bb - blueprint bundle
+     */
     public void openBB(BlueprintBundle bb) {
         int index = 18;
         for (Blueprint bp : plugin.getBlueprintsManager().getBlueprints(addon).values()) {
             blueprints.put(index++, bp);
         }
         // Create the panel
-        PanelBuilder pb = new PanelBuilder().name(bb.getDisplayName()).user(user).size(45);
+        PanelBuilder pb = new PanelBuilder().name(bb.getDisplayName()).user(user).size(45).listener(new IconChanger(plugin, addon, this, bb));
         // Display bundle icon
-        pb.item(0, new PanelItemBuilder()
-                .name(t("edit-description"))
-                .description(bb.getDescription())
-                .icon(bb.getIcon())
-                .clickHandler((panel, u, clickType, slot) -> {
-                    u.closeInventory();
-                    // Description conversation
-                    askForDescription(u.getPlayer(), addon, bb);
-                    return true;
-                })
-                .build());
+        pb.item(0, getBundleIcon(bb));
         SLOT_TO_ENV.forEach((k,v) -> {
             String bpName = bb.getBlueprint(v);
             pb.item(k-1, getWorldInstrTile(v));
@@ -146,6 +142,25 @@ public class BlueprintManagementPanel {
 
         pb.build();
 
+    }
+
+    /**
+     * Gets the panel item for Blueprint Bundle
+     * @param bb - blueprint bundle
+     * @return - panel item
+     */
+    protected PanelItem getBundleIcon(BlueprintBundle bb) {
+        return new PanelItemBuilder()
+                .name(t("edit-description"))
+                .description(bb.getDescription())
+                .icon(bb.getIcon())
+                .clickHandler((panel, u, clickType, slot) -> {
+                    u.closeInventory();
+                    // Description conversation
+                    askForDescription(u.getPlayer(), addon, bb);
+                    return true;
+                })
+                .build();
     }
 
     private PanelItem getWorldInstrTile(Environment env) {
@@ -187,7 +202,15 @@ public class BlueprintManagementPanel {
                 }).build();
     }
 
-    private PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
+    /**
+     * Gets a panel item that fully represents a blueprint in a bundle for an addon
+     * @param addon - the GameMode Addon
+     * @param pos - the position where this icon will be placed - the description changes
+     * @param bb - the blueprint bundle this blueprint is in, if any
+     * @param blueprint - blueprint itself
+     * @return a panel item
+     */
+    protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
         if ((!blueprint.equals(END_BP) && !blueprint.equals(NORMAL_BP) && !blueprint.equals(NETHER_BP))) {
@@ -201,18 +224,23 @@ public class BlueprintManagementPanel {
                 .name(blueprint.getDisplayName() == null ? blueprint.getName() : blueprint.getDisplayName())
                 .description(desc)
                 .icon(blueprint.getIcon() == null ? Material.PAPER : blueprint.getIcon())
+                .glow(selected != null && pos == selected.getKey())
                 .clickHandler((panel, u, clickType, slot) -> {
+                    // Renaming blueprint
+                    if (clickType.equals(ClickType.RIGHT)) {
+                        u.closeInventory();
+                        this.askForBlueprintName(u.getPlayer(), addon, blueprint, bb);
+                        return true;
+                    }
                     // Handle the world squares
                     if (slot > MIN_WORLD_SLOT && slot < MAX_WORLD_SLOT) {
                         if (clickType.equals(ClickType.RIGHT)) {
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
-                            PanelItem item = getBlueprintItem(addon, slot, bb, ENV_TO_BP.get(SLOT_TO_ENV.get(slot)));
                             // Remove the item and replace with the blank
                             bb.clearBlueprint(SLOT_TO_ENV.get(slot));
-                            panel.getItems().put(slot, item);
-                            panel.getInventory().setItem(slot, item.getItem());
                             // Save
                             plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                            openBB(bb);
                         } else if (selected == null) {
                             u.sendMessage("commands.admin.blueprint.management.select-first");
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_ANVIL_HIT, 1F, 1F);
@@ -220,35 +248,26 @@ public class BlueprintManagementPanel {
                             // Add
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
                             Blueprint bp = selected.getValue();
-                            PanelItem item = getBlueprintItem(addon, slot, bb, bp);
                             // make slot the chosen one
                             bb.setBlueprint(SLOT_TO_ENV.get(slot), bp);
-                            panel.getItems().put(slot, item);
-                            panel.getInventory().setItem(slot, item.getItem());
                             // Save
                             plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                            openBB(bb);
                         }
                     } else {
                         // Select blueprint
                         if (blueprints.containsKey(slot)) {
-                            if (selected == null) {
-                                // Nothing selected
-                                u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 2F);
-                                selected = new AbstractMap.SimpleEntry<>(slot, blueprints.get(slot));
-                                panel.getInventory().getItem(slot).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
-                            } else if (slot == selected.getKey()){
-                                // Clicked on same item
+                            if (selected != null && slot == selected.getKey()){
+                                // Clicked on same item - deselect
+                                selected = null;
                             } else {
-                                // Another item already selected
-                                panel.getInventory().getItem(selected.getKey()).removeEnchantment(Enchantment.ARROW_DAMAGE);
-                                u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 2F);
+                                // Set selected
                                 selected = new AbstractMap.SimpleEntry<>(slot, blueprints.get(slot));
-                                panel.getInventory().getItem(slot).addUnsafeEnchantment(Enchantment.ARROW_DAMAGE, 1);
                             }
+                            u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 2F);
+                            openBB(bb);
                         }
-
                     }
-
                     return true;
                 })
                 .build();
@@ -278,6 +297,17 @@ public class BlueprintManagementPanel {
         .buildConversation(whom).begin();
     }
 
+    public void askForBlueprintName(Conversable whom, GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
+        new ConversationFactory(BentoBox.getInstance())
+        .withModality(true)
+        .withLocalEcho(false)
+        .withPrefix(new NameConversationPrefix())
+        .withTimeout(90)
+        .withFirstPrompt(new NamePrompt(addon, bp, bb))
+        .withEscapeSequence(t("name.quit"))
+        .buildConversation(whom).begin();
+    }
+
     public void askForDescription(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)
@@ -286,6 +316,13 @@ public class BlueprintManagementPanel {
         .withTimeout(90)
         .withFirstPrompt(new DescriptionPrompt(addon, bb))
         .buildConversation(whom).begin();
+    }
+
+    /**
+     * @return the selected
+     */
+    public Entry<Integer, Blueprint> getSelected() {
+        return selected;
     }
 
 

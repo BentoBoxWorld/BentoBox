@@ -79,7 +79,7 @@ public class Blueprint {
     }
     /**
      * @param icon the icon to set
-     * @return
+     * @return blueprint
      */
     public Blueprint setIcon(Material icon) {
         this.icon = icon;

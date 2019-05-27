@@ -8,15 +8,23 @@ import org.bukkit.entity.Player;
 import net.md_5.bungee.api.ChatColor;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.Blueprint;
 import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 
 public class NamePrompt extends StringPrompt {
 
     private GameModeAddon addon;
     private BlueprintBundle bb;
+    private Blueprint bp;
 
     public NamePrompt(GameModeAddon addon, BlueprintBundle bb) {
         this.addon = addon;
+        this.bb = bb;
+    }
+
+    public NamePrompt(GameModeAddon addon, Blueprint bp, BlueprintBundle bb) {
+        this.addon = addon;
+        this.bp = bp;
         this.bb = bb;
     }
 
@@ -48,7 +56,7 @@ public class NamePrompt extends StringPrompt {
         }
         context.setSessionData("uniqueId", uniqueId.toString());
         context.setSessionData("name", input);
-        return new NameSuccessPrompt(addon, bb);
+        return new NameSuccessPrompt(addon, bb, bp);
     }
 
 }

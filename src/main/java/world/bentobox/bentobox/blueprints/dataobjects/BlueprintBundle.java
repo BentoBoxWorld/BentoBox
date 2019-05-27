@@ -116,8 +116,8 @@ public class BlueprintBundle implements DataObject {
     }
 
     /**
-     * Adds a blueprint to the blueprint bundle. It will replace any blueprint that already exists of the same {@link World.Environment} type.
-     * @param env - the {@link World.Environment}
+     * Adds a blueprint to the blueprint bundle. It will replace any blueprint that already exists of the same Environment type.
+     * @param env - the Environment
      * @param bp - blueprint
      */
     public void setBlueprint(World.Environment env, Blueprint bp) {
@@ -134,7 +134,7 @@ public class BlueprintBundle implements DataObject {
 
     /**
      * Get the blueprint for the environment type
-     * @param env - {@link World.Environment} type
+     * @param env - Environment type
      * @return Blueprint or null if one does not exist
      */
     public String getBlueprint(World.Environment env) {

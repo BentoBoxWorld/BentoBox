@@ -54,7 +54,7 @@ public class PanelItemBuilder {
      * @return PanelItemBuilder
      */
     public PanelItemBuilder description(List<String> description) {
-        this.description.addAll(description);
+        description.forEach(this::description);
         return this;
     }
 

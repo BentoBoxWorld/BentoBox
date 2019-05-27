@@ -416,4 +416,36 @@ public class BlueprintsManager {
         }
     }
 
+    /**
+     * Rename a blueprint
+     * @param addon - Game Mode Addon
+     * @param bp - blueprint
+     * @param name - new name
+     */
+    public void renameBlueprint(GameModeAddon addon, Blueprint bp, String name) {
+        if (bp.getName().equalsIgnoreCase(name)) {
+            // If the name is the same, do not do anything
+            return;
+        }
+        File bpf = getBlueprintsFolder(addon);
+        // Get the filename
+        File fileName = new File(bpf, bp.getName().toLowerCase(Locale.ENGLISH) + BLUEPRINT_SUFFIX);
+        plugin.logDebug("Old blueprint filename = " + fileName);
+        // Delete the old file
+        try {
+            if (Files.deleteIfExists(fileName.toPath())) {
+                plugin.logDebug("Deleted");
+            } else {
+                plugin.logDebug("Could not delete - does not exist");
+            }
+        } catch (IOException e) {
+            plugin.logError("Could not delete old Blueprint " + e.getLocalizedMessage());
+        }
+        // Set new name
+        bp.setName(name);
+        // Save it
+        saveBlueprint(addon, bp);
+
+    }
+
 }
