@@ -235,12 +235,14 @@ public class BlueprintsManager {
     }
 
     /**
-     * Adds a blueprint to addon's list of blueprints
+     * Adds a blueprint to addon's list of blueprints. If the list already contains a blueprint with the same name
+     * it is replaced.
      * @param addon - the {@link GameModeAddon}
      * @param bp - blueprint
      */
     public void addBlueprint(@NonNull GameModeAddon addon, @NonNull Blueprint bp) {
         blueprints.putIfAbsent(addon, new ArrayList<>());
+        blueprints.get(addon).removeIf(b -> b.getName().equals(bp.getName()));
         blueprints.get(addon).add(bp);
         plugin.log("Added blueprint '" + bp.getName() + "' for " + addon.getDescription().getName());
     }
