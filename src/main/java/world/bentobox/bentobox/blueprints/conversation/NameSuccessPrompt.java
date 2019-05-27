@@ -15,19 +15,27 @@ import world.bentobox.bentobox.panels.BlueprintManagementPanel;
 public class NameSuccessPrompt extends MessagePrompt {
 
     private GameModeAddon addon;
+    private BlueprintBundle bb;
 
-    public NameSuccessPrompt(GameModeAddon addon) {
+    public NameSuccessPrompt(GameModeAddon addon, BlueprintBundle bb) {
         this.addon = addon;
+        this.bb = bb;
     }
 
     @Override
     public String getPromptText(ConversationContext context) {
         String name = (String) context.getSessionData("name");
         String uniqueId = (String) context.getSessionData("uniqueId");
-        BlueprintBundle bb = new BlueprintBundle();
-        bb.setIcon(Material.RED_WOOL);
-        bb.setUniqueId(uniqueId);
+        if (bb == null) {
+            // New Blueprint bundle
+            bb = new BlueprintBundle();
+            bb.setIcon(Material.RED_WOOL);
+        } else {
+            // Rename - remove old named file
+            BentoBox.getInstance().getBlueprintsManager().deleteBlueprintBundle(addon, bb);
+        }
         bb.setDisplayName(name);
+        bb.setUniqueId(uniqueId);
         BentoBox.getInstance().getBlueprintsManager().addBlueprintBundle(addon, bb);
         BentoBox.getInstance().getBlueprintsManager().saveBlueprintBundle(addon, bb);
         User user = User.getInstance((Player)context.getForWhom());

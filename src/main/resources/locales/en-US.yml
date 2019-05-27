@@ -237,6 +237,7 @@ commands:
         end: "The End"
         title: "Blueprint Bundle Manager"
         edit: "Click to edit"
+        rename: "Right-click to rename"
         edit-description: "Click to edit description"
         world-name-syntax: "[name] world"
         world-instructions: |

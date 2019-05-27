@@ -82,11 +82,17 @@ public class BlueprintManagementPanel {
         plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream().limit(36)
         .forEach(bb -> pb.item(new PanelItemBuilder()
                 .name(bb.getDisplayName())
-                .description(t("edit"))
+                .description(t("edit"),
+                        !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) ? t("rename") : "")
                 .icon(bb.getIcon())
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
-                    openBB(bb);
+                    if (clickType.equals(ClickType.RIGHT) && !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
+                        // Rename
+                        askForName(u.getPlayer(), addon, bb);
+                    } else {
+                        openBB(bb);
+                    }
                     return true;
                 })
                 .build()));
@@ -256,19 +262,19 @@ public class BlueprintManagementPanel {
                 .icon(Material.GREEN_BANNER)
                 .clickHandler((panel, u, clickType, slot) -> {
                     u.closeInventory();
-                    askForName(u.getPlayer(), addon);
+                    askForName(u.getPlayer(), addon, null);
                     return true;
                 })
                 .build();
     }
 
-    public void askForName(Conversable whom, GameModeAddon addon) {
+    public void askForName(Conversable whom, GameModeAddon addon, BlueprintBundle bb) {
         new ConversationFactory(BentoBox.getInstance())
         .withModality(true)
         .withLocalEcho(false)
         .withPrefix(new NameConversationPrefix())
         .withTimeout(90)
-        .withFirstPrompt(new NamePrompt(addon))
+        .withFirstPrompt(new NamePrompt(addon, bb))
         .withEscapeSequence(t("name.quit"))
         .buildConversation(whom).begin();
     }
