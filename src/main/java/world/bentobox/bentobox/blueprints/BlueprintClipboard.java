@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -59,9 +60,9 @@ public class BlueprintClipboard {
     private boolean copying;
     private int index;
     private int lastPercentage;
-    private Map<Vector, List<BlueprintEntity>> bpEntities = new HashMap<>();
-    private Map<Vector, BlueprintBlock> bpAttachable = new HashMap<>();
-    private Map<Vector, BlueprintBlock> bpBlocks = new HashMap<>();
+    private Map<Vector, List<BlueprintEntity>> bpEntities = new LinkedHashMap<>();
+    private Map<Vector, BlueprintBlock> bpAttachable = new LinkedHashMap<>();
+    private Map<Vector, BlueprintBlock> bpBlocks = new LinkedHashMap<>();
 
     /**
      * Create a clipboard for blueprint
