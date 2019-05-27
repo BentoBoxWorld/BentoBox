@@ -265,7 +265,7 @@ public class BlueprintClipboard {
         if (blockState instanceof InventoryHolder) {
             b.setInventory(new HashMap<>());
             InventoryHolder ih = (InventoryHolder)blockState;
-            for (int i = 0; index < ih.getInventory().getSize(); i++) {
+            for (int i = 0; i < ih.getInventory().getSize(); i++) {
                 ItemStack item = ih.getInventory().getItem(i);
                 if (item != null) {
                     b.getInventory().put(i, item);
