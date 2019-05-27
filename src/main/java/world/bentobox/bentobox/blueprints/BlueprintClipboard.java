@@ -101,6 +101,9 @@ public class BlueprintClipboard {
         }
         // Clear the clipboard
         blueprint = new Blueprint();
+        bpEntities.clear();
+        bpAttachable.clear();
+        bpBlocks.clear();
 
         count = 0;
         index = 0;
