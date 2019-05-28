@@ -1,7 +1,9 @@
 package world.bentobox.bentobox.database.json.adapters;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -105,5 +107,17 @@ public class FlagAdapterTest {
         Flag flag = fa.read(reader);
         Mockito.verify(reader).nextString();
         assertEquals(Flags.ANIMAL_SPAWN, flag);
+    }
+    
+    @Test
+    public void testReadJsonReaderNoSuchFlag() throws IOException {
+        FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
+        JsonReader reader = mock(JsonReader.class);
+        Mockito.when(reader.peek()).thenReturn(JsonToken.STRING);
+        Mockito.when(reader.nextString()).thenReturn("MUMBO_JUMBO");
+        Flag flag = fa.read(reader);
+        Mockito.verify(reader).nextString();
+        assertNotNull(flag);
+        assertTrue(flag.getID().startsWith("NULL_FLAG_"));
     }
 }

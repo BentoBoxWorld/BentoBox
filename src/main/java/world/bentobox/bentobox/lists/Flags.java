@@ -1,7 +1,12 @@
 package world.bentobox.bentobox.lists;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.Flag.Type;
 import world.bentobox.bentobox.api.flags.clicklisteners.CycleClick;
@@ -51,10 +56,6 @@ import world.bentobox.bentobox.listeners.flags.worldsettings.PistonPushListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.RemoveMobsListener;
 import world.bentobox.bentobox.listeners.flags.worldsettings.TreesGrowingOutsideRangeListener;
 import world.bentobox.bentobox.managers.RanksManager;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Contains built-in {@link Flag Flags} that are registered by default into the {@link world.bentobox.bentobox.managers.FlagsManager FlagsManager} at startup.
@@ -424,6 +425,7 @@ public final class Flags {
      */
     public static List<Flag> values() {
         return Arrays.stream(Flags.class.getFields())
+                .filter(field -> field.getAnnotation(Deprecated.class) == null) // Ensures it is not deprecated
                 .map(field -> {
                     try {
                         return (Flag)field.get(null);
