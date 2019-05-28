@@ -41,7 +41,7 @@ public class ServerCompatibility {
 
         /**
          * The server software is not supported, even though BentoBox may work fine.
-         * Issues are likely and won't receive any support.
+         * Issues are likely and will receive limited support.
          */
         NOT_SUPPORTED(true),
 
@@ -101,7 +101,11 @@ public class ServerCompatibility {
         /**
          * @since 1.5.0
          */
-        V1_14_1(Compatibility.NOT_SUPPORTED);
+        V1_14_1(Compatibility.NOT_SUPPORTED),
+        /**
+         * @since 1.5.0
+         */
+        V1_14_2(Compatibility.NOT_SUPPORTED);
 
         private Compatibility compatibility;
 
