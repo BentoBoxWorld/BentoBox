@@ -20,7 +20,17 @@ public enum GameModePlaceholder {
 
     /* Island-related */
     ISLAND_DISTANCE("island_distance", (addon, user, island) -> String.valueOf(addon.getWorldSettings().getIslandDistance())),
+    /**
+     * Displays the island distance as a diameter (it is therefore equivalent to twice the island distance).
+     * @since 1.5.0
+     */
+    ISLAND_DISTANCE_DIAMETER("island_distance_diameter", (addon, user, island) -> String.valueOf(2 * addon.getWorldSettings().getIslandDistance())),
     ISLAND_PROTECTION_RANGE("island_protection_range", (addon, user, island) -> island == null ? "" : String.valueOf(island.getProtectionRange())),
+    /**
+     * Displays the island protection range as a diameter (it is therefore equivalent to twice the island protection range).
+     * @since 1.5.0
+     */
+    ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter", (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
     ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
     ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
     ISLAND_SPAWNPOINT("island_spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
