@@ -14,7 +14,7 @@ import world.bentobox.bentobox.database.objects.Island;
 /**
  * Tells the players which islands are near to them
  * @author tastybento
- *
+ * @since 1.5.0
  */
 public class IslandNearCommand extends CompositeCommand {
 
