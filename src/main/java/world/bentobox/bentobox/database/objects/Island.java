@@ -946,6 +946,9 @@ public class Island implements DataObject {
      * @return if this island has its end island generated.
      */    
     public boolean hasEndIsland(){
+        if (!BentoBox.getInstance().getIWM().isEndGenerate(getWorld()) || !BentoBox.getInstance().getIWM().isEndIslands(getWorld()) || BentoBox.getInstance().getIWM().getEndWorld(getWorld()) == null ){
+            return false;   
+        }
         Location l = this.getCenter();
         l.setWorld(BentoBox.getInstance().getIWM().getEndWorld(l.getWorld()));
         return l.getBlock().getType() == Material.BEDROCK;
@@ -956,6 +959,9 @@ public class Island implements DataObject {
      * @return if this island has its nether island generated.
      */     
     public boolean hasNetherIsland(){
+        if (!BentoBox.getInstance().getIWM().isNetherGenerate(getWorld()) || !BentoBox.getInstance().getIWM().isNetherIslands(getWorld()) || BentoBox.getInstance().getIWM().getNetherWorld(getWorld()) == null ){
+            return false;   
+        }        
         Location l = this.getCenter();
         l.setWorld(BentoBox.getInstance().getIWM().getNetherWorld(l.getWorld()));
         return l.getBlock().getType() == Material.BEDROCK;
