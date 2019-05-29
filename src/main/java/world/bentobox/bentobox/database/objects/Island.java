@@ -943,7 +943,8 @@ public class Island implements DataObject {
     
     /**
      * Returns if this island has its end island generated.
-     * @return if this island has its end island generated.
+     * @return {@code true} if this island has its end island generated, {@code false} otherwise.
+     * @since 1.5.0
      */    
     public boolean hasEndIsland(){
         if (!BentoBox.getInstance().getIWM().isEndGenerate(getWorld()) || !BentoBox.getInstance().getIWM().isEndIslands(getWorld()) || BentoBox.getInstance().getIWM().getEndWorld(getWorld()) == null ){
