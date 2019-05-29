@@ -90,6 +90,14 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO END
+        
+        if (plugin.getIWM().isEndGenerate(overworld) && plugin.getIWM().isEndIslands(overworld) && plugin.getIWM().getEndWorld(overworld) != null) {
+            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasEndIsland()) {
+                //To do, paste the schem/blueprint
+                
+            }
+        }        
+        
         World endWorld = plugin.getIWM().getEndWorld(overWorld);
         // If this is to island End, then go to the same vector, otherwise try spawn
         Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
@@ -149,6 +157,14 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO NETHER
+        
+        if (plugin.getIWM().isNetherGenerate(overworld) && plugin.getIWM().isNetherIslands(overworld) && plugin.getIWM().getNetherWorld(overworld) != null) {
+            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasNetherIsland()) {
+                //To do, paste the schem/blueprint
+                
+            }
+        }        
+        
         World nether = plugin.getIWM().getNetherWorld(overWorld);
         // If this is to island nether, then go to the same vector, otherwise try spawn
         Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
