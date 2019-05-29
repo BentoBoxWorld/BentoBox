@@ -957,7 +957,8 @@ public class Island implements DataObject {
 
     /**
      * Returns if this island has its nether island generated.
-     * @return if this island has its nether island generated.
+     * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
+     * @since 1.5.0
      */     
     public boolean hasNetherIsland(){
         if (!BentoBox.getInstance().getIWM().isNetherGenerate(getWorld()) || !BentoBox.getInstance().getIWM().isNetherIslands(getWorld()) || BentoBox.getInstance().getIWM().getNetherWorld(getWorld()) == null ){
