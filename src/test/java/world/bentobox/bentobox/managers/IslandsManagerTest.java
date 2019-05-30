@@ -604,26 +604,8 @@ public class IslandsManagerTest {
         IslandsManager im = new IslandsManager(plugin);
         when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(0))).thenReturn(null);
         when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(1))).thenReturn(location);
-        when(player.getGameMode()).thenReturn(GameMode.SPECTATOR);
         im.homeTeleport(world, player, 0);
         Mockito.verify(player).teleport(location);
-        Mockito.verify(player).setGameMode(GameMode.SURVIVAL);
-
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.IslandsManager#homeTeleport(World, Player, int)}.
-     */
-    @Test
-    public void testHomeTeleportPlayerIntDifferentGameMode() {
-        when(iwm.getDefaultGameMode(world)).thenReturn(GameMode.CREATIVE);
-        IslandsManager im = new IslandsManager(plugin);
-        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(0))).thenReturn(null);
-        when(pm.getHomeLocation(Mockito.any(), Mockito.any(User.class), Mockito.eq(1))).thenReturn(location);
-        when(player.getGameMode()).thenReturn(GameMode.SPECTATOR);
-        im.homeTeleport(world, player, 0);
-        Mockito.verify(player).teleport(location);
-        Mockito.verify(player).setGameMode(GameMode.CREATIVE);
 
     }
 

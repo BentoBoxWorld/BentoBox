@@ -3,7 +3,6 @@ package world.bentobox.bentobox.api.commands.island;
 import java.io.IOException;
 import java.util.List;
 
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 import world.bentobox.bentobox.api.addons.GameModeAddon;
@@ -98,7 +97,6 @@ public class IslandResetCommand extends ConfirmableCommand {
     private boolean resetIsland(User user, String name) {
         // Reset the island
         Player player = user.getPlayer();
-        player.setGameMode(GameMode.SPECTATOR);
         user.sendMessage("commands.island.create.creating-island");
         // Get the player's old island
         Island oldIsland = getIslands().getIsland(getWorld(), player.getUniqueId());
