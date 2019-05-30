@@ -14,6 +14,7 @@ import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
+import world.bentobox.bentobox.blueprints.BlueprintPaster;
 
 /**
  * Handles teleportation via the Nether/End portals to the Nether and End dimensions of the worlds added by the GameModeAddons.
@@ -90,24 +91,35 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO END
-        
-        if (plugin.getIWM().isEndGenerate(overworld) && plugin.getIWM().isEndIslands(overworld) && plugin.getIWM().getEndWorld(overworld) != null) {
-            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasEndIsland()) {
-                //To do, paste the schem/blueprint
-                
-            }
-        }        
-        
+
         World endWorld = plugin.getIWM().getEndWorld(overWorld);
         // If this is to island End, then go to the same vector, otherwise try spawn
         Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
         e.setCancelled(true);
+
+        if (plugin.getIWM().isEndGenerate(overWorld) && plugin.getIWM().isEndIslands(overWorld) && plugin.getIWM().getEndWorld(overWorld) != null) {
+            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasEndIsland()) {
+                //To do, paste the schem/blueprint
+                Runnable task = () -> {
+                    new SafeSpotTeleport.Builder(plugin)
+                            .entity(e.getPlayer())
+                            .location(to)
+                            .portal()
+                            .build();
+                };
+                plugin.getIWM().getAddon(overWorld).ifPresent(addon
+                        -> new BlueprintPaster(plugin, plugin.getBlueprintsManager().getBlueprints(addon).get("end-island"), addon.getEndWorld(), plugin.getIslands().getIslandAt(e.getFrom()).get(), task));
+                return true;
+            }
+
+        }
+
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
-        .entity(e.getPlayer())
-        .location(to)
-        .portal()
-        .build();
+                .entity(e.getPlayer())
+                .location(to)
+                .portal()
+                .build();
         return true;
     }
 
@@ -157,24 +169,34 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO NETHER
-        
-        if (plugin.getIWM().isNetherGenerate(overworld) && plugin.getIWM().isNetherIslands(overworld) && plugin.getIWM().getNetherWorld(overworld) != null) {
-            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasNetherIsland()) {
-                //To do, paste the schem/blueprint
-                
-            }
-        }        
-        
+ 
         World nether = plugin.getIWM().getNetherWorld(overWorld);
         // If this is to island nether, then go to the same vector, otherwise try spawn
         Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
         e.setCancelled(true);
+        
+        if (plugin.getIWM().isNetherGenerate(overWorld) && plugin.getIWM().isNetherIslands(overWorld) && plugin.getIWM().getNetherWorld(overWorld) != null) {
+            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasNetherIsland()) {
+                //To do, paste the schem/blueprint
+                Runnable task = () -> {
+                    new SafeSpotTeleport.Builder(plugin)
+                            .entity(e.getPlayer())
+                            .location(to)
+                            .portal()
+                            .build();
+                };         
+                plugin.getIWM().getAddon(overWorld).ifPresent(addon
+                        -> new BlueprintPaster(plugin, plugin.getBlueprintsManager().getBlueprints(addon).get("nether-island"), addon.getNetherWorld(), plugin.getIslands().getIslandAt(e.getFrom()).get(), task));
+                return true;
+            }
+        }                    
+
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
-        .entity(e.getPlayer())
-        .location(to)
-        .portal()
-        .build();
+                .entity(e.getPlayer())
+                .location(to)
+                .portal()
+                .build();
         return true;
     }
 }
