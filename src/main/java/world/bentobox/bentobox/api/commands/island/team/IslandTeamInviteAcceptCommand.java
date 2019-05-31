@@ -5,7 +5,6 @@ import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 
 import com.google.common.collect.BiMap;
 
@@ -86,11 +85,8 @@ public class IslandTeamInviteAcceptCommand extends ConfirmableCommand {
             // Add the player as a team member of the new island
             getIslands().setJoinTeam(teamIsland, playerUUID);
             //Move player to team's island
-            User prospectiveOwner = User.getInstance(prospectiveOwnerUUID);
-            Location newHome = getIslands().getSafeHomeLocation(getWorld(), prospectiveOwner, 1);
-            user.teleport(newHome);
-            // Set the player's home
-            getPlayers().setHomeLocation(playerUUID, user.getLocation());
+            getPlayers().clearHomeLocations(getWorld(), playerUUID);
+            getIslands().homeTeleport(getWorld(), user.getPlayer());
             // Delete the old island
             if (island != null) {
                 getIslands().deleteIsland(island, true);
