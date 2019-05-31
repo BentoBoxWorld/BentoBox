@@ -52,6 +52,7 @@
         <bstats.version>1.5</bstats.version>
         <vault.version>1.7</vault.version>
         <placeholderapi.version>2.10.1</placeholderapi.version>
+        <mvdwplaceholderapi.version>2.5.1-SNAPSHOT</mvdwplaceholderapi.version>
         <githubapi.version>1.0</githubapi.version>
         <!-- Revision variable removes warning about dynamic version -->
         <revision>${build.version}-SNAPSHOT</revision>
@@ -206,6 +207,15 @@
 			<version>${placeholderapi.version}</version>
 			<scope>provided</scope>
 		</dependency>
+        <dependency>
+            <!-- We have to use a forked version of this api
+                 because Maxim had the brilliant idea to make one
+                 of the dependencies rely on an illegal artifact
+                 thus making its repository unusable. -->
+            <groupId>com.github.Prouser123-forks</groupId>
+            <artifactId>MVdWPlaceholderAPI</artifactId>
+            <version>master-SNAPSHOT</version>
+        </dependency>
         <!-- Hooks -->
         <dependency>
             <groupId>us.dynmap</groupId>

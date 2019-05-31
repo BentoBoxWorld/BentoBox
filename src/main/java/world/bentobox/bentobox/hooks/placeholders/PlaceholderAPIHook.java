@@ -1,4 +1,4 @@
-package world.bentobox.bentobox.hooks;
+package world.bentobox.bentobox.hooks.placeholders;
 
 import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Material;
@@ -19,13 +19,13 @@ import java.util.Map;
  *
  * @author Poslovitch
  */
-public class PlaceholderAPIHook extends Hook {
+public class PlaceholderAPIHook extends PlaceholderHook {
 
     private BentoBoxPlaceholderExpansion bentoboxExpansion;
     private Map<Addon, AddonPlaceholderExpansion> addonsExpansions;
 
     public PlaceholderAPIHook() {
-        super("PlaceholderAPI", Material.NAME_TAG);
+        super("PlaceholderAPI");
         this.addonsExpansions = new HashMap<>();
     }
 
@@ -46,23 +46,17 @@ public class PlaceholderAPIHook extends Hook {
     }
 
     /**
-     * Registers this placeholder into BentoBox's PlaceholderAPI expansion.
-     * @param placeholder the placeholder to register, not null
-     * @param replacer its replacement, not null
-     * @since 1.4.0
+     * {@inheritDoc}
      */
+    @Override
     public void registerPlaceholder(@NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         bentoboxExpansion.registerPlaceholder(placeholder, replacer);
     }
 
     /**
-     * Registers this placeholder into this addon's PlaceholderAPI expansion.
-     * It will register the expansion if it previously did not exist.
-     * @param addon the addon, not null
-     * @param placeholder the placeholder to register, not null
-     * @param replacer its replacement, not null
-     * @since 1.4.0
+     * {@inheritDoc}
      */
+    @Override
     public void registerPlaceholder(@NonNull Addon addon, @NonNull String placeholder, @NonNull PlaceholderReplacer replacer) {
         // Check if the addon expansion does not exist
         if (!addonsExpansions.containsKey(addon)) {
@@ -75,20 +69,17 @@ public class PlaceholderAPIHook extends Hook {
     }
 
     /**
-     * Unregisters this placeholder from the BentoBox PlaceholderAPI expansion.
-     * @param placeholder the placeholder to unregister, not null
-     * @since 1.4.0
+     * {@inheritDoc}
      */
+    @Override
     public void unregisterPlaceholder(@NonNull String placeholder) {
         bentoboxExpansion.unregisterPlaceholder(placeholder);
     }
 
     /**
-     * Unregister this placeholder from this addon's PlaceholderAPI expansion.
-     * @param addon the addon, not null
-     * @param placeholder the placeholder to unregister, not null
-     * @since 1.4.0
+     * {@inheritDoc}
      */
+    @Override
     public void unregisterPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
         if (addonsExpansions.containsKey(addon)) {
             addonsExpansions.get(addon).unregisterPlaceholder(placeholder);
@@ -96,23 +87,17 @@ public class PlaceholderAPIHook extends Hook {
     }
     
     /**
-     * Checks if a placeholder with this name is already registered
-     * @param addon the addon, not null
-     * @param placeholder - name of placeholder
-     * @return {@code true} if a placeholder with this name is already registered
-     * @since 1.4.0
+     * {@inheritDoc}
      */
+    @Override
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
     	return addonsExpansions.containsKey(addon) && addonsExpansions.get(addon).isPlaceholder(placeholder);
     }
 
     /**
-     * Replaces the placeholders in this String and returns it.
-     * @param player the Player to get the placeholders for.
-     * @param string the String to replace the placeholders in.
-     * @return the String with placeholders replaced, or the identical String if no placeholders were available.
-     * @since 1.5.0
+     * {@inheritDoc}
      */
+    @Override
     @NonNull
     public String replacePlaceholders(@NonNull Player player, @NonNull String string) {
         return PlaceholderAPI.setPlaceholders(player, string);
