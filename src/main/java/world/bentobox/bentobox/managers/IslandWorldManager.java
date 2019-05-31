@@ -92,7 +92,7 @@ public class IslandWorldManager {
      */
     public boolean inWorld(@Nullable World world) {
         return world != null && gameModes.containsKey(world) &&
-            (world.getEnvironment().equals(Environment.NORMAL) || isIslandNether(world) || isIslandEnd(world));
+                (world.getEnvironment().equals(Environment.NORMAL) || isIslandNether(world) || isIslandEnd(world));
     }
 
     /**
@@ -292,7 +292,7 @@ public class IslandWorldManager {
      * @return the worldName
      */
     public String getWorldName(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().getWorldName();
+        return gameModes.get(world).getWorldSettings().getWorldName().toLowerCase();
     }
 
     /**

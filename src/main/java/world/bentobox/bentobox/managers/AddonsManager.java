@@ -121,7 +121,7 @@ public class AddonsManager {
             if (addon instanceof GameModeAddon) {
                 GameModeAddon gameMode = (GameModeAddon) addon;
                 if (!gameMode.getWorldSettings().getWorldName().isEmpty()) {
-                    worldNames.put(gameMode.getWorldSettings().getWorldName(), gameMode);
+                    worldNames.put(gameMode.getWorldSettings().getWorldName().toLowerCase(), gameMode);
                 }
             }
             // Addon successfully loaded
@@ -377,7 +377,7 @@ public class AddonsManager {
 
     /**
      * Get the world generator if it exists
-     * @param worldName - name of world
+     * @param worldName - name of world - case insensitive
      * @param id - specific generator id
      * @return ChunkGenerator or null if none found
      * @since 1.2.0
@@ -385,7 +385,7 @@ public class AddonsManager {
     @Nullable
     public ChunkGenerator getDefaultWorldGenerator(String worldName, String id) {
         // Clean up world name
-        String w = worldName.replace("_nether", "").replace("_the_end", "");
+        String w = worldName.replace("_nether", "").replace("_the_end", "").toLowerCase();
         if (worldNames.containsKey(w)) {
             return worldNames.get(w).getDefaultWorldGenerator(worldName, id);
         }
