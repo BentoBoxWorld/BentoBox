@@ -269,9 +269,13 @@ public abstract class Addon {
                         java.nio.file.Files.copy(in, outFile.toPath());
                     }
                 }
+            } else {
+                // No file in the jar
+                throw new IllegalArgumentException(
+                        "The embedded resource '" + jarResource + "' cannot be found in " + jar.getName());
             }
         } catch (IOException e) {
-            Bukkit.getLogger().severe(
+            BentoBox.getInstance().logError(
                     "Could not save from jar file. From " + jarResource + " to " + destinationFolder.getAbsolutePath());
         }
     }
@@ -404,13 +408,13 @@ public abstract class Addon {
     }
 
 
-	/**
-	 * Register a flag for this addon.
-	 * @param flag the flag to register.
-	 * @return {@code true} if the flag was registered successfully, {@code false} otherwise.
-	 * @since 1.5.0
-	 */
-	public boolean registerFlag(Flag flag) {
-		return getPlugin().getFlagsManager().registerFlag(this, flag);
-	}
+    /**
+     * Register a flag for this addon.
+     * @param flag the flag to register.
+     * @return {@code true} if the flag was registered successfully, {@code false} otherwise.
+     * @since 1.5.0
+     */
+    public boolean registerFlag(Flag flag) {
+        return getPlugin().getFlagsManager().registerFlag(this, flag);
+    }
 }
