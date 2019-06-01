@@ -109,7 +109,7 @@ public class CycleClick implements PanelItem.ClickHandler {
             });
         } else {
             // Player is not the owner of the island.
-            user.getPlayer().sendMessage("general.errors.not-owner");
+            user.sendMessage("general.errors.not-owner");
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
         }
         return true;
