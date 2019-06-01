@@ -130,7 +130,8 @@ public class IslandSethomeCommandTest {
      */
     @Test
     public void testIslandSethomeCommand() {
-        new IslandSethomeCommand(ic);
+        IslandSethomeCommand cmd = new IslandSethomeCommand(ic);
+        assertEquals("sethome", cmd.getName());
     }
 
     /**

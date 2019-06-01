@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
+import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
@@ -17,6 +19,8 @@ import world.bentobox.bentobox.util.Util;
  *
  */
 public class IslandTeamCoopCommand extends CompositeCommand {
+
+    private @Nullable UUID targetUUID;
 
     public IslandTeamCoopCommand(CompositeCommand parentCommand) {
         super(parentCommand, "coop");
@@ -32,7 +36,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
     }
 
     @Override
-    public boolean execute(User user, String label, List<String> args) {
+    public boolean canExecute(User user, String label, List<String> args) {
         if (args.size() != 1) {
             // Show help
             showHelp(this, user);
@@ -49,15 +53,15 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             return false;
         }
         // Get target player
-        UUID targetUUID = getPlayers().getUUID(args.get(0));
+        targetUUID = getPlayers().getUUID(args.get(0));
         if (targetUUID == null) {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        return (getSettings().getCoopCooldown() <= 0 || !checkCooldown(user, targetUUID)) && coopCmd(user, targetUUID);
-    }
-
-    private boolean coopCmd(User user, UUID targetUUID) {
+        // Check cooldown
+        if (getSettings().getCoopCooldown() > 0 && checkCooldown(user, targetUUID)) {
+            return false;
+        }
         // Player cannot coop themselves
         if (user.getUniqueId().equals(targetUUID)) {
             user.sendMessage("commands.island.team.coop.cannot-coop-yourself");
@@ -67,6 +71,11 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             user.sendMessage("commands.island.team.coop.already-has-rank");
             return false;
         }
+        return true;
+    }
+
+    @Override
+    public boolean execute(User user, String label, List<String> args) {
         User target = User.getInstance(targetUUID);
         Island island = getIslands().getIsland(getWorld(), user.getUniqueId());
         if (island != null) {

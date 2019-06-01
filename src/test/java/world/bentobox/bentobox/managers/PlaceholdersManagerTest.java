@@ -1,5 +1,7 @@
 package world.bentobox.bentobox.managers;
 
+import static org.mockito.Mockito.when;
+
 import org.eclipse.jdt.annotation.NonNull;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -9,11 +11,10 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
-
-import static org.mockito.Mockito.when;
 
 /**
  * @author tastybento

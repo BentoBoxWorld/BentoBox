@@ -31,8 +31,6 @@ import org.powermock.reflect.Whitebox;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintCommand;
-import world.bentobox.bentobox.api.commands.admin.blueprints.AdminBlueprintListCommand;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
