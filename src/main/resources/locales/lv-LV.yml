@@ -46,6 +46,11 @@ commands:
     description: "Palīdzības komanda"
     console: "Konsole"
   admin:
+    switch:
+      description: Pārslēdz aizsardzības pārkāpšanu
+      op: '&cServera operātors vienmēr var pārkāpt aizsardzību.'
+      removing: Noņem aizsardzības pārkāpšanu...
+      adding: Ieslēdz aizsardzības pārkāpšanu...
     help:
       description: "admin komanda"
     resets:
@@ -185,6 +190,51 @@ commands:
       no-island-here: "&cŠeit nav neveinas salas."
       confirmation: "&cVai tiešām vēlies uzstādīt šo salu kā sākuma salu?"
     blueprint:
+      management:
+        back: Atpakaļ
+        instruction: Noklikšķini uz shēmu un tikai tad šeit
+        normal: Zemes
+        nether: Elles
+        end: Beigu
+        title: Shēmu saišķu pārvaldnieks
+        edit: Uzspied, lai labotu
+        rename: Labais klikšķis, lai pārdēvētu
+        edit-description: Uzspied, lai labotu aprakstu
+        world-name-syntax: '[name] pasaule'
+        world-instructions: |
+          Novieto shēmas labajā pusē
+          lai tās uzstādītu
+        trash: Atkritne
+        trash-instructions: Labais klikšķis, lai dzēstu
+        permission: Atļaujas
+        perm-required: Nepieciešams
+        perm-not-required: Nav nepieciešams
+        perm-format: '&e'
+        remove: Labais klikšķis, lai noņemtu
+        blueprint-instruction: |
+          Uzspied, lai izvēlētos,
+          un tad pievieno shēmu.
+          Labais klikšķis, lai
+          pārdēvētu.
+        select-first: Izvēlies shēmu vispirms
+        new-bundle: Jauns shēmu saišķis
+        new-bundle-instructions: Uzspied, lai izveidotu jaunu shēmu saišķi
+        name:
+          quit: iziet
+          prompt: Ieraksti vārdu vai 'iziet', lai izietu
+          too-long: '&cPārāk garš'
+          pick-a-unique-name: Lūdzu izvēlies unikālu nosaukumu
+          success: Izdevās!
+          conversation-prefix: '>'
+        description:
+          quit: iziet
+          instructions: |
+            Ieraksti vairāku rindiņu tekstu priekš
+            [name] un 'iziet' jaunā rindā, lai
+            pabeigtu.
+          default-color: ''
+          success: Izdevās!
+          cancelling: Atceļ
       parameters: "<load/copy/paste/pos1/pos2/save>"
       description: "manipulē ar shēmām"
       copy-first: "&cKopē shēmu sākumā!"
@@ -248,6 +298,13 @@ commands:
         parameters: "<spēlētājs> <nāves>"
         success: "&aSpēlētājam &b[name]&a nāvju skaits uzstādīts uz &b[number]&a."
   bentobox:
+    migrate:
+      description: Migrē no vienas datubāzes uz citu
+      players: '&6Pārceļ spēlētājus'
+      names: '&6Pārceļ vārdus'
+      addons: '&6Pārceļ papildinājumus'
+      class: '&6Pārceļ [description]'
+      migrated: '&aMigrācija pabeigta!'
     description: "BentoBox admina komandas"
     about:
       description: "parādīt autortiesības un licenses informāciju"
@@ -256,6 +313,10 @@ commands:
       locales-reloaded: "&2Valodas faili pārlādēti."
       addons-reloaded: "&2Papildinājumu pārlādēti."
       settings-reloaded: "&2Iestatījumi pārlādēti."
+      parameters: '[addon]'
+      addon: '&6Pārlādē &b[name]&2.'
+      addon-reloaded: '&b[name] &2pārlādēts.'
+      unknown-addon: '&2Nezināms papildinājums!'
     version:
       plugin-version: "&2BentoBox versija: &3[version]"
       description: "parādīt BentoBox un papildinājumu versijas"
@@ -311,6 +372,7 @@ commands:
       creating-island: "&aTiek veidota tava sala. Uzgaidi mirklīti..."
       pick-world: "&cIzvēkies pasauli no [worlds]."
       unknown-blueprint: "&cŠī shēma nav ielādēta vai tā neeksistē."
+      pick: '&aIzvēlies salas veidu'
     info:
       description: "parāda informāciju par tavu vai spēlētāja salu"
       parameters: "<spēlētājs>"
@@ -929,6 +991,19 @@ protection:
     TNT:
       description: "Pārslēdz Dinamīta bojājumus"
       name: "Dinamīta bojājumi"
+    TNT_DAMAGE:
+      description: |-
+        &aĻauj Dinamītam un Vagonam
+        &aar dinamītu saplēst blokus
+        &aun bojāt radības un objektus.
+      name: Dinamīta bojājumi
+    TNT_PRIMING:
+      description: |-
+        &aNeļauj aizdedzināt dinamītu.
+        &aŠī opcija nepārraksta Karma
+        &aun Dzelzs lietošanas opcijas.
+      name: "Dinamīta aizdedzināšana"
+      hint: "Aizdedzināt dinamītu nav atļauts"
     TRADING: 
       description: |-
         &aPārslēdz iespēju tirogties
@@ -1014,6 +1089,11 @@ language:
   panel-title: "Izvēlies valodu"
   selected: "&aŠobrīd izvēlēta."
   edited: "&aValoda nomainīta uz &e[lang]&a."
+  description:
+    selected: '&aŠobrīd izvēlēta.'
+    click-to-select: '&eUzspied&a, lai iezvēlētos.'
+    authors: '&aAutori:'
+    author: '&3- &b[name]'
 
 management:
   panel:
@@ -1023,8 +1103,12 @@ management:
         name: "&6Spēles režīmi"
         description: "&eUzspied&a, lai redzētu uzstādītos spēles režīmus."
         blueprints:
-          name: "&6Blueprints"
-          description: "&aAtver admina blueprint izvēlni."
+          name: "&6Shēmas"
+          description: "&aAtver administratora shēmu izvēlni."
+        gamemode:
+          name: '&f[name]'
+          description: |
+            &aSalas: &b[islands]
       addons:
         name: "&6Papildinājumi"
         description: "&eUzspied&a, lai redzētu uzstādītos spēles papildinājumus."
