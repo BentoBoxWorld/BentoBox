@@ -204,6 +204,42 @@ ranks:
 
 protection:
   command-is-banned: "Cette commande ne peut pas être utilisée par les visiteurs."
+  flags:
+    ANIMAL_SPAWN:
+      description: "Autoriser l'apparition"
+      name: "Apparition des animaux"
+    ANVIL:
+      description: "Autoriser l'interaction"
+      name: "Enclumes"
+      hint: "L'utilisation des enclumes est désactivée"
+    ARMOR_STAND:
+      description: "Autoriser l'interaction"
+      name: "Porte-armures"
+      hint: "L'utilisation des porte-armures est désactivée"
+    BEACON:
+      description: "Autoriser l'interaction"
+      name: "Balises"
+      hint: "L'utilisation des balises est désactivée"
+    BED:
+      description: "Autoriser l'interaction"
+      name: "Lits"
+      hint: "L'utilisation des lits est désactivée"
+    BOAT:
+      description: "Autoriser l'interaction avec les bateaux"
+      name: "Bateaux"
+      hint: "Aucune interaction avec les bateaux n'est autorisée"
+    BREAK_BLOCKS:
+      description: "Autoriser le cassage de blocs"
+      name: "Casser les blocs"
+      hint: "casser des blocs est interdit"
+    BREEDING:
+      description: "Autoriser la reproduction"
+      name: "Reproduire les animaux"
+      hint: "La reproduction des animaux est désactivée"
+    BREWING:
+      description: "Autoriser l'interaction"
+      name: "Alambics"
+      hint: "L'utilisation des alambics est désactivée"
   locked: "&cCette île est verrouillée!"
   protected: "&cÎle protégée: [description]"
   spawn-protected: "&cSpawn protégé: [description]"
