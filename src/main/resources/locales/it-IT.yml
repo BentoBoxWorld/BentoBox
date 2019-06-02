@@ -3,12 +3,12 @@
 # the one at http://yaml-online-parser.appspot.com                                        #
 ###########################################################################################
 
-# This locale is always current with the latest version
+# This locale is current with 1.5.0.
 
 meta:
   authors:
   - jummes
-  banner: "LIGHT_BLUE_BANNER:1:BORDER:WHITE:CURLY_BORDER:WHITE:TRIANGLES_BOTTOM:WHITE:TRIANGLES_TOP:WHITE:FLOWER:WHITE"
+  banner: "WHITE_BANNER:1:STRIPE_TOP:GREEN:STRIPE_BOTTOM:RED"
 
 general:
   success: "&aSuccesso!"
