@@ -22,7 +22,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
      * @param parent command parent
      */
     public BentoBoxReloadCommand(CompositeCommand parent) {
-        super(parent, "reload");
+        super(parent, "reload", "rl");
     }
 
     @Override
