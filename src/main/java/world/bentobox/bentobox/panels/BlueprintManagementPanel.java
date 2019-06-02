@@ -2,6 +2,7 @@ package world.bentobox.bentobox.panels;
 
 import java.util.AbstractMap;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,6 +48,7 @@ public class BlueprintManagementPanel {
     private final Map<World.Environment, Blueprint> ENV_TO_BP;
     private static final int MAX_WORLD_SLOT = 9;
     private static final int MIN_WORLD_SLOT = 0;
+    public static final int MAX_BP_SLOT = 35;
     private Entry<Integer, Blueprint> selected;
     private Map<Integer, Blueprint> blueprints = new HashMap<>();
     private final User user;
@@ -80,23 +82,43 @@ public class BlueprintManagementPanel {
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(t("title")).user(user).size(45);
         // Get the bundles
+        Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
         plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream().limit(36)
-        .forEach(bb -> pb.item(new PanelItemBuilder()
-                .name(bb.getDisplayName())
-                .description(t("edit"),
-                        !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) ? t("rename") : "")
-                .icon(bb.getIcon())
-                .clickHandler((panel, u, clickType, slot) -> {
-                    u.closeInventory();
-                    if (clickType.equals(ClickType.RIGHT) && !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
-                        // Rename
-                        askForName(u.getPlayer(), addon, bb);
-                    } else {
-                        openBB(bb);
-                    }
-                    return true;
-                })
-                .build()));
+        .sorted(sortByDisplayName)
+        .forEach(bb -> {
+            // Make item
+            PanelItem item = new PanelItemBuilder()
+                    .name(bb.getDisplayName())
+                    .description(t("edit"),
+                            !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME) ? t("rename") : "")
+                    .icon(bb.getIcon())
+                    .clickHandler((panel, u, clickType, slot) -> {
+
+                        u.closeInventory();
+                        if (clickType.equals(ClickType.RIGHT) && !bb.getUniqueId().equals(BlueprintsManager.DEFAULT_BUNDLE_NAME)) {
+                            // Rename
+                            askForName(u.getPlayer(), addon, bb);
+                        } else {
+                            openBB(bb);
+                        }
+                        return true;
+                    })
+                    .build();
+            // Determine slot
+            if (bb.getSlot() < 0 || bb.getSlot() > MAX_BP_SLOT) {
+                bb.setSlot(0);
+            }
+            if (pb.slotOccupied(bb.getSlot())) {
+                int slot = pb.getFirstAvailableSlot();
+                if (slot == -1) {
+                    // TODO add paging
+                    plugin.logError("Too many blueprint bundles to show!");
+                }
+                pb.item(slot, item);
+            } else {
+                pb.item(bb.getSlot(), item);
+            }
+        });
 
         // Panel has New Blueprint Bundle button - clicking in creates a new bundle
         pb.item(36, getNewBundle(user, addon));
@@ -134,14 +156,49 @@ public class BlueprintManagementPanel {
             // Toggle permission - default is always allowed
             pb.item(39, getPermissionIcon(addon, bb));
         }
+        // Preferred slot
+        pb.item(40, getSlotIcon(addon, bb));
         // Panel has a Back icon.
-        pb.item(44, new PanelItemBuilder().icon(Material.ARROW).name(t("back")).clickHandler((panel, u, clickType, slot) -> {
+        pb.item(44, new PanelItemBuilder().icon(Material.OAK_DOOR).name(t("back")).clickHandler((panel, u, clickType, slot) -> {
             openPanel();
             return true;
         }).build());
 
         pb.build();
 
+    }
+
+    /**
+     * Gets the preferred slot icon
+     * @param addon - addon
+     * @param bb - blueprint bundle
+     * @return slot panel item
+     */
+    private PanelItem getSlotIcon(GameModeAddon addon, BlueprintBundle bb) {
+        return new PanelItemBuilder()
+                .name(t("slot", TextVariables.NUMBER, String.valueOf(bb.getSlot())))
+                .description(t("slot-instructions"))
+                .icon(Material.IRON_TRAPDOOR)
+                .clickHandler((panel, u, clickType, slot) -> {
+                    // Increment or decrement slot
+                    if (clickType.isLeftClick()) {
+                        bb.setSlot(bb.getSlot() + 1);
+                        if (bb.getSlot() > MAX_BP_SLOT) {
+                            bb.setSlot(0);
+                        }
+                    } else if (clickType.isRightClick()) {
+                        bb.setSlot(bb.getSlot() - 1);
+                        if (bb.getSlot() < 0) {
+                            bb.setSlot(MAX_BP_SLOT);
+                        }
+                    }
+                    u.getPlayer().playSound(u.getLocation(), Sound.UI_BUTTON_CLICK, 1F, 1F);
+                    // Save
+                    plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
+                    panel.getInventory().setItem(40, getSlotIcon(addon, bb).getItem());
+                    return true;
+                })
+                .build();
     }
 
     /**

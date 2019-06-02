@@ -1,15 +1,17 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
-import com.google.gson.annotations.Expose;
-import org.bukkit.Material;
-import org.bukkit.World;
-import world.bentobox.bentobox.blueprints.Blueprint;
-import world.bentobox.bentobox.database.objects.DataObject;
-
 import java.util.ArrayList;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
+
+import org.bukkit.Material;
+import org.bukkit.World;
+
+import com.google.gson.annotations.Expose;
+
+import world.bentobox.bentobox.blueprints.Blueprint;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  * Represents a bundle of three {@link Blueprint}s.
@@ -52,6 +54,15 @@ public class BlueprintBundle implements DataObject {
      */
     @Expose
     private Map<World.Environment, String> blueprints = new EnumMap<>(World.Environment.class);
+
+    /**
+     * Preferred slot in GUI.
+     */
+    @Expose
+    private int slot = 0;
+
+
+
     /**
      * @return the uniqueId
      */
@@ -163,6 +174,18 @@ public class BlueprintBundle implements DataObject {
      */
     public void setRequirePermission(boolean requirePermission) {
         this.requirePermission = requirePermission;
+    }
+    /**
+     * @return the slot
+     */
+    public int getSlot() {
+        return slot;
+    }
+    /**
+     * @param slot the slot to set
+     */
+    public void setSlot(int slot) {
+        this.slot = slot;
     }
 
 }

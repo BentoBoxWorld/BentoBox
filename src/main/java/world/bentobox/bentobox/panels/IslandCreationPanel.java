@@ -1,13 +1,16 @@
 package world.bentobox.bentobox.panels;
 
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.eclipse.jdt.annotation.NonNull;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
+import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.builders.PanelBuilder;
 import world.bentobox.bentobox.api.panels.builders.PanelItemBuilder;
 import world.bentobox.bentobox.api.user.User;
@@ -34,7 +37,9 @@ public class IslandCreationPanel {
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(user.getTranslation("commands.island.create.pick")).user(user);
         // Get the bundles
-        Collection<BlueprintBundle> bbs = plugin.getBlueprintsManager().getBlueprintBundles((@NonNull GameModeAddon) command.getAddon()).values();
+        Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
+        List<BlueprintBundle> bbs = plugin.getBlueprintsManager().getBlueprintBundles((@NonNull GameModeAddon) command.getAddon()).values()
+                .stream().sorted(sortByDisplayName).collect(Collectors.toList());
         // Loop through them and create items in the panel
         for (BlueprintBundle bb : bbs) {
             String perm = command.getPermissionPrefix() + "island.create." + bb.getUniqueId();
@@ -42,12 +47,26 @@ public class IslandCreationPanel {
                     || !bb.isRequirePermission()
                     || user.hasPermission(perm)) {
                 // Add an item
-                pb.item(new PanelItemBuilder().name(bb.getDisplayName()).description(bb.getDescription())
+                PanelItem item = new PanelItemBuilder().name(bb.getDisplayName()).description(bb.getDescription())
                         .icon(bb.getIcon()).clickHandler((panel, user1, clickType, slot1) -> {
                             user1.closeInventory();
                             command.execute(user1, label, Collections.singletonList(bb.getUniqueId()));
                             return true;
-                        }).build());
+                        }).build();
+                // Determine slot
+                if (bb.getSlot() < 0 || bb.getSlot() > BlueprintManagementPanel.MAX_BP_SLOT) {
+                    bb.setSlot(0);
+                }
+                if (pb.slotOccupied(bb.getSlot())) {
+                    int slot = pb.getFirstAvailableSlot();
+                    if (slot == -1) {
+                        // TODO add paging
+                        plugin.logError("Too many blueprint bundles to show!");
+                    }
+                    pb.item(slot, item);
+                } else {
+                    pb.item(bb.getSlot(), item);
+                }
             }
         }
         pb.build();
