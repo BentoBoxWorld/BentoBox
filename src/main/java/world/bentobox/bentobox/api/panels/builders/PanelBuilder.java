@@ -84,29 +84,11 @@ public class PanelBuilder {
     }
 
     /**
-     * Get the next free slot number after the largest slot. If larger than the size of the panel, the first free spot available
-     * is used.
+     * Get the next free slot number after the largest slot.
      * @return next slot number, or -1 in case none has been found.
      */
     public int nextSlot() {
-        int slot = items.isEmpty() ? 0 : items.lastKey() + 1;
-        if (slot >= size) {
-            return getFirstAvailableSlot();
-        }
-        return slot;
-    }
-
-    /**
-     * Get the first available slot
-     * @return slot or -1 if panel is full
-     */
-    public int getFirstAvailableSlot() {
-        for (int i = 0; i < size; i++) {
-            if (!slotOccupied(i)) {
-                return i;
-            }
-        }
-        return -1;
+        return items.isEmpty() ? 0 : items.lastKey() + 1;
     }
 
     /**

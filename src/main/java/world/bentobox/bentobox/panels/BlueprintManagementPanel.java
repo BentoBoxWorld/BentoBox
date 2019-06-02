@@ -81,6 +81,8 @@ public class BlueprintManagementPanel {
         // Clicking on a bundle opens up the bundle edit panel
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(t("title")).user(user).size(45);
+        // Panel has New Blueprint Bundle button - clicking in creates a new bundle
+        pb.item(36, getNewBundle(user, addon));
         // Get the bundles
         Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
         plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream().limit(36)
@@ -109,21 +111,33 @@ public class BlueprintManagementPanel {
                 bb.setSlot(0);
             }
             if (pb.slotOccupied(bb.getSlot())) {
-                int slot = pb.getFirstAvailableSlot();
+                int slot = getFirstAvailableSlot(pb);
                 if (slot == -1) {
                     // TODO add paging
                     plugin.logError("Too many blueprint bundles to show!");
+                    pb.item(item);
+                } else {
+                    pb.item(slot, item);
                 }
-                pb.item(slot, item);
             } else {
                 pb.item(bb.getSlot(), item);
             }
         });
 
-        // Panel has New Blueprint Bundle button - clicking in creates a new bundle
-        pb.item(36, getNewBundle(user, addon));
-
         pb.build();
+    }
+
+    /**
+     * @param pb - panel builder
+     * @return first available slot, or -1 if none
+     */
+    private static int getFirstAvailableSlot(PanelBuilder pb) {
+        for (int i = 0; i < BlueprintManagementPanel.MAX_BP_SLOT; i++) {
+            if (!pb.slotOccupied(i)) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     /**
