@@ -41,7 +41,7 @@ public class BlockEndDragon implements Listener {
         }
 
         // Setting a End Portal at the top will trick dragon legacy check.
-        e.getChunk().getBlock(0, 255, 0).setType(Material.END_PORTAL);
+        e.getChunk().getBlock(0, 255, 0).setType(Material.END_PORTAL, false);
     }
 
     /**
