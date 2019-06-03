@@ -205,7 +205,7 @@ public class Players implements DataObject {
      * @param world - world
      */
     public void clearHomeLocations(World world) {
-        homeLocations.keySet().removeIf(l -> l == null || Util.sameWorld(l.getWorld(), world));
+        homeLocations.keySet().removeIf(l -> l == null || l.getWorld() == null || Util.sameWorld(l.getWorld(), world));
     }
 
     /**
