@@ -321,7 +321,7 @@ public class BlueprintPaster {
         }
     }
 
-    private void writeSign(Island island, Block block, List<String> lines) {
+    private void writeSign(final Island island, final Block block, final List<String> lines) {
         Sign sign = (Sign) block.getState();
         org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
         // Handle spawn sign
@@ -333,25 +333,25 @@ public class BlueprintPaster {
             island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
             return;
         }
+        // Get the name of the player
+        String name = "";
+        if (island != null) {
+            name = plugin.getPlayers().getName(island.getOwner());
+        }
         // Handle locale text for starting sign
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
             String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase()).orElse("");
-            lines.clear();
             for (int i = 0; i < 4; i++) {
-                lines.add(ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
-                        addonName + ".sign.line" + i,"")));
+                sign.setLine(i, ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
+                        addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));
             }
-        }
-        // Get the name of the player
-        String name = TextVariables.NAME;
-        if (island != null) {
-            name = plugin.getPlayers().getName(island.getOwner());
-        }
-        // Sub in player's name
-        for (int i = 0 ; i < lines.size(); i++) {
-            sign.setLine(i, lines.get(i).replace(TextVariables.NAME, name));
+        } else {
+            // Just paste
+            for (int i = 0; i < 4; i++) {
+                sign.setLine(i, lines.get(i));
+            }
         }
         // Update the sign
         sign.update();
