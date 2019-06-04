@@ -9,6 +9,7 @@ import org.bukkit.event.block.BlockRedstoneEvent;
 
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.RanksManager;
 
 /**
  * Handles {@link Flags#OFFLINE_REDSTONE} flag.
@@ -25,7 +26,7 @@ public class OfflineRedstoneListener extends FlagListener {
 
         // Check if island exists and members are online
         getIslands().getProtectedIslandAt(e.getBlock().getLocation()).ifPresent(i -> {
-            for (UUID uuid : i.getMemberSet()) {
+            for (UUID uuid : i.getMemberSet(RanksManager.COOP_RANK)) {
                 if (Bukkit.getPlayer(uuid) != null) {
                     return;
                 }

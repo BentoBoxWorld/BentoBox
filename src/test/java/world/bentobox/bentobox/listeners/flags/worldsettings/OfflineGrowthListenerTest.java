@@ -1,6 +1,7 @@
 package world.bentobox.bentobox.listeners.flags.worldsettings;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.any;
@@ -15,11 +16,13 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockRedstoneEvent;
+import org.bukkit.event.block.BlockGrowEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -38,13 +41,20 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.util.Util;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({BentoBox.class, Util.class, Bukkit.class })
-public class OfflineRedstoneListenerTest {
+public class OfflineGrowthListenerTest {
 
+    @Mock
     private World world;
+    @Mock
     private IslandsManager im;
+    @Mock
     private Location inside;
+    @Mock
     private Block block;
+    @Mock
     private IslandWorldManager iwm;
+    @Mock
+    private BlockState blockState;
 
     @Before
     public void setUp() throws Exception {
@@ -52,8 +62,6 @@ public class OfflineRedstoneListenerTest {
         BentoBox plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
-        // World
-        world = mock(World.class);
         // Owner
         UUID uuid = UUID.randomUUID();
 
@@ -69,17 +77,13 @@ public class OfflineRedstoneListenerTest {
         when(island.getMemberSet(Mockito.anyInt())).thenReturn(set.build());
 
 
-        im = mock(IslandsManager.class);
         when(plugin.getIslands()).thenReturn(im);
         when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
-
-        inside = mock(Location.class);
 
         Optional<Island> opIsland = Optional.ofNullable(island);
         when(im.getProtectedIslandAt(eq(inside))).thenReturn(opIsland);
 
         // Blocks
-        block = mock(Block.class);
         when(block.getWorld()).thenReturn(world);
         when(block.getLocation()).thenReturn(inside);
 
@@ -87,7 +91,6 @@ public class OfflineRedstoneListenerTest {
         when(Util.getWorld(any())).thenReturn(world);
 
         // World Settings
-        iwm = mock(IslandWorldManager.class);
         when(iwm.inWorld(any(World.class))).thenReturn(true);
         when(plugin.getIWM()).thenReturn(iwm);
         WorldSettings ws = mock(WorldSettings.class);
@@ -99,84 +102,84 @@ public class OfflineRedstoneListenerTest {
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneDoNothing() {
+    public void testOnCropGrowDoNothing() {
         // Make an event to give some current to block
-        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
-        OfflineRedstoneListener orl = new OfflineRedstoneListener();
-        Flags.OFFLINE_REDSTONE.setSetting(world, true);
-        orl.onBlockRedstone(e);
-        // Current remains 10
-        assertEquals(10, e.getNewCurrent());
+        BlockGrowEvent e = new BlockGrowEvent(block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, true);
+        orl.onCropGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOnline() {
+    public void testOnCropGrowMembersOnline() {
         // Make an event to give some current to block
-        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
-        OfflineRedstoneListener orl = new OfflineRedstoneListener();
-        // Offline redstone not allowed
-        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        BlockGrowEvent e = new BlockGrowEvent(block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        // Offline Growth not allowed
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
         // Members are online
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(mock(Player.class));
 
-        orl.onBlockRedstone(e);
-        // Current remains 10
-        assertEquals(10, e.getNewCurrent());
+        orl.onCropGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneMembersOffline() {
+    public void testOnCropGrowMembersOffline() {
         // Make an event to give some current to block
-        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
-        OfflineRedstoneListener orl = new OfflineRedstoneListener();
-        // Offline redstone not allowed
-        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        BlockGrowEvent e = new BlockGrowEvent(block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        // Offline Growth not allowed
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
         // Members are online
         when(Bukkit.getPlayer(any(UUID.class))).thenReturn(null);
 
-        orl.onBlockRedstone(e);
-        // Current will be 0
-        assertEquals(0, e.getNewCurrent());
+        orl.onCropGrow(e);
+        // Block growth
+        assertTrue(e.isCancelled());
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneNonIsland() {
+    public void testOnCropGrowNonIsland() {
         // Make an event to give some current to block
-        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
-        OfflineRedstoneListener orl = new OfflineRedstoneListener();
-        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        BlockGrowEvent e = new BlockGrowEvent(block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
         when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
-        orl.onBlockRedstone(e);
-        // Current remains 10
-        assertEquals(10, e.getNewCurrent());
+        orl.onCropGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
     }
 
     /**
-     * Test method for {@link OfflineRedstoneListener#onBlockRedstone(BlockRedstoneEvent)}.
+     * Test method for {@link OfflineGrowthListener#OnCropGrow(BlockGrowEvent)}.
      */
     @Test
-    public void testOnBlockRedstoneNonBentoBoxWorldIsland() {
+    public void testOnCropGrowNonBentoBoxWorldIsland() {
         when(iwm.inWorld(any(World.class))).thenReturn(false);
         // Make an event to give some current to block
-        BlockRedstoneEvent e = new BlockRedstoneEvent(block, 0, 10);
-        OfflineRedstoneListener orl = new OfflineRedstoneListener();
-        Flags.OFFLINE_REDSTONE.setSetting(world, false);
+        BlockGrowEvent e = new BlockGrowEvent(block, blockState);
+        OfflineGrowthListener orl = new OfflineGrowthListener();
+        Flags.OFFLINE_GROWTH.setSetting(world, false);
         when(im.getProtectedIslandAt(eq(inside))).thenReturn(Optional.empty());
-        orl.onBlockRedstone(e);
-        // Current remains 10
-        assertEquals(10, e.getNewCurrent());
+        orl.onCropGrow(e);
+        // Allow growth
+        assertFalse(e.isCancelled());
     }
 
 }
