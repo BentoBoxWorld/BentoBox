@@ -940,4 +940,28 @@ public class Island implements DataObject {
     public void setGameMode(String gameMode) {
         this.gameMode = gameMode;
     }
+    
+    /**
+     * Returns if this island has its end island generated.
+     * @return {@code true} if this island has its end island generated, {@code false} otherwise.
+     * @since 1.5.0
+     */    
+    public boolean hasEndIsland(){
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        return iwm.isEndGenerate(getWorld()) && iwm.isEndIslands(getWorld()) &&
+            iwm.getEndWorld(getWorld()) != null &&
+            getCenter().toVector().toLocation(iwm.getEndWorld(getWorld)).getBlock().getType().equals(Material.BEDROCK);
+    }
+
+    /**
+     * Returns if this island has its nether island generated.
+     * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
+     * @since 1.5.0
+     */     
+    public boolean hasNetherIsland(){
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        return iwm.isNetherGenerate(getWorld()) && iwm.isNetherIslands(getWorld()) &&
+            iwm.getNetherWorld(getWorld()) != null &&
+            getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld)).getBlock().getType().equals(Material.BEDROCK);
+    }
 }
