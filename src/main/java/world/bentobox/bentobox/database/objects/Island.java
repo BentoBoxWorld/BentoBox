@@ -947,12 +947,10 @@ public class Island implements DataObject {
      * @since 1.5.0
      */    
     public boolean hasEndIsland(){
-        if (!BentoBox.getInstance().getIWM().isEndGenerate(getWorld()) || !BentoBox.getInstance().getIWM().isEndIslands(getWorld()) || BentoBox.getInstance().getIWM().getEndWorld(getWorld()) == null ){
-            return false;   
-        }
-        Location l = this.getCenter();
-        l.setWorld(BentoBox.getInstance().getIWM().getEndWorld(l.getWorld()));
-        return l.getBlock().getType() == Material.BEDROCK;
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        return iwm.isEndGenerate(getWorld()) && iwm.isEndIslands(getWorld()) &&
+            iwm.getEndWorld(getWorld()) != null &&
+            getCenter().toVector().toLocation(iwm.getEndWorld(getWorld)).getBlock().getType().equals(Material.BEDROCK);
     }
 
     /**
@@ -961,12 +959,9 @@ public class Island implements DataObject {
      * @since 1.5.0
      */     
     public boolean hasNetherIsland(){
-        if (!BentoBox.getInstance().getIWM().isNetherGenerate(getWorld()) || !BentoBox.getInstance().getIWM().isNetherIslands(getWorld()) || BentoBox.getInstance().getIWM().getNetherWorld(getWorld()) == null ){
-            return false;   
-        }        
-        Location l = this.getCenter();
-        l.setWorld(BentoBox.getInstance().getIWM().getNetherWorld(l.getWorld()));
-        return l.getBlock().getType() == Material.BEDROCK;
-    }    
-    
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        return iwm.isNetherGenerate(getWorld()) && iwm.isNetherIslands(getWorld()) &&
+            iwm.getNetherWorld(getWorld()) != null &&
+            getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld)).getBlock().getType().equals(Material.BEDROCK);
+    }
 }
