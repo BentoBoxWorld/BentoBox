@@ -22,12 +22,17 @@ public class PanelListenerManager implements Listener {
 
     private static HashMap<UUID, Panel> openPanels = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.LOWEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
         InventoryView view = event.getView();
+
         // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(user.getUniqueId())) {
+            // Cancel the event. If they don't want it to be cancelled then the click handler(s) should
+            // uncancel it. If gui was from our environment, then cancel event anyway.
+            event.setCancelled(true);
+
             // Check the name of the panel
             if (view.getTitle().equals(openPanels.get(user.getUniqueId()).getName())) {
                 // Close inventory if clicked outside and if setting is true
@@ -36,8 +41,6 @@ public class PanelListenerManager implements Listener {
                     return;
                 }
 
-                // Cancel the event. If they don't want it to be cancelled then the click handler(s) should uncancel it
-                event.setCancelled(true);
                 // Get the panel itself
                 Panel panel = openPanels.get(user.getUniqueId());
                 // Check that they clicked on a specific item
