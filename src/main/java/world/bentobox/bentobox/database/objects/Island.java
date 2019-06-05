@@ -5,6 +5,7 @@ import com.google.common.collect.ImmutableSet.Builder;
 import com.google.gson.annotations.Expose;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
@@ -21,6 +22,7 @@ import world.bentobox.bentobox.database.objects.adapters.Adapter;
 import world.bentobox.bentobox.database.objects.adapters.FlagSerializer;
 import world.bentobox.bentobox.database.objects.adapters.LogEntryListAdapter;
 import world.bentobox.bentobox.lists.Flags;
+import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.RanksManager;
 import world.bentobox.bentobox.util.Pair;
 import world.bentobox.bentobox.util.Util;
@@ -940,28 +942,28 @@ public class Island implements DataObject {
     public void setGameMode(String gameMode) {
         this.gameMode = gameMode;
     }
-    
+
     /**
-     * Returns if this island has its end island generated.
+     * Checks whether this island has its nether island generated or not.
+     * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
+     * @since 1.5.0
+     */
+    public boolean hasNetherIsland(){
+        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
+        return iwm.isNetherGenerate(getWorld()) && iwm.isNetherIslands(getWorld()) &&
+                iwm.getNetherWorld(getWorld()) != null &&
+                getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld())).getBlock().getType().equals(Material.BEDROCK);
+    }
+
+    /**
+     * Checks whether this island has its end island generated or not.
      * @return {@code true} if this island has its end island generated, {@code false} otherwise.
      * @since 1.5.0
-     */    
+     */
     public boolean hasEndIsland(){
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
         return iwm.isEndGenerate(getWorld()) && iwm.isEndIslands(getWorld()) &&
             iwm.getEndWorld(getWorld()) != null &&
-            getCenter().toVector().toLocation(iwm.getEndWorld(getWorld)).getBlock().getType().equals(Material.BEDROCK);
-    }
-
-    /**
-     * Returns if this island has its nether island generated.
-     * @return {@code true} if this island has its nether island generated, {@code false} otherwise.
-     * @since 1.5.0
-     */     
-    public boolean hasNetherIsland(){
-        IslandWorldManager iwm = BentoBox.getInstance().getIWM();
-        return iwm.isNetherGenerate(getWorld()) && iwm.isNetherIslands(getWorld()) &&
-            iwm.getNetherWorld(getWorld()) != null &&
-            getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld)).getBlock().getType().equals(Material.BEDROCK);
+            getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.BEDROCK);
     }
 }
