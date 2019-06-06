@@ -634,6 +634,10 @@ public class IslandsManager {
             home.getChunk().load();
         }
         player.teleport(home);
+        // Add home
+        if (plugin.getPlayers().getHomeLocations(world, player.getUniqueId()).isEmpty()) {
+            plugin.getPlayers().setHomeLocation(player.getUniqueId(), home);
+        }
         if (number == 1) {
             user.sendMessage("commands.island.go.teleport");
         } else {
