@@ -86,7 +86,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             // Set cooldown
             if (getSettings().getCoopCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("coop").ifPresent(subCommand ->
-                subCommand.setCooldown(user.getUniqueId(), targetUUID, getSettings().getCoopCooldown() * 60));
+                subCommand.setCooldown(island.getUniqueId(), targetUUID.toString(), getSettings().getCoopCooldown() * 60));
             }
             return true;
         } else {
@@ -107,7 +107,7 @@ public class IslandTeamUncoopCommand extends CompositeCommand {
             List<String> options = island.getMemberSet().stream()
                     .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.COOP_RANK)
                     .map(Bukkit::getOfflinePlayer)
-                    .map(OfflinePlayer::getName).collect(Collectors.toList());  
+                    .map(OfflinePlayer::getName).collect(Collectors.toList());
 
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));

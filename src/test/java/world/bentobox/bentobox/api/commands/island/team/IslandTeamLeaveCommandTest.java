@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
@@ -29,6 +31,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -49,6 +52,8 @@ public class IslandTeamLeaveCommandTest {
     private IslandsManager im;
     private IslandWorldManager iwm;
     private Player player;
+    @Mock
+    private CompositeCommand subCommand;
 
     /**
      * @throws java.lang.Exception
@@ -81,6 +86,8 @@ public class IslandTeamLeaveCommandTest {
         // Parent command has no aliases
         ic = mock(CompositeCommand.class);
         when(ic.getSubCommandAliases()).thenReturn(new HashMap<>());
+        Optional<CompositeCommand> optionalCommand = Optional.of(subCommand);
+        when(ic.getSubCommand(Mockito.anyString())).thenReturn(optionalCommand);
 
         // Player has island to begin with
         im = mock(IslandsManager.class);
@@ -107,6 +114,11 @@ public class IslandTeamLeaveCommandTest {
         PluginManager pim = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pim);
         when(Bukkit.getServer()).thenReturn(server);
+
+        // Island
+        Island island = mock(Island.class);
+        when(island.getUniqueId()).thenReturn("uniqueid");
+        when(im.getIsland(Mockito.any(), Mockito.any(User.class))).thenReturn(island);
     }
 
     /**
@@ -193,5 +205,16 @@ public class IslandTeamLeaveCommandTest {
 
         Mockito.verify(enderChest).clear();
         Mockito.verify(inv).clear();
+    }
+
+    /**
+     * Test method for {@link IslandTeamLeaveCommand#execute(User, String, java.util.List)}
+     */
+    @Test
+    public void testCooldown() {
+        // 10 minutes = 600 seconds
+        when(s.getInviteCooldown()).thenReturn(10);
+        testExecuteNoConfirmation();
+        Mockito.verify(subCommand).setCooldown("uniqueid", uuid.toString(), 600);
     }
 }

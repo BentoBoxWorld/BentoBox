@@ -33,6 +33,7 @@ import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.IslandWorldManager;
 import world.bentobox.bentobox.managers.IslandsManager;
@@ -139,6 +140,11 @@ public class IslandTeamKickCommandTest {
         PluginManager pim = mock(PluginManager.class);
         when(server.getPluginManager()).thenReturn(pim);
         when(Bukkit.getServer()).thenReturn(server);
+
+        // Island
+        Island island = mock(Island.class);
+        when(island.getUniqueId()).thenReturn("uniqueid");
+        when(im.getIsland(Mockito.any(), Mockito.any(UUID.class))).thenReturn(island);
 
     }
 
@@ -296,6 +302,6 @@ public class IslandTeamKickCommandTest {
         // 10 minutes = 600 seconds
         when(s.getInviteCooldown()).thenReturn(10);
         testExecuteNoConfirmation();
-        Mockito.verify(subCommand).setCooldown(uuid, notUUID, 600);
+        Mockito.verify(subCommand).setCooldown("uniqueid", notUUID.toString(), 600);
     }
 }

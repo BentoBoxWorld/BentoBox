@@ -44,7 +44,8 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -54,7 +55,7 @@ public class IslandTeamTrustCommand extends CompositeCommand {
             user.sendMessage("general.errors.unknown-player", TextVariables.NAME, args.get(0));
             return false;
         }
-        return (getSettings().getTrustCooldown() <= 0 || !checkCooldown(user, targetUUID)) && trustCmd(user, targetUUID);
+        return (getSettings().getTrustCooldown() <= 0 || !checkCooldown(user, island.getUniqueId(), targetUUID.toString())) && trustCmd(user, targetUUID);
     }
 
     private boolean trustCmd(User user, UUID targetUUID) {

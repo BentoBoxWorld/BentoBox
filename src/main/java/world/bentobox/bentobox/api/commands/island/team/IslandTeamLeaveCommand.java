@@ -62,6 +62,11 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         if (getSettings().isUseEconomy() && getIWM().isOnLeaveResetMoney(getWorld())) {
             getPlugin().getVault().ifPresent(vault -> vault.withdraw(user, vault.getBalance(user)));
         }
+        // Add cooldown for this player and target
+        if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
+            // Get the invite class from the parent
+            getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(island.getUniqueId(), user.getUniqueId().toString(), getSettings().getInviteCooldown() * 60));
+        }
         user.sendMessage("general.success");
         // Fire event
         IslandBaseEvent e = TeamEvent.builder()

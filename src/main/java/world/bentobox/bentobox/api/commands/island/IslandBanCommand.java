@@ -46,7 +46,8 @@ public class IslandBanCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -69,7 +70,7 @@ public class IslandBanCommand extends CompositeCommand {
             user.sendMessage("commands.island.ban.player-already-banned");
             return false;
         }
-        if (getSettings().getBanCooldown() > 0 && checkCooldown(user, targetUUID)) {
+        if (getSettings().getBanCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
         }
         User target = User.getInstance(targetUUID);

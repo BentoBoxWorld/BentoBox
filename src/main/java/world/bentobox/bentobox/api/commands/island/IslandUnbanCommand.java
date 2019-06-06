@@ -84,7 +84,7 @@ public class IslandUnbanCommand extends CompositeCommand {
             // Set cooldown
             if (getSettings().getBanCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("ban").ifPresent(subCommand ->
-                        subCommand.setCooldown(issuer.getUniqueId(), target.getUniqueId(), getSettings().getBanCooldown() * 60));
+                subCommand.setCooldown(island.getUniqueId(), target.getUniqueId().toString(), getSettings().getBanCooldown() * 60));
             }
             return true;
         }

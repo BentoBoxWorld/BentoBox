@@ -86,7 +86,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             // Set cooldown
             if (getSettings().getTrustCooldown() > 0 && getParent() != null) {
                 getParent().getSubCommand("trust").ifPresent(subCommand ->
-                subCommand.setCooldown(user.getUniqueId(), targetUUID, getSettings().getTrustCooldown() * 60));
+                subCommand.setCooldown(island.getUniqueId(), targetUUID.toString(), getSettings().getTrustCooldown() * 60));
             }
             return true;
         } else {
@@ -107,7 +107,7 @@ public class IslandTeamUntrustCommand extends CompositeCommand {
             List<String> options = island.getMemberSet().stream()
                     .filter(uuid -> island.getRank(User.getInstance(uuid)) == RanksManager.TRUSTED_RANK)
                     .map(Bukkit::getOfflinePlayer)
-                    .map(OfflinePlayer::getName).collect(Collectors.toList());  
+                    .map(OfflinePlayer::getName).collect(Collectors.toList());
 
             String lastArg = !args.isEmpty() ? args.get(args.size()-1) : "";
             return Optional.of(Util.tabLimit(options, lastArg));

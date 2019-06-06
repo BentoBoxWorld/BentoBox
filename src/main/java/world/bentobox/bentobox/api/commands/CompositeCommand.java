@@ -107,7 +107,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * Cool down tracker
      */
-    private Map<UUID, Map<UUID, Long>> cooldowns = new HashMap<>();
+    private Map<String, Map<String, Long>> cooldowns = new HashMap<>();
 
     /**
      * Top level command
@@ -670,32 +670,76 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
 
     /**
      * Set a cool down - can be set by other commands on this one
-     * @param uniqueId - the caller
+     * @param uniqueId - the unique ID that is having the cooldown
      * @param targetUUID - the target (if any)
      * @param timeInSeconds - time in seconds to cool down
+     * @since 1.5.0
      */
-    public void setCooldown(UUID uniqueId, UUID targetUUID, int timeInSeconds) {
+    public void setCooldown(String uniqueId, String targetUUID, int timeInSeconds) {
         cooldowns.putIfAbsent(uniqueId, new HashMap<>());
         cooldowns.get(uniqueId).put(targetUUID, System.currentTimeMillis() + timeInSeconds * 1000);
     }
 
     /**
-     * Check if cool down is in progress
+     * Set a cool down - can be set by other commands on this one
+     * @param uniqueId - the UUID that is having the cooldown
+     * @param targetUUID - the target UUID (if any)
+     * @param timeInSeconds - time in seconds to cool down
+     */
+    public void setCooldown(UUID uniqueId, UUID targetUUID, int timeInSeconds) {
+        cooldowns.putIfAbsent(uniqueId.toString(), new HashMap<>());
+        cooldowns.get(uniqueId.toString()).put(targetUUID == null ? null : targetUUID.toString(), System.currentTimeMillis() + timeInSeconds * 1000);
+    }
+
+    /**
+     * Set a cool down for a user - can be set by other commands on this one
+     * @param uniqueId - the UUID that is having the cooldown
+     * @param timeInSeconds - time in seconds to cool down
+     * @since 1.5.0
+     */
+    public void setCooldown(UUID uniqueId, int timeInSeconds) {
+        setCooldown(uniqueId, null, timeInSeconds);
+    }
+
+    /**
+     * Check if cool down is in progress for user
      * @param user - the caller of the command
      * @param targetUUID - the target (if any)
      * @return true if cool down in place, false if not
      */
     protected boolean checkCooldown(User user, UUID targetUUID) {
-        if (!cooldowns.containsKey(user.getUniqueId()) || user.isOp() || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")) {
+        return checkCooldown(user, user.getUniqueId().toString(), targetUUID == null ? null : targetUUID.toString());
+    }
+
+    /**
+     * Check if cool down is in progress for user
+     * @param user - the user to check
+     * @return true if cool down in place, false if not
+     * @since 1.5.0
+     */
+    protected boolean checkCooldown(User user) {
+        return checkCooldown(user, user.getUniqueId().toString(), null);
+    }
+
+    /**
+     * Check if cool down is in progress
+     * @param user - the caller of the command
+     * @param uniqueId - the id that needs to be checked
+     * @param targetUUID - the target (if any)
+     * @return true if cool down in place, false if not
+     * @since 1.5.0
+     */
+    protected boolean checkCooldown(User user, String uniqueId, String targetUUID) {
+        if (!cooldowns.containsKey(uniqueId) || user.isOp() || user.hasPermission(getPermissionPrefix() + "mod.bypasscooldowns")) {
             return false;
         }
-        cooldowns.putIfAbsent(user.getUniqueId(), new HashMap<>());
-        if (cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis() <= 0) {
+        cooldowns.putIfAbsent(uniqueId, new HashMap<>());
+        if (cooldowns.get(uniqueId).getOrDefault(targetUUID, 0L) - System.currentTimeMillis() <= 0) {
             // Cool down is done
-            cooldowns.get(user.getUniqueId()).remove(targetUUID);
+            cooldowns.get(uniqueId).remove(targetUUID);
             return false;
         }
-        int timeToGo = (int) ((cooldowns.get(user.getUniqueId()).getOrDefault(targetUUID, 0L) - System.currentTimeMillis()) / 1000);
+        int timeToGo = (int) ((cooldowns.get(uniqueId).getOrDefault(targetUUID, 0L) - System.currentTimeMillis()) / 1000);
         user.sendMessage("general.errors.you-must-wait", TextVariables.NUMBER, String.valueOf(timeToGo));
         return true;
     }

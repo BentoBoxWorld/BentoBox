@@ -86,7 +86,7 @@ public class IslandCreateCommand extends CompositeCommand {
             return false;
         }
         if (getSettings().isResetCooldownOnCreate()) {
-            getParent().getSubCommand("reset").ifPresent(resetCommand -> resetCommand.setCooldown(user.getUniqueId(), null, getSettings().getResetCooldown()));
+            getParent().getSubCommand("reset").ifPresent(resetCommand -> resetCommand.setCooldown(user.getUniqueId(), getSettings().getResetCooldown()));
         }
         return true;
     }

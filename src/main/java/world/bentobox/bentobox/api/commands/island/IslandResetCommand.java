@@ -35,7 +35,7 @@ public class IslandResetCommand extends ConfirmableCommand {
     @Override
     public boolean canExecute(User user, String label, List<String> args) {
         // Check cooldown
-        if (getSettings().getResetCooldown() > 0 && checkCooldown(user, null)) {
+        if (getSettings().getResetCooldown() > 0 && checkCooldown(user)) {
             return false;
         }
 
@@ -128,7 +128,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             user.sendMessage("commands.island.create.unable-create-island");
             return false;
         }
-        setCooldown(user.getUniqueId(), null, getSettings().getResetCooldown());
+        setCooldown(user.getUniqueId(), getSettings().getResetCooldown());
         return true;
     }
 }

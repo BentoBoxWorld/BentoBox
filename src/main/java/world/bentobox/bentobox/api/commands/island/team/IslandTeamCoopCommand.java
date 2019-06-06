@@ -48,7 +48,8 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             return false;
         }
         // Check rank to use command
-        if (getIslands().getIsland(getWorld(), user).getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
+        Island island = getIslands().getIsland(getWorld(), user);
+        if (island.getRank(user) < getPlugin().getSettings().getRankCommand(getUsage())) {
             user.sendMessage("general.errors.no-permission");
             return false;
         }
@@ -59,7 +60,7 @@ public class IslandTeamCoopCommand extends CompositeCommand {
             return false;
         }
         // Check cooldown
-        if (getSettings().getCoopCooldown() > 0 && checkCooldown(user, targetUUID)) {
+        if (getSettings().getCoopCooldown() > 0 && checkCooldown(user, island.getUniqueId(), targetUUID.toString())) {
             return false;
         }
         // Player cannot coop themselves

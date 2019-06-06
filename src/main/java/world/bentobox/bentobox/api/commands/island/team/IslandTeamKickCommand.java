@@ -105,7 +105,10 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
         // Add cooldown for this player and target
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
             // Get the invite class from the parent
-            getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(user.getUniqueId(), targetUUID, getSettings().getInviteCooldown() * 60));
+            getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(
+                    oldIsland.getUniqueId(),
+                    targetUUID.toString(),
+                    getSettings().getInviteCooldown() * 60));
         }
     }
 }
