@@ -40,9 +40,29 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
             leave(user);
             return true;
         } else {
+            // Check resets
+            if (getIWM().isLeaversLoseReset(getWorld())) {
+                showResets(user);
+            }
             this.askConfirmation(user, () -> leave(user));
             return false;
         }
+    }
+
+    private void showResets(User user) {
+        int resetsLeft = getPlayers().getResetsLeft(getWorld(), user.getUniqueId());
+        if (resetsLeft != -1) {
+            // Resets are not unlimited here
+            if (resetsLeft == 0) {
+                // No resets allowed
+                user.sendMessage("commands.island.reset.none-left");
+            } else {
+                // Still some resets left
+                // Notify how many resets are left
+                user.sendMessage("commands.island.reset.resets-left", TextVariables.NUMBER, String.valueOf(resetsLeft));
+            }
+        }
+
     }
 
     private void leave(User user) {
@@ -66,6 +86,13 @@ public class IslandTeamLeaveCommand extends ConfirmableCommand {
         if (getSettings().getInviteCooldown() > 0 && getParent() != null) {
             // Get the invite class from the parent
             getParent().getSubCommand("invite").ifPresent(c -> c.setCooldown(island.getUniqueId(), user.getUniqueId().toString(), getSettings().getInviteCooldown() * 60));
+        }
+        // Remove reset if required
+        if (getIWM().isLeaversLoseReset(getWorld())) {
+            // Add a reset
+            getPlayers().addReset(getWorld(), user.getUniqueId());
+            // Notify how many resets are left
+            showResets(user);
         }
         user.sendMessage("general.success");
         // Fire event

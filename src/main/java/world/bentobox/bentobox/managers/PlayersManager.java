@@ -422,6 +422,11 @@ public class PlayersManager {
     }
 
 
+    /**
+     * Adds a reset to this player's number of resets
+     * @param world
+     * @param playerUUID
+     */
     public void addReset(World world, UUID playerUUID) {
         addPlayer(playerUUID);
         playerCache.get(playerUUID).addReset(world);
