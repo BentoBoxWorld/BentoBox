@@ -283,19 +283,20 @@ public interface WorldSettings extends ConfigObject {
 
     /**
      * @return whether leavers should lose a reset or not
+     * @since 1.5.0
      */
     boolean isLeaversLoseReset();
 
     /**
      * @return whether players keep their inventory when they are kicked
+     * @since 1.5.0
      */
     boolean isKickedKeepInventory();
-
 
     /**
      * @return whether the death value reported by {@link world.bentobox.bentobox.database.objects.Players#getDeaths()}
      * should include a sum of all players on the island or not
+     * @since 1.5.0
      */
     boolean isDeathsSumTeam();
-
 }
