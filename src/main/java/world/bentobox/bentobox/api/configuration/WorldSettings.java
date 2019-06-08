@@ -287,7 +287,7 @@ public interface WorldSettings extends ConfigObject {
     boolean isLeaversLoseReset();
 
     /**
-     * @return whether players keep their inventory if they are kicked or not
+     * @return whether players keep their inventory when they are kicked
      */
     boolean isKickedKeepInventory();
 

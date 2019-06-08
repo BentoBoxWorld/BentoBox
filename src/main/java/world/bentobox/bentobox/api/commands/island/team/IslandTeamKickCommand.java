@@ -81,11 +81,10 @@ public class IslandTeamKickCommand extends ConfirmableCommand {
                 getPlayers().save(targetUUID);
             }
         }
-        if (getIWM().isOnLeaveResetInventory(getWorld())) {
+        if (getIWM().isOnLeaveResetInventory(getWorld()) && !getIWM().isKickedKeepInventory(getWorld())) {
             if (target.isOnline()) {
                 target.getPlayer().getInventory().clear();
-            }
-            else {
+            } else {
                 getPlayers().getPlayer(targetUUID).addToPendingKick(getWorld());
                 getPlayers().save(targetUUID);
             }

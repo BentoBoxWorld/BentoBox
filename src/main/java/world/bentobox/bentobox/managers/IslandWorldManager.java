@@ -709,7 +709,7 @@ public class IslandWorldManager {
     }
 
     /**
-     * @return whether players keep their inventory if they are kicked or not
+     * @return whether players keep their inventory if they are kicked. Overrides leave inventory clearing
      */
     public boolean isKickedKeepInventory(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().isKickedKeepInventory();
