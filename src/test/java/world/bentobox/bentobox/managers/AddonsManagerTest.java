@@ -28,7 +28,9 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.Settings;
 import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.database.DatabaseSetup.DatabaseType;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 @RunWith(PowerMockRunner.class)
@@ -39,6 +41,8 @@ public class AddonsManagerTest {
     private AddonsManager am;
     @Mock
     private PluginManager pm;
+    @Mock
+    private CommandsManager cm;
 
     /**
      * @throws Exception
@@ -54,6 +58,13 @@ public class AddonsManagerTest {
         when(plugin.getFlagsManager()).thenReturn(fm);
 
         am = new AddonsManager(plugin);
+
+        // Command Manager
+        when(plugin.getCommandsManager()).thenReturn(cm);
+        Settings s = mock(Settings.class);
+        when(s.getDatabaseType()).thenReturn(DatabaseType.MYSQL);
+        // settings
+        when(plugin.getSettings()).thenReturn(s);
     }
 
     /**

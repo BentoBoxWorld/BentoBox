@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
@@ -99,6 +100,9 @@ public class BentoBoxReloadCommandTest {
         PowerMockito.mockStatic(Bukkit.class);
         when(Bukkit.getScheduler()).thenReturn(sch);
 
+        // User
+        when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
+
 
         // Command
         reload = new BentoBoxReloadCommand(ac);
@@ -144,32 +148,12 @@ public class BentoBoxReloadCommandTest {
      * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfString() {
-        reload.execute(user, "", Collections.singletonList("bskyblock"));
-        Mockito.verify(user).sendMessage("commands.confirmation.confirm",
-                "[seconds]",
-                "10");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
-    public void testExecuteUserStringListOfStringNoAddon() {
-        reload.execute(user, "", Collections.singletonList("warps"));
-        Mockito.verify(user).sendMessage("commands.bentobox.reload.unknown-addon");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.commands.BentoBoxReloadCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
-     */
-    @Test
     public void testExecuteUserStringListOfStringHelp() {
-        reload.execute(user, "", Arrays.asList("warps", "fhfhfh"));
+        reload.execute(user, "", Collections.singletonList("sdfsdfs"));
         Mockito.verify(user).sendMessage(
                 "commands.help.header",
                 "[label]",
-                null
+                "commands.help.console"
                 );
     }
 
