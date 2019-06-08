@@ -29,7 +29,6 @@ import org.powermock.reflect.Whitebox;
 
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.database.objects.DataObject;
 
 @RunWith(PowerMockRunner.class)
@@ -103,23 +102,6 @@ public class AddonsManagerTest {
     public void testReloadAddonsNoAddons() {
         am.reloadAddons();
         verify(plugin, never()).log("Disabling addons...");
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.managers.AddonsManager#reloadAddon(world.bentobox.bentobox.api.addons.Addon)}.
-     */
-    @Test
-    public void testReloadAddon() {
-        Addon addon = mock(Addon.class);
-        when(addon.isEnabled()).thenReturn(true);
-        File f = new File(plugin.getDataFolder(), "addons");
-        File file = new File(f, "addon.jar");
-        when(addon.getFile()).thenReturn(file);
-        AddonDescription desc = new AddonDescription.Builder("main", "addon-name", "1.0").build();
-        when(addon.getDescription()).thenReturn(desc);
-        am.reloadAddon(addon);
-        verify(plugin).log("Disabling addon-name...");
-        verify(addon).onDisable();
     }
 
     /**

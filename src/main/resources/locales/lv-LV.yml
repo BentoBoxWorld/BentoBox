@@ -313,7 +313,6 @@ commands:
       locales-reloaded: "&2Valodas faili pārlādēti."
       addons-reloaded: "&2Papildinājumu pārlādēti."
       settings-reloaded: "&2Iestatījumi pārlādēti."
-      parameters: '[addon]'
       addon: '&6Pārlādē &b[name]&2.'
       addon-reloaded: '&b[name] &2pārlādēts.'
       unknown-addon: '&2Nezināms papildinājums!'

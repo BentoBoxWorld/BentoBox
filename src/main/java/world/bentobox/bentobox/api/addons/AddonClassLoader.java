@@ -21,6 +21,7 @@ import java.net.URLClassLoader;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Loads addons and sets up permissions
@@ -153,6 +154,13 @@ public class AddonClassLoader extends URLClassLoader {
      */
     public Addon getAddon() {
         return addon;
+    }
+
+    /**
+     * @return class list
+     */
+    public Set<String> getClasses() {
+        return classes.keySet();
     }
 
 }

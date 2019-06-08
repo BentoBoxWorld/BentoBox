@@ -1,27 +1,9 @@
 package world.bentobox.bentobox.managers;
 
-import org.bukkit.Bukkit;
-import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.event.HandlerList;
-import org.bukkit.event.Listener;
-import org.bukkit.generator.ChunkGenerator;
-import org.eclipse.jdt.annotation.NonNull;
-import org.eclipse.jdt.annotation.Nullable;
-import world.bentobox.bentobox.BentoBox;
-import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.addons.AddonClassLoader;
-import world.bentobox.bentobox.api.addons.GameModeAddon;
-import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
-import world.bentobox.bentobox.api.configuration.ConfigObject;
-import world.bentobox.bentobox.api.events.addon.AddonEvent;
-import world.bentobox.bentobox.database.objects.DataObject;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -34,6 +16,26 @@ import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
+import org.bukkit.generator.ChunkGenerator;
+import org.eclipse.jdt.annotation.NonNull;
+import org.eclipse.jdt.annotation.Nullable;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.addons.Addon;
+import world.bentobox.bentobox.api.addons.Addon.State;
+import world.bentobox.bentobox.api.addons.AddonClassLoader;
+import world.bentobox.bentobox.api.addons.GameModeAddon;
+import world.bentobox.bentobox.api.addons.exceptions.InvalidAddonFormatException;
+import world.bentobox.bentobox.api.configuration.ConfigObject;
+import world.bentobox.bentobox.api.events.addon.AddonEvent;
+import world.bentobox.bentobox.commands.BentoBoxCommand;
+import world.bentobox.bentobox.database.objects.DataObject;
 
 /**
  * @author tastybento, ComminQ
@@ -213,19 +215,29 @@ public class AddonsManager {
      */
     public void reloadAddons() {
         disableAddons();
+        // Reload BentoBox commands
+        new BentoBoxCommand();
         loadAddons();
         enableAddons();
     }
 
     /**
-     * Reloads one addon
-     * @param addon - addon
+     * Disable all the enabled addons
      */
-    public void reloadAddon(Addon addon) {
-        Path p = addon.getFile().toPath();
-        disable(addon);
-        loadAddon(p.toFile());
-        enableAddon(addon);
+    public void disableAddons() {
+        if (!getEnabledAddons().isEmpty()) {
+            plugin.log("Disabling addons...");
+            // Disable addons
+            getEnabledAddons().forEach(this::disable);
+            plugin.log("Addons successfully disabled.");
+        }
+        // Unregister all commands
+        plugin.getCommandsManager().unregisterCommands();
+        // Clear all maps
+        listeners.clear();
+        addons.clear();
+        loaders.clear();
+        classes.clear();
     }
 
     /**
@@ -251,23 +263,6 @@ public class AddonsManager {
         YamlConfiguration data = new YamlConfiguration();
         data.load(reader);
         return data;
-    }
-
-    /**
-     * Disable all the enabled addons
-     */
-    public void disableAddons() {
-        if (!getEnabledAddons().isEmpty()) {
-            plugin.log("Disabling addons...");
-            // Disable addons
-            getEnabledAddons().forEach(this::disable);
-            plugin.log("Addons successfully disabled.");
-        }
-        // Clear all maps
-        listeners.clear();
-        addons.clear();
-        loaders.clear();
-        classes.clear();
     }
 
     @NonNull
@@ -422,11 +417,9 @@ public class AddonsManager {
         }
         // Clear loaders
         if (loaders.containsKey(addon)) {
-            try {
-                loaders.get(addon).close();
-            } catch (IOException ignore) {
-                // Nothing
-            }
+            loaders.get(addon).getClasses().forEach(classes::remove);
+            addon.setState(State.DISABLED);
+            loaders.remove(addon);
         }
 
         // Remove it from the addons list

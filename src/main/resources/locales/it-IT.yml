@@ -300,8 +300,7 @@ commands:
     about:
       description: "mostra le info riguardo copyright e licenza"
     reload:
-      parameters: "[addon]"
-      description: "ricarica gli addons, le impostazioni, i locali o ricarica un singolo addon"
+      description: "ricarica gli addons, le impostazioni, i locali"
       locales-reloaded: "&2Linguaggi ricaricati."
       addons-reloaded: "&2Addons ricaricati."
       settings-reloaded: "&2Impostazioni ricaricate."
