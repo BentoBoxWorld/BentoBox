@@ -232,7 +232,7 @@ public class IslandsManager {
         // Check that the space is not solid
         // The isSolid function is not fully accurate (yet) so we have to check a few other items
         // isSolid thinks that PLATEs and SIGNS are solid, but they are not
-        return (!space1.getType().isSolid() || space1.getType().toString().contains("SIGN")) && (!space2.getType().isSolid() || space2.getType().equals(Material.SIGN) || space2.getType().equals(Material.WALL_SIGN));
+        return (!space1.getType().isSolid() || space1.getType().toString().contains("SIGN")) && (!space2.getType().isSolid() || space2.getType().toString().contains("SIGN"));
     }
 
     /**

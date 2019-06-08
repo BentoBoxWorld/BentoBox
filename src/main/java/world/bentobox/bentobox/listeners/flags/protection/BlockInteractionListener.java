@@ -1,5 +1,8 @@
 package world.bentobox.bentobox.listeners.flags.protection;
 
+import java.util.Map;
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,17 +14,36 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+
+import com.google.common.collect.ImmutableMap;
+
+import world.bentobox.bentobox.BentoBox;
+import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.api.flags.FlagListener;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.lists.Flags;
-
-import java.util.Optional;
 
 /**
  * Handle interaction with blocks
  * @author tastybento
  */
 public class BlockInteractionListener extends FlagListener {
+
+    /**
+     * These cover materials in another server version.
+     * This avoids run time errors due to unknown enum values, at the expense of a string comparison
+     */
+    Map<String, String> STRING_FLAGS = ImmutableMap.<String, String>builder()
+            .put("CAMPFIRE", "FURNACE")
+            .put("CARTOGRAPHY_TABLE", "CRAFTING")
+            .put("GRINDSTONE", "CRAFTING")
+            .put("LECTERN", "BREAK_BLOCKS")
+            .put("LOOM", "CRAFTING")
+            .put("STONECUTTER", "CRAFTING")
+            .put("SMOKER", "FURNACE")
+            .put("BLAST_FURNACE", "FURNACE")
+            .put("COMPOSTER", "CONTAINER")
+            .build();
 
     /**
      * Handle interaction with blocks
@@ -36,7 +58,7 @@ public class BlockInteractionListener extends FlagListener {
             return;
         }
 
-        // Otherwise, we just don't care about the RIGHT_CLICK_BLOCK action.
+        // We only care about the RIGHT_CLICK_BLOCK action.
         if (!e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             return;
         }
@@ -263,8 +285,10 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.ITEM_FRAME);
             break;
         default:
-            break;
-
+            if (STRING_FLAGS.containsKey(type.name())) {
+                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(STRING_FLAGS.get(type.name()));
+                if (f.isPresent()) checkIsland(e, player, loc, f.get());
+            }
         }
     }
 
