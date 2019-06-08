@@ -715,11 +715,4 @@ public class IslandWorldManager {
         return gameModes.get(world).getWorldSettings().isKickedKeepInventory();
     }
 
-    /**
-     * @return whether the death value reported by {@link world.bentobox.bentobox.database.objects.Players#getDeaths()}
-     * should include a sum of all players on the island or not
-     */
-    public boolean isDeathsSumTeam(@NonNull World world) {
-        return gameModes.get(world).getWorldSettings().isDeathsSumTeam();
-    }
 }

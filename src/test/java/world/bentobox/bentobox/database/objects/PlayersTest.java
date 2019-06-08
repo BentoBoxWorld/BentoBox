@@ -129,33 +129,10 @@ public class PlayersTest {
      * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
      */
     @Test
-    public void testGetDeathsNoSumTeam() {
+    public void testGetDeaths() {
         p.addDeath(world);
         p.addDeath(world);
         assertEquals(2, p.getDeaths(world));
-    }
-
-    /**
-     * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
-     */
-    @Test
-    public void testGetDeathsSumTeamNoIsland() {
-        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
-        p.addDeath(world);
-        p.addDeath(world);
-        when(iwm.isDeathsSumTeam(any())).thenReturn(true);
-        assertEquals(2, p.getDeaths(world));
-    }
-
-    /**
-     * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
-     */
-    @Test
-    public void testGetDeathsSumTeamHasIsland() {
-        p.addDeath(world);
-        p.addDeath(world);
-        when(iwm.isDeathsSumTeam(any())).thenReturn(true);
-        assertEquals(52, p.getDeaths(world));
     }
 
 }
