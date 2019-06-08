@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -17,18 +18,33 @@ import org.bukkit.World;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.powermock.reflect.Whitebox;
 
+import com.google.common.collect.ImmutableSet;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.managers.IslandWorldManager;
+import world.bentobox.bentobox.managers.IslandsManager;
+import world.bentobox.bentobox.managers.PlayersManager;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest({Bukkit.class, BentoBox.class})
 public class PlayersTest {
+
+    @Mock
+    private BentoBox plugin;
+    @Mock
+    private World world;
+    @Mock
+    private IslandWorldManager iwm;
+    @Mock
+    private IslandsManager im;
+    private Players p;
 
     /**
      * @throws java.lang.Exception
@@ -36,12 +52,10 @@ public class PlayersTest {
     @Before
     public void setUp() throws Exception {
         // Set up plugin
-        plugin = mock(BentoBox.class);
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
-        IslandWorldManager s = mock(IslandWorldManager.class);
 
-        when(s.getDeathsMax(Mockito.any())).thenReturn(3);
-        when(plugin.getIWM()).thenReturn(s);
+        when(iwm.getDeathsMax(Mockito.any())).thenReturn(3);
+        when(plugin.getIWM()).thenReturn(iwm);
 
         Server server = mock(Server.class);
         PowerMockito.mockStatic(Bukkit.class);
@@ -52,9 +66,29 @@ public class PlayersTest {
         when(server.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
         when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(olp);
 
-    }
+        // world
+        when(world.getName()).thenReturn("world");
+        when(world.getEnvironment()).thenReturn(World.Environment.NORMAL);
 
-    private BentoBox plugin;
+        // Island manager
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(true);
+        Island island = mock(Island.class);
+        UUID uuid = UUID.randomUUID();
+        UUID uuid2 = UUID.randomUUID();
+        UUID uuid3 = UUID.randomUUID();
+        ImmutableSet<UUID> set = ImmutableSet.of(uuid, uuid2, uuid3);
+        when(island.getMemberSet()).thenReturn(set);
+        when(im.getIsland(any(), any(UUID.class))).thenReturn(island);
+        when(plugin.getIslands()).thenReturn(im);
+
+        // Player manager
+        PlayersManager pm = mock(PlayersManager.class);
+        when(pm.getDeaths(any(), any())).thenReturn(25);
+        when(plugin.getPlayers()).thenReturn(pm);
+
+        // Player
+        p = new Players(plugin, uuid);
+    }
 
     @Test
     public void testPlayersBSkyBlockUUID() {
@@ -63,24 +97,17 @@ public class PlayersTest {
 
     @Test
     public void testSetHomeLocationLocation() {
-        Players p = new Players(plugin, UUID.randomUUID());
         Location l = mock(Location.class);
-        World w = mock(World.class);
-        when(w.getName()).thenReturn("world");
-        when(w.getEnvironment()).thenReturn(World.Environment.NORMAL);
-        when(l.getWorld()).thenReturn(w);
+        when(l.getWorld()).thenReturn(world);
         p.setHomeLocation(l, 5);
-        assertEquals(l, p.getHomeLocation(w, 5));
-        assertNotEquals(l, p.getHomeLocation(w, 0));
-        p.clearHomeLocations(w);
-        assertTrue(p.getHomeLocations(w).isEmpty());
+        assertEquals(l, p.getHomeLocation(world, 5));
+        assertNotEquals(l, p.getHomeLocation(world, 0));
+        p.clearHomeLocations(world);
+        assertTrue(p.getHomeLocations(world).isEmpty());
     }
 
     @Test
     public void testDeaths() {
-        Players p = new Players(plugin, UUID.randomUUID());
-        World world = mock(World.class);
-        when(world.getName()).thenReturn("world_name");
         assertTrue(p.getDeaths(world) == 0);
         p.addDeath(world);
         assertTrue(p.getDeaths(world) == 1);
@@ -96,6 +123,39 @@ public class PlayersTest {
         assertTrue(p.getDeaths(world) == 3);
         p.setDeaths(world, 0);
         assertTrue(p.getDeaths(world) == 0);
+    }
+
+    /**
+     * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
+     */
+    @Test
+    public void testGetDeathsNoSumTeam() {
+        p.addDeath(world);
+        p.addDeath(world);
+        assertEquals(2, p.getDeaths(world));
+    }
+
+    /**
+     * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
+     */
+    @Test
+    public void testGetDeathsSumTeamNoIsland() {
+        when(im.hasIsland(any(), any(UUID.class))).thenReturn(false);
+        p.addDeath(world);
+        p.addDeath(world);
+        when(iwm.isDeathsSumTeam(any())).thenReturn(true);
+        assertEquals(2, p.getDeaths(world));
+    }
+
+    /**
+     * Test for {@link world.bentobox.bentobox.database.objects.Players#getDeaths(World)}
+     */
+    @Test
+    public void testGetDeathsSumTeamHasIsland() {
+        p.addDeath(world);
+        p.addDeath(world);
+        when(iwm.isDeathsSumTeam(any())).thenReturn(true);
+        assertEquals(52, p.getDeaths(world));
     }
 
 }

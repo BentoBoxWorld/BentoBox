@@ -1,5 +1,13 @@
 package world.bentobox.bentobox.managers;
 
+import java.io.File;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Difficulty;
 import org.bukkit.GameMode;
@@ -9,19 +17,12 @@ import org.bukkit.World.Environment;
 import org.bukkit.entity.EntityType;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
+
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.configuration.WorldSettings;
 import world.bentobox.bentobox.api.flags.Flag;
 import world.bentobox.bentobox.hooks.MultiverseCoreHook;
-
-import java.io.File;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 /**
  * Handles registration and management of worlds
@@ -691,7 +692,34 @@ public class IslandWorldManager {
         return gameModes.get(world).getWorldSettings().getDeathsMax();
     }
 
+    /**
+     * Get the ban limit for this world
+     * @param world - world
+     * @return ban limit
+     */
     public int getBanLimit(@NonNull World world) {
         return gameModes.get(world).getWorldSettings().getBanLimit();
+    }
+
+    /**
+     * @return whether leavers should lose a reset or not
+     */
+    public boolean isLeaversLoseReset(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isLeaversLoseReset();
+    }
+
+    /**
+     * @return whether players keep their inventory if they are kicked or not
+     */
+    public boolean isKickedKeepInventory(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isKickedKeepInventory();
+    }
+
+    /**
+     * @return whether the death value reported by {@link world.bentobox.bentobox.database.objects.Players#getDeaths()}
+     * should include a sum of all players on the island or not
+     */
+    public boolean isDeathsSumTeam(@NonNull World world) {
+        return gameModes.get(world).getWorldSettings().isDeathsSumTeam();
     }
 }

@@ -266,12 +266,22 @@ public class Players implements DataObject {
     }
 
     /**
-     * Get the number of deaths in this world
+     * Get the number of deaths in this world. If {@link world.bentobox.bentobox.api.configuration.WorldSettings#isDeathsSumTeam()}
+     * is true, then this value will be the sum of the team deaths.
      * @param world - world
      * @return number of deaths
      */
     public int getDeaths(World world) {
-        return deaths.getOrDefault(world.getName(), 0);
+        BentoBox plugin = BentoBox.getInstance();
+        int d = deaths.getOrDefault(world.getName(), 0);
+        if (plugin.getIWM().isDeathsSumTeam(world) && plugin.getIslands().hasIsland(world, getPlayerUUID())) {
+            // Sum team deaths
+            d += plugin.getIslands().getIsland(world, getPlayerUUID()).getMemberSet().stream()
+                    .filter(playerUUID -> !getPlayerUUID().equals(playerUUID))
+                    .map(playerUUID -> plugin.getPlayers().getDeaths(world, playerUUID))
+                    .collect(Collectors.summingInt(Integer::intValue));
+        }
+        return d;
     }
 
     /**

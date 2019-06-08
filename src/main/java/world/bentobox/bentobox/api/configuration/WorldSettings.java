@@ -280,4 +280,22 @@ public interface WorldSettings extends ConfigObject {
      * @return the ban limit for this world.
      */
     int getBanLimit();
+
+    /**
+     * @return whether leavers should lose a reset or not
+     */
+    boolean isLeaversLoseReset();
+
+    /**
+     * @return whether players keep their inventory if they are kicked or not
+     */
+    boolean isKickedKeepInventory();
+
+
+    /**
+     * @return whether the death value reported by {@link world.bentobox.bentobox.database.objects.Players#getDeaths()}
+     * should include a sum of all players on the island or not
+     */
+    boolean isDeathsSumTeam();
+
 }
