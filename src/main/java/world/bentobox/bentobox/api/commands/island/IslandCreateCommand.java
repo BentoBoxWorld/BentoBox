@@ -65,9 +65,13 @@ public class IslandCreateCommand extends CompositeCommand {
             // Make island
             return makeIsland(user, name);
         } else {
-            // Show panel
-            IslandCreationPanel.openPanel(this, user, label);
-            return true;
+            // Show panel only if there are multiple bundles available
+            if (getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).size() > 1) {
+                // Show panel
+                IslandCreationPanel.openPanel(this, user, label);
+                return true;
+            }
+            return makeIsland(user, getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).keySet().toArray(new String[]{})[0]);
         }
     }
 

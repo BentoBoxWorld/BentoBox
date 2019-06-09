@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.bukkit.entity.Player;
 
+import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
@@ -85,14 +86,27 @@ public class IslandResetCommand extends ConfirmableCommand {
         } else {
             // Show panel after confirmation
             if (getPlugin().getSettings().isResetConfirmation()) {
-                this.askConfirmation(user, () -> IslandCreationPanel.openPanel(this, user, label));
+                this.askConfirmation(user, () -> selectBundle(user, label));
             } else {
-                IslandCreationPanel.openPanel(this, user, label);
+                selectBundle(user, label);
             }
             return true;
         }
     }
 
+    /**
+     * Either selects the bundle to use or asks the user to choose.
+     * @since 1.5.1
+     */
+    private void selectBundle(@NonNull User user, @NonNull String label) {
+        // Show panel only if there are multiple bundles available
+        if (getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).size() > 1) {
+            // Show panel
+            IslandCreationPanel.openPanel(this, user, label);
+        } else {
+            resetIsland(user, getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon) getAddon()).keySet().toArray(new String[]{})[0]);
+        }
+    }
 
     private boolean resetIsland(User user, String name) {
         // Reset the island
