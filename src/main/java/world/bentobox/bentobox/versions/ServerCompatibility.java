@@ -5,6 +5,8 @@ import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * Checks and ensures the current server software is compatible with BentoBox.
@@ -121,6 +123,20 @@ public class ServerCompatibility {
         @NonNull
         public String toString() {
             return super.toString().substring(1).replace("_", ".");
+        }
+
+        /**
+         * @since 1.5.0
+         */
+        @NonNull
+        public static List<ServerVersion> getVersions(@NonNull Compatibility... compatibility) {
+            List<ServerVersion> versions = new LinkedList<>();
+            for (ServerVersion version : values()) {
+                if (Arrays.asList(compatibility).contains(version.getCompatibility())) {
+                    versions.add(version);
+                }
+            }
+            return versions;
         }
     }
 
