@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.5.0-SNAPSHOT
+# BentoBox Configuration 1.5.0
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -14,10 +14,10 @@ general:
     # JSON, MYSQL, MARIADB (10.2.3+), MONGODB, and YAML(deprecated).
     # Transition database options are:
     #   YAML2JSON, YAML2MARIADB, YAML2MYSQL
-    #   JSON2YAML, JSON2MARIADB, JSON2MYSQL
-    #   MYSQL2JSON, MYSQL2YAML
-    # If you need others, make a feature request.
+    #   JSON2MARIADB, JSON2MYSQL, MYSQL2JSON
+    # If you need others, please make a feature request.
     # Transition options enable migration from one database type to another. Use /bbox migrate.
+    # YAML and JSON are file-based databases.
     # MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).
     # If you use MONGODB, you must also run the BSBMongo plugin (not addon).
     # See https://github.com/tastybento/bsbMongo/releases/.
@@ -38,7 +38,6 @@ general:
   fakeplayers:
     - '[CoFH]'
   # Rank required to use a command. e.g., use the invite command. Default is owner rank is required.
-  # /!\ This feature is experimental and might not work as expected or might not work at all.
   rank-command: {}
 panel:
   close-on-click-outside: true
@@ -49,6 +48,9 @@ logs:
   # this setting set to true, as it will help you know if there are regenerations taking place.
   # Added since 1.2.0.
   clean-super-flat-chunks: true
+  # Toggle whether downloading data from GitHub should be logged in the server logs or not.
+  # Added since 1.5.0.
+  github-download-data: true
 island:
   cooldown:
     time:
@@ -97,9 +99,7 @@ web:
     download-data: true
     # Time in minutes between each connection to the GitHub API.
     # This allows for up-to-the-minute information gathering.
-    # However, as the GitHub API data does not get updated instantly, it is recommended to keep
-    # this value greater than 15 minutes.
+    # However, as the GitHub API data does not get updated instantly, this value cannot be set less than 15 minutes.
     # Setting this to 0 will make BentoBox download data only at startup.
     # Added since 1.5.0.
     connection-interval: 10
-uniqueId: config
