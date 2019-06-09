@@ -1,8 +1,11 @@
 package world.bentobox.bentobox.listeners;
 
+import java.util.Optional;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -15,6 +18,7 @@ import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.util.Util;
 import world.bentobox.bentobox.util.teleport.SafeSpotTeleport;
 import world.bentobox.bentobox.blueprints.BlueprintPaster;
+import world.bentobox.bentobox.database.objects.Island;
 
 /**
  * Handles teleportation via the Nether/End portals to the Nether and End dimensions of the worlds added by the GameModeAddons.
@@ -94,32 +98,25 @@ public class PortalTeleportationListener implements Listener {
 
         World endWorld = plugin.getIWM().getEndWorld(overWorld);
         // If this is to island End, then go to the same vector, otherwise try spawn
-        Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
+        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
+        Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.THE_END)).orElse(e.getFrom().toVector().toLocation(endWorld));
         e.setCancelled(true);
-
-        if (plugin.getIWM().isEndGenerate(overWorld) && plugin.getIWM().isEndIslands(overWorld) && plugin.getIWM().getEndWorld(overWorld) != null) {
-            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasEndIsland()) {
-                //To do, paste the schem/blueprint
-                Runnable task = () -> {
-                    new SafeSpotTeleport.Builder(plugin)
-                            .entity(e.getPlayer())
-                            .location(to)
-                            .portal()
-                            .build();
-                };
-                plugin.getIWM().getAddon(overWorld).ifPresent(addon
-                        -> new BlueprintPaster(plugin, plugin.getBlueprintsManager().getBlueprints(addon).get("end-island"), addon.getEndWorld(), plugin.getIslands().getIslandAt(e.getFrom()).get(), task));
-                return true;
-            }
-
+        // Check if there is a missing end island
+        if (plugin.getIWM().isEndGenerate(overWorld)
+                && plugin.getIWM().isEndIslands(overWorld)
+                && plugin.getIWM().getEndWorld(overWorld) != null
+                && !optionalIsland.map(Island::hasEndIsland).orElse(true)) {
+            // No end island present so paste the default one
+            pasteNewIsland(e.getPlayer(), to, optionalIsland.get(), Environment.THE_END);
+            return true;
         }
 
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
-                .entity(e.getPlayer())
-                .location(to)
-                .portal()
-                .build();
+        .entity(e.getPlayer())
+        .location(to)
+        .portal()
+        .build();
         return true;
     }
 
@@ -144,7 +141,6 @@ public class PortalTeleportationListener implements Listener {
             if (fromWorld.getEnvironment() != Environment.NETHER) {
                 // To Standard Nether
                 e.setTo(plugin.getIWM().getNetherWorld(overWorld).getSpawnLocation());
-                // e.useTravelAgent(true); - No longer available in 1.14
             }
             // From standard nether
             else {
@@ -169,34 +165,47 @@ public class PortalTeleportationListener implements Listener {
             return true;
         }
         // TO NETHER
- 
         World nether = plugin.getIWM().getNetherWorld(overWorld);
         // If this is to island nether, then go to the same vector, otherwise try spawn
-        Location to = plugin.getIslands().getIslandAt(e.getFrom()).map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
+        Optional<Island> optionalIsland = plugin.getIslands().getIslandAt(e.getFrom());
+        Location to = optionalIsland.map(i -> i.getSpawnPoint(Environment.NETHER)).orElse(e.getFrom().toVector().toLocation(nether));
         e.setCancelled(true);
-        
-        if (plugin.getIWM().isNetherGenerate(overWorld) && plugin.getIWM().isNetherIslands(overWorld) && plugin.getIWM().getNetherWorld(overWorld) != null) {
-            if (!plugin.getIslands().getIslandAt(e.getFrom()).hasNetherIsland()) {
-                //To do, paste the schem/blueprint
-                Runnable task = () -> {
-                    new SafeSpotTeleport.Builder(plugin)
-                            .entity(e.getPlayer())
-                            .location(to)
-                            .portal()
-                            .build();
-                };         
-                plugin.getIWM().getAddon(overWorld).ifPresent(addon
-                        -> new BlueprintPaster(plugin, plugin.getBlueprintsManager().getBlueprints(addon).get("nether-island"), addon.getNetherWorld(), plugin.getIslands().getIslandAt(e.getFrom()).get(), task));
-                return true;
-            }
-        }                    
+        // Check if there is an island there or not
+        if (plugin.getIWM().isNetherGenerate(overWorld)
+                && plugin.getIWM().isNetherIslands(overWorld)
+                && plugin.getIWM().getNetherWorld(overWorld) != null
+                && !optionalIsland.map(Island::hasNetherIsland).orElse(true)) {
+            // No nether island present so paste the default one
+            pasteNewIsland(e.getPlayer(), to, optionalIsland.get(), Environment.NETHER);
+            return true;
+        }
 
         // Else other worlds teleport to the nether
         new SafeSpotTeleport.Builder(plugin)
-                .entity(e.getPlayer())
-                .location(to)
-                .portal()
-                .build();
+        .entity(e.getPlayer())
+        .location(to)
+        .portal()
+        .build();
         return true;
+    }
+
+    /**
+     * Pastes the default nether or end island and teleports the player to the island's spawn point
+     * @param player - player to teleport after pasting
+     * @param to - the fallback location if a spawn point is not part of the blueprint
+     * @param island - the island
+     * @param env - NETHER or THE_END
+     */
+    private void pasteNewIsland(Player player, Location to, Island island, Environment env) {
+        String name = env.equals(Environment.NETHER) ? "nether-island" : "end-island";
+        // Paste then teleport player
+        plugin.getIWM().getAddon(island.getWorld()).ifPresent(addon
+                -> new BlueprintPaster(plugin, plugin.getBlueprintsManager().getBlueprints(addon).get(name),
+                        to.getWorld(),
+                        island, () -> new SafeSpotTeleport.Builder(plugin)
+                        .entity(player)
+                        .location(island.getSpawnPoint(env) == null ? to : island.getSpawnPoint(env))
+                        // No need to use portal because there will be no portal on the other end
+                        .build()));
     }
 }
