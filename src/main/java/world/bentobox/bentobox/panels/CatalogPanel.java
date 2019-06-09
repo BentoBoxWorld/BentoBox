@@ -93,9 +93,9 @@ public class CatalogPanel {
                         "[install]", install,
                         "[description]", "WIP"));
 
-                // Set the link to the latest release
+                // Send the link to the releases tab on click
                 itemBuilder.clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + addon.getRepository() + "/releases/latest");
+                    user1.sendRawMessage(ChatColor.GRAY + "" + ChatColor.ITALIC + "https://github.com/" + addon.getRepository() + "/releases");
                     return true;
                 });
 
