@@ -1075,9 +1075,6 @@ management:
         name: "&6Hooks"
         description: "&eClick &ato display currently loaded Hooks"
     actions:
-      check-updates:
-        name: "&6Check for updates"
-        description: "&eClick &ato check for updates"
       reload:
         name: "&cReload"
         description: "&eClick &c&ltwice &r&ato reload BentoBox"

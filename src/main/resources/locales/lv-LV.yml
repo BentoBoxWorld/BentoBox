@@ -1115,9 +1115,6 @@ management:
         name: "&6Iestapinājumi"
         description: "&eUzspied&a, lai redzētu uzstādītos iestapinājumus."
     actions:
-      check-updates:
-        name: "&6Pārbaudīt atjauninājumus"
-        description: "&eUzspied&a, lai pārbaudītu vai ir pieejami atjauninājumi."
       reload:
         name: "&cPārlādēt"
         description: "&eUzspied &c&ldivreiz&r&a, lai pārlādētu BentoBox"

@@ -25,7 +25,7 @@ import world.bentobox.bentobox.versions.ServerCompatibility;
 public class ManagementPanel {
 
     private static final String LOCALE_REF = "management.panel.";
-    private static final int[] PANES = {0, 4, 8, 9, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
+    private static final int[] PANES = {0, 4, 5, 8, 9, 18, 26, 27, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44};
 
     private ManagementPanel() {}
 
@@ -184,17 +184,6 @@ public class ManagementPanel {
         builder.item(2, addonsIconBuilder.build());
         builder.item(3, hooksIconBuilder.build());
 
-        // Global action buttons
-        PanelItem checkUpdatesItem = new PanelItemBuilder()
-                .icon(Material.OBSERVER)
-                .name(user.getTranslation(LOCALE_REF + "actions.check-updates.name"))
-                .description(user.getTranslation(LOCALE_REF + "actions.check-updates.description"))
-                .clickHandler((panel, user1, clickType, slot) -> {
-                    user1.sendRawMessage("checking for updates (not implemented yet)");
-                    return true;
-                })
-                .build();
-
         PanelItem reloadItem = new PanelItemBuilder()
                 .icon(Material.REDSTONE_TORCH)
                 .name(user.getTranslation(LOCALE_REF + "actions.reload.name"))
@@ -205,7 +194,6 @@ public class ManagementPanel {
                 })
                 .build();
 
-        builder.item(5, checkUpdatesItem);
         builder.item(6, reloadItem);
 
         // BentoBox state icon

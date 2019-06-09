@@ -969,9 +969,6 @@ management:
         name: "&6Ganchos"
         description: "&eClick &apara mostrar los ganchos cargados actualmente"
     actions:
-      check-updates:
-        name: "&6Buscar actualizaciones"
-        description: "&eClick &apara buscar actualizaciones"
       reload:
         name: "&cReload"
         description: "&eClick &c&ldoble &r&apara recargar BentoBox"

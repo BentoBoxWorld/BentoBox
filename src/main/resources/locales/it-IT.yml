@@ -1070,9 +1070,6 @@ management:
         name: "&6Hooks"
         description: "&eClicca &aper mostrare gli Hooks caricati al momento"
     actions:
-      check-updates:
-        name: "&6Controlla aggiornamenti"
-        description: "&eClicca &aper controllare gli aggiornamenti"
       reload:
         name: "&cRicarica"
         description: "&eClicca &c&ldue volte &r&aper ricaricare BentoBox"
