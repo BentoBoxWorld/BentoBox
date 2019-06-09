@@ -35,6 +35,7 @@ import world.bentobox.bentobox.api.addons.Addon;
 import world.bentobox.bentobox.api.addons.AddonDescription;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.PanelListenerManager;
 import world.bentobox.bentobox.managers.AddonsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
 import world.bentobox.bentobox.managers.LocalesManager;
@@ -44,7 +45,7 @@ import world.bentobox.bentobox.managers.LocalesManager;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, User.class })
+@PrepareForTest({Bukkit.class, BentoBox.class, User.class, PanelListenerManager.class })
 public class BentoBoxReloadCommandTest {
 
     @Mock
@@ -103,6 +104,8 @@ public class BentoBoxReloadCommandTest {
         // User
         when(user.getTranslation(Mockito.anyString())).thenAnswer((Answer<String>) invocation -> invocation.getArgumentAt(0, String.class));
 
+        // Panels
+        PowerMockito.mockStatic(PanelListenerManager.class);
 
         // Command
         reload = new BentoBoxReloadCommand(ac);

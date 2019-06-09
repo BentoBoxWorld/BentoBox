@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.commands.ConfirmableCommand;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.listeners.PanelListenerManager;
 
 /**
  * Reloads settings, addons and localization.
@@ -35,6 +36,9 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
     public boolean execute(User user, String label, List<String> args) {
         if (args.isEmpty()) {
             this.askConfirmation(user, user.getTranslation("commands.bentobox.reload.warning"), () -> {
+                // Close all open panels
+                PanelListenerManager.closeAllPanels();
+
                 // Reload settings
                 getPlugin().loadSettings();
                 user.sendMessage("commands.bentobox.reload.settings-reloaded");

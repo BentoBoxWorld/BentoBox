@@ -3,7 +3,9 @@ package world.bentobox.bentobox.listeners;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -11,6 +13,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.InventoryView;
 
 import world.bentobox.bentobox.BentoBox;
@@ -72,6 +75,22 @@ public class PanelListenerManager implements Listener {
     @EventHandler(priority = EventPriority.NORMAL)
     public void onLogOut(PlayerQuitEvent event) {
         openPanels.remove(event.getPlayer().getUniqueId());
+    }
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onPluginDisable(PluginDisableEvent event) {
+        if (event.getPlugin().getName().equals("BentoBox")) {
+            closeAllPanels();
+        }
+    }
+
+    /**
+     * Closes all open BentoBox panels
+     */
+    public static void closeAllPanels() {
+        // Use stream clones to avoid concurrent modification exceptions
+        openPanels.values().stream().collect(Collectors.toList()).forEach(p ->
+        p.getInventory().getViewers().stream().collect(Collectors.toList()).forEach(HumanEntity::closeInventory));
     }
 
     /**
