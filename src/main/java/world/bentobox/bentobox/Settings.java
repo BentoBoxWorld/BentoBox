@@ -85,12 +85,19 @@ public class Settings implements ConfigObject {
     @ConfigEntry(path = "panel.close-on-click-outside")
     private boolean closePanelOnClickOutside = true;
 
+    /*
+     * Logs
+     */
     @ConfigComment("Toggle whether superflat chunks regeneration should be logged in the server logs or not.")
     @ConfigComment("It can be spammy if there are a lot of superflat chunks to regenerate.")
     @ConfigComment("However, as superflat chunks regeneration can be performance-intensive, it is recommended to keep")
     @ConfigComment("this setting set to true, as it will help you know if there are regenerations taking place.")
     @ConfigEntry(path = "logs.clean-super-flat-chunks", since = "1.2.0")
     private boolean logCleanSuperFlatChunks = true;
+
+    @ConfigComment("Toggle whether downloading data from GitHub should be logged in the server logs or not.")
+    @ConfigEntry(path = "logs.github-download-data", since = "1.5.0")
+    private boolean logGithubDownloadData = true;
 
     /*
      * Island
@@ -183,8 +190,7 @@ public class Settings implements ConfigObject {
 
     @ConfigComment("Time in minutes between each connection to the GitHub API.")
     @ConfigComment("This allows for up-to-the-minute information gathering.")
-    @ConfigComment("However, as the GitHub API data does not get updated instantly,")
-    @ConfigComment("this value cannot be set less than 15 minutes.")
+    @ConfigComment("However, as the GitHub API data does not get updated instantly, this value cannot be set less than 15 minutes.")
     @ConfigComment("Setting this to 0 will make BentoBox download data only at startup.")
     @ConfigEntry(path = "web.github.connection-interval", since = "1.5.0")
     private int githubConnectionInterval = 60;
@@ -482,5 +488,13 @@ public class Settings implements ConfigObject {
 
     public void setCheckAddonsUpdates(boolean checkAddonsUpdates) {
         this.checkAddonsUpdates = checkAddonsUpdates;
+    }
+
+    public boolean isLogGithubDownloadData() {
+        return logGithubDownloadData;
+    }
+
+    public void setLogGithubDownloadData(boolean logGithubDownloadData) {
+        this.logGithubDownloadData = logGithubDownloadData;
     }
 }

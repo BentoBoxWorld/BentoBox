@@ -56,7 +56,9 @@ public class WebManager {
                 this.gamemodesCatalog.clear();
             }
 
-            plugin.log("Updating data from GitHub...");
+            if (plugin.getSettings().isLogGithubDownloadData()) {
+                plugin.log("Downloading data from GitHub...");
+            }
             try {
                 String catalogContent = new GitHubGist(gh, "bccabc20bce17f358d0f94bbbe83babd").getRawResponseAsJson()
                         .getAsJsonObject().getAsJsonObject("files").getAsJsonObject("catalog.json").get("content").getAsString()
