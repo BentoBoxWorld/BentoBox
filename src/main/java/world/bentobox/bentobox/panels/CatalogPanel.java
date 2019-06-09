@@ -91,7 +91,7 @@ public class CatalogPanel {
                 itemBuilder.description(user.getTranslation(LOCALE_REF + "icon.description-template",
                         "[topic]", StringUtils.capitalize(addon.getTopic()),
                         "[install]", install,
-                        "[description]", "WIP"));
+                        "[description]", addon.getDescription()));
 
                 // Send the link to the releases tab on click
                 itemBuilder.clickHandler((panel, user1, clickType, slot) -> {

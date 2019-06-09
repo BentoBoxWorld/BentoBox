@@ -20,6 +20,7 @@ public class CatalogEntry {
      */
     private @NonNull Material icon;
     private @NonNull String name;
+    private @NonNull String description;
     private @Nullable String topic;
     private @NonNull List<String> tags = new ArrayList<>();
     private @NonNull String repository;
@@ -29,6 +30,7 @@ public class CatalogEntry {
         Material material = Material.getMaterial(object.get("icon").getAsString());
         this.icon = (material != null) ? material : Material.PAPER;
         this.name = object.get("name").getAsString();
+        this.description = object.get("description").getAsString();
         this.repository = object.get("repository").getAsString();
         this.topic = object.get("topic").getAsString();
     }
@@ -45,6 +47,11 @@ public class CatalogEntry {
     @NonNull
     public String getName() {
         return name;
+    }
+
+    @NonNull
+    public String getDescription() {
+        return description;
     }
 
     @Nullable
