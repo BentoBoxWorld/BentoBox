@@ -86,6 +86,7 @@ public class PanelListenerManager implements Listener {
 
     /**
      * Closes all open BentoBox panels
+     * @since 1.5.0
      */
     public static void closeAllPanels() {
         // Use stream clones to avoid concurrent modification exceptions
