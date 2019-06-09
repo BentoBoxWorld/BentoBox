@@ -1,6 +1,8 @@
 package world.bentobox.bentobox;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.bukkit.Bukkit;
@@ -90,7 +92,12 @@ public class BentoBox extends JavaPlugin {
             // Show a warning
             logWarning("************ Disclaimer **************");
             logWarning("BentoBox may not be compatible with this server!");
-            logWarning("BentoBox is tested only on the latest version of Spigot.");
+            logWarning("BentoBox is tested only on the following Spigot versions:");
+
+            List<String> versions = ServerCompatibility.ServerVersion.getVersions(ServerCompatibility.Compatibility.COMPATIBLE, ServerCompatibility.Compatibility.SUPPORTED)
+                    .stream().map(ServerCompatibility.ServerVersion::toString).collect(Collectors.toList());
+
+            logWarning(String.join(", ", versions));
             logWarning("**************************************");
         }
 
