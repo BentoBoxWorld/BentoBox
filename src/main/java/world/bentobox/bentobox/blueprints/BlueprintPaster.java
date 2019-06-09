@@ -12,10 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.CreatureSpawner;
-import org.bukkit.block.Sign;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Sign;
+import org.bukkit.block.data.type.WallSign;
 import org.bukkit.entity.AbstractHorse;
 import org.bukkit.entity.Ageable;
 import org.bukkit.entity.ChestedHorse;
@@ -221,7 +223,7 @@ public class BlueprintPaster {
         // Get the block state
         BlockState bs = block.getState();
         // Signs
-        if (bs instanceof Sign) {
+        if (bs instanceof org.bukkit.block.Sign) {
             writeSign(island, block, bpBlock.getSignLines());
         }
         // Chests, in general
@@ -322,14 +324,20 @@ public class BlueprintPaster {
     }
 
     private void writeSign(final Island island, final Block block, final List<String> lines) {
-        Sign sign = (Sign) block.getState();
-        org.bukkit.material.Sign s = (org.bukkit.material.Sign) sign.getData();
+        BlockFace bf = null;
+        if (block.getType().name().contains("WALL_SIGN")) {
+            WallSign wallSign = (WallSign)block.getBlockData();
+            bf = wallSign.getFacing();
+        } else {
+            Sign sign = (Sign)block.getBlockData();
+            bf = sign.getRotation();
+        }
         // Handle spawn sign
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.SPAWN_HERE)) {
             block.setType(Material.AIR);
             // Orient to face same direction as sign
             Location spawnPoint = new Location(block.getWorld(), block.getX() + 0.5D, block.getY(),
-                    block.getZ() + 0.5D, Util.blockFaceToFloat(s.getFacing().getOppositeFace()), 30F);
+                    block.getZ() + 0.5D, Util.blockFaceToFloat(bf.getOppositeFace()), 30F);
             island.setSpawnPoint(block.getWorld().getEnvironment(), spawnPoint);
             return;
         }
@@ -339,22 +347,23 @@ public class BlueprintPaster {
             name = plugin.getPlayers().getName(island.getOwner());
         }
         // Handle locale text for starting sign
+        org.bukkit.block.Sign s = (org.bukkit.block.Sign)block.getState();
         // Sign text must be stored under the addon's name.sign.line0,1,2,3 in the yaml file
         if (island != null && !lines.isEmpty() && lines.get(0).equalsIgnoreCase(TextVariables.START_TEXT)) {
             // Get the addon that is operating in this world
             String addonName = plugin.getIWM().getAddon(island.getWorld()).map(addon -> addon.getDescription().getName().toLowerCase()).orElse("");
             for (int i = 0; i < 4; i++) {
-                sign.setLine(i, ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
+                s.setLine(i, ChatColor.translateAlternateColorCodes('&', plugin.getLocalesManager().getOrDefault(User.getInstance(island.getOwner()),
                         addonName + ".sign.line" + i,"").replace(TextVariables.NAME, name)));
             }
         } else {
             // Just paste
             for (int i = 0; i < 4; i++) {
-                sign.setLine(i, lines.get(i));
+                s.setLine(i, lines.get(i));
             }
         }
         // Update the sign
-        sign.update();
+        s.update();
     }
 
 }
