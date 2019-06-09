@@ -74,7 +74,8 @@ public class FlagTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.getWorld(Mockito.any())).thenReturn(mock(World.class));
+        // Return world
+        when(Util.getWorld(Mockito.any())).thenAnswer((Answer<World>) invocation -> invocation.getArgumentAt(0, World.class));
 
         // World Settings
         IslandWorldManager iwm = mock(IslandWorldManager.class);
@@ -193,6 +194,9 @@ public class FlagTest {
     @Test
     public void testSetDefaultSettingBoolean() {
         f.setDefaultSetting(true);
+        assertTrue(f.isSetForWorld(world));
+        f.setDefaultSetting(false);
+        assertFalse(f.isSetForWorld(world));
     }
 
     /**
@@ -201,6 +205,9 @@ public class FlagTest {
     @Test
     public void testSetDefaultSettingWorldBoolean() {
         f.setDefaultSetting(world, true);
+        assertTrue(f.isSetForWorld(world));
+        f.setDefaultSetting(world, false);
+        assertFalse(f.isSetForWorld(world));
     }
 
     /**

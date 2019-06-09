@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.api.panels.builders;
 
@@ -19,6 +19,7 @@ import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
+import world.bentobox.bentobox.api.panels.Panel;
 import world.bentobox.bentobox.api.panels.PanelItem;
 import world.bentobox.bentobox.api.panels.PanelListener;
 import world.bentobox.bentobox.api.user.User;
@@ -28,7 +29,7 @@ import world.bentobox.bentobox.api.user.User;
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class })
+@PrepareForTest({Bukkit.class})
 public class PanelBuilderTest {
 
     /**
@@ -39,7 +40,7 @@ public class PanelBuilderTest {
         PowerMockito.mockStatic(Bukkit.class);
         Inventory inv = mock(Inventory.class);
         when(Bukkit.createInventory(Mockito.any(), Mockito.any(), Mockito.any())).thenReturn(inv);
-        
+
     }
 
     /**
@@ -48,7 +49,7 @@ public class PanelBuilderTest {
     @Test
     public void testName() {
         PanelBuilder pb = new PanelBuilder();
-        assertTrue(pb.name("test") instanceof PanelBuilder);    
+        assertTrue(pb.name("test") instanceof PanelBuilder);
     }
 
     /**
@@ -63,7 +64,8 @@ public class PanelBuilderTest {
         pb = pb.item(pi);
         pb = pb.item(pi);
         pb = pb.item(pi);
-        
+        assertTrue(pb.slotOccupied(3));
+        assertFalse(pb.slotOccupied(4));
     }
 
     /**
@@ -78,6 +80,11 @@ public class PanelBuilderTest {
         pb = pb.item(1, pi);
         pb = pb.item(10, pi);
         pb = pb.item(20, pi);
+        assertTrue(pb.slotOccupied(0));
+        assertTrue(pb.slotOccupied(1));
+        assertTrue(pb.slotOccupied(10));
+        assertTrue(pb.slotOccupied(20));
+        assertFalse(pb.slotOccupied(4));
     }
 
     /**
@@ -86,7 +93,7 @@ public class PanelBuilderTest {
     @Test
     public void testSize() {
         PanelBuilder pb = new PanelBuilder();
-        pb = pb.size(45);
+        assertEquals(pb, pb.size(45));
     }
 
     /**
@@ -99,7 +106,7 @@ public class PanelBuilderTest {
         pb = pb.user(user);
         // Change user
         User user2 = mock(User.class);
-        pb = pb.user(user2);
+        assertEquals(pb, pb.user(user2));
     }
 
     /**
@@ -109,7 +116,7 @@ public class PanelBuilderTest {
     public void testListener() {
         PanelBuilder pb = new PanelBuilder();
         PanelListener listener = mock(PanelListener.class);
-        pb = pb.listener(listener);
+        assertEquals(pb, pb.listener(listener));
     }
 
     /**
@@ -142,7 +149,7 @@ public class PanelBuilderTest {
         assertFalse(pb.slotOccupied(0));
         pb = pb.item(0, pi);
         assertTrue(pb.slotOccupied(0));
-        
+
         // Add multiple items
         pb = pb.item(1, pi);
         assertTrue(pb.slotOccupied(1));
@@ -158,7 +165,9 @@ public class PanelBuilderTest {
     @Test
     public void testBuild() {
         PanelBuilder pb = new PanelBuilder();
-        pb.build();
-     }
+        pb.name("test");
+        Panel p = pb.build();
+        assertEquals("test", p.getName());
+    }
 
 }

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.api.commands.island.team;
 
@@ -212,8 +212,8 @@ public class IslandTeamTrustCommandTest {
         when(s.getInviteCooldown()).thenReturn(10);
         IslandTeamTrustCommand itl = new IslandTeamTrustCommand(ic);
         String[] name = {"tastybento"};
-        itl.execute(user, itl.getLabel(), Arrays.asList(name));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
     }
-    
+
 
 }

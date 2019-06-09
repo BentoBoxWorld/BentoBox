@@ -1,6 +1,9 @@
 package world.bentobox.bentobox.database.mysql;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.sql.Connection;
@@ -44,11 +47,13 @@ import world.bentobox.bentobox.util.Util;
 @PrepareForTest( { Bukkit.class, BentoBox.class, Util.class })
 public class MySQLDatabaseHandlerTest {
 
-    private static MySQLDatabaseHandler<Island> handler;
-    private static Island instance;
-    private static String UNIQUE_ID = "xyz";
-    private static MySQLDatabaseConnector dbConn;
-    private static World world;
+    private MySQLDatabaseHandler<Island> handler;
+    private Island instance;
+    private String UNIQUE_ID = "xyz";
+    private MySQLDatabaseConnector dbConn;
+    private World world;
+    @Mock
+    private Location location;
     @Mock
     static BentoBox plugin = mock(BentoBox.class);
     private static IslandWorldManager iwm;
@@ -78,7 +83,7 @@ public class MySQLDatabaseHandlerTest {
         when(plugin.getSettings()).thenReturn(settings);
 
         iwm = mock(IslandWorldManager.class);
-        when(iwm.getDeathsMax(Mockito.any())).thenReturn(10);
+        when(iwm.getDeathsMax(any())).thenReturn(10);
         when(plugin.getIWM()).thenReturn(iwm);
 
         when(Bukkit.getLogger()).thenReturn(Logger.getAnonymousLogger());
@@ -97,34 +102,41 @@ public class MySQLDatabaseHandlerTest {
         handler = new MySQLDatabaseHandler<>(plugin, Island.class, dbConn);
 
         PowerMockito.mockStatic(Util.class);
-        when(Util.sameWorld(Mockito.any(), Mockito.any())).thenReturn(true);
+        when(Util.sameWorld(any(), any())).thenReturn(true);
 
         // Flags
         FlagsManager fm = mock(FlagsManager.class);
         when(plugin.getFlagsManager()).thenReturn(fm);
         when(fm.getFlags()).thenReturn(new ArrayList<>());
+
+        // Location
+        when(location.getWorld()).thenReturn(world);
+        when(location.getBlockX()).thenReturn(0);
+        when(location.getBlockY()).thenReturn(0);
+        when(location.getBlockZ()).thenReturn(0);
+
     }
 
     @Test
     public void testSaveNullObject() {
         handler.saveObject(null);
+        verify(plugin).logError(eq("MySQL database request to store a null. "));
     }
 
     @Test
     public void testSaveObject() {
         handler.saveObject(instance);
+    }
+
+    @Test
+    public void testSaveObject2() {
         BentoBox plugin = mock(BentoBox.class);
         Settings settings = mock(Settings.class);
         when(plugin.getSettings()).thenReturn(settings);
-        when(iwm.getDeathsMax(Mockito.any())).thenReturn(10);
+        when(iwm.getDeathsMax(any())).thenReturn(10);
         Players players = new Players();
         players.setUniqueId(UUID.randomUUID().toString());
         players.setDeaths(world, 23);
-        Location location = mock(Location.class);
-        Mockito.when(location.getWorld()).thenReturn(world);
-        Mockito.when(location.getBlockX()).thenReturn(0);
-        Mockito.when(location.getBlockY()).thenReturn(0);
-        Mockito.when(location.getBlockZ()).thenReturn(0);
 
         players.setHomeLocation(location);
         players.setHomeLocation(location, 1);
@@ -140,6 +152,10 @@ public class MySQLDatabaseHandlerTest {
         MySQLDatabaseHandler<Players> h = new MySQLDatabaseHandler<>(plugin, Players.class, dbConn);
         h.saveObject(players);
 
+    }
+
+    @Test
+    public void testSaveObject3() {
         Island island = new Island();
         island.setUniqueId(UNIQUE_ID);
         island.setCenter(location);

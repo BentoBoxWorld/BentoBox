@@ -227,7 +227,8 @@ public class IslandTeamInviteCommandTest {
         when(s.getInviteCooldown()).thenReturn(10);
         IslandTeamInviteCommand itl = new IslandTeamInviteCommand(ic);
         String[] name = {"tastybento"};
-        itl.execute(user, itl.getLabel(), Arrays.asList(name));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
+
     }
 
 }

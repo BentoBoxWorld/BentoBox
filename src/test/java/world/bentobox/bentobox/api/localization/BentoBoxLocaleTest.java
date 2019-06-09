@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.api.localization;
 
@@ -49,7 +49,7 @@ public class BentoBoxLocaleTest {
         // Mock item factory (for itemstacks)
         ItemFactory itemFactory = mock(ItemFactory.class);
         bannerMeta = mock(BannerMeta.class);
-        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);       
+        when(itemFactory.getItemMeta(any())).thenReturn(bannerMeta);
         when(Bukkit.getItemFactory()).thenReturn(itemFactory);
 
         Locale locale = Locale.US;
@@ -60,14 +60,7 @@ public class BentoBoxLocaleTest {
         authors.add("tastybento2");
         config.set("meta.authors", authors );
         config.set("reference.to.test", "test result");
-        localeObject = new BentoBoxLocale(locale, config);   
-    }
-
-    /**
-     * Test method for {@link world.bentobox.bentobox.api.localization.BentoBoxLocale#BentoBoxLocale(java.util.Locale, org.bukkit.configuration.file.YamlConfiguration)}.
-     */
-    @Test
-    public void testBentoBoxLocale() {
+        localeObject = new BentoBoxLocale(locale, config);
     }
 
     /**

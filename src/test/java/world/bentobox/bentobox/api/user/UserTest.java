@@ -8,6 +8,8 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
 
 import java.util.HashSet;
 import java.util.Locale;
@@ -59,6 +61,8 @@ public class UserTest {
     private LocalesManager lm;
     private User user;
     private IslandWorldManager iwm;
+    private Server server;
+    private UUID uuid;
 
     @Before
     public void setUp() throws Exception {
@@ -67,13 +71,15 @@ public class UserTest {
         Whitebox.setInternalState(BentoBox.class, "instance", plugin);
         User.setPlugin(plugin);
 
-        Server server = mock(Server.class);
+        server = mock(Server.class);
         World world = mock(World.class);
         when(server.getLogger()).thenReturn(Logger.getAnonymousLogger());
         when(server.getWorld("world")).thenReturn(world);
         when(server.getVersion()).thenReturn("BSB_Mocking");
 
         player = mock(Player.class);
+        uuid = UUID.randomUUID();
+        when(player.getUniqueId()).thenReturn(uuid);
         when(server.getPlayer(Mockito.any(UUID.class))).thenReturn(player);
 
         PluginManager pluginManager = mock(PluginManager.class);
@@ -141,13 +147,21 @@ public class UserTest {
 
     @Test
     public void testRemovePlayer() {
+        assertNotNull(User.getInstance(uuid));
+        assertEquals(user, User.getInstance(uuid));
         User.removePlayer(player);
+        // If the player has been removed from the cache, then code will ask server for player
+        // Return null and check if instance is null will show that the player is not in the cache
+        when(Bukkit.getPlayer(Mockito.any(UUID.class))).thenReturn(null);
+        assertNull(User.getInstance(uuid).getPlayer());
     }
 
     @Test
     public void testSetPlugin() {
         BentoBox plugin = mock(BentoBox.class);
         User.setPlugin(plugin);
+        user.addPerm("testing123");
+        verify(player).addAttachment(eq(plugin), eq("testing123"), eq(true));
     }
 
     @Test
@@ -278,7 +292,7 @@ public class UserTest {
     @Test
     public void testSendMessage() {
         user.sendMessage("a.reference");
-        Mockito.verify(player).sendMessage(Mockito.eq(TEST_TRANSLATION));
+        verify(player).sendMessage(eq(TEST_TRANSLATION));
     }
 
     @Test
@@ -290,10 +304,10 @@ public class UserTest {
         user.setAddon(addon);
         Optional<GameModeAddon> optionalAddon = Optional.of(addon);
         when(iwm .getAddon(any())).thenReturn(optionalAddon);
-        when(lm.get(any(), Mockito.eq("name.a.reference"))).thenReturn("mockmockmock");
+        when(lm.get(any(), eq("name.a.reference"))).thenReturn("mockmockmock");
         user.sendMessage("a.reference");
-        Mockito.verify(player, Mockito.never()).sendMessage(Mockito.eq(TEST_TRANSLATION));
-        Mockito.verify(player).sendMessage(Mockito.eq("mockmockmock"));
+        verify(player, Mockito.never()).sendMessage(eq(TEST_TRANSLATION));
+        verify(player).sendMessage(eq("mockmockmock"));
     }
 
     @Test
@@ -301,7 +315,7 @@ public class UserTest {
         // Nothing - blank translation
         when(lm.get(any(), any())).thenReturn("");
         user.sendMessage("a.reference");
-        Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(player, Mockito.never()).sendMessage(Mockito.anyString());
     }
 
     @Test
@@ -313,14 +327,14 @@ public class UserTest {
         }
         when(lm.get(any(), any())).thenReturn(allColors.toString());
         user.sendMessage("a.reference");
-        Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(player, Mockito.never()).sendMessage(Mockito.anyString());
     }
 
     @Test
     public void testSendRawMessage() {
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user.sendRawMessage(raw);
-        Mockito.verify(player).sendMessage(raw);
+        verify(player).sendMessage(raw);
     }
 
     @Test
@@ -328,7 +342,7 @@ public class UserTest {
         String raw = ChatColor.RED + "" + ChatColor.BOLD + "test message";
         user = User.getInstance((CommandSender)null);
         user.sendRawMessage(raw);
-        Mockito.verify(player, Mockito.never()).sendMessage(Mockito.anyString());
+        verify(player, Mockito.never()).sendMessage(Mockito.anyString());
     }
 
     @Test
@@ -340,10 +354,10 @@ public class UserTest {
         when(lm.get(any(), any())).thenReturn(translation);
 
         // Set notify
-        when(notifier.notify(any(), Mockito.eq(translation))).thenReturn(true);
+        when(notifier.notify(any(), eq(translation))).thenReturn(true);
 
         user.notify("a.reference");
-        Mockito.verify(notifier).notify(user, translation);
+        verify(notifier).notify(user, translation);
     }
 
 
@@ -352,7 +366,7 @@ public class UserTest {
         for (GameMode gm: GameMode.values()) {
             user.setGameMode(gm);
         }
-        Mockito.verify(player, Mockito.times(GameMode.values().length)).setGameMode(Mockito.any());
+        verify(player, Mockito.times(GameMode.values().length)).setGameMode(Mockito.any());
     }
 
     @Test
@@ -360,7 +374,7 @@ public class UserTest {
         when(player.teleport(Mockito.any(Location.class))).thenReturn(true);
         Location loc = mock(Location.class);
         user.teleport(loc);
-        Mockito.verify(player).teleport(loc);
+        verify(player).teleport(loc);
     }
 
     @Test
@@ -374,7 +388,7 @@ public class UserTest {
     @Test
     public void testCloseInventory() {
         user.closeInventory();
-        Mockito.verify(player).closeInventory();
+        verify(player).closeInventory();
     }
 
     @Test
@@ -406,13 +420,13 @@ public class UserTest {
     @Test
     public void testUpdateInventory() {
         user.updateInventory();
-        Mockito.verify(player).updateInventory();
+        verify(player).updateInventory();
     }
 
     @Test
     public void testPerformCommand() {
         user.performCommand("test");
-        Mockito.verify(player).performCommand("test");
+        verify(player).performCommand("test");
     }
 
     @SuppressWarnings("unlikely-arg-type")

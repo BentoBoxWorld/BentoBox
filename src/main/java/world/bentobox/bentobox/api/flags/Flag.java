@@ -296,14 +296,14 @@ public class Flag implements Comparable<Flag> {
         }
         Island island = plugin.getIslands().getIslandAt(user.getLocation()).orElse(plugin.getIslands().getIsland(user.getWorld(), user.getUniqueId()));
         switch(getType()) {
-            case PROTECTION:
-                return createProtectionFlag(plugin, user, island, pib).build();
-            case SETTING:
-                return createSettingFlag(user, island, pib).build();
-            case WORLD_SETTING:
-                return createWorldSettingFlag(user, pib).build();
-            default:
-                return pib.build();
+        case PROTECTION:
+            return createProtectionFlag(plugin, user, island, pib).build();
+        case SETTING:
+            return createSettingFlag(user, island, pib).build();
+        case WORLD_SETTING:
+            return createWorldSettingFlag(user, pib).build();
+        default:
+            return pib.build();
         }
     }
 
@@ -483,18 +483,18 @@ public class Flag implements Comparable<Flag> {
             // If no clickHandler has been set, then apply default ones
             if (clickHandler == null) {
                 switch (type){
-                    case PROTECTION:
-                        clickHandler = new CycleClick(id);
-                        break;
-                    case SETTING:
-                        clickHandler = new IslandToggleClick(id);
-                        break;
-                    case WORLD_SETTING:
-                        clickHandler = new WorldToggleClick(id);
-                        break;
-                    default:
-                        clickHandler = new CycleClick(id);
-                        break;
+                case PROTECTION:
+                    clickHandler = new CycleClick(id);
+                    break;
+                case SETTING:
+                    clickHandler = new IslandToggleClick(id);
+                    break;
+                case WORLD_SETTING:
+                    clickHandler = new WorldToggleClick(id);
+                    break;
+                default:
+                    clickHandler = new CycleClick(id);
+                    break;
                 }
             }
 

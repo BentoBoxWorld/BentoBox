@@ -66,11 +66,6 @@ public class FlagAdapterTest {
     }
 
     @Test
-    public void testFlagAdapter() {
-        new FlagTypeAdapter(plugin);
-    }
-
-    @Test
     public void testWriteJsonWriterFlag() throws IOException {
         FlagTypeAdapter fa = new FlagTypeAdapter(plugin);
         JsonWriter out = mock(JsonWriter.class);
@@ -108,7 +103,7 @@ public class FlagAdapterTest {
         Mockito.verify(reader).nextString();
         assertEquals(Flags.ANIMAL_SPAWN, flag);
     }
-    
+
     @Test
     public void testReadJsonReaderNoSuchFlag() throws IOException {
         FlagTypeAdapter fa = new FlagTypeAdapter(plugin);

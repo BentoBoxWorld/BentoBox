@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package world.bentobox.bentobox.api.commands.island.team;
 
@@ -221,9 +221,9 @@ public class IslandTeamUntrustCommandTest {
         when(s.getInviteCooldown()).thenReturn(10);
         IslandTeamUntrustCommand itl = new IslandTeamUntrustCommand(ic);
         String[] name = {"tastybento"};
-        itl.execute(user, itl.getLabel(), Arrays.asList(name));
+        assertFalse(itl.execute(user, itl.getLabel(), Arrays.asList(name)));
     }
-    
+
     @Test
     public void testTabCompleteNoIsland() {
         // No island
@@ -250,13 +250,13 @@ public class IslandTeamUntrustCommandTest {
         result = ibc.tabComplete(user, "", args);
         assertFalse(result.isPresent());
     }
-    
+
     @Test
     public void testTabComplete() {
 
         Builder<UUID> memberSet = new ImmutableSet.Builder<>();
-         for (int j = 0; j < 11; j++) {
-             memberSet.add(UUID.randomUUID());
+        for (int j = 0; j < 11; j++) {
+            memberSet.add(UUID.randomUUID());
         }
 
         when(island.getMemberSet()).thenReturn(memberSet.build());
@@ -266,8 +266,8 @@ public class IslandTeamUntrustCommandTest {
         when(Bukkit.getOfflinePlayer(Mockito.any(UUID.class))).thenReturn(offlinePlayer);
         when(offlinePlayer.getName()).thenReturn("adam", "ben", "cara", "dave", "ed", "frank", "freddy", "george", "harry", "ian", "joe");
         when(island.getRank(Mockito.any())).thenReturn(
-                RanksManager.TRUSTED_RANK, 
-                RanksManager.TRUSTED_RANK, 
+                RanksManager.TRUSTED_RANK,
+                RanksManager.TRUSTED_RANK,
                 RanksManager.TRUSTED_RANK,
                 RanksManager.MEMBER_RANK,
                 RanksManager.MEMBER_RANK,
@@ -292,7 +292,7 @@ public class IslandTeamUntrustCommandTest {
         List<String> r = result.get().stream().sorted().collect(Collectors.toList());
         // Compare the expected with the actual
         String[] expectedNames = {"adam", "ben", "cara"};
-        
+
         assertTrue(Arrays.equals(expectedNames, r.toArray()));
 
     }
