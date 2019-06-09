@@ -235,7 +235,7 @@ public class MySQLDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     public void deleteObject(T instance) {
         // Null check
         if (instance == null) {
-            plugin.logError("MySQL database request to delete a null. ");
+            plugin.logError("MySQL database request to delete a null.");
             return;
         }
         if (!(instance instanceof DataObject)) {

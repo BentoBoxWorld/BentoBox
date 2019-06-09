@@ -234,7 +234,7 @@ public class MariaDBDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
     public void deleteObject(T instance) {
         // Null check
         if (instance == null) {
-            plugin.logError("MySQL database request to delete a null. ");
+            plugin.logError("MariaDB database request to delete a null.");
             return;
         }
         if (!(instance instanceof DataObject)) {
