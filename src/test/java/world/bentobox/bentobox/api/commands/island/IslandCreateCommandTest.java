@@ -16,6 +16,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -40,6 +41,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.blueprints.dataobjects.BlueprintBundle;
 import world.bentobox.bentobox.database.objects.Island;
 import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.CommandsManager;
@@ -48,13 +50,14 @@ import world.bentobox.bentobox.managers.IslandsManager;
 import world.bentobox.bentobox.managers.PlayersManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.managers.island.NewIsland.Builder;
+import world.bentobox.bentobox.panels.IslandCreationPanel;
 
 /**
  * @author tastybento
  *
  */
 @RunWith(PowerMockRunner.class)
-@PrepareForTest({Bukkit.class, BentoBox.class, NewIsland.class})
+@PrepareForTest({Bukkit.class, BentoBox.class, NewIsland.class, IslandCreationPanel.class})
 public class IslandCreateCommandTest {
 
     @Mock
@@ -150,6 +153,9 @@ public class IslandCreateCommandTest {
 
         // Bundles manager
         when(plugin.getBlueprintsManager()).thenReturn(bpm);
+
+        // IslandCreationPanel
+        PowerMockito.mockStatic(IslandCreationPanel.class);
 
         // Command
         cc = new IslandCreateCommand(ic);
@@ -284,10 +290,11 @@ public class IslandCreateCommandTest {
      * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
      */
     @Test
-    public void testExecuteUserStringListOfStringNoBundle() {
+    public void testExecuteUserStringListOfStringNoBundleNoPanel() {
+        // Creates default bundle
         assertTrue(cc.execute(user, "", Collections.emptyList()));
-        //verify(bpm).showPanel(any(), any(), any());
-        //TODO verify it is calling the panel
+        // do not show panel, just make the island
+        verify(user).sendMessage("commands.island.create.creating-island");
     }
 
     /**
@@ -324,5 +331,20 @@ public class IslandCreateCommandTest {
     public void testExecuteUserStringListOfStringNoCooldown() {
         when(settings.isResetCooldownOnCreate()).thenReturn(true);
         assertTrue(cc.execute(user, "", Collections.emptyList()));
+    }
+
+    /**
+     * Test method for {@link world.bentobox.bentobox.api.commands.island.IslandCreateCommand#execute(world.bentobox.bentobox.api.user.User, java.lang.String, java.util.List)}.
+     */
+    @Test
+    public void testExecuteUserStringListOfStringShowPanel() {
+        Map<String, BlueprintBundle> map = new HashMap<>();
+        map.put("bundle1", new BlueprintBundle());
+        map.put("bundle2", new BlueprintBundle());
+        map.put("bundle3", new BlueprintBundle());
+        when(bpm.getBlueprintBundles(any())).thenReturn(map);
+        assertTrue(cc.execute(user, "", Collections.emptyList()));
+        // Panel is shown, not the creation message
+        verify(user, never()).sendMessage("commands.island.create.creating-island");
     }
 }

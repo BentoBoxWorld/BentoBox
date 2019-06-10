@@ -7,6 +7,7 @@ import world.bentobox.bentobox.api.addons.GameModeAddon;
 import world.bentobox.bentobox.api.commands.CompositeCommand;
 import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.user.User;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.panels.IslandCreationPanel;
 
@@ -71,7 +72,7 @@ public class IslandCreateCommand extends CompositeCommand {
                 IslandCreationPanel.openPanel(this, user, label);
                 return true;
             }
-            return makeIsland(user, getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon)getAddon()).keySet().toArray(new String[]{})[0]);
+            return makeIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
         }
     }
 
