@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World.Environment;
 import org.bukkit.block.Biome;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
@@ -79,7 +80,7 @@ public class DeleteIslandChunks {
         .filter(te -> di.inBounds(te.getLocation().getBlockX(), te.getLocation().getBlockZ()))
         .forEach(te -> ((InventoryHolder)te).getInventory().clear());
         // Reset blocks
-        MyBiomeGrid grid = new MyBiomeGrid();
+        MyBiomeGrid grid = new MyBiomeGrid(chunk.getWorld().getEnvironment());
         ChunkData cd = gm.getDefaultWorldGenerator(chunk.getWorld().getName(), "").generateChunkData(chunk.getWorld(), new Random(), chunk.getX(), chunk.getZ(), grid);
         int baseX = chunk.getX() << 4;
         int baseZ = chunk.getZ() << 4;
@@ -99,9 +100,24 @@ public class DeleteIslandChunks {
 
     class MyBiomeGrid implements BiomeGrid {
         Map<Vector, Biome> map = new HashMap<>();
+        private Biome defaultBiome;
+        public MyBiomeGrid(Environment environment) {
+            switch(environment) {
+            case NETHER:
+                defaultBiome = Biome.NETHER;
+                break;
+            case THE_END:
+                defaultBiome = Biome.THE_END;
+                break;
+            default:
+                defaultBiome = Biome.PLAINS;
+                break;
+            }
+
+        }
         @Override
         public Biome getBiome(int x, int z) {
-            return map.getOrDefault(new Vector(x,0,z), Biome.PLAINS);
+            return map.getOrDefault(new Vector(x,0,z), defaultBiome);
         }
         @Override
         public void setBiome(int x, int z, Biome bio) {
