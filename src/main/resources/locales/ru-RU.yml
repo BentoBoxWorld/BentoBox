@@ -1,0 +1,916 @@
+###########################################################################################
+# This is a YML file. Be careful when editing. Check your edits in a YAML checker like    #
+# the one at http://yaml-online-parser.appspot.com                                        #
+###########################################################################################
+
+# This locale is current with 1.4.0
+
+meta:
+  authors:
+    - ramirilyasov999
+  banner: "BLUE_BANNER:1:STRIPE_LEFT:RED:STRIPE_RIGHT:WHITE"
+
+general:
+  success: "&aУспех!"
+  invalid: "Неверный"
+  errors:
+    command-cancelled: "&cКоманда отменена."
+    no-permission: "&cУ вас нет прав что-бы использовать эту команду (&7[permission]&c)."
+    use-in-game: "&cЭта команда доступна только во время игры."
+    no-team: "&cУ вас нет команды!"
+    no-island: "&cУ вас нет острова!"
+    player-has-island: "&cИгрок уже имеет свой остров!"
+    player-has-no-island: "&cЭтот игрок не имеет  своего острова!"
+    already-have-island: "&cУ вас уже есть свой остров!"
+    no-safe-location: "&cНе найдено безопасных локаций на этом острове!"
+    not-owner: "&cВы не являетесь владельцем этого острова!"
+    not-in-team: "&cЭтот игрок не принадлежит вашей команде!"
+    offline-player: "&cЭтот игрок не существует или не играет в данный момент."
+    unknown-player: "&cИгрока с ником [name] не существует!"
+    general: "&cЭта команда еще не готова для использования - обратитесь к администратору"
+    unknown-command: "&cНеизвестная команда. Напишите &b/[label] help &cдля просмотра команд."
+    warp-not-safe: "&cЭтот варп не безопасен!"
+    wrong-world: "&cВы не можете делать это в данном мире!"
+    you-must-wait: "&cВы должны подождать [number] секунд перед тем как вы пропишите эту команду снова."
+    must-be-positive-number: "&cЦифра [number] не является положительным числом."
+  tips:
+    changing-obsidian-to-lava: "Обсидиан превращается обратно в лаву. Не обожгитесь!"
+
+commands:
+  # Parameters in <> are required, parameters in [] are optional
+  help:
+    header: "&7=========== &c[label] помощь &7==========="
+    syntax: "&b[usage] &a[parameters]&7: &e[description]"
+    syntax-no-parameters: "&b[usage]&7: &e[description]"
+    end: "&7================================="
+    parameters: "[command]"
+    description: "Команда для помощи"
+    console: "Консоль"
+  admin:
+    help:
+      parameters: ""
+      description: "Админ-команды"
+    resets:
+      description: "Изменяет сбросы островов игроков"
+      set:
+        description: "Устанавливает количество сбросов для игрока"
+        parameters: "<player> <resets>"
+      reset:
+        description: "Снимает счетчик сбросов игрока до нуля"
+        parameters: "<player>"
+    team:
+      add:
+        parameters: "<owner> <player>"
+        description: "добавить игрока в команду владельцев"
+        name-not-owner: "&c[name] не владелец."
+        name-has-island: "&c[name] уже имеет остров. Удалите или разрегестрируйте его остров!"
+      disband:
+        parameters: "<owner>"
+        description: "разъеденяет команду владельцев"
+        use-disband-owner: "&cНе владелец! Используйте разъединить [owner]"
+        disbanded: "&cАдминистратор разъединил вашу команду!"
+      kick:
+        parameters: "<team player>"
+        description: "Исключает игрока из команды"
+        cannot-kick-owner: "&cВы не можете исключить владельца. Сперва исключите участников."
+        not-in-team: "&cЭтот игрок не находится в команде."
+        admin-kicked: "&cАдминистратор исключил вас из команды."
+      setowner:
+        parameters: "<player>"
+        description: "перемещает владльца острова к игроку"
+        already-owner: "&cДанный игрок уже является владельцем этого острова!"
+    range:
+      description: "Админ-команда для размеров островов"
+      display:
+        already-off: "&cИндикаторы уже выключены"
+        already-on: "&cИндикаторы уже включены"
+        description: "Показать/скрыть индикаторы расстояния"
+        hiding: "&2Прячет индикаторы расстояния"
+        showing: "&2Показывает индикаторы расстояния"
+      set:
+        parameters: "<player> <range>"
+        description: "Устанавливает защитную территорию для острова игрока"
+        invalid-value:
+          not-numeric: "&cЦифра [number] не является целым числом!"
+          too-low: "&cЗащитная территория не должна быть меньше чем 1!"
+          too-high: "&cЗащитная территория должка быть равна или иметь значение менее чем [number]!"
+          same-as-before: "&cЗащитная территория уже имела значение [number]!"
+        success: "&2Защитная территория была успешно выставлена на значение [number]"
+      reset:
+        parameters: "<player>"
+        description: "Выставляет защитную территорию игрока к стандартному значению"
+        success: "&2Сбросить значение защитной территории к значению [number]"
+    register:
+      parameters: "<player>"
+      description: "Регистрирует игрока на не занятый остров на которым вы находитесь"
+      registered-island: "&aУспешно зарегистрировали игрока на координаты [xyz]."
+      already-owned: "&cДанный остров уже занят другим игроком!"
+      no-island-here: "&cТут нет острова. Подтвердите чтобы сделать остров."
+      in-deletion: "&cДанное островое пространство уже удаляется. Повторите попытку позже."
+      cannot-make-island: "&cИзвините но, остров не может быть тут установлен. Проверьте консоль на возможные ошибки."
+    unregister:
+      parameters: "<owner>"
+      description: "Разрегистрирует владельца острова. Но оставит остров без повреждений"
+      unregistered-island: "&aУспешно разрегистрировали игрока на координаты [xyz]."
+    info:
+      parameters: "<player>"
+      description: "Получить информацию о острове игрока на котором вы находитесь"
+      no-island: "&cНе обнаружено островов под вами."
+      title: "&3========== &9Информация о острове &3============"
+      island-uuid: "&9UUID:&3 [uuid]"
+      owner: "&9Владелец острова:&3 [owner] ([uuid])"
+      last-login: "&9Последний заход:&3 [date]"
+      deaths: "&9Смертей:&3 [number]"
+      resets-left: "&9Сбросов острова:&3 [number] (Максимальное количество: [total])"
+      team-members-title: "&9Жители острова:&3"
+      team-owner-format: "&a[name] [rank]"
+      team-member-format: "&b[name] [rank]"
+      island-location: "&9Местоположение острова:&3 [xyz]"
+      island-coords: "&9Координаты острова:&3 [xz1] to [xz2]"
+      islands-in-trash: "&9Игрок имеет остров в мусоре."
+      protection-range: "&9Радиус защитной территории: [range]"
+      max-protection-range: "&9Самый большой защитный радиус в истории острова:&3 [range]"
+      protection-coords: "&9Координаты защитной территории:&3 [xz1] to [xz2]"
+      is-spawn: "&9Данный остров является является спавном"
+      banned-players: "&9Забаненные игроки:&3"
+      banned-format: "&c[name]"
+      unowned: "&cНе занятый остров"
+    switchto:
+      parameters: "<player> <number>"
+      description: "Переместите "
+    trash:
+      parameters: "[player]"
+    emptytrash:
+      parameters: "[player]"
+    version:
+      description: "Показывает версии адонов и БентоБокса"
+    setrange:
+      parameters: "<player> <range>"
+      description: "Устанавливает радиус острова игрока"
+      range-updated: "Радиус острова игрока теперь имеет значение [number]"
+    reload:
+      description: "Обновление конфига"
+    tp:
+      parameters: "<player>"
+      description: "телепортирует на остров игрока"
+      manual: "&cНе найдено безопасных варпов! Вручную телепортируйтесь на локацию &b[location] &cи проверьте её."
+    getrank:
+      parameters: "<player>"
+      description: "получить ранг острова"
+      rank-is: "&aРанг острова [rank] ."
+    setrank:
+      parameters: "<player> <rank>"
+      description: "Выставить ранг острова игрока"
+      unknown-rank: "&cНеизвестный ранг!"
+      rank-set: "&aРанг изменен с [from] до [to]."
+    setspawn:
+      description: "Выставить остров как спавн для этого мира"
+      already-spawn: "&cЭтот остров уже является спавном!"
+      no-island-here: "&cНе обнаружено островов в вашем месте."
+      confirmation: "&cВы уверены что хотите установить этот остров в качестве точки спавна?"
+    schem:
+      parameters: "<load/copy/paste/pos1/pos2/save>"
+      description: "Манипулировать схематиками"
+      copy-first: "&cСначала скопируйте схематику!"
+      file-exists: "&cФайл уже существует, перезапишем?"
+      no-such-file: "&cТакого файла не существует!"
+      could-not-load: "&cНе могу загрузить этот файл!"
+      could-not-save: "&cХмм, что-то пошло не так во время сохранения этого файла: [message]"
+      set-pos1: "&aПозиция 1 выставлена как [vector]"
+      set-pos2: "&aПозиция 2 выставлена как [vector]"
+      set-different-pos: "&cВыставьте другую позицию - эта точка уже существует!"
+      need-pos1-pos2: "&cСперва выставите первую и вторую точку (pos1 pos2)!"
+      copied-blocks: "&bСкопировано [number] блоков в буфер обмена"
+      look-at-a-block: "&cПосмотрите на блок который находится 20 blocks to set"
+      copy:
+        parameters: "[air]"
+      load:
+        parameters: "<schem name>"
+        description: "схематика была загружена в буфер обмена"
+      list:
+        parameters: ""
+        description: "список доступных схематик"
+        no-schems: "&cНе обнаружено схематик в папке с схематиками!"
+        available-schems: "&aЭти схематики доступны для установки:"
+      origin:
+        parameters: ""
+        description: "Установить точку на позицию"
+      paste:
+        parameters: ""
+        description: "Вставить схематику на вашу локацию"
+      pos1:
+        parameters: ""
+        description: "Выставить 1ый угол кубовидной схемы "
+      pos2:
+        parameters: ""
+        description: "Выставить 2ой угол кубовидной схемы"
+      save:
+        parameters: "<schem name>"
+        description: "Скопировать в буфер обмена"
+    resetflags:
+      description: "Выставить всем островам дефолтные значения флагов из файла config.yml"
+    world:
+      description: "Изменять настройки мира"
+    delete:
+      parameters: "<player>"
+      description: "удаляет остров игрока"
+      cannot-delete-owner: "&cВсе жители острова должны быть исключены перед тем как остров будет удален."
+      deleted-island: "&aIОстров на координатах &e[xyz] &aбыл успешно удален."
+    why:
+      parameters: "<player>"
+      description:  "toggle console protection debug reporting"
+      turning-on: "Turning on console debug for [name]."
+      turning-off: "Turning off console debug for [name]."
+    deaths:
+      description: "Изменить смерти игроков"
+      reset:
+        description: "Сбросить количество смертей игрока"
+        parameters: "<player>"
+      set:
+        description: "Устанавливает определенное количество смертей для игрока"
+        parameters: "<player> <deaths>"
+  bentobox:
+    description: "БентоБокс - команды для админов"
+    about:
+      description: "Показывает всякую инфу"
+    reload:
+      description: "перезагружает настройки (if supported) и локальные файлы"
+      locales-reloaded: "&2Языки успешно обновлены."
+      addons-reloaded: "&2Дополнения успешно обновлены."
+      settings-reloaded: "&2Настройки успешно обновлены."
+    version:
+      plugin-version: "&2Версия БентоБокса: &3[version]"
+      description: "Показывает версию БентоБокса и Дополнений"
+      loaded-addons: "Загруженные дополнения:"
+      loaded-game-worlds: "Загруженные игровые миры:"
+      addon-syntax: "&2[name] &3[version]"
+      game-worlds: "&2[name] &3([addon])"
+      server: "&2На данный момент запущено &3[name] [version]&2."
+  confirmation:
+    confirm: "&cВпишите эту команду в течении &b[seconds] секунд&c что-бы подтвердить."
+    previous-request-cancelled: "&6Прошлый запрос на подтверждение был отменен."
+    request-cancelled: "&cВремя на подтверждение истекло - &bзапрос был сброшен."
+  island:
+    about:
+      description: "Информация об этом дополнении"
+    go:
+      parameters: "[home number]"
+      description: "Телепортирует вас на ваш остров"
+      teleport: "&aТелепортируем вас на ваш остров."
+      teleported: "&aТелепортировали вас на точку дома номер &e#[number]."
+      tip: "&bНапишите /[label] help &aдля просмотра списка команд."
+    help:
+      description: "Самая главная команда"
+      pick-world: "&cВыберите игровой мир [worlds]"
+    spawn:
+      description: "Телепортирует вас на спавн"
+      teleporting: "&aТелепортируем вас на спавн."
+      no-spawn: "&cВ этом мире нету точки спавна."
+    create:
+      description: "создать остров, (требует доп. права)"
+      parameters: "<schem>"
+      too-many-islands: "&cСлишком много островов уже создано в этом мире: обратитесь к администратору."
+      unable-create-island: "&cВаш остров не может быть сгенерирован: пожалуйста обратитесь к администратору."
+      creating-island: "&aГенерируем ваш мир, пожалуйста подождите..."
+      pick-world: "&cВыберите один из игровых миров [worlds]."
+      unknown-schem: "&cЭта схематика еще не известна."
+    info:
+      description: "Показывает информацию о вашем острове, или острове другого игрока"
+      parameters: "<player>"
+    reset:
+      description: "Сбросьте ваш остров или удалите прошлый"
+      parameters: "<schem>"
+      must-remove-members: "&cВы должны убрать всех жителей острова перед тем как его сбросить (/island team kick <player>)."
+      none-left: "&cУ вас больше не осталось сбросов острова!"
+      resets-left: "&cУ вас осталось [number] сбросов острова"
+    sethome:
+      description: "Ставит точку дома под вами"
+      must-be-on-your-island: "&cВы должны быть на острове чтобы установить точку дома!"
+      num-homes: "&cТочки дома должны быть цифрой от 1 до [number]."
+      home-set: "&6Вы успешно установили точку дома, попробуйте - /is home или /is."
+      nether:
+        not-allowed: "&cВы не можете поставить точку дома в аду."
+        confirmation: "&cВы уверены что хотите установить точку дома в аду?"
+      the-end:
+        not-allowed: "&cВы не можете поставить точку дома в краю."
+        confirmation: "&cВы уверены что хотите установить точку дома в краю?"
+      parameters: "[home number]"
+    setname:
+      description: "впишите имя для вашего острова"
+      name-too-short: "&cЭто слишком мало. Минимальное количество знаков - [number]."
+      name-too-long: "&cСлишком много. Максимальное количество знаков - [number]."
+      parameters: "<name>"
+    resetname:
+      description: "Сбросьте имя своего острова"
+    team:
+      description: "Настройте вашу команду"
+      info:
+        description: "Просмотреть информацию о вашей команде"
+      coop:
+        description: "Сделайте игрока своим временным жителем"
+        parameters: "<player>"
+        cannot-coop-yourself: "&cВы не можете сделать из себя временного жителя!"
+        already-has-rank: "&cДанный игрок уже имеет этот статус!"
+        you-are-a-coop-member: "&2Вы стали временным жителем острова, игрока [name]"
+      uncoop:
+        description: "Уберите статус временного жителя с игрока"
+        parameters: "<player>"
+      trust:
+        description: "Выдает статус доверенного игрока на вашем острове"
+        parameters: "<player>"
+        trust-in-yourself: "&cПоверьте в себя!"
+        members-trusted: "&cУчастники уже имеют статус доверенного игрока"
+        player-already-trusted: "&cИгрок уже имеет статус доверенный!"
+        you-are-trusted: "&2Вы получили статус доверенного игрока от [name]!"
+      untrust:
+        description: "Отбирает статус доверенного игрока на вашем острове"
+        parameters: "<player>"
+        cannot-untrust-yourself: "&cВы не можете не верить в себя!"
+        cannot-untrust-member: "&cВы не можете убрать статус доверенного игрока с этого игрока!"
+        player-not-trusted: "&cИгрок не имеет статус доверенного!"
+        you-are-no-longer-trusted: "&cВы больше не имеете статус доверенного игрока от [name]!"
+      invite:
+        description: "Пригласить игрока присоединиться к вашему острову"
+        invitation-sent: "&aПриглашение было отправлено игроку [name]"
+        removing-invite: "&cОтменяем приглашение"
+        name-has-invited-you: "&a[name] пригласил тебя присоединиться к его острову."
+        to-accept-or-reject: "&aВпишите /[label] team accept что-бы принять приглашение, или /[label] team reject что-бы отклонить"
+        you-will-lose-your-island: "&cВНИМАНИЕ! Вы потеряете свой остров при принятии приглашения!"
+        errors:
+          cannot-invite-self: "&cВы не можете пригласить самого себя!"
+          cooldown: "&cВы не можете пригласить этого пользователя еще [number] секунд"
+          island-is-full: "&cВаш остров переполнен, вы больше не можете приглашать игроков."
+          none-invited-you: "&cНикто тебя не пригласил ;c."
+          you-already-are-in-team: "&cВы уже в команде!"
+          already-on-team: "&cЭтот игрок уже в команде!"
+          invalid-invite: "&cЭто приглашение уже неактивно, просим прощения."
+        parameters: "<player>"
+        you-can-invite: "&aВы можете пригласить еще [number] игроков."
+        accept:
+          description: "Принять приглашение"
+          you-joined-island: "&aВы присоединились к острову! Впищите /[label] team info что-бы просмотреть жителей этого острова."
+          name-joined-your-island: "&a[name] присоединился к вашему острову!"
+          confirmation: |-
+            &cВы уверены что хотите принять приглашение?
+            &c&lВы &nПОТЕРЯЕТЕ&r &c&lваш существующий остров!
+        reject:
+          description: "Отклонить приглашение"
+          you-rejected-invite: "&aВы отклонили запрос о присоединении к острову."
+          name-rejected-your-invite: "&c[name] отклонил запрос на присоединение!"
+        cancel:
+          description: "Завершите существующее приглашение чтоб принять новое"
+      leave:
+        cannot-leave: "&cВладельцы не могут покинуть остров! Сперва станьте участником, или исключите всех участников."
+        description: "покинуть свой остров"
+        left-your-island: "&c[name] &cпокинул ваш остров"
+      kick:
+        description: "Исключить участника своего острова"
+        parameters: "<player>"
+        owner-kicked: "&cВладелец исключил вас со своего острова!"
+        cannot-kick: "&cВы не можете исключить самого себя!"
+      demote:
+        description: "Понизить ранг игрока"
+        parameters: "<player>"
+        failure: "&cИгрок больше никак не может быть понижен!"
+        success: "&aПонизили игрока [name] до ранга [rank]"
+      promote:
+        description: "Повысить ранг игрока"
+        parameters: "<player>"
+        failure: "&cИгрок больше никак не может быть повышен!!"
+        success: "&aПовысили игрока [name] до ранга [rank]"
+      setowner:
+        description: "Передать статус владельца острова другому игроку"
+        errors:
+          cant-transfer-to-yourself: "&cВы не можете передать статус владльца самому себе! &7(&oХотя, по факту, вы бы могли... Но вы так не желаем. Так как это бесполезно.&r&7)"
+          target-is-not-member: "&cЭтот игрок не является частью вашей команды!"
+        name-is-the-owner: "&a[name] теперь является владельцем острова!"
+        parameters: "<player>"
+        you-are-the-owner: "&aТеперь ВЫ владелец острова!"
+    ban:
+      description: "Заблокировать игрока на вашем острове"
+      parameters: "<player>"
+      cannot-ban-yourself: "&cВы не можете заблокировать самого себя!"
+      cannot-ban: "&cЭтот игрок не может быть заблокирован."
+      cannot-ban-member: "&cСперва нужно исключить игрока, а потом уже блокировать."
+      cannot-ban-more-players: "&cВы достигли лимита блокировок, теперь вы не можете блокировать игроков на своем острове."
+      player-already-banned: "&cДанный игрок уже заблокирован"
+      owner-banned-you: "&b[name]&c заблокировал вас на своем острове!"
+      you-are-banned: "&bВы заблокированы на острове игрока!"
+    unban:
+      description: "Разблокировать игрока на вашем острове"
+      parameters: "<player>"
+      cannot-unban-yourself: "&cНельзя просто взять и разблокировать самого себя!"
+      player-not-banned: "&cНельзя разбанить того кого вы не банили"
+      you-are-unbanned: "&b[name]&a разблокировал вас на своем острове!"
+    banlist:
+      description: "Список заблокированных игроков"
+      noone: "&aНа вашем острове нет заблокированных игроков"
+      the-following: "&bСледующие игроки заблокированы:"
+      names: "&c[line]"
+      you-can-ban: "&bВы можете забанить еще &e[number] &bигроков."
+    settings:
+      description: "показать настройки острова"
+    language:
+      description: "выбрать язык"
+    expel:
+      description: "исключить игрока со своего острова"
+      parameters: "<player>"
+      cannot-expel-yourself: "&cЧтобы изгнать себя надо познать смысл жизни..."
+      cannot-expel: "&cДанный игрок не может быть изгнан."
+      cannot-ban-member: "&cВы не можете изгнать игрока из своей команды!"
+      not-on-island: "&cДанный игрок не является частью вашего острова!"
+      player-expelled-you: "&b[name]&c изгнал вас со своего острова!"
+
+ranks:
+  owner: "Владелец"
+  sub-owner: "Зам. Владельца"
+  member: "Участник"
+  trusted: "Доверенный"
+  coop: "Путник"
+  visitor: "Посетитель"
+  banned: "Забаненный"
+  admin: "Администратор"
+  mod: "Модератор"
+
+protection:
+  command-is-banned: "Данная команда заблокирована для посетителей"
+  flags:
+    ANIMAL_SPAWN:
+      description: "Зеленым - можно, красным - нет"
+      name: "Cпавн животных "
+    ANVIL:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование наковален"
+      hint: "Использование наковален запрещено "
+    ARMOR_STAND:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование стоек для брони"
+      hint: "Использование стоек для брони отключено "
+    BEACON:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование маяков"
+      hint: "Использование маяков запрещено "
+    BED:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование кроватей"
+      hint: "Использование кроватей запрещено "
+    BOAT:
+      name: "Использование лодок"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Использование лодок запрещено"
+    BREAK_BLOCKS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Ломание блоков"
+      hint: "Ломание блоков запрещено"
+    BREEDING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Размножение животных"
+      hint: "Размножение животных запрещено"
+    BREWING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Зельеваренье"
+      hint: "Зельеваренье запрещено"
+    BUCKET:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование вёдер"
+      hint: "Использование вёдер заперещено"
+    BUTTON:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование кнопок"
+      hint: "Использование кнопок запрещено"
+    CONTAINER:
+      name: "Контейнеры"
+      description: |-
+        &aВключить/выключить взаимодействие с сундуками,
+        &aшалкер боксами и цветочными горшками.
+
+        &7Управление другими контейнерами
+        &7осуществляется через определенные флаги.
+      hint: "Использование контейнеров заперещено"
+    DISPENSER:
+      name: "Использование раздатчиков"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Использование раздатчиков запрещено"
+    DROPPER:
+      name: "Использование выбрасывателей"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Использование выбрасывателей запрещено"
+    HOPPER:
+      name: "Использование воронок"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Использование воронок запрещено"
+    CHEST_DAMAGE:
+      description: "Зеленым - можно, красным - нет"
+      name: "Урон по сундукам"
+    CHORUS_FRUIT:
+      description: "Зеленым - можно, красным - нет"
+      name: "Телепортирование при поедании плода хоруса"
+      hint: "Телепортирование при поедании плода хоруса отключено"
+    CLEAN_SUPER_FLAT:
+      description: |-
+        &aВключите что-бы очистить
+        &aсупер-плоские чанки
+        &aв игровых мирах с островами
+      name: "Почистить супер плоский мир"
+    COARSE_DIRT_TILLING:
+      description: |-
+        &aВключить вспахивание
+        &aземли и ломания подзола
+        &aдля получения земли
+      name: "dirt tilling (не знаю)"
+    COLLECT_LAVA:
+      description: |-
+        &aСобирание лавы
+        &a(Оверрайд)
+      name: "Переключает Собирание лавы"
+      hint: "Запрещено собирание лавы"
+    COLLECT_WATER:
+      description: |-
+        &aПеревключает собирание воды
+        &a(Оверрайд)
+      name: "Собирание воды"
+      hint: "Запрещено собирание воды"
+    COMMAND_RANKS:
+      name: "&eРанги команды"
+      description: "&aНастройте ранги для команды"
+    CRAFTING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование верстаков"
+      hint: "Запрещено использование верстаков"
+    CREEPER_DAMAGE:
+      description: "Зеленым - можно, красным - нет"
+      name: "Получение урона от криперов"
+    CREEPER_GRIEFING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Ломание блоков от криперов"
+      hint: "Запрещено гриферство от криперов"
+    CROP_TRAMPLE:
+      description: "Зеленым - можно, красным - нет"
+      name: "Собирание посевов"
+    DOOR:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование дверей"
+      hint: "Использование дверей запрещено"
+    DRAGON_EGG:
+      name: "Яйцо дракона"
+      description: |-
+        &aПредотвращает взаимодействие с яйцом.
+
+        &cЭто не защищает яйцо от
+        &cломания или установки.
+      hint: "Запрещено использование яйца"
+    EGGS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Кидание яиц"
+      hint: "Запрещено кидание яиц"
+    ELYTRA:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование Элитр"
+      hint: "Запрещено использовать элитры"
+    ENCHANTING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование стола зачарований"
+      hint: "Запрещено использовать стол зачарований"
+    ENDER_CHEST:
+      description: "Включить/выключить использование и крафтинг"
+      name: "Использование Эндер Сундуков"
+      hint: "Эндер сундуки запрещены в этом мире"
+    ENDERMAN_DEATH_DROP:
+      description: |-
+        &aИз эндерменов будет выпадать
+        &aпри смерти любой блок который
+        &aкоторый он держит.
+      name: "Дроп с Эндерменов"
+    ENDERMAN_GRIEFING:
+      description: |-
+        &aЭндермены могут брать
+        &aблоки с острова
+      name: "Грифинг Эндерменов"
+    ENDER_PEARL:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование Эндер Жемчуга"
+      hint: "Запрещено использовать эндер жемчуг"
+    ENTER_EXIT_MESSAGES:
+      description: "Показывает сообщение при входе и выходе с острова"
+      island: "[name]"
+      name: "Сообшения о Входе/Выходе"
+      now-entering: "&bВход на остров игрока [name]"
+      now-leaving: "&bВыход с острова игрока [name]"
+    EXPERIENCE_BOTTLE_THROWING:
+      name: "Бросание бутыльков с опытом"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Запрещено бросать пузырьки с опытом"
+    FIRE_BURNING:
+      name: "Горение огня"
+      description: |-
+        &aРазрешить/запретить
+        &aвоспламенение блоков и т.п. .
+    FIRE_EXTINGUISH:
+      description: "Зеленым - можно, красным - нет"
+      name: "Возможность тушения огня"
+      hint: "Запрещено тушить огонь"
+    FIRE_IGNITE:
+      name: "Возможность разжигания огня"
+      description: |-
+        &aПереключить, может ли огонь
+        &aбыть зажжен неигровыми средствами или нет.
+    FIRE_SPREAD:
+      name: "Распространение огня"
+      description: |-
+        &aРазрешить/запретить распространение огня
+        &aна блоках и т.п. .
+    FISH_SCOOPING:
+      name: "Ловля рыб ведром"
+      description: "Разрешить/запретить ловлю рыб с помощью вёдер"
+      hint: "Запрещено ловить рыб ведром"
+    FLINT_AND_STEEL:
+      name: "Использование огнива"
+      description: |-
+        &aРазрешает игрока зажигать поверхности
+        &aс помощью огнива или других средств.
+      hint: "Запрещено использовать огниво и т.п. ."
+    FURNACE:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование печей"
+      hint: "Запрещено использовать печи"
+    GATE:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование калиток"
+      hint: "Запрещено использовать калитки"
+    GEO_LIMIT_MOBS:
+      description: |-
+        &aУбить мобов которые находятся
+        &aвне защитной зоны острова
+      name: "&eУбрать мобов"
+    HURT_ANIMALS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Урон по животным"
+      hint: "Урон по животным запрещен"
+    HURT_MONSTERS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Урон по монстрам"
+      hint: "Урон по монстрам запрещен"
+    HURT_VILLAGERS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Урон по крестьянинам"
+      hint: "Урон по крестьянинам запрещен"
+    ITEM_FRAME:
+      name: "Использование рамок"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Использование рамок запрещено"
+    ITEM_FRAME_DAMAGE:
+      description: |-
+        &aМонстры могут повреждать
+        &aрамки
+      name: "Урон по рамкам"
+    INVINCIBLE_VISITORS:
+      description: |-
+        &aНастроить защищенного
+        &aпосетителя.
+      name: "&eЗащищенные посетители"
+      hint: "&cПосетители защищены"
+    ISLAND_RESPAWN:
+      description: |-
+        &aИгрок возраждается
+        &aна острове
+      name: "Спавн на острове"
+    ITEM_DROP:
+      description: "Зеленым - можно, красным - нет"
+      name: "Выбрасывание предметов"
+      hint: "Нельзя выкидывать предметы ТУТ"
+    ITEM_PICKUP:
+      description: "Зеленым - можно, красным - нет"
+      name: "Подбирание предметов"
+      hint: "Нельзя подбирать предметы ТУТ"
+    JUKEBOX:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование нотного блока"
+      hint: "Запрещено использовать нотный блок"
+    LEAF_DECAY:
+      name: "Авто-удаление листвы"
+      description: "Разрешить листве удаляться естесственным путем"
+    LEASH:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование поводка"
+    LEVER:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование рычагов"
+      hint: "Запрещено использование поводков"
+    LIQUIDS_FLOWING_OUT:
+      name: "Liquids flowing outside islands"
+      description: |-
+        &aРазрешить/запретить выливание
+        &aводы за края защитного Радиуса
+        &aВыключив данную функцию - ближайшие
+        &aострова к игроку Не смогут навредить
+        &aдругому игроку
+        &aРекомендую запретить данную функцию!
+
+        &cЗаметьте то что жидкости будут течь ВЕРТИКАЛЬНО.
+        &cТакже они не будут течь горизонтально
+        &cесли они расположены снаружи
+        &cзащитного радиуса острова
+    LOCK:
+      description: "Зеленым - можно, красным - нет"
+      name: "Закрыть остров от игроков"
+    MILKING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Добыча молока с коров"
+      hint: "Запрещено добывать молоко с коров!"
+    MINECART:
+      name: "Использование вагонеток"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Запрещено использовать вагонетки"
+    MONSTER_SPAWN:
+      description: "Разрешить/запретить спавн монстров"
+      name: "Спавн монстров на острове"
+    MOUNT_INVENTORY:
+      description: |-
+        &aРазрешить/запретить
+        &aиспользовать инвентарь мула/лошадки
+      name: "Инвентарь мула/лошадки"
+      hint: "Запрещено использовать инвентарь мула/лошадки"
+    NAME_TAG:
+      name: "Бирки"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Запрещено использовать бирки"
+    NATURAL_SPAWNING_OUTSIDE_RANGE:
+      name: "Натуральный спавн мобов вне зоны острова"
+      description: |-
+        &aРазрешить/запретить монстрам или животным
+        &aпоявляться вне защитной зоны острова
+
+        &cЗаметьте что это не остановит
+        &cспавн мобов с помощью яиц или
+        &cспавнеров
+    NOTE_BLOCK:
+      description: "Зеленым - можно, красным - нет"
+      name: "Нотный блок"
+      hint: "Запрещено использовать нотный блок"
+    OBSIDIAN_SCOOPING:
+      name: "Перевоплащение лавы"
+      description: |
+        &aПеревоплащение лавы
+        &aРазрешить обсидиану превращаться
+        &aв ведро с лавой с помощью пустого ведра.
+        &aПомогает новичкам. Меньше сбросов островов.
+    OFFLINE_REDSTONE:
+      description: |-
+        &aКогда отключено - редстоун
+        &aне будет работать на острове
+        &aна котором все участники оффлайн
+        &aМожет уменьшить количество лагов
+      name: "Замороженный редстоун"
+    PISTON_PUSH:
+      description: |-
+        &aРазрешить поршням
+        &aвыталкивать блоки
+      name: "Движение поршней"
+    PLACE_BLOCKS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Возможность ставить блоки"
+      hint: "Запрещено ставить блоки"
+    POTION_THROWING:
+      name: "Кидание зелий"
+      description: |-
+        &aЗеленым - можно, красным - нет
+        &aПод этот параметр попадают ВСЕ зелья
+      hint: "Запрещено кидать зелья"
+    NETHER_PORTAL:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование портала в ад"
+      hint: "Использование этого портала запрещено"
+    END_PORTAL:
+      description: "TЗеленым - можно, красным - нет"
+      name: "Использование портала в край"
+      hint: "Использование этого портала запрещено"
+    PRESSURE_PLATE:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование нажимных плит"
+      hint: "Использование нажимных плит запрещено"
+    PVP_END:
+      description: |-
+        &cРазрешить/запретить пвп
+        &cв Краю
+      name: "Пвп в Краю"
+      hint: "Пвп в Краю запрещено"
+    PVP_NETHER:
+      description: |-
+        &cРазрешить/запретить пвп
+        &cв Аду.
+      name: "Пвп в Аду"
+      hint: "Пвп в Аду запрещено"
+    PVP_OVERWORLD:
+      description: |-
+        &cРазрешить/запретить пвп
+        &cна островах.
+      name: "Пвп в обычном мире"
+      hint: "&cПвп в мире запрещено"
+      active: "&cПвп работает здесь!"
+    REDSTONE:
+      description: "Зеленым - можно, красным - нельзя"
+      name: "Использование редстоун компонентов"
+      hint: "Запрещено использование редстоун компонентов"
+    REMOVE_END_EXIT_ISLAND:
+      description: |-
+        &aТипо предотвращает
+        &aостров от генерации
+        &aна нулевых координатах (0,0)
+      name: "(Убрать и выйти с острова)"
+    REMOVE_MOBS:
+      description: |-
+        &aУбрать монстров
+        &aпри телепортировании на остров
+      name: "Убирание монстров"
+    RIDING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Возможность катания на животных"
+      hint: "Запрещено кататься на животных"
+    SHEARING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Возможность стрижки овец"
+      hint: "Запрещено стричь овец"
+    SPAWN_EGGS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование яиц спавна"
+      hint: "Запрещено спавнить животных яйцами спавна"
+    TNT:
+      description: "Зеленым - можно, красным - нет"
+      name: "Урон от динамита"
+    TRADING:
+      description: "Зеленым - можно, красным - нет"
+      name: "Торговля с жителями"
+      hint: "Запрещено торговаться с жителями"
+    TRAPDOOR:
+      description: "Toggle access"
+      name: "Trap doors"
+      hint: "No trapdoor use"
+    TURTLE_EGGS:
+      description: "Зеленым - можно, красным - нет"
+      name: "Черепашьи яйца"
+      hint: "Запрещено разбивать черепашьи яйца!"
+    FROST_WALKER:
+      description: "Зеленым - можно, красным - нет"
+      name: "Использование зачарования - ледоход"
+      hint: "Запрещено использовать это зачарование тут"
+    EXPERIENCE_PICKUP:
+      name: "Возможность подбирания опыта"
+      description: "Зеленым - можно, красным - нет"
+      hint: "Запрещено подбирать опыт тут"
+    PREVENT_TELEPORT_WHEN_FALLING:
+      name: "Предотвращает возможность телепортирования при падении"
+      description: |-
+        &aПредотвращает прописывание команды
+        &aдля возвращения на точку дома
+        &aпри падении
+      hint: "&cВы не можете телепортироваться на точку дома пока вы падаете."
+  locked: "&cЭтот остров закрыт!"
+  protected: "&cОстров защищен: [description]"
+  spawn-protected: "&cСпавн защищен: [description]"
+
+  panel:
+    next: "След. страница"
+    previous: "Пред. страница"
+    PROTECTION:
+      title: "&6Защита"
+      description: |-
+        &aНастройки защиты
+        &aдля этого острова
+    SETTING:
+      title: "&6Настройки"
+      description: |-
+        &aОсновные настройки
+        &aдля этого острова
+    WORLD_SETTING:
+      title: "&b[world_name] &6Настройки"
+      description: "&aНастройки для этого игрового мира"
+    flag-item:
+      name-layout: "&a[name]"
+      description-layout: |
+        &a[description]
+
+        &7Allowed for:
+      allowed-rank: "&3- &a"
+      blocked-rank: "&3- &c"
+      minimal-rank: "&3- &2"
+      menu-layout: "&a[description]"
+      setting-layout: |
+        &a[description]
+
+        &7Текущее состояние: [setting]
+      setting-active: "&aАктивно"
+      setting-disabled: "&cОтключено"
+
+language:
+  panel-title: "Выберите ваш язык"
+  selected: "&aЭто выбранный язык."
+  edited: "&aВаш язык изменен на &e[lang]&a."
+
+successfully-loaded: |
+
+  &6  ____             _        ____
+  &6 |  _ \           | |      |  _ \             &7by &atastybento &7and &aPoslovitch
+  &6 | |_) | ___ _ __ | |_ ___ | |_) | _____  __  &72017 - 2019
+  &6 |  _ < / _ \ '_ \| __/ _ \|  _ < / _ \ \/ /
+  &6 | |_) |  __/ | | | || (_) | |_) | (_) >  <   &bv&e[version]
+  &6 |____/ \___|_| |_|\__\___/|____/ \___/_/\_\  &8Loaded in &e[time]&8ms.
