@@ -13,6 +13,7 @@ import world.bentobox.bentobox.api.events.island.IslandEvent.Reason;
 import world.bentobox.bentobox.api.localization.TextVariables;
 import world.bentobox.bentobox.api.user.User;
 import world.bentobox.bentobox.database.objects.Island;
+import world.bentobox.bentobox.managers.BlueprintsManager;
 import world.bentobox.bentobox.managers.island.NewIsland;
 import world.bentobox.bentobox.panels.IslandCreationPanel;
 
@@ -104,7 +105,7 @@ public class IslandResetCommand extends ConfirmableCommand {
             // Show panel
             IslandCreationPanel.openPanel(this, user, label);
         } else {
-            resetIsland(user, getPlugin().getBlueprintsManager().getBlueprintBundles((GameModeAddon) getAddon()).keySet().toArray(new String[]{})[0]);
+            resetIsland(user, BlueprintsManager.DEFAULT_BUNDLE_NAME);
         }
     }
 
