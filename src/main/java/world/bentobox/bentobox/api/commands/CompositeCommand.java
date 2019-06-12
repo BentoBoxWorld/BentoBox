@@ -86,6 +86,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     /**
      * The prefix to be used in this command
      */
+    @Nullable
     private String permissionPrefix;
 
     /**
@@ -540,7 +541,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      */
     @Override
     public void setPermission(String permission) {
-        this.permission = permissionPrefix + permission;
+        this.permission = ((permissionPrefix != null && !permissionPrefix.isEmpty()) ? permissionPrefix : "") + permission;
     }
 
     /**
@@ -634,6 +635,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * If the permission prefix has been set, will return the prefix plus a trailing dot.
      * @return the permissionPrefix
      */
+    @Nullable
     public String getPermissionPrefix() {
         return permissionPrefix;
     }
