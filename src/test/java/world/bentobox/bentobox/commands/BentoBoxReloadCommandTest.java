@@ -1,6 +1,3 @@
-/**
- *
- */
 package world.bentobox.bentobox.commands;
 
 import static org.junit.Assert.assertEquals;
@@ -73,7 +70,6 @@ public class BentoBoxReloadCommandTest {
         when(plugin.getCommandsManager()).thenReturn(cm);
         // Parent command has no aliases
         when(ac.getSubCommandAliases()).thenReturn(new HashMap<>());
-        when(ac.getPermissionPrefix()).thenReturn("bentobox.");
         // Addons manager
         when(plugin.getAddonsManager()).thenReturn(am);
         // Addons
