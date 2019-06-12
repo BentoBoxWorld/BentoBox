@@ -30,7 +30,7 @@ public class BentoBoxMigrateCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        setPermission("admin.migrate");
+        setPermission("bentobox.admin.migrate");
         setDescription("commands.bentobox.migrate.description");
     }
 

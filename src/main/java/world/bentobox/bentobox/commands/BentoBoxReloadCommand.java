@@ -26,7 +26,7 @@ public class BentoBoxReloadCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        setPermission("admin.reload");
+        setPermission("bentobox.admin.reload");
         setParametersHelp("commands.bentobox.reload.parameters");
         setDescription("commands.bentobox.reload.description");
     }

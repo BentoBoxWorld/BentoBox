@@ -24,7 +24,7 @@ public class BentoBoxLocaleCommand extends ConfirmableCommand {
 
     @Override
     public void setup() {
-        setPermission("admin.locale");
+        setPermission("bentobox.admin.locale");
         setDescription("commands.bentobox.locale.description");
     }
 

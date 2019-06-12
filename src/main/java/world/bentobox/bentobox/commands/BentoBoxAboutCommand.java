@@ -22,7 +22,7 @@ public class BentoBoxAboutCommand extends CompositeCommand {
 
     @Override
     public void setup() {
-        // Useless : this command uses the default values.
+        setPermission("bentobox.about");
     }
 
     @Override
