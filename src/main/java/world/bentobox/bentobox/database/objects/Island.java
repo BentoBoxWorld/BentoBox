@@ -371,6 +371,7 @@ public class Island implements DataObject {
     /**
      * @return the island display name. Might be {@code null} if none is set.
      */
+    @Nullable
     public String getName() {
         return name;
     }
@@ -378,6 +379,7 @@ public class Island implements DataObject {
     /**
      * @return the owner
      */
+    @Nullable
     public UUID getOwner(){
         return owner;
     }
