@@ -528,12 +528,12 @@ public class Island implements DataObject {
     }
 
     /**
-     * Checks if a location is within this island's protected area
+     * Checks if a location is within this island's protected area.
      *
-     * @param target - target location
-     * @return true if it is, false if not
+     * @param target location to check, not null
+     * @return {@code true} if this location is within this island's protected area, {@code false} otherwise.
      */
-    public boolean onIsland(Location target) {
+    public boolean onIsland(@NonNull Location target) {
         return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
     }
 
