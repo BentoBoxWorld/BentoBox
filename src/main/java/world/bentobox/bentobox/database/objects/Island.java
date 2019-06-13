@@ -316,10 +316,26 @@ public class Island implements DataObject {
     }
 
     /**
+     * @return the maxProtectedX
+     * @since 1.5.2
+     */
+    public int getMaxProtectedX() {
+        return center.getBlockX() + protectionRange;
+    }
+
+    /**
      * @return the minProtectedZ
      */
     public int getMinProtectedZ() {
         return center.getBlockZ() - protectionRange;
+    }
+
+    /**
+     * @return the maxProtectedZ
+     * @since 1.5.2
+     */
+    public int getMaxProtectedZ() {
+        return center.getBlockZ() + protectionRange;
     }
 
     /**
@@ -330,10 +346,26 @@ public class Island implements DataObject {
     }
 
     /**
+     * @return the maxX
+     * @since 1.5.2
+     */
+    public int getMaxX() {
+        return center.getBlockX() + range;
+    }
+
+    /**
      * @return the minZ
      */
     public int getMinZ() {
         return center.getBlockZ() - range;
+    }
+
+    /**
+     * @return the maxZ
+     * @since 1.5.2
+     */
+    public int getMaxZ() {
+        return center.getBlockZ() + range;
     }
 
     /**
