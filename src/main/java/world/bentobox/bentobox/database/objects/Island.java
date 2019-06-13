@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.World.Environment;
 import org.bukkit.entity.Player;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.eclipse.jdt.annotation.NonNull;
 import org.eclipse.jdt.annotation.Nullable;
@@ -500,6 +501,15 @@ public class Island implements DataObject {
     }
 
     /**
+     * Returns a {@link BoundingBox} of the full island space.
+     * @return a {@link BoundingBox} of the full island space.
+     * @since 1.5.2
+     */
+    public BoundingBox getBoundingBox() {
+        return new BoundingBox(getMinX(), 0.0D, getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
+    }
+
+    /**
      * Returns a list of players that are physically inside the island's protection range and that are visitors.
      * @return list of visitors
      * @since 1.3.0
@@ -569,6 +579,15 @@ public class Island implements DataObject {
      */
     public boolean onIsland(@NonNull Location target) {
         return Util.sameWorld(world, target.getWorld()) && target.getBlockX() >= getMinProtectedX() && target.getBlockX() < (getMinProtectedX() + protectionRange * 2) && target.getBlockZ() >= getMinProtectedZ() && target.getBlockZ() < (getMinProtectedZ() + protectionRange * 2);
+    }
+
+    /**
+     * Returns a {@link BoundingBox} of this island's protected area.
+     * @return a {@link BoundingBox} of this island's protected area.
+     * @since 1.5.2
+     */
+    public BoundingBox getProtectionBoundingBox() {
+        return new BoundingBox(getMinProtectedX(), 0.0D, getMinProtectedZ(), getMaxProtectedX(), world.getMaxHeight(), getMaxProtectedZ());
     }
 
     /**
