@@ -24,8 +24,8 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Ignore;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -69,7 +69,7 @@ public class PanelListenerManagerTest {
     private UUID uuid;
     private SlotType type;
     private ClickType click;
-    private InventoryAction invAction;
+    private InventoryAction inv;
 
     /**
      * @throws java.lang.Exception
@@ -94,7 +94,7 @@ public class PanelListenerManagerTest {
 
         type = SlotType.CONTAINER;
         click = ClickType.LEFT;
-        invAction = InventoryAction.UNKNOWN;
+        inv = InventoryAction.UNKNOWN;
 
         // Panel Listener Manager
         plm = new PanelListenerManager();
@@ -102,7 +102,7 @@ public class PanelListenerManagerTest {
         // Panel
         Optional<PanelListener> opl = Optional.of(pl);
         when(panel.getListener()).thenReturn(opl);
-        when(panel.getInventory()).thenReturn(mock(Inventory.class));
+        when(panel.getInventory()).thenReturn(view.getTopInventory());
         when(panel.getName()).thenReturn("name");
         Map<Integer, PanelItem> map = new HashMap<>();
         PanelItem panelItem = mock(PanelItem.class);
@@ -169,7 +169,7 @@ public class PanelListenerManagerTest {
     @Test
     public void testOnInventoryClickOutsideUnknownPanel() {
         SlotType type = SlotType.OUTSIDE;
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, invAction);
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
         Mockito.verify(player, Mockito.never()).closeInventory();
     }
@@ -177,13 +177,12 @@ public class PanelListenerManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
-    @Ignore("NPE")
     @Test
     public void testOnInventoryClickOutsideKnownPanel() {
         // Put a panel in the list
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         SlotType type = SlotType.OUTSIDE;
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, invAction);
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
         Mockito.verify(player).closeInventory();
     }
@@ -193,7 +192,7 @@ public class PanelListenerManagerTest {
      */
     @Test
     public void testOnInventoryClickNoOpenPanels() {
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, invAction);
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
         // Nothing should happen
         Mockito.verify(player, Mockito.never()).closeInventory();
@@ -202,11 +201,11 @@ public class PanelListenerManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
-    @Ignore("NPE")
+    @Ignore("Logic needs to be rewritten")
     @Test
     public void testOnInventoryClickOpenPanelsWrongPanel() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
-        InventoryClickEvent e = new InventoryClickEvent(new MyView("another"), type, 0, click, invAction);
+        InventoryClickEvent e = new InventoryClickEvent(new MyView("another"), type, 0, click, inv);
         plm.onInventoryClick(e);
         // Panel should be removed
         assertTrue(PanelListenerManager.getOpenPanels().isEmpty());
@@ -215,12 +214,11 @@ public class PanelListenerManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
-    @Ignore("NPE")
     @Test
     public void testOnInventoryClickOpenPanelsRightPanelWrongSlot() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Click on 1 instead of 0
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 1, click, invAction);
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 1, click, inv);
         plm.onInventoryClick(e);
         assertTrue(e.isCancelled());
         Mockito.verify(pl).onInventoryClick(Mockito.any(), Mockito.any());
@@ -229,12 +227,11 @@ public class PanelListenerManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
-    @Ignore("NPE")
     @Test
     public void testOnInventoryClickOpenPanelsRightPanelRightSlot() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
         // Click on 0
-        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, invAction);
+        InventoryClickEvent e = new InventoryClickEvent(view, type, 0, click, inv);
         plm.onInventoryClick(e);
         // Check that the onClick is called
         Mockito.verify(ch).onClick(Mockito.eq(panel), Mockito.any(User.class), Mockito.eq(click), Mockito.eq(0));
