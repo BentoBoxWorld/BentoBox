@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.InventoryView;
@@ -25,7 +26,7 @@ public class PanelListenerManager implements Listener {
 
     private static HashMap<UUID, Panel> openPanels = new HashMap<>();
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onInventoryClick(InventoryClickEvent event) {
         User user = User.getInstance(event.getWhoClicked()); // The player that clicked the item
         InventoryView view = event.getView();
@@ -77,6 +78,13 @@ public class PanelListenerManager implements Listener {
         openPanels.remove(event.getPlayer().getUniqueId());
     }
 
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onKick(PlayerKickEvent event) {
+        openPanels.remove(event.getPlayer().getUniqueId());
+    }
+
+
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPluginDisable(PluginDisableEvent event) {
         if (event.getPlugin().getName().equals("BentoBox")) {
@@ -100,5 +108,4 @@ public class PanelListenerManager implements Listener {
     public static Map<UUID, Panel> getOpenPanels() {
         return openPanels;
     }
-
 }
