@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.managers;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import org.eclipse.jdt.annotation.NonNull;
@@ -50,23 +51,25 @@ public class WebManager {
 
     public void requestGitHubData(boolean clearCache) {
         getGitHub().ifPresent(gh -> {
-            if (clearCache) {
-                gh.clearCache(); // TODO might be better to not clear cache, check
-                this.addonsCatalog.clear();
-                this.gamemodesCatalog.clear();
-            }
-
             if (plugin.getSettings().isLogGithubDownloadData()) {
                 plugin.log("Downloading data from GitHub...");
             }
             try {
-                String catalogContent = new GitHubGist(gh, "bccabc20bce17f358d0f94bbbe83babd").getRawResponseAsJson()
-                        .getAsJsonObject().getAsJsonObject("files").getAsJsonObject("catalog.json").get("content").getAsString()
-                        .replace("\n", "").replace("\\", "");
+                JsonElement gistContent = new GitHubGist(gh, "bccabc20bce17f358d0f94bbbe83babd").getRawResponseAsJson();
+                if (gistContent != null) {
+                    if (clearCache) {
+                        gh.clearCache();
+                        this.addonsCatalog.clear();
+                        this.gamemodesCatalog.clear();
+                    }
 
-                JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
-                catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
-                catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
+                    String catalogContent = gistContent.getAsJsonObject().getAsJsonObject("files").getAsJsonObject("catalog.json")
+                            .get("content").getAsString().replace("\n", "").replace("\\", "");
+
+                    JsonObject catalog = new JsonParser().parse(catalogContent).getAsJsonObject();
+                    catalog.getAsJsonArray("gamemodes").forEach(gamemode -> gamemodesCatalog.add(new CatalogEntry(gamemode.getAsJsonObject())));
+                    catalog.getAsJsonArray("addons").forEach(addon -> addonsCatalog.add(new CatalogEntry(addon.getAsJsonObject())));
+                }
             } catch (Exception e) {
                 plugin.logError("An error occurred when downloading or parsing data from GitHub...");
                 plugin.logStacktrace(e);
