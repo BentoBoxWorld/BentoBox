@@ -33,7 +33,7 @@ public class PanelListenerManager implements Listener {
 
         // Open the inventory panel that this player has open (they can only ever have one)
         if (openPanels.containsKey(user.getUniqueId()) &&
-            openPanels.get(user.getUniqueId()).getInventory().equals(event.getClickedInventory())) {
+            openPanels.get(user.getUniqueId()).getInventory().equals(event.getInventory())) {
             // Cancel the event. If they don't want it to be cancelled then the click handler(s) should
             // uncancel it. If gui was from our environment, then cancel event anyway.
             event.setCancelled(true);
