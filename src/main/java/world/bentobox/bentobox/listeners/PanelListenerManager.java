@@ -79,13 +79,6 @@ public class PanelListenerManager implements Listener {
         openPanels.remove(event.getPlayer().getUniqueId());
     }
 
-
-    @EventHandler(priority = EventPriority.NORMAL)
-    public void onKick(PlayerKickEvent event) {
-        openPanels.remove(event.getPlayer().getUniqueId());
-    }
-
-
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPluginDisable(PluginDisableEvent event) {
         if (event.getPlugin().getName().equals("BentoBox")) {
