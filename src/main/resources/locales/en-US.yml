@@ -311,7 +311,7 @@ commands:
       settings-reloaded: "&2Settings reloaded."
       addon: "&6Reloading &b[name]&2."
       addon-reloaded: "&b[name] &2reloaded."
-      warning: "&cWarning: Reloading may cause instability, so if you see errors afterwards, restart the server"
+      warning: "&cWarning: Reloading may cause instability, so if you see errors afterwards, restart the server."
       unknown-addon: "&2Unknown addon!"
     version:
       plugin-version: "&2BentoBox version: &3[version]"
