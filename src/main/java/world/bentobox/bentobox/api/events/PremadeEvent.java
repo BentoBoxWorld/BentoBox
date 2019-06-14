@@ -16,7 +16,6 @@ public abstract class PremadeEvent extends Event {
         this(false);
     }
 
-
     /**
      * This constructor is used to explicitly declare an PremadeEvent as synchronous or asynchronous.
      * @param async - true indicates the event will fire asynchronously, false
