@@ -24,6 +24,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.junit.After;
+import org.junit.Ignore;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -200,6 +201,7 @@ public class PanelListenerManagerTest {
     /**
      * Test method for {@link world.bentobox.bentobox.listeners.PanelListenerManager#onInventoryClick(org.bukkit.event.inventory.InventoryClickEvent)}.
      */
+    @Ignore("Logic needs to be rewritten")
     @Test
     public void testOnInventoryClickOpenPanelsWrongPanel() {
         PanelListenerManager.getOpenPanels().put(uuid, panel);
