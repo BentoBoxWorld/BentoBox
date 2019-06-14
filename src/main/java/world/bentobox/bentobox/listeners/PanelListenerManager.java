@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.inventory.InventoryType.SlotType;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.inventory.InventoryView;
@@ -31,7 +32,8 @@ public class PanelListenerManager implements Listener {
         InventoryView view = event.getView();
 
         // Open the inventory panel that this player has open (they can only ever have one)
-        if (openPanels.containsKey(user.getUniqueId())) {
+        if (openPanels.containsKey(user.getUniqueId()) &&
+            openPanels.get(user.getUniqueId()).getInventory().equals(event.getClickedInventory())) {
             // Cancel the event. If they don't want it to be cancelled then the click handler(s) should
             // uncancel it. If gui was from our environment, then cancel event anyway.
             event.setCancelled(true);
@@ -76,6 +78,13 @@ public class PanelListenerManager implements Listener {
     public void onLogOut(PlayerQuitEvent event) {
         openPanels.remove(event.getPlayer().getUniqueId());
     }
+
+
+    @EventHandler(priority = EventPriority.NORMAL)
+    public void onKick(PlayerKickEvent event) {
+        openPanels.remove(event.getPlayer().getUniqueId());
+    }
+
 
     @EventHandler(priority = EventPriority.NORMAL)
     public void onPluginDisable(PluginDisableEvent event) {
