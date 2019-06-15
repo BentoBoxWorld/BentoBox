@@ -1,12 +1,10 @@
 package world.bentobox.bentobox.hooks.placeholders;
 
 import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.AddonPlaceholderExpansion;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlaceholderExpansion;

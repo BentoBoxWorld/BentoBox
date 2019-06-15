@@ -33,7 +33,7 @@ public class BlockInteractionListener extends FlagListener {
      * These cover materials in another server version.
      * This avoids run time errors due to unknown enum values, at the expense of a string comparison
      */
-    Map<String, String> STRING_FLAGS = ImmutableMap.<String, String>builder()
+    private final Map<String, String> stringFlags = ImmutableMap.<String, String>builder()
             .put("CAMPFIRE", "FURNACE")
             .put("CARTOGRAPHY_TABLE", "CRAFTING")
             .put("GRINDSTONE", "CRAFTING")
@@ -285,8 +285,8 @@ public class BlockInteractionListener extends FlagListener {
             checkIsland(e, player, loc, Flags.ITEM_FRAME);
             break;
         default:
-            if (STRING_FLAGS.containsKey(type.name())) {
-                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(STRING_FLAGS.get(type.name()));
+            if (stringFlags.containsKey(type.name())) {
+                Optional<Flag> f = BentoBox.getInstance().getFlagsManager().getFlag(stringFlags.get(type.name()));
                 if (f.isPresent()) checkIsland(e, player, loc, f.get());
             }
         }

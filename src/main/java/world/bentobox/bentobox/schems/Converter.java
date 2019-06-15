@@ -205,9 +205,9 @@ public class Converter {
 
     private Vector getVector(String name) {
         String[] pos = name.split(",");
-        int x = Integer.valueOf(pos[0]);
-        int y = Integer.valueOf(pos[1]);
-        int z = Integer.valueOf(pos[2]);
+        int x = Integer.parseInt(pos[0]);
+        int y = Integer.parseInt(pos[1]);
+        int z = Integer.parseInt(pos[2]);
         return new Vector(x,y,z);
     }
 

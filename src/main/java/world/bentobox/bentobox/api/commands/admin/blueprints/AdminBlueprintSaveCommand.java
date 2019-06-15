@@ -37,9 +37,7 @@ public class AdminBlueprintSaveCommand extends ConfirmableCommand {
             // Check if file exists
             File newFile = new File(parent.getBlueprintsFolder(), fileName + BlueprintsManager.BLUEPRINT_SUFFIX);
             if (newFile.exists()) {
-                this.askConfirmation(user, user.getTranslation("commands.admin.blueprint.file-exists"), () -> {
-                    hideAndSave(user, parent, clipboard, fileName);
-                });
+                this.askConfirmation(user, user.getTranslation("commands.admin.blueprint.file-exists"), () -> hideAndSave(user, parent, clipboard, fileName));
                 return false;
             }
             return hideAndSave(user, parent, clipboard, fileName);

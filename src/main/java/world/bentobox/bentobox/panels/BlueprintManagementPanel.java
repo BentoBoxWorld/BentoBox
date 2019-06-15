@@ -41,11 +41,11 @@ import world.bentobox.bentobox.util.Util;
 public class BlueprintManagementPanel {
 
     private final BentoBox plugin;
-    private final Blueprint NORMAL_BP;
-    private final Blueprint NETHER_BP;
-    private final Blueprint END_BP;
-    private final Map<Integer, World.Environment> SLOT_TO_ENV;
-    private final Map<World.Environment, Blueprint> ENV_TO_BP;
+    private final Blueprint normalBlueprint;
+    private final Blueprint netherBlueprint;
+    private final Blueprint endBlueprint;
+    private final Map<Integer, World.Environment> slotToEnvironment;
+    private final Map<World.Environment, Blueprint> environmentToBlueprint;
     private static final int MAX_WORLD_SLOT = 9;
     private static final int MIN_WORLD_SLOT = 0;
     public static final int MAX_BP_SLOT = 35;
@@ -58,11 +58,11 @@ public class BlueprintManagementPanel {
         this.plugin = plugin;
         this.user = user;
         this.addon = addon;
-        NORMAL_BP = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t("instruction"));
-        NETHER_BP = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t("instruction"));
-        END_BP = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t("instruction"));
-        SLOT_TO_ENV = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
-        ENV_TO_BP = ImmutableMap.of(World.Environment.NORMAL, NORMAL_BP, World.Environment.NETHER, NETHER_BP, World.Environment.THE_END, END_BP);
+        normalBlueprint = new Blueprint().setIcon(Material.GREEN_STAINED_GLASS_PANE).setName(t("normal")).setDescription(t("instruction"));
+        netherBlueprint = new Blueprint().setIcon(Material.RED_STAINED_GLASS_PANE).setName(t("nether")).setDescription(t("instruction"));
+        endBlueprint = new Blueprint().setIcon(Material.YELLOW_STAINED_GLASS_PANE).setName(t("end")).setDescription(t("instruction"));
+        slotToEnvironment = ImmutableMap.of(3, World.Environment.NORMAL, 5, World.Environment.NETHER, 7, World.Environment.THE_END);
+        environmentToBlueprint = ImmutableMap.of(World.Environment.NORMAL, normalBlueprint, World.Environment.NETHER, netherBlueprint, World.Environment.THE_END, endBlueprint);
     }
 
     private String t(String t) {
@@ -82,7 +82,7 @@ public class BlueprintManagementPanel {
         // Create the panel
         PanelBuilder pb = new PanelBuilder().name(t("title")).user(user).size(45);
         // Panel has New Blueprint Bundle button - clicking in creates a new bundle
-        pb.item(36, getNewBundle(user, addon));
+        pb.item(36, getNewBundle(addon));
         // Get the bundles
         Comparator<BlueprintBundle> sortByDisplayName = (p, o) -> p.getDisplayName().compareToIgnoreCase(o.getDisplayName());
         plugin.getBlueprintsManager().getBlueprintBundles(addon).values().stream().limit(36)
@@ -153,10 +153,10 @@ public class BlueprintManagementPanel {
         PanelBuilder pb = new PanelBuilder().name(bb.getDisplayName()).user(user).size(45).listener(new IconChanger(plugin, addon, this, bb));
         // Display bundle icon
         pb.item(0, getBundleIcon(bb));
-        SLOT_TO_ENV.forEach((k,v) -> {
+        slotToEnvironment.forEach((k, v) -> {
             String bpName = bb.getBlueprint(v);
             pb.item(k-1, getWorldInstrTile(v));
-            pb.item(k, getBlueprintItem(addon, k, bb, plugin.getBlueprintsManager().getBlueprints(addon).getOrDefault(bpName, ENV_TO_BP.get(v))));
+            pb.item(k, getBlueprintItem(addon, k, bb, plugin.getBlueprintsManager().getBlueprints(addon).getOrDefault(bpName, environmentToBlueprint.get(v))));
         });
 
         for (int i = 9; i < 18; i++) {
@@ -284,7 +284,7 @@ public class BlueprintManagementPanel {
     protected PanelItem getBlueprintItem(GameModeAddon addon, int pos, BlueprintBundle bb, Blueprint blueprint) {
         // Create description
         List<String> desc = blueprint.getDescription() == null ? new ArrayList<>() : blueprint.getDescription();
-        if ((!blueprint.equals(END_BP) && !blueprint.equals(NORMAL_BP) && !blueprint.equals(NETHER_BP))) {
+        if ((!blueprint.equals(endBlueprint) && !blueprint.equals(normalBlueprint) && !blueprint.equals(netherBlueprint))) {
             if ((pos > MIN_WORLD_SLOT && pos < MAX_WORLD_SLOT)) {
                 desc.add(t("remove"));
             } else {
@@ -308,7 +308,7 @@ public class BlueprintManagementPanel {
                         if (clickType.equals(ClickType.RIGHT)) {
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_GLASS_BREAK, 1F, 1F);
                             // Remove the item and replace with the blank
-                            bb.clearBlueprint(SLOT_TO_ENV.get(slot));
+                            bb.clearBlueprint(slotToEnvironment.get(slot));
                             // Save
                             plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                             openBB(bb);
@@ -320,7 +320,7 @@ public class BlueprintManagementPanel {
                             u.getPlayer().playSound(u.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
                             Blueprint bp = selected.getValue();
                             // make slot the chosen one
-                            bb.setBlueprint(SLOT_TO_ENV.get(slot), bp);
+                            bb.setBlueprint(slotToEnvironment.get(slot), bp);
                             // Save
                             plugin.getBlueprintsManager().saveBlueprintBundle(addon, bb);
                             openBB(bb);
@@ -344,7 +344,7 @@ public class BlueprintManagementPanel {
                 .build();
     }
 
-    private PanelItem getNewBundle(@NonNull User user, @NonNull GameModeAddon addon) {
+    private PanelItem getNewBundle(@NonNull GameModeAddon addon) {
         return new PanelItemBuilder()
                 .name(t("new-bundle"))
                 .description(t("new-bundle-instructions"))

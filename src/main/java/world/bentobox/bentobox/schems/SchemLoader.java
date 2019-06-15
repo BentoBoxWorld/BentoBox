@@ -52,7 +52,7 @@ public class SchemLoader {
      * @throws IOException - if there's a load error with unziping or name
      * @throws InvalidConfigurationException - the YAML of the schem is at fault
      */
-    public void load(String fileName) throws FileNotFoundException, IOException, InvalidConfigurationException {
+    public void load(String fileName) throws IOException, InvalidConfigurationException {
         File zipFile = new File(schemFolder, fileName + ".schem");
         if (!zipFile.exists()) {
             plugin.logError(LOAD_ERROR + zipFile.getName());

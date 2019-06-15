@@ -43,7 +43,7 @@ public class IconChanger implements PanelListener {
     @Override
     public void onInventoryClick(User user, InventoryClickEvent event) {
         // Handle icon changing
-        if (event.getCurrentItem().getType() != null && !event.getCurrentItem().getType().equals(Material.AIR) && event.getRawSlot() > 44) {
+        if (event.getCurrentItem() != null && !event.getCurrentItem().getType().equals(Material.AIR) && event.getRawSlot() > 44) {
             Material icon = event.getCurrentItem().getType();
             Entry<Integer, Blueprint> selected = blueprintManagementPanel.getSelected();
             user.getPlayer().playSound(user.getLocation(), Sound.BLOCK_METAL_HIT, 1F, 1F);
