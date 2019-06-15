@@ -506,7 +506,7 @@ public class Island implements DataObject {
      * @since 1.5.2
      */
     public BoundingBox getBoundingBox() {
-        return new BoundingBox(getMinX(), 0.0D, getMinZ(), getMaxX(), world.getMaxHeight(), getMaxZ());
+        return new BoundingBox(getMinX(), 0.0D, getMinZ(), getMaxX()-1.0D, world.getMaxHeight(), getMaxZ()-1.0D);
     }
 
     /**
@@ -587,7 +587,7 @@ public class Island implements DataObject {
      * @since 1.5.2
      */
     public BoundingBox getProtectionBoundingBox() {
-        return new BoundingBox(getMinProtectedX(), 0.0D, getMinProtectedZ(), getMaxProtectedX(), world.getMaxHeight(), getMaxProtectedZ());
+        return new BoundingBox(getMinProtectedX(), 0.0D, getMinProtectedZ(), getMaxProtectedX()-1.0D, world.getMaxHeight(), getMaxProtectedZ()-1.0D);
     }
 
     /**
