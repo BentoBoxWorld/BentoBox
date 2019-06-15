@@ -15,6 +15,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -177,6 +178,9 @@ public class AddonsManager {
         } catch (NoClassDefFoundError | NoSuchMethodError | NoSuchFieldError e) {
             // Looks like the addon is incompatible, because it tries to refer to missing classes...
             handleAddonIncompatibility(addon);
+            StringBuilder a = new StringBuilder();
+            addon.getDescription().getAuthors().forEach(author -> a.append(author).append(" "));
+            plugin.getLogger().log(Level.SEVERE, "Please report this stack trace to the addon's author(s): " + a.toString(), e);
         } catch (Exception e) {
             // Unhandled exception. We'll give a bit of debug here.
             handleAddonError(addon, e);
