@@ -303,7 +303,7 @@ commands:
   bentobox:
     description: "BentoBox admin command"
     about:
-      description: "display copyright and license info"
+      description: "displays copyright and license information"
     reload:
       description: "reloads BentoBox and all addons, settings and locales"
       locales-reloaded: "&2Languages reloaded."
@@ -312,21 +312,21 @@ commands:
       addon: "&6Reloading &b[name]&2."
       addon-reloaded: "&b[name] &2reloaded."
       warning: "&cWarning: Reloading may cause instability, so if you see errors afterwards, restart the server."
-      unknown-addon: "&2Unknown addon!"
+      unknown-addon: "&cUnknown addon!"
     version:
       plugin-version: "&2BentoBox version: &3[version]"
-      description: "display BentoBox and addons versions"
+      description: "displays BentoBox and addons versions"
       loaded-addons: "Loaded Addons:"
       loaded-game-worlds: "Loaded Game Worlds:"
       addon-syntax: "&2[name] &3[version] &7(&3[state]&7)"
       game-world: "&2[name] &7(&3[addon]&7): &aOverworld&7, &r[nether_color]Nether&7, &r[end_color]End"
       server: "&2Running &3[name] [version]&2."
     manage:
-      description: "display the management panel"
+      description: "displays the Management Panel"
     catalog:
-      description: "display the Addons catalog"
+      description: "displays the Catalog"
     locale:
-      description: "perform locale analysis"
+      description: "performs localization files analysis"
       see-console: |-
         &aCheck the console to see the feedback.
         &aThis command is so spammy that the feedback cannot be read from chat...
