@@ -23,12 +23,10 @@ public class BlockEndDragon implements Listener {
         this.plugin = plugin;
     }
 
-
     /**
-     * This listener add portal frame at the top of the world, when player joins certain world. This will
-     * prevent ender dragon to spawn, as if any portal frame exists, the it is considered that dragon is
-     * killed.
-     * @param event - event
+     * Adds a portal frame at the top of the world, when a player joins an island End world.
+     * This prevents the Ender Dragon from spawning: if any portal frame exists, then the dragon is considered killed already.
+     * @param event PlayerChangedWorldEvent
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerChangeWorld(PlayerChangedWorldEvent event) {
@@ -36,8 +34,7 @@ public class BlockEndDragon implements Listener {
 
         if (!plugin.getIWM().isIslandEnd(location.getWorld())
             || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(location.getWorld())
-            || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL))
-        {
+            || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
             return;
         }
 
@@ -45,12 +42,10 @@ public class BlockEndDragon implements Listener {
         location.getWorld().getBlockAt(0, 255, 0).setType(Material.END_PORTAL, false);
     }
 
-
     /**
-     * This listener add portal frame at the top of the world, when player joins certain world. This will
-     * prevent ender dragon to spawn, as if any portal frame exists, the it is considered that dragon is
-     * killed.
-     * @param event - event
+     * Adds a portal frame at the top of the world, when a player joins an island End world.
+     * This prevents the Ender Dragon from spawning: if any portal frame exists, then the dragon is considered killed already.
+     * @param event PlayerJoinEvent
      */
     @EventHandler(priority = EventPriority.LOWEST, ignoreCancelled = true)
     public void onPlayerJoinWorld(PlayerJoinEvent event) {
@@ -58,15 +53,13 @@ public class BlockEndDragon implements Listener {
 
         if (!plugin.getIWM().isIslandEnd(location.getWorld())
             || !Flags.REMOVE_END_EXIT_ISLAND.isSetForWorld(location.getWorld())
-            || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL))
-        {
+            || location.getWorld().getBlockAt(0, 255, 0).getType().equals(Material.END_PORTAL)) {
             return;
         }
 
         // Setting a End Portal at the top will trick dragon legacy check.
         location.getWorld().getBlockAt(0, 255, 0).setType(Material.END_PORTAL, false);
     }
-
 
     /**
      * Silently prevents block placing in the dead zone.
