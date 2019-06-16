@@ -1,4 +1,4 @@
-# BentoBox Configuration 1.5.1
+# BentoBox Configuration 1.5.2
 # This config file is dynamic and is updated right after BentoBox loaded its settings from it.
 # You can edit it while the server is online and you can do '/bbox reload' to take the changes into account.
 # However, it is a better practice to edit this file while the server is offline.
@@ -102,4 +102,4 @@ web:
     # However, as the GitHub API data does not get updated instantly, this value cannot be set less than 15 minutes.
     # Setting this to 0 will make BentoBox download data only at startup.
     # Added since 1.5.0.
-    connection-interval: 10
+    connection-interval: 60
