@@ -27,7 +27,7 @@ public class CreeperListener extends FlagListener {
      */
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
     public void onExplosion(final EntityExplodeEvent e) {
-        if (e.getEntity() == null || !e.getEntityType().equals(EntityType.CREEPER) || !getIWM().inWorld(e.getLocation())) {
+        if (!e.getEntityType().equals(EntityType.CREEPER) || !getIWM().inWorld(e.getLocation())) {
             return;
         }
         // If creeper damage is not allowed in world, remove it
