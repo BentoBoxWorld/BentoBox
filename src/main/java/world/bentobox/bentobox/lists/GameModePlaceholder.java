@@ -33,6 +33,10 @@ public enum GameModePlaceholder {
     ISLAND_PROTECTION_RANGE_DIAMETER("island_protection_range_diameter", (addon, user, island) -> island == null ? "" : String.valueOf(2 * island.getProtectionRange())),
     ISLAND_OWNER("island_owner", (addon, user, island) -> island == null ? "" : addon.getPlayers().getName(island.getOwner())),
     ISLAND_CREATION_DATE("island_creation_date", (addon, user, island) -> island == null ? "" : DateFormat.getInstance().format(Date.from(Instant.ofEpochMilli(island.getCreatedDate())))),
+    /**
+     * @deprecated As of 1.5.2, for removal; use {@link #ISLAND_CENTER} instead.
+     */
+    @Deprecated
     ISLAND_SPAWNPOINT("island_spawnpoint", (addon, user, island) -> island == null ? "" : Util.xyz(island.getCenter().toVector())),
     ISLAND_NAME("island_name", (addon, user, island) -> island == null ? "" : (island.getName() == null ? "" : island.getName())),
     /**
@@ -85,6 +89,9 @@ public enum GameModePlaceholder {
      * @since 1.5.0
      */
     ISLAND_BANS_COUNT("island_bans_count", (addon, user, island) -> island == null ? "" : String.valueOf(island.getBanned().size())),
+
+    /* Visited island-related (= island the user is standing on) */
+
 
     /* Player-related */
     /**
