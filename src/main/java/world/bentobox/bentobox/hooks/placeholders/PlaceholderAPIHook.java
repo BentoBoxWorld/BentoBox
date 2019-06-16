@@ -1,18 +1,17 @@
 package world.bentobox.bentobox.hooks.placeholders;
 
-import me.clip.placeholderapi.PlaceholderAPI;
-import org.bukkit.Material;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.bukkit.entity.Player;
 import org.eclipse.jdt.annotation.NonNull;
+
+import me.clip.placeholderapi.PlaceholderAPI;
 import world.bentobox.bentobox.BentoBox;
 import world.bentobox.bentobox.api.addons.Addon;
-import world.bentobox.bentobox.api.hooks.Hook;
 import world.bentobox.bentobox.api.placeholders.PlaceholderReplacer;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.AddonPlaceholderExpansion;
 import world.bentobox.bentobox.api.placeholders.placeholderapi.BentoBoxPlaceholderExpansion;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Provides implementations and interfacing needed to register and get placeholders from PlaceholderAPI.
@@ -85,13 +84,13 @@ public class PlaceholderAPIHook extends PlaceholderHook {
             addonsExpansions.get(addon).unregisterPlaceholder(placeholder);
         }
     }
-    
+
     /**
      * {@inheritDoc}
      */
     @Override
     public boolean isPlaceholder(@NonNull Addon addon, @NonNull String placeholder) {
-    	return addonsExpansions.containsKey(addon) && addonsExpansions.get(addon).isPlaceholder(placeholder);
+        return addonsExpansions.containsKey(addon) && addonsExpansions.get(addon).isPlaceholder(placeholder);
     }
 
     /**
