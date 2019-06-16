@@ -215,17 +215,6 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     public boolean execute(CommandSender sender, String label, String[] args) {
         // Get the User instance for this sender
         User user = User.getInstance(sender);
-        CompositeCommand cmd = getCommandFromArgs(args);
-        // Check for console and permissions
-        if (cmd.onlyPlayer && !(sender instanceof Player)) {
-            user.sendMessage("general.errors.use-in-game");
-            return false;
-        }
-        // Check perms, but only if this isn't the console
-        if ((sender instanceof Player) && !sender.isOp() && !cmd.getPermission().isEmpty() && !sender.hasPermission(cmd.getPermission())) {
-            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, cmd.getPermission());
-            return false;
-        }
         // Fire an event to see if this command should be cancelled
         CommandEvent event = CommandEvent.builder()
                 .setCommand(this)
@@ -236,14 +225,37 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
         if (event.isCancelled()) {
             return false;
         }
+        // Get command
+        CompositeCommand cmd = getCommandFromArgs(args);
+        String cmdLabel = (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label;
+        List<String> cmdArgs = Arrays.asList(args).subList(cmd.subCommandLevel, args.length);
+        // Call
+        return cmd.call(user, cmdLabel, cmdArgs);
+    }
+
+    /**
+     * Calls this composite command. Does not traverse the tree of subcommands in args.
+     * Event is not fired and it cannot be cancelled
+     * @param user - user calling this command
+     * @param label - label used
+     * @param args - list of args
+     * @return true if successful, false if not
+     */
+    public boolean call(User user, String cmdLabel, List<String> cmdArgs) {
+        // Check for console and permissions
+        if (onlyPlayer && !user.isPlayer()) {
+            user.sendMessage("general.errors.use-in-game");
+            return false;
+        }
+        // Check perms, but only if this isn't the console
+        if (user.isPlayer() && !user.isOp() && !getPermission().isEmpty() && !user.hasPermission(getPermission())) {
+            user.sendMessage("general.errors.no-permission", TextVariables.PERMISSION, getPermission());
+            return false;
+        }
         // Set the user's addon context
         user.setAddon(addon);
         // Execute and trim args
-
-        String cmdLabel = (cmd.subCommandLevel > 0) ? args[cmd.subCommandLevel-1] : label;
-        List<String> cmdArgs = Arrays.asList(args).subList(cmd.subCommandLevel, args.length);
-
-        return cmd.canExecute(user, cmdLabel, cmdArgs) && cmd.execute(user, cmdLabel, cmdArgs);
+        return canExecute(user, cmdLabel, cmdArgs) && execute(user, cmdLabel, cmdArgs);
     }
 
     /**
