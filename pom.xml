@@ -13,6 +13,27 @@
     <url>https://github.com/BentoBoxWorld/BentoBox</url>
     <inceptionYear>2017</inceptionYear>
 
+    <developers>
+        <developer>
+            <name>Florian Cuny</name>
+            <id>Poslovitch</id>
+            <email>poslovitch@bentobox.world</email>
+            <timezone>1</timezone>
+            <roles>
+                <role>Project manager</role>
+                <role>Developer</role>
+            </roles>
+        </developer>
+        <developer>
+            <id>tastybento</id>
+            <email>tastybento@bentobox.world</email>
+            <timezone>-8</timezone>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </developer>
+    </developers>
+
     <scm>
         <connection>scm:git:https://github.com/BentoBoxWorld/BentoBox.git</connection>
         <developerConnection>scm:git:git@github.com:BentoBoxWorld/BentoBox.git</developerConnection>
