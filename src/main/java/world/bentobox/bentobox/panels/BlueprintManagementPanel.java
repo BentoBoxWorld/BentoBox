@@ -297,12 +297,6 @@ public class BlueprintManagementPanel {
                 .icon(blueprint.getIcon() == null ? Material.PAPER : blueprint.getIcon())
                 .glow(selected != null && pos == selected.getKey())
                 .clickHandler((panel, u, clickType, slot) -> {
-                    // Renaming blueprint
-                    if (clickType.equals(ClickType.RIGHT)) {
-                        u.closeInventory();
-                        this.askForBlueprintName(u.getPlayer(), addon, blueprint, bb);
-                        return true;
-                    }
                     // Handle the world squares
                     if (slot > MIN_WORLD_SLOT && slot < MAX_WORLD_SLOT) {
                         if (clickType.equals(ClickType.RIGHT)) {
@@ -328,6 +322,12 @@ public class BlueprintManagementPanel {
                     } else {
                         // Select blueprint
                         if (blueprints.containsKey(slot)) {
+                            // Renaming blueprint
+                            if (clickType.equals(ClickType.RIGHT)) {
+                                u.closeInventory();
+                                this.askForBlueprintName(u.getPlayer(), addon, blueprint, bb);
+                                return true;
+                            }
                             if (selected != null && slot == selected.getKey()){
                                 // Clicked on same item - deselect
                                 selected = null;

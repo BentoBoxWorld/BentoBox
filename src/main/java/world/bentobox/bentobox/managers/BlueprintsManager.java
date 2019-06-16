@@ -368,7 +368,9 @@ public class BlueprintsManager {
                 && addon.getWorldSettings().isNetherIslands()
                 && addon.getNetherWorld() != null) {
             bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.NETHER));
-            new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island, null);
+            if (bp != null) {
+                new BlueprintPaster(plugin, bp, addon.getNetherWorld(), island, null);
+            }
         }
         // Make end island
         if (bb.getBlueprint(World.Environment.THE_END) != null
@@ -376,7 +378,9 @@ public class BlueprintsManager {
                 && addon.getWorldSettings().isEndIslands()
                 && addon.getEndWorld() != null) {
             bp = getBlueprints(addon).get(bb.getBlueprint(World.Environment.THE_END));
-            new BlueprintPaster(plugin, bp, addon.getEndWorld(), island, null);
+            if (bp != null) {
+                new BlueprintPaster(plugin, bp, addon.getEndWorld(), island, null);
+            }
         }
         return true;
 
