@@ -234,12 +234,14 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
     }
 
     /**
-     * Calls this composite command. Does not traverse the tree of subcommands in args.
-     * Event is not fired and it cannot be cancelled
+     * Calls this composite command.
+     * Does not traverse the tree of subcommands in args.
+     * Event is not fired and it cannot be cancelled.
      * @param user - user calling this command
      * @param label - label used
      * @param args - list of args
-     * @return true if successful, false if not
+     * @return {@code true} if successful, {@code false} if not.
+     * @since 1.5.2
      */
     public boolean call(User user, String cmdLabel, List<String> cmdArgs) {
         // Check for console and permissions
