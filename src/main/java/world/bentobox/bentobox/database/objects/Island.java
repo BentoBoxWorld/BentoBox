@@ -640,9 +640,9 @@ public class Island implements DataObject {
         BentoBox plugin = BentoBox.getInstance();
         Map<Flag, Integer> result = new HashMap<>();
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
-                .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
+        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandFlags(world).getOrDefault(f, f.getDefaultRank())));
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.SETTING))
-                .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
+        .forEach(f -> result.put(f, plugin.getIWM().getDefaultIslandSettings(world).getOrDefault(f, f.getDefaultRank())));
         this.setFlags(result);
     }
 
@@ -830,14 +830,14 @@ public class Island implements DataObject {
             // Fixes #getLastPlayed() returning 0 when it is the owner's first connection.
             long lastPlayed = (Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() != 0) ?
                     Bukkit.getServer().getOfflinePlayer(owner).getLastPlayed() : Bukkit.getServer().getOfflinePlayer(owner).getFirstPlayed();
-            user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
+                    user.sendMessage("commands.admin.info.last-login","[date]", new Date(lastPlayed).toString());
 
-            user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
-            String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
-            String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
-            user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
-            // Show team members
-            showMembers(user);
+                    user.sendMessage("commands.admin.info.deaths", "[number]", String.valueOf(plugin.getPlayers().getDeaths(world, owner)));
+                    String resets = String.valueOf(plugin.getPlayers().getResets(world, owner));
+                    String total = plugin.getIWM().getResetLimit(world) < 0 ? "Unlimited" : String.valueOf(plugin.getIWM().getResetLimit(world));
+                    user.sendMessage("commands.admin.info.resets-left", "[number]", resets, "[total]", total);
+                    // Show team members
+                    showMembers(user);
         }
         Vector location = center.toVector();
         user.sendMessage("commands.admin.info.island-location", "[xyz]", Util.xyz(location));
@@ -1005,7 +1005,7 @@ public class Island implements DataObject {
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
         return iwm.isNetherGenerate(getWorld()) && iwm.isNetherIslands(getWorld()) &&
                 iwm.getNetherWorld(getWorld()) != null &&
-                getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld())).getBlock().getType().equals(Material.BEDROCK);
+                !getCenter().toVector().toLocation(iwm.getNetherWorld(getWorld())).getBlock().getType().equals(Material.AIR);
     }
 
     /**
@@ -1016,7 +1016,7 @@ public class Island implements DataObject {
     public boolean hasEndIsland(){
         IslandWorldManager iwm = BentoBox.getInstance().getIWM();
         return iwm.isEndGenerate(getWorld()) && iwm.isEndIslands(getWorld()) &&
-            iwm.getEndWorld(getWorld()) != null &&
-            getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.BEDROCK);
+                iwm.getEndWorld(getWorld()) != null &&
+                !getCenter().toVector().toLocation(iwm.getEndWorld(getWorld())).getBlock().getType().equals(Material.AIR);
     }
 }
