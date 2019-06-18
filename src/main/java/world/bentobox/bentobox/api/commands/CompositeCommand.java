@@ -241,7 +241,7 @@ public abstract class CompositeCommand extends Command implements PluginIdentifi
      * @param label - label used
      * @param args - list of args
      * @return {@code true} if successful, {@code false} if not.
-     * @since 1.5.2
+     * @since 1.5.3
      */
     public boolean call(User user, String cmdLabel, List<String> cmdArgs) {
         // Check for console and permissions
