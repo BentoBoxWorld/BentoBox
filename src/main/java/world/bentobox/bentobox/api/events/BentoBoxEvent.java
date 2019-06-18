@@ -28,6 +28,11 @@ public abstract class BentoBoxEvent extends Event {
         this(false);
     }
 
+    /**
+     * Explicitly declares a BentoBoxEvent as synchronous or asynchronous.
+     * @param async - true indicates the event will fire asynchronously, false
+     *    by default from default constructor
+     */
     public BentoBoxEvent(boolean async) {
         super(async);
     }
