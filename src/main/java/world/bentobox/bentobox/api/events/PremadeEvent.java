@@ -4,7 +4,7 @@ import org.bukkit.event.Event;
 
 /**
  * Provides the default methods expected when extending {@link Event}.
- * @deprecated Use {@link BentoBoxEvent} instead
+ * @deprecated As of 1.5.3, for removal. Use {@link BentoBoxEvent} instead.
  */
 @Deprecated
 public abstract class PremadeEvent extends BentoBoxEvent {
