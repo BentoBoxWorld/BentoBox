@@ -23,4 +23,11 @@ public @interface ConfigEntry {
      * @return {@code true} if this config entry should be printed in the final config file, {@code false} otherwise.
      */
     boolean hidden() default false;
+
+    /**
+     * Sets a link to a video explaining this configuration option.
+     * @return the link to a video explaining this configuration option.
+     * @since 1.5.3
+     */
+    String video() default "";
 }
