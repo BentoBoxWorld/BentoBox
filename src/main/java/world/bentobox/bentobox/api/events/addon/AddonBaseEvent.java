@@ -26,6 +26,7 @@ public class AddonBaseEvent extends PremadeEvent {
     /**
      * @return the keyValues
      */
+    @Override
     public Map<String, Object> getKeyValues() {
         return keyValues;
     }
