@@ -54,8 +54,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
         // Load each object from the file system, filtered, non-null
         for (File file: Objects.requireNonNull(tableFolder.listFiles((dir, name) ->  name.toLowerCase(Locale.ENGLISH).endsWith(JSON)))) {
-            try {
-                list.add(getGson().fromJson(new FileReader(file), dataObject));
+            try (FileReader reader = new FileReader(file)){
+                list.add(getGson().fromJson(reader, dataObject));
             } catch (FileNotFoundException e) {
                 plugin.logError("Could not load file '" + file.getName() + "': File not found.");
             } catch (Exception e) {
@@ -76,8 +76,8 @@ public class JSONDatabaseHandler<T> extends AbstractJSONDatabaseHandler<T> {
         }
 
         T result = null;
-        try {
-            result = getGson().fromJson(new FileReader(new File(plugin.getDataFolder(), fileName)), dataObject);
+        try (FileReader reader = new FileReader(new File(plugin.getDataFolder(), fileName))) {
+            result = getGson().fromJson(reader, dataObject);
         } catch (FileNotFoundException e) {
             plugin.logError("Could not load file '" + fileName + "': File not found.");
         } catch (Exception e) {
