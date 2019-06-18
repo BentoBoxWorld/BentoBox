@@ -153,17 +153,38 @@ public class IslandWorldManager {
         // Call Multiverse
         registerToMultiverse(world);
         if (settings.isNetherGenerate()) {
+            if (!Bukkit.getAllowNether()) {
+                // Warn the users that players might not be able to teleport to these worlds later on
+                plugin.logWarning("'allow-nether' is set to 'false' in the server.properties file!");
+                plugin.logWarning("This means that players won't be able to teleport to the Nether through portals.");
+                plugin.logWarning("Please turn off the server and set 'allow-nether' to 'true' in the server.properties file.");
+            }
+
             gameModes.put(gameMode.getNetherWorld(), gameMode);
             if (settings.isNetherIslands()) {
                 registerToMultiverse(gameMode.getNetherWorld());
             }
         }
         if (settings.isEndGenerate() && settings.isEndIslands()) {
+            if (!Bukkit.getAllowEnd()) {
+                // Warn the users that players might not be able to teleport to these worlds later on
+                plugin.logWarning("'settings.allow-end' is set to 'false' in the bukkit.yml file!");
+                plugin.logWarning("This means that players won't be able to teleport to the End through portals.");
+                plugin.logWarning("Please turn off the server and set 'settings.allow-end' to 'true' in the bukkit.yml file.");
+            }
+
             gameModes.put(gameMode.getEndWorld(), gameMode);
             if (settings.isEndGenerate()) {
                 registerToMultiverse(gameMode.getEndWorld());
             }
         }
+
+        // If allow-nether or allow-end is false, then we will send the user some help.
+        if ((settings.isNetherGenerate() || settings.isEndGenerate()) && (!Bukkit.getAllowNether() || !Bukkit.getAllowEnd())) {
+            plugin.logWarning("If this is intended in order to prevent the vanilla worlds from being generated, please read the following page:");
+            plugin.logWarning("https://github.com/BentoBoxWorld/BentoBox/wiki/Set-one-of-BentoBox-worlds-as-the-server-default-world");
+        }
+
         // Set default island settings
         plugin.getFlagsManager().getFlags().stream().filter(f -> f.getType().equals(Flag.Type.PROTECTION))
         .forEach(f -> settings.getDefaultIslandFlags().putIfAbsent(f, f.getDefaultRank()));
