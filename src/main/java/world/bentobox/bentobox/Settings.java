@@ -48,7 +48,7 @@ public class Settings implements ConfigObject {
     @ConfigComment("MYSQL might not work with all implementations: if available, use a dedicated database type (e.g. MARIADB).")
     @ConfigComment("If you use MONGODB, you must also run the BSBMongo plugin (not addon).")
     @ConfigComment("See https://github.com/tastybento/bsbMongo/releases/.")
-    @ConfigEntry(path = "general.database.type")
+    @ConfigEntry(path = "general.database.type", video = "https://youtu.be/FFzCk5-y7-g")
     private DatabaseType databaseType = DatabaseType.JSON;
 
     @ConfigEntry(path = "general.database.host")

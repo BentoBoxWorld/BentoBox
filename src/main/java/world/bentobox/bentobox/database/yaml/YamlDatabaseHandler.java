@@ -521,6 +521,11 @@ public class YamlDatabaseHandler<T> extends AbstractDatabaseHandler<T> {
      * @since 1.3.0
      */
     private void handleConfigEntryComments(@NonNull ConfigEntry configEntry, @NonNull YamlConfiguration config, @NonNull Map<String, String> yamlComments, @NonNull String parent) {
+        // Tell if there is a video associated to this configuration option.
+        if (!configEntry.video().isEmpty()) {
+            setComment("You can find more details in this video: " + configEntry.video(), config, yamlComments, parent);
+        }
+
         // Tell when the configEntry has been added (if it's not "1.0")
         if (!configEntry.since().equals("1.0")) {
             setComment("Added since " + configEntry.since() + ".", config, yamlComments, parent);
