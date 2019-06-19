@@ -4,14 +4,14 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.event.Cancellable;
 
-import world.bentobox.bentobox.api.events.PremadeEvent;
+import world.bentobox.bentobox.api.events.BentoBoxEvent;
 
 /**
  * Fired when a team event happens.
  *
  * @author tastybento
  */
-public class CommandEvent extends PremadeEvent implements Cancellable {
+public class CommandEvent extends BentoBoxEvent implements Cancellable {
 
     private boolean cancelled;
 

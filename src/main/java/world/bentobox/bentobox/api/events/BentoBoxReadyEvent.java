@@ -5,4 +5,4 @@ package world.bentobox.bentobox.api.events;
  *
  * @author tastybento
  */
-public class BentoBoxReadyEvent extends PremadeEvent {}
+public class BentoBoxReadyEvent extends BentoBoxEvent {}

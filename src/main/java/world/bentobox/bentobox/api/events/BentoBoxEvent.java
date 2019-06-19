@@ -54,8 +54,7 @@ public abstract class BentoBoxEvent extends Event {
     public Map<String, Object> getKeyValues() {
         try {
             Map<String, Object> map = new HashMap<>();
-            Arrays.asList(Introspector.getBeanInfo(this.getClass(), PremadeEvent.class).getPropertyDescriptors())
-            .stream()
+            Arrays.stream(Introspector.getBeanInfo(this.getClass(), BentoBoxEvent.class).getPropertyDescriptors())
             // only get getters
             .filter(pd -> Objects.nonNull(pd.getReadMethod()))
             .forEach(pd -> { // invoke method to get value

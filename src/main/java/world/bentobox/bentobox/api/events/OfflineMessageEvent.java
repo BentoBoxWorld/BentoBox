@@ -8,7 +8,7 @@ import java.util.UUID;
  * @author tastybento
  * @since 1.5.0
  */
-public class OfflineMessageEvent extends PremadeEvent {
+public class OfflineMessageEvent extends BentoBoxEvent {
     private final UUID offlinePlayer;
     private final String message;
 

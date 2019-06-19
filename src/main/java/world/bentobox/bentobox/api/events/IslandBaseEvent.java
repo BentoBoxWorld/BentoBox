@@ -8,11 +8,9 @@ import org.bukkit.event.Cancellable;
 import world.bentobox.bentobox.database.objects.Island;
 
 /**
- *
  * @author Poslovitch
- * @version 1.0
  */
-public class IslandBaseEvent extends PremadeEvent implements Cancellable {
+public class IslandBaseEvent extends BentoBoxEvent implements Cancellable {
     private boolean cancelled;
 
     protected final Island island;
