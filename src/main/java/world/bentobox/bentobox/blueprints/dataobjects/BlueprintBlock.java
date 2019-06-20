@@ -1,5 +1,6 @@
 package world.bentobox.bentobox.blueprints.dataobjects;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -58,7 +59,7 @@ public class BlueprintBlock {
      * @return the inventory
      */
     public Map<Integer, ItemStack> getInventory() {
-        return inventory;
+        return inventory == null ? new HashMap<>() : inventory;
     }
 
     /**
